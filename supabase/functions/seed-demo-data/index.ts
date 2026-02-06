@@ -8,7 +8,7 @@ const corsHeaders = {
 // Demo company configurations with industry data
 const COMPANY_DATA = {
   'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f': {
-    name: 'Demo Flow Company',
+    name: 'Demo Business Company',
     industry: 'Personal Assistant',
     services: [
       { name: 'Calendar Management', description: 'Full calendar organization and scheduling', price: 50, duration_minutes: 30 },
@@ -43,7 +43,7 @@ const COMPANY_DATA = {
     },
   },
   'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a': {
-    name: 'Demo Core Company',
+    name: 'Demo Growth Company',
     industry: 'Real Estate',
     services: [
       { name: 'Home Buying Assistance', description: 'Full-service home buying from search to closing', price: 0, duration_minutes: 60 },
@@ -78,7 +78,7 @@ const COMPANY_DATA = {
     },
   },
   '8fafcec0-4b2a-45a1-8663-f9ccb5afc545': {
-    name: 'Demo Solo Company',
+    name: 'Demo Field Ops Company',
     industry: 'HVAC',
     services: [
       { name: 'AC Repair', description: 'Expert diagnosis and repair of all AC systems', price: 150, duration_minutes: 60 },
@@ -114,7 +114,7 @@ const COMPANY_DATA = {
     },
   },
   '4f85ed98-0e98-480c-b904-1c33424e26ad': {
-    name: 'Demo Multi Company',
+    name: 'Demo Performance Company',
     industry: 'Plumbing',
     services: [
       { name: 'Leak Detection', description: 'Advanced leak detection and repair', price: 125, duration_minutes: 45 },
@@ -186,7 +186,7 @@ const COMPANY_DATA = {
     },
   },
   '56c0a3a8-a2a1-4689-9c18-d115080a816d': {
-    name: 'Demo Halo Company',
+    name: 'Demo Scheduling Company',
     industry: 'Salon',
     services: [
       { name: 'Manicure', description: 'Classic manicure with polish', price: 35, duration_minutes: 30 },
@@ -223,7 +223,7 @@ const COMPANY_DATA = {
     },
   },
   'd4a6c195-c89a-4208-a818-981902af6c51': {
-    name: 'Demo Express Company',
+    name: 'Demo Starter Company',
     industry: 'Restaurant',
     services: [
       { name: 'Dine-In', description: 'Full dining experience with table service', price: 0, duration_minutes: 60 },
