@@ -1,200 +1,194 @@
 
-# Option C Implementation Plan: Pricing + Agent Redistribution
+# Documentation, Guides & Dashboard Sync Plan
 
-## Summary of Changes
+## Overview
 
-This plan updates all 7 subscription tiers with:
-1. New pricing across all tiers
-2. Performance tier reduced from 24 to 22 agents (remove advanced analytics)
-3. Command tier keeps all 24 agents (exclusive: revenue + forecast agents)
-4. Priority Support and Dedicated Account Manager removed as tier-exclusive features
+Following the pricing restructure and agent redistribution (Option C), multiple documentation files, guides, PDFs, and help content need to be updated to reflect:
 
----
-
-## Price Updates
-
-| Tier | Current | New | Change |
-|------|---------|-----|--------|
-| Aura Starter | $197 | $197 | - |
-| Aura Scheduling | $297 | **$397** | +$100 |
-| Aura Growth | $397 | **$597** | +$200 |
-| Aura Business | $500 | **$797** | +$297 |
-| Aura Field Ops | $1,500 | **$1,497** | -$3 |
-| Aura Performance | $3,997 | **$3,497** | -$500 |
-| Aura Command | $5,997 | **$5,497** | -$500 |
+1. **New Pricing Structure** (6 tiers changed)
+2. **Agent Redistribution** (Performance: 22 agents, Command: 24 agents)
+3. **Console Access Updates** (Performance: 7 consoles, Command: 8 consoles)
+4. **Tier Name Updates** (using new tier names: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command)
 
 ---
 
-## Agent Redistribution (Option C)
+## Files Requiring Updates
 
-### Performance Tier - 22 Agents (was 24)
+### Category 1: Configuration Files (Source of Truth)
 
-Remove `revenue` and `forecast` agents from Performance. Keep basic analytics with `insights` and `performance`.
+These files were already updated in the previous implementation, but we need to verify consistency:
 
+| File | Status | Notes |
+|------|--------|-------|
+| `src/lib/subscriptionAgentConfig.ts` | Updated | New prices and agent arrays |
+| `src/lib/documentationConfig.ts` | Updated | SUBSCRIPTION_TIERS and AI_OPERATIVES |
+
+### Category 2: PDF Documentation (13 files)
+
+| File | Updates Needed |
+|------|----------------|
+| `src/components/documentation/PricingSummaryPDF.tsx` | Pulls from documentationConfig - should auto-update |
+| `src/components/documentation/AIAgentGuidesPDF.tsx` | Pulls from SUBSCRIPTION_TIERS - should auto-update |
+| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | **Hardcoded pricing** at lines 219-230 |
+| `src/components/documentation/CompanyGuidesPDF.tsx` | May have hardcoded tier info |
+| `src/components/documentation/PlatformDocumentPDF.tsx` | Pulls from config - verify |
+| `src/components/documentation/PlatformFAQPDF.tsx` | Pulls from config - verify |
+| `src/components/documentation/SalesPitchDataPDF.tsx` | May have hardcoded pricing |
+| `src/components/documentation/WebsiteCopyPDF.tsx` | May have hardcoded tier descriptions |
+| `src/components/documentation/BrandAssetGuidePDF.tsx` | May have tier references |
+| `src/components/documentation/VideoScriptsPDF.tsx` | May have pricing in scripts |
+| `src/components/documentation/SocialMediaContentPackPDF.tsx` | May have promotional content |
+| `src/components/documentation/IndustryMarketingKitPDF.tsx` | May have pricing references |
+| `src/components/documentation/CompanyOnboardingPDF.tsx` | May have tier options |
+
+### Category 3: Dashboard & UI Components (5 files)
+
+| File | Updates Needed |
+|------|----------------|
+| `src/pages/PlatformGuides.tsx` | **Hardcoded pricing** at lines 120-131 |
+| `src/pages/Auth.tsx` | **Hardcoded pricing** at lines 722-942 |
+| `src/components/agents/TierComparisonCards.tsx` | **Hardcoded pricing** at lines 294-327 |
+| `src/components/help/AIHelpCenter.tsx` | **Hardcoded pricing** in SYSTEM_PROMPT at line 77 |
+
+### Category 4: Feature Gating & Access Control (Already Correct)
+
+| File | Status |
+|------|--------|
+| `src/components/subscription/FeatureGate.tsx` | Uses subscriptionAgentConfig - OK |
+| `src/hooks/useSubscription.ts` | Uses tier config - OK |
+
+---
+
+## Detailed Changes
+
+### 1. ComprehensiveGuidesPDF.tsx (Lines 219-230)
+
+**Current (Outdated):**
 ```text
-Performance ($3,497) - 22 Agents:
-├── Customer Portal (4): triage, booking, followup, review
-├── Field Operations (4): dispatch, route, eta, checkin
-├── Business Operations (4): admin, quoting, invoice, inventory
-├── Marketing & Sales (3): campaign, lead, marketing
-├── Social Media (3): social_content, social_scheduler, social_analytics
-├── Analytics (2): insights, performance  ← REDUCED
-└── Creative & Web (2): creative, web_presence
+'Aura Express ($197/mo): AI Voice + Chat for restaurants...'
+'Aura Flow ($297/mo): AI Personal Assistant...'
+'Aura Halo ($397/mo): 3 AI Operatives for salons...'
+'Aura Core ($500/mo): AI-Assisted (No Automation)...'
+'Single-Point ($1,500/mo): 3 AI Operatives...'
+'Multi-Track ($3,997/mo): 10 AI Operatives...'
+'Aura Pro Command ($5,997/mo): All 24 AI Operatives...'
 ```
 
-### Command Tier - 24 Agents (unchanged)
-
-Full suite including advanced forecasting agents.
-
+**Updated:**
 ```text
-Command ($5,497) - 24 Agents:
-├── Customer Portal (4): triage, booking, followup, review
-├── Field Operations (4): dispatch, route, eta, checkin
-├── Business Operations (4): admin, quoting, invoice, inventory
-├── Marketing & Sales (3): campaign, lead, marketing
-├── Social Media (3): social_content, social_scheduler, social_analytics
-├── Analytics (4): insights, performance, revenue, forecast  ← FULL
-└── Creative & Web (2): creative, web_presence
+'Aura Starter ($197/mo): AI Receptionist for 24/7 lead capture'
+'Aura Scheduling ($397/mo): AI booking with calendar sync + Customer Portal'
+'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation'
+'Aura Business ($797/mo): 12 AI Operatives + Web Presence'
+'Aura Field Ops ($1,497/mo): 18 AI Operatives + Field Operations'
+'Aura Performance ($3,497/mo): 22 AI Operatives + Analytics & Reports'
+'Aura Command ($5,497/mo): All 24 AI Operatives + AI Operatives Hub'
+```
+
+### 2. PlatformGuides.tsx (Lines 120-131)
+
+Same updates as ComprehensiveGuidesPDF - the guide content needs to match.
+
+### 3. Auth.tsx (Lines 722-942)
+
+Update the tier selection cards during signup:
+- Scheduling: $297 to $397
+- Growth: $397 to $597
+- Business: $500 to $797
+- Field Ops: $1,500 to $1,497
+- Performance: $3,997 to $3,497
+- Command: $5,997 to $5,497
+
+### 4. TierComparisonCards.tsx (Lines 294-327)
+
+Update the upgrade summary bar with new prices:
+```text
+Express $197 → Flow $397 → Halo $597 → Core $797 → Single-Point $1,497 → Multi-Track $3,497 → Command $5,497
+```
+
+Also update the `upgradeFrom` price differences in the card props.
+
+### 5. AIHelpCenter.tsx (Line 77)
+
+Update the SYSTEM_PROMPT with correct pricing:
+```text
+4. **Subscription Tiers**: Starter ($197), Scheduling ($397), Growth ($597), Business ($797), Field Ops ($1,497), Performance ($3,497), Command ($5,497)
 ```
 
 ---
 
-## Console Assignments
+## Agent/Console Distribution Updates
 
-| Console | Starter | Scheduling | Growth | Business | Field Ops | Performance | Command |
-|---------|---------|------------|--------|----------|-----------|-------------|---------|
-| Customer Portal | - | Yes | Yes | Yes | Yes | Yes | Yes |
-| Outreach & Sales | - | - | Yes | Yes | Yes | Yes | Yes |
-| Social Media | - | - | Yes | Yes | Yes | Yes | Yes |
-| Creative & Web | - | - | - | Yes | Yes | Yes | Yes |
-| Field Operations | - | - | - | - | Yes | Yes | Yes |
-| Business Management | - | - | - | - | Yes | Yes | Yes |
-| Analytics & Reports | - | - | - | - | - | Yes | Yes |
-| AI Operatives Hub | - | - | - | - | - | - | Yes |
-| **Total** | **0** | **1** | **3** | **4** | **6** | **7** | **8** |
+Files need to reflect the correct agent counts per tier:
 
----
+| Tier | Agents | Consoles | Key Change |
+|------|--------|----------|------------|
+| Starter | 1 | 0 | No change |
+| Scheduling | 3 | 1 | No change |
+| Growth | 11 | 3 | No change |
+| Business | 12 | 4 | No change |
+| Field Ops | 18 | 6 | No change |
+| Performance | **22** | 7 | Excludes revenue, forecast |
+| Command | 24 | 8 | Full suite + AI Operatives Hub |
 
-## Employee Limits (Unchanged)
+### Analytics Agent Access
 
-| Tier | Employees |
-|------|-----------|
-| Starter | 2 |
-| Scheduling | 3 |
-| Growth | 5 |
-| Business | 8 |
-| Field Ops | 15 |
-| Performance | 25 |
-| Command | 50 |
-
----
-
-## Files to Update
-
-### 1. src/lib/subscriptionAgentConfig.ts
-- Update price strings for all tiers
-- Update Performance agents array: remove `revenue`, `forecast`
-- Keep Command agents unchanged (24 total)
-
-### 2. src/lib/documentationConfig.ts
-- Update `SUBSCRIPTION_TIERS` prices
-- Update `annualPrice` (10x monthly)
-- Update Performance operatives count: 24 to 22
-- Update AI_OPERATIVES tier assignments for revenue/forecast: `performance` to `command`
-
-### 3. src/pages/Index.tsx
-- Update all pricing card prices
-- Update agent/console counts on Performance card (24 to 22)
-- Remove "Priority Support" from Performance features
-- Remove "Dedicated Account Manager" from Command features
-
-### 4. src/components/landing/PricingComparisonTable.tsx
-- Update price headers
-- Update AI Agents row: (1 / 3 / 11 / 12 / 18 / 22 / 24)
-- Update feature checkmarks for analytics agents
-- Remove Priority Support and Dedicated Account Manager rows
-
-### 5. supabase/functions/ai-agent-chat/index.ts
-- Update TIER_AGENTS.performance: remove `revenue`, `forecast`
-- Update comments with new prices
-
-### 6. supabase/functions/create-checkout/index.ts
-- Update price values in cents for all tiers
-
----
-
-## Technical Changes Detail
-
-### subscriptionAgentConfig.ts - Performance Tier
-
-```typescript
-// BEFORE (24 agents)
-performance: {
-  agents: [
-    'triage', 'booking', 'followup', 'review',
-    'dispatch', 'route', 'eta', 'checkin',
-    'admin', 'quoting', 'invoice', 'inventory',
-    'campaign', 'lead', 'marketing',
-    'social_content', 'social_scheduler', 'social_analytics',
-    'insights', 'performance', 'revenue', 'forecast',  // ← HAS ALL 4
-    'creative', 'web_presence',
-  ],
-  price: '$3,997/mo',
-}
-
-// AFTER (22 agents)
-performance: {
-  agents: [
-    'triage', 'booking', 'followup', 'review',
-    'dispatch', 'route', 'eta', 'checkin',
-    'admin', 'quoting', 'invoice', 'inventory',
-    'campaign', 'lead', 'marketing',
-    'social_content', 'social_scheduler', 'social_analytics',
-    'insights', 'performance',  // ← ONLY 2 analytics agents
-    'creative', 'web_presence',
-  ],
-  price: '$3,497/mo',
-}
-```
-
-### create-checkout/index.ts - Price Updates
-
-```typescript
-// New prices in cents
-starter:     { price: 19700 },   // $197 (unchanged)
-scheduling:  { price: 39700 },   // $397 (was $297)
-growth:      { price: 59700 },   // $597 (was $397)
-business:    { price: 79700 },   // $797 (was $500)
-field_ops:   { price: 149700 },  // $1,497 (was $1,500)
-performance: { price: 349700 },  // $3,497 (was $3,997)
-command:     { price: 549700 },  // $5,497 (was $5,997)
-```
-
----
-
-## Value Differentiation Summary
-
-### Performance ($3,497/mo)
-- 22 AI Agents
-- 7 Consoles
-- 25 Employees
-- Basic Analytics: See what's happening (insights + performance metrics)
-- Position: "Run your entire company with visibility"
-
-### Command ($5,497/mo)
-- 24 AI Agents (+2 exclusive)
-- 8 Consoles (+1 exclusive)
-- 50 Employees
-- Full Analytics: Predict what's coming (adds revenue + forecast)
-- AI Operatives Hub for advanced management
-- Position: "AI Operating System with predictive intelligence"
+- **Performance ($3,497)**: Gets `insights` + `performance` agents (basic analytics)
+- **Command ($5,497)**: Gets all 4 analytics agents (`insights`, `performance`, `revenue`, `forecast`)
 
 ---
 
 ## Implementation Order
 
-1. Update configuration files (subscriptionAgentConfig.ts, documentationConfig.ts)
-2. Update landing page UI (Index.tsx, PricingComparisonTable.tsx)
-3. Update backend edge functions (ai-agent-chat, create-checkout)
-4. Note: Stripe Price IDs will need to be updated separately in Stripe Dashboard
+### Phase 1: UI Components (High Visibility)
+1. `src/pages/Auth.tsx` - Signup flow pricing
+2. `src/pages/PlatformGuides.tsx` - User-facing guides
+3. `src/components/agents/TierComparisonCards.tsx` - Agent hub comparison
+4. `src/components/help/AIHelpCenter.tsx` - AI help system prompt
 
+### Phase 2: PDF Documents
+5. `src/components/documentation/ComprehensiveGuidesPDF.tsx`
+6. Review and update remaining PDF files as needed
+
+### Phase 3: Verification
+7. Generate and review all PDFs for consistency
+8. Test tier comparison displays
+9. Verify feature gating works correctly for Performance vs Command
+
+---
+
+## Technical Notes
+
+### Files Using Centralized Config (Auto-Updated)
+These files import from `documentationConfig.ts` and should automatically reflect the new prices:
+- `PricingSummaryPDF.tsx`
+- `AIAgentGuidesPDF.tsx`
+- `PlatformFAQPDF.tsx`
+- `PlatformDocumentPDF.tsx`
+
+### Files with Hardcoded Values (Manual Update Required)
+- `ComprehensiveGuidesPDF.tsx`
+- `PlatformGuides.tsx`
+- `Auth.tsx`
+- `TierComparisonCards.tsx`
+- `AIHelpCenter.tsx`
+
+---
+
+## Summary of Price Changes
+
+| Tier | Old Price | New Price |
+|------|-----------|-----------|
+| Starter | $197 | $197 (unchanged) |
+| Scheduling | $297 | **$397** |
+| Growth | $397 | **$597** |
+| Business | $500 | **$797** |
+| Field Ops | $1,500 | **$1,497** |
+| Performance | $3,997 | **$3,497** |
+| Command | $5,997 | **$5,497** |
+
+## Performance vs Command Differentiation
+
+The key differentiation is now clearly defined:
+- **Performance**: 22 agents, 7 consoles, basic analytics (insights + performance metrics)
+- **Command**: 24 agents, 8 consoles, full analytics (adds revenue + forecast) + AI Operatives Hub
