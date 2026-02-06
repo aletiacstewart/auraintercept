@@ -70,35 +70,45 @@ Deno.serve(async (req) => {
     const results: any[] = [];
     const password = 'aidemo*!';
 
-    // Company IDs from the database
+    // Company IDs from the database - mapped to new tier names
     const companies = {
-      solo: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
-      multi: '4f85ed98-0e98-480c-b904-1c33424e26ad',
-      cmd: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
-      halo: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
-      xprs: 'd4a6c195-c89a-4208-a818-981902af6c51',
+      starter: 'd4a6c195-c89a-4208-a818-981902af6c51',
+      scheduling: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
+      growth: 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
+      business: 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+      field_ops: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
+      performance: '4f85ed98-0e98-480c-b904-1c33424e26ad',
+      command: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
     };
 
-    // Define all accounts to create
+    // Define all 21 accounts to create (7 tiers × 3 account types)
     const accounts = [
-      // Company Admins
-      { email: 'companysolo@demo.com', name: 'Solo Demo Admin', role: 'company_admin', companyId: companies.solo },
-      { email: 'companymulti@demo.com', name: 'Multi Demo Admin', role: 'company_admin', companyId: companies.multi },
-      { email: 'companycmd@demo.com', name: 'Command Demo Admin', role: 'company_admin', companyId: companies.cmd },
-      { email: 'companyhalo@demo.com', name: 'Halo Demo Admin', role: 'company_admin', companyId: companies.halo },
-      { email: 'companyxprs@demo.com', name: 'Express Demo Admin', role: 'company_admin', companyId: companies.xprs },
-      // Employees
-      { email: 'employeesolo@demo.com', name: 'Solo Demo Employee', role: 'employee', companyId: companies.solo },
-      { email: 'employeemulti@demo.com', name: 'Multi Demo Employee', role: 'employee', companyId: companies.multi },
-      { email: 'employeecmd@demo.com', name: 'Command Demo Employee', role: 'employee', companyId: companies.cmd },
-      { email: 'employeehalo@demo.com', name: 'Halo Demo Employee', role: 'employee', companyId: companies.halo },
-      { email: 'employeexprs@demo.com', name: 'Express Demo Employee', role: 'employee', companyId: companies.xprs },
-      // Customers
-      { email: 'customersolo@demo.com', name: 'Solo Demo Customer', role: 'customer', companyId: companies.solo },
-      { email: 'customermulti@demo.com', name: 'Multi Demo Customer', role: 'customer', companyId: companies.multi },
-      { email: 'customercmd@demo.com', name: 'Command Demo Customer', role: 'customer', companyId: companies.cmd },
-      { email: 'customerxprs@demo.com', name: 'Express Demo Customer', role: 'customer', companyId: companies.xprs },
-      { email: 'customerhalo@demo.com', name: 'Halo Demo Customer', role: 'customer', companyId: companies.halo },
+      // Company Admins (7)
+      { email: 'companystarter@demo.com', name: 'Starter Demo Admin', role: 'company_admin', companyId: companies.starter },
+      { email: 'companysched@demo.com', name: 'Scheduling Demo Admin', role: 'company_admin', companyId: companies.scheduling },
+      { email: 'companygrowth@demo.com', name: 'Growth Demo Admin', role: 'company_admin', companyId: companies.growth },
+      { email: 'companybiz@demo.com', name: 'Business Demo Admin', role: 'company_admin', companyId: companies.business },
+      { email: 'companyfops@demo.com', name: 'Field Ops Demo Admin', role: 'company_admin', companyId: companies.field_ops },
+      { email: 'companyperf@demo.com', name: 'Performance Demo Admin', role: 'company_admin', companyId: companies.performance },
+      { email: 'companycmd@demo.com', name: 'Command Demo Admin', role: 'company_admin', companyId: companies.command },
+      
+      // Employees (7)
+      { email: 'employeestarter@demo.com', name: 'Starter Demo Employee', role: 'employee', companyId: companies.starter },
+      { email: 'employeesched@demo.com', name: 'Scheduling Demo Employee', role: 'employee', companyId: companies.scheduling },
+      { email: 'employeegrowth@demo.com', name: 'Growth Demo Employee', role: 'employee', companyId: companies.growth },
+      { email: 'employeebiz@demo.com', name: 'Business Demo Employee', role: 'employee', companyId: companies.business },
+      { email: 'employeefops@demo.com', name: 'Field Ops Demo Employee', role: 'employee', companyId: companies.field_ops },
+      { email: 'employeeperf@demo.com', name: 'Performance Demo Employee', role: 'employee', companyId: companies.performance },
+      { email: 'employeecmd@demo.com', name: 'Command Demo Employee', role: 'employee', companyId: companies.command },
+      
+      // Customers (7)
+      { email: 'customerstarter@demo.com', name: 'Starter Demo Customer', role: 'customer', companyId: companies.starter },
+      { email: 'customersched@demo.com', name: 'Scheduling Demo Customer', role: 'customer', companyId: companies.scheduling },
+      { email: 'customergrowth@demo.com', name: 'Growth Demo Customer', role: 'customer', companyId: companies.growth },
+      { email: 'customerbiz@demo.com', name: 'Business Demo Customer', role: 'customer', companyId: companies.business },
+      { email: 'customerfops@demo.com', name: 'Field Ops Demo Customer', role: 'customer', companyId: companies.field_ops },
+      { email: 'customerperf@demo.com', name: 'Performance Demo Customer', role: 'customer', companyId: companies.performance },
+      { email: 'customercmd@demo.com', name: 'Command Demo Customer', role: 'customer', companyId: companies.command },
     ];
 
     for (const account of accounts) {
