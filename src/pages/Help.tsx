@@ -53,7 +53,7 @@ export default function Help() {
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Effective tier for display: trial users see all, others see their tier
-  const effectiveTier: SubscriptionTier = inTrial || isPlatformAdmin ? 'command' : (subscriptionTier || 'single_point');
+  const effectiveTier: SubscriptionTier = inTrial || isPlatformAdmin ? 'command' : (subscriptionTier || 'field_ops');
   
   // Get available consoles based on tier
   const availableConsoles = useMemo(() => {

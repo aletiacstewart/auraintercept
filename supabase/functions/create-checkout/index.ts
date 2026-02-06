@@ -13,41 +13,74 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 };
 
 // Subscription tier configuration with Stripe Price IDs
+// NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
-  express: {
+  // New tier names
+  starter: {
     price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
-    name: "Aura Express",
+    name: "Aura Starter",
     price: 19700, // $197 in cents
   },
-  aura_flow: {
+  scheduling: {
     price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
-    name: "Aura Flow",
+    name: "Aura Scheduling",
     price: 29700, // $297 in cents
   },
-  halo: {
+  growth: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
-    name: "Aura Halo",
+    name: "Aura Growth",
     price: 39700, // $397 in cents
   },
-  core: {
+  business: {
     price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
-    name: "Aura Core",
+    name: "Aura Business",
     price: 50000, // $500 in cents
   },
-  single_point: {
+  field_ops: {
     price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
-    name: "Single-Point",
+    name: "Aura Field Ops",
     price: 150000, // $1,500 in cents
   },
-  multi_track: {
+  performance: {
     price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
-    name: "Multi-Track",
+    name: "Aura Performance",
     price: 399700, // $3,997 in cents
   },
   command: {
     price_id: "price_1StwYSJ9fo9y8fGHpPa6JL5I",
-    name: "Aura Pro Command",
+    name: "Aura Command",
     price: 599700, // $5,997 in cents
+  },
+  // Legacy tier name aliases for backward compatibility
+  express: {
+    price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
+    name: "Aura Starter",
+    price: 19700,
+  },
+  aura_flow: {
+    price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
+    name: "Aura Scheduling",
+    price: 29700,
+  },
+  halo: {
+    price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
+    name: "Aura Growth",
+    price: 39700,
+  },
+  core: {
+    price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
+    name: "Aura Business",
+    price: 50000,
+  },
+  single_point: {
+    price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
+    name: "Aura Field Ops",
+    price: 150000,
+  },
+  multi_track: {
+    price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
+    name: "Aura Performance",
+    price: 399700,
   },
 };
 
