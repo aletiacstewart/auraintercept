@@ -481,7 +481,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
 ];
 
 // ============================================
-// CONSOLES - 7 TOTAL
+// CONSOLES - 8 TOTAL (including AI Operatives Hub)
 // ============================================
 
 export interface ConsoleConfig {
@@ -499,7 +499,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'customer_portal',
     name: 'Customer Portal',
     description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
-    tier: 'halo',
+    tier: 'aura_flow',
     agentCount: 4,
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     color: 'blue',
@@ -508,25 +508,25 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'field_operations',
     name: 'Field Operations',
     description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
-    tier: 'multi_track',
+    tier: 'single_point',
     agentCount: 4,
-    tabs: ['Accept Job', 'Get Directions', 'Mark En Route', 'Update ETA', 'Arrive & Start', 'Complete Job', 'Generate Quote', 'Generate Invoice', 'Contact Dispatch'],
+    tabs: ['Map View', 'Schedule', 'Dispatch', 'Check-in'],
     color: 'green',
   },
   {
     id: 'business_management',
     name: 'Business Operations',
     description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
-    tier: 'command',
+    tier: 'single_point',
     agentCount: 4,
-    tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
+    tabs: ['Aura Live', 'Quote', 'Invoice', 'Lead', 'Appts', 'Inventory', 'Companies', 'Employees', 'Customers'],
     color: 'purple',
   },
   {
     id: 'marketing_sales',
     name: 'Outreach & Sales Ops',
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
-    tier: 'halo',  // Changed from express to halo
+    tier: 'halo',
     agentCount: 3,
     tabs: ['Campaign', 'Leads', 'Marketing'],
     color: 'orange',
@@ -535,28 +535,37 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'social_media',
     name: 'Social Media Ops',
     description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
-    tier: 'aura_flow',  // Changed from express to aura_flow
+    tier: 'halo',
     agentCount: 3,
-    tabs: ['Social Posts', 'Calendar', 'Analytics'],
+    tabs: ['Home', 'Social Posts', 'Analytics'],
     color: 'pink',
   },
   {
     id: 'creative_web_presence',
     name: 'Creative & Web Presence',
     description: 'Content Engine for unified multi-channel generation plus AI-powered website builder, blog management, and SEO optimization.',
-    tier: 'single_point',  // Changed from command to single_point
+    tier: 'core',
     agentCount: 2,
-    tabs: ['Content Engine', 'Web Presence', 'Blog'],
+    tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     color: 'violet',
   },
   {
     id: 'analytics_reports',
     name: 'Analytics & Reports',
     description: 'Advanced analytics console with 8 specialized tabs for comprehensive business intelligence, forecasting, and multi-format report export.',
-    tier: 'command',
+    tier: 'multi_track',
     agentCount: 4,
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     color: 'cyan',
+  },
+  {
+    id: 'ai_operatives_hub',
+    name: 'AI Operatives Hub',
+    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    tier: 'command',
+    agentCount: 24,
+    tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
+    color: 'indigo',
   },
 ];
 
@@ -623,10 +632,10 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 
 export const PLATFORM_STATS = {
   totalOperatives: 24,
-  totalConsoles: 7,
+  totalConsoles: 8,  // Including AI Operatives Hub
   totalTiers: 7,
   startingPrice: 197,
-  maxEmployees: 25,
+  maxEmployees: 50,
   socialPlatforms: 6,
   analyticsTabs: 8,
   industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness', 'Restaurants', 'Personal Services'],
