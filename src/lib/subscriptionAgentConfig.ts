@@ -32,17 +32,17 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Never miss a lead again - 24/7 AI answering and lead capture',
   },
   scheduling: {
-    // Aura Scheduling ($297/mo): Lead Capture + Booking Automation
+    // Aura Scheduling ($397/mo): Lead Capture + Booking Automation
     agents: [
       'triage', 'booking', 'followup',  // Lead Capture + Booking Stack
     ],
     consoles: ['customer_portal'],  // Now includes Customer Portal (has booking/followup)
     label: 'Aura Scheduling',
-    price: '$297/mo',
+    price: '$397/mo',
     description: 'Turn conversations into booked appointments',
   },
   growth: {
-    // Aura Growth ($397/mo): + Marketing Automation Stack
+    // Aura Growth ($597/mo): + Marketing Automation Stack
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
@@ -51,11 +51,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media'],  // 3 consoles
     label: 'Aura Growth',
-    price: '$397/mo',
+    price: '$597/mo',
     description: 'Start growing automatically with marketing automation',
   },
   business: {
-    // Aura Business ($500/mo): + Office Automation Stack
+    // Aura Business ($797/mo): + Office Automation Stack
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
@@ -64,11 +64,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],  // 4 consoles
     label: 'Aura Business',
-    price: '$500/mo',
+    price: '$797/mo',
     description: 'Run your office automatically with web presence',
   },
   field_ops: {
-    // Aura Field Ops ($1,500/mo): + Field Operations Stack
+    // Aura Field Ops ($1,497/mo): + Field Operations Stack
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
@@ -79,29 +79,30 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence'],  // 6 consoles
     label: 'Aura Field Ops',
-    price: '$1,500/mo',
+    price: '$1,497/mo',
     description: 'Run your field team automatically',
   },
   performance: {
-    // Aura Performance ($3,997/mo): + Business Intelligence Stack
+    // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic Analytics)
+    // 22 agents - excludes revenue and forecast (advanced analytics for Command only)
     agents: [
-      'triage', 'booking', 'followup', 'review',  // Customer Portal
-      'dispatch', 'route', 'eta', 'checkin',  // Field Operations
-      'admin', 'quoting', 'invoice', 'inventory',  // Business Operations
-      'campaign', 'lead', 'marketing',  // Outreach & Sales
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'insights', 'performance', 'revenue', 'forecast',  // Analytics & Reports
-      'creative', 'web_presence',  // Creative & Web Presence
+      'triage', 'booking', 'followup', 'review',  // Customer Portal (4)
+      'dispatch', 'route', 'eta', 'checkin',  // Field Operations (4)
+      'admin', 'quoting', 'invoice', 'inventory',  // Business Operations (4)
+      'campaign', 'lead', 'marketing',  // Outreach & Sales (3)
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media (3)
+      'insights', 'performance',  // Analytics & Reports - Basic (2) - NO revenue, forecast
+      'creative', 'web_presence',  // Creative & Web Presence (2)
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports'],  // All 7 consoles
     label: 'Aura Performance',
-    price: '$3,997/mo',
-    description: 'Run your entire company with AI and business intelligence',
+    price: '$3,497/mo',
+    description: 'Run your entire company with AI and basic analytics',
   },
   command: {
-    // Aura Command ($5,997/mo): All agents + enterprise features
+    // Aura Command ($5,497/mo): All agents + enterprise features
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-    // 24 Total Agents
+    // 24 Total Agents - Full suite including advanced analytics (revenue, forecast)
     agents: [
       // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
@@ -113,15 +114,15 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'campaign', 'lead', 'marketing',
       // Social Media (3)
       'social_content', 'social_scheduler', 'social_analytics',
-      // Analytics & Reports (4)
+      // Analytics & Reports (4) - FULL including revenue + forecast
       'insights', 'performance', 'revenue', 'forecast',
       // Creative & Web Presence (2)
       'creative', 'web_presence',
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Command',
-    price: '$5,997/mo',
-    description: 'AI Operating System for multi-location companies',
+    price: '$5,497/mo',
+    description: 'AI Operating System with predictive intelligence',
   },
 };
 

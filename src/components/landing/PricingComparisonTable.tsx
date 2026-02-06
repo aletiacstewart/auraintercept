@@ -99,7 +99,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'AI Agents (1 / 3 / 11 / 12 / 18 / 24 / 24)',
+    title: 'AI Agents (1 / 3 / 11 / 12 / 18 / 22 / 24)',
     features: [
       // Lead Capture Stack (1 agent) - All tiers
       { name: 'AI Receptionist (Triage)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
@@ -129,13 +129,14 @@ const sections: FeatureSection[] = [
       { name: 'Quote Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'Invoice Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
       
-      // Business Intelligence Stack (6 agents) - Performance+
+      // Business Intelligence Stack - Performance (4 agents), Command adds 2 more
       { name: 'Admin Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
       { name: 'Inventory Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
       { name: 'Performance Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Revenue Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
       { name: 'Insights Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Forecast Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      // Advanced Analytics - Command only
+      { name: 'Revenue Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
+      { name: 'Forecast Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
@@ -194,9 +195,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$197', scheduling: '$297', growth: '$397', business: '$500', fieldOps: '$1,500', performance: '$3,997', command: '$5,997' },
-      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$2,970/year', growth: '$3,970/year', business: '$5,000/year', fieldOps: '$15,000/year', performance: '$39,970/year', command: '$59,970/year' },
-      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $594', growth: 'Save $794', business: 'Save $1,000', fieldOps: 'Save $3,000', performance: 'Save $7,994', command: 'Save $11,994' },
+      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$3,497', command: '$5,497' },
+      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$34,970/year', command: '$54,970/year' },
+      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $6,994', command: 'Save $10,994' },
     ],
   },
 ];

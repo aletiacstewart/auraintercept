@@ -713,10 +713,10 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Field Ops</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Field Service Teams)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold">$1,500</span>
+                  <span className="text-3xl font-bold">$1,497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$15,000/year (Save $3,000)</p>
+                <p className="text-xs text-secondary mb-3">$14,970/year (Save $2,994)</p>
                 <p className="text-xs text-card-foreground/70 mb-4">Complete field operations with dispatch & routing.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
@@ -768,16 +768,16 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Full Automation)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold gradient-text">$3,997</span>
+                  <span className="text-3xl font-bold gradient-text">$3,497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$39,970/year (Save $7,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">All 24 agents with business intelligence.</p>
+                <p className="text-xs text-secondary mb-3">$34,970/year (Save $6,994)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">22 agents with basic business intelligence.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">All 24 AI Agents</span>
+                    <span className="text-xs">22 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -789,15 +789,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Business Intelligence</span>
+                    <span className="text-xs">Basic Analytics (Insights + Performance)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
                     <span className="text-xs">25 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
-                    <span className="text-xs text-sky-400">Priority Support</span>
                   </div>
                 </div>
 
@@ -823,11 +819,11 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Command</h3>
                 <p className="text-[10px] text-amber-400/80 mb-2">Multi-Location / Enterprise</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold">$5,997</span>
+                  <span className="text-3xl font-bold">$5,497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$59,970/year (Save $11,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Full suite with dedicated support & implementation.</p>
+                <p className="text-xs text-secondary mb-3">$54,970/year (Save $10,994)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full 24-agent suite with predictive analytics.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
@@ -836,7 +832,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">All 7 Control Centers</span>
+                    <span className="text-xs">All 7 Control Centers + AI Hub</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs text-amber-400">Advanced Analytics (Revenue + Forecast)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -845,14 +845,6 @@ export default function Index() {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
                     <span className="text-xs">50 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Dedicated Account Manager</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Priority Support</span>
                   </div>
                 </div>
 
@@ -945,7 +937,7 @@ export default function Index() {
                   Personal Assistants • Real Estate • Consultants
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-2xl font-bold text-cyan-400">$297</span>
+                  <span className="text-2xl font-bold text-cyan-400">$397</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 
@@ -1006,7 +998,7 @@ export default function Index() {
                   Salons • Spas • Wellness • Growing Businesses
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-2xl font-bold text-rose-400">$397</span>
+                  <span className="text-2xl font-bold text-rose-400">$597</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 
@@ -1066,10 +1058,10 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Business</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Web Presence Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-emerald-400">$500</span>
+                  <span className="text-3xl font-bold text-emerald-400">$797</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
+                <p className="text-xs text-secondary mb-3">$7,970/year (Save $1,594)</p>
                 <p className="text-xs text-card-foreground/70 mb-4">Digital presence with web & social tools.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
