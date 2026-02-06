@@ -1,57 +1,79 @@
 
+# Demo Accounts Email Rename Plan
 
-# Demo Accounts Email Fix Plan
+## Overview
+Update all 21 demo account emails in the database and UI to use the new tier-based naming convention that matches the subscription tier names.
 
-## Current Problem
+## Email Mapping (Old to New)
 
-1. The `DemoAccounts.tsx` UI was updated to show **new email patterns** (e.g., `companystarter@demo.com`)
-2. But the **actual accounts** in the database still use the **old email patterns** (e.g., `companyxprs@demo.com`)
-3. There is **no UI button** to trigger the `create-demo-accounts` edge function
+| Tier | Role | Current Email | New Email |
+|------|------|---------------|-----------|
+| **Starter** | Admin | companyxprs@demo.com | companystarter@demo.com |
+| | Employee | employeexprs@demo.com | employeestarter@demo.com |
+| | Customer | customerxprs@demo.com | customerstarter@demo.com |
+| **Scheduling** | Admin | companyhalo@demo.com | companysched@demo.com |
+| | Employee | employeehalo@demo.com | employeesched@demo.com |
+| | Customer | customerhalo@demo.com | customersched@demo.com |
+| **Growth** | Admin | companycore@demo.com | companygrowth@demo.com |
+| | Employee | employeecore@demo.com | employeegrowth@demo.com |
+| | Customer | customercore@demo.com | customergrowth@demo.com |
+| **Business** | Admin | companyflow@demo.com | companybiz@demo.com |
+| | Employee | employeeflow@demo.com | employeebiz@demo.com |
+| | Customer | customerflow@demo.com | customerbiz@demo.com |
+| **Field Ops** | Admin | companysolo@demo.com | companyfops@demo.com |
+| | Employee | employeesolo@demo.com | employeefops@demo.com |
+| | Customer | customersolo@demo.com | customerfops@demo.com |
+| **Performance** | Admin | companymulti@demo.com | companyperf@demo.com |
+| | Employee | employeemulti@demo.com | employeeperf@demo.com |
+| | Customer | customermulti@demo.com | customerperf@demo.com |
+| **Command** | Admin | companycmd@demo.com | companycmd@demo.com (no change) |
+| | Employee | employeecmd@demo.com | employeecmd@demo.com (no change) |
+| | Customer | customercmd@demo.com | customercmd@demo.com (no change) |
 
-## Two Options
+## Implementation Steps
 
-### Option A: Update UI to Show Existing Emails (Recommended)
-- Simply update `DemoAccounts.tsx` to display the actual emails that exist
-- Quick fix, no database changes needed
-- Accounts continue to work immediately
+### Step 1: Database Migration
+Update emails in both `auth.users` and `profiles` tables, plus update the `full_name` fields to use consistent naming.
 
-### Option B: Update Database Emails to Match New Names
-- More complex - requires updating `auth.users` and `profiles` tables
-- Cleaner naming but higher risk of breaking existing logins
+The migration will:
+- Update 18 email addresses (Command tier stays the same)
+- Update corresponding full names (e.g., "Express Demo Admin" becomes "Starter Demo Admin")
 
-## Recommended Approach: Option A
+### Step 2: Update DemoAccounts.tsx
+Update the `demoAccounts` array to display the new email addresses that match the database.
 
-Update the `DemoAccounts.tsx` to show the **actual working emails**:
+## Files to Change
 
-### Email Mapping (Old → Display)
+| File | Change |
+|------|--------|
+| Database Migration | Update `auth.users.email`, `profiles.email`, and `profiles.full_name` |
+| `src/pages/DemoAccounts.tsx` | Update `demoAccounts` array with new emails |
 
-| Tier | Admin Email | Employee Email | Customer Email |
-|------|-------------|----------------|----------------|
-| **Starter** | companyxprs@demo.com | employeexprs@demo.com | customerxprs@demo.com |
-| **Scheduling** | companyhalo@demo.com | employeehalo@demo.com | customerhalo@demo.com |
-| **Growth** | companycore@demo.com | employeecore@demo.com | customercore@demo.com |
-| **Business** | companyflow@demo.com | employeeflow@demo.com | customerflow@demo.com |
-| **Field Ops** | companysolo@demo.com | employeesolo@demo.com | customersolo@demo.com |
-| **Performance** | companymulti@demo.com | employeemulti@demo.com | customermulti@demo.com |
-| **Command** | companycmd@demo.com | employeecmd@demo.com | customercmd@demo.com |
+## Technical Details
 
-### Files to Update
+```text
+Database Changes (SQL Migration):
++----------------------------------+
+|  auth.users table                |
+|  - Update email column           |
+|  - Update raw_user_meta_data     |
++----------------------------------+
+           |
+           v
++----------------------------------+
+|  profiles table                  |
+|  - Update email column           |
+|  - Update full_name column       |
++----------------------------------+
+```
 
-**1. src/pages/DemoAccounts.tsx**
-- Update the `demoAccounts` array with the actual existing email addresses
-- Keep the new tier names (Starter, Scheduling, Growth, Business, Field Ops, Performance, Command)
-- Keep the new pricing ($197, $397, $597, $797, $1,497, $3,497, $5,497)
+### SQL Migration Summary
+- 18 UPDATE statements for `auth.users` (6 tiers x 3 roles, excluding Command)
+- 18 UPDATE statements for `profiles` (matching changes)
 
-**2. supabase/functions/create-demo-accounts/index.ts**
-- Revert to the old email patterns (or remove if not needed)
-- This function was never connected to the UI anyway
-
-### Optional: Add Edge Function Trigger Button
-If you want the ability to recreate demo accounts in the future, we can add a "Reset Demo Accounts" button to the DemoAccounts page that calls the edge function.
-
-## Summary
-
-The simplest fix is to update the UI to show the **emails that actually exist in the database**. The accounts are already set up correctly - only the displayed emails in the UI need to match reality.
-
-All 21 accounts work with password: `aidemo*!`
-
+## Result
+After implementation:
+- All demo accounts will have emails matching the tier names
+- Users can log in using the new email addresses (e.g., `companystarter@demo.com`)
+- Password remains unchanged: `aidemo*!`
+- The Demo Accounts page will display the correct credentials
