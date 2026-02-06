@@ -27,9 +27,12 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   inventory: { name: 'Inventory Agent', description: 'Stock tracking', icon: '📦' },
   campaign: { name: 'Campaign Agent', description: 'Marketing automation', icon: '📣' },
   marketing: { name: 'Lead Agent', description: 'Lead qualification', icon: '🎯' },
+  lead: { name: 'Lead Agent', description: 'Lead qualification', icon: '🎯' },
   social_content: { name: 'Social Content', description: 'Content creation', icon: '✏️' },
   social_scheduler: { name: 'Social Scheduler', description: 'Post scheduling', icon: '📆' },
   social_analytics: { name: 'Social Analytics', description: 'Engagement metrics', icon: '📊' },
+  creative: { name: 'Creative Agent', description: 'Content generation', icon: '🎨' },
+  web_presence: { name: 'Web Presence Agent', description: 'Website management', icon: '🌐' },
   insights: { name: 'Insights Agent', description: 'Business intelligence', icon: '💡' },
   performance: { name: 'Performance Agent', description: 'KPI tracking', icon: '📈' },
   revenue: { name: 'Revenue Agent', description: 'Financial analysis', icon: '💰' },
@@ -37,25 +40,26 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   analytics: { name: 'Analytics Agent', description: 'Data analysis', icon: '📊' },
 };
 
+// NEW 7-TIER STRUCTURE
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
-  express: 'bg-amber-500',
-  aura_flow: 'bg-cyan-500',
-  core: 'bg-emerald-600',
-  halo: 'bg-rose-500',
-  single_point: 'bg-amber-600',
-  multi_track: 'bg-sky-600',
+  starter: 'bg-amber-500',
+  scheduling: 'bg-cyan-500',
+  growth: 'bg-rose-500',
+  business: 'bg-emerald-600',
+  field_ops: 'bg-amber-600',
+  performance: 'bg-sky-600',
   command: 'bg-violet-600',
 };
 
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
-  express: 197,
-  aura_flow: 297,
-  core: 500,
-  halo: 397,
-  single_point: 1500,
-  multi_track: 3997,
+  starter: 197,
+  scheduling: 297,
+  growth: 397,
+  business: 500,
+  field_ops: 1500,
+  performance: 3997,
   command: 5997,
 };
 
@@ -91,7 +95,7 @@ const AgentRequirementCalculator: React.FC = () => {
     calculateRequirements.forEach(agent => {
       const tierNeeded = getRequiredTierForAgent(agent);
       if (tierNeeded) {
-        const tierOrder: SubscriptionTier[] = ['free', 'core', 'single_point', 'multi_track', 'command'];
+        const tierOrder: SubscriptionTier[] = ['free', 'starter', 'scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'];
         if (tierOrder.indexOf(tierNeeded) > tierOrder.indexOf(maxTier)) {
           maxTier = tierNeeded;
         }
@@ -116,12 +120,12 @@ const AgentRequirementCalculator: React.FC = () => {
   const agentsByTier = useMemo(() => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
-      express: [],
-      aura_flow: [],
-      core: [],
-      halo: [],
-      single_point: [],
-      multi_track: [],
+      starter: [],
+      scheduling: [],
+      growth: [],
+      business: [],
+      field_ops: [],
+      performance: [],
       command: [],
     };
     
@@ -147,55 +151,57 @@ const AgentRequirementCalculator: React.FC = () => {
       <CardContent className="space-y-6">
         {/* Agent Selection Grid */}
         <div className="space-y-4">
-          {(['single_point', 'multi_track', 'command'] as SubscriptionTier[]).map(tier => (
-            <div key={tier} className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Badge className={`${TIER_COLORS[tier]} text-white`}>
-                  {TIER_AGENT_CONFIG[tier].label}
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  {TIER_AGENT_CONFIG[tier].price}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {agentsByTier[tier].map(agent => {
-                  const info = AGENT_INFO[agent];
-                  if (!info) return null;
-                  const isSelected = selectedAgents.has(agent);
-                  const isRequired = calculateRequirements.has(agent) && !isSelected;
-                  
-                  return (
-                    <div
-                      key={agent}
-                      className={`
-                        flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all
-                        ${isSelected 
-                          ? 'bg-primary/20 border-primary' 
-                          : isRequired 
-                            ? 'bg-amber-500/10 border-amber-500/50' 
-                            : 'bg-card hover:bg-accent border-border'
-                        }
-                      `}
-                      onClick={() => toggleAgent(agent)}
-                    >
-                      <Checkbox 
-                        checked={isSelected || isRequired}
-                        className={isRequired ? 'border-amber-500 data-[state=checked]:bg-amber-500' : ''}
-                      />
-                      <span className="text-lg">{info.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-card-foreground truncate">
-                          {info.name}
-                        </p>
-                        {isRequired && (
-                          <p className="text-xs text-amber-500">Required dependency</p>
-                        )}
+          {(['scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'] as SubscriptionTier[]).map(tier => (
+            agentsByTier[tier].length > 0 && (
+              <div key={tier} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge className={`${TIER_COLORS[tier]} text-white`}>
+                    {TIER_AGENT_CONFIG[tier].label}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    {TIER_AGENT_CONFIG[tier].price}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {agentsByTier[tier].map(agent => {
+                    const info = AGENT_INFO[agent];
+                    if (!info) return null;
+                    const isSelected = selectedAgents.has(agent);
+                    const isRequired = calculateRequirements.has(agent) && !isSelected;
+                    
+                    return (
+                      <div
+                        key={agent}
+                        className={`
+                          flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all
+                          ${isSelected 
+                            ? 'bg-primary/20 border-primary' 
+                            : isRequired 
+                              ? 'bg-amber-500/10 border-amber-500/50' 
+                              : 'bg-card hover:bg-accent border-border'
+                          }
+                        `}
+                        onClick={() => toggleAgent(agent)}
+                      >
+                        <Checkbox 
+                          checked={isSelected || isRequired}
+                          className={isRequired ? 'border-amber-500 data-[state=checked]:bg-amber-500' : ''}
+                        />
+                        <span className="text-lg">{info.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-card-foreground truncate">
+                            {info.name}
+                          </p>
+                          {isRequired && (
+                            <p className="text-xs text-amber-500">Required dependency</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )
           ))}
         </div>
 

@@ -2172,22 +2172,31 @@ serve(async (req) => {
     // === SUBSCRIPTION TIER GATING ===
     // Define which agents are available in each subscription tier
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    // 24 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
+    // NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
+    // 24 Total Agents
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Express ($197/mo): AI Receptionist only for restaurants
-      express: ['triage'],
-      // Aura Flow ($297/mo): AI Receptionist + Scheduling + Social Media + Creative (1 employee)
-      aura_flow: ['triage', 'booking', 'followup', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Aura Core ($500/mo): AI Chat + Marketing + Social Media
-      core: ['triage', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up + Review + Marketing + Social for salons/wellness
-      halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Single-Point ($1,500/mo): Customer Portal + Marketing + Social + Web Presence
-      single_point: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Multi-Track ($3,997/mo): Field ops + booking + Web Presence
-      multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Command ($5,997/mo): Full suite - 24 agents total
+      // Aura Starter ($197/mo): Lead Capture Stack only - 1 agent
+      starter: ['triage'],
+      // Aura Scheduling ($297/mo): Lead Capture + Booking Automation - 3 agents
+      scheduling: ['triage', 'booking', 'followup'],
+      // Aura Growth ($397/mo): + Marketing Automation Stack - 11 agents
+      growth: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
+      // Aura Business ($500/mo): + Office Automation Stack - 12 agents
+      business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+      // Aura Field Ops ($1,500/mo): + Field Operations Stack - 18 agents
+      field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+      // Aura Performance ($3,997/mo): + Business Intelligence Stack - 24 agents
+      performance: [
+        'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
+        'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
+        'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
+        'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
+        'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
+        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
+        'creative', 'web_presence'                           // Creative & Web Presence (2)
+      ],
+      // Aura Command ($5,997/mo): Full suite + Enterprise features - 24 agents
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
@@ -2196,18 +2205,33 @@ serve(async (req) => {
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
         'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ]                                                       // Total: 24 agents
+      ],                                                      // Total: 24 agents
+      // Legacy tier name aliases for backward compatibility
+      express: ['triage'],  // maps to starter
+      aura_flow: ['triage', 'booking', 'followup'],  // maps to scheduling
+      halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],  // maps to growth
+      core: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to business
+      single_point: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to field_ops
+      multi_track: [  // maps to performance
+        'triage', 'booking', 'followup', 'review',
+        'dispatch', 'route', 'eta', 'checkin',
+        'admin', 'quoting', 'invoice', 'inventory',
+        'campaign', 'lead', 'marketing',
+        'social_content', 'social_scheduler', 'social_analytics',
+        'insights', 'performance', 'revenue', 'forecast',
+        'creative', 'web_presence'
+      ],
     };
 
     // Helper to determine required tier for an agent
     const getRequiredTierForAgent = (agent: string): string | null => {
-      if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.multi_track.includes(agent)) return 'command';
-      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent)) return 'multi_track';
-      if (TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent) && !TIER_AGENTS.core.includes(agent)) return 'single_point';
-      if (TIER_AGENTS.halo.includes(agent) && !TIER_AGENTS.aura_flow.includes(agent)) return 'halo';
-      if (TIER_AGENTS.core.includes(agent) && !TIER_AGENTS.aura_flow.includes(agent)) return 'core';
-      if (TIER_AGENTS.aura_flow.includes(agent) && !TIER_AGENTS.express.includes(agent)) return 'aura_flow';
-      if (TIER_AGENTS.express.includes(agent)) return 'express';
+      if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.performance.includes(agent)) return 'command';
+      if (TIER_AGENTS.performance.includes(agent) && !TIER_AGENTS.field_ops.includes(agent)) return 'performance';
+      if (TIER_AGENTS.field_ops.includes(agent) && !TIER_AGENTS.business.includes(agent)) return 'field_ops';
+      if (TIER_AGENTS.business.includes(agent) && !TIER_AGENTS.growth.includes(agent)) return 'business';
+      if (TIER_AGENTS.growth.includes(agent) && !TIER_AGENTS.scheduling.includes(agent)) return 'growth';
+      if (TIER_AGENTS.scheduling.includes(agent) && !TIER_AGENTS.starter.includes(agent)) return 'scheduling';
+      if (TIER_AGENTS.starter.includes(agent)) return 'starter';
       return null;
     };
 

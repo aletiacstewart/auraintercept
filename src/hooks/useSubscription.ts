@@ -17,10 +17,11 @@ import {
   isTierAtLeast,
   TIER_HIERARCHY,
   TIER_FEATURE_CONFIG,
+  normalizeTierName,
 } from '@/lib/subscriptionAgentConfig';
 
-// Updated to include all 7 subscription tiers
-export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+// NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
+export type SubscriptionTier = 'free' | 'starter' | 'scheduling' | 'growth' | 'business' | 'field_ops' | 'performance' | 'command';
 
 // All features available on Command tier
 const ALL_FEATURES = [
@@ -32,12 +33,12 @@ const ALL_FEATURES = [
 // Feature mapping for all 7 tiers - API Access included in all paid tiers
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
   free: ['basic_dashboard'],
-  express: ['voice_reminders', 'widget', 'smart_links', 'api_access'],  // Removed social_media, marketing_automation, creative_tools
-  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync', 'social_media', 'creative_tools', 'api_access'],  // Removed marketing_automation, kept social
-  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'api_access'],  // Added api_access
-  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence', 'marketing_automation', 'creative_tools', 'api_access'],  // Added api_access
-  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'api_access'],  // Added web_presence, api_access
-  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'api_access'],  // Added web_presence, api_access
+  starter: ['voice_reminders', 'widget', 'smart_links', 'api_access'],  // Lead Capture only
+  scheduling: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync', 'customer_portal', 'api_access'],  // + Booking
+  growth: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'api_access'],  // + Marketing
+  business: ['email_reminders', 'advanced_dashboard', 'widget', 'customer_portal', 'social_media', 'web_presence', 'marketing_automation', 'creative_tools', 'api_access'],  // + Office (no voice)
+  field_ops: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'field_ops', 'quotes', 'invoices', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'api_access'],  // + Field Ops
+  performance: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'analytics', 'api_access'],  // + BI
   command: ALL_FEATURES,
 };
 
@@ -46,16 +47,16 @@ export type Feature = string;
 export const useSubscription = () => {
   const { subscribed, subscriptionTier: authTier, subscriptionEnd, inTrial, trialEndsAt, checkSubscription } = useAuth();
 
-  // Normalize tier to our 7-tier system
+  // Normalize tier to our 7-tier system (handles legacy names)
   const normalizeSubscriptionTier = (tier: string | null): SubscriptionTier => {
     if (!tier) return 'free';
     
-    // Map legacy 'enterprise' to 'command' for backwards compatibility
-    if (tier === 'enterprise') return 'command';
+    // Use the normalizeTierName function from config (handles legacy → new mapping)
+    const normalized = normalizeTierName(tier);
     
-    // Check if it's a valid tier (all 7 tiers)
-    if (['free', 'express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'].includes(tier)) {
-      return tier as SubscriptionTier;
+    // Check if it's a valid tier (all 7 new tiers)
+    if (['free', 'starter', 'scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'].includes(normalized)) {
+      return normalized as SubscriptionTier;
     }
     
     return 'free';
@@ -68,7 +69,7 @@ export const useSubscription = () => {
   };
 
   const isAtLeastTier = (requiredTier: SubscriptionTier): boolean => {
-    return isTierAtLeast(subscriptionTier, requiredTier as ConfigTier);
+    return isTierAtLeast(subscriptionTier as ConfigTier, requiredTier as ConfigTier);
   };
 
   // Calculate trial days remaining
@@ -141,9 +142,9 @@ export const useSubscription = () => {
     return getRequiredTierForFeature(featureField) as SubscriptionTier | null;
   };
 
-  // Get all tiers for display
+  // Get all tiers for display (new names)
   const getAllTiers = (): { tier: SubscriptionTier; label: string; price: string; description: string }[] => {
-    return (['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as SubscriptionTier[]).map(tier => ({
+    return (['starter', 'scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'] as SubscriptionTier[]).map(tier => ({
       tier,
       ...getTierDisplayInfo(tier as ConfigTier),
     }));
