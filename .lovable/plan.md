@@ -1,150 +1,86 @@
 
-# Help Pages Update Plan
+# Control Center Count Correction Plan
 
 ## Summary
-The Help & Documentation pages are missing console configurations and AI agent help content. Two consoles are missing from the help config, and the AI Help Center needs more comprehensive agent-specific assistance.
+The documentation incorrectly states 8 Control Centers when there are actually **7 Control Centers (Consoles)**. The AI Operatives Hub is a management interface, not a Control Center itself.
 
-## Issues Identified
+## Correct Structure
 
-### 1. Missing Consoles in Help Config (src/lib/helpContentConfig.ts)
+### 7 Control Centers (Consoles)
+| # | Control Center | Required Tier |
+|---|----------------|---------------|
+| 1 | Customer Portal | Scheduling |
+| 2 | Outreach & Sales Ops | Growth |
+| 3 | Social Media Ops | Growth |
+| 4 | Creative & Web Presence | Business |
+| 5 | Field Operations | Field Ops |
+| 6 | Business Management | Field Ops |
+| 7 | Analytics & Reports | Performance |
 
-The `CONSOLE_HELP_CONFIG` array has only 6 consoles but needs 8 to match the subscription config:
+### Management Interface (Separate)
+| Interface | Required Tier | Purpose |
+|-----------|---------------|---------|
+| AI Operatives Hub | Command | Central management for all 24 operatives |
 
-| Console ID | Status | Required Tier |
-|------------|--------|---------------|
-| customer_portal | Present | scheduling |
-| field_operations | Present | field_ops |
-| business_management | Present | field_ops |
-| marketing_sales | Present | growth |
-| social_media | Present | growth |
-| creative_web_presence | **MISSING** | business |
-| analytics_reports | Present | performance |
-| ai_operatives_hub | **MISSING** | command |
+## Files Requiring Updates
 
-### 2. Console Count Mismatch
+### 1. src/lib/documentationConfig.ts
 
-`TIER_CONSOLE_COUNTS` in helpContentConfig.ts shows command tier has 7 consoles but should be 8 (includes AI Operatives Hub).
+**PLATFORM_STATS** (line 635):
+- Change `totalConsoles: 8` to `totalConsoles: 7`
 
-### 3. AI Help Center System Prompt Outdated
+**SUBSCRIPTION_TIERS - command tier** (lines 194-199):
+- Change `consoles: 8` to `consoles: 7`
+- Update highlight from "All 7 Consoles + AI Operatives Hub" to "All 7 Control Centers + AI Operatives Hub (Management Interface)"
 
-The `AIHelpCenter.tsx` SYSTEM_PROMPT needs more detailed agent descriptions for each of the 24 agents.
+**CONSOLES array** (lines 561-569):
+- Move `ai_operatives_hub` to a separate exported constant `MANAGEMENT_INTERFACES`
+- Keep it in the file but categorize it distinctly
 
-## Implementation Details
+### 2. src/lib/helpContentConfig.ts
 
-### Step 1: Add Creative & Web Presence Console
-Add to `CONSOLE_HELP_CONFIG` array:
+**TIER_CONSOLE_COUNTS** (line 588):
+- Change `command: 8` to `command: 7`
+- Update comment from "8 total consoles" to "7 total consoles"
 
-```text
-New Console Config:
-┌────────────────────────────────────────────────────────┐
-│ id: 'creative_web_presence'                            │
-│ title: 'Creative & Web Presence'                       │
-│ icon: Palette                                          │
-│ requiredTier: 'business'                               │
-│ description: Content Engine + Website/Blog Management  │
-├────────────────────────────────────────────────────────┤
-│ tabs: ['Content Engine', 'Web Presence', 'Blog']       │
-├────────────────────────────────────────────────────────┤
-│ agents:                                                │
-│   - Creative Agent (growth)                            │
-│   - Web Presence Agent (business)                      │
-├────────────────────────────────────────────────────────┤
-│ features:                                              │
-│   - Multi-channel content generation                   │
-│   - AI website builder                                 │
-│   - Blog management                                    │
-│   - SEO optimization                                   │
-│   - Content calendar                                   │
-│   - Brand voice integration                            │
-└────────────────────────────────────────────────────────┘
-```
+**CONSOLE_HELP_CONFIG**:
+- Verify `ai_operatives_hub` is properly labeled as a management interface, not a console
 
-### Step 2: Add AI Operatives Hub Console
-Add to `CONSOLE_HELP_CONFIG` array:
+### 3. src/components/documentation/PlatformFAQPDF.tsx
 
-```text
-New Console Config:
-┌────────────────────────────────────────────────────────┐
-│ id: 'ai_operatives_hub'                                │
-│ title: 'AI Operatives Hub'                             │
-│ icon: Bot                                              │
-│ requiredTier: 'command'                                │
-│ description: Central management for all 24 AI agents   │
-├────────────────────────────────────────────────────────┤
-│ tabs: ['Operatives', 'Quick Start', 'Monitor',         │
-│        'Analytics', 'History']                         │
-├────────────────────────────────────────────────────────┤
-│ agents:                                                │
-│   - All 24 Operatives (view/manage)                    │
-├────────────────────────────────────────────────────────┤
-│ features:                                              │
-│   - Individual agent management                        │
-│   - Batch activation                                   │
-│   - Dependency visualization                           │
-│   - Real-time event monitoring                         │
-│   - Performance metrics                                │
-│   - Conversation history browser                       │
-└────────────────────────────────────────────────────────┘
-```
+Multiple FAQ answers reference the console count dynamically via `PLATFORM_STATS.totalConsoles`, so they will auto-correct once the config is updated.
 
-### Step 3: Update Console Counts
-Update `TIER_CONSOLE_COUNTS`:
-
-| Tier | Current | Corrected |
-|------|---------|-----------|
-| command | 7 | 8 |
-
-### Step 4: Update AI Help Center System Prompt
-Expand `SYSTEM_PROMPT` with comprehensive agent coverage:
-
-**Agent Descriptions to Add:**
-
-| Category | Agents | Help Topics |
-|----------|--------|-------------|
-| Lead Capture | Triage (AI Receptionist) | 24/7 answering, lead capture, routing |
-| Booking | Scheduling, Follow-up | Calendar sync, reminders, confirmations |
-| Marketing | Campaign, Lead, Marketing, Review | Campaigns, segmentation, promos, referrals |
-| Social Media | Social Content, Scheduler, Analytics | 6 platforms, scheduling, metrics |
-| Creative | Creative, Web Presence | Content Engine, website, blog, SEO |
-| Field Ops | Dispatch, Route, ETA, Check-in | GPS, job assignment, notifications |
-| Business Ops | Admin, Quoting, Invoice, Inventory | Quotes, invoices, stock management |
-| Analytics | Insights, Performance, Revenue, Forecast | KPIs, forecasting, exports |
-
-### Step 5: Add Missing Icon Import
-Add `Bot` and `Palette` icon imports to helpContentConfig.ts
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/lib/helpContentConfig.ts` | Add 2 console configs, fix console counts, add icon imports |
-| `src/components/help/AIHelpCenter.tsx` | Expand SYSTEM_PROMPT with detailed agent help |
+**Line 524** answer text mentions "organized into X Control Centers" - will auto-update.
 
 ## Technical Changes Summary
 
-### helpContentConfig.ts
-1. Add import for `Bot` and `Palette` icons
-2. Add `creative_web_presence` console config with:
-   - 2 agents (Creative, Web Presence)
-   - 10+ features covering content engine and web management
-   - 8+ example prompts
-3. Add `ai_operatives_hub` console config with:
-   - All agents listed as manageable
-   - 10+ features for agent orchestration
-   - 8+ example prompts
-4. Update `TIER_CONSOLE_COUNTS.command` from 7 to 8
+```text
+documentationConfig.ts:
+├── PLATFORM_STATS.totalConsoles: 8 → 7
+├── SUBSCRIPTION_TIERS.command.consoles: 8 → 7
+├── SUBSCRIPTION_TIERS.command.highlights: Update wording
+└── CONSOLES array: Move ai_operatives_hub to separate section
 
-### AIHelpCenter.tsx
-1. Expand SYSTEM_PROMPT to include:
-   - All 24 agent names with specific capabilities
-   - Console navigation paths
-   - Feature-specific guidance
-   - Tier-specific agent availability
-   - Common troubleshooting scenarios
+helpContentConfig.ts:
+├── TIER_CONSOLE_COUNTS.command: 8 → 7
+└── Comment: "8 total" → "7 total"
+```
+
+## Resulting Tier Console Access
+
+| Tier | Console Count | Consoles Available |
+|------|--------------|-------------------|
+| Starter | 0 | None |
+| Scheduling | 1 | Customer Portal |
+| Growth | 3 | + Outreach & Sales, Social Media |
+| Business | 4 | + Creative & Web Presence |
+| Field Ops | 6 | + Field Operations, Business Management |
+| Performance | 7 | + Analytics & Reports |
+| Command | 7 | All 7 + AI Operatives Hub (management interface) |
 
 ## Verification Steps
 After implementation:
-1. Navigate to Help page and verify Creative & Web Presence console appears
-2. Verify AI Operatives Hub appears for command tier users
-3. Test AI Help Center with agent-specific questions
-4. Verify console selector shows all 8 consoles at command tier
+1. Check Platform Guides shows "7 Control Centers (Consoles)"
+2. Verify FAQ PDF exports show correct count
+3. Confirm AI Operatives Hub is labeled as management interface
+4. Test subscription comparison cards display correct console counts
