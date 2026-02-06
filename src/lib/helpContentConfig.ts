@@ -6,6 +6,8 @@ import {
   Megaphone, 
   Share2, 
   BarChart3,
+  Bot,
+  Palette,
   LucideIcon
 } from 'lucide-react';
 
@@ -245,11 +247,45 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     ],
   },
   {
+    id: 'creative_web_presence',
+    title: 'Creative & Web Presence',
+    icon: Palette,
+    description: 'AI-powered content generation and web management hub with Content Engine, AI website builder, blog management, and SEO optimization.',
+    requiredTier: 'business',
+    tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
+    agents: [
+      { name: 'Creative Agent', tier: 'growth' },
+      { name: 'Web Presence Agent', tier: 'business' },
+    ],
+    features: [
+      { text: 'Multi-channel content generation (Social, Blog, Email, SMS, Website)' },
+      { text: 'Brand Voice configuration and consistency' },
+      { text: 'AI-powered content variations and rewording' },
+      { text: 'Content calendar with cross-channel scheduling' },
+      { text: 'AI website builder with drag-and-drop sections' },
+      { text: 'Blog management with auto-publishing' },
+      { text: 'SEO optimization and scan frequency settings' },
+      { text: 'Push to Web Presence for website content' },
+      { text: 'Content history and performance metrics' },
+      { text: 'Integration with Knowledge Base for brand context' },
+    ],
+    useCases: [
+      '"Generate content about our summer special for all channels"',
+      '"Create a blog post about HVAC maintenance tips"',
+      '"Update the website hero section"',
+      '"Run an SEO scan on my website"',
+      '"Push this content to the website"',
+      '"Show my content calendar for this month"',
+      '"Generate variations of this marketing copy"',
+      '"Set up my brand voice profile"',
+    ],
+  },
+  {
     id: 'analytics_reports',
     title: 'Analytics & Reports',
     icon: BarChart3,
     description: 'Advanced analytics console with 8 specialized tabs for comprehensive business intelligence, forecasting, and multi-format report export.',
-    requiredTier: 'performance',  // Available at Performance tier
+    requiredTier: 'performance',
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     agents: [
       { name: 'Insights Agent', tier: 'performance' },
@@ -280,6 +316,39 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       '"How are our reminder deliveries performing?"',
       '"Export a CSV of all jobs this month"',
       '"Generate a PDF revenue report"',
+    ],
+  },
+  {
+    id: 'ai_operatives_hub',
+    title: 'AI Operatives Hub',
+    icon: Bot,
+    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    requiredTier: 'command',
+    tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
+    agents: [
+      { name: 'All 24 AI Operatives', tier: 'command' },
+    ],
+    features: [
+      { text: 'Individual agent configuration and enable/disable' },
+      { text: 'Batch activation for quick setup' },
+      { text: 'Dependency visualization graph showing agent relationships' },
+      { text: 'Real-time event monitoring with live updates' },
+      { text: 'Performance metrics dashboard (requests, success rate, handoffs)' },
+      { text: 'Conversation history browser with search' },
+      { text: 'Agent health status indicators' },
+      { text: 'Test suite for validating agent functionality' },
+      { text: 'Role-based access control (admin vs employee view)' },
+      { text: 'Agent-specific settings (thresholds, auto-actions, notifications)' },
+    ],
+    useCases: [
+      '"Enable all marketing agents"',
+      '"Show me which agents are currently active"',
+      '"View the dependency graph for dispatch agents"',
+      '"Check the health status of my agents"',
+      '"Run tests on the invoice agent"',
+      '"View conversation history for last week"',
+      '"Monitor real-time agent events"',
+      '"Configure the dispatch agent settings"',
     ],
   },
 ];
@@ -441,7 +510,8 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     highlights: [
       'Everything in Performance',
       'All 24 AI Agents',
-      'All 7 Control Consoles',
+      'All 8 Control Centers (Consoles)',
+      'AI Operatives Hub for central management',
       'Multi-location support',
       'White-label branding',
       'Dedicated Account Manager',
@@ -506,7 +576,7 @@ export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   command: 24,
 };
 
-// Console count per tier - NEW STRUCTURE
+// Console count per tier - NEW STRUCTURE (8 total consoles)
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
   starter: 0,
@@ -515,7 +585,7 @@ export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   business: 4,
   field_ops: 6,
   performance: 7,
-  command: 7,
+  command: 8,  // Includes AI Operatives Hub
 };
 
 // Employee limits per tier - NEW STRUCTURE
