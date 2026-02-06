@@ -27,10 +27,6 @@ const AGENT_TYPES = {
   admin: { name: 'Admin Agent', category: 'business_operations', phase: 3 },
   
   // Marketing & Sales (Phase 4)
-  promo: { name: 'Promo Agent', category: 'marketing_sales', phase: 4 },
-  referral: { name: 'Referral Agent', category: 'marketing_sales', phase: 4 },
-  winback: { name: 'Win-back Agent', category: 'marketing_sales', phase: 4 },
-  seasonal: { name: 'Seasonal Agent', category: 'marketing_sales', phase: 4 },
   marketing: { name: 'Marketing Agent', category: 'marketing_sales', phase: 4 },
   
   // Analytics & Insights (Phase 5)
@@ -38,7 +34,6 @@ const AGENT_TYPES = {
   forecast: { name: 'Forecast Agent', category: 'analytics', phase: 5 },
   revenue: { name: 'Revenue Agent', category: 'analytics', phase: 5 },
   performance: { name: 'Performance Agent', category: 'analytics', phase: 5 },
-  analytics: { name: 'Data Analytics Agent', category: 'analytics', phase: 5 },
 };
 
 // Event routing rules - which agents should receive which events
@@ -56,9 +51,9 @@ const EVENT_ROUTING: Record<string, string[]> = {
   'payment_received': ['followup', 'predictive'],
   'followup_sent': ['review'],
   'review_received': ['predictive', 'performance'],
-  'churn_risk_detected': ['winback'],
+  'churn_risk_detected': ['marketing'],
   'inventory_low': ['dispatch', 'quoting'],
-  'seasonal_trigger': ['seasonal'],
+  'seasonal_trigger': ['marketing'],
 };
 
 serve(async (req) => {

@@ -282,6 +282,38 @@ serve(async (req) => {
             required: ["feedback_type"]
           }
         }
+      },
+      {
+        type: "function",
+        function: {
+          name: "escalate_to_human",
+          description: "Transfer the conversation to a human support agent. Use when customer requests human support, has complex issues, or when the AI cannot resolve the query.",
+          parameters: {
+            type: "object",
+            properties: {
+              reason: { type: "string", description: "Reason for escalation" },
+              priority: { type: "string", enum: ["low", "medium", "high"], description: "Priority level of the escalation" },
+              customer_info: { type: "string", description: "Summary of customer issue and conversation context" }
+            },
+            required: ["reason"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "lookup_lead",
+          description: "Search for leads by phone, email, or name. Use when you need to find existing lead information or qualify a potential customer.",
+          parameters: {
+            type: "object",
+            properties: {
+              phone: { type: "string", description: "Phone number to search" },
+              email: { type: "string", description: "Email address to search" },
+              name: { type: "string", description: "Customer name to search" }
+            },
+            required: []
+          }
+        }
       }
     ];
 
@@ -457,6 +489,10 @@ async function executeToolCall(supabase: any, companyId: string, toolName: strin
       return listServices(knowledge, args);
     case "collect_feedback":
       return await collectFeedback(supabase, companyId, knowledge, args);
+    case "escalate_to_human":
+      return await escalateToHuman(supabase, companyId, args);
+    case "lookup_lead":
+      return await lookupLead(supabase, companyId, args);
     default:
       return { error: `Unknown tool: ${toolName}` };
   }
@@ -868,6 +904,160 @@ async function collectFeedback(supabase: any, companyId: string, knowledge: any,
       message: `We're sorry to hear about your experience. Your feedback is important to us and we'll use it to improve our services.`,
       action_recommended: 'escalate_to_manager'
     };
+  }
+}
+
+async function escalateToHuman(supabase: any, companyId: string, args: any) {
+  const { reason, priority = 'medium', customer_info } = args || {};
+  
+  try {
+    // Log the escalation event
+    const { data: event, error: eventError } = await supabase
+      .from('ai_agent_events')
+      .insert({
+        company_id: companyId,
+        source_agent: 'triage',
+        event_type: 'human_escalation',
+        payload: {
+          reason,
+          priority,
+          customer_info,
+          escalated_at: new Date().toISOString()
+        },
+        status: 'pending',
+        requires_human_review: true
+      })
+      .select()
+      .single();
+    
+    if (eventError) {
+      console.error('Failed to create escalation event:', eventError);
+    }
+    
+    // Get company contact info for escalation
+    const { data: company } = await supabase
+      .from('companies')
+      .select('de_escalation_manager_contact, contact_email, contact_phone')
+      .eq('id', companyId)
+      .single();
+    
+    return {
+      success: true,
+      escalated: true,
+      event_id: event?.id || null,
+      priority,
+      reason,
+      message: `I understand you'd like to speak with a human representative. I've escalated your request with ${priority} priority. A team member will reach out to you shortly.`,
+      contact_info: {
+        email: company?.contact_email || null,
+        phone: company?.contact_phone || null
+      },
+      action_recommended: 'await_human_contact'
+    };
+  } catch (err) {
+    console.error('Error escalating to human:', err);
+    return {
+      success: false,
+      escalated: false,
+      message: `I apologize, but I encountered an issue while escalating your request. Please try contacting us directly.`,
+      error: 'escalation_failed'
+    };
+  }
+}
+
+async function lookupLead(supabase: any, companyId: string, args: any) {
+  const { phone, email, name } = args || {};
+  
+  if (!phone && !email && !name) {
+    return {
+      success: false,
+      message: 'Please provide at least one search criterion: phone, email, or name'
+    };
+  }
+  
+  try {
+    // Search in customers table
+    let query = supabase
+      .from('customers')
+      .select('id, first_name, last_name, email, phone, mobile_phone, lifecycle_stage, lead_source, customer_since, notes')
+      .eq('company_id', companyId);
+    
+    if (email) {
+      query = query.ilike('email', `%${email}%`);
+    } else if (phone) {
+      query = query.or(`phone.ilike.%${phone}%,mobile_phone.ilike.%${phone}%`);
+    } else if (name) {
+      query = query.or(`first_name.ilike.%${name}%,last_name.ilike.%${name}%`);
+    }
+    
+    const { data: customers, error } = await query.limit(5);
+    
+    if (error) {
+      console.error('Error searching leads:', error);
+      return { success: false, message: 'Error searching for leads' };
+    }
+    
+    if (!customers || customers.length === 0) {
+      // Search in appointments for non-registered customers
+      let apptQuery = supabase
+        .from('appointments')
+        .select('customer_name, customer_email, customer_phone, service_type, datetime, status')
+        .eq('company_id', companyId);
+      
+      if (email) {
+        apptQuery = apptQuery.ilike('customer_email', `%${email}%`);
+      } else if (phone) {
+        apptQuery = apptQuery.ilike('customer_phone', `%${phone}%`);
+      } else if (name) {
+        apptQuery = apptQuery.ilike('customer_name', `%${name}%`);
+      }
+      
+      const { data: appointments } = await apptQuery.limit(5);
+      
+      if (appointments && appointments.length > 0) {
+        return {
+          success: true,
+          found: true,
+          source: 'appointments',
+          leads: appointments.map((a: any) => ({
+            name: a.customer_name,
+            email: a.customer_email,
+            phone: a.customer_phone,
+            last_service: a.service_type,
+            last_visit: a.datetime,
+            status: 'past_customer'
+          })),
+          message: `Found ${appointments.length} matching record(s) from past appointments`
+        };
+      }
+      
+      return {
+        success: true,
+        found: false,
+        leads: [],
+        message: 'No matching leads found in our system'
+      };
+    }
+    
+    return {
+      success: true,
+      found: true,
+      source: 'customers',
+      leads: customers.map((c: any) => ({
+        id: c.id,
+        name: `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'Unknown',
+        email: c.email,
+        phone: c.phone || c.mobile_phone,
+        lifecycle_stage: c.lifecycle_stage || 'unknown',
+        lead_source: c.lead_source,
+        customer_since: c.customer_since,
+        notes: c.notes
+      })),
+      message: `Found ${customers.length} matching lead(s)`
+    };
+  } catch (err) {
+    console.error('Error in lookupLead:', err);
+    return { success: false, message: 'Error searching for leads' };
   }
 }
 

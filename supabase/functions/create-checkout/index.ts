@@ -19,6 +19,11 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     name: "Aura Express",
     price: 19700, // $197 in cents
   },
+  aura_flow: {
+    price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
+    name: "Aura Flow",
+    price: 29700, // $297 in cents
+  },
   halo: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
     name: "Aura Halo",
