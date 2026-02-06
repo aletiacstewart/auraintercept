@@ -62,6 +62,8 @@ import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
+import { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
+
 interface NavItem {
   label: string;
   icon: React.ElementType;
@@ -70,13 +72,13 @@ interface NavItem {
   requiredJobTypes?: string[];
   external?: boolean;
   featureColor?: string;
-  requiredTier?: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+  requiredTier?: SubscriptionTier;
 }
 
 interface NavGroup {
   label: string;
   items: NavItem[];
-  requiredTier?: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+  requiredTier?: SubscriptionTier;
 }
 
 const navGroups: NavGroup[] = [
@@ -95,57 +97,57 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Business Mgt Console & Mobile App',
-    requiredTier: 'command',
+    requiredTier: 'field_ops',
     items: [
-      { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'field_ops' },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'field_ops' },
+      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
     ],
   },
   {
     label: 'Marketing Console',
-    requiredTier: 'halo',  // Changed from command to halo
+    requiredTier: 'growth',
     items: [
-      { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'halo' },  // Changed from command to halo
+      { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'growth' },
     ],
   },
   {
     label: 'Social Media Console',
-    requiredTier: 'aura_flow',  // Changed from command to aura_flow
+    requiredTier: 'growth',
     items: [
-      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'aura_flow' },  // Changed from command to aura_flow
+      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'growth' },
     ],
   },
   {
     label: 'Web Presence Console',
-    requiredTier: 'single_point',  // Changed from command to single_point
+    requiredTier: 'business',
     items: [
-      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'single_point' },  // Changed from command to single_point
+      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'business' },
     ],
   },
   {
     label: 'Tech-Field Console & Mobile App',
-    requiredTier: 'multi_track',
+    requiredTier: 'field_ops',
     items: [
-      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
-      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
+      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'field_ops' },
+      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'field_ops' },
     ],
   },
   {
     label: 'Dispatch-Field Console & Mobile App',
-    requiredTier: 'multi_track',
+    requiredTier: 'field_ops',
     items: [
-      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
-      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
+      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'field_ops' },
+      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'field_ops' },
     ],
   },
   {
     label: 'Customer Console & Mobile App',
-    requiredTier: 'halo',  // Added tier requirement
+    requiredTier: 'scheduling',
     items: [
-      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
-      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
+      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'scheduling' },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'scheduling' },
+      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'scheduling' },
     ],
   },
   {
