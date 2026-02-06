@@ -15,41 +15,41 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Subscription tier configuration with Stripe Price IDs
 // NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
-  // New tier names
+  // New tier names - Updated pricing January 2026
   starter: {
     price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
     name: "Aura Starter",
-    price: 19700, // $197 in cents
+    price: 19700, // $197 in cents (unchanged)
   },
   scheduling: {
     price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
     name: "Aura Scheduling",
-    price: 29700, // $297 in cents
+    price: 39700, // $397 in cents (was $297)
   },
   growth: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
     name: "Aura Growth",
-    price: 39700, // $397 in cents
+    price: 59700, // $597 in cents (was $397)
   },
   business: {
     price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
     name: "Aura Business",
-    price: 50000, // $500 in cents
+    price: 79700, // $797 in cents (was $500)
   },
   field_ops: {
     price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
     name: "Aura Field Ops",
-    price: 150000, // $1,500 in cents
+    price: 149700, // $1,497 in cents (was $1,500)
   },
   performance: {
     price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
     name: "Aura Performance",
-    price: 399700, // $3,997 in cents
+    price: 349700, // $3,497 in cents (was $3,997)
   },
   command: {
     price_id: "price_1StwYSJ9fo9y8fGHpPa6JL5I",
     name: "Aura Command",
-    price: 599700, // $5,997 in cents
+    price: 549700, // $5,497 in cents (was $5,997)
   },
   // Legacy tier name aliases for backward compatibility
   express: {
@@ -60,27 +60,27 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   aura_flow: {
     price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
     name: "Aura Scheduling",
-    price: 29700,
+    price: 39700,
   },
   halo: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
     name: "Aura Growth",
-    price: 39700,
+    price: 59700,
   },
   core: {
     price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
     name: "Aura Business",
-    price: 50000,
+    price: 79700,
   },
   single_point: {
     price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
     name: "Aura Field Ops",
-    price: 150000,
+    price: 149700,
   },
   multi_track: {
     price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
     name: "Aura Performance",
-    price: 399700,
+    price: 349700,
   },
 };
 

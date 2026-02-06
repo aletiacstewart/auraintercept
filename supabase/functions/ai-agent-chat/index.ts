@@ -2178,32 +2178,33 @@ serve(async (req) => {
       free: [],
       // Aura Starter ($197/mo): Lead Capture Stack only - 1 agent
       starter: ['triage'],
-      // Aura Scheduling ($297/mo): Lead Capture + Booking Automation - 3 agents
+      // Aura Scheduling ($397/mo): Lead Capture + Booking Automation - 3 agents
       scheduling: ['triage', 'booking', 'followup'],
-      // Aura Growth ($397/mo): + Marketing Automation Stack - 11 agents
+      // Aura Growth ($597/mo): + Marketing Automation Stack - 11 agents
       growth: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Aura Business ($500/mo): + Office Automation Stack - 12 agents
+      // Aura Business ($797/mo): + Office Automation Stack - 12 agents
       business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Field Ops ($1,500/mo): + Field Operations Stack - 18 agents
+      // Aura Field Ops ($1,497/mo): + Field Operations Stack - 18 agents
       field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Performance ($3,997/mo): + Business Intelligence Stack - 24 agents
+      // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic) - 22 agents
+      // Excludes revenue and forecast (advanced analytics reserved for Command)
       performance: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
+        'insights', 'performance',                            // Analytics & Reports - Basic (2)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ],
-      // Aura Command ($5,997/mo): Full suite + Enterprise features - 24 agents
+      ],                                                      // Total: 22 agents
+      // Aura Command ($5,497/mo): Full suite + Enterprise features - 24 agents
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
+        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports - Full (4)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
       ],                                                      // Total: 24 agents
       // Legacy tier name aliases for backward compatibility
@@ -2212,13 +2213,13 @@ serve(async (req) => {
       halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],  // maps to growth
       core: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to business
       single_point: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to field_ops
-      multi_track: [  // maps to performance
+      multi_track: [  // maps to performance (22 agents)
         'triage', 'booking', 'followup', 'review',
         'dispatch', 'route', 'eta', 'checkin',
         'admin', 'quoting', 'invoice', 'inventory',
         'campaign', 'lead', 'marketing',
         'social_content', 'social_scheduler', 'social_analytics',
-        'insights', 'performance', 'revenue', 'forecast',
+        'insights', 'performance',
         'creative', 'web_presence'
       ],
     };
