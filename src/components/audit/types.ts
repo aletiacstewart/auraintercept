@@ -427,7 +427,7 @@ export const QUESTIONS: AuditQuestion[] = [
 export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   EXPRESS: {
     tier: 'EXPRESS',
-    label: 'Aura Express',
+    label: 'Aura Starter',
     price: '$197/mo',
     description: 'AI voice and chat for restaurants with smart link sharing',
     keyFeatures: [
@@ -445,7 +445,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   FLOW: {
     tier: 'FLOW',
-    label: 'Aura Flow',
+    label: 'Aura Scheduling',
     price: '$297/mo',
     description: 'AI Personal Assistant with scheduling via direct calendar sync',
     keyFeatures: [
@@ -463,7 +463,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   CORE: {
     tier: 'CORE',
-    label: 'Aura Core',
+    label: 'Aura Business',
     price: '$500/mo',
     description: 'AI-assisted tools for digital presence — you stay in control, no automation',
     keyFeatures: [
@@ -481,7 +481,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   HALO: {
     tier: 'HALO',
-    label: 'Aura Halo',
+    label: 'Aura Growth',
     price: '$397/mo',
     description: 'AI receptionist with scheduling for salons, spas, and wellness businesses',
     keyFeatures: [
@@ -499,7 +499,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   SINGLE_POINT: {
     tier: 'SINGLE_POINT',
-    label: 'Single-Point',
+    label: 'Aura Field Ops',
     price: '$1,500/mo',
     description: 'AI Receptionist with voice capability for teams focused on lead capture',
     keyFeatures: [
@@ -518,11 +518,11 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   MULTI_TRACK: {
     tier: 'MULTI_TRACK',
-    label: 'Multi-Track',
+    label: 'Aura Performance',
     price: '$3,997/mo',
     description: 'Full field operations automation for growing service businesses',
     keyFeatures: [
-      'All Single-Point features',
+      'All Aura Field Ops features',
       '+6 Field Ops Agents (Dispatch, Route, ETA, Check-in, Quote, Invoice)',
       'Online Booking Agent',
       'Field Ops Console',
@@ -536,12 +536,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   COMMAND: {
     tier: 'COMMAND',
-    label: 'Aura Pro Command',
+    label: 'Aura Command',
     price: '$5,997/mo',
     description: 'Enterprise solution for 15+ technician teams and multi-location operations',
     keyFeatures: [
       '⭐ For 15+ technicians or multi-location',
-      'All Multi-Track features',
+      'All Aura Performance features',
       '+14 Agents (Admin, Inventory, Campaign, Lead, Marketing, Social Content, Social Scheduler, Social Analytics, Insights, Performance, Revenue, Forecast, Creative, Web Presence)',
       'All 7 Control Centers',
       'White-Label Branding',
