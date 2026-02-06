@@ -733,6 +733,132 @@ async function handleTestAgent(
       toolCalls.push({ name: 'schedule_campaign', result: 'March 1st launch' });
       break;
     
+    case 'admin':
+      response = "Dashboard loaded: 12 appointments today, 3 pending quotes, 2 overdue invoices. Next available slot: 3:00 PM. Would you like me to show more details?";
+      eventType = 'admin_dashboard';
+      toolCalls.push({ name: 'load_dashboard', result: 'Dashboard data retrieved' });
+      break;
+    
+    case 'lead':
+      const isNewLead = /new lead|website|inquiry/i.test(message);
+      const isQualify = /qualify|score/i.test(message);
+      
+      if (isNewLead) {
+        response = "New lead captured! John Smith added to pipeline. Auto-qualification score: 78/100 (High potential). Recommended action: Schedule discovery call within 24 hours.";
+        eventType = 'lead_captured';
+        toolCalls.push(
+          { name: 'create_lead', result: 'Lead #L-456 created' },
+          { name: 'auto_qualify', result: 'Score: 78/100' }
+        );
+      } else if (isQualify) {
+        response = "Lead qualification complete. Based on budget, timeline, and need, this lead scores 85/100. Recommended: Fast-track to proposal stage.";
+        eventType = 'lead_qualified';
+        toolCalls.push({ name: 'qualify_lead', result: '85/100 - High priority' });
+      } else {
+        response = "Lead pipeline status: 15 new leads, 8 in qualification, 5 proposal-ready. Conversion rate this month: 23%.";
+        eventType = 'lead_status';
+        toolCalls.push({ name: 'get_pipeline', result: '28 total leads' });
+      }
+      break;
+    
+    case 'campaign':
+      const isCreate = /create|new|launch/i.test(message);
+      
+      if (isCreate) {
+        response = "Campaign created: 'Spring Special' promotion. Target: 340 customers inactive 60+ days. Channels: Email + SMS. Scheduled launch: Tomorrow 9 AM. Estimated ROI: 3.2x.";
+        eventType = 'campaign_created';
+        toolCalls.push(
+          { name: 'create_campaign', result: 'Campaign #C-789' },
+          { name: 'segment_audience', result: '340 customers' },
+          { name: 'estimate_roi', result: '3.2x expected' }
+        );
+      } else {
+        response = "Active campaigns: 3. 'Spring Special' (42% open rate), 'Referral Bonus' (18 conversions), 'Maintenance Reminder' (sending today). Total reach: 1,240 customers.";
+        eventType = 'campaign_status';
+        toolCalls.push({ name: 'list_campaigns', result: '3 active' });
+      }
+      break;
+    
+    case 'marketing':
+      const isPromo = /promo|offer|discount/i.test(message);
+      const isRetention = /retention|churn/i.test(message);
+      
+      if (isPromo) {
+        response = "Promotional offer generated: 15% off first service for new customers. Unique code: WELCOME15. Valid for 30 days. Ready to deploy via email and social.";
+        eventType = 'promo_generated';
+        toolCalls.push({ name: 'generate_promo', result: 'WELCOME15' });
+      } else if (isRetention) {
+        response = "Customer retention analysis: 89% retention rate (industry avg: 78%). 23 customers at risk of churn. Recommended: Personalized win-back campaign with 20% loyalty discount.";
+        eventType = 'retention_analyzed';
+        toolCalls.push(
+          { name: 'analyze_retention', result: '89% rate' },
+          { name: 'identify_at_risk', result: '23 customers' }
+        );
+      } else {
+        response = "Marketing overview: Email list: 2,450 subscribers. This month: 3 campaigns sent, 28% avg open rate, 12 new customers acquired. Cost per acquisition: $45.";
+        eventType = 'marketing_overview';
+        toolCalls.push({ name: 'get_marketing_stats', result: 'Stats retrieved' });
+      }
+      break;
+    
+    case 'social_content':
+      response = "Social media content generated:\n\n📱 Instagram: 'Beat the heat this summer! ❄️ AC tune-up special - $99. Book now!'\n\n🐦 Twitter: 'Is your AC ready for summer? Our expert technicians are standing by. #HVAC #CoolAir'\n\n📘 Facebook: Full post with image suggestions created.";
+      eventType = 'content_generated';
+      toolCalls.push(
+        { name: 'generate_instagram', result: 'Post created' },
+        { name: 'generate_twitter', result: 'Tweet created' },
+        { name: 'generate_facebook', result: 'Post created' }
+      );
+      break;
+    
+    case 'social_scheduler':
+      response = "Social media schedule optimized:\n• Monday 9 AM: Instagram post (highest engagement time)\n• Wednesday 2 PM: Twitter thread\n• Friday 11 AM: Facebook update\n\nNext 7 days: 8 posts scheduled across 3 platforms.";
+      eventType = 'schedule_optimized';
+      toolCalls.push(
+        { name: 'analyze_best_times', result: 'Peak times identified' },
+        { name: 'schedule_posts', result: '8 posts scheduled' }
+      );
+      break;
+    
+    case 'social_analytics':
+      response = "Social media performance (last 30 days):\n• Reach: 12,450 (+23%)\n• Engagement: 4.2% (industry avg: 2.8%)\n• Top post: AC maintenance tips (892 likes)\n• Followers gained: +156\n\nRecommendation: More video content could increase engagement 40%.";
+      eventType = 'analytics_generated';
+      toolCalls.push({ name: 'get_social_metrics', result: 'Metrics retrieved' });
+      break;
+    
+    case 'performance':
+      response = "Technician Performance Leaderboard:\n1. Mike S. - 4.9⭐ (42 jobs)\n2. John D. - 4.8⭐ (38 jobs)\n3. Sarah L. - 4.7⭐ (35 jobs)\n\nTeam avg: 4.6⭐. On-time rate: 94%. First-time fix rate: 87%.";
+      eventType = 'performance_report';
+      toolCalls.push({ name: 'get_tech_performance', result: 'Rankings generated' });
+      break;
+    
+    case 'revenue':
+      response = "Revenue Report:\n• This Month: $48,200 (+12% vs last month)\n• YTD: $312,450\n• Avg ticket: $385\n• Top service: AC Repair ($18,400)\n\nProjection: On track to exceed quarterly target by 8%.";
+      eventType = 'revenue_report';
+      toolCalls.push(
+        { name: 'calculate_revenue', result: '$48,200' },
+        { name: 'compare_periods', result: '+12% growth' }
+      );
+      break;
+    
+    case 'creative':
+      response = "Marketing creative generated:\n• Promotional flyer: Spring AC tune-up special (PDF ready)\n• Email header image: Brand colors with seasonal theme\n• Social media graphics: 5 variations for A/B testing\n\nAll assets saved to marketing folder.";
+      eventType = 'creative_generated';
+      toolCalls.push(
+        { name: 'generate_flyer', result: 'PDF created' },
+        { name: 'generate_graphics', result: '5 variants' }
+      );
+      break;
+    
+    case 'web_presence':
+      response = "Website Performance:\n• Monthly visitors: 3,420 (+18%)\n• Avg time on site: 2:45\n• Top landing page: Services (/services)\n• SEO score: 78/100\n\nOpportunities: Add FAQ schema markup, improve mobile load time (currently 3.2s).";
+      eventType = 'web_report';
+      toolCalls.push(
+        { name: 'get_analytics', result: 'GA data retrieved' },
+        { name: 'audit_seo', result: '78/100 score' }
+      );
+      break;
+    
     case 'insights':
       response = "Weekly Performance Report:\n• Revenue: $12,450 (+8% vs last week)\n• Jobs Completed: 34 (+3)\n• Avg. Rating: 4.7 ⭐\n• Top Service: AC Repair (40%)\n\nRecommendation: Consider hiring additional HVAC tech to meet demand.";
       eventType = 'report_generated';
