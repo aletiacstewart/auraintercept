@@ -7,40 +7,40 @@ const corsHeaders = {
 
 // Demo company configurations
 const DEMO_COMPANIES = {
-  flow: {
+  business: {
     id: 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
-    name: 'Demo Flow Company',
-    slug: 'demo-flow'
+    name: 'Demo Business Company',
+    slug: 'demo-business'
   },
-  core: {
+  growth: {
     id: 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
-    name: 'Demo Core Company',
-    slug: 'demo-core'
+    name: 'Demo Growth Company',
+    slug: 'demo-growth'
   },
-  solo: {
+  field_ops: {
     id: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
-    name: 'Demo Solo Company',
-    slug: 'demo-solo'
+    name: 'Demo Field Ops Company',
+    slug: 'demo-fieldops'
   },
-  multi: {
+  performance: {
     id: '4f85ed98-0e98-480c-b904-1c33424e26ad',
-    name: 'Demo Multi Company',
-    slug: 'demo-multi'
+    name: 'Demo Performance Company',
+    slug: 'demo-performance'
   },
-  cmd: {
+  command: {
     id: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
     name: 'Demo Command Company',
-    slug: 'demo-cmd'
+    slug: 'demo-command'
   },
-  halo: {
+  scheduling: {
     id: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
-    name: 'Demo Halo Company',
-    slug: 'demo-halo'
+    name: 'Demo Scheduling Company',
+    slug: 'demo-scheduling'
   },
-  xprs: {
+  starter: {
     id: 'd4a6c195-c89a-4208-a818-981902af6c51',
-    name: 'Demo Express Company',
-    slug: 'demo-xprs'
+    name: 'Demo Starter Company',
+    slug: 'demo-starter'
   }
 };
 
