@@ -243,12 +243,12 @@ const TierComparisonCards: React.FC = () => {
           color="text-amber-400"
           bgColor="bg-amber-950/30"
           borderColor="border-amber-600/50"
-          upgradeFrom={{ tier: 'Core', priceDiff: 1000 }}
+          upgradeFrom={{ tier: 'Business', priceDiff: 700 }}
           additionalFeatures={[
-            'Scheduling Agent',
-            'Web Presence Agent',
-            'Creative & Web Console',
-            '5 Employee Accounts',
+            'Field Operations',
+            'Business Management',
+            '18 AI Operatives',
+            '15 Employee Accounts',
             'API Access',
           ]}
         />
@@ -259,12 +259,12 @@ const TierComparisonCards: React.FC = () => {
           color="text-sky-400"
           bgColor="bg-sky-950/30"
           borderColor="border-sky-600/50"
-          upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
+          upgradeFrom={{ tier: 'Field Ops', priceDiff: 2000 }}
           additionalFeatures={[
-            'Field Operations',
-            'Quoting & Invoicing',
-            'Web Presence Agent',
-            '10 Employee Accounts',
+            'Analytics & Reports',
+            '22 AI Operatives',
+            'Insights + Performance',
+            '25 Employee Accounts',
             'API Access',
           ]}
         />
@@ -275,13 +275,13 @@ const TierComparisonCards: React.FC = () => {
           color="text-violet-400"
           bgColor="bg-violet-950/30"
           borderColor="border-violet-600/50"
-          upgradeFrom={{ tier: 'Multi-Track', priceDiff: 2000 }}
+          upgradeFrom={{ tier: 'Performance', priceDiff: 2000 }}
           additionalFeatures={[
             'All 24 AI Operatives',
-            'All 7 Consoles',
-            'Analytics & Reports',
-            'Inventory Management',
-            '25 Employee Accounts',
+            'All 8 Consoles',
+            'AI Operatives Hub',
+            'Revenue + Forecast Agents',
+            '50 Employee Accounts',
             'API Access',
           ]}
         />
@@ -292,38 +292,38 @@ const TierComparisonCards: React.FC = () => {
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <Badge className="bg-orange-600">Express</Badge>
+              <Badge className="bg-orange-600">Starter</Badge>
               <span className="text-muted-foreground">$197/mo</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-cyan-600">Flow</Badge>
-              <span className="text-muted-foreground">$297/mo</span>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-2">
-              <Badge className="bg-rose-600">Halo</Badge>
+              <Badge className="bg-cyan-600">Scheduling</Badge>
               <span className="text-muted-foreground">$397/mo</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-emerald-600">Core</Badge>
-              <span className="text-muted-foreground">$500/mo</span>
+              <Badge className="bg-rose-600">Growth</Badge>
+              <span className="text-muted-foreground">$597/mo</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-amber-600">Single-Point</Badge>
-              <span className="text-muted-foreground">$1,500/mo</span>
+              <Badge className="bg-emerald-600">Business</Badge>
+              <span className="text-muted-foreground">$797/mo</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-sky-600">Multi-Track</Badge>
-              <span className="text-muted-foreground">$3,997/mo</span>
+              <Badge className="bg-amber-600">Field Ops</Badge>
+              <span className="text-muted-foreground">$1,497/mo</span>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Badge className="bg-sky-600">Performance</Badge>
+              <span className="text-muted-foreground">$3,497/mo</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-violet-600">Command</Badge>
-              <span className="text-muted-foreground">$5,997/mo</span>
+              <span className="text-muted-foreground">$5,497/mo</span>
             </div>
           </div>
         </CardContent>
