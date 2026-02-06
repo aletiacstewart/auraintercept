@@ -1,210 +1,150 @@
 
+# Help Pages Update Plan
 
-# AI Agent Functionality Investigation & Fix Plan
+## Summary
+The Help & Documentation pages are missing console configurations and AI agent help content. Two consoles are missing from the help config, and the AI Help Center needs more comprehensive agent-specific assistance.
 
-## Executive Summary
-The AI Agent Test Suite has fundamental issues beyond simple timeout thresholds. The tests call a unified `ai-agent` endpoint without agent-specific routing, meaning the "Invoice Agent" test doesn't actually test the invoice agent - it just sends a generic message and hopes the AI figures out what to do.
+## Issues Identified
 
-## Root Cause Analysis
+### 1. Missing Consoles in Help Config (src/lib/helpContentConfig.ts)
 
-### Current Architecture Issues
+The `CONSOLE_HELP_CONFIG` array has only 6 consoles but needs 8 to match the subscription config:
 
-| Issue | Impact | Current Behavior |
-|-------|--------|------------------|
-| No Agent Routing | Tests don't target specific agents | All tests call same unified endpoint |
-| Double AI Calls | 7-18s latency for tool-based agents | Initial call + follow-up after tool execution |
-| Unused Test Endpoint | Faster testing option exists but isn't used | `ai-orchestrator/test_agent` provides quick simulated tests |
-| No Agent Type Hints | AI must infer intent from message | No way to force specific agent behavior |
+| Console ID | Status | Required Tier |
+|------------|--------|---------------|
+| customer_portal | Present | scheduling |
+| field_operations | Present | field_ops |
+| business_management | Present | field_ops |
+| marketing_sales | Present | growth |
+| social_media | Present | growth |
+| creative_web_presence | **MISSING** | business |
+| analytics_reports | Present | performance |
+| ai_operatives_hub | **MISSING** | command |
 
-### How Tests Currently Work
+### 2. Console Count Mismatch
 
-```text
-Current Flow (SLOW - 7-18 seconds):
-┌──────────────────────┐
-│   Test Suite         │
-│   (Invoice Agent)    │
-└──────────┬───────────┘
-           │ Generic message: "Can I get an invoice?"
-           ▼
-┌──────────────────────┐
-│   ai-agent function  │
-│   (unified endpoint) │
-└──────────┬───────────┘
-           │
-           ├──► Fetch knowledge base (4-5 DB calls)
-           │
-           ├──► 1st AI API call (3-8 sec)
-           │    "What tools should I use?"
-           │
-           ├──► Execute tool calls (0.5-2 sec)
-           │    (create_invoice, generate_payment_link)
-           │
-           └──► 2nd AI API call (3-8 sec)
-                "Format response with tool results"
-                
-Total: 7-18 seconds per test
-```
+`TIER_CONSOLE_COUNTS` in helpContentConfig.ts shows command tier has 7 consoles but should be 8 (includes AI Operatives Hub).
 
-### Why Invoice Agent Times Out
-The Invoice Agent test prompt triggers tool calls (`create_invoice`, `generate_payment_link`), requiring:
-- 1st AI call to detect intent
-- Tool execution
-- 2nd AI call to format response
-- Total: ~12-18 seconds, exceeding previous 15s timeout
+### 3. AI Help Center System Prompt Outdated
 
-## Proposed Solution
+The `AIHelpCenter.tsx` SYSTEM_PROMPT needs more detailed agent descriptions for each of the 24 agents.
 
-### Dual-Mode Testing Architecture
+## Implementation Details
+
+### Step 1: Add Creative & Web Presence Console
+Add to `CONSOLE_HELP_CONFIG` array:
 
 ```text
-Option 1: Quick Functional Tests (< 500ms)
-┌──────────────────────┐
-│   Test Suite         │
-│   Mode: Quick/Standard│
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│  ai-orchestrator     │
-│  action: test_agent  │
-│  (simulated response)│
-└──────────────────────┘
-- Pattern matching, no AI inference
-- Tests agent routing logic
-- Tests tool call simulation
-
-
-Option 2: Full AI Tests (10-30 sec)
-┌──────────────────────┐
-│   Test Suite         │
-│   Mode: Comprehensive│
-└──────────┬───────────┘
-           │ Include agent_type hint
-           ▼
-┌──────────────────────┐
-│   ai-agent function  │
-│   (with agent hint)  │
-└──────────────────────┘
-- Real AI inference
-- Tests actual AI behavior
-- Used sparingly for validation
+New Console Config:
+┌────────────────────────────────────────────────────────┐
+│ id: 'creative_web_presence'                            │
+│ title: 'Creative & Web Presence'                       │
+│ icon: Palette                                          │
+│ requiredTier: 'business'                               │
+│ description: Content Engine + Website/Blog Management  │
+├────────────────────────────────────────────────────────┤
+│ tabs: ['Content Engine', 'Web Presence', 'Blog']       │
+├────────────────────────────────────────────────────────┤
+│ agents:                                                │
+│   - Creative Agent (growth)                            │
+│   - Web Presence Agent (business)                      │
+├────────────────────────────────────────────────────────┤
+│ features:                                              │
+│   - Multi-channel content generation                   │
+│   - AI website builder                                 │
+│   - Blog management                                    │
+│   - SEO optimization                                   │
+│   - Content calendar                                   │
+│   - Brand voice integration                            │
+└────────────────────────────────────────────────────────┘
 ```
 
-## Implementation Steps
+### Step 2: Add AI Operatives Hub Console
+Add to `CONSOLE_HELP_CONFIG` array:
 
-### Step 1: Update Test Suite to Use Orchestrator for Quick Tests
-Modify `AIAgentTestSuite.tsx` to call `ai-orchestrator` with `action: test_agent` for Quick and Standard modes, which provides fast simulated responses (< 500ms) without real AI inference.
+```text
+New Console Config:
+┌────────────────────────────────────────────────────────┐
+│ id: 'ai_operatives_hub'                                │
+│ title: 'AI Operatives Hub'                             │
+│ icon: Bot                                              │
+│ requiredTier: 'command'                                │
+│ description: Central management for all 24 AI agents   │
+├────────────────────────────────────────────────────────┤
+│ tabs: ['Operatives', 'Quick Start', 'Monitor',         │
+│        'Analytics', 'History']                         │
+├────────────────────────────────────────────────────────┤
+│ agents:                                                │
+│   - All 24 Operatives (view/manage)                    │
+├────────────────────────────────────────────────────────┤
+│ features:                                              │
+│   - Individual agent management                        │
+│   - Batch activation                                   │
+│   - Dependency visualization                           │
+│   - Real-time event monitoring                         │
+│   - Performance metrics                                │
+│   - Conversation history browser                       │
+└────────────────────────────────────────────────────────┘
+```
 
-Changes:
-- Add new `runSimulatedTest` function that calls orchestrator
-- Use simulated tests for Quick/Standard modes
-- Reserve real `ai-agent` calls for Comprehensive mode only
+### Step 3: Update Console Counts
+Update `TIER_CONSOLE_COUNTS`:
 
-### Step 2: Add Agent-Type Hints to ai-agent Function
-Modify the `ai-agent` edge function to accept an optional `agent_type` parameter that biases the AI toward specific tool usage and response patterns.
+| Tier | Current | Corrected |
+|------|---------|-----------|
+| command | 7 | 8 |
 
-Changes:
-- Accept `agent_type` parameter in request body
-- Add agent-specific system prompt sections
-- Prioritize relevant tools for the specified agent
+### Step 4: Update AI Help Center System Prompt
+Expand `SYSTEM_PROMPT` with comprehensive agent coverage:
 
-### Step 3: Optimize ai-agent Performance
-Reduce latency for real AI tests:
+**Agent Descriptions to Add:**
 
-| Optimization | Expected Savings |
-|--------------|------------------|
-| Cache knowledge base per company (5 min TTL) | 1-2 seconds |
-| Use lighter model for simple queries | 2-4 seconds |
-| Parallel tool execution | 0.5-1 second |
+| Category | Agents | Help Topics |
+|----------|--------|-------------|
+| Lead Capture | Triage (AI Receptionist) | 24/7 answering, lead capture, routing |
+| Booking | Scheduling, Follow-up | Calendar sync, reminders, confirmations |
+| Marketing | Campaign, Lead, Marketing, Review | Campaigns, segmentation, promos, referrals |
+| Social Media | Social Content, Scheduler, Analytics | 6 platforms, scheduling, metrics |
+| Creative | Creative, Web Presence | Content Engine, website, blog, SEO |
+| Field Ops | Dispatch, Route, ETA, Check-in | GPS, job assignment, notifications |
+| Business Ops | Admin, Quoting, Invoice, Inventory | Quotes, invoices, stock management |
+| Analytics | Insights, Performance, Revenue, Forecast | KPIs, forecasting, exports |
 
-### Step 4: Add Agent-Specific Test Scenarios
-Enhance test scenarios with agent-targeted prompts that better match each agent's capabilities.
-
-| Agent Type | Current Prompt | Improved Prompt |
-|------------|----------------|-----------------|
-| invoice | "Can I get an invoice?" | "Generate invoice for job #123 with labor $190 and parts $245" |
-| dispatch | "Who is assigned?" | "Emergency: customer at 123 Main St has a water leak, dispatch nearest tech" |
-| quoting | "How much?" | "I need a quote for AC repair and filter replacement" |
+### Step 5: Add Missing Icon Import
+Add `Bot` and `Palette` icon imports to helpContentConfig.ts
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/components/ai/AIAgentTestSuite.tsx` | Add orchestrator-based simulated testing for Quick/Standard modes |
-| `supabase/functions/ai-agent/index.ts` | Add agent_type parameter support and optimizations |
-| `supabase/functions/ai-orchestrator/index.ts` | Add more comprehensive test_agent scenarios |
+| `src/lib/helpContentConfig.ts` | Add 2 console configs, fix console counts, add icon imports |
+| `src/components/help/AIHelpCenter.tsx` | Expand SYSTEM_PROMPT with detailed agent help |
 
-## Technical Details
+## Technical Changes Summary
 
-### AIAgentTestSuite.tsx Changes
+### helpContentConfig.ts
+1. Add import for `Bot` and `Palette` icons
+2. Add `creative_web_presence` console config with:
+   - 2 agents (Creative, Web Presence)
+   - 10+ features covering content engine and web management
+   - 8+ example prompts
+3. Add `ai_operatives_hub` console config with:
+   - All agents listed as manageable
+   - 10+ features for agent orchestration
+   - 8+ example prompts
+4. Update `TIER_CONSOLE_COUNTS.command` from 7 to 8
 
-```text
-New runSimulatedTest function:
-- Calls: supabase.functions.invoke('ai-orchestrator', {
-    body: {
-      action: 'test_agent',
-      companyId,
-      agentType,
-      payload: { message: prompt }
-    }
-  })
-- Returns in < 500ms with simulated response
-- Tests agent routing and tool call logic
-
-Mode routing:
-- Quick mode: Health check only (existing)
-- Standard mode: Use simulated tests via orchestrator
-- Comprehensive mode: Use real AI tests via ai-agent
-```
-
-### ai-agent/index.ts Changes
-
-```text
-New agent_type parameter handling:
-- Add to request body parsing
-- Create agent-specific system prompt additions
-- Bias tool_choice toward agent-relevant tools
-
-Example for invoice agent:
-- Append to system prompt: "Focus on invoice generation, payment processing"
-- Set tool_choice preference for: create_invoice, generate_payment_link
-```
-
-### Test Scenarios Enhancement
-
-```text
-Invoice Agent scenarios:
-1. "Create an invoice for the completed job" 
-   - Expected: Uses create_invoice tool
-   - Validates: Invoice number returned
-
-2. "Send payment reminder for overdue invoice #123"
-   - Expected: Uses send_reminder tool  
-   - Validates: Reminder confirmation
-
-Dispatch Agent scenarios:
-1. "Emergency dispatch needed at 456 Oak St"
-   - Expected: Uses find_nearest_tech, assign_job tools
-   - Validates: Tech assignment confirmation
-
-2. "What technician is closest to downtown?"
-   - Expected: Uses find_nearest_tech tool
-   - Validates: Distance/ETA information
-```
-
-## Expected Results After Implementation
-
-| Mode | Test Count | Time per Test | Total Time |
-|------|------------|---------------|------------|
-| Quick Health | 24 agents | ~50ms | ~2 seconds |
-| Standard (simulated) | 24 agents | ~200ms | ~5 seconds |
-| Comprehensive (real AI) | 24 agents | ~8-15s | ~3-6 minutes |
+### AIHelpCenter.tsx
+1. Expand SYSTEM_PROMPT to include:
+   - All 24 agent names with specific capabilities
+   - Console navigation paths
+   - Feature-specific guidance
+   - Tier-specific agent availability
+   - Common troubleshooting scenarios
 
 ## Verification Steps
 After implementation:
-1. Run Quick Health tests - all should pass in < 5 seconds
-2. Run Standard tests - all should pass with simulated responses in < 30 seconds  
-3. Run Comprehensive tests - validates real AI behavior, allows 30s per agent
-4. Verify Invoice Agent specifically returns proper invoice generation response
-5. Check that agent-type hints improve response relevance
-
+1. Navigate to Help page and verify Creative & Web Presence console appears
+2. Verify AI Operatives Hub appears for command tier users
+3. Test AI Help Center with agent-specific questions
+4. Verify console selector shows all 8 consoles at command tier
