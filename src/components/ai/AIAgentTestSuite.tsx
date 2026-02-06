@@ -24,10 +24,18 @@ import {
 import { cn } from '@/lib/utils';
 
 // Performance thresholds (in milliseconds)
+// Standard mode uses orchestrator simulation (<500ms expected)
+// Comprehensive mode uses real AI (10-30s expected)
 const THRESHOLDS = {
+  // Standard mode (simulated) thresholds
+  SIMULATED_PASS: 500,    // Under 500ms = passed
+  SIMULATED_SLOW: 2000,   // 500ms-2s = slow warning
+  SIMULATED_TIMEOUT: 5000, // 5s timeout for simulated tests
+  
+  // Comprehensive mode (real AI) thresholds
   PASS: 10000,     // Under 10s = passed
   SLOW: 25000,     // 10-25s = slow warning
-  TIMEOUT: 30000   // 30s timeout
+  TIMEOUT: 30000   // 30s timeout for real AI
 };
 
 const BATCH_SIZE = 5; // Process 5 agents concurrently
@@ -64,6 +72,34 @@ interface HealthCheckResult {
   };
 }
 
+// Agent-specific test prompts for targeted testing
+const AGENT_TEST_PROMPTS: Record<string, string[]> = {
+  triage: ['Hello, what services do you offer?', 'I need help with my HVAC system'],
+  booking: ['I want to schedule an appointment for next Tuesday at 2pm', 'Can you reschedule my appointment?'],
+  followup: ['When is my next appointment?', 'Can you check my booking status?'],
+  review: ['The service was excellent, 5 stars!', 'How can I leave a review?'],
+  dispatch: ['Emergency: customer at 123 Main St has a water leak, dispatch nearest tech', 'Who is assigned to my job?'],
+  route: ['Optimize today\'s route for the team', 'What\'s the best route for 8 stops?'],
+  eta: ['When will the technician arrive?', 'How far away is the tech?'],
+  checkin: ['I\'ve arrived at the job site, check me in', 'Job complete, customer satisfied'],
+  admin: ['Show me today\'s schedule overview', 'What\'s our capacity for next week?'],
+  quoting: ['I need a quote for AC repair and filter replacement - labor 2 hours, parts $245', 'How much does a tune-up cost?'],
+  invoice: ['Generate invoice for job #123 with labor $190 and parts $245', 'Send payment reminder for overdue invoice'],
+  inventory: ['Check stock levels for HVAC filters', 'What items are running low?'],
+  campaign: ['Create a spring promotion campaign', 'What campaigns are active?'],
+  lead: ['New lead from website: John Smith, interested in AC repair', 'Show me unqualified leads'],
+  marketing: ['Generate a promotional offer for inactive customers', 'What\'s our customer retention rate?'],
+  social_content: ['Create a social media post about our AC maintenance special', 'Generate content for Instagram'],
+  social_scheduler: ['Schedule posts for the next week', 'When should I post for maximum engagement?'],
+  social_analytics: ['How did our last campaign perform?', 'Show me our social media metrics'],
+  insights: ['Give me this week\'s performance summary', 'What are our top performing services?'],
+  performance: ['Show technician performance metrics', 'Who has the highest ratings?'],
+  revenue: ['What\'s our revenue this month?', 'Compare this month to last month'],
+  forecast: ['Predict demand for next month', 'When will we need extra capacity?'],
+  creative: ['Design a promotional flyer for spring', 'Create marketing copy for our website'],
+  web_presence: ['How is our website performing?', 'What are our SEO opportunities?'],
+};
+
 // Predefined test scenarios
 const TEST_SCENARIOS: TestScenario[] = [
   {
@@ -71,15 +107,15 @@ const TEST_SCENARIOS: TestScenario[] = [
     name: 'Triage Flow',
     description: 'Test AI receptionist greeting and service inquiry',
     agentTypes: ['triage'],
-    prompts: ['What services do you offer?', 'Hello, I need help'],
+    prompts: AGENT_TEST_PROMPTS.triage,
     expectedBehaviors: ['Lists services', 'Provides greeting'],
   },
   {
     id: 'booking',
     name: 'Booking Flow',
     description: 'Test appointment scheduling capabilities',
-    agentTypes: ['triage', 'booking'],
-    prompts: ["I'd like to schedule an appointment for Tuesday", 'Book me for next week'],
+    agentTypes: ['booking'],
+    prompts: AGENT_TEST_PROMPTS.booking,
     expectedBehaviors: ['Checks availability', 'Collects customer info'],
   },
   {
@@ -87,7 +123,7 @@ const TEST_SCENARIOS: TestScenario[] = [
     name: 'Follow-up Flow',
     description: 'Test appointment lookup and status check',
     agentTypes: ['followup'],
-    prompts: ['When is my next appointment?', 'Can you check my booking status?'],
+    prompts: AGENT_TEST_PROMPTS.followup,
     expectedBehaviors: ['Retrieves appointment', 'Provides status'],
   },
   {
@@ -95,7 +131,7 @@ const TEST_SCENARIOS: TestScenario[] = [
     name: 'Review Collection',
     description: 'Test feedback collection and review prompts',
     agentTypes: ['review'],
-    prompts: ['How can I leave a review?', 'I want to share my feedback'],
+    prompts: AGENT_TEST_PROMPTS.review,
     expectedBehaviors: ['Provides review links', 'Collects feedback'],
   },
   {
@@ -103,7 +139,7 @@ const TEST_SCENARIOS: TestScenario[] = [
     name: 'Quote Generation',
     description: 'Test price quote functionality',
     agentTypes: ['quoting'],
-    prompts: ['How much does service X cost?', 'Can I get a quote?'],
+    prompts: AGENT_TEST_PROMPTS.quoting,
     expectedBehaviors: ['Provides pricing', 'Generates quote'],
   },
   {
@@ -111,8 +147,32 @@ const TEST_SCENARIOS: TestScenario[] = [
     name: 'Dispatch Operations',
     description: 'Test technician dispatch and job tracking',
     agentTypes: ['dispatch', 'eta'],
-    prompts: ['Who is assigned to my job?', 'When will the technician arrive?'],
+    prompts: AGENT_TEST_PROMPTS.dispatch,
     expectedBehaviors: ['Shows technician info', 'Provides ETA'],
+  },
+  {
+    id: 'invoice',
+    name: 'Invoice Generation',
+    description: 'Test invoice creation and payment processing',
+    agentTypes: ['invoice'],
+    prompts: AGENT_TEST_PROMPTS.invoice,
+    expectedBehaviors: ['Creates invoice', 'Sends payment link'],
+  },
+  {
+    id: 'inventory',
+    name: 'Inventory Management',
+    description: 'Test inventory tracking and alerts',
+    agentTypes: ['inventory'],
+    prompts: AGENT_TEST_PROMPTS.inventory,
+    expectedBehaviors: ['Shows stock levels', 'Triggers reorders'],
+  },
+  {
+    id: 'analytics',
+    name: 'Business Analytics',
+    description: 'Test insights and performance reporting',
+    agentTypes: ['insights', 'performance', 'revenue', 'forecast'],
+    prompts: AGENT_TEST_PROMPTS.insights,
+    expectedBehaviors: ['Generates reports', 'Shows metrics'],
   },
 ];
 
@@ -207,8 +267,109 @@ export function AIAgentTestSuite() {
     }
   }, [companyId]);
 
-  // Single agent test with timeout
-  const runTest = useCallback(async (
+  // Simulated test using orchestrator (fast, <500ms) - used for Standard mode
+  const runSimulatedTest = useCallback(async (
+    agentType: string,
+    prompt: string,
+    scenario: string,
+    signal?: AbortSignal
+  ): Promise<TestResult> => {
+    const startTime = Date.now();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), THRESHOLDS.SIMULATED_TIMEOUT);
+    
+    if (signal) {
+      signal.addEventListener('abort', () => controller.abort());
+    }
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            action: 'test_agent',
+            companyId,
+            agentType,
+            payload: { message: prompt }
+          }),
+          signal: controller.signal,
+        }
+      );
+
+      clearTimeout(timeoutId);
+      const responseTime = Date.now() - startTime;
+      
+      if (!response.ok) {
+        return {
+          agentType,
+          agentName: AGENT_NAMES[agentType] || agentType,
+          scenario,
+          status: 'failed',
+          responseTime,
+          error: `HTTP ${response.status}`,
+          timestamp: new Date(),
+        };
+      }
+
+      const data = await response.json();
+      const content = data.response || '';
+      const toolCalls = data.tool_calls || [];
+      
+      // Determine status based on simulated thresholds
+      let status: TestResult['status'] = 'passed';
+      if (responseTime >= THRESHOLDS.SIMULATED_SLOW) {
+        status = 'slow';
+      }
+      
+      // Check if agent actually processed the request
+      if (!content && toolCalls.length === 0) {
+        status = 'failed';
+      }
+      
+      return {
+        agentType,
+        agentName: AGENT_NAMES[agentType] || agentType,
+        scenario,
+        status,
+        responseTime,
+        response: content.slice(0, 200) + (content.length > 200 ? '...' : ''),
+        timestamp: new Date(),
+      };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      const responseTime = Date.now() - startTime;
+      
+      if (error instanceof Error && error.name === 'AbortError') {
+        return {
+          agentType,
+          agentName: AGENT_NAMES[agentType] || agentType,
+          scenario,
+          status: 'timeout',
+          responseTime,
+          error: 'Simulated test timed out',
+          timestamp: new Date(),
+        };
+      }
+      
+      return {
+        agentType,
+        agentName: AGENT_NAMES[agentType] || agentType,
+        scenario,
+        status: 'failed',
+        responseTime,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date(),
+      };
+    }
+  }, [companyId]);
+
+  // Real AI test with timeout - used for Comprehensive mode
+  const runRealAITest = useCallback(async (
     agentType: string, 
     prompt: string, 
     scenario: string,
@@ -218,7 +379,6 @@ export function AIAgentTestSuite() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), THRESHOLDS.TIMEOUT);
     
-    // Combine with external abort signal if provided
     if (signal) {
       signal.addEventListener('abort', () => controller.abort());
     }
@@ -235,6 +395,7 @@ export function AIAgentTestSuite() {
           body: JSON.stringify({
             messages: [{ role: 'user', content: prompt }],
             company_id: companyId,
+            agent_type: agentType, // Hint for agent-specific behavior
             stream: false,
           }),
           signal: controller.signal,
@@ -259,7 +420,7 @@ export function AIAgentTestSuite() {
       const data = await response.json();
       const content = data.content || '';
       
-      // Determine status based on response time with new thresholds
+      // Determine status based on response time with comprehensive thresholds
       let status: TestResult['status'] = 'passed';
       if (responseTime >= THRESHOLDS.SLOW) {
         status = 'timeout';
@@ -280,7 +441,6 @@ export function AIAgentTestSuite() {
       clearTimeout(timeoutId);
       const responseTime = Date.now() - startTime;
       
-      // Check if it was an abort/timeout
       if (error instanceof Error && error.name === 'AbortError') {
         return {
           agentType,
@@ -376,18 +536,24 @@ export function AIAgentTestSuite() {
           : r
       ));
       
-      // Run batch in parallel
+      // Run batch in parallel - use appropriate test function based on mode
       const batchPromises = batch.map(async agent => {
         const relevantScenario = scenariosToRun.find(s => s.agentTypes.includes(agent.type));
-        const prompts = relevantScenario?.prompts || ['Hello, what can you help me with?'];
+        // Use agent-specific prompts or fall back to scenario prompts
+        const agentPrompts = AGENT_TEST_PROMPTS[agent.type] || relevantScenario?.prompts || ['Hello, what can you help me with?'];
         const scenarioName = relevantScenario?.name || 'General Test';
         
-        // For comprehensive mode, run multiple prompts
-        if (testMode === 'comprehensive' && prompts.length > 1) {
+        // Standard mode: Use simulated tests via orchestrator (fast)
+        if (testMode === 'standard') {
+          return runSimulatedTest(agent.type, agentPrompts[0], scenarioName, signal);
+        }
+        
+        // Comprehensive mode: Use real AI with multiple prompts
+        if (testMode === 'comprehensive' && agentPrompts.length > 1) {
           const results: TestResult[] = [];
-          for (const prompt of prompts) {
+          for (const prompt of agentPrompts) {
             if (signal.aborted) break;
-            const result = await runTest(agent.type, prompt, scenarioName, signal);
+            const result = await runRealAITest(agent.type, prompt, scenarioName, signal);
             results.push(result);
           }
           // Use worst result for comprehensive mode
@@ -398,7 +564,8 @@ export function AIAgentTestSuite() {
           return { ...results[0], status: worstStatus, responseTime: avgTime } as TestResult;
         }
         
-        return runTest(agent.type, prompts[0], scenarioName, signal);
+        // Comprehensive mode with single prompt
+        return runRealAITest(agent.type, agentPrompts[0], scenarioName, signal);
       });
       
       const batchResults = await Promise.all(batchPromises);
@@ -415,7 +582,7 @@ export function AIAgentTestSuite() {
 
     setIsRunning(false);
     abortControllerRef.current = null;
-  }, [companyId, enabledAgents, selectedAgents, selectedScenario, testMode, runTest, runHealthCheck]);
+  }, [companyId, enabledAgents, selectedAgents, selectedScenario, testMode, runSimulatedTest, runRealAITest, runHealthCheck]);
 
   const stopTests = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -566,10 +733,10 @@ export function AIAgentTestSuite() {
               <span><strong>Quick Health:</strong> Fast connectivity check (~500ms). Tests DB, agent configs, and API keys without invoking AI.</span>
             )}
             {testMode === 'standard' && (
-              <span><strong>Standard:</strong> Single prompt per agent with {THRESHOLDS.TIMEOUT/1000}s timeout. Pass: &lt;{THRESHOLDS.PASS/1000}s, Slow: {THRESHOLDS.PASS/1000}-{THRESHOLDS.SLOW/1000}s</span>
+              <span><strong>Standard (Simulated):</strong> Fast agent-specific tests via orchestrator (~200ms per agent). Tests agent routing, tool calls, and response patterns without real AI inference.</span>
             )}
             {testMode === 'comprehensive' && (
-              <span><strong>Comprehensive:</strong> Multiple prompts per agent. Takes longer but provides thorough validation.</span>
+              <span><strong>Comprehensive (Real AI):</strong> Full AI inference with agent hints. Pass: &lt;{THRESHOLDS.PASS/1000}s, Slow: {THRESHOLDS.PASS/1000}-{THRESHOLDS.SLOW/1000}s, Timeout: &gt;{THRESHOLDS.TIMEOUT/1000}s</span>
             )}
           </div>
 

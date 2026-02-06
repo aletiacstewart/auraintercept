@@ -92,7 +92,7 @@ serve(async (req) => {
       });
     }
 
-    const { messages, company_id, stream = true } = await req.json();
+    const { messages, company_id, stream = true, agent_type } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -169,7 +169,7 @@ serve(async (req) => {
 
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);
-    const systemPrompt = buildSystemPrompt(knowledgeContext);
+    const systemPrompt = buildSystemPrompt(knowledgeContext, agent_type);
 
     const tools = [
       {
@@ -1129,7 +1129,7 @@ ${nextWeekDates.join('\n')}
 When customers say "tomorrow", "next Monday", etc., use these dates. NEVER ask what tomorrow's date is!`;
 }
 
-function buildSystemPrompt(knowledge: any) {
+function buildSystemPrompt(knowledge: any, agentType?: string) {
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
   const hoursText = knowledge.businessHours.map((h: any) => 
@@ -1151,6 +1151,9 @@ function buildSystemPrompt(knowledge: any) {
 
   const dateTimeContext = getDateTimeContext();
 
+  // Agent-specific focus instructions
+  const agentFocusInstructions = getAgentFocusInstructions(agentType);
+
   return `You are a helpful AI assistant for ${knowledge.companyName}. Your role is to help customers book appointments, answer questions about services, and provide information about the business.
 
 ${dateTimeContext}
@@ -1166,6 +1169,8 @@ ${faqsText || 'No FAQs available'}
 
 ## Additional Information
 ${docsText || 'No additional documents'}
+
+${agentFocusInstructions}
 
 ## Instructions
 1. Be friendly, professional, and helpful
@@ -1208,4 +1213,68 @@ When a customer wants to leave feedback, share their experience, or write a revi
 4. For negative feedback: Apologize sincerely, thank them for sharing, and assure them their feedback will be addressed
 5. If review links are available, encourage them to share their positive experience online
 6. Always be empathetic and appreciative of their time`;
+}
+
+// Agent-specific focus instructions for comprehensive testing
+function getAgentFocusInstructions(agentType?: string): string {
+  if (!agentType) return '';
+  
+  const focusMap: Record<string, string> = {
+    triage: `
+## Agent Focus: Triage/Receptionist
+PRIORITY: Greeting customers, understanding their needs, and routing to appropriate services.
+Focus on: classify_intent, list_services, check_availability`,
+    
+    booking: `
+## Agent Focus: Booking
+PRIORITY: Schedule appointments efficiently. Use check_availability first, then book_appointment.
+Focus on: check_availability, book_appointment, get_business_hours`,
+    
+    followup: `
+## Agent Focus: Follow-up
+PRIORITY: Track existing appointments and provide status updates.
+Focus on: track_appointment - always ask for phone or email to lookup`,
+    
+    review: `
+## Agent Focus: Review Collection
+PRIORITY: Collect customer feedback and direct positive reviews to review platforms.
+Focus on: collect_feedback - determine sentiment and provide appropriate review links`,
+    
+    quoting: `
+## Agent Focus: Quoting
+PRIORITY: Generate accurate price quotes. List services first, then create quotes.
+Focus on: list_services, get_quote - always show itemized breakdown`,
+    
+    invoice: `
+## Agent Focus: Invoice
+PRIORITY: Generate invoices and payment links for completed work.
+Focus on: Creating invoices with accurate labor and parts totals, generating payment links`,
+    
+    dispatch: `
+## Agent Focus: Dispatch
+PRIORITY: Assign technicians to jobs based on proximity and availability.
+Focus on: Finding nearest available technician, emergency dispatch for urgent requests`,
+    
+    eta: `
+## Agent Focus: ETA
+PRIORITY: Provide accurate arrival time estimates to customers.
+Focus on: track_appointment to get technician status and provide ETA updates`,
+    
+    inventory: `
+## Agent Focus: Inventory
+PRIORITY: Track stock levels and trigger reorders for low items.
+Focus on: Stock checking, reorder alerts, parts availability`,
+    
+    insights: `
+## Agent Focus: Business Insights
+PRIORITY: Provide business performance summaries and analytics.
+Focus on: Revenue metrics, job completion rates, customer satisfaction scores`,
+    
+    marketing: `
+## Agent Focus: Marketing
+PRIORITY: Generate promotional offers and analyze customer retention.
+Focus on: Campaign creation, customer segmentation, retention analysis`,
+  };
+  
+  return focusMap[agentType] || '';
 }
