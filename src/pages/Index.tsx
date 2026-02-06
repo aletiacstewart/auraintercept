@@ -702,51 +702,47 @@ export default function Index() {
 
           {/* Flex wrapper to enable ordering - Industry first, General second */}
           <div className="flex flex-col">
-            {/* General Business Plans - Order 2 */}
+            {/* Scale Your Operations - Order 2 */}
             <div className="order-2">
-              <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">General Business Plans</h3>
+              <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">Scale Your Operations</h3>
               <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
 
-            {/* Single-Point Plan - Updated */}
+            {/* Aura Field Ops Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-5">
-                <h3 className="text-lg font-bold mb-1">Aura Single-Point</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Solo-Focus)</p>
+                <h3 className="text-lg font-bold mb-1">Aura Field Ops</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Field Service Teams)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$1,500</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$15,000/year (Save $3,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Lead intake & reputation management with AI agents.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Complete field operations with dispatch & routing.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">3 AI Agents</span>
+                    <span className="text-xs">18 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Message Aura (Text)</span>
+                    <span className="text-xs">6 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Voice)</span>
+                    <span className="text-xs">Field Operations Console</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Customer Portal Console</span>
+                    <span className="text-xs">Dispatch & Route Optimization</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Email + SMS + Voice Outbound</span>
+                    <span className="text-xs">Quoting & Invoicing</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">5 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Choice: Social Media or Aura Web Presence ($500 value)</span>
+                    <span className="text-xs">15 Employee Accounts</span>
                   </div>
                 </div>
 
@@ -764,44 +760,44 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Multi-Track Plan */}
+            {/* Aura Performance Plan */}
             <Card className="relative overflow-hidden border-primary/50 shadow-glow dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
               <CardContent className="p-5">
                 <Badge className="mb-2 gradient-primary border-0 text-[10px]">Most Popular</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Multi-Track</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Business)</p>
+                <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Full Automation)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold gradient-text">$3,997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$39,970/year (Save $7,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Field ops + dispatch automation.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">All 24 agents with business intelligence.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">10 AI Agents</span>
+                    <span className="text-xs">All 24 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">2 AI Consoles</span>
+                    <span className="text-xs">All 7 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Online Booking</span>
+                    <span className="text-xs">Analytics & Reports Console</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Field Operations</span>
+                    <span className="text-xs">Business Intelligence</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">10 Employee Accounts</span>
+                    <span className="text-xs">25 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Social + Website Included</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+                    <span className="text-xs text-sky-400">Priority Support</span>
                   </div>
                 </div>
 
@@ -820,18 +816,18 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Command Plan */}
+            {/* Aura Command Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Pro Command</h3>
-                <p className="text-[10px] text-amber-400/80 mb-2">Large Scale Business</p>
+                <h3 className="text-lg font-bold mb-1">Aura Command</h3>
+                <p className="text-[10px] text-amber-400/80 mb-2">Multi-Location / Enterprise</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$5,997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$59,970/year (Save $11,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Full business automation suite with dedicated onboarding.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full suite with dedicated support & implementation.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
@@ -840,7 +836,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">All 7 Consoles</span>
+                    <span className="text-xs">All 7 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -848,11 +844,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">25 Employee Accounts</span>
+                    <span className="text-xs">50 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Dedicated Implementation</span>
+                    <span className="text-xs text-amber-400">Dedicated Account Manager</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
@@ -876,20 +872,20 @@ export default function Index() {
           </div>
           </div>
 
-          {/* Industry-Specific Packages - Order 1 (appears first) */}
+          {/* Start Your AI Journey - Order 1 (appears first) */}
           <div className="order-1">
-            <h3 className="text-xl font-semibold text-center mb-4 text-foreground/80">Industry-Specific Packages</h3>
+            <h3 className="text-xl font-semibold text-center mb-4 text-foreground/80">Start Your AI Journey</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {/* Aura Express - Restaurant Package */}
+            {/* Aura Starter */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500 text-white border-0 text-[10px]">
-                  For Restaurants
+                  Entry Level
                 </Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Express</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Starter</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
-                  Restaurants • Cafes • Food Trucks • Food Service
+                  Restaurants • Cafes • Food Trucks • Single Location
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
                   <span className="text-2xl font-bold text-amber-400">$197</span>
@@ -897,6 +893,10 @@ export default function Index() {
                 </div>
                 
                 <div className="space-y-1.5 mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs">1 AI Agent (Triage)</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                     <span className="text-xs">Message Aura (Text)</span>
@@ -909,7 +909,10 @@ export default function Index() {
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                     <span className="text-xs">Smart Link Sharing</span>
                   </div>
-                  <p className="text-[10px] text-card-foreground/50 ml-5">(Menu, Ordering, Website)</p>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs">2 Employee Accounts</span>
+                  </div>
                 </div>
 
                 <Button 
@@ -930,16 +933,16 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Flow - Service Business Package */}
+            {/* Aura Scheduling */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-cyan-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-cyan-500 text-white border-0 text-[10px]">
-                  AI Personal Assistant
+                  Booking Focus
                 </Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Flow</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Scheduling</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
-                  Individual/Home Assistant • Calendar-Based Booking
+                  Personal Assistants • Real Estate • Consultants
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
                   <span className="text-2xl font-bold text-cyan-400">$297</span>
@@ -949,27 +952,27 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">AI Receptionist</span>
+                    <span className="text-xs">3 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Scheduling Agent</span>
+                    <span className="text-xs">1 Control Center</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">SMS/Email Follow-ups</span>
+                    <span className="text-xs">Booking Agent</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Voice)</span>
+                    <span className="text-xs">Follow-up Agent</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Message Aura (Text)</span>
+                    <span className="text-xs">Email + SMS</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Calendar Sync</span>
+                    <span className="text-xs">3 Employees</span>
                   </div>
                 </div>
                 
@@ -991,16 +994,16 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Halo - Specialized Salon Package */}
+            {/* Aura Growth */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-rose-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-400 to-pink-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-rose-500 text-white border-0 text-[10px]">
-                  For Salons & Wellness
+                  Marketing Focus
                 </Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Halo</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Growth</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
-                  Nail Salons • Hair Salons • Barbers • Massage Centers
+                  Salons • Spas • Wellness • Growing Businesses
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
                   <span className="text-2xl font-bold text-rose-400">$397</span>
@@ -1010,27 +1013,27 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">AI Receptionist</span>
+                    <span className="text-xs">11 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Scheduling Agent</span>
+                    <span className="text-xs">3 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">SMS/Email Follow-ups</span>
+                    <span className="text-xs">Marketing Stack</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Voice)</span>
+                    <span className="text-xs">Social Media</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Message Aura (Text)</span>
+                    <span className="text-xs">Review Agent</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Customer Portal</span>
+                    <span className="text-xs">5 Employees</span>
                   </div>
                 </div>
                 
@@ -1052,50 +1055,43 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Core Plan - AI-Assisted (No Automation) */}
+            {/* Aura Business */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
               <CardContent className="p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">AI-Assisted</Badge>
-                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">0 Agents • 3 Tools</Badge>
+                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">Digital-First</Badge>
+                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">No Voice</Badge>
                 </div>
-                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Digital Foundation)</p>
+                <h3 className="text-lg font-bold mb-1">Aura Business</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Web Presence Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-emerald-400">$500</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">AI-powered tools for content & presence. <span className="text-emerald-400">You stay in control.</span></p>
+                <p className="text-xs text-card-foreground/70 mb-4">Digital presence with web & social tools.</p>
                 
-                {/* AI Tools Section */}
-                <p className="text-[10px] text-emerald-400 font-medium mb-1.5 uppercase tracking-wide">AI Tools Included</p>
-                <div className="space-y-1.5 text-left mb-3">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Message Aura (Text) <span className="text-card-foreground/50">(Chat Tool)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Social Media <span className="text-card-foreground/50">(Content Tool)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Web Presence <span className="text-card-foreground/50">(1-Page Site)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">2 Employee Accounts</span>
-                  </div>
-                </div>
-                
-                {/* What's NOT included */}
-                <p className="text-[10px] text-muted-foreground font-medium mb-1.5 uppercase tracking-wide">No Automation</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
-                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No AI Agents (manual operations)</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">12 AI Agents</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">4 Control Centers</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Web Presence Agent</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Social Media Suite</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">8 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
