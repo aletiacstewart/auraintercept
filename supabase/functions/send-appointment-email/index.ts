@@ -272,6 +272,34 @@ Deno.serve(async (req) => {
 
     console.log('Email sent successfully:', emailResult);
 
+    // Track subscription usage for emails
+    const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM format
+    const { data: existingUsage } = await supabase
+      .from('subscription_usage_tracking')
+      .select('emails_sent')
+      .eq('company_id', appointment.company_id)
+      .eq('month_year', currentMonth)
+      .single();
+
+    if (existingUsage) {
+      await supabase
+        .from('subscription_usage_tracking')
+        .update({ emails_sent: (existingUsage.emails_sent || 0) + 1 })
+        .eq('company_id', appointment.company_id)
+        .eq('month_year', currentMonth);
+    } else {
+      await supabase
+        .from('subscription_usage_tracking')
+        .insert({
+          company_id: appointment.company_id,
+          month_year: currentMonth,
+          ai_requests: 0,
+          voice_minutes: 0,
+          sms_sent: 0,
+          emails_sent: 1,
+        });
+    }
+
     return new Response(
       JSON.stringify({ success: true, emailId: emailResult?.id }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

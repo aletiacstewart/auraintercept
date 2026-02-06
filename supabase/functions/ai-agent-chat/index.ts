@@ -2187,7 +2187,7 @@ serve(async (req) => {
       single_point: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
       // Multi-Track ($3,997/mo): Field ops + booking + Web Presence
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Command ($5,997/mo): Full suite - 24 agents + Analytics Router
+      // Command ($5,997/mo): Full suite - 24 agents total
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
@@ -2195,9 +2195,8 @@ serve(async (req) => {
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
         'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
-        'creative', 'web_presence',                          // Creative & Web Presence (2)
-        'analytics'                                          // Analytics Router Agent
-      ]
+        'creative', 'web_presence'                           // Creative & Web Presence (2)
+      ]                                                       // Total: 24 agents
     };
 
     // Helper to determine required tier for an agent
@@ -2843,6 +2842,34 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       },
       success: true,
     });
+
+    // Track subscription usage for AI requests
+    const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM format
+    const { data: existingUsage } = await supabase
+      .from('subscription_usage_tracking')
+      .select('ai_requests')
+      .eq('company_id', companyId)
+      .eq('month_year', currentMonth)
+      .single();
+
+    if (existingUsage) {
+      await supabase
+        .from('subscription_usage_tracking')
+        .update({ ai_requests: (existingUsage.ai_requests || 0) + 1 })
+        .eq('company_id', companyId)
+        .eq('month_year', currentMonth);
+    } else {
+      await supabase
+        .from('subscription_usage_tracking')
+        .insert({
+          company_id: companyId,
+          month_year: currentMonth,
+          ai_requests: 1,
+          voice_minutes: 0,
+          sms_sent: 0,
+          emails_sent: 0,
+        });
+    }
 
     // Create event if there was a handoff or action
     if (handoffTo || toolCalls.length > 0) {
