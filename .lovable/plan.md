@@ -1,194 +1,333 @@
 
-# Documentation, Guides & Dashboard Sync Plan
 
-## Overview
+# Demo Accounts Full Rename Plan
 
-Following the pricing restructure and agent redistribution (Option C), multiple documentation files, guides, PDFs, and help content need to be updated to reflect:
+## Current State
 
-1. **New Pricing Structure** (6 tiers changed)
-2. **Agent Redistribution** (Performance: 22 agents, Command: 24 agents)
-3. **Console Access Updates** (Performance: 7 consoles, Command: 8 consoles)
-4. **Tier Name Updates** (using new tier names: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command)
+### 7 Demo Companies in Database
+| Current Name | Current Tier | Company ID | Business Type |
+|--------------|--------------|------------|---------------|
+| Demo Flow Company | free | b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f | Personal Assistant |
+| Demo Core Company | core | c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a | Real Estate |
+| Demo Express Company | express | d4a6c195-c89a-4208-a818-981902af6c51 | Restaurant |
+| Demo Halo Company | halo | 56c0a3a8-a2a1-4689-9c18-d115080a816d | Nail & Hair Salon |
+| Demo Solo Company | single_point | 8fafcec0-4b2a-45a1-8663-f9ccb5afc545 | HVAC |
+| Demo Multi Company | multi_track | 4f85ed98-0e98-480c-b904-1c33424e26ad | Plumbing |
+| Demo Command Company | command | 298a7275-0a1f-4bd8-a0ae-b692fdbcd3af | Electrical |
 
----
-
-## Files Requiring Updates
-
-### Category 1: Configuration Files (Source of Truth)
-
-These files were already updated in the previous implementation, but we need to verify consistency:
-
-| File | Status | Notes |
-|------|--------|-------|
-| `src/lib/subscriptionAgentConfig.ts` | Updated | New prices and agent arrays |
-| `src/lib/documentationConfig.ts` | Updated | SUBSCRIPTION_TIERS and AI_OPERATIVES |
-
-### Category 2: PDF Documentation (13 files)
-
-| File | Updates Needed |
-|------|----------------|
-| `src/components/documentation/PricingSummaryPDF.tsx` | Pulls from documentationConfig - should auto-update |
-| `src/components/documentation/AIAgentGuidesPDF.tsx` | Pulls from SUBSCRIPTION_TIERS - should auto-update |
-| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | **Hardcoded pricing** at lines 219-230 |
-| `src/components/documentation/CompanyGuidesPDF.tsx` | May have hardcoded tier info |
-| `src/components/documentation/PlatformDocumentPDF.tsx` | Pulls from config - verify |
-| `src/components/documentation/PlatformFAQPDF.tsx` | Pulls from config - verify |
-| `src/components/documentation/SalesPitchDataPDF.tsx` | May have hardcoded pricing |
-| `src/components/documentation/WebsiteCopyPDF.tsx` | May have hardcoded tier descriptions |
-| `src/components/documentation/BrandAssetGuidePDF.tsx` | May have tier references |
-| `src/components/documentation/VideoScriptsPDF.tsx` | May have pricing in scripts |
-| `src/components/documentation/SocialMediaContentPackPDF.tsx` | May have promotional content |
-| `src/components/documentation/IndustryMarketingKitPDF.tsx` | May have pricing references |
-| `src/components/documentation/CompanyOnboardingPDF.tsx` | May have tier options |
-
-### Category 3: Dashboard & UI Components (5 files)
-
-| File | Updates Needed |
-|------|----------------|
-| `src/pages/PlatformGuides.tsx` | **Hardcoded pricing** at lines 120-131 |
-| `src/pages/Auth.tsx` | **Hardcoded pricing** at lines 722-942 |
-| `src/components/agents/TierComparisonCards.tsx` | **Hardcoded pricing** at lines 294-327 |
-| `src/components/help/AIHelpCenter.tsx` | **Hardcoded pricing** in SYSTEM_PROMPT at line 77 |
-
-### Category 4: Feature Gating & Access Control (Already Correct)
-
-| File | Status |
-|------|--------|
-| `src/components/subscription/FeatureGate.tsx` | Uses subscriptionAgentConfig - OK |
-| `src/hooks/useSubscription.ts` | Uses tier config - OK |
+### Edge Function Issue
+The `create-demo-accounts` edge function only has 5 companies defined (missing Flow and Core). It creates 15 accounts total but should create 21 accounts (7 tiers × 3 account types).
 
 ---
 
-## Detailed Changes
+## New Tier Mapping
 
-### 1. ComprehensiveGuidesPDF.tsx (Lines 219-230)
+| New Tier | Price | Old Tier | Company ID | Business Type |
+|----------|-------|----------|------------|---------------|
+| **Starter** | $197 | Express | d4a6c195-c89a-4208-a818-981902af6c51 | Restaurant |
+| **Scheduling** | $397 | Halo | 56c0a3a8-a2a1-4689-9c18-d115080a816d | Nail & Hair Salon |
+| **Growth** | $597 | Core | c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a | Real Estate |
+| **Business** | $797 | Flow/Free | b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f | Personal Assistant |
+| **Field Ops** | $1,497 | Single-Point | 8fafcec0-4b2a-45a1-8663-f9ccb5afc545 | HVAC |
+| **Performance** | $3,497 | Multi-Track | 4f85ed98-0e98-480c-b904-1c33424e26ad | Plumbing |
+| **Command** | $5,497 | Command | 298a7275-0a1f-4bd8-a0ae-b692fdbcd3af | Electrical |
 
-**Current (Outdated):**
-```text
-'Aura Express ($197/mo): AI Voice + Chat for restaurants...'
-'Aura Flow ($297/mo): AI Personal Assistant...'
-'Aura Halo ($397/mo): 3 AI Operatives for salons...'
-'Aura Core ($500/mo): AI-Assisted (No Automation)...'
-'Single-Point ($1,500/mo): 3 AI Operatives...'
-'Multi-Track ($3,997/mo): 10 AI Operatives...'
-'Aura Pro Command ($5,997/mo): All 24 AI Operatives...'
+---
+
+## Complete Demo Accounts (21 Total)
+
+### All Account Emails
+| Tier | Company Admin | Employee | Customer |
+|------|---------------|----------|----------|
+| Starter | companystarter@demo.com | employeestarter@demo.com | customerstarter@demo.com |
+| Scheduling | companysched@demo.com | employeesched@demo.com | customersched@demo.com |
+| Growth | companygrowth@demo.com | employeegrowth@demo.com | customergrowth@demo.com |
+| Business | companybiz@demo.com | employeebiz@demo.com | customerbiz@demo.com |
+| Field Ops | companyfops@demo.com | employeefops@demo.com | customerfops@demo.com |
+| Performance | companyperf@demo.com | employeeperf@demo.com | customerperf@demo.com |
+| Command | companycmd@demo.com | employeecmd@demo.com | customercmd@demo.com |
+
+**Password for all accounts:** `aidemo*!`
+
+---
+
+## Implementation Steps
+
+### Step 1: Database Migration
+Update company names and subscription tiers:
+
+```sql
+-- Update Demo Express → Demo Starter
+UPDATE companies SET 
+  name = 'Demo Starter Company',
+  subscription_tier = 'starter',
+  slug = 'demo-starter'
+WHERE id = 'd4a6c195-c89a-4208-a818-981902af6c51';
+
+-- Update Demo Halo → Demo Scheduling
+UPDATE companies SET 
+  name = 'Demo Scheduling Company',
+  subscription_tier = 'scheduling',
+  slug = 'demo-scheduling'
+WHERE id = '56c0a3a8-a2a1-4689-9c18-d115080a816d';
+
+-- Update Demo Core → Demo Growth
+UPDATE companies SET 
+  name = 'Demo Growth Company',
+  subscription_tier = 'growth',
+  slug = 'demo-growth'
+WHERE id = 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a';
+
+-- Update Demo Flow → Demo Business
+UPDATE companies SET 
+  name = 'Demo Business Company',
+  subscription_tier = 'business',
+  slug = 'demo-business'
+WHERE id = 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f';
+
+-- Update Demo Solo → Demo Field Ops
+UPDATE companies SET 
+  name = 'Demo Field Ops Company',
+  subscription_tier = 'field_ops',
+  slug = 'demo-fieldops'
+WHERE id = '8fafcec0-4b2a-45a1-8663-f9ccb5afc545';
+
+-- Update Demo Multi → Demo Performance
+UPDATE companies SET 
+  name = 'Demo Performance Company',
+  subscription_tier = 'performance',
+  slug = 'demo-performance'
+WHERE id = '4f85ed98-0e98-480c-b904-1c33424e26ad';
+
+-- Update Demo Command (keep name, just ensure tier)
+UPDATE companies SET 
+  subscription_tier = 'command',
+  slug = 'demo-command'
+WHERE id = '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af';
 ```
 
-**Updated:**
-```text
-'Aura Starter ($197/mo): AI Receptionist for 24/7 lead capture'
-'Aura Scheduling ($397/mo): AI booking with calendar sync + Customer Portal'
-'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation'
-'Aura Business ($797/mo): 12 AI Operatives + Web Presence'
-'Aura Field Ops ($1,497/mo): 18 AI Operatives + Field Operations'
-'Aura Performance ($3,497/mo): 22 AI Operatives + Analytics & Reports'
-'Aura Command ($5,497/mo): All 24 AI Operatives + AI Operatives Hub'
+### Step 2: Update Edge Function
+Update `supabase/functions/create-demo-accounts/index.ts`:
+
+**Companies object:**
+```typescript
+const companies = {
+  starter: 'd4a6c195-c89a-4208-a818-981902af6c51',
+  scheduling: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
+  growth: 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
+  business: 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+  field_ops: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
+  performance: '4f85ed98-0e98-480c-b904-1c33424e26ad',
+  command: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
+};
 ```
 
-### 2. PlatformGuides.tsx (Lines 120-131)
-
-Same updates as ComprehensiveGuidesPDF - the guide content needs to match.
-
-### 3. Auth.tsx (Lines 722-942)
-
-Update the tier selection cards during signup:
-- Scheduling: $297 to $397
-- Growth: $397 to $597
-- Business: $500 to $797
-- Field Ops: $1,500 to $1,497
-- Performance: $3,997 to $3,497
-- Command: $5,997 to $5,497
-
-### 4. TierComparisonCards.tsx (Lines 294-327)
-
-Update the upgrade summary bar with new prices:
-```text
-Express $197 → Flow $397 → Halo $597 → Core $797 → Single-Point $1,497 → Multi-Track $3,497 → Command $5,497
+**Accounts array (21 accounts):**
+```typescript
+const accounts = [
+  // Company Admins (7)
+  { email: 'companystarter@demo.com', name: 'Starter Demo Admin', role: 'company_admin', companyId: companies.starter },
+  { email: 'companysched@demo.com', name: 'Scheduling Demo Admin', role: 'company_admin', companyId: companies.scheduling },
+  { email: 'companygrowth@demo.com', name: 'Growth Demo Admin', role: 'company_admin', companyId: companies.growth },
+  { email: 'companybiz@demo.com', name: 'Business Demo Admin', role: 'company_admin', companyId: companies.business },
+  { email: 'companyfops@demo.com', name: 'Field Ops Demo Admin', role: 'company_admin', companyId: companies.field_ops },
+  { email: 'companyperf@demo.com', name: 'Performance Demo Admin', role: 'company_admin', companyId: companies.performance },
+  { email: 'companycmd@demo.com', name: 'Command Demo Admin', role: 'company_admin', companyId: companies.command },
+  
+  // Employees (7)
+  { email: 'employeestarter@demo.com', name: 'Starter Demo Employee', role: 'employee', companyId: companies.starter },
+  { email: 'employeesched@demo.com', name: 'Scheduling Demo Employee', role: 'employee', companyId: companies.scheduling },
+  { email: 'employeegrowth@demo.com', name: 'Growth Demo Employee', role: 'employee', companyId: companies.growth },
+  { email: 'employeebiz@demo.com', name: 'Business Demo Employee', role: 'employee', companyId: companies.business },
+  { email: 'employeefops@demo.com', name: 'Field Ops Demo Employee', role: 'employee', companyId: companies.field_ops },
+  { email: 'employeeperf@demo.com', name: 'Performance Demo Employee', role: 'employee', companyId: companies.performance },
+  { email: 'employeecmd@demo.com', name: 'Command Demo Employee', role: 'employee', companyId: companies.command },
+  
+  // Customers (7)
+  { email: 'customerstarter@demo.com', name: 'Starter Demo Customer', role: 'customer', companyId: companies.starter },
+  { email: 'customersched@demo.com', name: 'Scheduling Demo Customer', role: 'customer', companyId: companies.scheduling },
+  { email: 'customergrowth@demo.com', name: 'Growth Demo Customer', role: 'customer', companyId: companies.growth },
+  { email: 'customerbiz@demo.com', name: 'Business Demo Customer', role: 'customer', companyId: companies.business },
+  { email: 'customerfops@demo.com', name: 'Field Ops Demo Customer', role: 'customer', companyId: companies.field_ops },
+  { email: 'customerperf@demo.com', name: 'Performance Demo Customer', role: 'customer', companyId: companies.performance },
+  { email: 'customercmd@demo.com', name: 'Command Demo Customer', role: 'customer', companyId: companies.command },
+];
 ```
 
-Also update the `upgradeFrom` price differences in the card props.
+### Step 3: Update DemoAccounts.tsx UI
 
-### 5. AIHelpCenter.tsx (Line 77)
+**New demoAccounts array:**
+```typescript
+const demoAccounts = [
+  {
+    tier: 'Aura Starter',
+    tierColor: 'bg-amber-500/20 text-amber-600',
+    price: '$197/mo',
+    companyAdmin: 'companystarter@demo.com',
+    employee: 'employeestarter@demo.com',
+    customer: 'customerstarter@demo.com',
+    businessType: 'Restaurant',
+    agents: 1,
+    consoles: 0,
+  },
+  {
+    tier: 'Aura Scheduling',
+    tierColor: 'bg-rose-500/20 text-rose-600',
+    price: '$397/mo',
+    companyAdmin: 'companysched@demo.com',
+    employee: 'employeesched@demo.com',
+    customer: 'customersched@demo.com',
+    businessType: 'Nail & Hair Salon',
+    agents: 3,
+    consoles: 1,
+  },
+  {
+    tier: 'Aura Growth',
+    tierColor: 'bg-cyan-500/20 text-cyan-600',
+    price: '$597/mo',
+    companyAdmin: 'companygrowth@demo.com',
+    employee: 'employeegrowth@demo.com',
+    customer: 'customergrowth@demo.com',
+    businessType: 'Real Estate',
+    agents: 11,
+    consoles: 3,
+  },
+  {
+    tier: 'Aura Business',
+    tierColor: 'bg-gray-500/20 text-gray-600',
+    price: '$797/mo',
+    companyAdmin: 'companybiz@demo.com',
+    employee: 'employeebiz@demo.com',
+    customer: 'customerbiz@demo.com',
+    businessType: 'Personal Assistant',
+    agents: 12,
+    consoles: 4,
+  },
+  {
+    tier: 'Aura Field Ops',
+    tierColor: 'bg-blue-500/20 text-blue-600',
+    price: '$1,497/mo',
+    companyAdmin: 'companyfops@demo.com',
+    employee: 'employeefops@demo.com',
+    customer: 'customerfops@demo.com',
+    businessType: 'HVAC',
+    agents: 18,
+    consoles: 6,
+  },
+  {
+    tier: 'Aura Performance',
+    tierColor: 'bg-purple-500/20 text-purple-600',
+    price: '$3,497/mo',
+    companyAdmin: 'companyperf@demo.com',
+    employee: 'employeeperf@demo.com',
+    customer: 'customerperf@demo.com',
+    businessType: 'Plumbing',
+    agents: 22,
+    consoles: 7,
+  },
+  {
+    tier: 'Aura Command',
+    tierColor: 'bg-emerald-500/20 text-emerald-600',
+    price: '$5,497/mo',
+    companyAdmin: 'companycmd@demo.com',
+    employee: 'employeecmd@demo.com',
+    customer: 'customercmd@demo.com',
+    businessType: 'Electrical',
+    agents: 24,
+    consoles: 8,
+  },
+];
+```
 
-Update the SYSTEM_PROMPT with correct pricing:
-```text
-4. **Subscription Tiers**: Starter ($197), Scheduling ($397), Growth ($597), Business ($797), Field Ops ($1,497), Performance ($3,497), Command ($5,497)
+**New tierFeatures object:**
+```typescript
+const tierFeatures: Record<string, string[]> = {
+  'Aura Starter': [
+    'AI Receptionist (Triage)',
+    'Talk to Aura (Voice)',
+    'Message Aura (Text)',
+    'Smart Link Sharing',
+    'Lead Capture',
+  ],
+  'Aura Scheduling': [
+    'All Starter features',
+    'Scheduling Agent',
+    'Follow-up Agent',
+    'Customer Portal Console',
+    'Calendar Integration',
+  ],
+  'Aura Growth': [
+    'All Scheduling features',
+    '11 AI Agents',
+    'Outreach & Sales Console',
+    'Social Media Console',
+    'Marketing Automation',
+  ],
+  'Aura Business': [
+    'All Growth features',
+    '12 AI Agents',
+    'Creative & Web Console',
+    'Web Presence Agent',
+    'Brand Management',
+  ],
+  'Aura Field Ops': [
+    'All Business features',
+    '18 AI Agents',
+    'Field Operations Console',
+    'Business Management Console',
+    'Dispatch & Route Optimization',
+  ],
+  'Aura Performance': [
+    'All Field Ops features',
+    '22 AI Agents',
+    'Analytics & Reports Console',
+    'Insights & Performance Agents',
+    'Business Intelligence',
+  ],
+  'Aura Command': [
+    'All Performance features',
+    '24 AI Agents (Full Suite)',
+    'AI Operatives Hub Console',
+    'Revenue & Forecast Agents',
+    'Predictive Analytics',
+  ],
+};
 ```
 
 ---
 
-## Agent/Console Distribution Updates
+## Files to Update
 
-Files need to reflect the correct agent counts per tier:
-
-| Tier | Agents | Consoles | Key Change |
-|------|--------|----------|------------|
-| Starter | 1 | 0 | No change |
-| Scheduling | 3 | 1 | No change |
-| Growth | 11 | 3 | No change |
-| Business | 12 | 4 | No change |
-| Field Ops | 18 | 6 | No change |
-| Performance | **22** | 7 | Excludes revenue, forecast |
-| Command | 24 | 8 | Full suite + AI Operatives Hub |
-
-### Analytics Agent Access
-
-- **Performance ($3,497)**: Gets `insights` + `performance` agents (basic analytics)
-- **Command ($5,497)**: Gets all 4 analytics agents (`insights`, `performance`, `revenue`, `forecast`)
+| File | Changes |
+|------|---------|
+| **Database** | Rename 7 companies, update subscription_tier values |
+| `supabase/functions/create-demo-accounts/index.ts` | Add all 7 companies, expand to 21 accounts |
+| `src/pages/DemoAccounts.tsx` | New tier names, prices, emails, features |
 
 ---
 
-## Implementation Order
+## Summary
 
-### Phase 1: UI Components (High Visibility)
-1. `src/pages/Auth.tsx` - Signup flow pricing
-2. `src/pages/PlatformGuides.tsx` - User-facing guides
-3. `src/components/agents/TierComparisonCards.tsx` - Agent hub comparison
-4. `src/components/help/AIHelpCenter.tsx` - AI help system prompt
+| Component | Before | After |
+|-----------|--------|-------|
+| Demo Companies | 7 with old names | 7 with new tier names |
+| Company Admin Accounts | 5 | 7 |
+| Employee Accounts | 5 | 7 |
+| Customer Accounts | 5 | 7 |
+| **Total Demo Accounts** | **15** | **21** |
 
-### Phase 2: PDF Documents
-5. `src/components/documentation/ComprehensiveGuidesPDF.tsx`
-6. Review and update remaining PDF files as needed
+### Final Account Structure
+```text
+7 Tiers × 3 Account Types = 21 Demo Accounts
 
-### Phase 3: Verification
-7. Generate and review all PDFs for consistency
-8. Test tier comparison displays
-9. Verify feature gating works correctly for Performance vs Command
+Starter ($197):      companystarter@demo.com, employeestarter@demo.com, customerstarter@demo.com
+Scheduling ($397):   companysched@demo.com, employeesched@demo.com, customersched@demo.com
+Growth ($597):       companygrowth@demo.com, employeegrowth@demo.com, customergrowth@demo.com
+Business ($797):     companybiz@demo.com, employeebiz@demo.com, customerbiz@demo.com
+Field Ops ($1,497):  companyfops@demo.com, employeefops@demo.com, customerfops@demo.com
+Performance ($3,497): companyperf@demo.com, employeeperf@demo.com, customerperf@demo.com
+Command ($5,497):    companycmd@demo.com, employeecmd@demo.com, customercmd@demo.com
 
----
+All accounts use password: aidemo*!
+```
 
-## Technical Notes
-
-### Files Using Centralized Config (Auto-Updated)
-These files import from `documentationConfig.ts` and should automatically reflect the new prices:
-- `PricingSummaryPDF.tsx`
-- `AIAgentGuidesPDF.tsx`
-- `PlatformFAQPDF.tsx`
-- `PlatformDocumentPDF.tsx`
-
-### Files with Hardcoded Values (Manual Update Required)
-- `ComprehensiveGuidesPDF.tsx`
-- `PlatformGuides.tsx`
-- `Auth.tsx`
-- `TierComparisonCards.tsx`
-- `AIHelpCenter.tsx`
-
----
-
-## Summary of Price Changes
-
-| Tier | Old Price | New Price |
-|------|-----------|-----------|
-| Starter | $197 | $197 (unchanged) |
-| Scheduling | $297 | **$397** |
-| Growth | $397 | **$597** |
-| Business | $500 | **$797** |
-| Field Ops | $1,500 | **$1,497** |
-| Performance | $3,997 | **$3,497** |
-| Command | $5,997 | **$5,497** |
-
-## Performance vs Command Differentiation
-
-The key differentiation is now clearly defined:
-- **Performance**: 22 agents, 7 consoles, basic analytics (insights + performance metrics)
-- **Command**: 24 agents, 8 consoles, full analytics (adds revenue + forecast) + AI Operatives Hub
