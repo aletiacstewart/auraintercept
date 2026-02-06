@@ -251,6 +251,34 @@ Important guidelines:
       status: 'sent',
     });
 
+    // Track subscription usage for SMS
+    const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM format
+    const { data: existingUsage } = await supabase
+      .from('subscription_usage_tracking')
+      .select('sms_sent')
+      .eq('company_id', integration.company_id)
+      .eq('month_year', currentMonth)
+      .single();
+
+    if (existingUsage) {
+      await supabase
+        .from('subscription_usage_tracking')
+        .update({ sms_sent: (existingUsage.sms_sent || 0) + 1 })
+        .eq('company_id', integration.company_id)
+        .eq('month_year', currentMonth);
+    } else {
+      await supabase
+        .from('subscription_usage_tracking')
+        .insert({
+          company_id: integration.company_id,
+          month_year: currentMonth,
+          ai_requests: 0,
+          voice_minutes: 0,
+          sms_sent: 1,
+          emails_sent: 0,
+        });
+    }
+
     console.log(`Sent AI response to ${fromNumber}`);
 
     // Return empty TwiML (we're sending via API, not TwiML response)

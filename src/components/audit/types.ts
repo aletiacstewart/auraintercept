@@ -542,7 +542,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     keyFeatures: [
       '⭐ For 15+ technicians or multi-location',
       'All Multi-Track features',
-      '+13 Agents (Admin, Inventory, Warranty, Campaign, Lead, Promo, Social Content, Social Scheduler, Social Analytics, Insights, Performance, Revenue, Forecast)',
+      '+14 Agents (Admin, Inventory, Campaign, Lead, Marketing, Social Content, Social Scheduler, Social Analytics, Insights, Performance, Revenue, Forecast, Creative, Web Presence)',
       'All 7 Control Centers',
       'White-Label Branding',
       'Dedicated Implementation & Priority Support',

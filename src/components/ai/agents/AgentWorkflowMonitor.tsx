@@ -45,13 +45,16 @@ const AGENT_ICONS: Record<string, React.ElementType> = {
   quoting: Briefcase,
   invoice: Briefcase,
   inventory: Briefcase,
-  warranty: Briefcase,
-  promo: Megaphone,
-  referral: Megaphone,
-  winback: Megaphone,
-  seasonal: Megaphone,
+  admin: Briefcase,
+  campaign: Megaphone,
+  lead: Megaphone,
+  marketing: Megaphone,
   insights: BarChart3,
   forecast: BarChart3,
+  performance: BarChart3,
+  revenue: BarChart3,
+  creative: Zap,
+  web_presence: Zap,
 };
 
 const STATUS_CONFIG: Record<string, { color: string; icon: React.ElementType }> = {

@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, MessageCircle, Send, Sparkles, Loader2, HelpCircle } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { X, MessageCircle, Send, Sparkles, Loader2, HelpCircle, History, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
@@ -20,7 +22,41 @@ interface QuickQuestion {
   category: string;
 }
 
-const QUICK_QUESTIONS: QuickQuestion[] = [
+interface HistoryEntry {
+  question: string;
+  timestamp: number;
+}
+
+// Context-aware suggestions based on current page
+const PAGE_SUGGESTIONS: Record<string, QuickQuestion[]> = {
+  '/dashboard/ai-agents': [
+    { question: 'How do I enable a specific AI agent?', category: 'Agents' },
+    { question: 'What is the difference between triage and booking agents?', category: 'Agents' },
+    { question: 'How do agent handoffs work?', category: 'Agents' },
+  ],
+  '/dashboard/appointments': [
+    { question: 'How do I reschedule an appointment?', category: 'Scheduling' },
+    { question: 'How do I set up appointment reminders?', category: 'Reminders' },
+    { question: 'Can I sync with Google Calendar?', category: 'Integrations' },
+  ],
+  '/dashboard/ai-consoles/social-media': [
+    { question: 'How do I schedule a social post?', category: 'Social' },
+    { question: 'Can I generate AI content for social media?', category: 'Social' },
+    { question: 'How do I connect my social accounts?', category: 'Integrations' },
+  ],
+  '/dashboard/analytics': [
+    { question: 'How do I export analytics data?', category: 'Analytics' },
+    { question: 'What metrics are tracked?', category: 'Analytics' },
+    { question: 'How do I view agent performance?', category: 'Analytics' },
+  ],
+  '/dashboard/settings': [
+    { question: 'How do I change company settings?', category: 'Settings' },
+    { question: 'How do I set up integrations?', category: 'Integrations' },
+    { question: 'How do I manage team permissions?', category: 'Team' },
+  ],
+};
+
+const DEFAULT_QUESTIONS: QuickQuestion[] = [
   { question: 'How do I set up my AI receptionist?', category: 'Agents' },
   { question: 'How do I create a social media post?', category: 'Social' },
   { question: 'How do I manage appointments?', category: 'Scheduling' },
@@ -37,7 +73,7 @@ Key platform features you can help with:
 1. **AI Operatives (Agents)**: 24 specialized AI agents including Receptionist, Scheduling, Follow-up, Review, Dispatch, Quoting, Invoice agents
 2. **Consoles**: Customer Portal, Business Ops, Field Ops, Marketing & Sales, Social Media, Analytics & Reports, Web Presence
 3. **Communication**: Message Aura (text chat), Talk to Aura (voice - requires ElevenLabs + Twilio), SMS/Email/Voice reminders
-4. **Subscription Tiers**: Express ($197), Flow ($297), Halo ($297), Core ($397), Single-Point ($497), Multi-Track ($597), Command ($997)
+4. **Subscription Tiers**: Express ($197), Flow ($297), Halo ($397), Core ($500), Single-Point ($1,500), Multi-Track ($3,997), Command ($5,997)
 5. **Integrations**: Twilio (SMS/Voice), ElevenLabs (AI Voice), Stripe (Payments), Calendar sync, Social media platforms
 
 Navigation tips:
@@ -46,16 +82,69 @@ Navigation tips:
 - Knowledge Base: Customize AI responses at /dashboard/knowledge
 - Social Media Ops: Create posts at /dashboard/ai-consoles/social-media
 - Customer Portal: Manage at /dashboard/ai-consoles/customer-portal
+- Analytics: View performance at /dashboard/analytics
 
 Always be helpful, concise, and provide specific navigation paths when applicable. Use markdown formatting for clarity.`;
+
+const HISTORY_STORAGE_KEY = 'aura-help-history';
+const MAX_HISTORY_ITEMS = 10;
 
 export function AIHelpCenter() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<HistoryEntry[]>([]);
+  const [activeTab, setActiveTab] = useState('suggested');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
+
+  // Load search history from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (stored) {
+        setSearchHistory(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error('Failed to load search history:', e);
+    }
+  }, []);
+
+  // Save search history to localStorage
+  const saveToHistory = (question: string) => {
+    const newEntry: HistoryEntry = { question, timestamp: Date.now() };
+    const updated = [newEntry, ...searchHistory.filter(h => h.question !== question)].slice(0, MAX_HISTORY_ITEMS);
+    setSearchHistory(updated);
+    try {
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to save search history:', e);
+    }
+  };
+
+  // Get context-aware suggestions
+  const getContextualSuggestions = (): QuickQuestion[] => {
+    const path = location.pathname;
+    
+    // Check for exact match first
+    if (PAGE_SUGGESTIONS[path]) {
+      return PAGE_SUGGESTIONS[path];
+    }
+    
+    // Check for partial matches
+    for (const [pagePath, suggestions] of Object.entries(PAGE_SUGGESTIONS)) {
+      if (path.startsWith(pagePath)) {
+        return suggestions;
+      }
+    }
+    
+    return [];
+  };
+
+  const contextualSuggestions = getContextualSuggestions();
+  const hasContextualSuggestions = contextualSuggestions.length > 0;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -74,6 +163,7 @@ export function AIHelpCenter() {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setQuery('');
     setIsLoading(true);
+    saveToHistory(userMessage);
 
     try {
       // Build conversation history for context
@@ -117,6 +207,23 @@ export function AIHelpCenter() {
   const handleClear = () => {
     setMessages([]);
     setQuery('');
+  };
+
+  const clearHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem(HISTORY_STORAGE_KEY);
+  };
+
+  const formatTimestamp = (timestamp: number) => {
+    const diff = Date.now() - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
   };
 
   return (
@@ -170,25 +277,94 @@ export function AIHelpCenter() {
                   </div>
                 </Card>
 
-                {/* Quick questions */}
-                <div>
-                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    Popular Questions
-                  </h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {QUICK_QUESTIONS.map((q, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleQuickQuestion(q.question)}
-                        className="flex items-center gap-2 p-2.5 rounded-lg border bg-card hover:bg-accent hover:border-accent-foreground/20 transition-colors text-left group"
-                      >
-                        <MessageCircle className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                        <span className="text-sm flex-1">{q.question}</span>
-                        <Badge variant="secondary" className="text-[10px]">{q.category}</Badge>
-                      </button>
-                    ))}
+                {/* Contextual suggestions */}
+                {hasContextualSuggestions && (
+                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightbulb className="h-4 w-4 text-amber-500" />
+                      <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                        Suggestions for this page
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {contextualSuggestions.map((q, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleQuickQuestion(q.question)}
+                          className="w-full text-left text-sm p-2 rounded hover:bg-amber-500/10 transition-colors"
+                        >
+                          {q.question}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Tabbed questions */}
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="w-full">
+                    <TabsTrigger value="suggested" className="flex-1 text-xs">
+                      <MessageCircle className="h-3 w-3 mr-1" />
+                      Popular
+                    </TabsTrigger>
+                    <TabsTrigger value="history" className="flex-1 text-xs">
+                      <History className="h-3 w-3 mr-1" />
+                      Recent
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="suggested" className="mt-3">
+                    <div className="grid grid-cols-1 gap-2">
+                      {DEFAULT_QUESTIONS.map((q, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleQuickQuestion(q.question)}
+                          className="flex items-center gap-2 p-2.5 rounded-lg border bg-card hover:bg-accent hover:border-accent-foreground/20 transition-colors text-left group"
+                        >
+                          <MessageCircle className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                          <span className="text-sm flex-1">{q.question}</span>
+                          <Badge variant="secondary" className="text-[10px]">{q.category}</Badge>
+                        </button>
+                      ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="history" className="mt-3">
+                    {searchHistory.length > 0 ? (
+                      <>
+                        <div className="grid grid-cols-1 gap-2">
+                          {searchHistory.map((entry, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleQuickQuestion(entry.question)}
+                              className="flex items-center gap-2 p-2.5 rounded-lg border bg-card hover:bg-accent hover:border-accent-foreground/20 transition-colors text-left group"
+                            >
+                              <History className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                              <span className="text-sm flex-1 truncate">{entry.question}</span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {formatTimestamp(entry.timestamp)}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={clearHistory}
+                          className="w-full mt-2 text-muted-foreground text-xs"
+                        >
+                          Clear history
+                        </Button>
+                      </>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <History className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No recent questions</p>
+                        <p className="text-xs">Your search history will appear here</p>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
               </>
             ) : (
               <>

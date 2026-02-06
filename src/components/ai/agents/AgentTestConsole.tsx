@@ -155,10 +155,10 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Low Stock', message: "Generate a low stock alert report" },
     { label: 'Reorder', message: "Place reorder for items below minimum threshold" },
   ],
-  warranty: [
-    { label: 'Check Coverage', message: "Is my AC unit still under warranty?" },
-    { label: 'File Claim', message: "I need to file a warranty claim for a defective part" },
-    { label: 'Claim Status', message: "What's the status of my warranty claim #WC-123?" },
+  admin: [
+    { label: 'Business Overview', message: "Give me an overview of today's business activity" },
+    { label: 'Team Status', message: "What's the current status of my team?" },
+    { label: 'Action Items', message: "What are the priority action items for today?" },
   ],
   campaign: [
     { label: 'Create Campaign', message: "I'd like to create a new marketing campaign" },

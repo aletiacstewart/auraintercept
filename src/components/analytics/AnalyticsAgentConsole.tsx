@@ -202,6 +202,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       forecast: `Based on this forecast data: ${dataStr}. What should we prepare for and what actions should we take?`,
       kpi: `Review these KPIs: ${dataStr}. Which ones need immediate attention and what steps can improve them?`,
       reminders: `Analyze this reminder performance data: ${dataStr}. What recommendations do you have to improve delivery rates and customer engagement?`,
+      social: `Analyze this social media performance data: ${dataStr}. What content is performing best and what recommendations do you have to improve engagement?`,
       export: `I just exported a ${data.type} report with ${data.count} records. What analysis would be most valuable from this data?`,
     };
     if (messages[formType]) {
