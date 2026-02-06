@@ -1,175 +1,210 @@
 
-# PDF Documents & AI Agent Tests Update Plan
 
-## Overview
-Two issues need to be addressed:
-1. **AI Agent Test Suite** - Invoice Agent and 6 other agents timing out/slow due to 15-second timeout being too short for complex AI inference + tool calls
-2. **PDF Documents Outdated** - Multiple PDF exports use old tier names (Express, Flow, Halo, Core, Single-Point, Multi-Track, Pro Command) instead of new names (Starter, Scheduling, Growth, Business, Field Ops, Performance, Command)
+# AI Agent Functionality Investigation & Fix Plan
 
----
+## Executive Summary
+The AI Agent Test Suite has fundamental issues beyond simple timeout thresholds. The tests call a unified `ai-agent` endpoint without agent-specific routing, meaning the "Invoice Agent" test doesn't actually test the invoice agent - it just sends a generic message and hopes the AI figures out what to do.
 
-## Issue 1: AI Agent Test Timeouts
+## Root Cause Analysis
 
-### Root Cause
-The AI Agent Test Suite has a 15-second timeout (`THRESHOLDS.TIMEOUT: 15000`) which is too short for complex agents like Invoice Agent that require:
-- Initial AI inference call
-- Tool call execution (quote/invoice generation)
-- Follow-up AI call with tool results
-- Total round-trip time can easily exceed 15 seconds
+### Current Architecture Issues
 
-### Solution
-Increase timeout thresholds to accommodate realistic AI inference latency:
+| Issue | Impact | Current Behavior |
+|-------|--------|------------------|
+| No Agent Routing | Tests don't target specific agents | All tests call same unified endpoint |
+| Double AI Calls | 7-18s latency for tool-based agents | Initial call + follow-up after tool execution |
+| Unused Test Endpoint | Faster testing option exists but isn't used | `ai-orchestrator/test_agent` provides quick simulated tests |
+| No Agent Type Hints | AI must infer intent from message | No way to force specific agent behavior |
 
-| Metric | Current | New |
-|--------|---------|-----|
-| Pass threshold | 8 seconds | 10 seconds |
-| Slow warning | 8-15 seconds | 10-25 seconds |
-| Timeout | 15 seconds | 30 seconds |
-
-### File Change
-**`src/components/ai/AIAgentTestSuite.tsx`** - Update THRESHOLDS constant
-
----
-
-## Issue 2: Outdated PDF Tier Names
-
-### Tier Name Mapping
-
-| Old Name | New Name |
-|----------|----------|
-| Aura Express | Aura Starter |
-| Aura Flow | Aura Scheduling |
-| Aura Halo | Aura Growth |
-| Aura Core | Aura Business |
-| Single-Point | Aura Field Ops |
-| Multi-Track | Aura Performance |
-| Aura Pro Command | Aura Command |
-
-### Files Requiring Updates
-
-#### 1. PricingSummaryPDF.tsx (Major Updates)
-This file has extensive hardcoded tier references that need updating:
-
-| Section | Changes Needed |
-|---------|----------------|
-| Table of Contents | Update tier page titles |
-| Executive Summary Cards | Update all tier labels (AURA EXPRESS, etc.) |
-| Feature Highlight Table | Update header labels |
-| Complete Comparison Table | Update tier column headers |
-| Individual Tier Pages | Update page titles and tier names |
-| Annual Savings Table | Update tier names in rows |
-| Implementation Fees Table | Update tier names in rows |
-| Integration Notes | Update tier references |
-
-Key changes:
-- "AURA EXPRESS" becomes "AURA STARTER"
-- "AURA FLOW" becomes "AURA SCHEDULING" 
-- "AURA HALO" becomes "AURA GROWTH"
-- "AURA CORE" becomes "AURA BUSINESS"
-- "SINGLE-POINT" becomes "AURA FIELD OPS"
-- "MULTI-TRACK" becomes "AURA PERFORMANCE"
-- "PRO COMMAND" becomes "AURA COMMAND"
-- Section titles like "Aura Express Tier" become "Aura Starter Tier"
-
-#### 2. src/components/audit/types.ts (TIER_RECOMMENDATIONS)
-Update the `label` field in each tier recommendation:
-
-| Key | Current Label | New Label |
-|-----|--------------|-----------|
-| EXPRESS | Aura Express | Aura Starter |
-| FLOW | Aura Flow | Aura Scheduling |
-| HALO | Aura Halo | Aura Growth |
-| CORE | Aura Core | Aura Business |
-| SINGLE_POINT | Single-Point | Aura Field Ops |
-| MULTI_TRACK | Multi-Track | Aura Performance |
-| COMMAND | Aura Pro Command | Aura Command |
-
----
-
-## Technical Details
-
-### PricingSummaryPDF.tsx Changes Summary
+### How Tests Currently Work
 
 ```text
-File: src/components/documentation/PricingSummaryPDF.tsx
-
-Sections to update:
-+--------------------------------------------------+
-| Table of Contents (lines ~400-420)               |
-|   - 'Aura Express Tier' -> 'Aura Starter Tier'   |
-|   - 'Aura Flow Tier' -> 'Aura Scheduling Tier'   |
-|   - 'Aura Halo Tier' -> 'Aura Growth Tier'       |
-|   - etc.                                          |
-+--------------------------------------------------+
-| Executive Summary Cards (lines ~440-480)         |
-|   - 'AURA EXPRESS' -> 'AURA STARTER'             |
-|   - 'AURA FLOW' -> 'AURA SCHEDULING'             |
-|   - etc.                                          |
-+--------------------------------------------------+
-| Feature Tables (lines ~488-515)                  |
-|   - Column headers: Express -> Starter           |
-|   - Halo -> Growth, Core -> Business             |
-|   - Single -> Field Ops, Multi -> Performance    |
-+--------------------------------------------------+
-| Tier Detail Pages (lines ~589-900)               |
-|   - Section titles and card names                |
-+--------------------------------------------------+
-| Annual Savings Table (lines ~919-935)            |
-|   - Row labels: Aura Halo -> Aura Growth         |
-+--------------------------------------------------+
-| Implementation Fees Table (lines ~1050-1065)     |
-|   - Row labels for all tiers                     |
-+--------------------------------------------------+
+Current Flow (SLOW - 7-18 seconds):
+┌──────────────────────┐
+│   Test Suite         │
+│   (Invoice Agent)    │
+└──────────┬───────────┘
+           │ Generic message: "Can I get an invoice?"
+           ▼
+┌──────────────────────┐
+│   ai-agent function  │
+│   (unified endpoint) │
+└──────────┬───────────┘
+           │
+           ├──► Fetch knowledge base (4-5 DB calls)
+           │
+           ├──► 1st AI API call (3-8 sec)
+           │    "What tools should I use?"
+           │
+           ├──► Execute tool calls (0.5-2 sec)
+           │    (create_invoice, generate_payment_link)
+           │
+           └──► 2nd AI API call (3-8 sec)
+                "Format response with tool results"
+                
+Total: 7-18 seconds per test
 ```
 
-### audit/types.ts Changes
+### Why Invoice Agent Times Out
+The Invoice Agent test prompt triggers tool calls (`create_invoice`, `generate_payment_link`), requiring:
+- 1st AI call to detect intent
+- Tool execution
+- 2nd AI call to format response
+- Total: ~12-18 seconds, exceeding previous 15s timeout
+
+## Proposed Solution
+
+### Dual-Mode Testing Architecture
 
 ```text
-TIER_RECOMMENDATIONS object updates:
+Option 1: Quick Functional Tests (< 500ms)
+┌──────────────────────┐
+│   Test Suite         │
+│   Mode: Quick/Standard│
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  ai-orchestrator     │
+│  action: test_agent  │
+│  (simulated response)│
+└──────────────────────┘
+- Pattern matching, no AI inference
+- Tests agent routing logic
+- Tests tool call simulation
 
-EXPRESS: {
-  label: 'Aura Express' -> 'Aura Starter'
-}
 
-FLOW: {
-  label: 'Aura Flow' -> 'Aura Scheduling'
-}
-
-HALO: {
-  label: 'Aura Halo' -> 'Aura Growth'
-}
-
-CORE: {
-  label: 'Aura Core' -> 'Aura Business'
-}
-
-SINGLE_POINT: {
-  label: 'Single-Point' -> 'Aura Field Ops'
-}
-
-MULTI_TRACK: {
-  label: 'Multi-Track' -> 'Aura Performance'
-}
-
-COMMAND: {
-  label: 'Aura Pro Command' -> 'Aura Command'
-}
+Option 2: Full AI Tests (10-30 sec)
+┌──────────────────────┐
+│   Test Suite         │
+│   Mode: Comprehensive│
+└──────────┬───────────┘
+           │ Include agent_type hint
+           ▼
+┌──────────────────────┐
+│   ai-agent function  │
+│   (with agent hint)  │
+└──────────────────────┘
+- Real AI inference
+- Tests actual AI behavior
+- Used sparingly for validation
 ```
 
----
+## Implementation Steps
+
+### Step 1: Update Test Suite to Use Orchestrator for Quick Tests
+Modify `AIAgentTestSuite.tsx` to call `ai-orchestrator` with `action: test_agent` for Quick and Standard modes, which provides fast simulated responses (< 500ms) without real AI inference.
+
+Changes:
+- Add new `runSimulatedTest` function that calls orchestrator
+- Use simulated tests for Quick/Standard modes
+- Reserve real `ai-agent` calls for Comprehensive mode only
+
+### Step 2: Add Agent-Type Hints to ai-agent Function
+Modify the `ai-agent` edge function to accept an optional `agent_type` parameter that biases the AI toward specific tool usage and response patterns.
+
+Changes:
+- Accept `agent_type` parameter in request body
+- Add agent-specific system prompt sections
+- Prioritize relevant tools for the specified agent
+
+### Step 3: Optimize ai-agent Performance
+Reduce latency for real AI tests:
+
+| Optimization | Expected Savings |
+|--------------|------------------|
+| Cache knowledge base per company (5 min TTL) | 1-2 seconds |
+| Use lighter model for simple queries | 2-4 seconds |
+| Parallel tool execution | 0.5-1 second |
+
+### Step 4: Add Agent-Specific Test Scenarios
+Enhance test scenarios with agent-targeted prompts that better match each agent's capabilities.
+
+| Agent Type | Current Prompt | Improved Prompt |
+|------------|----------------|-----------------|
+| invoice | "Can I get an invoice?" | "Generate invoice for job #123 with labor $190 and parts $245" |
+| dispatch | "Who is assigned?" | "Emergency: customer at 123 Main St has a water leak, dispatch nearest tech" |
+| quoting | "How much?" | "I need a quote for AC repair and filter replacement" |
 
 ## Files to Modify
 
-| File | Type of Change |
-|------|----------------|
-| `src/components/ai/AIAgentTestSuite.tsx` | Increase timeout thresholds |
-| `src/components/documentation/PricingSummaryPDF.tsx` | Update ~50+ tier name references |
-| `src/components/audit/types.ts` | Update 7 TIER_RECOMMENDATIONS labels |
+| File | Changes |
+|------|---------|
+| `src/components/ai/AIAgentTestSuite.tsx` | Add orchestrator-based simulated testing for Quick/Standard modes |
+| `supabase/functions/ai-agent/index.ts` | Add agent_type parameter support and optimizations |
+| `supabase/functions/ai-orchestrator/index.ts` | Add more comprehensive test_agent scenarios |
 
----
+## Technical Details
+
+### AIAgentTestSuite.tsx Changes
+
+```text
+New runSimulatedTest function:
+- Calls: supabase.functions.invoke('ai-orchestrator', {
+    body: {
+      action: 'test_agent',
+      companyId,
+      agentType,
+      payload: { message: prompt }
+    }
+  })
+- Returns in < 500ms with simulated response
+- Tests agent routing and tool call logic
+
+Mode routing:
+- Quick mode: Health check only (existing)
+- Standard mode: Use simulated tests via orchestrator
+- Comprehensive mode: Use real AI tests via ai-agent
+```
+
+### ai-agent/index.ts Changes
+
+```text
+New agent_type parameter handling:
+- Add to request body parsing
+- Create agent-specific system prompt additions
+- Bias tool_choice toward agent-relevant tools
+
+Example for invoice agent:
+- Append to system prompt: "Focus on invoice generation, payment processing"
+- Set tool_choice preference for: create_invoice, generate_payment_link
+```
+
+### Test Scenarios Enhancement
+
+```text
+Invoice Agent scenarios:
+1. "Create an invoice for the completed job" 
+   - Expected: Uses create_invoice tool
+   - Validates: Invoice number returned
+
+2. "Send payment reminder for overdue invoice #123"
+   - Expected: Uses send_reminder tool  
+   - Validates: Reminder confirmation
+
+Dispatch Agent scenarios:
+1. "Emergency dispatch needed at 456 Oak St"
+   - Expected: Uses find_nearest_tech, assign_job tools
+   - Validates: Tech assignment confirmation
+
+2. "What technician is closest to downtown?"
+   - Expected: Uses find_nearest_tech tool
+   - Validates: Distance/ETA information
+```
+
+## Expected Results After Implementation
+
+| Mode | Test Count | Time per Test | Total Time |
+|------|------------|---------------|------------|
+| Quick Health | 24 agents | ~50ms | ~2 seconds |
+| Standard (simulated) | 24 agents | ~200ms | ~5 seconds |
+| Comprehensive (real AI) | 24 agents | ~8-15s | ~3-6 minutes |
 
 ## Verification Steps
 After implementation:
-1. Export the Pricing Summary PDF and verify all tier names show correctly
-2. Run AI Agent Test Suite in Standard mode to verify timeouts are improved
-3. Complete a subscription audit to verify tier recommendations show new names
+1. Run Quick Health tests - all should pass in < 5 seconds
+2. Run Standard tests - all should pass with simulated responses in < 30 seconds  
+3. Run Comprehensive tests - validates real AI behavior, allows 30s per agent
+4. Verify Invoice Agent specifically returns proper invoice generation response
+5. Check that agent-type hints improve response relevance
+
