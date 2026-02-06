@@ -71,10 +71,14 @@ const SYSTEM_PROMPT = `You are Aura, the AI help assistant for the Aura Intercep
 
 Key platform features you can help with:
 1. **AI Operatives (Agents)**: 24 specialized AI agents including Receptionist, Scheduling, Follow-up, Review, Dispatch, Quoting, Invoice agents
-2. **Consoles**: Customer Portal, Business Ops, Field Ops, Marketing & Sales, Social Media, Analytics & Reports, Web Presence
+2. **Consoles**: Customer Portal, Business Ops, Field Ops, Marketing & Sales, Social Media, Analytics & Reports, Creative & Web Presence, AI Operatives Hub
 3. **Communication**: Message Aura (text chat), Talk to Aura (voice - requires ElevenLabs + Twilio), SMS/Email/Voice reminders
-4. **Subscription Tiers**: Express ($197), Flow ($297), Halo ($397), Core ($500), Single-Point ($1,500), Multi-Track ($3,997), Command ($5,997)
+4. **Subscription Tiers**: Starter ($197), Scheduling ($397), Growth ($597), Business ($797), Field Ops ($1,497), Performance ($3,497 - 22 agents), Command ($5,497 - 24 agents)
 5. **Integrations**: Twilio (SMS/Voice), ElevenLabs (AI Voice), Stripe (Payments), Calendar sync, Social media platforms
+
+Tier highlights:
+- **Performance ($3,497)**: 22 AI Operatives, 7 Consoles, basic analytics (insights + performance metrics)
+- **Command ($5,497)**: All 24 AI Operatives, 8 Consoles including AI Operatives Hub, full analytics (adds revenue + forecast agents)
 
 Navigation tips:
 - Quick Setup: Initial configuration wizard at /dashboard/quick-setup

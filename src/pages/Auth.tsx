@@ -751,19 +751,19 @@ export default function Auth() {
                           {selectedTier === 'flow' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Flow</h3>
-                          <p className="text-[10px] text-card-foreground/70">Personal Assistant</p>
+                      <h3 className="font-semibold text-xs text-card-foreground">Aura Scheduling</h3>
+                          <p className="text-[10px] text-card-foreground/70">Booking Automation</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-teal-600">$297</span>
+                        <span className="text-sm font-bold text-teal-600">$397</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>4 Agents</span>
+                      <span>3 Agents</span>
                       <span>•</span>
-                      <span>Scheduling</span>
+                      <span>1 Console</span>
                       <span>•</span>
                       <span>Calendar Sync</span>
                     </div>
@@ -786,21 +786,21 @@ export default function Auth() {
                           {selectedTier === 'halo' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Halo</h3>
-                          <p className="text-[10px] text-card-foreground/70">Salons & Wellness</p>
+                      <h3 className="font-semibold text-xs text-card-foreground">Aura Growth</h3>
+                          <p className="text-[10px] text-card-foreground/70">Marketing Automation</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-rose-600">$397</span>
+                        <span className="text-sm font-bold text-rose-600">$597</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>4 Agents</span>
+                      <span>11 Agents</span>
                       <span>•</span>
-                      <span>1 Console</span>
+                      <span>3 Consoles</span>
                       <span>•</span>
-                      <span>Online Booking</span>
+                      <span>Outreach & Sales</span>
                     </div>
                   </div>
 
@@ -824,21 +824,21 @@ export default function Auth() {
                           {selectedTier === 'core' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Core</h3>
-                          <p className="text-[10px] text-card-foreground/70">AI-Assisted (No Automation)</p>
+                      <h3 className="font-semibold text-xs text-card-foreground">Aura Business</h3>
+                          <p className="text-[10px] text-card-foreground/70">Creative & Web Presence</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-slate-600">$500</span>
+                        <span className="text-sm font-bold text-slate-600">$797</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>Tools Only</span>
+                      <span>12 Agents</span>
                       <span>•</span>
-                      <span>Chat</span>
+                      <span>4 Consoles</span>
                       <span>•</span>
-                      <span>Social + Web</span>
+                      <span>Web Presence</span>
                     </div>
                   </div>
 
@@ -859,21 +859,21 @@ export default function Auth() {
                           {selectedTier === 'single_point' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Single-Point</h3>
-                          <p className="text-[10px] text-card-foreground/70">Solo-Focus Service Business</p>
+                      <h3 className="font-semibold text-xs text-card-foreground">Aura Field Ops</h3>
+                          <p className="text-[10px] text-card-foreground/70">Field Service Teams</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-blue-600">$1,500</span>
+                        <span className="text-sm font-bold text-blue-600">$1,497</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>3 Agents</span>
+                      <span>18 Agents</span>
                       <span>•</span>
-                      <span>1 Console</span>
+                      <span>6 Consoles</span>
                       <span>•</span>
-                      <span>5 Employees</span>
+                      <span>15 Employees</span>
                     </div>
                   </div>
 
@@ -897,21 +897,21 @@ export default function Auth() {
                           {selectedTier === 'multi_track' && <Check className="w-2 h-2 text-primary-foreground" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-foreground">Multi-Track</h3>
-                          <p className="text-[10px] text-muted-foreground">Small Scale Business</p>
+                      <h3 className="font-semibold text-xs text-foreground">Aura Performance</h3>
+                          <p className="text-[10px] text-muted-foreground">Analytics & Visibility</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-primary">$3,997</span>
+                        <span className="text-sm font-bold text-primary">$3,497</span>
                         <span className="text-[10px] text-muted-foreground">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-muted-foreground">
-                      <span>10 Agents</span>
+                      <span>22 Agents</span>
                       <span>•</span>
-                      <span>2 Consoles</span>
+                      <span>7 Consoles</span>
                       <span>•</span>
-                      <span>Field Ops</span>
+                      <span>Analytics</span>
                     </div>
                   </div>
 
@@ -932,21 +932,21 @@ export default function Auth() {
                           {selectedTier === 'command' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Pro Command</h3>
-                          <p className="text-[10px] text-card-foreground/70">Large Scale / Enterprise</p>
+                      <h3 className="font-semibold text-xs text-card-foreground">Aura Command</h3>
+                          <p className="text-[10px] text-card-foreground/70">Full AI Operating System</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-purple-600">$5,997</span>
+                        <span className="text-sm font-bold text-purple-600">$5,497</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
                       <span>24 Agents</span>
                       <span>•</span>
-                      <span>7 Consoles</span>
+                      <span>8 Consoles</span>
                       <span>•</span>
-                      <span>25 Employees</span>
+                      <span>50 Employees</span>
                     </div>
                   </div>
                 </div>

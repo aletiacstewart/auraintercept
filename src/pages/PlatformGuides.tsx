@@ -94,7 +94,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier in the bottom left (Express, Flow, Halo, Core, Single-Point, Multi-Track, or Command)',
+          'Review your subscription tier in the bottom left (Starter, Scheduling, Growth, Business, Field Ops, Performance, or Command)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -117,19 +117,18 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing to menu/ordering',
-          'Aura Flow ($297/mo): AI Personal Assistant with scheduling via direct calendar sync (no portal)',
-          'Aura Halo ($397/mo): 3 AI Operatives for salons/wellness + Customer Portal Console',
-          'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media + Web Presence',
-          'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
-          'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
-          'Aura Pro Command ($5,997/mo): All 24 AI Operatives + 7 Consoles + Enterprise Features',
-          'Talk to Aura (Voice) included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
-          'Employee limits: 2 (Express/Flow), 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
-          'Premium Add-Ons: Social Media ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
-          'Implementation fees: $299 (Express), $399 (Flow), $499 (others), Custom for Command'
+          'Aura Starter ($197/mo): AI Receptionist for 24/7 lead capture with 1 agent',
+          'Aura Scheduling ($397/mo): AI booking with calendar sync + Customer Portal (3 agents)',
+          'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation + Outreach & Sales',
+          'Aura Business ($797/mo): 12 AI Operatives + Creative & Web Presence console',
+          'Aura Field Ops ($1,497/mo): 18 AI Operatives + Field Operations + Business Management',
+          'Aura Performance ($3,497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
+          'Aura Command ($5,497/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
+          'Performance tier includes insights + performance agents; Command adds revenue + forecast agents',
+          'Employee limits: 2 (Starter), 3 (Scheduling), 5 (Growth), 8 (Business), 15 (Field Ops), 25 (Performance), 50 (Command)',
+          'All tiers include API Access, White-Label Branding, and Chat Widget'
         ],
-        tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$12,000/year)']
+        tips: ['Trial users get full Command tier access', 'Annual billing = 10x monthly rate']
       },
       {
         title: 'User Roles & Permissions',
