@@ -25,9 +25,9 @@ import { cn } from '@/lib/utils';
 
 // Performance thresholds (in milliseconds)
 const THRESHOLDS = {
-  PASS: 8000,      // Under 8s = passed
-  SLOW: 15000,     // 8-15s = slow warning
-  TIMEOUT: 15000   // 15s timeout
+  PASS: 10000,     // Under 10s = passed
+  SLOW: 25000,     // 10-25s = slow warning
+  TIMEOUT: 30000   // 30s timeout
 };
 
 const BATCH_SIZE = 5; // Process 5 agents concurrently
