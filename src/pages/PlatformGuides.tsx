@@ -155,6 +155,23 @@ const guideCategories = [
           'Configure widget embed code in Integrations → Website Embed'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site', 'Customers can manage preferences per company']
+      },
+      {
+        title: '8 Control Centers Overview',
+        duration: '12 min',
+        steps: [
+          '1. Customer Portal: AI-powered customer engagement (Scheduling+)',
+          '2. Field Operations: GPS dispatch, routing, job management (Field Ops+)',
+          '3. Business Operations: Quoting, invoicing, inventory (Field Ops+)',
+          '4. Outreach & Sales Ops: Campaigns, leads, marketing (Growth+)',
+          '5. Social Media Ops: 6-platform content creation and scheduling (Growth+)',
+          '6. Creative & Web Presence: Content Engine, website, blog, SEO (Business+)',
+          '7. Analytics & Reports: KPIs, forecasting, exports (Performance+)',
+          '8. AI Operatives Hub: Central agent management (Command only)',
+          'Each console manages specific AI operatives',
+          'Access consoles via sidebar navigation'
+        ],
+        tips: ['Consoles unlock based on subscription tier', 'Start with Customer Portal for immediate impact']
       }
     ]
   },
@@ -165,31 +182,20 @@ const guideCategories = [
     featureColor: 'feature-config',
     guides: [
       {
-        title: 'AI Operatives Hub Overview',
-        duration: '10 min',
-        steps: [
-          'Navigate to AI Operatives Hub from the sidebar',
-          'View all 24 AI operatives organized across 7 Control Centers (Consoles)',
-          'Operatives locked by tier show "Locked" badge with upgrade path',
-          'Click any operative card to view settings and dependencies',
-          'Enable/disable operatives with the toggle switch',
-          'Monitor operative activity in console-specific event logs'
-        ],
-        tips: ['Start with Customer Portal operatives', 'Locked operatives show required tier for upgrade planning']
-      },
-      {
-        title: 'AI Agent Workflow Guide',
+        title: 'AI Operatives Overview (24 Agents)',
         duration: '15 min',
         steps: [
-          'Navigate to Platform Resources → AI Agent Guide in sidebar',
-          'View Agent Dependency Flow diagram showing handoff sequences',
-          'Explore Console Requirements to understand which consoles need which agents',
-          'Use the Calculator tab to determine which agents you need',
-          'Review Quick Reference for agent-to-console mappings',
-          'Compare subscription tiers in the Tier Comparison tab'
+          'The platform includes 24 AI Operatives organized into 6 functional stacks:',
+          '1. Lead Capture Stack (Starter): AI Receptionist (triage)',
+          '2. Booking Stack (Scheduling): Scheduling Agent, Follow-up Agent',
+          '3. Marketing Stack (Growth): Review, Campaign, Lead, Marketing, Creative, Social Content, Social Scheduler, Social Analytics',
+          '4. Office Stack (Business): Web Presence Agent',
+          '5. Field Ops Stack (Field Ops): Dispatch, Route, ETA, Check-in, Quoting, Invoice',
+          '6. Business Intelligence Stack (Performance+): Admin, Inventory, Insights, Performance, Revenue, Forecast',
+          'Agents unlock progressively as you upgrade tiers',
+          'Each agent has specific dependencies and capabilities'
         ],
-        tips: ['Use the Calculator for upgrade planning', 'Bookmark the guide for quick reference'],
-        link: '/dashboard/ai-agent-guide'
+        tips: ['Start with AI Receptionist as your foundation', 'Dependencies must be enabled for agents to work together']
       },
       {
         title: 'AI Receptionist (Triage)',
@@ -200,7 +206,8 @@ const guideCategories = [
           'Routes to specialized agents based on inquiry type',
           'Configure greeting in AI Agents Hub → AI Receptionist',
           'Works across Voice, SMS, Email, and Widget channels',
-          'Available in all paid tiers (Single-Point+)'
+          'Available in all paid tiers (Starter+)',
+          'Uses Knowledge Base for FAQ responses'
         ],
         tips: ['AI Receptionist is required for all other customer-facing agents', 'Customize greeting for your brand voice']
       },
@@ -208,184 +215,334 @@ const guideCategories = [
         title: 'Scheduling Agent',
         duration: '10 min',
         steps: [
-          'Enable in AI Agents Hub (requires Multi-Track+ tier)',
+          'Enable in AI Agents Hub (requires Scheduling+ tier)',
           'Checks business hours and employee availability automatically',
           'Presents available time slots to customers',
           'Creates confirmed appointments in the system',
           'Triggers calendar sync if Google Calendar connected',
-          'Hands off to Dispatch Agent for technician assignment'
+          'Hands off to Dispatch Agent for technician assignment',
+          'Depends on AI Receptionist being enabled'
         ],
         tips: ['Ensure business hours are configured accurately', 'Set buffer times between appointments in Settings']
       },
       {
-        title: 'Follow-up & Review Agents',
+        title: 'Follow-up Agent',
         duration: '8 min',
         steps: [
-          'Follow-up Agent: Automated post-service check-ins via Email/SMS',
-          'Review Agent: Collects ratings and routes to Google/Yelp/Facebook',
-          'Both depend on AI Receptionist being enabled',
+          'Automated post-service check-ins via Email/SMS',
+          'Sends appointment reminders (24h and 1h before)',
+          'Handles confirmation and rescheduling requests',
           'Configure templates in Settings → Email Templates',
-          'Set timing delays (e.g., 2 hours after service)',
-          'Negative feedback routes internally before public review'
+          'Set timing delays for post-service follow-up',
+          'Requires Scheduling+ tier',
+          'Depends on AI Receptionist being enabled'
         ],
-        tips: ['Both agents included in Single-Point tier', 'Customize templates with your brand voice']
+        tips: ['Customize reminder timing based on service type', 'Use personalization tokens in templates']
       },
       {
-        title: 'Field Operations Agents',
-        duration: '12 min',
+        title: 'Review Agent',
+        duration: '8 min',
         steps: [
-          'Dispatch Agent: Assigns technicians based on skills and zones',
-          'Route Agent: Optimizes travel routes using distance calculations',
-          'ETA Agent: Sends real-time arrival updates to customers',
-          'Check-in Agent: Manages on-site status with photo documentation',
-          'All require Multi-Track+ tier',
-          'Access via Field Operations Console in sidebar'
+          'Collects customer ratings after service completion',
+          'Routes satisfied customers to Google/Yelp/Facebook reviews',
+          'Negative feedback routed internally before public review',
+          'Configure review links in company settings',
+          'Set timing delay (recommended: 2 hours after service)',
+          'Requires Growth+ tier',
+          'Depends on Follow-up Agent being enabled'
         ],
-        tips: ['Enable GPS on technician mobile devices for accurate ETAs', 'Use skill tags for intelligent dispatch matching']
+        tips: ['Ask immediately after positive service', 'Respond to all reviews promptly']
       },
       {
-        title: 'Business Operations Agents',
+        title: 'Campaign Agent',
         duration: '10 min',
         steps: [
-          'Quoting Agent: Generates quotes from service catalog pricing',
-          'Invoice Agent: Creates invoices and tracks payment status',
-          'Inventory Agent: Monitors stock levels and triggers alerts (Command)',
-          'Access via Business Ops Console',
-          'Quoting/Invoice available Multi-Track+; Inventory Command only'
-        ],
-        tips: ['Link Quote Forge to your service catalog', 'Configure low-stock thresholds for proactive ordering']
-      },
-      {
-        title: 'Outreach & Sales Ops Agents',
-        duration: '10 min',
-        steps: [
-          'Campaign Agent: Creates and sends marketing campaigns',
-          'Lead Agent: Qualifies and scores leads',
-          'Marketing Agent: Manages segments and promo codes',
-          'Winback automation for inactive customers',
-          'Referral program management',
-          'All marketing agents require Command tier',
+          'Creates and sends email/SMS marketing campaigns',
+          'Target specific customer segments',
+          'Schedule campaigns for optimal send times',
+          'A/B test subject lines and content',
+          'Track open rates and click-through',
+          'Requires Growth+ tier',
           'Access via Outreach & Sales Ops Console'
         ],
-        tips: ['A/B test subject lines for better performance', 'Start with simple campaigns before automation']
+        tips: ['Segment audiences for better engagement', 'Use AI content generation for copy']
       },
       {
-        title: 'Social Media Agents',
+        title: 'Lead Agent',
+        duration: '8 min',
+        steps: [
+          'Qualifies and scores incoming leads',
+          'Auto-qualification based on engagement signals',
+          'Manages lead pipeline stages',
+          'Triggers nurture sequences for cold leads',
+          'Integrates with appointment booking',
+          'Requires Growth+ tier',
+          'Configure scoring thresholds in agent settings'
+        ],
+        tips: ['Define clear qualification criteria', 'Follow up quickly on hot leads']
+      },
+      {
+        title: 'Marketing Agent',
+        duration: '8 min',
+        steps: [
+          'Manages customer segments for targeting',
+          'Creates and tracks promo codes',
+          'Handles referral program rewards',
+          'Win-back campaigns for inactive customers',
+          'Discount management with expiration rules',
+          'Requires Growth+ tier',
+          'Works with Campaign Agent for distribution'
+        ],
+        tips: ['Use memorable promo codes', 'Set reasonable usage limits']
+      },
+      {
+        title: 'Social Media Agents (3 Agents)',
         duration: '12 min',
         steps: [
-          'Social Media Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
-          'Social Media Scheduler: Queues and publishes content',
-          'Social Media Analytics: Tracks engagement metrics',
-          'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Social Media agents require Aura Pro Command tier',
-          'Access via Social Media & Web Presence Console'
+          'Social Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
+          'Social Scheduler Agent: Queues and publishes at optimal times',
+          'Social Analytics Agent: Tracks engagement across platforms',
+          'All three require Growth+ tier',
+          'Uses 3-step Content Wizard: Topic → Generate → Schedule',
+          'Auto-adjusts content for platform character limits',
+          'Access via Social Media Ops Console'
         ],
-        tips: ['Respects platform character limits automatically', 'Queue posts for optimal engagement times']
+        tips: ['Consistent posting improves engagement', 'Let AI adapt content per platform']
       },
       {
         title: 'Creative Agent (Content Engine)',
         duration: '10 min',
         steps: [
-          'Creative Agent is the unified AI content generation hub',
-          'Access via Social Media & Web Presence Console → Content Engine tab',
-          'Enter a single topic to generate content for all channels',
-          'Generates: Social posts, Blog content, Email campaigns, SMS templates, Website copy',
-          'All content uses your Brand Voice from AI Content Profile',
-          'Push content directly to Web Presence, Blog, or Outreach campaigns',
-          'Requires Aura Pro Command tier'
+          'Unified AI content generation hub',
+          'Enter single topic to generate content for all channels',
+          'Outputs: Social posts, Blog, Email, SMS, Website copy',
+          'Uses Brand Voice from AI Content Profile',
+          'Push content to Web Presence, Blog, or Campaigns',
+          'Requires Growth+ tier',
+          'Access via Creative & Web Presence Console'
         ],
-        tips: ['Set up AI Content Profile first for best results', 'Generate from one topic for consistent messaging across channels']
+        tips: ['Set up AI Content Profile first', 'Generate from one topic for consistent messaging']
       },
       {
         title: 'Web Presence Agent',
         duration: '8 min',
         steps: [
-          'Web Presence Agent manages your AI-powered website and blog',
-          'Access via Social Media & Web Presence Console → Web Presence tab',
-          'Auto-optimizes SEO for all pages and blog posts',
-          'Monitors site performance and suggests improvements',
-          'Auto-publishes blog posts from the Content Engine',
-          'Manages custom domain verification and SSL',
-          'Requires Aura Pro Command tier',
-          'Has dependency on Creative Agent being enabled'
+          'Manages AI-powered website and blog',
+          'Auto-optimizes SEO for all pages',
+          'Monitors site performance metrics',
+          'Auto-publishes blog posts from Content Engine',
+          'Handles custom domain setup',
+          'Requires Business+ tier',
+          'Depends on Creative Agent being enabled'
         ],
-        tips: ['Connect custom domain for professional branding', 'Enable auto-publish for hands-off content management']
+        tips: ['Connect custom domain for branding', 'Enable auto-publish for hands-off management']
       },
       {
-        title: 'Analytics & Reporting Agents',
+        title: 'Field Operations Agents (4 Agents)',
+        duration: '12 min',
+        steps: [
+          'Dispatch Agent: Assigns technicians based on skills, zones, workload',
+          'Route Agent: Optimizes travel routes with traffic awareness',
+          'ETA Agent: Calculates arrival times, sends customer updates',
+          'Check-in Agent: Tracks on-site status with photo documentation',
+          'All four require Field Ops+ tier',
+          'GPS tracking required on technician devices',
+          'Access via Field Operations Console'
+        ],
+        tips: ['Use skill tags for intelligent dispatch', 'Enable GPS for accurate ETAs']
+      },
+      {
+        title: 'Quoting & Invoice Agents',
         duration: '10 min',
         steps: [
+          'Quoting Agent: Generates quotes from service catalog',
+          'Invoice Agent: Creates invoices, tracks payments',
+          'Both support multi-line items with AI descriptions',
+          'Stripe integration for payment links',
+          'Both require Field Ops+ tier',
+          'Invoice Agent depends on Quoting Agent',
+          'Access via Business Operations Console'
+        ],
+        tips: ['Link quotes to appointments', 'Payment links increase collection rate']
+      },
+      {
+        title: 'Admin & Inventory Agents',
+        duration: '8 min',
+        steps: [
+          'Admin Agent: Company settings, user management, multi-location',
+          'Inventory Agent: Stock tracking, low-level alerts, reorder planning',
+          'Both require Performance+ tier',
+          'Inventory tracks parts usage per job',
+          'Admin handles role-based permissions',
+          'Access via Business Operations Console'
+        ],
+        tips: ['Regular inventory audits ensure accuracy', 'Set appropriate low-stock thresholds']
+      },
+      {
+        title: 'Analytics Agents (4 Agents)',
+        duration: '12 min',
+        steps: [
           'Insights Agent: Natural language business queries',
-          'Performance Agent: Tracks KPIs and operational metrics',
-          'Revenue Agent: Analyzes financial trends and forecasts',
-          'Forecast Agent: Predicts demand and capacity needs',
-          'All analytics agents require Command tier',
+          'Performance Agent: KPIs and operational metrics',
+          'Revenue Agent: Financial trends and analysis (Command only)',
+          'Forecast Agent: Demand prediction and capacity planning (Command only)',
+          'Insights + Performance require Performance+ tier',
+          'Revenue + Forecast require Command tier',
           'Access via Analytics & Reports Console'
         ],
-        tips: ['Use form-based interfaces for structured reports', 'Export to CSV/PDF from Reports tab']
+        tips: ['Use structured forms for consistent reports', 'Forecasts help with staffing decisions']
       },
       {
-        title: 'Talk to Aura (Voice) via ElevenLabs',
+        title: 'Talk to Aura (Voice)',
         duration: '8 min',
         steps: [
-          'Talk to Aura (Voice) powered by ElevenLabs included in Single-Point+ tiers',
-          'Customers can speak naturally with AI agents',
-          'Supports inbound and outbound voice interactions',
-          'Configure voice settings in Integrations → Voice Agent',
-          'Voice cloning available with ElevenLabs account',
-          'Real-time transcription shows in console'
+          'Voice interaction powered by ElevenLabs',
+          'Customers speak naturally with AI agents',
+          'Supports inbound and outbound calls',
+          'Configure voice settings in Integrations',
+          'Voice cloning available for brand voice',
+          'Real-time transcription in console',
+          'Requires ElevenLabs + Twilio integrations'
         ],
-        tips: ['Choose a voice matching your brand personality', 'Test voice interactions before going live']
+        tips: ['Choose voice matching your brand personality', 'Test voice interactions before going live']
       },
       {
-        title: 'Knowledge Base AI Generator',
-        duration: '5 min',
+        title: 'AI Agent Dependencies',
+        duration: '10 min',
         steps: [
-          'Navigate to Knowledge Base from sidebar',
-          'Click the "AI Generate" button (sparkle icon) in the header',
-          'Select your primary industry from the dropdown',
-          'Enter your service area (city, state)',
-          'Choose a business type that matches your operation',
-          'Add a brief description of your services (optional)',
-          'Select content to generate: FAQs, Services, and/or Business Hours',
-          'Review generated content before saving',
-          'Edit any items as needed in the preview',
-          'Click "Save to Knowledge Base" to add all items'
+          'AI Receptionist (triage) is the root dependency for customer-facing agents',
+          'Scheduling Agent requires AI Receptionist',
+          'Follow-up Agent requires AI Receptionist',
+          'Review Agent requires Follow-up Agent',
+          'Dispatch Agent is root for field operations',
+          'Route, ETA, Check-in agents require Dispatch',
+          'Web Presence Agent requires Creative Agent',
+          'Invoice Agent requires Quoting Agent',
+          'Enable dependencies first before dependent agents'
         ],
-        tips: ['Generated content uses industry-specific language', 'You can regenerate if results don\'t match your needs', 'Edit items after saving in their respective tabs']
+        tips: ['Use dependency graph in AI Operatives Hub', 'Locked agents show required dependencies']
+      }
+    ]
+  },
+  {
+    id: 'control-centers',
+    title: 'Control Centers',
+    icon: Briefcase,
+    featureColor: 'feature-platform',
+    guides: [
+      {
+        title: 'Customer Portal Console',
+        duration: '10 min',
+        steps: [
+          'Navigate to Customer Portal Console from sidebar',
+          'Tabs: Chat, Voice, Services, Hours, Feedback, Track, Billing',
+          'Chat tab: View and respond to customer conversations',
+          'Voice tab: Monitor Talk to Aura calls',
+          'Services tab: Display service catalog to customers',
+          'Feedback tab: View customer ratings and reviews',
+          'Track tab: Customer appointment status updates',
+          'Agents: AI Receptionist, Scheduling, Follow-up, Review'
+        ],
+        tips: ['Configure widget in Integrations for website embedding', 'Monitor feedback for service improvements']
       },
       {
-        title: 'Campaign Series Generator',
-        duration: '8 min',
+        title: 'Field Operations Console',
+        duration: '12 min',
         steps: [
-          'Navigate to Campaigns from sidebar (Command tier)',
-          'Click "Batch Series" button next to New Campaign',
-          'Enter series name and select campaign type (promotional, nurture, etc.)',
-          'Choose duration: 2-8 weeks',
-          'Select communication channels: Email, SMS, or both',
-          'Set touchpoints per week (1-3 recommended)',
-          'Review the generated timeline of touchpoints',
-          'AI generates coordinated content for each touchpoint',
-          'Review and edit each message before creating',
-          'Click "Create Series" to save all campaigns'
+          'Navigate to Field Operations from sidebar (Field Ops+ tier)',
+          'Quick Action Tabs: Map View, Schedule, Dispatch, Check-in',
+          'Map View: Real-time technician GPS locations',
+          'Dispatch tab: Job assignment and technician routing',
+          'Schedule tab: Daily/weekly planning view',
+          'Check-in tab: On-site status monitoring',
+          'Agents: Dispatch, Route, ETA, Check-in'
         ],
-        tips: ['Multi-week series improve engagement vs one-off campaigns', 'Mix Email and SMS for best results', 'Each touchpoint builds on the previous one']
+        tips: ['Map View ideal for dispatchers', 'Use skill tags for intelligent matching']
       },
       {
-        title: 'AI Content Generation (SMS & Line Items)',
-        duration: '3 min',
+        title: 'Business Operations Console',
+        duration: '10 min',
         steps: [
-          'SMS Templates: Go to Settings → SMS Templates',
-          'Click the sparkle (✨) button next to Message field',
-          'AI generates professional SMS with 160-character limit',
-          'Generated messages include proper placeholder support',
-          'Quote/Invoice Line Items: Open any Quote or Invoice form',
-          'Click the sparkle button next to line item description',
-          'AI generates professional descriptions from service names',
-          'Descriptions include industry context from your profile',
-          'Accept or regenerate until satisfied'
+          'Navigate to Business Mgt Ops Console from sidebar',
+          'Tabs: Aura Live, Quote, Invoice, Lead, Appts, Inventory, Companies, Employees, Customers',
+          'Aura Live: Real-time activity monitoring',
+          'Quote/Invoice: AI-powered document generation',
+          'Lead: Pipeline and qualification management',
+          'Inventory: Stock levels and reorder alerts (Command)',
+          'Agents: Admin, Quoting, Invoice, Inventory'
         ],
-        tips: ['SMS AI respects character limits automatically', 'Line item AI uses your AI Content Profile for context', 'Works with any service name input']
+        tips: ['Use Aura Live for real-time visibility', 'Quote Forge saves time on complex quotes']
+      },
+      {
+        title: 'Outreach & Sales Ops Console',
+        duration: '10 min',
+        steps: [
+          'Navigate to Outreach & Sales Ops from sidebar (Growth+ tier)',
+          'Tabs: Campaign, Leads, Marketing',
+          'Campaign: Create and manage email/SMS campaigns',
+          'Leads: Pipeline management and scoring',
+          'Marketing: Segments, promos, referrals, win-back',
+          'Agents: Campaign, Lead, Marketing'
+        ],
+        tips: ['Segment audiences for personalization', 'A/B test campaigns for better results']
+      },
+      {
+        title: 'Social Media Ops Console',
+        duration: '10 min',
+        steps: [
+          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
+          'Tabs: Home, Social Posts, Analytics',
+          'Home: Overview and quick actions',
+          'Social Posts: Create and manage content for 6 platforms',
+          'Analytics: Engagement metrics across platforms',
+          'Agents: Social Content, Social Scheduler, Social Analytics',
+          'Supports: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS'
+        ],
+        tips: ['Use Content Wizard for guided creation', 'Schedule posts for optimal engagement times']
+      },
+      {
+        title: 'Creative & Web Presence Console',
+        duration: '12 min',
+        steps: [
+          'Navigate to Creative & Web Presence from sidebar (Business+ tier)',
+          'Tabs: Content Engine, Brand Voice, Generate, Dashboard, Calendar, Web Presence, Blog, SEO',
+          'Content Engine: Multi-channel content generation',
+          'Brand Voice: Configure your brand personality',
+          'Web Presence: AI website builder',
+          'Blog: Manage and publish articles',
+          'SEO: Site optimization and performance',
+          'Agents: Creative Agent, Web Presence Agent'
+        ],
+        tips: ['Set Brand Voice first for consistent content', 'Push content to website with one click']
+      },
+      {
+        title: 'Analytics & Reports Console',
+        duration: '10 min',
+        steps: [
+          'Navigate to Analytics & Reports from sidebar (Performance+ tier)',
+          'Tabs: Performance, Revenue, Insights, Forecast, KPIs, Social, Reminders, Export',
+          'Performance: Operational metrics and trends',
+          'Revenue: Financial analysis (Command for full features)',
+          'Forecast: Demand prediction (Command only)',
+          'Export: CSV and PDF report generation',
+          'Agents: Insights, Performance, Revenue, Forecast'
+        ],
+        tips: ['Weekly reviews catch issues early', 'Use forecasts for capacity planning']
+      },
+      {
+        title: 'AI Operatives Hub',
+        duration: '15 min',
+        steps: [
+          'Navigate to AI Operatives Hub from sidebar (Command tier only)',
+          'Tabs: Operatives, Quick Start, Monitor, Analytics, History',
+          'Operatives: Individual agent management with toggle enable/disable',
+          'Quick Start: Batch activation and dependency visualization',
+          'Monitor: Real-time event streaming from all agents',
+          'Analytics: Performance metrics (requests, success rate, handoffs)',
+          'History: Searchable conversation browser',
+          'Central management for all 24 AI Operatives'
+        ],
+        tips: ['Use Quick Start for rapid deployment', 'Monitor tab shows live agent activity']
       }
     ]
   },
@@ -483,7 +640,7 @@ const guideCategories = [
         title: 'Social Media Integration',
         duration: '15 min',
         steps: [
-          'Navigate to Social Media Ops → Settings (Command tier or Add-On)',
+          'Navigate to Social Media Ops → Settings (Growth+ tier)',
           'Connect social accounts via OAuth for each platform',
           'Supported platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
           'Grant posting permissions when prompted',
@@ -506,6 +663,144 @@ const guideCategories = [
           'Verify messages reach your dashboard'
         ],
         tips: ['Iframe works on most website builders', 'Test on mobile devices too']
+      },
+      {
+        title: 'Tavily AI Research',
+        duration: '8 min',
+        steps: [
+          'Navigate to Integrations → AI Research',
+          'Optional integration for enhanced content research',
+          'Create Tavily account at tavily.com',
+          'Generate and enter API key',
+          'Content Engine uses Tavily for real-time research',
+          'Improves accuracy of AI-generated content',
+          'Available for Business+ tiers'
+        ],
+        tips: ['Optional enhancement for content quality', 'Useful for industry-specific content']
+      }
+    ]
+  },
+  {
+    id: 'creative-web-presence',
+    title: 'Creative & Web Presence',
+    icon: Globe,
+    featureColor: 'feature-marketing',
+    guides: [
+      {
+        title: 'Creative & Web Presence Console',
+        duration: '12 min',
+        steps: [
+          'Navigate to Creative & Web Presence from sidebar (Business+ tier)',
+          'Tabs: Content Engine, Brand Voice, Generate, Dashboard, Calendar, Web Presence, Blog, SEO',
+          'Content Engine: Multi-channel content generation hub',
+          'Brand Voice: Configure your brand personality for AI',
+          'Web Presence: AI-powered website builder',
+          'Blog: Manage and publish articles',
+          'SEO: Site optimization and performance monitoring',
+          'Agents: Creative Agent, Web Presence Agent'
+        ],
+        tips: ['Set Brand Voice first for consistent content', 'Use Content Engine for multi-channel campaigns']
+      },
+      {
+        title: 'Content Engine Overview',
+        duration: '10 min',
+        steps: [
+          'Access Content Engine tab in Creative & Web Presence Console',
+          'Enter a single topic or theme for content generation',
+          'AI generates content for all channels: Social, Blog, Email, SMS, Website',
+          'Content automatically uses your Brand Voice settings',
+          'Preview and edit generated content before saving',
+          'Push content directly to Web Presence, Blog, or Campaigns',
+          'View content history in Dashboard tab'
+        ],
+        tips: ['One topic = consistent messaging across all channels', 'Edit AI content to add specific details']
+      },
+      {
+        title: 'Brand Voice Configuration',
+        duration: '8 min',
+        steps: [
+          'Navigate to Brand Voice tab in Creative & Web Presence Console',
+          'Set your primary industry and business type',
+          'Define your target audience demographics',
+          'Choose brand tone: Professional, Friendly, Technical, Casual',
+          'Add unique selling points for AI context',
+          'Set keywords to include and topics to avoid',
+          'All AI content uses these settings automatically'
+        ],
+        tips: ['Specific voice settings improve content quality', 'Update regularly as your brand evolves']
+      },
+      {
+        title: 'Multi-Channel Content Generation',
+        duration: '12 min',
+        steps: [
+          'Go to Generate tab in Content Engine',
+          'Enter your topic (e.g., "Summer HVAC maintenance tips")',
+          'Select channels: Social, Blog, Email, SMS, Website',
+          'AI generates platform-specific content for each',
+          'Social: 6 platform-optimized posts',
+          'Blog: Full article with headings and SEO',
+          'Email: Campaign-ready HTML template',
+          'SMS: 160-character message',
+          'Website: Hero copy, about section, CTAs',
+          'Review and approve each piece before publishing'
+        ],
+        tips: ['Generate all channels at once for campaign consistency', 'Use Dashboard to track generated content']
+      },
+      {
+        title: 'Web Presence Manager',
+        duration: '10 min',
+        steps: [
+          'Navigate to Web Presence tab in Creative Console',
+          'AI-powered website builder with drag-and-drop sections',
+          'Edit hero section: headline, subheadline, CTA button',
+          'Manage about section, services, and testimonials',
+          'Push website content from Content Engine',
+          'Configure custom domain (Business+ tier)',
+          'Preview changes before publishing'
+        ],
+        tips: ['Use Push to Web Presence for quick updates', 'Keep hero section focused on your main offer']
+      },
+      {
+        title: 'Blog Management',
+        duration: '10 min',
+        steps: [
+          'Navigate to Blog tab in Creative Console',
+          'View and manage all blog posts',
+          'Create new posts manually or from Content Engine',
+          'Edit title, content, featured image, and excerpt',
+          'Set publish date for scheduling',
+          'Enable auto-publish from Content Engine',
+          'Web Presence Agent optimizes SEO automatically'
+        ],
+        tips: ['Consistent blogging improves SEO rankings', 'Use Content Engine for topic ideas']
+      },
+      {
+        title: 'SEO Optimization',
+        duration: '8 min',
+        steps: [
+          'Navigate to SEO tab in Creative Console',
+          'Run SEO scan on your website',
+          'View optimization recommendations',
+          'Check page speed and performance metrics',
+          'Monitor search engine visibility',
+          'Configure scan frequency (Daily/Weekly/Monthly)',
+          'Web Presence Agent applies fixes automatically'
+        ],
+        tips: ['Run scans after major content updates', 'Address high-priority issues first']
+      },
+      {
+        title: 'Content Calendar',
+        duration: '8 min',
+        steps: [
+          'Navigate to Calendar tab in Creative Console',
+          'View scheduled content across all channels',
+          'Monthly view shows posts, blogs, and campaigns',
+          'Click any item to edit or reschedule',
+          'Color-coded by channel type',
+          'Drag and drop to reschedule',
+          'Plan content weeks in advance'
+        ],
+        tips: ['Visualize content gaps in your schedule', 'Balance content across channels']
       }
     ]
   },
@@ -519,7 +814,7 @@ const guideCategories = [
         title: 'Field Operations Console',
         duration: '12 min',
         steps: [
-          'Navigate to Field Operations from sidebar (Multi-Track+ tier)',
+          'Navigate to Field Operations from sidebar (Field Ops+ tier)',
           'Use Quick Action Tabs: Map View, Schedule, Dispatch, Check-in',
           'Map View shows real-time technician GPS locations',
           'Dispatch tab for job assignment and routing',
