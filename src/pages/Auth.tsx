@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Brain, Send } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -980,37 +980,103 @@ export default function Auth() {
                   </p>
                 </div>
 
-                {/* 3rd Party Integrations */}
-                <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
-                  <h4 className="text-[10px] font-semibold text-foreground mb-2 text-center">3rd Party Integrations (Your Accounts)</h4>
-                  <div className="grid grid-cols-2 gap-1.5 text-[9px]">
-                    <div className="flex items-center gap-1">
-                      <Mail className="w-2.5 h-2.5 text-blue-500" />
-                      <span className="text-muted-foreground">Resend (Email)</span>
+                {/* 3rd Party Integrations - Detailed Cards */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-foreground text-center">3rd Party Integration Costs + Usage Fees</h4>
+                  <p className="text-[9px] text-muted-foreground text-center mb-2">You'll need your own accounts with these services.</p>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Calendar className="w-3 h-3 text-cyan-400" />
+                        <span className="font-semibold text-[9px] text-white">Google Calendar</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free - Unlimited</p>
+                      <p className="text-[8px] text-white/60">Optional for scheduling</p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-2.5 h-2.5 text-green-500" />
-                      <span className="text-muted-foreground">Twilio (SMS/Voice)</span>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Mail className="w-3 h-3 text-blue-400" />
+                        <span className="font-semibold text-[9px] text-white">Resend</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
+                      <p className="text-[8px] text-white/60">Then $20/mo for 50k</p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Mic className="w-2.5 h-2.5 text-purple-500" />
-                      <span className="text-muted-foreground">ElevenLabs (AI Voice)</span>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Mic className="w-3 h-3 text-purple-400" />
+                        <span className="font-semibold text-[9px] text-white">ElevenLabs</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
+                      <p className="text-[8px] text-white/60">$5/mo (30k) • $22/mo (100k)</p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="w-2.5 h-2.5 text-amber-500" />
-                      <span className="text-muted-foreground">Stripe (Payments)</span>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Phone className="w-3 h-3 text-green-400" />
+                        <span className="font-semibold text-[9px] text-white">Twilio</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Pay-as-you-go</p>
+                      <p className="text-[8px] text-white/60">$0.0079/SMS • $0.014/min</p>
+                    </div>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Shield className="w-3 h-3 text-cyan-400" />
+                        <span className="font-semibold text-[9px] text-white">A2P 10DLC</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time</p>
+                      <p className="text-[8px] text-white/60">$10/mo + ~$0.003/SMS</p>
+                    </div>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <DollarSign className="w-3 h-3 text-amber-400" />
+                        <span className="font-semibold text-[9px] text-white">Stripe</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Pay-as-you-go</p>
+                      <p className="text-[8px] text-white/60">2.9% + $0.30/transaction</p>
+                    </div>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Send className="w-3 h-3 text-pink-400" />
+                        <span className="font-semibold text-[9px] text-white">Social Media</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free - Your Pages</p>
+                      <p className="text-[8px] text-white/60">OAuth connection</p>
+                    </div>
+
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Brain className="w-3 h-3 text-blue-400" />
+                        <span className="font-semibold text-[9px] text-white">Google Gemini</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 15 req/min</p>
+                      <p className="text-[8px] text-white/60">AI content generation</p>
+                    </div>
+
+                    <div className="rounded-lg p-2 col-span-2" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <Search className="w-3 h-3 text-orange-400" />
+                        <span className="font-semibold text-[9px] text-white">Tavily</span>
+                      </div>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                      <p className="text-[8px] text-white/60">Optional AI research engine • Enhances content quality</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Concierge Onboarding */}
-                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-2">
-                    <Headphones className="w-5 h-5 text-blue-400" />
+                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-1.5">
+                    <Headphones className="w-4 h-4 text-blue-400" />
                   </div>
-                  <h4 className="text-sm font-semibold text-blue-300 mb-1">Concierge Onboarding</h4>
-                  <p className="text-xs text-blue-200/80">
-                    Aura Intercept will configure all 3rd party integrations on your behalf for a one-time setup fee of <span className="font-bold text-blue-100">$500</span>.
+                  <h4 className="text-xs font-semibold text-blue-300 mb-1">Concierge Onboarding</h4>
+                  <p className="text-[10px] text-blue-200/80">
+                    We'll configure all 3rd party integrations for a one-time fee of <span className="font-bold text-blue-100">$500</span>.
                   </p>
                 </div>
               </div>
