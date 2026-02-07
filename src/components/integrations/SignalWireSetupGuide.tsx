@@ -52,12 +52,6 @@ export function SignalWireSetupGuide() {
           </AlertDescription>
         </Alert>
 
-        {/* SignalWire Benefits */}
-        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-          <p className="text-green-600 dark:text-green-400 text-xs">
-            <strong>💡 Why SignalWire?</strong> Up to 40% cheaper SMS ($0.004/msg vs $0.0079), lower voice rates ($0.01/min), and full Twilio API compatibility for easy migration.
-          </p>
-        </div>
 
         <Accordion type="single" collapsible className="w-full">
           {/* Step 1: A2P 10DLC Overview */}
