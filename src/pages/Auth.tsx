@@ -699,7 +699,7 @@ export default function Auth() {
                   {/* Industry-Specific Tiers Label */}
                   <p className="text-xs font-medium text-muted-foreground">Industry-Specific Packages:</p>
                   
-                  {/* Express */}
+                  {/* Starter */}
                   <div 
                     onClick={() => setSelectedTier(selectedTier === 'express' ? null : 'express')}
                     className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
@@ -716,7 +716,7 @@ export default function Auth() {
                           {selectedTier === 'express' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Express</h3>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Starter</h3>
                           <p className="text-[10px] text-card-foreground/70">Restaurants & Cafes</p>
                         </div>
                       </div>
@@ -944,7 +944,7 @@ export default function Auth() {
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
                       <span>24 Agents</span>
                       <span>•</span>
-                      <span>8 Consoles</span>
+                      <span>7 Consoles</span>
                       <span>•</span>
                       <span>50 Employees</span>
                     </div>
@@ -956,13 +956,13 @@ export default function Auth() {
                   <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
                     <p className="text-xs text-center text-foreground">
                       <span className="font-medium">Selected: {
-                        selectedTier === 'express' ? 'Aura Express' :
-                        selectedTier === 'flow' ? 'Aura Flow' :
-                        selectedTier === 'halo' ? 'Aura Halo' :
-                        selectedTier === 'core' ? 'Aura Core' :
-                        selectedTier === 'single_point' ? 'Single-Point' :
-                        selectedTier === 'multi_track' ? 'Multi-Track' :
-                        'Aura Pro Command'
+                        selectedTier === 'express' ? 'Aura Starter' :
+                        selectedTier === 'flow' ? 'Aura Scheduling' :
+                        selectedTier === 'halo' ? 'Aura Growth' :
+                        selectedTier === 'core' ? 'Aura Business' :
+                        selectedTier === 'single_point' ? 'Aura Field Ops' :
+                        selectedTier === 'multi_track' ? 'Aura Performance' :
+                        'Aura Command'
                       }</span>
                     </p>
                   </div>
