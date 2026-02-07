@@ -1,73 +1,106 @@
 
 
-# Fix: Booking Agent "Business Closed" Error
+# Update SignalWire Instructions to Correct Terminology
 
-## Root Cause
-The `booking-actions` edge function queries the `business_hours` table using `.single()`, but the table contains **multiple hour types** per day (regular, office, field, emergency). This causes the query to fail, returning `null` and triggering the "closed" message.
-
-## Solution
-Update the business hours query to:
-1. Filter for appropriate hour types (`regular` or `office`)
-2. Check if **any** matching hour type is open
-3. Use the open hours for slot calculation
+## Problem Identified
+The webhook configuration instructions currently use **Twilio-style field names**, which don't match the SignalWire dashboard. Users are confused because the labels don't correspond to what they see in SignalWire.
 
 ---
 
-## Technical Changes
+## Changes Required
 
-### File: `supabase/functions/booking-actions/index.ts`
+### 1. SignalWireSetupGuide.tsx - Webhook Step (Step 6)
 
-**Lines 287-298** - Update the business hours query:
+**Current labels (Twilio terminology):**
+- "Voice 'When a call comes in'"
+- "Voice 'Call Status Callback'"
+- "Voice 'Status Callback URL'"
+- "Messaging 'When a message comes in'"
+
+**Updated labels (SignalWire terminology):**
+- "Call Request URL (Inbound)"
+- "Call Status Callback URL"
+- "Status Callback URL" (combine with above or clarify)
+- "Message Request URL (Inbound)"
+
+**Updated navigation instructions:**
 
 ```text
 Before:
-const dayOfWeek = new Date(date).getDay();
-const { data: hours } = await supabase
-  .from('business_hours')
-  .select('*')
-  .eq('company_id', companyId)
-  .eq('day_of_week', dayOfWeek)
-  .single();
+"In SignalWire Dashboard, go to Phone Numbers → select your number → Edit → Configure the Voice and Messaging webhook URLs."
 
-if (!hours || hours.is_closed) {
-  return { success: true, available_slots: [], message: 'Business is closed on this day' };
+After:
+"In SignalWire Dashboard, go to Phone Numbers → click your number → Settings tab → scroll to 'LaML Webhooks' section. Configure the Call and Message Handler URLs."
+```
+
+**Specific line updates in Step 6 (lines 318-406):**
+
+| Line | Current Text | Updated Text |
+|------|--------------|--------------|
+| 326 | Voice "When a call comes in" | Call Request URL (Inbound Calls) |
+| 338 | Set to HTTP POST - Handles incoming calls with AI | Method: POST - Receives incoming call events |
+| 346 | Voice "Call Status Callback" | Call Status Callback URL |
+| 358 | Handles missed calls - triggers AI callback or SMS | Method: POST - Receives call completion events |
+| 366 | Voice "Status Callback URL" | *(Remove - combine with above or clarify)* |
+| 386 | Messaging "When a message comes in" | Message Request URL (Inbound SMS) |
+| 398 | Set to HTTP POST - Handles inbound SMS with AI responses | Method: POST - Receives incoming SMS events |
+| 403 | "Phone Numbers → select your number → Edit" | "Phone Numbers → click your number → Settings → LaML Webhooks" |
+
+---
+
+### 2. PlatformGuides.tsx - Integration Guide (lines 555-567)
+
+Update the guide to reference SignalWire instead of Twilio:
+
+```text
+Before:
+{
+  title: 'Twilio Voice & SMS',
+  steps: [
+    'Navigate to Integrations → Voice Agent or SMS & Text',
+    'Create Twilio account at twilio.com',
+    'Obtain Account SID and Auth Token from Twilio Console',
+    ...
+  ]
 }
 
 After:
-// Parse date properly using local components to avoid timezone issues
-const dateParts = date.split('-');
-const targetDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-const dayOfWeek = targetDate.getDay();
-
-// Get ALL hour types for this day (regular, office, field, emergency)
-const { data: allHours } = await supabase
-  .from('business_hours')
-  .select('*')
-  .eq('company_id', companyId)
-  .eq('day_of_week', dayOfWeek)
-  .in('hour_type', ['regular', 'office']); // Only booking-relevant types
-
-// Find any open hours (prefer 'office' for booking, then 'regular')
-const hours = allHours?.find(h => !h.is_closed && h.hour_type === 'office') 
-           || allHours?.find(h => !h.is_closed && h.hour_type === 'regular');
-
-if (!hours) {
-  return { success: true, available_slots: [], message: 'Business is closed on this day' };
+{
+  title: 'SignalWire Voice & SMS',
+  steps: [
+    'Navigate to Integrations → Voice Agent or SMS & Text',
+    'Create SignalWire account at signalwire.com',
+    'Obtain Project ID and API Token from SignalWire Dashboard',
+    'Note your Space URL (e.g., yourspace.signalwire.com)',
+    'Purchase a phone number with Voice and SMS capabilities',
+    'Enter credentials in the integration settings',
+    'Configure LaML webhook URLs for call and message handling',
+    'Test with your own phone number'
+  ]
 }
 ```
 
 ---
 
-## Why This Fix Works
+## Updated Webhook Configuration Section Preview
 
-| Before | After |
-|--------|-------|
-| Query returns error when 4 rows exist | Query returns all rows, then finds open one |
-| `hours = null` → "Business closed" | `hours = office hours` → Proceeds to check slots |
-| Timezone-sensitive date parsing | Local date component parsing |
+After the changes, Step 6 will display:
+
+| Webhook Type | Label | Description |
+|--------------|-------|-------------|
+| Voice Inbound | **Call Request URL** | Method: POST - Receives incoming call events |
+| Voice Status | **Call Status Callback URL** | Method: POST - Receives call status events & recordings |
+| SMS Inbound | **Message Request URL** | Method: POST - Receives incoming SMS events |
+
+And the navigation tip will read:
+> "In SignalWire Dashboard: **Phone Numbers** → click your number → **Settings** tab → scroll to **LaML Webhooks** section"
 
 ---
 
-## Deployment
-After the change, the `booking-actions` edge function will be automatically redeployed.
+## Files to Update
+
+| File | Changes |
+|------|---------|
+| `src/components/integrations/SignalWireSetupGuide.tsx` | Update Step 6 webhook labels and navigation instructions |
+| `src/pages/PlatformGuides.tsx` | Update "Twilio Voice & SMS" guide to "SignalWire Voice & SMS" |
 
