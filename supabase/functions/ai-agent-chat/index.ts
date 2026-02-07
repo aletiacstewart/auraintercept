@@ -193,13 +193,20 @@ Be concise but friendly. Extract info from messages when provided; only ask for 
 - Track existing appointments when requested
 - CAPTURE LEADS when customers don't complete booking
 
-CRITICAL - SERVICE VALIDATION:
+CRITICAL - SERVICE VALIDATION & DELIVERY TYPE:
 You can ONLY book appointments for services that are listed in the AVAILABLE SERVICES section of your context.
-- If a customer requests a service that is NOT in your available services list, politely inform them:
-  "I'm sorry, we don't currently offer [requested service]. Here are the services we do offer: [list available services]."
-- If NO services are configured (AVAILABLE SERVICES section is empty or missing), tell the customer:
-  "I apologize, but we don't have any services configured for online booking at this time. Please call us directly to schedule an appointment."
-- NEVER create an appointment for a service that doesn't exist in your available services list!
+Each service has a DELIVERY TYPE that tells you where the service takes place:
+- "virtual" = Online appointment (video call, phone call) - NO ADDRESS NEEDED
+- "in_person_business" = Customer comes to our location - NO ADDRESS NEEDED (we provide our address)
+- "in_person_customer" = We come to the customer - MUST ASK FOR THEIR ADDRESS
+
+CRITICAL: Check the delivery_type in AVAILABLE SERVICES before asking for address!
+- For VIRTUAL services: Skip the address question entirely. Just confirm date/time.
+- For IN_PERSON_BUSINESS services: Tell them our business address instead of asking for theirs.
+- For IN_PERSON_CUSTOMER services: Ask "What's the address where you'd like the service performed?"
+
+If a customer requests a service that is NOT in your available services list, politely inform them what services you DO offer.
+If NO services are configured, tell the customer to call directly.
 
 APPOINTMENT TRACKING:
 If a customer asks to TRACK or CHECK STATUS of an appointment:
@@ -209,29 +216,28 @@ If a customer asks to TRACK or CHECK STATUS of an appointment:
 
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
 The AI Receptionist should have already collected the customer's NAME and PHONE NUMBER.
-Look for this info in the handoff context (e.g., "Customer Name: John Smith, Phone: 555-1234, Issue: AC not cooling").
+Look for this info in the handoff context (e.g., "Customer Name: John Smith, Phone: 555-1234, Issue: Consultation").
 
 CRITICAL - CONFIRM INFO WITH YES/NO (don't re-ask!):
 If you received customer info from the handoff, CONFIRM it like this:
-"Hi [Name]! I see you need help with [issue]. I have your phone as [phone]. Is that correct?"
-- If YES: Proceed to collect the service address and schedule
+"Hi [Name]! I see you'd like to book [service]. I have your phone as [phone]. Is that correct?"
+- If YES: Proceed based on service delivery type (see above)
 - If NO: Ask which information needs to be updated
 
 DO NOT re-ask for name and phone if it was provided - just confirm with yes/no!
 
 CONVERSATION FLOW:
-1. FIRST: Check if the requested service is in your AVAILABLE SERVICES list. If not, tell them what services you DO offer.
-2. If service is valid, greet by name (from handoff) and confirm the info with a simple yes/no question
-3. If confirmed, ask for their SERVICE ADDRESS: "What's the address where you'd like the service performed?"
+1. FIRST: Check if the requested service is in your AVAILABLE SERVICES list. Note its delivery_type.
+2. Greet by name (from handoff) and confirm the info with a simple yes/no question
+3. Based on delivery_type:
+   - VIRTUAL: Skip address, proceed to date/time
+   - IN_PERSON_BUSINESS: Mention "You'll come to our location at [business address]", proceed to date/time
+   - IN_PERSON_CUSTOMER: Ask "What's the address where you'd like the service performed?"
 4. Ask what date/time works for them
 5. Check availability using the check_availability tool
 6. Offer 2-3 available time slots
-7. Confirm ALL details (name, phone, address, date/time, service) before booking
-8. Create the appointment using create_appointment tool with all info - use EXACT service name from available services
-
-CRITICAL: YOU MUST COLLECT THE SERVICE ADDRESS!
-For in-home or on-site services, always ask for the address.
-DO NOT book an appointment without the service address.
+7. Confirm ALL details before booking (include address only if in_person_customer)
+8. Create the appointment using create_appointment tool with all info
 
 LEAD CAPTURE - NEVER MISS A POTENTIAL CUSTOMER:
 If a customer provides contact info but DOESN'T complete the booking:
@@ -246,7 +252,7 @@ ALWAYS use the capture_lead tool to save their information with:
 - notes: Summary of what service they wanted and why they didn't complete
 
 Use the check_availability tool to find open slots.
-Use the create_appointment tool to book appointments - include the address in the notes field.`,
+Use the create_appointment tool to book appointments.`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
@@ -2342,10 +2348,10 @@ serve(async (req) => {
     // Fetch knowledge base data for booking/dispatch agents
     let knowledgeBaseContext = '';
     if (['booking', 'dispatch', 'quoting', 'triage'].includes(agentType)) {
-      // Get services
+      // Get services with delivery_type
       const { data: services } = await supabase
         .from('services')
-        .select('name, description, duration_minutes, price, category')
+        .select('name, description, duration_minutes, price, category, delivery_type')
         .eq('company_id', companyId)
         .eq('is_active', true)
         .limit(20);
@@ -2368,12 +2374,22 @@ serve(async (req) => {
 
       const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       
+      // Map delivery_type to human-readable labels
+      const deliveryTypeLabels: Record<string, string> = {
+        'virtual': 'Virtual (Online/Phone)',
+        'in_person_business': 'At Our Location',
+        'in_person_customer': 'At Customer Location',
+      };
+      
       if (services && services.length > 0) {
         knowledgeBaseContext += `\n\nAVAILABLE SERVICES:\n`;
-        services.forEach(s => {
+        services.forEach((s: any) => {
+          const deliveryType = s.delivery_type || 'in_person_customer';
+          const deliveryLabel = deliveryTypeLabels[deliveryType] || 'At Customer Location';
           knowledgeBaseContext += `- ${s.name}`;
           if (s.duration_minutes) knowledgeBaseContext += ` (${s.duration_minutes} mins)`;
           if (s.price) knowledgeBaseContext += ` - $${s.price}`;
+          knowledgeBaseContext += ` [delivery_type: ${deliveryType} - ${deliveryLabel}]`;
           if (s.description) knowledgeBaseContext += `\n  ${s.description}`;
           knowledgeBaseContext += '\n';
         });
@@ -4144,7 +4160,7 @@ async function executeAgentTool(
       
       let query = supabase
         .from('services')
-        .select('id, name, description, price, duration_minutes, category, flat_fee, hourly_rate')
+        .select('id, name, description, price, duration_minutes, category, flat_fee, hourly_rate, delivery_type')
         .eq('company_id', companyId)
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
@@ -4168,12 +4184,20 @@ async function executeAgentTool(
         };
       }
       
+      const deliveryTypeLabels: Record<string, string> = {
+        'virtual': 'Virtual (Online/Phone)',
+        'in_person_business': 'At Our Location',
+        'in_person_customer': 'At Your Location',
+      };
+      
       const formattedServices = services.map((s: any) => ({
         name: s.name,
         description: s.description || 'Professional service',
         price: s.flat_fee || s.price || (s.hourly_rate ? `$${s.hourly_rate}/hr` : 'Contact for pricing'),
         duration: s.duration_minutes ? `${s.duration_minutes} min` : null,
         category: s.category,
+        delivery_type: s.delivery_type || 'in_person_customer',
+        delivery_label: deliveryTypeLabels[s.delivery_type] || 'At Your Location',
       }));
       
       return {
