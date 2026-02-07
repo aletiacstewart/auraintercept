@@ -149,7 +149,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
       'Social Media Ops (Content, Scheduler, Analytics agents)',
       'Creative Agent + Web Presence Agent',
-      'AI Outbound Calls for reminders (requires Twilio)',
+      'AI Outbound Calls for reminders (requires SignalWire)',
       'Up to 15 employees',
       'API Access',
     ],
@@ -587,9 +587,9 @@ export interface IntegrationConfig {
 
 export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
   {
-    name: 'Twilio',
+    name: 'SignalWire',
     purpose: 'SMS & Voice Calls',
-    cost: '$1.15/number + ~$30-100/mo usage',
+    cost: '$2/number + ~$20-80/mo usage (40% cheaper SMS)',
     requiredFor: 'Halo+ (for Voice)',
     optional: false,
   },
@@ -738,7 +738,7 @@ export function formatEmployees(employees: number | 'Unlimited'): string {
 // INTEGRATION REQUIREMENTS BY TIER
 // ============================================
 
-export type IntegrationId = 'stripe' | 'twilio' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar';
+export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar';
 
 export interface IntegrationRequirement {
   required: boolean; // true = auto-enabled + locked, false = optional (soft lock)
@@ -751,7 +751,7 @@ export interface IntegrationRequirement {
 export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
   express: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    twilio: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: false, reason: 'Optional for email notifications' },
     tavily: { required: false, reason: 'Not included in your plan' },
@@ -759,7 +759,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   aura_flow: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    twilio: { required: true, reason: 'Required for voice calls and SMS reminders' },
+    signalwire: { required: true, reason: 'Required for voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email follow-ups' },
     tavily: { required: false, reason: 'Not included in your plan' },
@@ -767,7 +767,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   halo: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    twilio: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: false, reason: 'Optional for email notifications' },
     tavily: { required: false, reason: 'Not included in your plan' },
@@ -775,7 +775,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    twilio: { required: false, reason: 'Voice not included - use Message Aura (text)' },
+    signalwire: { required: false, reason: 'Voice not included - use Message Aura (text)' },
     elevenlabs: { required: false, reason: 'Voice not included in your plan' },
     resend: { required: false, reason: 'Optional for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
@@ -783,7 +783,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   single_point: {
     stripe: { required: false, reason: 'Optional for invoice payments' },
-    twilio: { required: true, reason: 'Required for voice calls and SMS reminders' },
+    signalwire: { required: true, reason: 'Required for voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email reminders' },
     tavily: { required: false, reason: 'Optional for AI content research' },
@@ -791,7 +791,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   multi_track: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
-    twilio: { required: true, reason: 'Required for dispatch notifications and voice' },
+    signalwire: { required: true, reason: 'Required for dispatch notifications and voice' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
@@ -799,7 +799,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
   command: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
-    twilio: { required: true, reason: 'Required for full communication suite' },
+    signalwire: { required: true, reason: 'Required for full communication suite' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email campaigns' },
     tavily: { required: false, reason: 'Optional for AI content research' },
@@ -808,7 +808,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   // Fallback for free/unknown tiers
   free: {
     stripe: { required: false, reason: 'Subscribe to enable payments' },
-    twilio: { required: false, reason: 'Subscribe to enable voice/SMS' },
+    signalwire: { required: false, reason: 'Subscribe to enable voice/SMS' },
     elevenlabs: { required: false, reason: 'Subscribe to enable AI voice' },
     resend: { required: false, reason: 'Subscribe to enable email' },
     tavily: { required: false, reason: 'Subscribe to enable AI research' },

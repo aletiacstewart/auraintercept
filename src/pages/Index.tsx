@@ -260,13 +260,13 @@ const platformFeatures = [{
 const communicationChannels = [{
   icon: Mic,
   title: 'Talk to Aura (Voice)',
-  description: 'Natural voice conversations with AI agents for phone-based customer service. Requires ElevenLabs + Twilio.',
+  description: 'Natural voice conversations with AI agents for phone-based customer service. Requires ElevenLabs + SignalWire.',
   color: 'bg-channel-voice',
   gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'
 }, {
   icon: MessageSquare,
   title: 'SMS Reminders',
-  description: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires Twilio.',
+  description: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires SignalWire.',
   color: 'bg-channel-sms',
   gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
 }, {
@@ -756,7 +756,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs</p>
+                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs</p>
               </CardContent>
             </Card>
 
@@ -808,7 +808,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
 
@@ -858,7 +858,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
           </div>
@@ -921,7 +921,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio</p>
+                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: ElevenLabs + SignalWire</p>
               </CardContent>
             </Card>
 
@@ -982,7 +982,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
+                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: ElevenLabs + SignalWire + Resend</p>
               </CardContent>
             </Card>
 
@@ -1043,7 +1043,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-rose-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
+                <p className="text-[9px] text-rose-400/70 mt-2 text-center">Requires: ElevenLabs + SignalWire + Resend</p>
               </CardContent>
             </Card>
 
@@ -1174,11 +1174,11 @@ export default function Index() {
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Phone className="w-3.5 h-3.5 text-green-400" />
-                  <span className="font-semibold text-xs text-white">Twilio</span>
+                  <span className="font-semibold text-xs text-white">SignalWire</span>
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-[10px] text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
+                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (40% cheaper SMS)</p>
+                <p className="text-[10px] text-white/70">$2/number • $0.004/SMS • $0.01/min calls</p>
                 <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
               </div>
 
@@ -1187,7 +1187,7 @@ export default function Index() {
                   <Shield className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="font-semibold text-xs text-white">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">US SMS Carrier Registration (Twilio)</p>
+                <p className="text-[10px] text-white/70 mb-1">US SMS Carrier Registration (SignalWire)</p>
                 <p className="text-[10px] text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
                 <p className="text-[10px] text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
                 <p className="text-[10px] text-white/60">Required for: All SMS features • Prevents carrier filtering</p>

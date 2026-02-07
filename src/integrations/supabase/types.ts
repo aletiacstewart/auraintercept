@@ -5786,6 +5786,10 @@ export type Database = {
           openai_tts_model: string | null
           openai_tts_voice: string | null
           resend_api_key: string | null
+          signalwire_api_token: string | null
+          signalwire_phone_number: string | null
+          signalwire_project_id: string | null
+          signalwire_space_url: string | null
           stripe_publishable_key: string | null
           stripe_secret_key: string | null
           stripe_webhook_secret: string | null
@@ -5819,6 +5823,10 @@ export type Database = {
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
           resend_api_key?: string | null
+          signalwire_api_token?: string | null
+          signalwire_phone_number?: string | null
+          signalwire_project_id?: string | null
+          signalwire_space_url?: string | null
           stripe_publishable_key?: string | null
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null
@@ -5852,6 +5860,10 @@ export type Database = {
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
           resend_api_key?: string | null
+          signalwire_api_token?: string | null
+          signalwire_phone_number?: string | null
+          signalwire_project_id?: string | null
+          signalwire_space_url?: string | null
           stripe_publishable_key?: string | null
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null

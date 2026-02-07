@@ -59,11 +59,11 @@ const featureDescriptions: Record<string, string> = {
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
   // Communication Channels - Chat vs Voice distinction
-  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or Twilio needed).',
-  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Available on Aura Express and above (where enabled). Requires ElevenLabs for voice synthesis and Twilio for telephony.',
+  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or SignalWire needed).',
+  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Available on Aura Express and above (where enabled). Requires ElevenLabs for voice synthesis and SignalWire for telephony.',
   // 3rd Party Integrations
   'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based). NOT required for Message Aura (Text).',
-  'Twilio (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text).',
+  'SignalWire (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text). 40% cheaper SMS than alternatives.',
 };
 
 // Tier configuration matching homepage
@@ -301,7 +301,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Resend (Email)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Stripe (Payments)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Twilio (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'ElevenLabs (Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Calendar Sync', core: 'x', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
       { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
@@ -821,14 +821,14 @@ export default function Subscription() {
                 <MessageSquare className="w-5 h-5 text-sky-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-card-foreground">SMS Reminders</p>
-                  <p className="text-muted-foreground">Usage-based via Twilio</p>
+                  <p className="text-muted-foreground">Usage-based via SignalWire</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Mic className="w-5 h-5 text-violet-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-card-foreground">AI Voice Calls</p>
-                  <p className="text-muted-foreground">Usage-based via ElevenLabs + Twilio</p>
+                  <p className="text-muted-foreground">Usage-based via ElevenLabs + SignalWire</p>
                 </div>
               </div>
             </div>
