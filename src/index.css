@@ -11,7 +11,7 @@
     /* Dark navy cards with high-contrast text */
     --card: 208 30% 18%;
     --card-foreground: 0 0% 98%;
-    --card-muted: 0 0% 85%;
+    --card-muted: 215 16% 47%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 208 30% 15%;
@@ -227,13 +227,18 @@
        - Both will now be readable on dark backgrounds
      ============================================================ */
   .guide-card {
-    background: hsl(var(--card));
-    color: hsl(var(--card-foreground));
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
     border: 1px solid hsl(var(--border));
-
-    /* Override ALL text tokens for dark card readability */
-    --foreground: var(--card-foreground);
-    --muted-foreground: var(--card-muted);
+  }
+  
+  /* Force readable text color in guide card accordion content */
+  .guide-card .text-muted-foreground {
+    color: hsl(215 16% 47%) !important;
+  }
+  
+  .dark .guide-card .text-muted-foreground {
+    color: hsl(210 25% 75%) !important;
   }
 
   /* Dark surface border utility - higher contrast on dark cards */
