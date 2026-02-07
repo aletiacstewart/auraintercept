@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -53,21 +53,21 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Handle incoming call webhook from Twilio
-    if (path === 'incoming' || url.searchParams.get('action') === 'incoming') {
-      const formData = await req.formData();
-      const callerPhone = formData.get('From') as string;
-      const calledPhone = formData.get('To') as string;
-      const callSid = formData.get('CallSid') as string;
+      // Handle incoming call webhook from SignalWire
+      if (path === 'incoming' || url.searchParams.get('action') === 'incoming') {
+        const formData = await req.formData();
+        const callerPhone = formData.get('From') as string;
+        const calledPhone = formData.get('To') as string;
+        const callSid = formData.get('CallSid') as string;
 
-      console.log(`Incoming call from ${callerPhone} to ${calledPhone}, CallSid: ${callSid}`);
+        console.log(`Incoming call from ${callerPhone} to ${calledPhone}, CallSid: ${callSid}`);
 
-      // Find company by Twilio phone number
-      const { data: integration } = await supabase
-        .from('tenant_integrations')
-        .select('company_id, elevenlabs_api_key, elevenlabs_voice_id')
-        .eq('twilio_phone_number', calledPhone)
-        .single();
+        // Find company by SignalWire phone number
+        const { data: integration } = await supabase
+          .from('tenant_integrations')
+          .select('company_id, elevenlabs_api_key, elevenlabs_voice_id')
+          .eq('signalwire_phone_number', calledPhone)
+          .single();
 
       if (!integration) {
         console.error('No company found for phone number:', calledPhone);

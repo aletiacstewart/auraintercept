@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -77,17 +77,17 @@ serve(async (req) => {
       );
     }
 
-    // Get Twilio credentials
+    // Get SignalWire credentials
     const { data: integration, error: integrationError } = await supabase
       .from('tenant_integrations')
-      .select('twilio_account_sid, twilio_auth_token, twilio_phone_number, elevenlabs_api_key, elevenlabs_voice_id')
+      .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
       .eq('company_id', companyId)
       .single();
 
-    if (integrationError || !integration?.twilio_account_sid) {
+    if (integrationError || !integration?.signalwire_project_id) {
       console.error('Integration not found:', integrationError);
       return new Response(
-        JSON.stringify({ error: 'Twilio integration not configured' }),
+        JSON.stringify({ error: 'SignalWire integration not configured' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -128,20 +128,20 @@ serve(async (req) => {
     // Encode context to pass via URL
     const encodedContext = encodeURIComponent(JSON.stringify(callContext));
 
-    // Initiate the call via Twilio
-    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integration.twilio_account_sid}/Calls.json`;
+    // Initiate the call via SignalWire
+    const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
     
     const formData = new URLSearchParams();
     formData.append('To', customerPhone);
-    formData.append('From', integration.twilio_phone_number!);
+    formData.append('From', integration.signalwire_phone_number!);
     formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
     formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
     formData.append('Timeout', '30');
 
-    const authHeader = btoa(`${integration.twilio_account_sid}:${integration.twilio_auth_token}`);
+    const authHeader = btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`);
     
-    const twilioResponse = await fetch(twilioUrl, {
+    const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${authHeader}`,
@@ -150,17 +150,17 @@ serve(async (req) => {
       body: formData.toString(),
     });
 
-    const twilioData = await twilioResponse.json();
+    const signalwireData = await signalwireResponse.json();
 
-    if (!twilioResponse.ok) {
-      console.error('Twilio error:', twilioData);
+    if (!signalwireResponse.ok) {
+      console.error('SignalWire error:', signalwireData);
       return new Response(
-        JSON.stringify({ error: 'Failed to initiate call', details: twilioData }),
+        JSON.stringify({ error: 'Failed to initiate call', details: signalwireData }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Call initiated successfully:', twilioData.sid);
+    console.log('Call initiated successfully:', signalwireData.sid);
 
     // Log the outbound call
     const { error: logError } = await supabase
@@ -169,11 +169,11 @@ serve(async (req) => {
         company_id: companyId,
         direction: 'outbound',
         status: 'initiated',
-        from_number: integration.twilio_phone_number,
+        from_number: integration.signalwire_phone_number,
         to_number: customerPhone,
         customer_name: customerName,
         customer_phone: customerPhone,
-        call_sid: twilioData.sid,
+        call_sid: signalwireData.sid,
         purpose,
         metadata: { appointmentDetails },
       });
@@ -185,8 +185,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        callSid: twilioData.sid,
-        status: twilioData.status,
+        callSid: signalwireData.sid,
+        status: signalwireData.status,
         message: 'Call initiated successfully'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

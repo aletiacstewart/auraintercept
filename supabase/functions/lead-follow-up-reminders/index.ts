@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -96,45 +96,45 @@ serve(async (req) => {
         switch (followUp.follow_up_type) {
           case 'sms':
             if (lead.phone) {
-              // Get company's Twilio credentials
+              // Get company's SignalWire credentials
               const { data: settings } = await supabase
-                .from('integration_settings')
-                .select('twilio_account_sid, twilio_auth_token, twilio_phone_number')
+                .from('tenant_integrations')
+                .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
                 .eq('company_id', followUp.company_id)
                 .single();
 
-              if (settings?.twilio_account_sid && settings?.twilio_auth_token && settings?.twilio_phone_number) {
+              if (settings?.signalwire_project_id && settings?.signalwire_api_token && settings?.signalwire_phone_number && settings?.signalwire_space_url) {
                 const message = followUp.message_template || 
                   `Hi ${leadName}, this is ${companyName} following up on your inquiry. How can we help you today?`;
 
                 try {
-                  const twilioResponse = await fetch(
-                    `https://api.twilio.com/2010-04-01/Accounts/${settings.twilio_account_sid}/Messages.json`,
+                  const signalwireResponse = await fetch(
+                    `https://${settings.signalwire_space_url}/api/laml/2010-04-01/Accounts/${settings.signalwire_project_id}/Messages`,
                     {
                       method: 'POST',
                       headers: {
-                        'Authorization': `Basic ${btoa(`${settings.twilio_account_sid}:${settings.twilio_auth_token}`)}`,
+                        'Authorization': `Basic ${btoa(`${settings.signalwire_project_id}:${settings.signalwire_api_token}`)}`,
                         'Content-Type': 'application/x-www-form-urlencoded',
                       },
                       body: new URLSearchParams({
                         To: lead.phone,
-                        From: settings.twilio_phone_number,
+                        From: settings.signalwire_phone_number,
                         Body: message,
                       }),
                     }
                   );
 
-                  if (twilioResponse.ok) {
+                  if (signalwireResponse.ok) {
                     sent = true;
                   } else {
-                    const twilioError = await twilioResponse.json();
-                    errorMessage = twilioError.message || 'Failed to send SMS';
+                    const signalwireError = await signalwireResponse.json();
+                    errorMessage = signalwireError.message || 'Failed to send SMS';
                   }
                 } catch (e: unknown) {
                   errorMessage = `SMS error: ${e instanceof Error ? e.message : 'Unknown error'}`;
                 }
               } else {
-                errorMessage = 'Twilio not configured';
+                errorMessage = 'SignalWire not configured';
               }
             } else {
               errorMessage = 'No phone number';

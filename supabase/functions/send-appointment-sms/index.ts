@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -37,10 +37,10 @@ Deno.serve(async (req) => {
 
       console.log(`Processing custom SMS to ${toPhone} for company ${companyId}`);
 
-      // Fetch company's Twilio credentials
+      // Fetch company's SignalWire credentials
       const { data: integrations, error: integrationsError } = await supabase
         .from('tenant_integrations')
-        .select('twilio_account_sid, twilio_auth_token, twilio_phone_number')
+        .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
         .eq('company_id', companyId)
         .maybeSingle();
 
@@ -52,23 +52,23 @@ Deno.serve(async (req) => {
         );
       }
 
-      if (!integrations?.twilio_account_sid || !integrations?.twilio_auth_token || !integrations?.twilio_phone_number) {
+      if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
         return new Response(
-          JSON.stringify({ error: 'Twilio not configured for this company' }),
+          JSON.stringify({ error: 'SignalWire not configured for this company' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // Send SMS via Twilio
-      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integrations.twilio_account_sid}/Messages.json`;
-      const credentials = btoa(`${integrations.twilio_account_sid}:${integrations.twilio_auth_token}`);
+      // Send SMS via SignalWire
+      const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+      const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
 
       const formData = new URLSearchParams();
       formData.append('To', toPhone);
-      formData.append('From', integrations.twilio_phone_number);
+      formData.append('From', integrations.signalwire_phone_number);
       formData.append('Body', message);
 
-      const twilioResponse = await fetch(twilioUrl, {
+      const signalwireResponse = await fetch(signalwireUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,
@@ -77,20 +77,20 @@ Deno.serve(async (req) => {
         body: formData.toString(),
       });
 
-      const twilioResult = await twilioResponse.json();
+      const signalwireResult = await signalwireResponse.json();
 
-      if (!twilioResponse.ok) {
-        console.error('Twilio error:', twilioResult);
+      if (!signalwireResponse.ok) {
+        console.error('SignalWire error:', signalwireResult);
         return new Response(
-          JSON.stringify({ error: 'Failed to send SMS', details: twilioResult }),
+          JSON.stringify({ error: 'Failed to send SMS', details: signalwireResult }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      console.log('Custom SMS sent successfully:', twilioResult.sid);
+      console.log('Custom SMS sent successfully:', signalwireResult.sid);
 
       return new Response(
-        JSON.stringify({ success: true, messageSid: twilioResult.sid }),
+        JSON.stringify({ success: true, messageSid: signalwireResult.sid }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -136,10 +136,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch company's Twilio credentials
+    // Fetch company's SignalWire credentials
     const { data: integrations, error: integrationsError } = await supabase
       .from('tenant_integrations')
-      .select('twilio_account_sid, twilio_auth_token, twilio_phone_number')
+      .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
       .eq('company_id', appointment.company_id)
       .maybeSingle();
 
@@ -147,10 +147,10 @@ Deno.serve(async (req) => {
       console.error('Integration fetch error:', integrationsError);
     }
 
-    if (!integrations?.twilio_account_sid || !integrations?.twilio_auth_token || !integrations?.twilio_phone_number) {
-      console.log('Twilio not configured for this company, skipping SMS');
+    if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
+      console.log('SignalWire not configured for this company, skipping SMS');
       return new Response(
-        JSON.stringify({ success: true, message: 'Twilio not configured, skipped' }),
+        JSON.stringify({ success: true, message: 'SignalWire not configured, skipped' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -202,16 +202,16 @@ Deno.serve(async (req) => {
       message = defaultTemplates[type];
     }
 
-    // Send SMS via Twilio
-    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integrations.twilio_account_sid}/Messages.json`;
-    const credentials = btoa(`${integrations.twilio_account_sid}:${integrations.twilio_auth_token}`);
+    // Send SMS via SignalWire
+    const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+    const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
 
     const formData = new URLSearchParams();
     formData.append('To', appointment.customer_phone);
-    formData.append('From', integrations.twilio_phone_number);
+    formData.append('From', integrations.signalwire_phone_number);
     formData.append('Body', message);
 
-    const twilioResponse = await fetch(twilioUrl, {
+    const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${credentials}`,
@@ -220,20 +220,20 @@ Deno.serve(async (req) => {
       body: formData.toString(),
     });
 
-    const twilioResult = await twilioResponse.json();
+    const signalwireResult = await signalwireResponse.json();
 
-    if (!twilioResponse.ok) {
-      console.error('Twilio error:', twilioResult);
+    if (!signalwireResponse.ok) {
+      console.error('SignalWire error:', signalwireResult);
       return new Response(
-        JSON.stringify({ error: 'Failed to send SMS', details: twilioResult }),
+        JSON.stringify({ error: 'Failed to send SMS', details: signalwireResult }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('SMS sent successfully:', twilioResult.sid);
+    console.log('SMS sent successfully:', signalwireResult.sid);
 
     return new Response(
-      JSON.stringify({ success: true, messageSid: twilioResult.sid }),
+      JSON.stringify({ success: true, messageSid: signalwireResult.sid }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

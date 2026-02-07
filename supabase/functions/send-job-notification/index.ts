@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -88,10 +88,10 @@ Deno.serve(async (req) => {
       hour12: true,
     });
 
-    // Fetch company's Twilio credentials
+    // Fetch company's SignalWire credentials
     const { data: integrations } = await supabase
       .from('tenant_integrations')
-      .select('twilio_account_sid, twilio_auth_token, twilio_phone_number, resend_api_key')
+      .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key')
       .eq('company_id', appointment.company_id)
       .maybeSingle();
 
@@ -114,7 +114,7 @@ Deno.serve(async (req) => {
     );
 
     // Send SMS notification
-    if (integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number) {
+    if (integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number && integrations?.signalwire_space_url) {
       const phoneNumber = recipientType === 'customer' 
         ? appointment.customer_phone 
         : employee?.phone_number;
@@ -124,15 +124,15 @@ Deno.serve(async (req) => {
         
         if (smsEnabled) {
           try {
-            const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integrations.twilio_account_sid}/Messages.json`;
-            const credentials = btoa(`${integrations.twilio_account_sid}:${integrations.twilio_auth_token}`);
+            const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+            const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
 
             const formData = new URLSearchParams();
             formData.append('To', phoneNumber);
-            formData.append('From', integrations.twilio_phone_number);
+            formData.append('From', integrations.signalwire_phone_number);
             formData.append('Body', messages.sms);
 
-            const twilioResponse = await fetch(twilioUrl, {
+            const signalwireResponse = await fetch(signalwireUrl, {
               method: 'POST',
               headers: {
                 'Authorization': `Basic ${credentials}`,
@@ -141,14 +141,14 @@ Deno.serve(async (req) => {
               body: formData.toString(),
             });
 
-            const twilioResult = await twilioResponse.json();
+            const signalwireResult = await signalwireResponse.json();
 
-            if (twilioResponse.ok) {
-              results.sms = { success: true, messageSid: twilioResult.sid };
-              console.log(`[Job Notification] SMS sent successfully to ${recipientType}:`, twilioResult.sid);
+            if (signalwireResponse.ok) {
+              results.sms = { success: true, messageSid: signalwireResult.sid };
+              console.log(`[Job Notification] SMS sent successfully to ${recipientType}:`, signalwireResult.sid);
             } else {
-              results.sms = { success: false, error: twilioResult };
-              console.error('[Job Notification] Twilio error:', twilioResult);
+              results.sms = { success: false, error: signalwireResult };
+              console.error('[Job Notification] SignalWire error:', signalwireResult);
             }
           } catch (smsError) {
             console.error('[Job Notification] SMS send error:', smsError);
