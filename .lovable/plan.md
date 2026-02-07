@@ -1,80 +1,177 @@
 
+# Fix AI Voice Agent Issues
 
-# Fix SignalWire Webhook Configuration Instructions
+## Problems Identified
 
-## Problem
-The current instructions don't match the actual SignalWire Dashboard interface. Users can't find where to configure webhooks because the navigation path is incorrect.
+### 1. Agent Doesn't Pause Long Enough
+The ElevenLabs Conversational AI agent's response timing is controlled by settings in the **ElevenLabs Dashboard**, not in your code. The current setup guide doesn't mention configuring these critical settings:
+- **End of Speech Detection** - How long the AI waits after you stop talking
+- **Responsiveness** - How quickly the agent responds
 
----
+### 2. Agent Asks for Rigid Date Formats (mm/dd/yyyy)
+The current system prompt instructs the AI to understand natural language dates, but the instructions aren't prominent enough. The agent is still sometimes asking for explicit date formats instead of intuitively understanding "next Monday at 2pm" or "this Thursday".
 
-## What SignalWire Dashboard Actually Looks Like
-
-Based on the official SignalWire documentation, here's how webhook configuration actually works:
-
-1. Go to **Phone Numbers** in your SignalWire Space
-2. Click on the phone number you want to configure
-3. Click **Edit Settings**
-4. You'll see two sections: **Voice & Fax** and **Messaging**
-5. Each section has a dropdown labeled **"When a Call/Message Comes In"**
-6. Select **"LaML Webhooks"** from the dropdown (other options include RELAY, integrations, etc.)
-7. A URL input field appears where you paste the webhook URL
-8. Select **POST** as the method
+### 3. Agent Not Using Company-Specific Settings
+Your Aura Intelligence configuration (brand tone, emergency settings, etc.) exists in the database but is **not being pulled into the ElevenLabs agent prompt**. The setup guide provides a generic static prompt rather than company-customized instructions.
 
 ---
 
-## Changes Required
+## Solution Overview
 
-### File: `src/components/integrations/SignalWireSetupGuide.tsx`
+### Part 1: Update ElevenLabs Setup Guide with Conversation Settings
 
-**Update the navigation tip (lines 401-405):**
+Add a new section in the setup guide explaining how to configure:
+- **End of Speech Detection**: Set to "Relaxed" (~3-4 seconds) for collecting information like names/numbers
+- **Response Delay**: Add a brief delay to ensure users finish speaking
+- **Turn-Taking Sensitivity**: Reduce interruption behavior
 
-| Current Text | Corrected Text |
-|--------------|----------------|
-| "Phone Numbers → click your number → Settings tab → scroll to LaML Webhooks section" | "Phone Numbers → click your number → Edit Settings → Voice & Fax section (or Messaging section) → select 'LaML Webhooks' from the dropdown" |
+### Part 2: Improve the Agent Prompt with Stronger Date/Time Instructions
 
-**Add clearer field mapping:**
+Update the recommended agent prompt to:
+- **Explicitly forbid** asking for formatted dates
+- Add more examples of natural language date interpretation
+- Include a pause-and-wait instruction for collecting names/numbers
 
-| Our Webhook | SignalWire Field | Section |
-|-------------|-----------------|---------|
-| Call Request URL | "When a Call Comes In" → LaML Webhooks → URL | Voice & Fax |
-| Call Status Callback | Set via API only (StatusCallback parameter) | N/A |
-| Message Request URL | "When a Message Comes In" → LaML Webhooks → URL | Messaging |
+### Part 3: Add Company-Specific Prompt Export
 
-**Important clarification to add:**
-- The "Status Callback URL" and "Call Status Callback URL" are NOT configured in the phone number settings UI
-- These are set programmatically via the API when making/receiving calls (using `StatusCallback` parameter)
-- Only the **inbound** webhooks are configured in the dashboard
+Create a new feature in the Aura Intelligence settings that generates a **complete, company-customized prompt** users can copy into ElevenLabs, including:
+- Company name and brand tone
+- Service area ZIP codes
+- Emergency protocols
+- Smart link URLs
+- Business hours
 
 ---
 
-## Updated Navigation Instructions
+## Technical Changes
 
-Replace the current tip box with more accurate step-by-step instructions:
+### File 1: `src/components/integrations/ElevenLabsSetupGuide.tsx`
+
+**Add new section (after Step 2)**: "Configure Conversation Settings"
 
 ```text
-How to configure in SignalWire Dashboard:
+New content to add:
 
-1. Go to Phone Numbers and click your number
-2. Click "Edit Settings" button
+📍 Location: Agent Settings → Advanced → Conversation Settings
 
-For Voice (inbound calls):
-3. In the "Voice & Fax" section, find "When a Call Comes In"
-4. Select "LaML Webhooks" from the dropdown
-5. Paste the Call Request URL and select POST method
+Configure these critical settings for natural conversation:
 
-For SMS (inbound messages):  
-6. In the "Messaging" section, find "When a Message Comes In"
-7. Select "LaML Webhooks" from the dropdown
-8. Paste the Message Request URL and select POST method
+1. **End of Speech Detection**: Set to "Relaxed" (2000-4000ms)
+   - Gives callers more time to provide names, phone numbers, and addresses
+   - Prevents the agent from cutting off mid-sentence
 
-Note: Status callbacks are handled automatically by our system when making outbound calls.
+2. **Response Speed**: Set to "Normal" or "Relaxed"
+   - Ensures the agent doesn't interrupt while collecting information
+
+3. **Interruption Sensitivity**: Set to "Low"
+   - Prevents the AI from cutting in when the caller pauses to think
+
+These settings are critical for collecting customer information without rushing them.
+```
+
+**Update the AGENT_PROMPT constant** to include stronger date handling:
+
+```typescript
+const AGENT_PROMPT = `You are a professional and friendly appointment booking assistant. Help customers schedule service appointments.
+
+CRITICAL - CONVERSATIONAL PAUSES:
+- When asking for name, phone, or address, WAIT patiently for the response
+- Never rush the caller - give them time to speak
+- Say "take your time" if they seem to be thinking
+
+CRITICAL - DATE & TIME HANDLING:
+- NEVER ask for dates in a specific format like "mm/dd/yyyy" or "month day year"
+- ALWAYS accept natural language: "tomorrow", "next Monday", "this Friday", "in 2 days"
+- Examples you must understand:
+  • "tomorrow at 4pm" → Calculate tomorrow's date
+  • "next Tuesday around 3" → Next week's Tuesday, 15:00
+  • "this Thursday afternoon" → This week's Thursday, ask for specific time
+  • "in 3 days at 10am" → Calculate the date
+  • "Monday the week after next" → Calculate correctly
+- If ambiguous, ask for clarification naturally: "Did you mean this coming Monday or the Monday after?"
+- Convert times naturally: "4pm" = 16:00, "9 in the morning" = 09:00
+
+FLOW:
+1. Greet warmly, ask how you can help
+2. Ask what service they need (call get_services first)
+3. Collect: name, phone, address - give time for each answer
+4. Ask "What day works best for you?" - accept natural language
+5. Confirm date, then check times (get_available_times)
+6. Confirm all details before booking
+
+GUIDELINES:
+- Be conversational and patient
+- Never ask for specific date formats
+- If no times available, offer alternatives`;
+```
+
+### File 2: `src/components/settings/AuraIntelligenceSettings.tsx`
+
+**Add new export button**: "Export ElevenLabs Prompt"
+
+This generates a complete, company-customized prompt including:
+- Company name
+- Brand tone instructions
+- Service ZIP codes
+- Emergency keywords and protocols
+- Business hours (fetched from business_hours table)
+- Smart links
+
+The generated prompt will look like:
+
+```text
+You are Aura, the AI voice assistant for [Company Name]. 
+
+PERSONALITY:
+- Use a [professional/friendly/technical] tone
+- Be patient when collecting customer information
+- Never rush callers
+
+CRITICAL - DATE HANDLING:
+- Accept natural language dates: "tomorrow", "next Monday", "this Friday"
+- NEVER ask for mm/dd/yyyy format
+- Convert relative dates based on today's date
+
+COMPANY CONTEXT:
+- Business Name: [Company Name]
+- Phone: [contact_phone]
+- Service Area: [zip_codes]
+- Emergency Surcharge: $[amount] for after-hours
+
+EMERGENCY PROTOCOL:
+If caller mentions: [gas, fire, smoke, flood, etc.]
+→ Immediately provide emergency number: [emergency_phone]
+→ Do not proceed with booking
+
+BOOKING LINKS:
+- Booking: [url]
+- Payment: [url]
+- Reviews: [url]
+
+[Include business hours]
+[Include services list]
 ```
 
 ---
 
-## Files to Update
+## Summary of Changes
 
-| File | Changes |
-|------|---------|
-| `src/components/integrations/SignalWireSetupGuide.tsx` | Update Step 6 with accurate navigation, clarify which webhooks go where, note that status callbacks are API-level |
+| File | Change |
+|------|--------|
+| `ElevenLabsSetupGuide.tsx` | Add "Conversation Settings" section explaining pause/timing config in ElevenLabs dashboard |
+| `ElevenLabsSetupGuide.tsx` | Update AGENT_PROMPT with stronger natural language date instructions |
+| `ElevenLabsSetupGuide.tsx` | Add warning about collection pauses |
+| `AuraIntelligenceSettings.tsx` | Add "Export ElevenLabs Prompt" button that generates company-specific prompt |
 
+---
+
+## User Action Required (ElevenLabs Dashboard)
+
+After the code changes, you'll need to:
+
+1. Go to ElevenLabs Dashboard → Your Agent → Settings
+2. Find **Conversation Settings** or **Advanced Settings**
+3. Set **End of Speech Detection** to "Relaxed" (2000-4000ms)
+4. Set **Interruption Sensitivity** to "Low"
+5. Copy the new prompt from Aura Intelligence settings
+6. Paste into your agent's System Prompt
