@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,7 +46,7 @@ serve(async (req) => {
     
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Parse Twilio webhook data (form-urlencoded)
+    // Parse SignalWire webhook data (form-urlencoded)
     const formData = await req.formData();
     const smsData: Record<string, string> = {};
     for (const [key, value] of formData.entries()) {
@@ -60,16 +60,16 @@ serve(async (req) => {
 
     console.log(`Incoming SMS from ${fromNumber} to ${toNumber}: "${messageBody}"`);
 
-    // Find company by Twilio phone number
+    // Find company by SignalWire phone number
     const { data: integration } = await supabase
       .from('tenant_integrations')
-      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number')
-      .eq('twilio_phone_number', toNumber)
+      .select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+      .eq('signalwire_phone_number', toNumber)
       .single();
 
     if (!integration) {
       console.error('No company found for phone number:', toNumber);
-      // Return TwiML with no response
+      // Return cXML with no response
       return new Response(
         `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`,
         { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
@@ -128,7 +128,7 @@ serve(async (req) => {
         // Increment hit count
         await supabase.rpc('increment_keyword_hit', { keyword_id: keywordConfig.id });
         
-        // Return empty TwiML - response already sent via API
+        // Return empty cXML - response already sent via API
         return new Response(
           `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`,
           { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
@@ -238,7 +238,7 @@ Important guidelines:
       ? aiMessage.substring(0, 1497) + '...' 
       : aiMessage;
 
-    // Send reply via Twilio
+    // Send reply via SignalWire
     await sendSmsReply(integration, fromNumber, truncatedMessage);
 
     // Log outbound SMS
@@ -281,7 +281,7 @@ Important guidelines:
 
     console.log(`Sent AI response to ${fromNumber}`);
 
-    // Return empty TwiML (we're sending via API, not TwiML response)
+    // Return empty cXML (we're sending via API, not cXML response)
     return new Response(
       `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`,
       { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
@@ -297,23 +297,24 @@ Important guidelines:
 });
 
 async function sendSmsReply(
-  integration: { twilio_account_sid: string; twilio_auth_token: string; twilio_phone_number: string },
+  integration: { signalwire_project_id: string; signalwire_api_token: string; signalwire_phone_number: string; signalwire_space_url: string },
   toNumber: string,
   message: string
 ) {
-  const accountSid = integration.twilio_account_sid;
-  const authToken = integration.twilio_auth_token;
-  const fromNumber = integration.twilio_phone_number;
+  const projectId = integration.signalwire_project_id;
+  const apiToken = integration.signalwire_api_token;
+  const fromNumber = integration.signalwire_phone_number;
+  const spaceUrl = integration.signalwire_space_url;
 
-  if (!accountSid || !authToken || !fromNumber) {
-    console.error('Missing Twilio credentials for SMS reply');
+  if (!projectId || !apiToken || !fromNumber || !spaceUrl) {
+    console.error('Missing SignalWire credentials for SMS reply');
     return;
   }
 
-  const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-  const authHeader = btoa(`${accountSid}:${authToken}`);
+  const signalwireUrl = `https://${spaceUrl}/api/laml/2010-04-01/Accounts/${projectId}/Messages`;
+  const authHeader = btoa(`${projectId}:${apiToken}`);
 
-  const response = await fetch(twilioUrl, {
+  const response = await fetch(signalwireUrl, {
     method: 'POST',
     headers: {
       'Authorization': `Basic ${authHeader}`,
@@ -328,6 +329,6 @@ async function sendSmsReply(
 
   if (!response.ok) {
     const error = await response.text();
-    console.error('Twilio SMS send error:', error);
+    console.error('SignalWire SMS send error:', error);
   }
 }

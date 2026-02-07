@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,7 +17,7 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Parse Twilio webhook data (form-urlencoded)
+    // Parse SignalWire webhook data (form-urlencoded)
     const formData = await req.formData();
     const callData: Record<string, string> = {};
     formData.forEach((value, key) => {
@@ -31,11 +31,11 @@ serve(async (req) => {
     const callStatus = callData.CallStatus;
     const callSid = callData.CallSid;
 
-    // Find company by Twilio phone number
+    // Find company by SignalWire phone number
     const { data: integration } = await supabase
       .from('tenant_integrations')
-      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number, elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('twilio_phone_number', calledNumber)
+      .select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
+      .eq('signalwire_phone_number', calledNumber)
       .single();
 
     if (!integration) {
@@ -141,8 +141,9 @@ serve(async (req) => {
       } else if (missedCallAction === 'sms_only') {
         // Send SMS immediately
         await sendFollowUpSMS(
-          integration.twilio_account_sid,
-          integration.twilio_auth_token,
+          integration.signalwire_project_id,
+          integration.signalwire_api_token,
+          integration.signalwire_space_url,
           calledNumber,
           callerNumber,
           companyName
@@ -151,7 +152,7 @@ serve(async (req) => {
       }
     }
 
-    // Return TwiML response
+    // Return cXML response
     return new Response('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
       headers: { ...corsHeaders, 'Content-Type': 'text/xml' },
     });
@@ -262,9 +263,10 @@ async function handleAICallback(
       console.log('Callback failed, falling back to SMS');
       try {
         await sendFollowUpSMS(
-          integration.twilio_account_sid,
-          integration.twilio_auth_token,
-          integration.twilio_phone_number,
+          integration.signalwire_project_id,
+          integration.signalwire_api_token,
+          integration.signalwire_space_url,
+          integration.signalwire_phone_number,
           customerPhone,
           companyName
         );
@@ -282,20 +284,21 @@ async function handleAICallback(
 }
 
 async function sendFollowUpSMS(
-  accountSid: string,
-  authToken: string,
+  projectId: string,
+  apiToken: string,
+  spaceUrl: string,
   fromNumber: string,
   toNumber: string,
   companyName: string
 ) {
   const message = `Hi! We noticed you just called ${companyName} and we missed your call. We're sorry about that! Would you like to book an appointment? Reply YES to receive a link to our online booking, or we'll call you back as soon as possible.`;
 
-  const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+  const signalwireUrl = `https://${spaceUrl}/api/laml/2010-04-01/Accounts/${projectId}/Messages`;
   
-  const response = await fetch(twilioUrl, {
+  const response = await fetch(signalwireUrl, {
     method: 'POST',
     headers: {
-      'Authorization': 'Basic ' + btoa(`${accountSid}:${authToken}`),
+      'Authorization': 'Basic ' + btoa(`${projectId}:${apiToken}`),
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: new URLSearchParams({
@@ -307,7 +310,7 @@ async function sendFollowUpSMS(
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('Twilio SMS error:', errorText);
+    console.error('SignalWire SMS error:', errorText);
     throw new Error(`Failed to send SMS: ${response.status}`);
   }
 
