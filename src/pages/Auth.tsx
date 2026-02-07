@@ -992,7 +992,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Google Calendar</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free - Unlimited</p>
-                      <p className="text-[8px] text-white/60">Optional for scheduling</p>
+                      <p className="text-[8px] text-white/60">Optional for: All tiers</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1000,8 +1000,8 @@ export default function Auth() {
                         <Mail className="w-3 h-3 text-blue-400" />
                         <span className="font-semibold text-[9px] text-white">Resend</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
-                      <p className="text-[8px] text-white/60">Then $20/mo for 50k</p>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 3,000/mo • $20/mo (50k)</p>
+                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1009,8 +1009,8 @@ export default function Auth() {
                         <Mic className="w-3 h-3 text-purple-400" />
                         <span className="font-semibold text-[9px] text-white">ElevenLabs</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
-                      <p className="text-[8px] text-white/60">$5/mo (30k) • $22/mo (100k)</p>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 10k • $5 (30k) • $99 (500k)</p>
+                      <p className="text-[8px] text-white/60">Required for: Scheduling+ (not Starter)</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1018,8 +1018,8 @@ export default function Auth() {
                         <Phone className="w-3 h-3 text-green-400" />
                         <span className="font-semibold text-[9px] text-white">Twilio</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Pay-as-you-go</p>
-                      <p className="text-[8px] text-white/60">$0.0079/SMS • $0.014/min</p>
+                      <p className="text-[8px] text-white/90 font-medium">$1.15/number • $0.0079/SMS</p>
+                      <p className="text-[8px] text-white/60">Required for: Scheduling+ (not Starter)</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1027,8 +1027,8 @@ export default function Auth() {
                         <Shield className="w-3 h-3 text-cyan-400" />
                         <span className="font-semibold text-[9px] text-white">A2P 10DLC</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time</p>
-                      <p className="text-[8px] text-white/60">$10/mo + ~$0.003/SMS</p>
+                      <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time • $10/mo</p>
+                      <p className="text-[8px] text-white/60">Required for: All SMS • Prevents filtering</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1036,8 +1036,8 @@ export default function Auth() {
                         <DollarSign className="w-3 h-3 text-amber-400" />
                         <span className="font-semibold text-[9px] text-white">Stripe</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Pay-as-you-go</p>
-                      <p className="text-[8px] text-white/60">2.9% + $0.30/transaction</p>
+                      <p className="text-[8px] text-white/90 font-medium">2.9% + $0.30/transaction</p>
+                      <p className="text-[8px] text-white/60">Required for: Growth+ (Invoicing)</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1045,8 +1045,8 @@ export default function Auth() {
                         <Send className="w-3 h-3 text-pink-400" />
                         <span className="font-semibold text-[9px] text-white">Social Media</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free - Your Pages</p>
-                      <p className="text-[8px] text-white/60">OAuth connection</p>
+                      <p className="text-[8px] text-white/90 font-medium">Free - Your Pages (OAuth)</p>
+                      <p className="text-[8px] text-white/60">Required for: Growth+ • Optional: Others</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1055,7 +1055,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Google Gemini</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free: 15 req/min</p>
-                      <p className="text-[8px] text-white/60">AI content generation</p>
+                      <p className="text-[8px] text-white/60">Required for: All tiers (AI content)</p>
                     </div>
 
                     <div className="rounded-lg p-2 col-span-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1064,7 +1064,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Tavily</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
-                      <p className="text-[8px] text-white/60">Optional AI research engine • Enhances content quality</p>
+                      <p className="text-[8px] text-white/60">Optional for: All tiers • Enhances content quality</p>
                     </div>
                   </div>
                 </div>
@@ -1310,17 +1310,7 @@ export default function Auth() {
 
           {/* Billing/Onboarding Notices - Only show for company mode */}
           {mode === 'company' && (
-            <div className="mt-8 grid md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
-                  <Users className="w-5 h-5 text-primary" />
-                </div>
-                <h4 className="font-semibold text-primary text-sm mb-2">Concierge Onboarding</h4>
-                <p className="text-xs text-foreground">
-                  Aura Intercept will configure all 3rd party integrations on your behalf for a one-time setup fee of <span className="font-bold">$500</span>.
-                </p>
-              </div>
-
+            <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
               <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col items-center text-center">
                 <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center mb-3">
                   <DollarSign className="w-5 h-5 text-amber-500" />
