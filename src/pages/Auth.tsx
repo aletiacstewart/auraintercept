@@ -1002,6 +1002,17 @@ export default function Auth() {
                     </div>
                   </div>
                 </div>
+
+                {/* Concierge Onboarding */}
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-2">
+                    <Headphones className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h4 className="text-sm font-semibold text-blue-300 mb-1">Concierge Onboarding</h4>
+                  <p className="text-xs text-blue-200/80">
+                    Aura Intercept will configure all 3rd party integrations on your behalf for a one-time setup fee of <span className="font-bold text-blue-100">$500</span>.
+                  </p>
+                </div>
               </div>
             )}
 
