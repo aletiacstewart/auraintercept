@@ -4599,6 +4599,7 @@ export type Database = {
           company_id: string
           created_at: string
           crm_product_id: string | null
+          delivery_type: string | null
           description: string | null
           duration_minutes: number | null
           flat_fee: number | null
@@ -4625,6 +4626,7 @@ export type Database = {
           company_id: string
           created_at?: string
           crm_product_id?: string | null
+          delivery_type?: string | null
           description?: string | null
           duration_minutes?: number | null
           flat_fee?: number | null
@@ -4651,6 +4653,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           crm_product_id?: string | null
+          delivery_type?: string | null
           description?: string | null
           duration_minutes?: number | null
           flat_fee?: number | null
