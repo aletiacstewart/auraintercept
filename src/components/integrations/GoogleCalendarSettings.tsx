@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Calendar, RefreshCw, Link2, Unlink, CheckCircle2, AlertCircle, ExternalLink, Copy, Check } from 'lucide-react';
+import { Calendar, RefreshCw, Link2, Unlink, CheckCircle2, AlertCircle, ExternalLink, Copy, Check, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   AlertDialog,
@@ -24,6 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { isLovablePreviewDomain, getPublishedDomain } from '@/lib/url';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -95,8 +96,19 @@ export function GoogleCalendarSettings() {
   });
 
 
-  // Connect to Google Calendar - just opens the intermediate page
+  // Connect to Google Calendar - check for preview domain first
   const handleConnect = () => {
+    // Check if we're on a preview domain
+    if (isLovablePreviewDomain()) {
+      // Show toast and open on published domain
+      toast.info('Opening Google Calendar OAuth on your published site...', {
+        description: 'OAuth must be completed from auraintercept.ai',
+      });
+      const publishedUrl = `${getPublishedDomain()}/oauth/google-calendar`;
+      window.open(publishedUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
     // Store return URL before opening the OAuth page
     localStorage.setItem('gcal-return-url', window.location.origin + '/dashboard/integrations/calendar');
 
@@ -424,11 +436,25 @@ export function GoogleCalendarSettings() {
             </Button>
           </div>
 
+          {/* Preview domain warning */}
+          {!isConnected && isLovablePreviewDomain() && (
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+              <div className="text-xs">
+                <p className="font-medium text-foreground">Preview Environment</p>
+                <p className="text-muted-foreground mt-0.5">
+                  Google Calendar OAuth must be completed from your published site. 
+                  Click the button below to open on auraintercept.ai.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Connect button - only when not connected */}
           {!isConnected && (
             <Button onClick={handleConnect} className="w-full">
               <Link2 className="h-4 w-4 mr-2" />
-              Connect Google Calendar
+              {isLovablePreviewDomain() ? 'Open on Published Site' : 'Connect Google Calendar'}
             </Button>
           )}
         </CardContent>
