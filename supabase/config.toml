@@ -7,7 +7,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.booking-actions]
-verify_jwt = true
+verify_jwt = false
 
 [functions.missed-call-handler]
 verify_jwt = false
