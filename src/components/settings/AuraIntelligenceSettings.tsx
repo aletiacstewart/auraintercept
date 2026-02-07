@@ -24,9 +24,11 @@ import {
   Download,
   ExternalLink,
   Check,
-  X
+  X,
+  Mic
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type BrandTone = 'professional' | 'friendly' | 'technical';
 
@@ -236,6 +238,7 @@ export function AuraIntelligenceSettings() {
 
   const configuredLinksCount = smartLinks.filter(l => l.url).length;
   const totalLinksCount = smartLinks.length;
+  const [elevenLabsPromptCopied, setElevenLabsPromptCopied] = useState(false);
 
   // Generate the JSON export
   const generateExport = () => {
@@ -280,6 +283,102 @@ export function AuraIntelligenceSettings() {
       customVariables,
       generatedAt: new Date().toISOString(),
     };
+  };
+
+  // Generate company-specific ElevenLabs prompt
+  const generateElevenLabsPrompt = () => {
+    const brandToneInstructions = {
+      professional: 'Use a formal, business-appropriate tone. Be courteous and precise.',
+      friendly: 'Use a warm, conversational tone. Be personable and approachable.',
+      technical: 'Use concise, industry-specific terminology. Be direct and efficient.',
+    };
+
+    const emergencyKeywords = config.emergency_keywords?.length 
+      ? config.emergency_keywords.join(', ')
+      : 'smoke, fire, gas, flood, spark, emergency, water damage';
+
+    const serviceZips = config.service_area_zip_codes?.length
+      ? config.service_area_zip_codes.join(', ')
+      : 'All service areas';
+
+    const bookingUrl = smartLinks.find(l => l.category === 'booking')?.url;
+    const paymentUrl = smartLinks.find(l => l.category === 'payment')?.url;
+    const reviewUrl = smartLinks.find(l => l.category === 'review')?.url;
+
+    return `You are Aura, the AI voice assistant for ${company?.name || '[Company Name]'}.
+
+PERSONALITY & TONE:
+- ${brandToneInstructions[config.brand_tone] || brandToneInstructions.professional}
+- Be patient when collecting customer information - never rush callers
+- When asking for name, phone number, or address, WAIT for the complete response
+- If the caller pauses to think, say "Take your time" before continuing
+
+CRITICAL - CONVERSATIONAL PAUSES:
+- After asking any question, wait at least 3-4 seconds for a response
+- Never interrupt the caller while they're providing information
+- For phone numbers and addresses, wait for them to finish completely
+
+CRITICAL - DATE & TIME HANDLING:
+- NEVER ask for dates in a specific format like "mm/dd/yyyy"
+- NEVER say "please provide the date in month day year format"
+- ALWAYS accept natural language dates: "tomorrow", "next Monday", "this Friday", "in 2 days"
+- Examples you MUST understand:
+  • "tomorrow at 4pm" → Calculate tomorrow's date
+  • "next Tuesday around 3" → Next week's Tuesday, 15:00
+  • "this Thursday afternoon" → This week's Thursday
+  • "Wednesday" → If unclear, ask "this Wednesday or next?"
+- Convert times naturally: "4pm" = 16:00, "9am" = 09:00, "noon" = 12:00
+
+COMPANY CONTEXT:
+- Business Name: ${company?.name || '[Company Name]'}
+- Primary Phone: ${config.contact_phone || '[Not configured]'}
+- Service Area ZIP Codes: ${serviceZips}
+${config.emergency_surcharge ? `- Emergency/After-Hours Surcharge: $${config.emergency_surcharge}` : ''}
+
+EMERGENCY PROTOCOL:
+If the caller mentions any of these keywords: ${emergencyKeywords}
+→ IMMEDIATELY ask: "This sounds like an emergency situation. Are you in immediate danger?"
+→ If yes, tell them to call 911
+→ If not life-threatening but urgent:${config.emergency_phone ? `
+  • Provide our emergency dispatch line: ${config.emergency_phone}` : ''}
+  • Do NOT proceed with regular booking
+  • Offer to have someone call them back immediately
+
+DE-ESCALATION PROTOCOL:
+If the caller sounds upset, frustrated, or asks for a manager:
+→ Stay calm and empathetic
+→ Say: "I completely understand your frustration, and I want to make sure we resolve this for you."${config.manager_name ? `
+→ Offer to connect them with ${config.manager_name}${config.de_escalation_manager_contact ? ` at ${config.de_escalation_manager_contact}` : ''}` : ''}
+
+BOOKING FLOW:
+1. Greet warmly: "Hi! Thanks for calling ${company?.name || 'us'}. I'm Aura, your scheduling assistant."
+2. Ask what service they need (call get_services first)
+3. Collect: name, phone, address - give ample time for EACH answer
+4. Ask "What day works best for you?" - accept natural language
+5. Check available times (get_available_times)
+6. Confirm ALL details before booking
+
+${bookingUrl || paymentUrl || reviewUrl ? `SMART LINKS (send via SMS when relevant):${bookingUrl ? `
+- Online Booking: ${bookingUrl}` : ''}${paymentUrl ? `
+- Payment Portal: ${paymentUrl}` : ''}${reviewUrl ? `
+- Leave a Review: ${reviewUrl}` : ''}` : ''}
+
+GUIDELINES:
+- Be conversational, patient, and natural
+- Never ask for formatted dates - always accept natural language
+- Always confirm details before booking
+- If no times available, offer the next available alternatives`;
+  };
+
+  const handleCopyElevenLabsPrompt = async () => {
+    const prompt = generateElevenLabsPrompt();
+    await navigator.clipboard.writeText(prompt);
+    setElevenLabsPromptCopied(true);
+    setTimeout(() => setElevenLabsPromptCopied(false), 2000);
+    toast({
+      title: 'ElevenLabs Prompt Copied',
+      description: 'Paste this into your ElevenLabs agent\'s System Prompt field.',
+    });
   };
 
   const handleCopyJson = async () => {
@@ -622,7 +721,51 @@ export function AuraIntelligenceSettings() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* Section 5: Developer Export */}
+        {/* Section 5: ElevenLabs Voice Agent Export */}
+        <AccordionItem value="elevenlabs-export" className="border rounded-lg bg-card border-primary/30">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <Mic className="h-4 w-4 text-primary" />
+              <span className="font-semibold">ElevenLabs Voice Agent Prompt</span>
+              <Badge className="ml-2 bg-primary text-primary-foreground">Recommended</Badge>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="space-y-4">
+              <Alert>
+                <Mic className="h-4 w-4" />
+                <AlertDescription>
+                  This generates a <strong>company-customized prompt</strong> for your ElevenLabs voice agent, including your brand tone, emergency protocols, and smart links.
+                </AlertDescription>
+              </Alert>
+
+              <div className="bg-muted rounded-lg p-4 overflow-x-auto max-h-80">
+                <pre className="text-xs font-mono whitespace-pre-wrap">
+                  {generateElevenLabsPrompt()}
+                </pre>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={handleCopyElevenLabsPrompt} className="gap-2">
+                  {elevenLabsPromptCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {elevenLabsPromptCopied ? 'Copied!' : 'Copy ElevenLabs Prompt'}
+                </Button>
+              </div>
+
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p><strong>Next steps:</strong></p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Copy the prompt above</li>
+                  <li>Go to ElevenLabs Dashboard → Your Agent → Settings</li>
+                  <li>Paste into the "System Prompt" field</li>
+                  <li>Configure conversation timing (see Integration guide for settings)</li>
+                </ol>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Section 6: Developer Export */}
         <AccordionItem value="developer" className="border rounded-lg bg-card">
           <AccordionTrigger className="px-4 hover:no-underline">
             <div className="flex items-center gap-2">

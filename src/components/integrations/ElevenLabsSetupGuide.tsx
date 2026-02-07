@@ -88,30 +88,38 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
 
 const AGENT_PROMPT = `You are a professional and friendly appointment booking assistant. Help customers schedule service appointments.
 
+CRITICAL - CONVERSATIONAL PAUSES:
+- When asking for name, phone number, or address, WAIT patiently for the full response
+- Never interrupt or rush the caller - give them plenty of time to speak
+- If they pause to think, say "Take your time" before continuing
+- After asking a question, wait at least 3-4 seconds for a response
+
+CRITICAL - DATE & TIME HANDLING:
+- NEVER ask for dates in a specific format like "mm/dd/yyyy" or "month day year"
+- NEVER say "please provide the date in month day year format"
+- ALWAYS accept natural language: "tomorrow", "next Monday", "this Friday", "in 2 days"
+- Examples you MUST understand and convert:
+  • "tomorrow at 4pm" → Calculate tomorrow's date, time: 16:00
+  • "next Tuesday around 3" → Next week's Tuesday, 15:00
+  • "this Thursday afternoon" → This week's Thursday, ask for specific time preference
+  • "in 3 days at 10am" → Calculate the date from today
+  • "Monday the week after next" → Calculate correctly
+  • "Wednesday" → Ask "Did you mean this Wednesday or next Wednesday?" if unclear
+- Convert times naturally: "4pm" = 16:00, "9 in the morning" = 09:00, "noon" = 12:00
+
 FLOW:
 1. Greet warmly, ask how you can help
 2. Ask what service they need (call get_services first)
-3. Collect: name, phone, address
-4. Check available dates (get_available_dates)
-5. Let them pick a date, then check times (get_available_times)
-6. Confirm all details, then book (book_appointment)
-
-IMPORTANT - DATE & TIME HANDLING:
-- Understand natural language dates like "tomorrow", "next Monday", "Wednesday of next week", "in 3 days"
-- Convert these to proper dates before calling tools (format: YYYY-MM-DD)
-- Use your knowledge of today's date to calculate relative dates
-- If unclear, ask for clarification (e.g., "Did you mean this Wednesday or next Wednesday?")
-- Convert times like "4pm" to 24-hour format: 16:00, "9am" to 09:00
-
-DATE EXAMPLES:
-- "tomorrow at 4pm" → date: tomorrow's YYYY-MM-DD, time: 16:00
-- "next Tuesday" → calculate the date for next Tuesday
-- "this Friday afternoon" → that Friday's date, then ask about specific time
+3. Collect: name, phone, address - give ample time for EACH answer
+4. Ask "What day works best for you?" - accept natural language, don't ask for specific format
+5. Confirm the date, then check available times (get_available_times)
+6. Confirm ALL details before booking (book_appointment)
 
 GUIDELINES:
-- Be conversational and natural
+- Be conversational, patient, and natural
+- NEVER ask for formatted dates - always accept natural language
 - Always confirm details before booking
-- If no times available, offer alternatives`;
+- If no times available, offer the next available alternatives`;
 
 export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuideProps) {
   const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
@@ -195,6 +203,90 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                   {copiedItems['prompt'] ? 'Copied' : 'Copy'}
                 </Button>
               </div>
+              
+              <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-xs text-amber-800 dark:text-amber-200">
+                  <strong>Want company-specific settings?</strong> Go to <strong>Knowledge Base → Aura Intelligence</strong> to export a customized prompt with your company's brand tone, emergency protocols, and smart links.
+                </AlertDescription>
+              </Alert>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 2.5: Conversation Settings - CRITICAL */}
+          <AccordionItem value="step-2-5">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-destructive text-destructive-foreground border-destructive">2.5</Badge>
+                <Clock className="w-4 h-4 text-destructive" />
+                Configure Conversation Timing (Critical!)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-4">
+              <Alert className="bg-destructive/10 border-destructive/30">
+                <AlertCircle className="h-4 w-4 text-destructive" />
+                <AlertDescription>
+                  <strong>Without these settings, the agent will cut off callers</strong> before they finish speaking their name, phone number, or address.
+                </AlertDescription>
+              </Alert>
+
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">📍 Location in ElevenLabs Dashboard:</p>
+                <p className="text-xs">Agent Settings → <strong>Voice</strong> tab → Scroll down to <strong>Turn-taking</strong> section</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="border rounded-lg p-4 bg-background">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 1</Badge>
+                    <span className="font-medium text-foreground">End of Speech Detection</span>
+                  </div>
+                  <p className="text-xs mb-2">How long the agent waits after you stop talking before responding.</p>
+                  <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span className="text-xs text-green-800 dark:text-green-200">
+                      Set slider to <strong>2000-4000ms</strong> (toward "Relaxed" end)
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-2">
+                    This gives callers time to say their full name or phone number without being interrupted.
+                  </p>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-background">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 2</Badge>
+                    <span className="font-medium text-foreground">Interruption Sensitivity</span>
+                  </div>
+                  <p className="text-xs mb-2">How easily the agent can be interrupted when speaking.</p>
+                  <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span className="text-xs text-green-800 dark:text-green-200">
+                      Set to <strong>Low</strong> (toward left)
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-2">
+                    Prevents the agent from cutting in when the caller pauses to think.
+                  </p>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-background">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Optional</Badge>
+                    <span className="font-medium text-foreground">Response Speed</span>
+                  </div>
+                  <p className="text-xs mb-2">How quickly the agent starts responding after detecting end of speech.</p>
+                  <div className="bg-blue-50 dark:bg-blue-950/30 p-2 rounded flex items-center gap-2">
+                    <span className="text-xs text-blue-800 dark:text-blue-200">
+                      Keep at <strong>Normal</strong> or slightly toward <strong>Relaxed</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs font-medium text-foreground">
+                💡 Test your agent after adjusting these settings - callers should be able to say their full name and phone number without being cut off.
+              </p>
             </AccordionContent>
           </AccordionItem>
 
