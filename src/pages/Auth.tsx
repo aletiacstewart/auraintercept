@@ -717,7 +717,7 @@ export default function Auth() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-xs text-card-foreground">Aura Starter</h3>
-                          <p className="text-[10px] text-card-foreground/70">Restaurants & Cafes</p>
+                          <p className="text-[10px] text-card-foreground/70">Restaurants • Cafes • Food Service</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -752,7 +752,7 @@ export default function Auth() {
                         </div>
                         <div>
                       <h3 className="font-semibold text-xs text-card-foreground">Aura Scheduling</h3>
-                          <p className="text-[10px] text-card-foreground/70">Booking Automation</p>
+                          <p className="text-[10px] text-card-foreground/70">Personal Services • Real Estate</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -787,7 +787,7 @@ export default function Auth() {
                         </div>
                         <div>
                       <h3 className="font-semibold text-xs text-card-foreground">Aura Growth</h3>
-                          <p className="text-[10px] text-card-foreground/70">Marketing Automation</p>
+                          <p className="text-[10px] text-card-foreground/70">Salons • Spas • Wellness</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -825,7 +825,7 @@ export default function Auth() {
                         </div>
                         <div>
                       <h3 className="font-semibold text-xs text-card-foreground">Aura Business</h3>
-                          <p className="text-[10px] text-card-foreground/70">Creative & Web Presence</p>
+                          <p className="text-[10px] text-card-foreground/70">Web Presence Focus</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -898,7 +898,7 @@ export default function Auth() {
                         </div>
                         <div>
                       <h3 className="font-semibold text-xs text-foreground">Aura Performance</h3>
-                          <p className="text-[10px] text-muted-foreground">Analytics & Visibility</p>
+                          <p className="text-[10px] text-muted-foreground">Full Automation</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -933,7 +933,7 @@ export default function Auth() {
                         </div>
                         <div>
                       <h3 className="font-semibold text-xs text-card-foreground">Aura Command</h3>
-                          <p className="text-[10px] text-card-foreground/70">Full AI Operating System</p>
+                          <p className="text-[10px] text-card-foreground/70">Multi-Location • Enterprise</p>
                         </div>
                       </div>
                       <div className="text-right">
