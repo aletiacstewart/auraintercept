@@ -1016,9 +1016,9 @@ export default function Auth() {
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
                       <div className="flex items-center gap-1.5 mb-0.5">
                         <Phone className="w-3 h-3 text-green-400" />
-                        <span className="font-semibold text-[9px] text-white">Twilio</span>
+                        <span className="font-semibold text-[9px] text-white">SignalWire</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">$1.15/number • $0.0079/SMS</p>
+                      <p className="text-[8px] text-white/90 font-medium">$2/number • $0.004/SMS (40% cheaper)</p>
                       <p className="text-[8px] text-white/60">Required for: Scheduling+ (not Starter)</p>
                     </div>
 
@@ -1028,7 +1028,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">A2P 10DLC</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time • $10/mo</p>
-                      <p className="text-[8px] text-white/60">Required for: All SMS • Prevents filtering</p>
+                      <p className="text-[8px] text-white/60">Required for: All SMS (SignalWire) • Prevents filtering</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>

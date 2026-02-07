@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TwilioSetupGuide } from '@/components/integrations/TwilioSetupGuide';
+import { SignalWireSetupGuide } from '@/components/integrations/SignalWireSetupGuide';
 import { SMSKeywordsSection } from '@/components/sms/SMSKeywordsSection';
 import {
   Dialog,
@@ -48,19 +48,20 @@ interface Integration {
 
 const SMS_INTEGRATIONS: Integration[] = [
   {
-    id: 'twilio',
-    name: 'Twilio',
+    id: 'signalwire',
+    name: 'SignalWire',
     description: 'Voice calls and SMS messaging.',
     icon: Phone,
-    color: 'bg-red-500',
-    docsUrl: 'https://console.twilio.com',
+    color: 'bg-blue-500',
+    docsUrl: 'https://signalwire.com/signin',
     fields: [
-      { key: 'twilio_account_sid', label: 'Account SID', placeholder: 'AC...', type: 'text', required: true },
-      { key: 'twilio_auth_token', label: 'Auth Token', placeholder: 'Your auth token', type: 'password', required: true },
-      { key: 'twilio_phone_number', label: 'Phone Number', placeholder: '+1234567890', type: 'text', required: true, helpText: 'E.164 format' },
+      { key: 'signalwire_space_url', label: 'Space URL', placeholder: 'yourspace.signalwire.com', type: 'text', required: true, helpText: 'Your SignalWire space URL' },
+      { key: 'signalwire_project_id', label: 'Project ID', placeholder: 'Your project ID', type: 'text', required: true },
+      { key: 'signalwire_api_token', label: 'API Token', placeholder: 'Your API token', type: 'password', required: true },
+      { key: 'signalwire_phone_number', label: 'Phone Number', placeholder: '+1234567890', type: 'text', required: true, helpText: 'E.164 format' },
     ],
-    checkConnection: (data) => !!(data.twilio_account_sid && data.twilio_auth_token && data.twilio_phone_number),
-    note: '💡 SMS ~$0.0079/msg, Voice ~$0.014/min. Required for SMS & voice reminders.',
+    checkConnection: (data) => !!(data.signalwire_project_id && data.signalwire_api_token && data.signalwire_phone_number && data.signalwire_space_url),
+    note: '💡 SMS ~$0.004/msg (40% cheaper), Voice ~$0.01/min. Required for SMS & voice reminders.',
   },
 ];
 
@@ -159,8 +160,8 @@ export default function SMSIntegration() {
             }
           />
 
-          {/* Twilio Setup Guide */}
-          <TwilioSetupGuide />
+          {/* SignalWire Setup Guide */}
+          <SignalWireSetupGuide />
 
           {/* Integration Cards */}
           <div className="grid gap-4 md:grid-cols-2">
