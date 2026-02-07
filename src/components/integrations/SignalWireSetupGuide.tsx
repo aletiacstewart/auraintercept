@@ -323,7 +323,7 @@ export function SignalWireSetupGuide() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-green-500" />
-                    <span className="text-xs font-medium text-foreground">Voice "When a call comes in"</span>
+                    <span className="text-xs font-medium text-foreground">Call Request URL (Inbound Calls)</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -335,15 +335,15 @@ export function SignalWireSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block text-foreground/70">{VOICE_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Set to HTTP POST - Handles incoming calls with AI</p>
+                <p className="text-xs text-foreground/70">Method: POST — Receives incoming call events</p>
               </div>
 
-              {/* Primary Handler Fails (Missed Call) */}
+              {/* Call Status Callback */}
               <div className="bg-muted p-3 rounded-lg space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-amber-500" />
-                    <span className="text-xs font-medium text-foreground">Voice "Call Status Callback"</span>
+                    <span className="text-xs font-medium text-foreground">Call Status Callback URL</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -355,7 +355,7 @@ export function SignalWireSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block text-foreground/70">{MISSED_CALL_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Handles missed calls - triggers AI callback or SMS</p>
+                <p className="text-xs text-foreground/70">Method: POST — Receives call completion events (missed calls trigger AI callback or SMS)</p>
               </div>
 
               {/* Status Callback */}
@@ -363,7 +363,7 @@ export function SignalWireSetupGuide() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-purple-500" />
-                    <span className="text-xs font-medium text-foreground">Voice "Status Callback URL"</span>
+                    <span className="text-xs font-medium text-foreground">Status Callback URL (Recordings)</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -375,7 +375,7 @@ export function SignalWireSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block text-foreground/70">{STATUS_CALLBACK_URL}</code>
-                <p className="text-xs text-foreground/70">Receives call completion events & recordings</p>
+                <p className="text-xs text-foreground/70">Method: POST — Receives call status events & recordings</p>
               </div>
 
               {/* SMS Webhook */}
@@ -383,7 +383,7 @@ export function SignalWireSetupGuide() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-blue-500" />
-                    <span className="text-xs font-medium text-foreground">Messaging "When a message comes in"</span>
+                    <span className="text-xs font-medium text-foreground">Message Request URL (Inbound SMS)</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -395,12 +395,12 @@ export function SignalWireSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block text-foreground/70">{SMS_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Set to HTTP POST - Handles inbound SMS with AI responses</p>
+                <p className="text-xs text-foreground/70">Method: POST — Receives incoming SMS events</p>
               </div>
 
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
                 <p className="text-blue-600 dark:text-blue-400 text-xs">
-                  <strong>📍 Where to configure:</strong> In SignalWire Dashboard, go to Phone Numbers → select your number → Edit → Configure the Voice and Messaging webhook URLs.
+                  <strong>📍 Where to configure:</strong> In SignalWire Dashboard, go to <strong>Phone Numbers</strong> → click your number → <strong>Settings</strong> tab → scroll to <strong>LaML Webhooks</strong> section.
                 </p>
               </div>
             </AccordionContent>
