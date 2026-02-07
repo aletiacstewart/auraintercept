@@ -1,238 +1,73 @@
 
-# Edge Function Migration: Twilio → SignalWire
 
-## Overview
-Update all 12 edge functions to use SignalWire credentials and API endpoints instead of Twilio.
+# Fix: Booking Agent "Business Closed" Error
 
----
+## Root Cause
+The `booking-actions` edge function queries the `business_hours` table using `.single()`, but the table contains **multiple hour types** per day (regular, office, field, emergency). This causes the query to fail, returning `null` and triggering the "closed" message.
 
-## Changes Per Edge Function
-
-### 1. `sms-handler/index.ts`
-**Database Query (Lines 63-68):**
-```typescript
-// Before: twilio_account_sid, twilio_auth_token, twilio_phone_number
-// After: signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url
-.eq('signalwire_phone_number', toNumber)
-```
-
-**sendSmsReply Function (Lines 299-333):**
-- Change function signature to accept SignalWire fields
-- Update API URL: `https://${spaceUrl}/api/laml/2010-04-01/Accounts/${projectId}/Messages`
-- Update authentication to use `projectId:apiToken`
+## Solution
+Update the business hours query to:
+1. Filter for appropriate hour types (`regular` or `office`)
+2. Check if **any** matching hour type is open
+3. Use the open hours for slot calculation
 
 ---
 
-### 2. `voice-handler/index.ts`
-**Incoming Call Handler (Lines 65-70):**
-```typescript
-.eq('signalwire_phone_number', calledPhone)
-```
+## Technical Changes
 
-**Note:** SignalWire uses cXML which is compatible with TwiML, so response formats remain unchanged.
+### File: `supabase/functions/booking-actions/index.ts`
 
----
+**Lines 287-298** - Update the business hours query:
 
-### 3. `missed-call-handler/index.ts`
-**Database Query (Lines 35-39):**
-```typescript
-.select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
-.eq('signalwire_phone_number', calledNumber)
-```
-
-**sendFollowUpSMS Function (Lines 284-317):**
-- Update to use `signalwireUrl` pattern
-- Change auth from `accountSid:authToken` to `projectId:apiToken`
-
----
-
-### 4. `send-appointment-sms/index.ts`
-**Database Query (Lines 41-44):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-```
-
-**Validation (Lines 55-59):**
-```typescript
-if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
-  return { error: 'SignalWire not configured for this company' }
-}
-```
-
-**API Call (Lines 63, 206):**
-```typescript
-const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-```
-
----
-
-### 5. `send-review-request/index.ts`
-**Database Query (Line 116-117):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key')
-```
-
-**SMS Send (Lines 211, 216-217):**
-```typescript
-if (integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number && integrations?.signalwire_space_url) {
-  const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-  const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
-```
-
----
-
-### 6. `lead-follow-up-reminders/index.ts`
-**Database Query (Lines 100-104):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-```
-
-**Validation & API Call (Lines 106, 111-112):**
-```typescript
-if (settings?.signalwire_project_id && settings?.signalwire_api_token && settings?.signalwire_phone_number && settings?.signalwire_space_url) {
-  const signalwireResponse = await fetch(
-    `https://${settings.signalwire_space_url}/api/laml/2010-04-01/Accounts/${settings.signalwire_project_id}/Messages`,
-    {
-      headers: {
-        'Authorization': `Basic ${btoa(`${settings.signalwire_project_id}:${settings.signalwire_api_token}`)}`,
-```
-
----
-
-### 7. `outbound-call/index.ts`
-**Database Query (Lines 81-84):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
-```
-
-**Validation (Lines 87-92):**
-```typescript
-if (integrationError || !integration?.signalwire_project_id) {
-  return { error: 'SignalWire integration not configured' }
-}
-```
-
-**API URL (Line 132):**
-```typescript
-const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
-```
-
----
-
-### 8. `test-voice-reminder/index.ts`
-**Database Query (Lines 56-60):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
-```
-
-**Validation (Lines 70-75):**
-```typescript
-if (!integration?.signalwire_project_id || !integration?.signalwire_api_token || !integration?.signalwire_phone_number || !integration?.signalwire_space_url) {
-  return { error: 'SignalWire integration not configured' }
-}
-```
-
-**API URL (Line 85):**
-```typescript
-const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
-```
-
----
-
-### 9. `send-job-notification/index.ts`
-**Database Query (Lines 92-95):**
-```typescript
-.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key')
-```
-
-**Validation & API Call (Lines 117, 127-128):**
-```typescript
-if (integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number && integrations?.signalwire_space_url) {
-  const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-  const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
-```
-
----
-
-### 10. `send-staff-notification/index.ts`
-**Database Query (Lines 205-209):**
-```typescript
-const { data: integration } = await supabase
-  .from('tenant_integrations')  // Changed from 'twilio_integrations'
-  .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+```text
+Before:
+const dayOfWeek = new Date(date).getDay();
+const { data: hours } = await supabase
+  .from('business_hours')
+  .select('*')
   .eq('company_id', companyId)
+  .eq('day_of_week', dayOfWeek)
   .single();
-```
 
-**API Call (Lines 211-220):**
-```typescript
-if (integration?.signalwire_project_id && integration?.signalwire_api_token && integration?.signalwire_phone_number && integration?.signalwire_space_url) {
-  const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Messages`;
-  await fetch(signalwireUrl, {
-    headers: {
-      'Authorization': 'Basic ' + btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`),
-```
+if (!hours || hours.is_closed) {
+  return { success: true, available_slots: [], message: 'Business is closed on this day' };
+}
 
----
+After:
+// Parse date properly using local components to avoid timezone issues
+const dateParts = date.split('-');
+const targetDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+const dayOfWeek = targetDate.getDay();
 
-### 11. `appointment-reminders/index.ts`
-**Interface Update (Lines 23-30):**
-```typescript
-interface CompanyIntegration {
-  company_id: string;
-  signalwire_project_id: string | null;
-  signalwire_api_token: string | null;
-  signalwire_phone_number: string | null;
-  signalwire_space_url: string | null;
-  resend_api_key: string | null;
-  elevenlabs_api_key: string | null;
-  elevenlabs_voice_id: string | null;
-  company: { name: string; };
+// Get ALL hour types for this day (regular, office, field, emergency)
+const { data: allHours } = await supabase
+  .from('business_hours')
+  .select('*')
+  .eq('company_id', companyId)
+  .eq('day_of_week', dayOfWeek)
+  .in('hour_type', ['regular', 'office']); // Only booking-relevant types
+
+// Find any open hours (prefer 'office' for booking, then 'regular')
+const hours = allHours?.find(h => !h.is_closed && h.hour_type === 'office') 
+           || allHours?.find(h => !h.is_closed && h.hour_type === 'regular');
+
+if (!hours) {
+  return { success: true, available_slots: [], message: 'Business is closed on this day' };
 }
 ```
 
-**Database Query (Lines 132-135):**
-```typescript
-.select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key, elevenlabs_api_key, elevenlabs_voice_id, company:companies(name)')
-```
+---
 
-**Validation (Line 157):**
-```typescript
-const hasSignalWire = integration?.signalwire_project_id && integration?.signalwire_api_token && integration?.signalwire_phone_number && integration?.signalwire_space_url;
-```
+## Why This Fix Works
 
-**API Calls (Lines 238-239, 325-326):**
-```typescript
-const signalwireUrl = `https://${integration!.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration!.signalwire_project_id}/Messages`;
-const authHeader = btoa(`${integration!.signalwire_project_id}:${integration!.signalwire_api_token}`);
-```
+| Before | After |
+|--------|-------|
+| Query returns error when 4 rows exist | Query returns all rows, then finds open one |
+| `hours = null` → "Business closed" | `hours = office hours` → Proceeds to check slots |
+| Timezone-sensitive date parsing | Local date component parsing |
 
 ---
 
-## API URL Pattern Change Summary
+## Deployment
+After the change, the `booking-actions` edge function will be automatically redeployed.
 
-| Component | Twilio | SignalWire |
-|-----------|--------|------------|
-| SMS URL | `api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json` | `{space}.signalwire.com/api/laml/2010-04-01/Accounts/{project}/Messages` |
-| Call URL | `api.twilio.com/2010-04-01/Accounts/{sid}/Calls.json` | `{space}.signalwire.com/api/laml/2010-04-01/Accounts/{project}/Calls` |
-| Auth | `account_sid:auth_token` | `project_id:api_token` |
-
----
-
-## Files to Update
-1. `supabase/functions/sms-handler/index.ts`
-2. `supabase/functions/voice-handler/index.ts`
-3. `supabase/functions/missed-call-handler/index.ts`
-4. `supabase/functions/send-appointment-sms/index.ts`
-5. `supabase/functions/send-review-request/index.ts`
-6. `supabase/functions/lead-follow-up-reminders/index.ts`
-7. `supabase/functions/outbound-call/index.ts`
-8. `supabase/functions/test-voice-reminder/index.ts`
-9. `supabase/functions/send-job-notification/index.ts`
-10. `supabase/functions/send-staff-notification/index.ts`
-11. `supabase/functions/appointment-reminders/index.ts`
-
----
-
-## Deployment Note
-After updating all edge functions, they will be automatically deployed. The SignalWire webhook URLs should be configured in the SignalWire dashboard to point to the same edge function endpoints (they remain unchanged).
