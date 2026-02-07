@@ -1,61 +1,48 @@
 
-# Add Google Calendar Email Matching Notice to Company Signup
+# Update 3rd Party Integration & Onboarding Information on Company Signup Page
 
-## Problem
-When companies sign up for Aura Intercept, they may use a different email address than their Google account. This causes issues when they try to connect Google Calendar because the OAuth system requires email matching for proper calendar sync functionality.
+## Problem Identified
+The company signup page (`Auth.tsx`) has:
+1. **Missing details** in the 3rd party integrations grid (e.g., missing "$1.15/number" for Twilio, missing tier requirements like "Required for: Halo, Single-Point, Multi-Track, Command")
+2. **Duplicate Concierge Onboarding** sections - one in the left column (line ~1073) and another in the bottom notice cards (line ~1318)
+3. **Incomplete information** compared to the homepage's detailed integration cards
 
 ## Solution
-Add a clear, informative notice near the email field in the Company Signup form explaining that the signup email should match their Google account email if they plan to use Google Calendar integration.
+Align the Auth page's 3rd party integrations section to match the homepage exactly, and remove the duplicate Concierge Onboarding card.
 
 ---
 
 ## Implementation Details
 
-### Location
-Add the notice in `src/pages/Auth.tsx`, specifically within the company signup form section, positioned near the email input field (around line 1172).
+### 1. Update 3rd Party Integration Cards (Lines 988-1069)
+Add the missing details to each integration card to match the homepage format:
 
-### Design Approach
-Use an inline info box (similar to the employee registration code notice pattern) that appears only for company mode signups. The notice will:
-- Use a subtle info styling (blue/cyan color scheme to match the existing design)
-- Include a Calendar icon to visually connect it to the Google Calendar feature
-- Be concise but clear about the requirement
+| Integration | Missing Details to Add |
+|-------------|----------------------|
+| Google Calendar | Add "Optional for: Halo, Single-Point, Multi-Track, Command" |
+| Resend | Add "Then $20/mo for 50k ($0.0004/email over)" and "Required for: Halo, Single-Point, Multi-Track, Command" |
+| ElevenLabs | Add "$99/mo (500k)" tier and "Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)" |
+| Twilio | Add "$1.15/number" and "Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)" |
+| A2P 10DLC | Add "Required for: All SMS features • Prevents carrier filtering" |
+| Stripe | Add "Required for: Single-Point, Multi-Track, Command (Invoicing)" |
+| Social Media | Add "Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point" |
+| Google Gemini | Add "Powers blog posts, social media, emails & marketing" and "Required for: All tiers" |
+| Tavily | Already correct - "Optional for: All tiers" |
 
-### Code Changes
+### 2. Remove Duplicate Concierge Onboarding (Lines 1311-1322)
+The bottom notice section has 3 cards:
+- **Concierge Onboarding** (DUPLICATE - remove this one)
+- **Billing Requirement** (keep)
+- **Invoice Payments** (keep)
 
-**File: `src/pages/Auth.tsx`**
-
-Add a conditional info notice that appears only for company mode, placed immediately before or after the email input field:
-
-```tsx
-{mode === 'company' && (
-  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-    <div className="flex items-start gap-2">
-      <Calendar className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-      <p className="text-xs text-foreground">
-        <span className="font-medium">Google Calendar Integration:</span>{' '}
-        Use the same email as your Google account to enable calendar sync.
-      </p>
-    </div>
-  </div>
-)}
-```
-
-### Visual Placement
-The notice will appear in the signup form, positioned after the email input field label and before the input itself (or as a helper text below the email field), making it contextually relevant.
+Change from 3 cards (`md:grid-cols-3`) to 2 cards (`md:grid-cols-2`) and remove the first Concierge Onboarding card since it's already shown in the left column above the auth form.
 
 ---
 
-## Alternative Approaches Considered
+## Files to Modify
+- `src/pages/Auth.tsx` (lines 988-1069 for integrations, lines 1311-1343 for notice cards)
 
-1. **Tooltip on email field** - Less visible, users might miss it
-2. **Bottom info cards** - Already have 3 cards, adding a 4th disrupts the grid layout
-3. **Modal on signup** - Too intrusive for a non-blocking requirement
-
-The inline notice approach provides the best balance of visibility and non-intrusiveness.
-
----
-
-## Expected Outcome
-- Users will see a clear notice when signing up for a company account
-- The notice explains the Google Calendar email matching requirement upfront
-- Reduces support requests and user confusion when setting up calendar integration
+## Visual Result
+- 3rd party integration cards will show the same level of detail as the homepage
+- Only ONE Concierge Onboarding section will appear (in the left column)
+- Bottom notice cards will show only Billing Requirement and Invoice Payments
