@@ -1182,9 +1182,9 @@ export default function Auth() {
                           {mode === 'company' && (
                             <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
                               <div className="flex items-start gap-2">
-                                <Calendar className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-foreground">
-                                  <span className="font-medium">Google Calendar Integration:</span>{' '}
+                                <Calendar className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-blue-300">
+                                  <span className="font-medium text-blue-200">Google Calendar Integration:</span>{' '}
                                   Use the same email as your Google account to enable calendar sync.
                                 </p>
                               </div>
