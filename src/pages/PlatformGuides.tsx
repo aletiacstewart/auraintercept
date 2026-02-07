@@ -553,15 +553,16 @@ const guideCategories = [
     featureColor: 'feature-integrations',
     guides: [
       {
-        title: 'Twilio Voice & SMS',
+        title: 'SignalWire Voice & SMS',
         duration: '15 min',
         steps: [
           'Navigate to Integrations → Voice Agent or SMS & Text',
-          'Create Twilio account at twilio.com',
-          'Obtain Account SID and Auth Token from Twilio Console',
+          'Create SignalWire account at signalwire.com',
+          'Obtain Project ID and API Token from SignalWire Dashboard',
+          'Note your Space URL (e.g., yourspace.signalwire.com)',
           'Purchase a phone number with Voice and SMS capabilities',
           'Enter credentials in the integration settings',
-          'Configure call handling and SMS templates',
+          'Configure LaML webhook URLs for call and message handling',
           'Test with your own phone number'
         ],
         tips: ['Use a local number for better answer rates', 'Keep SMS under 160 characters for single message']
