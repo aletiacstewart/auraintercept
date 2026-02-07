@@ -1,173 +1,238 @@
 
-# Twilio to SignalWire Migration Plan
+# Edge Function Migration: Twilio → SignalWire
 
 ## Overview
-Replace all Twilio references with SignalWire across the entire platform, including frontend UI, documentation, edge functions, and database schema.
-
-## Scope Analysis
-
-### Files Requiring Updates
-
-**Frontend/UI Components (9 files)**
-| File | Changes Needed |
-|------|----------------|
-| `src/pages/Auth.tsx` | Update 3rd party integration cards (Twilio → SignalWire, update pricing) |
-| `src/pages/Index.tsx` | Update homepage integration cards and pricing |
-| `src/pages/Subscription.tsx` | Update feature descriptions and tier comparison |
-| `src/pages/AIAgent.tsx` | Update voice integration status checks and links |
-| `src/pages/integrations/SMSIntegration.tsx` | Replace Twilio integration with SignalWire |
-| `src/components/integrations/TwilioSetupGuide.tsx` | Rename to `SignalWireSetupGuide.tsx`, rewrite entire guide |
-| `src/components/landing/PricingComparisonTable.tsx` | Update tooltips and descriptions |
-| `src/lib/documentationConfig.ts` | Update THIRD_PARTY_INTEGRATIONS and INTEGRATION_REQUIREMENTS |
-| `src/pages/PrivacyPolicy.tsx` | Update third-party service provider mention |
-
-**Edge Functions (12+ files)**
-| Function | Changes Needed |
-|----------|----------------|
-| `sms-handler` | Update API URL, field references (twilio_* → signalwire_*) |
-| `voice-handler` | Update API URL, TwiML → cXML (compatible) |
-| `missed-call-handler` | Update API calls and field references |
-| `send-appointment-sms` | Update API calls and field references |
-| `send-review-request` | Update SMS sending logic |
-| `lead-follow-up-reminders` | Update credentials lookup |
-| `voice-booking-agent` | Update SMS sending |
-| `outbound-call` | Update voice call initiation |
-| `test-voice-reminder` | Update test endpoint |
-| `send-job-notification` | Update SMS notifications |
-| `send-staff-notification` | Update staff SMS |
-| `appointment-reminders` | Update reminder logic |
-
-**Database Schema Changes**
-| Current Field | New Field |
-|---------------|-----------|
-| `twilio_account_sid` | `signalwire_project_id` |
-| `twilio_auth_token` | `signalwire_api_token` |
-| `twilio_phone_number` | `signalwire_phone_number` |
-| Add new field | `signalwire_space_url` |
+Update all 12 edge functions to use SignalWire credentials and API endpoints instead of Twilio.
 
 ---
 
-## Implementation Details
+## Changes Per Edge Function
 
-### 1. Database Migration
-Create new columns in `tenant_integrations` table:
-- `signalwire_project_id` (TEXT)
-- `signalwire_api_token` (TEXT)
-- `signalwire_phone_number` (TEXT)
-- `signalwire_space_url` (TEXT)
-
-Note: Keep Twilio columns temporarily for backward compatibility, then deprecate.
-
-### 2. SignalWire API Compatibility
-SignalWire offers a Twilio-compatible REST API, making migration simpler:
-
-**Twilio URL Pattern:**
-```
-https://api.twilio.com/2010-04-01/Accounts/{ACCOUNT_SID}/Messages.json
+### 1. `sms-handler/index.ts`
+**Database Query (Lines 63-68):**
+```typescript
+// Before: twilio_account_sid, twilio_auth_token, twilio_phone_number
+// After: signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url
+.eq('signalwire_phone_number', toNumber)
 ```
 
-**SignalWire URL Pattern:**
-```
-https://{SPACE_URL}/api/laml/2010-04-01/Accounts/{PROJECT_ID}/Messages
-```
-
-Authentication remains HTTP Basic with PROJECT_ID:API_TOKEN.
-
-### 3. Pricing Updates (SignalWire vs Twilio)
-
-| Feature | Twilio | SignalWire |
-|---------|--------|------------|
-| Phone Number | $1.15/mo | $2.00/mo |
-| Outbound SMS | $0.0079/msg | $0.004/msg (40% cheaper) |
-| Inbound SMS | $0.0075/msg | $0.004/msg |
-| Outbound Voice | $0.014/min | $0.01/min |
-| Inbound Voice | $0.0085/min | $0.01/min |
-
-### 4. A2P 10DLC Compliance
-SignalWire handles 10DLC registration similarly to Twilio. Update the setup guide to reference:
-- SignalWire Brand Registration
-- Campaign Registration within SignalWire dashboard
-- Number-to-Campaign linking
-
-### 5. UI Changes
-
-**Integration Cards (Auth.tsx & Index.tsx):**
-```
-Before:
-- Name: "Twilio"
-- Pricing: "$1.15/number • $0.0079/SMS"
-
-After:
-- Name: "SignalWire"
-- Pricing: "$2/number • $0.004/SMS (40% cheaper)"
-```
-
-**Setup Guide:**
-Rename `TwilioSetupGuide.tsx` → `SignalWireSetupGuide.tsx` with:
-- New account creation link: signalwire.com
-- SignalWire Space URL configuration
-- Project ID and API Token retrieval
-- Updated webhook URLs
-- Updated 10DLC registration steps
-
-### 6. Edge Function Updates
-
-Each edge function using Twilio will need:
-
-1. **Field name updates:**
-   ```typescript
-   // Before
-   .select('twilio_account_sid, twilio_auth_token, twilio_phone_number')
-   
-   // After  
-   .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-   ```
-
-2. **API URL updates:**
-   ```typescript
-   // Before
-   const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilio_account_sid}/Messages.json`;
-   
-   // After
-   const signalwireUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Messages`;
-   ```
-
-3. **Response format:** SignalWire uses cXML (compatible with TwiML), minimal changes needed.
+**sendSmsReply Function (Lines 299-333):**
+- Change function signature to accept SignalWire fields
+- Update API URL: `https://${spaceUrl}/api/laml/2010-04-01/Accounts/${projectId}/Messages`
+- Update authentication to use `projectId:apiToken`
 
 ---
 
-## Implementation Order
+### 2. `voice-handler/index.ts`
+**Incoming Call Handler (Lines 65-70):**
+```typescript
+.eq('signalwire_phone_number', calledPhone)
+```
 
-1. **Phase 1: Database** - Add new SignalWire columns to tenant_integrations
-2. **Phase 2: Documentation Config** - Update `documentationConfig.ts` central source
-3. **Phase 3: Setup Guide** - Create `SignalWireSetupGuide.tsx` component
-4. **Phase 4: Integration Pages** - Update SMSIntegration.tsx and AIAgent.tsx
-5. **Phase 5: Landing Pages** - Update Auth.tsx and Index.tsx integration cards
-6. **Phase 6: Edge Functions** - Update all 12+ functions with new API calls
-7. **Phase 7: Cleanup** - Update remaining references (PrivacyPolicy, Subscription, etc.)
+**Note:** SignalWire uses cXML which is compatible with TwiML, so response formats remain unchanged.
 
 ---
 
-## Files to Create
+### 3. `missed-call-handler/index.ts`
+**Database Query (Lines 35-39):**
+```typescript
+.select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
+.eq('signalwire_phone_number', calledNumber)
+```
 
-| File | Purpose |
-|------|---------|
-| `src/components/integrations/SignalWireSetupGuide.tsx` | New setup guide component |
-
-## Files to Delete
-
-| File | Reason |
-|------|--------|
-| `src/components/integrations/TwilioSetupGuide.tsx` | Replaced by SignalWire version |
+**sendFollowUpSMS Function (Lines 284-317):**
+- Update to use `signalwireUrl` pattern
+- Change auth from `accountSid:authToken` to `projectId:apiToken`
 
 ---
 
-## Testing Checklist
+### 4. `send-appointment-sms/index.ts`
+**Database Query (Lines 41-44):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+```
 
-- Verify SignalWire credentials can be saved to database
-- Test SMS sending via SignalWire API
-- Test inbound SMS webhook handling
-- Test voice call initiation
-- Test inbound voice call handling
-- Verify 10DLC registration flow documentation
-- Confirm all UI references updated (no "Twilio" mentions remain)
+**Validation (Lines 55-59):**
+```typescript
+if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
+  return { error: 'SignalWire not configured for this company' }
+}
+```
+
+**API Call (Lines 63, 206):**
+```typescript
+const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+```
+
+---
+
+### 5. `send-review-request/index.ts`
+**Database Query (Line 116-117):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key')
+```
+
+**SMS Send (Lines 211, 216-217):**
+```typescript
+if (integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number && integrations?.signalwire_space_url) {
+  const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+  const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
+```
+
+---
+
+### 6. `lead-follow-up-reminders/index.ts`
+**Database Query (Lines 100-104):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+```
+
+**Validation & API Call (Lines 106, 111-112):**
+```typescript
+if (settings?.signalwire_project_id && settings?.signalwire_api_token && settings?.signalwire_phone_number && settings?.signalwire_space_url) {
+  const signalwireResponse = await fetch(
+    `https://${settings.signalwire_space_url}/api/laml/2010-04-01/Accounts/${settings.signalwire_project_id}/Messages`,
+    {
+      headers: {
+        'Authorization': `Basic ${btoa(`${settings.signalwire_project_id}:${settings.signalwire_api_token}`)}`,
+```
+
+---
+
+### 7. `outbound-call/index.ts`
+**Database Query (Lines 81-84):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
+```
+
+**Validation (Lines 87-92):**
+```typescript
+if (integrationError || !integration?.signalwire_project_id) {
+  return { error: 'SignalWire integration not configured' }
+}
+```
+
+**API URL (Line 132):**
+```typescript
+const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
+```
+
+---
+
+### 8. `test-voice-reminder/index.ts`
+**Database Query (Lines 56-60):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
+```
+
+**Validation (Lines 70-75):**
+```typescript
+if (!integration?.signalwire_project_id || !integration?.signalwire_api_token || !integration?.signalwire_phone_number || !integration?.signalwire_space_url) {
+  return { error: 'SignalWire integration not configured' }
+}
+```
+
+**API URL (Line 85):**
+```typescript
+const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
+```
+
+---
+
+### 9. `send-job-notification/index.ts`
+**Database Query (Lines 92-95):**
+```typescript
+.select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key')
+```
+
+**Validation & API Call (Lines 117, 127-128):**
+```typescript
+if (integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number && integrations?.signalwire_space_url) {
+  const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
+  const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
+```
+
+---
+
+### 10. `send-staff-notification/index.ts`
+**Database Query (Lines 205-209):**
+```typescript
+const { data: integration } = await supabase
+  .from('tenant_integrations')  // Changed from 'twilio_integrations'
+  .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+  .eq('company_id', companyId)
+  .single();
+```
+
+**API Call (Lines 211-220):**
+```typescript
+if (integration?.signalwire_project_id && integration?.signalwire_api_token && integration?.signalwire_phone_number && integration?.signalwire_space_url) {
+  const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Messages`;
+  await fetch(signalwireUrl, {
+    headers: {
+      'Authorization': 'Basic ' + btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`),
+```
+
+---
+
+### 11. `appointment-reminders/index.ts`
+**Interface Update (Lines 23-30):**
+```typescript
+interface CompanyIntegration {
+  company_id: string;
+  signalwire_project_id: string | null;
+  signalwire_api_token: string | null;
+  signalwire_phone_number: string | null;
+  signalwire_space_url: string | null;
+  resend_api_key: string | null;
+  elevenlabs_api_key: string | null;
+  elevenlabs_voice_id: string | null;
+  company: { name: string; };
+}
+```
+
+**Database Query (Lines 132-135):**
+```typescript
+.select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, resend_api_key, elevenlabs_api_key, elevenlabs_voice_id, company:companies(name)')
+```
+
+**Validation (Line 157):**
+```typescript
+const hasSignalWire = integration?.signalwire_project_id && integration?.signalwire_api_token && integration?.signalwire_phone_number && integration?.signalwire_space_url;
+```
+
+**API Calls (Lines 238-239, 325-326):**
+```typescript
+const signalwireUrl = `https://${integration!.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration!.signalwire_project_id}/Messages`;
+const authHeader = btoa(`${integration!.signalwire_project_id}:${integration!.signalwire_api_token}`);
+```
+
+---
+
+## API URL Pattern Change Summary
+
+| Component | Twilio | SignalWire |
+|-----------|--------|------------|
+| SMS URL | `api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json` | `{space}.signalwire.com/api/laml/2010-04-01/Accounts/{project}/Messages` |
+| Call URL | `api.twilio.com/2010-04-01/Accounts/{sid}/Calls.json` | `{space}.signalwire.com/api/laml/2010-04-01/Accounts/{project}/Calls` |
+| Auth | `account_sid:auth_token` | `project_id:api_token` |
+
+---
+
+## Files to Update
+1. `supabase/functions/sms-handler/index.ts`
+2. `supabase/functions/voice-handler/index.ts`
+3. `supabase/functions/missed-call-handler/index.ts`
+4. `supabase/functions/send-appointment-sms/index.ts`
+5. `supabase/functions/send-review-request/index.ts`
+6. `supabase/functions/lead-follow-up-reminders/index.ts`
+7. `supabase/functions/outbound-call/index.ts`
+8. `supabase/functions/test-voice-reminder/index.ts`
+9. `supabase/functions/send-job-notification/index.ts`
+10. `supabase/functions/send-staff-notification/index.ts`
+11. `supabase/functions/appointment-reminders/index.ts`
+
+---
+
+## Deployment Note
+After updating all edge functions, they will be automatically deployed. The SignalWire webhook URLs should be configured in the SignalWire dashboard to point to the same edge function endpoints (they remain unchanged).
