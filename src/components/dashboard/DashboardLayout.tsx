@@ -165,7 +165,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: '3rd Party Overview', icon: Puzzle, href: '/dashboard/3rd-party-overview', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Voice & SMS', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Social Media', icon: Share2, href: '/dashboard/integrations/social', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },

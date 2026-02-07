@@ -148,7 +148,7 @@ export default function SMSIntegration() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Phone}
-            title="SMS & Text"
+            title="Voice & SMS"
             description="Configure SMS and voice call capabilities"
             featureColor="integrations"
             action={
