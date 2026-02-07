@@ -24,3 +24,20 @@ export function isLovablePreviewOrigin(origin: string): boolean {
   }
 }
 
+/**
+ * Detects if the current page is running in a Lovable preview environment.
+ * Preview environments cannot complete OAuth flows due to iframe/proxy restrictions.
+ */
+export function isLovablePreviewDomain(): boolean {
+  const host = window.location.hostname;
+  return host.endsWith('.lovableproject.com') || host.includes('id-preview--');
+}
+
+/**
+ * Returns the published domain for this project.
+ * Used to redirect users to the correct domain for OAuth flows.
+ */
+export function getPublishedDomain(): string {
+  return 'https://auraintercept.ai';
+}
+

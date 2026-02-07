@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, Calendar, ExternalLink, CheckCircle2 } from "lucide-react";
+import { RefreshCw, Calendar, ExternalLink, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { isLovablePreviewDomain, getPublishedDomain } from "@/lib/url";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -39,8 +40,15 @@ export default function OAuthGoogleCalendar() {
   const [loading, setLoading] = useState(true);
   const [isInIframe] = useState(detectIframe);
   const [autoRedirecting, setAutoRedirecting] = useState(false);
+  const [isPreview] = useState(isLovablePreviewDomain);
 
   useEffect(() => {
+    // Skip fetching auth URL if we're on preview domain - we'll show a message instead
+    if (isPreview) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     const fetchAuthUrl = async () => {
@@ -105,12 +113,61 @@ export default function OAuthGoogleCalendar() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isPreview]);
 
   const handleConnect = () => {
     if (!authUrl) return;
     navigateOutsideIframe(authUrl);
   };
+
+  const handleOpenOnPublishedSite = () => {
+    const publishedUrl = `${getPublishedDomain()}/oauth/google-calendar`;
+    window.open(publishedUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  // Show preview domain warning
+  if (isPreview) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6 bg-background">
+        <Card className="w-full max-w-lg">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-amber-500" />
+            </div>
+            <CardTitle>Preview Environment Detected</CardTitle>
+            <CardDescription>
+              Google Calendar OAuth cannot be completed from the Lovable preview
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 rounded-lg bg-muted/50 border text-sm">
+              <p className="text-foreground font-medium mb-2">Why is this happening?</p>
+              <p className="text-muted-foreground text-sm">
+                Google blocks OAuth flows from preview environments for security reasons. 
+                To connect Google Calendar, you must use your published site.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Button onClick={handleOpenOnPublishedSite} className="w-full" size="lg">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Open on auraintercept.ai
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                Opens the OAuth page on your published domain in a new tab
+              </p>
+            </div>
+
+            <div className="pt-2 border-t">
+              <p className="text-xs text-muted-foreground text-center">
+                After connecting on your published site, return here to verify the connection.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    );
+  }
 
   // While auto-redirecting, show a brief loading state
   if (autoRedirecting) {
