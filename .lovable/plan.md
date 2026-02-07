@@ -1,65 +1,61 @@
 
-# Fix Google OAuth Email Attribution
+# Add Google Calendar Email Matching Notice to Company Signup
 
 ## Problem
-The email `aibotcompany.ai@gmail.com` appears in the Google OAuth consent popup because the OAuth credentials (Client ID and Secret) were originally created by that account. Google tracks who created the credentials, not just project ownership.
+When companies sign up for Aura Intercept, they may use a different email address than their Google account. This causes issues when they try to connect Google Calendar because the OAuth system requires email matching for proper calendar sync functionality.
 
 ## Solution
-Create new OAuth credentials under the `auraintercept@gmail.com` account and update them in Lovable.
+Add a clear, informative notice near the email field in the Company Signup form explaining that the signup email should match their Google account email if they plan to use Google Calendar integration.
 
 ---
 
-## Step 1: Create New OAuth Credentials in Google Cloud Console
+## Implementation Details
 
-1. Go to **Google Cloud Console** → **APIs & Services** → **Credentials**
-2. Click **+ CREATE CREDENTIALS** → **OAuth client ID**
-3. Select **Web application** as the application type
-4. Set a name like "Aura Intercept OAuth"
-5. Under **Authorized JavaScript origins**, add:
-   - `https://auraintercept.ai`
-   - `https://auraintercept.lovable.app`
-6. Under **Authorized redirect URIs**, add:
-   - `https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/google-calendar-auth?action=callback`
-7. Click **CREATE**
-8. Copy the new **Client ID** and **Client Secret**
+### Location
+Add the notice in `src/pages/Auth.tsx`, specifically within the company signup form section, positioned near the email input field (around line 1172).
+
+### Design Approach
+Use an inline info box (similar to the employee registration code notice pattern) that appears only for company mode signups. The notice will:
+- Use a subtle info styling (blue/cyan color scheme to match the existing design)
+- Include a Calendar icon to visually connect it to the Google Calendar feature
+- Be concise but clear about the requirement
+
+### Code Changes
+
+**File: `src/pages/Auth.tsx`**
+
+Add a conditional info notice that appears only for company mode, placed immediately before or after the email input field:
+
+```tsx
+{mode === 'company' && (
+  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+    <div className="flex items-start gap-2">
+      <Calendar className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+      <p className="text-xs text-foreground">
+        <span className="font-medium">Google Calendar Integration:</span>{' '}
+        Use the same email as your Google account to enable calendar sync.
+      </p>
+    </div>
+  </div>
+)}
+```
+
+### Visual Placement
+The notice will appear in the signup form, positioned after the email input field label and before the input itself (or as a helper text below the email field), making it contextually relevant.
 
 ---
 
-## Step 2: Update Secrets in Lovable
+## Alternative Approaches Considered
 
-Once you have the new credentials, I will:
-1. Update the `GOOGLE_CLIENT_ID` secret with your new Client ID
-2. Update the `GOOGLE_CLIENT_SECRET` secret with your new Client Secret
+1. **Tooltip on email field** - Less visible, users might miss it
+2. **Bottom info cards** - Already have 3 cards, adding a 4th disrupts the grid layout
+3. **Modal on signup** - Too intrusive for a non-blocking requirement
 
----
-
-## Step 3: Delete Old Credentials (Optional but Recommended)
-
-In Google Cloud Console → Credentials:
-1. Find the old OAuth 2.0 Client ID (the one created by aibotcompany.ai@gmail.com)
-2. Click the trash icon to delete it
-
----
-
-## Technical Details
-
-| Item | Current Value |
-|------|---------------|
-| Edge Function | `supabase/functions/google-calendar-auth/index.ts` |
-| Redirect URI | `https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/google-calendar-auth?action=callback` |
-| Existing Secrets | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (configured) |
+The inline notice approach provides the best balance of visibility and non-intrusiveness.
 
 ---
 
 ## Expected Outcome
-After updating the credentials:
-- The OAuth consent popup will show `auraintercept@gmail.com` as the developer
-- Google Calendar integration will work correctly
-- No code changes required - only secret updates
-
----
-
-## Next Steps After You Create the Credentials
-1. Share the new Client ID and Client Secret
-2. I will update the secrets in Lovable Cloud
-3. Test the Google Calendar connection from `https://auraintercept.ai`
+- Users will see a clear notice when signing up for a company account
+- The notice explains the Google Calendar email matching requirement upfront
+- Reduces support requests and user confusion when setting up calendar integration
