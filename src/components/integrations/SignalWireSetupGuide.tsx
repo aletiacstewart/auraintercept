@@ -316,92 +316,99 @@ export function SignalWireSetupGuide() {
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
-              <p>To enable AI voice handling and missed call callbacks, configure these webhook URLs on your SignalWire phone number:</p>
+              <p>Configure these webhook URLs in your SignalWire Dashboard to enable AI voice and SMS handling:</p>
               
-              {/* Voice Webhook */}
-              <div className="bg-muted p-3 rounded-lg space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-green-500" />
-                    <span className="text-xs font-medium text-foreground">Call Request URL (Inbound Calls)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() => copyToClipboard(VOICE_WEBHOOK_URL, 'voice-webhook')}
-                  >
-                    {copiedItems['voice-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  </Button>
-                </div>
-                <code className="text-xs break-all block text-foreground/70">{VOICE_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Method: POST — Receives incoming call events</p>
+              {/* Step-by-step navigation */}
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 space-y-2">
+                <p className="text-blue-600 dark:text-blue-400 text-xs font-medium">📍 How to configure in SignalWire Dashboard:</p>
+                <ol className="text-blue-600 dark:text-blue-400 text-xs list-decimal list-inside space-y-1">
+                  <li>Go to <strong>Phone Numbers</strong> and click your number</li>
+                  <li>Click the <strong>"Edit Settings"</strong> button</li>
+                </ol>
               </div>
 
-              {/* Call Status Callback */}
-              <div className="bg-muted p-3 rounded-lg space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-amber-500" />
-                    <span className="text-xs font-medium text-foreground">Call Status Callback URL</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() => copyToClipboard(MISSED_CALL_WEBHOOK_URL, 'missed-webhook')}
-                  >
-                    {copiedItems['missed-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  </Button>
-                </div>
-                <code className="text-xs break-all block text-foreground/70">{MISSED_CALL_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Method: POST — Receives call completion events (missed calls trigger AI callback or SMS)</p>
-              </div>
-
-              {/* Status Callback */}
-              <div className="bg-muted p-3 rounded-lg space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-purple-500" />
-                    <span className="text-xs font-medium text-foreground">Status Callback URL (Recordings)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() => copyToClipboard(STATUS_CALLBACK_URL, 'status-webhook')}
-                  >
-                    {copiedItems['status-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  </Button>
-                </div>
-                <code className="text-xs break-all block text-foreground/70">{STATUS_CALLBACK_URL}</code>
-                <p className="text-xs text-foreground/70">Method: POST — Receives call status events & recordings</p>
-              </div>
-
-              {/* SMS Webhook */}
-              <div className="bg-muted p-3 rounded-lg space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-blue-500" />
-                    <span className="text-xs font-medium text-foreground">Message Request URL (Inbound SMS)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() => copyToClipboard(SMS_WEBHOOK_URL, 'sms-webhook')}
-                  >
-                    {copiedItems['sms-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  </Button>
-                </div>
-                <code className="text-xs break-all block text-foreground/70">{SMS_WEBHOOK_URL}</code>
-                <p className="text-xs text-foreground/70">Method: POST — Receives incoming SMS events</p>
-              </div>
-
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                <p className="text-blue-600 dark:text-blue-400 text-xs">
-                  <strong>📍 Where to configure:</strong> In SignalWire Dashboard, go to <strong>Phone Numbers</strong> → click your number → <strong>Settings</strong> tab → scroll to <strong>LaML Webhooks</strong> section.
+              {/* Voice Section */}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-foreground flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-green-500" />
+                  Voice & Fax Section (for inbound calls):
                 </p>
+                <div className="bg-muted p-3 rounded-lg space-y-2 ml-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-medium text-foreground">"When a Call Comes In" → LaML Webhooks</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 gap-1"
+                      onClick={() => copyToClipboard(VOICE_WEBHOOK_URL, 'voice-webhook')}
+                    >
+                      {copiedItems['voice-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                  <code className="text-xs break-all block text-foreground/70">{VOICE_WEBHOOK_URL}</code>
+                  <p className="text-xs text-foreground/60">Select <strong>POST</strong> method</p>
+                </div>
+              </div>
+
+              {/* SMS Section */}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-foreground flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-blue-500" />
+                  Messaging Section (for inbound SMS):
+                </p>
+                <div className="bg-muted p-3 rounded-lg space-y-2 ml-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-medium text-foreground">"When a Message Comes In" → LaML Webhooks</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 gap-1"
+                      onClick={() => copyToClipboard(SMS_WEBHOOK_URL, 'sms-webhook')}
+                    >
+                      {copiedItems['sms-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                  <code className="text-xs break-all block text-foreground/70">{SMS_WEBHOOK_URL}</code>
+                  <p className="text-xs text-foreground/60">Select <strong>POST</strong> method</p>
+                </div>
+              </div>
+
+              {/* Status Callbacks Note */}
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 space-y-2">
+                <p className="text-amber-600 dark:text-amber-400 text-xs font-medium">⚡ Status Callbacks (Automatic)</p>
+                <p className="text-amber-600 dark:text-amber-400 text-xs">
+                  The following callbacks are handled automatically by our system when making outbound calls — no dashboard configuration needed:
+                </p>
+                <div className="space-y-1 ml-2">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-3 h-3 text-amber-500" />
+                    <code className="text-xs text-foreground/70 break-all">{STATUS_CALLBACK_URL}</code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1"
+                      onClick={() => copyToClipboard(STATUS_CALLBACK_URL, 'status-webhook')}
+                    >
+                      {copiedItems['status-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3 h-3 text-amber-500" />
+                    <code className="text-xs text-foreground/70 break-all">{MISSED_CALL_WEBHOOK_URL}</code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1"
+                      onClick={() => copyToClipboard(MISSED_CALL_WEBHOOK_URL, 'missed-webhook')}
+                    >
+                      {copiedItems['missed-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>
