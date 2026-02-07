@@ -284,16 +284,24 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
     return { success: false, error: 'Service not found', available_slots: [] };
   }
 
-  // Get business hours for the day
-  const dayOfWeek = new Date(date).getDay();
-  const { data: hours } = await supabase
+  // Get business hours for the day - parse date components to avoid UTC timezone shift
+  const dateParts = date.split('-');
+  const targetDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+  const dayOfWeek = targetDate.getDay();
+  
+  // Get ALL hour types for this day (regular, office, field, emergency)
+  const { data: allHours } = await supabase
     .from('business_hours')
     .select('*')
     .eq('company_id', companyId)
     .eq('day_of_week', dayOfWeek)
-    .single();
+    .in('hour_type', ['regular', 'office']); // Only booking-relevant types
 
-  if (!hours || hours.is_closed) {
+  // Find any open hours (prefer 'office' for booking, then 'regular')
+  const hours = allHours?.find(h => !h.is_closed && h.hour_type === 'office') 
+             || allHours?.find(h => !h.is_closed && h.hour_type === 'regular');
+
+  if (!hours) {
     return { success: true, available_slots: [], message: 'Business is closed on this day' };
   }
 
