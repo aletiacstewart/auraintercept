@@ -1179,6 +1179,17 @@ export default function Auth() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                           />
+                          {mode === 'company' && (
+                            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                              <div className="flex items-start gap-2">
+                                <Calendar className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-foreground">
+                                  <span className="font-medium">Google Calendar Integration:</span>{' '}
+                                  Use the same email as your Google account to enable calendar sync.
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="signupPassword">Password</Label>
