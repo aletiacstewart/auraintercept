@@ -87,10 +87,31 @@ export default function SMSIntegration() {
     enabled: !!companyId,
   });
 
+  // Normalize phone number to E.164 format
+  const normalizePhoneNumber = (phone: string): string => {
+    if (!phone) return '';
+    // Remove all non-digit characters except leading +
+    let normalized = phone.replace(/[^\d+]/g, '');
+    // Ensure E.164 format (add + if missing for US numbers)
+    if (!normalized.startsWith('+') && normalized.length === 11 && normalized.startsWith('1')) {
+      normalized = '+' + normalized;
+    } else if (!normalized.startsWith('+') && normalized.length === 10) {
+      normalized = '+1' + normalized;
+    }
+    return normalized;
+  };
+
   const saveMutation = useMutation({
     mutationFn: async (data: Record<string, string>) => {
       if (!companyId) throw new Error('No company ID');
-      const payload = { company_id: companyId, ...data };
+      
+      // Normalize phone number before saving
+      const normalizedData = { ...data };
+      if (normalizedData.signalwire_phone_number) {
+        normalizedData.signalwire_phone_number = normalizePhoneNumber(normalizedData.signalwire_phone_number);
+      }
+      
+      const payload = { company_id: companyId, ...normalizedData };
       if (integrations?.id) {
         const { error } = await supabase.from('tenant_integrations').update(payload).eq('id', integrations.id);
         if (error) throw error;
