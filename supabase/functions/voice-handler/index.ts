@@ -1,6 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
+import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,21 +39,7 @@ function cleanupExpiredConversations(): void {
     console.log(`Cleaned up ${cleaned} expired conversation(s). Active: ${conversations.size}`);
   }
 }
-// Normalize phone number to E.164 format for consistent matching
-function normalizePhoneNumber(phone: string): string {
-  if (!phone) return '';
-  // Remove all non-digit characters except leading +
-  let normalized = phone.replace(/[^\d+]/g, '');
-  // Ensure E.164 format (add + if missing for US numbers)
-  if (!normalized.startsWith('+') && normalized.length === 11 && normalized.startsWith('1')) {
-    normalized = '+' + normalized;
-  } else if (!normalized.startsWith('+') && normalized.length === 10) {
-    normalized = '+1' + normalized;
-  }
-  return normalized;
-}
-
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

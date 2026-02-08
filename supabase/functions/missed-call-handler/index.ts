@@ -1,12 +1,12 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -27,19 +27,26 @@ serve(async (req) => {
     console.log("Missed call webhook received:", callData);
 
     const callerNumber = callData.From || callData.Caller;
-    const calledNumber = callData.To || callData.Called;
+    const calledNumberRaw = callData.To || callData.Called;
     const callStatus = callData.CallStatus;
     const callSid = callData.CallSid;
 
-    // Find company by SignalWire phone number
-    const { data: integration } = await supabase
+    // Normalize incoming phone for database lookup
+    const calledNumber = normalizePhoneNumber(calledNumberRaw);
+
+    // Find company by SignalWire phone number - fetch all and filter with normalization
+    const { data: allIntegrations } = await supabase
       .from('tenant_integrations')
       .select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url, elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('signalwire_phone_number', calledNumber)
-      .single();
+      .not('signalwire_phone_number', 'is', null);
+    
+    // Find matching integration by normalizing stored phone numbers
+    const integration = allIntegrations?.find(
+      (i) => normalizePhoneNumber(i.signalwire_phone_number || '') === calledNumber
+    );
 
     if (!integration) {
-      console.log("No company found for number:", calledNumber);
+      console.log("No company found for number:", calledNumberRaw, "(normalized:", calledNumber, ")");
       return new Response('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
         headers: { ...corsHeaders, 'Content-Type': 'text/xml' },
       });
@@ -293,6 +300,9 @@ async function sendFollowUpSMS(
 ) {
   const message = `Hi! We noticed you just called ${companyName} and we missed your call. We're sorry about that! Would you like to book an appointment? Reply YES to receive a link to our online booking, or we'll call you back as soon as possible.`;
 
+  // Normalize the From number for SignalWire
+  const normalizedFrom = normalizePhoneNumber(fromNumber);
+  
   const signalwireUrl = `https://${spaceUrl}/api/laml/2010-04-01/Accounts/${projectId}/Messages`;
   
   const response = await fetch(signalwireUrl, {
@@ -300,10 +310,11 @@ async function sendFollowUpSMS(
     headers: {
       'Authorization': 'Basic ' + btoa(`${projectId}:${apiToken}`),
       'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
     },
     body: new URLSearchParams({
       To: toNumber,
-      From: fromNumber,
+      From: normalizedFrom,
       Body: message,
     }),
   });
