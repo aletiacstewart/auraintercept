@@ -1,81 +1,72 @@
 
-# Fix SignalWire Voice to Use ElevenLabs TTS
 
-## Problem Summary
+# Fix Phone Number Format Matching for ElevenLabs Voice
 
-SignalWire phone calls are playing a default voice instead of your configured ElevenLabs voice because:
+## Problem Identified
 
-1. **Data URL incompatibility**: The `voice-handler` generates ElevenLabs audio as base64 data URLs, but SignalWire's `<Play>` verb requires publicly accessible HTTP URLs
-2. **Silent failures**: When the data URL fails to play, SignalWire falls back to built-in TTS (`Polly.Joanna`)
-3. **Agent prompts don't apply**: Your ElevenLabs Conversational AI Agent settings only affect web voice chat, not phone calls
+SignalWire phone calls are using a default robotic voice (Polly.Joanna) instead of your configured ElevenLabs voice because:
 
-## Solution: Host ElevenLabs Audio via Temporary Storage
+**Phone number format mismatch prevents credential lookup:**
+- Database stores: `+1 (484) 737-2424` (human-readable format)
+- SignalWire sends: `+14847372424` (E.164 format - digits only)
 
-### Approach
-Instead of returning base64 data URLs, the solution will:
-1. Generate audio via ElevenLabs TTS API
-2. Upload the audio file to Supabase Storage (temporary bucket)
-3. Return a public URL that SignalWire can play
-4. Clean up old audio files periodically
+The `voice-handler` cannot find your company's ElevenLabs API key because the phone numbers don't match exactly.
+
+## Solution
+
+Normalize phone numbers to E.164 format before comparing. This will fix the lookup query so your ElevenLabs credentials are found.
 
 ### Implementation Steps
 
-#### Step 1: Create Audio Storage Bucket
-Create a Supabase storage bucket for temporary voice audio files with:
-- Public access for SignalWire playback
-- Short retention policy for automatic cleanup
+#### Step 1: Add Phone Number Normalization Function
+Add a utility function in `voice-handler` that strips all non-digit characters (except leading `+`):
 
-#### Step 2: Update `voice-handler` Edge Function
-Modify the `generateElevenLabsAudio` function to:
-1. Generate audio from ElevenLabs TTS API
-2. Upload to Supabase Storage with a unique filename
-3. Return the public URL for SignalWire to play
-4. Add error logging to diagnose future issues
+```text
+Input: "+1 (484) 737-2424" → Output: "+14847372424"
+Input: "1-484-737-2424"   → Output: "+14847372424"
+Input: "+14847372424"     → Output: "+14847372424"
+```
 
-#### Step 3: Add Audio Cleanup
-Implement cleanup of old audio files (older than 1 hour) to prevent storage bloat.
+#### Step 2: Update the Database Query
+Instead of exact string matching, normalize both the incoming number and database values for comparison. The query will:
+1. Take the incoming `calledPhone` from SignalWire
+2. Normalize it to E.164 format
+3. Search for matching normalized phone numbers in the database
 
-### Technical Changes
+#### Step 3: Apply to All Phone Lookups
+Update both the incoming call handler and any other places that look up by phone number.
+
+## Technical Details
 
 **File: `supabase/functions/voice-handler/index.ts`**
 
-```text
-Current flow:
-  ElevenLabs TTS → base64 encode → data:audio/mpeg URL → SignalWire rejects
-
-New flow:
-  ElevenLabs TTS → Upload to Storage → Public HTTPS URL → SignalWire plays
+New helper function:
+```typescript
+function normalizePhoneNumber(phone: string): string {
+  if (!phone) return '';
+  // Remove all non-digit characters except leading +
+  let normalized = phone.replace(/[^\d+]/g, '');
+  // Ensure E.164 format (add + if missing for US numbers)
+  if (!normalized.startsWith('+') && normalized.length === 11 && normalized.startsWith('1')) {
+    normalized = '+' + normalized;
+  } else if (!normalized.startsWith('+') && normalized.length === 10) {
+    normalized = '+1' + normalized;
+  }
+  return normalized;
+}
 ```
 
-The updated `generateElevenLabsAudio` function will:
-- Accept the supabase client as a parameter
-- Upload audio to a `voice-audio` bucket
-- Generate a unique filename with timestamp
-- Return a public HTTPS URL that SignalWire can access
-- Include proper error handling and logging
+Updated query approach: Since Supabase doesn't support SQL functions in equality checks directly, the solution will fetch candidate integrations and filter client-side, OR update the database to store numbers in E.164 format.
 
-**Database: Storage Bucket**
-- Bucket name: `voice-audio`
-- Public access: Yes (for SignalWire playback)
-- File naming: `{callSid}-{timestamp}.mp3`
-
-### Voice Configuration Note
-
-The ElevenLabs voice used for phone calls is controlled by the `elevenlabs_voice_id` field in your `tenant_integrations` table. Your current configuration shows:
-- Voice ID: `cgSgspJ2msm6clMCkdW9` (Jessica voice)
-
-This voice will be used once the audio hosting is fixed. If you want a different voice, you can update this in your Voice & SMS integration settings.
-
-### What About Agent Prompts?
-
-The AI responses for phone calls are generated by Lovable AI (Gemini model), not your ElevenLabs Agent. The prompts are built dynamically from:
-- Your knowledge base (services, FAQs, business hours)
-- A system prompt in the `voice-handler` code
-
-If you want to customize the phone AI behavior, that would require updating the `buildSystemPrompt` function in the voice-handler, not the ElevenLabs dashboard.
+**Recommended approach: Store E.164 format in database**
+- Update the save mutation in `SMSIntegration.tsx` to normalize phone numbers before saving
+- This ensures consistent format going forward
+- One-time migration to fix existing data
 
 ## Expected Outcome
-After implementation:
-- SignalWire phone calls will play audio generated by ElevenLabs using your configured voice (Jessica)
-- AI responses will sound natural with your chosen voice
-- Fallback to Polly.Joanna will only occur if ElevenLabs API fails entirely
+After this fix:
+- Incoming calls will successfully match your phone number
+- ElevenLabs API credentials will be retrieved
+- Your configured Jessica voice (ID: `cgSgspJ2msm6clMCkdW9`) will be used
+- No more default robotic voice fallback
+
