@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -118,7 +119,9 @@ serve(async (req) => {
         const audioUrl = await generateElevenLabsAudio(
           greeting,
           integration.elevenlabs_api_key,
-          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL' // Default: Sarah
+          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL', // Default: Sarah
+          supabase,
+          callSid
         );
 
         if (audioUrl) {
@@ -193,7 +196,9 @@ serve(async (req) => {
         const audioUrl = await generateElevenLabsAudio(
           aiResponse,
           integration.elevenlabs_api_key,
-          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL'
+          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL',
+          supabase,
+          callSid
         );
 
         if (audioUrl) {
@@ -281,7 +286,9 @@ serve(async (req) => {
         const audioUrl = await generateElevenLabsAudio(
           context.message,
           integration.elevenlabs_api_key,
-          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL'
+          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL',
+          supabase,
+          callSid
         );
 
         if (audioUrl) {
@@ -469,15 +476,20 @@ serve(async (req) => {
   }
 });
 
-// Generate audio using ElevenLabs API
+// Generate ElevenLabs audio and upload to storage for SignalWire playback
 async function generateElevenLabsAudio(
   text: string,
   apiKey: string,
-  voiceId: string
+  voiceId: string,
+  supabase: any,
+  callSid: string
 ): Promise<string | null> {
   try {
+    console.log(`Generating ElevenLabs audio for callSid: ${callSid}, voiceId: ${voiceId}`);
+    
+    // Generate audio using ElevenLabs TTS API
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
       {
         method: 'POST',
         headers: {
@@ -487,7 +499,6 @@ async function generateElevenLabsAudio(
         body: JSON.stringify({
           text,
           model_id: 'eleven_turbo_v2_5',
-          output_format: 'mp3_44100_128',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -498,21 +509,96 @@ async function generateElevenLabsAudio(
     );
 
     if (!response.ok) {
-      console.error('ElevenLabs error:', await response.text());
+      const errorText = await response.text();
+      console.error(`ElevenLabs API error (${response.status}):`, errorText);
       return null;
     }
 
-    // Convert audio to base64 data URL for Twilio <Play>
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = btoa(
-      String.fromCharCode(...new Uint8Array(arrayBuffer))
+    // Get audio as ArrayBuffer
+    const audioBuffer = await response.arrayBuffer();
+    console.log(`ElevenLabs audio generated: ${audioBuffer.byteLength} bytes`);
+
+    // Generate unique filename
+    const timestamp = Date.now();
+    const filename = `${callSid}-${timestamp}.mp3`;
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('voice-audio')
+      .upload(filename, audioBuffer, {
+        contentType: 'audio/mpeg',
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('Storage upload error:', uploadError);
+      return null;
+    }
+
+    console.log(`Audio uploaded successfully: ${filename}`);
+
+    // Get public URL for the uploaded file
+    const { data: urlData } = supabase.storage
+      .from('voice-audio')
+      .getPublicUrl(filename);
+
+    const publicUrl = urlData?.publicUrl;
+    console.log(`Generated public URL: ${publicUrl}`);
+
+    // Clean up old audio files asynchronously (don't block response)
+    cleanupOldAudioFiles(supabase).catch(err => 
+      console.error('Cleanup error (non-blocking):', err)
     );
-    
-    // Return as data URL - Twilio can play this directly
-    return `data:audio/mpeg;base64,${base64}`;
+
+    return publicUrl;
   } catch (error) {
     console.error('ElevenLabs generation error:', error);
     return null;
+  }
+}
+
+// Clean up audio files older than 1 hour to prevent storage bloat
+async function cleanupOldAudioFiles(supabase: any): Promise<void> {
+  try {
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    
+    // List files in the bucket
+    const { data: files, error: listError } = await supabase.storage
+      .from('voice-audio')
+      .list();
+
+    if (listError || !files) {
+      console.log('Could not list files for cleanup:', listError);
+      return;
+    }
+
+    // Find files older than 1 hour based on their timestamp in filename
+    const filesToDelete = files.filter((file: any) => {
+      // Extract timestamp from filename (format: callSid-timestamp.mp3)
+      const match = file.name.match(/-(\d+)\.mp3$/);
+      if (match) {
+        const fileTimestamp = parseInt(match[1], 10);
+        return fileTimestamp < oneHourAgo;
+      }
+      // Delete files with unexpected format that are old based on created_at
+      return file.created_at && new Date(file.created_at).getTime() < oneHourAgo;
+    });
+
+    if (filesToDelete.length > 0) {
+      const fileNames = filesToDelete.map((f: any) => f.name);
+      const { error: deleteError } = await supabase.storage
+        .from('voice-audio')
+        .remove(fileNames);
+
+      if (deleteError) {
+        console.error('Error deleting old audio files:', deleteError);
+      } else {
+        console.log(`Cleaned up ${filesToDelete.length} old audio file(s)`);
+      }
+    }
+  } catch (error) {
+    console.error('Cleanup error:', error);
   }
 }
 
