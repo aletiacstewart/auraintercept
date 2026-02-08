@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -178,7 +179,7 @@ Deno.serve(async (req) => {
     
     const formData = new URLSearchParams();
     formData.append('To', formattedPhone);
-    formData.append('From', integration.signalwire_phone_number);
+    formData.append('From', normalizePhoneNumber(integration.signalwire_phone_number));
     formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
     formData.append('StatusCallbackEvent', 'initiated ringing answered completed');

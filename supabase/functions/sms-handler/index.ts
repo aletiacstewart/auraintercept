@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,7 +33,7 @@ function getDateTimeContext(): string {
 - Current time: ${currentTime}`;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -54,18 +54,24 @@ serve(async (req) => {
     }
 
     const fromNumber = smsData.From;
-    const toNumber = smsData.To;
+    const toNumberRaw = smsData.To;
     const messageBody = smsData.Body?.trim() || '';
     const messageSid = smsData.MessageSid;
 
-    console.log(`Incoming SMS from ${fromNumber} to ${toNumber}: "${messageBody}"`);
+    // Normalize incoming phone for database lookup
+    const toNumber = normalizePhoneNumber(toNumberRaw);
+    console.log(`Incoming SMS from ${fromNumber} to ${toNumberRaw} (normalized: ${toNumber}): "${messageBody}"`);
 
-    // Find company by SignalWire phone number
-    const { data: integration } = await supabase
+    // Find company by SignalWire phone number - fetch all and filter with normalization
+    const { data: allIntegrations } = await supabase
       .from('tenant_integrations')
       .select('company_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-      .eq('signalwire_phone_number', toNumber)
-      .single();
+      .not('signalwire_phone_number', 'is', null);
+    
+    // Find matching integration by normalizing stored phone numbers
+    const integration = allIntegrations?.find(
+      (i) => normalizePhoneNumber(i.signalwire_phone_number || '') === toNumber
+    );
 
     if (!integration) {
       console.error('No company found for phone number:', toNumber);
@@ -303,7 +309,7 @@ async function sendSmsReply(
 ) {
   const projectId = integration.signalwire_project_id;
   const apiToken = integration.signalwire_api_token;
-  const fromNumber = integration.signalwire_phone_number;
+  const fromNumber = normalizePhoneNumber(integration.signalwire_phone_number);
   const spaceUrl = integration.signalwire_space_url;
 
   if (!projectId || !apiToken || !fromNumber || !spaceUrl) {
@@ -319,6 +325,7 @@ async function sendSmsReply(
     headers: {
       'Authorization': `Basic ${authHeader}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
     },
     body: new URLSearchParams({
       To: toNumber,

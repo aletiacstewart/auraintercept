@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -65,7 +66,7 @@ Deno.serve(async (req) => {
 
       const formData = new URLSearchParams();
       formData.append('To', toPhone);
-      formData.append('From', integrations.signalwire_phone_number);
+      formData.append('From', normalizePhoneNumber(integrations.signalwire_phone_number));
       formData.append('Body', message);
 
       const signalwireResponse = await fetch(signalwireUrl, {
@@ -73,6 +74,7 @@ Deno.serve(async (req) => {
         headers: {
           'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
         },
         body: formData.toString(),
       });
@@ -208,7 +210,7 @@ Deno.serve(async (req) => {
 
     const formData = new URLSearchParams();
     formData.append('To', appointment.customer_phone);
-    formData.append('From', integrations.signalwire_phone_number);
+    formData.append('From', normalizePhoneNumber(integrations.signalwire_phone_number));
     formData.append('Body', message);
 
     const signalwireResponse = await fetch(signalwireUrl, {
@@ -216,6 +218,7 @@ Deno.serve(async (req) => {
       headers: {
         'Authorization': `Basic ${credentials}`,
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
       },
       body: formData.toString(),
     });
