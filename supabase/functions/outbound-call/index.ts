@@ -179,7 +179,8 @@ Deno.serve(async (req) => {
     
     const formData = new URLSearchParams();
     formData.append('To', formattedPhone);
-    formData.append('From', normalizePhoneNumber(integration.signalwire_phone_number));
+    const normalizedFromNumber = normalizePhoneNumber(integration.signalwire_phone_number);
+    formData.append('From', normalizedFromNumber);
     formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
     formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
@@ -188,7 +189,7 @@ Deno.serve(async (req) => {
     const authHeader = btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`);
     
     console.log(`Calling SignalWire API: ${signalwireUrl}`);
-    console.log(`From: ${integration.signalwire_phone_number}, To: ${formattedPhone}`);
+    console.log(`From: ${normalizedFromNumber} (raw: ${integration.signalwire_phone_number}), To: ${formattedPhone}`);
     
     const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
