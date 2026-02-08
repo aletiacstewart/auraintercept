@@ -194,6 +194,7 @@ Deno.serve(async (req) => {
       headers: {
         'Authorization': `Basic ${authHeader}`,
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
       },
       body: formData.toString(),
     });
