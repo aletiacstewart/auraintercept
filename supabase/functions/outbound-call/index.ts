@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -19,7 +18,7 @@ interface OutboundCallRequest {
   customMessage?: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -29,6 +28,25 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // Safely parse request body
+    let requestBody: OutboundCallRequest;
+    try {
+      const bodyText = await req.text();
+      if (!bodyText || bodyText.trim() === '') {
+        return new Response(
+          JSON.stringify({ error: 'Request body is empty' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      requestBody = JSON.parse(bodyText);
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { 
       companyId, 
       customerPhone, 
@@ -36,12 +54,18 @@ serve(async (req) => {
       purpose, 
       appointmentDetails,
       customMessage 
-    }: OutboundCallRequest = await req.json();
+    } = requestBody;
+
+    if (!companyId || !customerPhone || !customerName || !purpose) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields: companyId, customerPhone, customerName, purpose' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     console.log(`Initiating outbound call to ${customerPhone} for company ${companyId}`);
 
     // === SUBSCRIPTION TIER GATING FOR OUTBOUND CALLING ===
-    // Voice/calling features are available for all paid tiers (Single-Point+)
     const { data: companyData, error: companyError } = await supabase
       .from('companies')
       .select('name, subscription_tier, trial_ends_at')
@@ -92,6 +116,20 @@ serve(async (req) => {
       );
     }
 
+    if (!integration.signalwire_phone_number) {
+      return new Response(
+        JSON.stringify({ error: 'SignalWire phone number not configured' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!integration.signalwire_space_url) {
+      return new Response(
+        JSON.stringify({ error: 'SignalWire space URL not configured' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const company = companyData;
 
     // Build the call message based on purpose
@@ -133,13 +171,15 @@ serve(async (req) => {
     
     const formData = new URLSearchParams();
     formData.append('To', customerPhone);
-    formData.append('From', integration.signalwire_phone_number!);
+    formData.append('From', integration.signalwire_phone_number);
     formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
     formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
     formData.append('Timeout', '30');
 
     const authHeader = btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`);
+    
+    console.log(`Calling SignalWire API: ${signalwireUrl}`);
     
     const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
