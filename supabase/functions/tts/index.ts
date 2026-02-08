@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +12,7 @@ function getCurrentMonthYear(): string {
 }
 
 // Track TTS character usage
-async function trackUsage(supabase: any, companyId: string, charactersUsed: number): Promise<void> {
+async function trackUsage(supabase: ReturnType<typeof createClient>, companyId: string, charactersUsed: number): Promise<void> {
   const monthYear = getCurrentMonthYear();
   
   // Try to get existing record first
@@ -47,7 +46,7 @@ async function trackUsage(supabase: any, companyId: string, charactersUsed: numb
 }
 
 // Check if company is under usage limit
-async function checkUsageLimit(supabase: any, companyId: string, limit: number): Promise<{ allowed: boolean; used: number; remaining: number }> {
+async function checkUsageLimit(supabase: ReturnType<typeof createClient>, companyId: string, limit: number): Promise<{ allowed: boolean; used: number; remaining: number }> {
   const monthYear = getCurrentMonthYear();
   
   const { data, error } = await supabase
@@ -71,7 +70,7 @@ async function checkUsageLimit(supabase: any, companyId: string, limit: number):
 }
 
 // Unified TTS router that routes to the appropriate provider based on company settings
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
