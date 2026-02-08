@@ -40,6 +40,20 @@ function cleanupExpiredConversations(): void {
     console.log(`Cleaned up ${cleaned} expired conversation(s). Active: ${conversations.size}`);
   }
 }
+// Normalize phone number to E.164 format for consistent matching
+function normalizePhoneNumber(phone: string): string {
+  if (!phone) return '';
+  // Remove all non-digit characters except leading +
+  let normalized = phone.replace(/[^\d+]/g, '');
+  // Ensure E.164 format (add + if missing for US numbers)
+  if (!normalized.startsWith('+') && normalized.length === 11 && normalized.startsWith('1')) {
+    normalized = '+' + normalized;
+  } else if (!normalized.startsWith('+') && normalized.length === 10) {
+    normalized = '+1' + normalized;
+  }
+  return normalized;
+}
+
 serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -58,17 +72,23 @@ serve(async (req) => {
       if (path === 'incoming' || url.searchParams.get('action') === 'incoming') {
         const formData = await req.formData();
         const callerPhone = formData.get('From') as string;
-        const calledPhone = formData.get('To') as string;
+        const calledPhoneRaw = formData.get('To') as string;
         const callSid = formData.get('CallSid') as string;
+        
+        // Normalize the incoming phone number for database lookup
+        const calledPhone = normalizePhoneNumber(calledPhoneRaw);
+        console.log(`Incoming call from ${callerPhone} to ${calledPhoneRaw} (normalized: ${calledPhone}), CallSid: ${callSid}`);
 
-        console.log(`Incoming call from ${callerPhone} to ${calledPhone}, CallSid: ${callSid}`);
-
-        // Find company by SignalWire phone number
-        const { data: integration } = await supabase
+        // Find company by SignalWire phone number - fetch all and filter with normalization
+        const { data: allIntegrations } = await supabase
           .from('tenant_integrations')
-          .select('company_id, elevenlabs_api_key, elevenlabs_voice_id')
-          .eq('signalwire_phone_number', calledPhone)
-          .single();
+          .select('company_id, elevenlabs_api_key, elevenlabs_voice_id, signalwire_phone_number')
+          .not('signalwire_phone_number', 'is', null);
+        
+        // Find matching integration by normalizing stored phone numbers
+        const integration = allIntegrations?.find(
+          (i) => normalizePhoneNumber(i.signalwire_phone_number || '') === calledPhone
+        );
 
       if (!integration) {
         console.error('No company found for phone number:', calledPhone);
