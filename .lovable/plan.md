@@ -1,177 +1,81 @@
 
-# Fix AI Voice Agent Issues
+# Fix SignalWire Voice to Use ElevenLabs TTS
 
-## Problems Identified
+## Problem Summary
 
-### 1. Agent Doesn't Pause Long Enough
-The ElevenLabs Conversational AI agent's response timing is controlled by settings in the **ElevenLabs Dashboard**, not in your code. The current setup guide doesn't mention configuring these critical settings:
-- **End of Speech Detection** - How long the AI waits after you stop talking
-- **Responsiveness** - How quickly the agent responds
+SignalWire phone calls are playing a default voice instead of your configured ElevenLabs voice because:
 
-### 2. Agent Asks for Rigid Date Formats (mm/dd/yyyy)
-The current system prompt instructs the AI to understand natural language dates, but the instructions aren't prominent enough. The agent is still sometimes asking for explicit date formats instead of intuitively understanding "next Monday at 2pm" or "this Thursday".
+1. **Data URL incompatibility**: The `voice-handler` generates ElevenLabs audio as base64 data URLs, but SignalWire's `<Play>` verb requires publicly accessible HTTP URLs
+2. **Silent failures**: When the data URL fails to play, SignalWire falls back to built-in TTS (`Polly.Joanna`)
+3. **Agent prompts don't apply**: Your ElevenLabs Conversational AI Agent settings only affect web voice chat, not phone calls
 
-### 3. Agent Not Using Company-Specific Settings
-Your Aura Intelligence configuration (brand tone, emergency settings, etc.) exists in the database but is **not being pulled into the ElevenLabs agent prompt**. The setup guide provides a generic static prompt rather than company-customized instructions.
+## Solution: Host ElevenLabs Audio via Temporary Storage
 
----
+### Approach
+Instead of returning base64 data URLs, the solution will:
+1. Generate audio via ElevenLabs TTS API
+2. Upload the audio file to Supabase Storage (temporary bucket)
+3. Return a public URL that SignalWire can play
+4. Clean up old audio files periodically
 
-## Solution Overview
+### Implementation Steps
 
-### Part 1: Update ElevenLabs Setup Guide with Conversation Settings
+#### Step 1: Create Audio Storage Bucket
+Create a Supabase storage bucket for temporary voice audio files with:
+- Public access for SignalWire playback
+- Short retention policy for automatic cleanup
 
-Add a new section in the setup guide explaining how to configure:
-- **End of Speech Detection**: Set to "Relaxed" (~3-4 seconds) for collecting information like names/numbers
-- **Response Delay**: Add a brief delay to ensure users finish speaking
-- **Turn-Taking Sensitivity**: Reduce interruption behavior
+#### Step 2: Update `voice-handler` Edge Function
+Modify the `generateElevenLabsAudio` function to:
+1. Generate audio from ElevenLabs TTS API
+2. Upload to Supabase Storage with a unique filename
+3. Return the public URL for SignalWire to play
+4. Add error logging to diagnose future issues
 
-### Part 2: Improve the Agent Prompt with Stronger Date/Time Instructions
+#### Step 3: Add Audio Cleanup
+Implement cleanup of old audio files (older than 1 hour) to prevent storage bloat.
 
-Update the recommended agent prompt to:
-- **Explicitly forbid** asking for formatted dates
-- Add more examples of natural language date interpretation
-- Include a pause-and-wait instruction for collecting names/numbers
+### Technical Changes
 
-### Part 3: Add Company-Specific Prompt Export
-
-Create a new feature in the Aura Intelligence settings that generates a **complete, company-customized prompt** users can copy into ElevenLabs, including:
-- Company name and brand tone
-- Service area ZIP codes
-- Emergency protocols
-- Smart link URLs
-- Business hours
-
----
-
-## Technical Changes
-
-### File 1: `src/components/integrations/ElevenLabsSetupGuide.tsx`
-
-**Add new section (after Step 2)**: "Configure Conversation Settings"
+**File: `supabase/functions/voice-handler/index.ts`**
 
 ```text
-New content to add:
+Current flow:
+  ElevenLabs TTS → base64 encode → data:audio/mpeg URL → SignalWire rejects
 
-📍 Location: Agent Settings → Advanced → Conversation Settings
-
-Configure these critical settings for natural conversation:
-
-1. **End of Speech Detection**: Set to "Relaxed" (2000-4000ms)
-   - Gives callers more time to provide names, phone numbers, and addresses
-   - Prevents the agent from cutting off mid-sentence
-
-2. **Response Speed**: Set to "Normal" or "Relaxed"
-   - Ensures the agent doesn't interrupt while collecting information
-
-3. **Interruption Sensitivity**: Set to "Low"
-   - Prevents the AI from cutting in when the caller pauses to think
-
-These settings are critical for collecting customer information without rushing them.
+New flow:
+  ElevenLabs TTS → Upload to Storage → Public HTTPS URL → SignalWire plays
 ```
 
-**Update the AGENT_PROMPT constant** to include stronger date handling:
+The updated `generateElevenLabsAudio` function will:
+- Accept the supabase client as a parameter
+- Upload audio to a `voice-audio` bucket
+- Generate a unique filename with timestamp
+- Return a public HTTPS URL that SignalWire can access
+- Include proper error handling and logging
 
-```typescript
-const AGENT_PROMPT = `You are a professional and friendly appointment booking assistant. Help customers schedule service appointments.
+**Database: Storage Bucket**
+- Bucket name: `voice-audio`
+- Public access: Yes (for SignalWire playback)
+- File naming: `{callSid}-{timestamp}.mp3`
 
-CRITICAL - CONVERSATIONAL PAUSES:
-- When asking for name, phone, or address, WAIT patiently for the response
-- Never rush the caller - give them time to speak
-- Say "take your time" if they seem to be thinking
+### Voice Configuration Note
 
-CRITICAL - DATE & TIME HANDLING:
-- NEVER ask for dates in a specific format like "mm/dd/yyyy" or "month day year"
-- ALWAYS accept natural language: "tomorrow", "next Monday", "this Friday", "in 2 days"
-- Examples you must understand:
-  • "tomorrow at 4pm" → Calculate tomorrow's date
-  • "next Tuesday around 3" → Next week's Tuesday, 15:00
-  • "this Thursday afternoon" → This week's Thursday, ask for specific time
-  • "in 3 days at 10am" → Calculate the date
-  • "Monday the week after next" → Calculate correctly
-- If ambiguous, ask for clarification naturally: "Did you mean this coming Monday or the Monday after?"
-- Convert times naturally: "4pm" = 16:00, "9 in the morning" = 09:00
+The ElevenLabs voice used for phone calls is controlled by the `elevenlabs_voice_id` field in your `tenant_integrations` table. Your current configuration shows:
+- Voice ID: `cgSgspJ2msm6clMCkdW9` (Jessica voice)
 
-FLOW:
-1. Greet warmly, ask how you can help
-2. Ask what service they need (call get_services first)
-3. Collect: name, phone, address - give time for each answer
-4. Ask "What day works best for you?" - accept natural language
-5. Confirm date, then check times (get_available_times)
-6. Confirm all details before booking
+This voice will be used once the audio hosting is fixed. If you want a different voice, you can update this in your Voice & SMS integration settings.
 
-GUIDELINES:
-- Be conversational and patient
-- Never ask for specific date formats
-- If no times available, offer alternatives`;
-```
+### What About Agent Prompts?
 
-### File 2: `src/components/settings/AuraIntelligenceSettings.tsx`
+The AI responses for phone calls are generated by Lovable AI (Gemini model), not your ElevenLabs Agent. The prompts are built dynamically from:
+- Your knowledge base (services, FAQs, business hours)
+- A system prompt in the `voice-handler` code
 
-**Add new export button**: "Export ElevenLabs Prompt"
+If you want to customize the phone AI behavior, that would require updating the `buildSystemPrompt` function in the voice-handler, not the ElevenLabs dashboard.
 
-This generates a complete, company-customized prompt including:
-- Company name
-- Brand tone instructions
-- Service ZIP codes
-- Emergency keywords and protocols
-- Business hours (fetched from business_hours table)
-- Smart links
-
-The generated prompt will look like:
-
-```text
-You are Aura, the AI voice assistant for [Company Name]. 
-
-PERSONALITY:
-- Use a [professional/friendly/technical] tone
-- Be patient when collecting customer information
-- Never rush callers
-
-CRITICAL - DATE HANDLING:
-- Accept natural language dates: "tomorrow", "next Monday", "this Friday"
-- NEVER ask for mm/dd/yyyy format
-- Convert relative dates based on today's date
-
-COMPANY CONTEXT:
-- Business Name: [Company Name]
-- Phone: [contact_phone]
-- Service Area: [zip_codes]
-- Emergency Surcharge: $[amount] for after-hours
-
-EMERGENCY PROTOCOL:
-If caller mentions: [gas, fire, smoke, flood, etc.]
-→ Immediately provide emergency number: [emergency_phone]
-→ Do not proceed with booking
-
-BOOKING LINKS:
-- Booking: [url]
-- Payment: [url]
-- Reviews: [url]
-
-[Include business hours]
-[Include services list]
-```
-
----
-
-## Summary of Changes
-
-| File | Change |
-|------|--------|
-| `ElevenLabsSetupGuide.tsx` | Add "Conversation Settings" section explaining pause/timing config in ElevenLabs dashboard |
-| `ElevenLabsSetupGuide.tsx` | Update AGENT_PROMPT with stronger natural language date instructions |
-| `ElevenLabsSetupGuide.tsx` | Add warning about collection pauses |
-| `AuraIntelligenceSettings.tsx` | Add "Export ElevenLabs Prompt" button that generates company-specific prompt |
-
----
-
-## User Action Required (ElevenLabs Dashboard)
-
-After the code changes, you'll need to:
-
-1. Go to ElevenLabs Dashboard → Your Agent → Settings
-2. Find **Conversation Settings** or **Advanced Settings**
-3. Set **End of Speech Detection** to "Relaxed" (2000-4000ms)
-4. Set **Interruption Sensitivity** to "Low"
-5. Copy the new prompt from Aura Intelligence settings
-6. Paste into your agent's System Prompt
+## Expected Outcome
+After implementation:
+- SignalWire phone calls will play audio generated by ElevenLabs using your configured voice (Jessica)
+- AI responses will sound natural with your chosen voice
+- Fallback to Polly.Joanna will only occur if ElevenLabs API fails entirely
