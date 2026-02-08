@@ -130,15 +130,15 @@ export function ElevenLabsVoiceSetupGuide() {
                     </Button>
                   </div>
                   <div className="flex justify-between">
-                    <span>Adam:</span>
+                    <span>Jessica:</span>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-5 px-1 gap-1 text-xs"
-                      onClick={() => copyToClipboard('pNInz6obpgDQGcFmaJgB', 'adam')}
+                      onClick={() => copyToClipboard('cgSgspJ2msm6clMCkdW9', 'jessica')}
                     >
-                      {copiedItems['adam'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      pNInz6ob...
+                      {copiedItems['jessica'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      cgSgspJ2...
                     </Button>
                   </div>
                 </div>
