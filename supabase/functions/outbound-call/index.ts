@@ -150,7 +150,34 @@ serve(async (req) => {
       body: formData.toString(),
     });
 
-    const signalwireData = await signalwireResponse.json();
+    // Handle potential empty or non-JSON responses from SignalWire
+    const responseText = await signalwireResponse.text();
+    let signalwireData: Record<string, unknown> = {};
+    
+    if (responseText) {
+      try {
+        signalwireData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse SignalWire response:', responseText);
+        return new Response(
+          JSON.stringify({ 
+            error: 'Invalid response from SignalWire', 
+            details: responseText.substring(0, 200),
+            status: signalwireResponse.status
+          }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } else {
+      console.error('Empty response from SignalWire, status:', signalwireResponse.status);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Empty response from SignalWire', 
+          status: signalwireResponse.status
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (!signalwireResponse.ok) {
       console.error('SignalWire error:', signalwireData);
