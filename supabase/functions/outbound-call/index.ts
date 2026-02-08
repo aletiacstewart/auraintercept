@@ -166,11 +166,18 @@ Deno.serve(async (req) => {
     // Encode context to pass via URL
     const encodedContext = encodeURIComponent(JSON.stringify(callContext));
 
+    // Format phone number - ensure it has country code
+    let formattedPhone = customerPhone.replace(/\D/g, ''); // Remove non-digits
+    if (!formattedPhone.startsWith('1') && formattedPhone.length === 10) {
+      formattedPhone = '1' + formattedPhone; // Add US country code
+    }
+    formattedPhone = '+' + formattedPhone;
+
     // Initiate the call via SignalWire
     const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
     
     const formData = new URLSearchParams();
-    formData.append('To', customerPhone);
+    formData.append('To', formattedPhone);
     formData.append('From', integration.signalwire_phone_number);
     formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
@@ -180,6 +187,7 @@ Deno.serve(async (req) => {
     const authHeader = btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`);
     
     console.log(`Calling SignalWire API: ${signalwireUrl}`);
+    console.log(`From: ${integration.signalwire_phone_number}, To: ${formattedPhone}`);
     
     const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
@@ -192,13 +200,26 @@ Deno.serve(async (req) => {
 
     // Handle potential empty or non-JSON responses from SignalWire
     const responseText = await signalwireResponse.text();
+    console.log(`SignalWire response status: ${signalwireResponse.status}, body: ${responseText.substring(0, 500)}`);
+    
     let signalwireData: Record<string, unknown> = {};
     
-    if (responseText) {
+    if (responseText && responseText.trim()) {
       try {
         signalwireData = JSON.parse(responseText);
       } catch (parseError) {
-        console.error('Failed to parse SignalWire response:', responseText);
+        console.error('Failed to parse SignalWire response as JSON:', responseText);
+        // Check if it's XML (SignalWire sometimes returns XML errors)
+        if (responseText.includes('<') && responseText.includes('>')) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'SignalWire returned XML error', 
+              details: responseText.substring(0, 500),
+              status: signalwireResponse.status
+            }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
         return new Response(
           JSON.stringify({ 
             error: 'Invalid response from SignalWire', 
@@ -212,8 +233,10 @@ Deno.serve(async (req) => {
       console.error('Empty response from SignalWire, status:', signalwireResponse.status);
       return new Response(
         JSON.stringify({ 
-          error: 'Empty response from SignalWire', 
-          status: signalwireResponse.status
+          error: 'Empty response from SignalWire - check credentials and phone number format', 
+          status: signalwireResponse.status,
+          to: formattedPhone,
+          from: integration.signalwire_phone_number
         }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
