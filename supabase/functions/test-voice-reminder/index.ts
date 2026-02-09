@@ -44,7 +44,53 @@ serve(async (req) => {
 
     const { signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url } = integration;
 
-    // Pre-insert call log
+    const reminderMessage = callScript || "This is a test voice reminder.";
+
+    // Pre-generate TTS audio before calling SignalWire
+    let preGeneratedAudioUrl = '';
+    try {
+      const { data: ttsIntegration } = await supabase
+        .from("tenant_integrations")
+        .select("elevenlabs_api_key, elevenlabs_voice_id")
+        .eq("company_id", companyId)
+        .maybeSingle();
+
+      if (ttsIntegration?.elevenlabs_api_key) {
+        console.log('Pre-generating TTS audio for test reminder...');
+        const voiceId = ttsIntegration.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+        const ttsResponse = await fetch(
+          `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+          {
+            method: 'POST',
+            headers: {
+              'xi-api-key': ttsIntegration.elevenlabs_api_key,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: reminderMessage,
+              model_id: 'eleven_turbo_v2_5',
+              voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+            }),
+          }
+        );
+        if (ttsResponse.ok) {
+          const audioBuffer = await ttsResponse.arrayBuffer();
+          const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
+          const { error: uploadError } = await supabase.storage
+            .from('voice-audio')
+            .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
+          if (!uploadError) {
+            const { data: publicUrl } = supabase.storage.from('voice-audio').getPublicUrl(fileName);
+            preGeneratedAudioUrl = publicUrl.publicUrl;
+            console.log(`TTS pre-generated for test reminder: ${preGeneratedAudioUrl}`);
+          }
+        }
+      }
+    } catch (ttsErr) {
+      console.error('TTS pre-generation failed for test reminder:', ttsErr);
+    }
+
+    // Pre-insert call log with audio URL
     const { data: callLog, error: logError } = await supabase
       .from("call_logs")
       .insert({
@@ -55,7 +101,10 @@ serve(async (req) => {
         to_number: normalizedPhone,
         customer_phone: normalizedPhone,
         purpose: "test_reminder",
-        metadata: { call_script: callScript || "This is a test voice reminder." },
+        metadata: {
+          call_message: reminderMessage,
+          audio_url: preGeneratedAudioUrl || null,
+        },
         started_at: new Date().toISOString(),
       })
       .select("id")

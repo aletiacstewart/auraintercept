@@ -160,23 +160,17 @@ async function handleOutbound(
   }
 
   const callMessage = callLog.metadata?.call_message || `Hello ${callLog.customer_name}, thank you for your time.`;
+  const audioUrl = callLog.metadata?.audio_url || '';
   const purpose = callLog.purpose || 'custom';
 
-  console.log(`Outbound call connected. Purpose: ${purpose}, Message length: ${callMessage.length}`);
-
-  // Try ElevenLabs TTS, fall back to Polly
-  let audioUrl = '';
-  try {
-    audioUrl = await generateTTSAudio(supabase, supabaseUrl, callLog.company_id, callMessage);
-  } catch (ttsError) {
-    console.error('TTS generation failed, using Polly fallback:', ttsError);
-  }
+  console.log(`Outbound call connected. Purpose: ${purpose}, Message length: ${callMessage.length}, hasPreGenAudio: ${!!audioUrl}`);
 
   const responseUrl = `${supabaseUrl}/functions/v1/voice-handler?action=outbound-response&callLogId=${callLogId}`;
 
   if (audioUrl) {
+    // Use pre-generated audio — instant response, no TTS delay
     return twimlResponse(`
-      <Gather input="dtmf speech" numDigits="1" timeout="5" action="${responseUrl}" method="POST">
+      <Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="${responseUrl}" method="POST">
         <Play>${audioUrl}</Play>
       </Gather>
       <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
@@ -184,9 +178,9 @@ async function handleOutbound(
     `);
   }
 
-  // Polly fallback
+  // No pre-generated audio — use Polly directly (skip TTS to avoid delay)
   return twimlResponse(`
-    <Gather input="dtmf speech" numDigits="1" timeout="5" action="${responseUrl}" method="POST">
+    <Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="${responseUrl}" method="POST">
       <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
     </Gather>
     <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
