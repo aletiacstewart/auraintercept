@@ -1,60 +1,58 @@
 
 
-## Fix: No Audio on Outbound Calls
+## Fix: No Audio on Outbound Calls (TwiML Attribute Error)
 
 ### Root Cause
 
-The timeline from logs shows the problem clearly:
+The `voice-handler` returns this TwiML when the call connects:
 
-```text
-T+0s   Call answered, SignalWire sends webhook to voice-handler
-T+2s   TTS audio generated and uploaded to storage
-T+2s   TwiML response finally returned to SignalWire: <Gather timeout="5"><Play>URL</Play></Gather>
-T+2s+  SignalWire fetches the MP3 from storage URL
-T+7s   Gather timeout expires (5 seconds after TwiML was received)
-T+7s   Falls through to: "We didn't hear a response. Goodbye." -> Hangup
+```xml
+<Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="...">
+  <Play>https://...mp3</Play>
+</Gather>
+<Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
+<Hangup/>
 ```
 
-The 2-second delay generating TTS audio means SignalWire doesn't receive the TwiML until 2+ seconds after the call connects. Then the `<Gather timeout="5">` leaves only ~5 seconds to fetch the audio, play it, AND wait for input. For a multi-sentence message, the audio itself may be 5-10 seconds long, so the Gather times out before it even finishes playing.
+Two problems:
 
-### Solution: Pre-generate TTS Before Initiating the Call
+1. **`bargeIn="true"` is not a valid cXML attribute** on `<Gather>`. SignalWire/Twilio `<Gather>` does not accept this attribute. Nested `<Play>` and `<Say>` are interruptible by default inside `<Gather>` -- no attribute needed. The invalid attribute causes SignalWire to skip the `<Gather>` entirely, falling straight to the goodbye `<Say>` and `<Hangup/>`.
 
-Move TTS generation into `outbound-call` (before the SignalWire API call). Store the audio URL in `call_logs.metadata`. Then `voice-handler` just reads the URL and returns TwiML instantly -- no delay.
+2. **`input="dtmf speech"` combined with `numDigits="1"`** on a phone call can cause false triggers from ambient noise being interpreted as speech input, ending the Gather prematurely. For a press-1-or-2 scenario, DTMF-only input is more reliable.
 
-### Changes
+### Evidence from Logs
 
-**File 1: `supabase/functions/outbound-call/index.ts`**
-- After building the call message and before calling SignalWire, generate TTS audio and upload to storage
-- Store the `audio_url` in `call_logs.metadata` alongside `call_message`
-- If TTS fails, proceed anyway (voice-handler will use Polly fallback)
+- Audio files are valid: 44KB, correct mimetype, public bucket
+- Call answers at T+0, voice-handler fires instantly (no delay -- pre-generation working)
+- Call ends at T+6 (only 6 seconds of connected time)
+- No `outbound-response` action logged -- meaning SignalWire never POSTed to the Gather action URL, confirming the `<Gather>` was skipped entirely
 
-**File 2: `supabase/functions/voice-handler/index.ts`**
-- In `handleOutbound`, check `callLog.metadata.audio_url` first
-- If a pre-generated URL exists, use `<Play>` immediately (no TTS call needed)
-- If no pre-generated URL, fall back to Polly `<Say>` directly (skip TTS entirely to avoid the delay)
-- Increase `<Gather>` timeout from 5 to 15 seconds to allow longer messages to finish playing
-- Add `bargeIn="true"` so users can interrupt with a keypress without waiting
+### Fix
 
-**File 3: `supabase/functions/test-voice-reminder/index.ts`**
-- Same pattern: pre-generate TTS audio before calling SignalWire
-- Store audio URL in call log metadata
+**File: `supabase/functions/voice-handler/index.ts`**
 
-### Technical Details
+In `handleOutbound`, fix both the pre-generated audio path and the Polly fallback path:
 
-The key architectural change is shifting TTS generation from the webhook response path (where it blocks SignalWire) to the call initiation path (where latency doesn't matter):
+- Remove `bargeIn="true"` (invalid attribute)
+- Change `input="dtmf speech"` to `input="dtmf"` (more reliable for phone keypress scenarios)
+- Remove `numDigits="1"` (let it use the default behavior with timeout)
 
-```text
-BEFORE (broken):
-  outbound-call: insert log -> call SignalWire
-  voice-handler: fetch log -> generate TTS (2s delay) -> return TwiML
-
-AFTER (fixed):
-  outbound-call: insert log -> generate TTS -> store URL in log -> call SignalWire
-  voice-handler: fetch log -> read audio_url -> return TwiML instantly
+Before:
+```xml
+<Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="...">
+  <Play>URL</Play>
+</Gather>
 ```
+
+After:
+```xml
+<Gather input="dtmf" numDigits="1" timeout="15" action="..." method="POST">
+  <Play>URL</Play>
+</Gather>
+```
+
+Same change applies to the Polly `<Say>` fallback path below it.
 
 ### Files Modified
-- `supabase/functions/outbound-call/index.ts` -- add TTS pre-generation before SignalWire call
-- `supabase/functions/voice-handler/index.ts` -- use pre-generated audio URL, remove TTS call, increase Gather timeout
-- `supabase/functions/test-voice-reminder/index.ts` -- same TTS pre-generation pattern
+- `supabase/functions/voice-handler/index.ts` -- remove invalid `bargeIn` attribute, switch to DTMF-only input
 
