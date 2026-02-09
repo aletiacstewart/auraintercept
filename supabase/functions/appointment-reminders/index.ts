@@ -341,7 +341,10 @@ Deno.serve(async (req) => {
               formData.append('To', appointment.customer_phone);
               formData.append('Url', voiceHandlerUrl.toString());
               formData.append('StatusCallback', `${supabaseUrl}/functions/v1/voice-handler?action=status`);
-              formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
+              formData.append('StatusCallbackEvent', 'initiated');
+              formData.append('StatusCallbackEvent', 'ringing');
+              formData.append('StatusCallbackEvent', 'answered');
+              formData.append('StatusCallbackEvent', 'completed');
 
               const signalwireResponse = await fetch(signalwireUrl, {
                 method: 'POST',

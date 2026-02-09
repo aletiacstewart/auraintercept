@@ -76,14 +76,16 @@ serve(async (req) => {
     const signalwireUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Calls.json`;
     const authHeader = "Basic " + btoa(`${signalwire_project_id}:${signalwire_api_token}`);
 
-    const callParams = new URLSearchParams({
-      From: normalizePhoneNumber(signalwire_phone_number),
-      To: normalizedPhone,
-      Url: webhookUrl,
-      StatusCallback: statusUrl,
-      StatusCallbackEvent: "initiated ringing answered completed",
-      Method: "POST",
-    });
+    const callParams = new URLSearchParams();
+    callParams.append('From', normalizePhoneNumber(signalwire_phone_number));
+    callParams.append('To', normalizedPhone);
+    callParams.append('Url', webhookUrl);
+    callParams.append('StatusCallback', statusUrl);
+    callParams.append('StatusCallbackEvent', 'initiated');
+    callParams.append('StatusCallbackEvent', 'ringing');
+    callParams.append('StatusCallbackEvent', 'answered');
+    callParams.append('StatusCallbackEvent', 'completed');
+    callParams.append('Method', 'POST');
 
     const callResponse = await fetch(signalwireUrl, {
       method: "POST",
