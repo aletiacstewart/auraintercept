@@ -1,156 +1,165 @@
 
-## Full Teardown and Rebuild: Voice and SMS System
 
-### Current State (What Exists Today)
+## Rebuild: 6 Removed Voice/SMS Edge Functions
 
-The voice and SMS system has accumulated significant technical debt and bugs across **11 edge functions** and multiple UI components. Here is what currently exists:
+### Overview
 
-**Edge Functions (Voice/SMS Related):**
-1. `voice-handler` -- 764 lines, handles inbound calls, outbound call webhooks, speech processing, status callbacks
-2. `sms-handler` -- 341 lines, handles inbound SMS with keyword auto-responder and AI replies
-3. `outbound-call` -- 349 lines, initiates outbound calls via SignalWire (has a critical undefined variable bug)
-4. `send-appointment-sms` -- sends SMS for appointment reminders
-5. `missed-call-handler` -- handles missed call callbacks
-6. `test-voice-reminder` -- test utility for voice reminders
-7. `voice-navigator` -- "Ask Aura" staff voice navigation tool
-8. `voice-booking-agent` -- voice-based booking agent
-9. `elevenlabs-tts` -- text-to-speech via ElevenLabs API
-10. `elevenlabs-post-call` -- post-call transcription webhook
-11. `elevenlabs-conversation-token` -- token generation for web voice chat
-12. `elevenlabs-clone-voice` -- voice cloning utility
-13. `tts` -- generic TTS function
+Six edge functions were removed during the teardown that UI components still depend on. This will cause runtime errors when users interact with voice navigation, voice cloning, the ElevenLabs booking agent webhook, test voice reminders, and missed call handling. Each function needs to be rebuilt following the clean architecture principles established in the rebuild.
 
-**UI Components:**
-- `OutboundCallDialog` -- dialog to initiate outbound calls
-- `VoiceChat` -- ElevenLabs web voice chat widget
-- `SMSChat` -- SMS conversation interface
-- `SMSIntegration` -- SignalWire SMS setup page
-- `VoiceIntegration` -- voice setup page
-- `MissedCallSettings` -- missed call callback settings
-- `TTSProviderSettings` -- TTS configuration
-- `AIAgentConsole` -- contains voice and SMS tabs
+---
 
-**Database Tables:**
-- `call_logs` -- voice call records
-- `sms_logs` -- SMS message records
-- `sms_keywords` -- hashtag auto-responder keywords
+### Function 1: `voice-navigator`
 
-**Storage Bucket:**
-- `voice-audio` -- temporary ElevenLabs TTS audio files
+**Purpose**: "Ask Aura" -- staff voice navigation. Takes a voice command and current page context, returns an AI-interpreted action (navigate, click button, search, etc.)
 
-### Known Bugs
+**Called by**: `src/contexts/VoiceContext.tsx`, `src/hooks/useUnifiedAura.ts`
 
-1. **CRITICAL: `outbound-call` has undefined `signalwireUrl` variable** -- The variable is referenced on lines 207 and 211 but never declared. This means outbound calls crash immediately at runtime. This is the direct cause of "not getting outbound calls."
-2. Empty body handling complexity with multiple fallback paths
-3. In-memory conversation state in `voice-handler` that doesn't persist across function restarts
-4. SMS Messages endpoint missing `.json` suffix (same pattern as the calls issue)
+**Expected input** (JSON, JWT required):
+- `command`: the voice command text
+- `currentPage`: current route path
+- `visibleButtons`, `visibleCards`, `visibleFields`: arrays of visible UI element labels
 
-### Rebuild Plan
+**Expected output**: `AIAction` object with `action`, `target`, `route`, `value`, `confidence`, `message`
 
-#### Phase 1: Delete All Voice/SMS Edge Functions
+**Implementation**:
+- Use Lovable AI (`google/gemini-3-flash-preview`) to interpret the command
+- System prompt maps commands to actions: navigate, click_button, click_card, search, fill_field, focus_field, open_form, scroll, unknown
+- Use tool calling for structured output
+- Handle 429/402 rate limit errors
 
-Remove these 13 edge functions:
-- `voice-handler`
-- `sms-handler`
-- `outbound-call`
-- `send-appointment-sms`
-- `missed-call-handler`
-- `test-voice-reminder`
-- `voice-navigator`
-- `voice-booking-agent`
-- `elevenlabs-tts`
-- `elevenlabs-post-call`
-- `elevenlabs-conversation-token`
-- `elevenlabs-clone-voice`
-- `tts`
+---
 
-#### Phase 2: Rebuild Core Edge Functions (Clean Architecture)
+### Function 2: `voice-booking-agent`
 
-Rebuild only the essential functions with clean, tested code:
+**Purpose**: ElevenLabs webhook endpoint. When an ElevenLabs voice agent triggers a tool call (e.g., "book appointment"), this function handles the server-side action.
 
-**Function 1: `sms-handler` (Inbound SMS)**
-- Parse SignalWire webhook (form-urlencoded)
-- Normalize phone numbers (E.164)
-- Look up company by phone number
-- Keyword auto-responder check
-- AI response via Lovable AI
-- Reply via SignalWire Messages.json API (with `.json` suffix)
-- Log to `sms_logs`
-- Clean error handling with cXML fallback
+**Called by**: ElevenLabs agent via webhook (configured in `ElevenLabsSetupGuide.tsx` at the URL `voice-booking-agent`)
 
-**Function 2: `outbound-call` (Initiate Outbound Calls)**
-- Accept JSON body with companyId, phone, name, purpose, message
-- Subscription tier gating
-- Pre-insert `call_logs` record
-- Build short webhook URL with `callLogId` reference
-- Call SignalWire `Calls.json` API (with `.json` suffix)
-- Properly declare ALL variables before use
-- Update call log with SID on success
-- Defensive response parsing (text-first, then JSON.parse in try-catch)
+**Expected input** (form-urlencoded or JSON from ElevenLabs, no JWT):
+- Tool call parameters: customer name, phone, service type, date/time preferences
+- Agent ID for company mapping
 
-**Function 3: `voice-handler` (SignalWire Webhooks)**
-- Handle `action=incoming` (inbound call greeting)
-- Handle `action=outbound` (outbound call message delivery, context from DB via `callLogId`)
-- Handle `action=process` (speech input processing via AI)
-- Handle `action=status` (call status updates)
-- Handle `action=timeout` (no-speech timeout)
-- Handle `action=outbound-response` (DTMF/speech responses)
-- ElevenLabs TTS with storage upload and auto-cleanup
-- Polly.Joanna fallback for TTS failures
-- No in-memory state -- use `call_logs.metadata` for conversation context
+**Expected output**: JSON response to ElevenLabs with action result
 
-**Function 4: `send-appointment-sms` (Outbound SMS)**
-- Send appointment reminder/confirmation SMS
-- Use SignalWire Messages.json API
-- Log to `sms_logs`
-
-**Function 5: `elevenlabs-conversation-token` (Web Voice Chat)**
-- Generate conversation token for ElevenLabs web agent
-- Simple, single-purpose function
-
-**Function 6: `elevenlabs-post-call` (Post-Call Webhook)**
-- Receive transcription data from ElevenLabs
+**Implementation**:
+- Parse ElevenLabs webhook payload
 - Map agent_id to company_id via `tenant_integrations`
-- Persist to `call_logs`
+- Handle booking tools: check availability, create appointment, confirm booking
+- Query `employees`, `services`, `appointments` tables
+- Return structured result for ElevenLabs to speak back
 
-#### Phase 3: Update UI Components
+---
 
-- Fix `OutboundCallDialog` to handle new response format
-- Ensure `VoiceChat` works with rebuilt token function
-- Ensure `SMSChat` works with rebuilt SMS function
-- Update `AIAgentConsole` voice/SMS tab detection logic
+### Function 3: `elevenlabs-clone-voice`
 
-#### Phase 4: Verify and Test
+**Purpose**: Clone a custom voice using ElevenLabs Instant Voice Cloning API
 
-- Deploy all rebuilt functions
-- Test outbound call flow end-to-end
-- Test inbound SMS flow
-- Test web voice chat
-- Verify call and SMS logs are populated correctly
+**Called by**: `src/components/ai/VoiceCloningCard.tsx` via `fetch()` with FormData
 
-### What Gets Removed Permanently
+**Expected input** (multipart FormData, JWT required):
+- `company_id`: company identifier
+- `voice_name`: name for the cloned voice
+- `voice_description`: optional description
+- `audio_0`, `audio_1`, ...: audio file samples
 
-- `voice-navigator` (staff voice nav -- can be re-added later if needed)
-- `voice-booking-agent` (voice booking -- can be re-added later)
-- `elevenlabs-clone-voice` (voice cloning utility)
-- `elevenlabs-tts` (standalone TTS -- folded into voice-handler)
-- `tts` (duplicate/generic TTS)
-- `test-voice-reminder` (test utility)
-- `missed-call-handler` (can be re-added later)
+**Expected output**: JSON with `{ voice_id, voice_name }`
 
-### What Gets Kept (Database)
+**Implementation**:
+- Parse multipart FormData
+- Fetch ElevenLabs API key from `tenant_integrations`
+- Forward audio files to ElevenLabs `POST /v1/voices/add` (Instant Voice Cloning)
+- Update `tenant_integrations.elevenlabs_voice_id` with the new voice ID
+- Return the new voice ID
 
-- `call_logs` table -- no changes needed
-- `sms_logs` table -- no changes needed
-- `sms_keywords` table -- no changes needed
-- `voice-audio` storage bucket -- still needed for TTS files
+---
 
-### Architecture Principles for Rebuild
+### Function 4: `elevenlabs-tts` (standalone TTS)
 
-1. **Always use `.json` suffix** on SignalWire LaML API endpoints
-2. **Always declare all variables** before referencing them
-3. **Defensive response parsing**: read as text first, then JSON.parse in try-catch
-4. **No in-memory state** -- use database for all conversation context
-5. **E.164 phone normalization** at every boundary
-6. **Short webhook URLs** -- pass database IDs, not full payloads
-7. **Consistent error responses** -- JSON for API calls, cXML for webhooks
+**Purpose**: Standalone text-to-speech endpoint for generating audio from text. Used by various UI components that need TTS outside of the voice-handler call flow.
+
+**Called by**: Various components that need on-demand TTS
+
+**Expected input** (JSON, JWT required):
+- `text`: text to convert
+- `voiceId`: optional voice ID override
+- `companyId`: to look up ElevenLabs credentials
+
+**Expected output**: Binary audio/mpeg response
+
+**Implementation**:
+- Fetch ElevenLabs credentials from `tenant_integrations` by company_id
+- Call ElevenLabs TTS API with `eleven_turbo_v2_5` model
+- Return raw audio bytes with `Content-Type: audio/mpeg`
+- Use Jessica (`cgSgspJ2msm6clMCkdW9`) as default voice
+
+---
+
+### Function 5: `test-voice-reminder`
+
+**Purpose**: Initiates a test outbound call to verify voice reminder setup
+
+**Called by**: `src/components/company/ReminderSettings.tsx`
+
+**Expected input** (JSON, JWT required):
+- `phoneNumber`: E.164 phone number to call
+- `callScript`: the reminder script text
+- `companyId`: company identifier
+
+**Expected output**: `{ success: true }` or error
+
+**Implementation**:
+- Thin wrapper around `outbound-call` logic
+- Fetch SignalWire credentials from `tenant_integrations`
+- Pre-insert a `call_logs` record with purpose `test_reminder`
+- Call SignalWire `Calls.json` API with short webhook URL
+- Uses the same patterns as rebuilt `outbound-call`
+
+---
+
+### Function 6: `missed-call-handler`
+
+**Purpose**: SignalWire webhook called when a call goes unanswered. Triggers SMS and/or AI callback based on company settings.
+
+**Called by**: SignalWire status callback (configured in `SignalWireSetupGuide.tsx`)
+
+**Expected input** (form-urlencoded from SignalWire, no JWT):
+- `From`, `To`, `CallSid`, `CallStatus`
+
+**Expected output**: TwiML (empty Response) or JSON acknowledgment
+
+**Implementation**:
+- Parse SignalWire form data
+- Normalize phone numbers to E.164
+- Look up company by `signalwire_phone_number` in `tenant_integrations`
+- Fetch company's `missed_call_action` setting
+- If `sms_only` or `callback_then_sms`: send SMS via SignalWire `Messages.json`
+- If `callback_only` or `callback_then_sms`: insert into `missed_call_callbacks` table, then call the `outbound-call` function internally
+- Log to `call_logs` with direction `inbound` and status `missed`
+
+---
+
+### Config Updates
+
+The `config.toml` already has entries for all 6 functions with the correct `verify_jwt` settings. No config changes needed.
+
+### Files to Create
+
+| File | JWT |
+|---|---|
+| `supabase/functions/voice-navigator/index.ts` | true |
+| `supabase/functions/voice-booking-agent/index.ts` | false |
+| `supabase/functions/elevenlabs-clone-voice/index.ts` | true |
+| `supabase/functions/elevenlabs-tts/index.ts` | true |
+| `supabase/functions/test-voice-reminder/index.ts` | true |
+| `supabase/functions/missed-call-handler/index.ts` | false |
+
+### Architecture Principles (carried forward)
+
+1. All SignalWire API endpoints use `.json` suffix
+2. All variables declared before use
+3. Defensive response parsing (text-first, JSON.parse in try-catch)
+4. No in-memory state -- database for all context
+5. E.164 phone normalization at every boundary
+6. Short webhook URLs with database ID references
+7. cXML responses for SignalWire webhooks, JSON for API calls
+
