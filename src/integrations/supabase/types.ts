@@ -912,6 +912,7 @@ export type Database = {
           de_escalation_manager_contact: string | null
           default_call_enabled: boolean
           default_email_enabled: boolean
+          default_outbound_script: string | null
           default_sms_enabled: boolean
           dispatch_phone: string | null
           email: string | null
@@ -920,6 +921,7 @@ export type Database = {
           emergency_phone: string | null
           emergency_sms_enabled: boolean | null
           emergency_surcharge: number | null
+          followup_call_script: string | null
           id: string
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -931,6 +933,8 @@ export type Database = {
           logo_url: string | null
           manager_name: string | null
           missed_call_action: string | null
+          missed_call_callback_script: string | null
+          missed_call_sms_template: string | null
           monthly_digest_day: number | null
           monthly_digest_email: string | null
           monthly_digest_enabled: boolean | null
@@ -957,6 +961,7 @@ export type Database = {
           quarterly_digest_time: string | null
           quarterly_digest_timezone: string | null
           registration_code: string | null
+          reminder_call_script: string | null
           review_email_subject: string | null
           review_email_template: string | null
           review_facebook_url: string | null
@@ -1027,6 +1032,7 @@ export type Database = {
           de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
+          default_outbound_script?: string | null
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
           email?: string | null
@@ -1035,6 +1041,7 @@ export type Database = {
           emergency_phone?: string | null
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
+          followup_call_script?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -1046,6 +1053,8 @@ export type Database = {
           logo_url?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
+          missed_call_callback_script?: string | null
+          missed_call_sms_template?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
@@ -1072,6 +1081,7 @@ export type Database = {
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
           registration_code?: string | null
+          reminder_call_script?: string | null
           review_email_subject?: string | null
           review_email_template?: string | null
           review_facebook_url?: string | null
@@ -1142,6 +1152,7 @@ export type Database = {
           de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
+          default_outbound_script?: string | null
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
           email?: string | null
@@ -1150,6 +1161,7 @@ export type Database = {
           emergency_phone?: string | null
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
+          followup_call_script?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -1161,6 +1173,8 @@ export type Database = {
           logo_url?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
+          missed_call_callback_script?: string | null
+          missed_call_sms_template?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
@@ -1187,6 +1201,7 @@ export type Database = {
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
           registration_code?: string | null
+          reminder_call_script?: string | null
           review_email_subject?: string | null
           review_email_template?: string | null
           review_facebook_url?: string | null

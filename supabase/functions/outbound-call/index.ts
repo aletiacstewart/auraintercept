@@ -38,6 +38,7 @@ Deno.serve(async (req) => {
       purpose = 'custom',
       appointmentDetails,
       customMessage,
+      message: legacyMessage,
     } = payload;
 
     if (!companyId) throw new Error('companyId is required');
@@ -65,17 +66,61 @@ Deno.serve(async (req) => {
       throw new Error('SignalWire credentials are not fully configured');
     }
 
+    // Fetch company script templates
+    const { data: companyData } = await supabase
+      .from('companies')
+      .select('name, reminder_call_script, followup_call_script, default_outbound_script, missed_call_callback_script')
+      .eq('id', companyId)
+      .single();
+
+    const companyName = companyData?.name || '';
+
+    function replaceTokens(template: string, vars: Record<string, string>): string {
+      return Object.entries(vars).reduce(
+        (result, [key, value]) => result.replace(new RegExp(`\\{${key}\\}`, 'g'), value),
+        template
+      );
+    }
+
     // Build call message
-    let callMessage = customMessage || '';
+    let callMessage = customMessage || legacyMessage || '';
     if (purpose === 'reminder' && appointmentDetails) {
       const dateStr = new Date(appointmentDetails.datetime).toLocaleString('en-US', {
         weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit',
       });
-      callMessage = `Hello ${customerName}, this is a reminder about your ${appointmentDetails.service} appointment on ${dateStr}. ${appointmentDetails.employeeName ? `Your technician will be ${appointmentDetails.employeeName}.` : ''} Press 1 to confirm, or 2 to request a callback.`;
+      const tokens = {
+        customerName: customerName || '',
+        service: appointmentDetails.service || '',
+        dateTime: dateStr,
+        employeeName: appointmentDetails.employeeName || '',
+        companyName,
+      };
+      if (companyData?.reminder_call_script) {
+        callMessage = replaceTokens(companyData.reminder_call_script, tokens);
+      } else {
+        callMessage = `Hello ${customerName}, this is a reminder about your ${appointmentDetails.service} appointment on ${dateStr}. ${appointmentDetails.employeeName ? `Your technician will be ${appointmentDetails.employeeName}.` : ''} Press 1 to confirm, or 2 to request a callback.`;
+      }
     } else if (purpose === 'followup') {
-      callMessage = `Hello ${customerName}, we're following up regarding your recent service. We'd love to hear about your experience. Press 1 if you were satisfied, or 2 to speak with a manager.`;
+      const tokens = { customerName: customerName || '', companyName };
+      if (companyData?.followup_call_script) {
+        callMessage = replaceTokens(companyData.followup_call_script, tokens);
+      } else {
+        callMessage = `Hello ${customerName}, we're following up regarding your recent service. We'd love to hear about your experience. Press 1 if you were satisfied, or 2 to speak with a manager.`;
+      }
+    } else if (purpose === 'missed_call_callback' && !callMessage) {
+      const tokens = { companyName };
+      if (companyData?.missed_call_callback_script) {
+        callMessage = replaceTokens(companyData.missed_call_callback_script, tokens);
+      } else {
+        callMessage = `Hello, this is ${companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?`;
+      }
     } else if (!callMessage) {
-      callMessage = `Hello ${customerName}, thank you for your time.`;
+      const tokens = { customerName: customerName || '', companyName };
+      if (companyData?.default_outbound_script) {
+        callMessage = replaceTokens(companyData.default_outbound_script, tokens);
+      } else {
+        callMessage = `Hello ${customerName}, thank you for your time.`;
+      }
     }
 
     // Step 1: Pre-generate TTS audio BEFORE calling SignalWire

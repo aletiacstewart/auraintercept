@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles } from 'lucide-react';
+import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles, Phone, MessageCircle } from 'lucide-react';
 import { VoiceCloningCard } from './VoiceCloningCard';
 import { TTSProviderSettings } from './TTSProviderSettings';
 
@@ -56,6 +56,13 @@ export const AIAgentSettings = () => {
   // TTS Provider settings
   const [ttsProvider, setTtsProvider] = useState('elevenlabs');
 
+  // Script templates
+  const [missedCallSmsTemplate, setMissedCallSmsTemplate] = useState('');
+  const [missedCallCallbackScript, setMissedCallCallbackScript] = useState('');
+  const [reminderCallScript, setReminderCallScript] = useState('');
+  const [followupCallScript, setFollowupCallScript] = useState('');
+  const [defaultOutboundScript, setDefaultOutboundScript] = useState('');
+
   // Fetch company settings
   const { data: company, isLoading: isLoadingCompany } = useQuery({
     queryKey: ['company-ai-settings', companyId],
@@ -63,7 +70,7 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('ai_voice_greeting, ai_agent_prompt')
+        .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script')
         .eq('id', companyId)
         .single();
 
@@ -96,6 +103,11 @@ export const AIAgentSettings = () => {
     if (company) {
       setVoiceGreeting(company.ai_voice_greeting || 'Hello! Thank you for calling. How can I assist you today?');
       setAgentPrompt(company.ai_agent_prompt || 'You are a helpful AI assistant for this business. Help callers with scheduling appointments, answering questions about services, and providing information about business hours.');
+      setMissedCallSmsTemplate((company as any).missed_call_sms_template || '');
+      setMissedCallCallbackScript((company as any).missed_call_callback_script || '');
+      setReminderCallScript((company as any).reminder_call_script || '');
+      setFollowupCallScript((company as any).followup_call_script || '');
+      setDefaultOutboundScript((company as any).default_outbound_script || '');
     }
   }, [company]);
 
@@ -131,7 +143,12 @@ export const AIAgentSettings = () => {
         .update({
           ai_voice_greeting: voiceGreeting,
           ai_agent_prompt: agentPrompt,
-        })
+          missed_call_sms_template: missedCallSmsTemplate || null,
+          missed_call_callback_script: missedCallCallbackScript || null,
+          reminder_call_script: reminderCallScript || null,
+          followup_call_script: followupCallScript || null,
+          default_outbound_script: defaultOutboundScript || null,
+        } as any)
         .eq('id', companyId);
 
       if (error) throw error;
@@ -200,6 +217,11 @@ export const AIAgentSettings = () => {
     setVoiceStyle(0.5);
     setVoiceSpeed(1.0);
     setTtsProvider('elevenlabs');
+    setMissedCallSmsTemplate('');
+    setMissedCallCallbackScript('');
+    setReminderCallScript('');
+    setFollowupCallScript('');
+    setDefaultOutboundScript('');
   };
 
   const handlePreviewGreeting = async () => {
@@ -685,6 +707,115 @@ export const AIAgentSettings = () => {
                 </>
               )}
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Call & SMS Scripts Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Phone className="h-5 w-5" />
+            Call & SMS Scripts
+          </CardTitle>
+          <CardDescription>
+            Customize the messages your AI agent uses for outbound calls and SMS. Leave blank to use defaults.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Missed Call SMS */}
+          <div className="space-y-2">
+            <Label htmlFor="missed-call-sms" className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-muted-foreground" />
+              Missed Call SMS
+            </Label>
+            <Textarea
+              id="missed-call-sms"
+              value={missedCallSmsTemplate}
+              onChange={(e) => setMissedCallSmsTemplate(e.target.value)}
+              placeholder="Hi, we noticed we missed your call at {companyName}. How can we help? Reply to this message or call us back at your convenience."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tokens: <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
+            </p>
+          </div>
+
+          {/* Missed Call Callback Script */}
+          <div className="space-y-2">
+            <Label htmlFor="missed-call-callback" className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              Missed Call Callback Script
+            </Label>
+            <Textarea
+              id="missed-call-callback"
+              value={missedCallCallbackScript}
+              onChange={(e) => setMissedCallCallbackScript(e.target.value)}
+              placeholder="Hello, this is {companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?"
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tokens: <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
+            </p>
+          </div>
+
+          {/* Appointment Reminder Script */}
+          <div className="space-y-2">
+            <Label htmlFor="reminder-script" className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              Appointment Reminder Script
+            </Label>
+            <Textarea
+              id="reminder-script"
+              value={reminderCallScript}
+              onChange={(e) => setReminderCallScript(e.target.value)}
+              placeholder="Hello {customerName}, this is a reminder about your {service} appointment on {dateTime}. {employeeName} will be your technician. Press 1 to confirm, or 2 to request a callback."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{service}'}</code> <code className="bg-muted px-1 rounded">{'{dateTime}'}</code> <code className="bg-muted px-1 rounded">{'{employeeName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
+            </p>
+          </div>
+
+          {/* Follow-up Call Script */}
+          <div className="space-y-2">
+            <Label htmlFor="followup-script" className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              Follow-up Call Script
+            </Label>
+            <Textarea
+              id="followup-script"
+              value={followupCallScript}
+              onChange={(e) => setFollowupCallScript(e.target.value)}
+              placeholder="Hello {customerName}, we're following up regarding your recent service. We'd love to hear about your experience. Press 1 if you were satisfied, or 2 to speak with a manager."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
+            </p>
+          </div>
+
+          {/* Default Outbound Script */}
+          <div className="space-y-2">
+            <Label htmlFor="default-outbound" className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              Default Outbound Script
+            </Label>
+            <Textarea
+              id="default-outbound"
+              value={defaultOutboundScript}
+              onChange={(e) => setDefaultOutboundScript(e.target.value)}
+              placeholder="Hello {customerName}, thank you for your time."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
+            </p>
           </div>
         </CardContent>
       </Card>
