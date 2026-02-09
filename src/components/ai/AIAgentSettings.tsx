@@ -805,33 +805,6 @@ export const AIAgentSettings = () => {
             </p>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              disabled={isSaving}
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset to Defaults
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Settings
-                </>
-              )}
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
@@ -921,6 +894,34 @@ export const AIAgentSettings = () => {
 
       {/* Voice Cloning Card */}
       <VoiceCloningCard hasElevenLabs={hasElevenLabs} />
+
+      {/* Save / Reset Actions */}
+      <div className="flex gap-3 pt-4 pb-2 sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border px-4 -mx-4 py-4">
+        <Button
+          variant="outline"
+          onClick={handleReset}
+          disabled={isSaving}
+        >
+          <RotateCcw className="h-4 w-4 mr-2" />
+          Reset to Defaults
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="h-4 w-4 mr-2" />
+              Save Settings
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };
