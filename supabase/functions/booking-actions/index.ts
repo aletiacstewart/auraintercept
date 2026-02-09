@@ -225,6 +225,9 @@ serve(async (req) => {
       case 'get_technician_scores':
         result = await getTechnicianScores(supabase, company_id, params);
         break;
+      case 'find_next_available':
+        result = await findNextAvailable(supabase, company_id, params);
+        break;
       default:
         throw new Error(`Unknown action: ${action}`);
     }
@@ -632,5 +635,49 @@ async function getBusinessHours(supabase: any, companyId: string, dayOfWeek: num
     hours: `${hours.open_time} - ${hours.close_time}`,
     open_time: hours.open_time,
     close_time: hours.close_time
+  };
+}
+
+async function findNextAvailable(supabase: any, companyId: string, params: any) {
+  const { service_name, start_date, max_days = 14 } = params;
+
+  const startDate = start_date ? new Date(start_date) : new Date();
+  // Start from the day after the requested date
+  startDate.setDate(startDate.getDate() + 1);
+
+  const datesWithSlots: any[] = [];
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  for (let i = 0; i < max_days && datesWithSlots.length < 3; i++) {
+    const checkDate = new Date(startDate);
+    checkDate.setDate(startDate.getDate() + i);
+    const dateStr = checkDate.toISOString().split('T')[0];
+
+    try {
+      const result = await checkAvailability(supabase, companyId, {
+        service_name: service_name || 'Standard Service Call / Diagnostic',
+        date: dateStr,
+      });
+
+      if (result.available_slots && result.available_slots.length > 0) {
+        datesWithSlots.push({
+          date: dateStr,
+          day_name: dayNames[checkDate.getDay()],
+          slot_count: result.available_slots.length,
+          sample_times: result.available_slots.slice(0, 4).map((s: any) => s.start_time),
+          service: result.service,
+        });
+      }
+    } catch (err) {
+      console.error(`Error checking ${dateStr}:`, err);
+    }
+  }
+
+  return {
+    success: true,
+    dates_with_availability: datesWithSlots,
+    message: datesWithSlots.length > 0
+      ? `Found ${datesWithSlots.length} upcoming date(s) with availability.`
+      : 'No availability found in the next ' + max_days + ' days.',
   };
 }
