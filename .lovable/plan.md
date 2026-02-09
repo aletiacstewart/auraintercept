@@ -1,37 +1,48 @@
 
 
-## Fix Booking Agent: No Availability + Smart Suggestions
+# Fix: Appointment Times Showing 6:30 AM Instead of 12:30 PM
 
-### Problem
-Three issues are causing the booking agent to fail:
+## Problem
+Appointment times are stored in the database as UTC (e.g., `12:30:00+00`). When the browser creates a `new Date()` from this value, JavaScript converts it to local time (CST = UTC-6), displaying **6:30 AM** instead of the intended **12:30 PM**.
 
-1. **No technician assignments** -- The `employee_job_assignments` table is completely empty. The booking engine only considers employees with `job_type = 'technician'`, so it finds zero eligible staff and returns "no availability."
+This affects **~15 files** across the project wherever appointment times are displayed.
 
-2. **Empty availability schedules** -- The admin profile (`5e877645...`) has empty arrays for every day in `availability_json`. Even with a technician assignment, no time slots would be generated.
+## Solution
+Create a centralized utility function that parses the datetime string and extracts the UTC components directly, bypassing JavaScript's automatic timezone conversion. Then replace all `new Date(datetime)` usages for display formatting with this utility.
 
-3. **No fallback when slots are empty** -- When `check_availability` returns zero slots, the agent just says "try another date" instead of proactively finding the next available date.
+## Implementation Steps
 
-### Fix (3 Parts)
+### Step 1: Create a UTC date helper utility
+Add a helper function in `src/lib/dateUtils.ts` (new file):
+- `parseUTCDateTime(datetime: string): Date` - Parses a UTC datetime string and returns a Date object where the local time components match the UTC values (effectively treating UTC as local time for display purposes).
+- This prevents the timezone shift by adjusting the Date object by the local timezone offset.
 
-**Part 1: Data fix (database migration)**
-- Insert a `technician` row into `employee_job_assignments` for the admin profile (`5e877645-4201-49f5-9fca-9efe06548ff9`) with company `04c57cbe-358e-4036-a3ad-b777a55f5be0`
-- The admin keeps their `platform_admin` role in `user_roles` -- that is unchanged. The technician assignment is a separate job-role concept used only by the booking engine.
-- Update `profiles.availability_json` for the admin to have working hours: 08:00-18:00 Monday-Saturday, 10:00-16:00 Sunday
+### Step 2: Update all 15 files to use the helper
+Replace `new Date(appointment.datetime)` with `parseUTCDateTime(appointment.datetime)` in all display-related formatting calls across these files:
 
-**Part 2: Add `find_next_available` action to booking-actions edge function**
-- New action in `supabase/functions/booking-actions/index.ts`
-- Loops through the next 14 days starting from a given date
-- For each day, calls the existing `checkAvailability` logic internally
-- Returns the first 3 dates that have open slots, with sample time slots for each
-- Gives the AI agent concrete suggestions when a requested date has no availability
+1. `src/components/employee/AppointmentCalendar.tsx` (~8 occurrences)
+2. `src/components/booking/BookingAgentConsole.tsx` (~4 occurrences)
+3. `src/components/employee/FieldOpsAgentConsole.tsx`
+4. `src/pages/CustomerDashboard.tsx`
+5. `src/components/fieldops/FieldOpsConsole.tsx`
+6. `src/components/employee/CompletedJobsHistory.tsx`
+7. `src/components/ai/AppointmentTrackingView.tsx`
+8. `src/components/company/CompanyJobQueue.tsx`
+9. And remaining files with similar patterns
 
-**Part 3: Wire up AI agent to auto-suggest alternatives**
-- Add a `find_next_available` tool definition in `supabase/functions/ai-agent-chat/index.ts`
-- Add execution handler in the tool switch that calls booking-actions with the new action
-- Update the booking agent system prompt to instruct: "If check_availability returns zero slots, immediately call find_next_available and present the closest dates with open slots. Do NOT ask the customer to guess another date."
+### Step 3: Update date comparison logic
+For filtering (e.g., `isSameDay`), also use the UTC-preserving parser so calendar date highlighting matches correctly.
 
-### Files Modified
-- `supabase/functions/booking-actions/index.ts` -- add `find_next_available` case in switch + implementation
-- `supabase/functions/ai-agent-chat/index.ts` -- add tool definition, execution handler, prompt update
-- Database migration: insert into `employee_job_assignments`, update `profiles.availability_json`
+## Technical Details
+
+The helper function approach:
+```typescript
+export function parseUTCDateTime(datetime: string): Date {
+  const d = new Date(datetime);
+  // Add the timezone offset so local display matches the stored UTC value
+  return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+}
+```
+
+This is a single-line fix per call site (import + find-replace), ensuring all appointment times display the originally intended time regardless of the user's timezone.
 
