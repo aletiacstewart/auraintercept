@@ -18,9 +18,133 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles, Phone, MessageCircle } from 'lucide-react';
+import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles, Phone, MessageCircle, FileText } from 'lucide-react';
 import { VoiceCloningCard } from './VoiceCloningCard';
 import { TTSProviderSettings } from './TTSProviderSettings';
+import { AIContentButton, ContentType } from './AIContentButton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+// Script template presets
+const SCRIPT_TEMPLATES: Record<string, { label: string; templates: { name: string; text: string }[] }> = {
+  missed_call_sms: {
+    label: 'Missed Call SMS',
+    templates: [
+      { name: 'Professional', text: 'We missed your call at {companyName}. Reply here or call us back and we\'ll be happy to assist.' },
+      { name: 'Friendly', text: 'Hey! We saw we missed your call at {companyName}. Text us back or give us a ring — we\'re here to help! 😊' },
+      { name: 'Urgent', text: 'We missed your call at {companyName}. We\'re available now — call or text us back for immediate assistance.' },
+    ],
+  },
+  missed_call_callback: {
+    label: 'Missed Call Callback',
+    templates: [
+      { name: 'Professional', text: 'Hello, this is {companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?' },
+      { name: 'Friendly', text: 'Hi there! This is {companyName} calling you back. Sorry we missed you earlier! What can we do for you?' },
+    ],
+  },
+  reminder_call: {
+    label: 'Appointment Reminder',
+    templates: [
+      { name: 'Standard', text: 'Hi {customerName}, this is {companyName} reminding you about your {service} appointment on {dateTime} with {employeeName}. Press 1 to confirm or 2 to reschedule.' },
+      { name: 'Brief', text: 'Hi {customerName}, reminder: {service} on {dateTime}. Press 1 to confirm, 2 to reschedule.' },
+      { name: 'Detailed', text: 'Hello {customerName}, this is {companyName}. We\'re looking forward to your {service} appointment scheduled for {dateTime}. {employeeName} will be assisting you. Press 1 to confirm, 2 to reschedule, or 3 to speak with someone.' },
+    ],
+  },
+  followup_call: {
+    label: 'Follow-up Call',
+    templates: [
+      { name: 'Professional', text: 'Hello {customerName}, this is {companyName} following up on your recent service. We hope everything went well. Press 1 if you were satisfied, or 2 to speak with a manager.' },
+      { name: 'Friendly', text: 'Hi {customerName}! {companyName} here. We just wanted to check in after your recent visit. How did everything go? Press 1 for great, 2 if we can improve.' },
+    ],
+  },
+  default_outbound: {
+    label: 'Default Outbound',
+    templates: [
+      { name: 'Professional', text: 'Hello {customerName}, this is {companyName}. Thank you for your time. How can we assist you today?' },
+      { name: 'Friendly', text: 'Hi {customerName}! This is {companyName} reaching out. We\'d love to help — what can we do for you?' },
+    ],
+  },
+};
+
+// Reusable ScriptField component with AI generation and template dropdown
+function ScriptField({
+  id,
+  icon,
+  label,
+  value,
+  onChange,
+  placeholder,
+  tokens,
+  contentType,
+  templateKey,
+  companyId,
+}: {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  tokens: string[];
+  contentType: ContentType;
+  templateKey: string;
+  companyId: string | null;
+}) {
+  const templates = SCRIPT_TEMPLATES[templateKey]?.templates || [];
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label htmlFor={id} className="flex items-center gap-2">
+          {icon}
+          {label}
+        </Label>
+        <div className="flex items-center gap-1">
+          {templates.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                  <FileText className="h-3.5 w-3.5 mr-1" />
+                  Templates
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {templates.map((t) => (
+                  <DropdownMenuItem key={t.name} onClick={() => onChange(t.text)}>
+                    {t.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          <AIContentButton
+            contentType={contentType}
+            existingContent={value}
+            onGenerate={onChange}
+            context={{ companyName: companyId || undefined }}
+          />
+        </div>
+      </div>
+      <Textarea
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={3}
+        className="resize-none"
+      />
+      <p className="text-xs text-muted-foreground">
+        Tokens: {tokens.map((token) => (
+          <code key={token} className="bg-muted px-1 rounded mr-1">{token}</code>
+        ))}
+      </p>
+    </div>
+  );
+}
 
 // Popular ElevenLabs voices
 const ELEVENLABS_VOICES = [
@@ -719,104 +843,79 @@ export const AIAgentSettings = () => {
             Call & SMS Scripts
           </CardTitle>
           <CardDescription>
-            Customize the messages your AI agent uses for outbound calls and SMS. Leave blank to use defaults.
+            Customize the messages your AI agent uses for outbound calls and SMS. Use the AI button to generate or the templates dropdown for quick presets. Leave blank to use defaults.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Missed Call SMS */}
-          <div className="space-y-2">
-            <Label htmlFor="missed-call-sms" className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-              Missed Call SMS
-            </Label>
-            <Textarea
-              id="missed-call-sms"
-              value={missedCallSmsTemplate}
-              onChange={(e) => setMissedCallSmsTemplate(e.target.value)}
-              placeholder="Hi, we noticed we missed your call at {companyName}. How can we help? Reply to this message or call us back at your convenience."
-              rows={3}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tokens: <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
-            </p>
-          </div>
+          <ScriptField
+            id="missed-call-sms"
+            icon={<MessageCircle className="h-4 w-4 text-muted-foreground" />}
+            label="Missed Call SMS"
+            value={missedCallSmsTemplate}
+            onChange={setMissedCallSmsTemplate}
+            placeholder="Hi, we noticed we missed your call at {companyName}. How can we help? Reply to this message or call us back at your convenience."
+            tokens={['{companyName}']}
+            contentType="missed_call_sms"
+            templateKey="missed_call_sms"
+            companyId={companyId}
+          />
 
           {/* Missed Call Callback Script */}
-          <div className="space-y-2">
-            <Label htmlFor="missed-call-callback" className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              Missed Call Callback Script
-            </Label>
-            <Textarea
-              id="missed-call-callback"
-              value={missedCallCallbackScript}
-              onChange={(e) => setMissedCallCallbackScript(e.target.value)}
-              placeholder="Hello, this is {companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?"
-              rows={3}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tokens: <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
-            </p>
-          </div>
+          <ScriptField
+            id="missed-call-callback"
+            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            label="Missed Call Callback Script"
+            value={missedCallCallbackScript}
+            onChange={setMissedCallCallbackScript}
+            placeholder="Hello, this is {companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?"
+            tokens={['{companyName}']}
+            contentType="missed_call_callback"
+            templateKey="missed_call_callback"
+            companyId={companyId}
+          />
 
           {/* Appointment Reminder Script */}
-          <div className="space-y-2">
-            <Label htmlFor="reminder-script" className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              Appointment Reminder Script
-            </Label>
-            <Textarea
-              id="reminder-script"
-              value={reminderCallScript}
-              onChange={(e) => setReminderCallScript(e.target.value)}
-              placeholder="Hello {customerName}, this is a reminder about your {service} appointment on {dateTime}. {employeeName} will be your technician. Press 1 to confirm, or 2 to request a callback."
-              rows={3}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{service}'}</code> <code className="bg-muted px-1 rounded">{'{dateTime}'}</code> <code className="bg-muted px-1 rounded">{'{employeeName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
-            </p>
-          </div>
+          <ScriptField
+            id="reminder-script"
+            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            label="Appointment Reminder Script"
+            value={reminderCallScript}
+            onChange={setReminderCallScript}
+            placeholder="Hello {customerName}, this is a reminder about your {service} appointment on {dateTime}. {employeeName} will be your technician. Press 1 to confirm, or 2 to request a callback."
+            tokens={['{customerName}', '{service}', '{dateTime}', '{employeeName}', '{companyName}']}
+            contentType="reminder_call"
+            templateKey="reminder_call"
+            companyId={companyId}
+          />
 
           {/* Follow-up Call Script */}
-          <div className="space-y-2">
-            <Label htmlFor="followup-script" className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              Follow-up Call Script
-            </Label>
-            <Textarea
-              id="followup-script"
-              value={followupCallScript}
-              onChange={(e) => setFollowupCallScript(e.target.value)}
-              placeholder="Hello {customerName}, we're following up regarding your recent service. We'd love to hear about your experience. Press 1 if you were satisfied, or 2 to speak with a manager."
-              rows={3}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
-            </p>
-          </div>
+          <ScriptField
+            id="followup-script"
+            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            label="Follow-up Call Script"
+            value={followupCallScript}
+            onChange={setFollowupCallScript}
+            placeholder="Hello {customerName}, we're following up regarding your recent service. We'd love to hear about your experience. Press 1 if you were satisfied, or 2 to speak with a manager."
+            tokens={['{customerName}', '{companyName}']}
+            contentType="followup_call"
+            templateKey="followup_call"
+            companyId={companyId}
+          />
 
           {/* Default Outbound Script */}
-          <div className="space-y-2">
-            <Label htmlFor="default-outbound" className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              Default Outbound Script
-            </Label>
-            <Textarea
-              id="default-outbound"
-              value={defaultOutboundScript}
-              onChange={(e) => setDefaultOutboundScript(e.target.value)}
-              placeholder="Hello {customerName}, thank you for your time."
-              rows={3}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Tokens: <code className="bg-muted px-1 rounded">{'{customerName}'}</code> <code className="bg-muted px-1 rounded">{'{companyName}'}</code>
-            </p>
-          </div>
+          <ScriptField
+            id="default-outbound"
+            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            label="Default Outbound Script"
+            value={defaultOutboundScript}
+            onChange={setDefaultOutboundScript}
+            placeholder="Hello {customerName}, thank you for your time."
+            tokens={['{customerName}', '{companyName}']}
+            contentType="default_outbound"
+            templateKey="default_outbound"
+            companyId={companyId}
+          />
         </CardContent>
       </Card>
 

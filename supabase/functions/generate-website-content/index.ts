@@ -98,6 +98,26 @@ const CONTENT_PROMPTS: Record<string, { generate: string; reword: string }> = {
   line_item_description: {
     generate: "Create a professional, detailed line item description for a quote or invoice. 1-2 sentences. Should clearly explain what the service/item includes and its value. Maximum 150 characters.",
     reword: "Improve this line item description to be more professional and detailed. Keep it concise but informative. Maximum 150 characters."
+  },
+  missed_call_sms: {
+    generate: "Create a friendly, professional SMS message to send when a customer's call was missed. Under 160 characters. Must include the {companyName} placeholder. Include a clear call-to-action to reply or call back.",
+    reword: "Improve this missed-call SMS to be more engaging while staying under 160 characters. Keep the {companyName} placeholder and core message."
+  },
+  missed_call_callback: {
+    generate: "Create a warm, professional voice script for when the AI returns a missed call. 2-3 sentences. Must include the {companyName} placeholder. Should explain why you're calling and offer to help.",
+    reword: "Improve this missed-call callback script to be more natural and professional. Keep the {companyName} placeholder."
+  },
+  reminder_call: {
+    generate: "Create a clear, professional appointment reminder voice script. 2-3 sentences. Must include these placeholders: {customerName}, {service}, {dateTime}, {employeeName}, {companyName}. Include options to confirm or reschedule.",
+    reword: "Improve this appointment reminder script to be more engaging and clear. Keep all existing placeholders."
+  },
+  followup_call: {
+    generate: "Create a warm post-service follow-up voice script. 2-3 sentences. Must include {customerName} and {companyName} placeholders. Ask about their experience and offer further assistance.",
+    reword: "Improve this follow-up call script to be warmer and more engaging. Keep all existing placeholders."
+  },
+  default_outbound: {
+    generate: "Create a professional general-purpose outbound call voice script. 2-3 sentences. Must include {customerName} and {companyName} placeholders. Should be adaptable to various call purposes.",
+    reword: "Improve this outbound call script to be more professional and natural. Keep all existing placeholders."
   }
 };
 

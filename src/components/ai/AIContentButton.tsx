@@ -19,7 +19,9 @@ export type ContentType =
   | 'email_subject' | 'email_heading' | 'email_message'
   | 'social_content'
   | 'blog_title' | 'blog_excerpt' | 'blog_content'
-  | 'sms_message' | 'line_item_description';
+  | 'sms_message' | 'line_item_description'
+  | 'missed_call_sms' | 'missed_call_callback' | 'reminder_call'
+  | 'followup_call' | 'default_outbound';
 
 interface AIContentButtonProps {
   contentType: ContentType;
