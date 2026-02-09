@@ -170,7 +170,7 @@ async function handleOutbound(
   if (audioUrl) {
     // Use pre-generated audio — instant response, no TTS delay
     return twimlResponse(`
-      <Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="${responseUrl}" method="POST">
+      <Gather input="dtmf" numDigits="1" timeout="15" action="${responseUrl}" method="POST">
         <Play>${audioUrl}</Play>
       </Gather>
       <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
@@ -180,7 +180,7 @@ async function handleOutbound(
 
   // No pre-generated audio — use Polly directly (skip TTS to avoid delay)
   return twimlResponse(`
-    <Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="${responseUrl}" method="POST">
+    <Gather input="dtmf" numDigits="1" timeout="15" action="${responseUrl}" method="POST">
       <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
     </Gather>
     <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
