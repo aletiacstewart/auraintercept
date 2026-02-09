@@ -1,58 +1,37 @@
 
 
-## Fix: No Audio on Outbound Calls (TwiML Attribute Error)
+## Fix: XML Escaping Bug Causing No Audio on Outbound Calls
 
 ### Root Cause
 
-The `voice-handler` returns this TwiML when the call connects:
+All TwiML `action` and `<Redirect>` URLs contain unescaped `&` characters in query parameters. In XML, `&` inside attribute values is invalid and must be written as `&amp;`. SignalWire's XML parser rejects the malformed elements, causing the `<Gather>` (and its nested `<Play>`/`<Say>`) to be silently skipped. The call falls through to `<Hangup/>`.
 
-```xml
-<Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="...">
-  <Play>https://...mp3</Play>
-</Gather>
-<Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
-<Hangup/>
+Example of current broken output:
+```text
+action="https://...voice-handler?action=outbound-response&callLogId=xxx"
+                                                         ^ INVALID XML
 ```
-
-Two problems:
-
-1. **`bargeIn="true"` is not a valid cXML attribute** on `<Gather>`. SignalWire/Twilio `<Gather>` does not accept this attribute. Nested `<Play>` and `<Say>` are interruptible by default inside `<Gather>` -- no attribute needed. The invalid attribute causes SignalWire to skip the `<Gather>` entirely, falling straight to the goodbye `<Say>` and `<Hangup/>`.
-
-2. **`input="dtmf speech"` combined with `numDigits="1"`** on a phone call can cause false triggers from ambient noise being interpreted as speech input, ending the Gather prematurely. For a press-1-or-2 scenario, DTMF-only input is more reliable.
-
-### Evidence from Logs
-
-- Audio files are valid: 44KB, correct mimetype, public bucket
-- Call answers at T+0, voice-handler fires instantly (no delay -- pre-generation working)
-- Call ends at T+6 (only 6 seconds of connected time)
-- No `outbound-response` action logged -- meaning SignalWire never POSTed to the Gather action URL, confirming the `<Gather>` was skipped entirely
 
 ### Fix
 
 **File: `supabase/functions/voice-handler/index.ts`**
 
-In `handleOutbound`, fix both the pre-generated audio path and the Polly fallback path:
+Create a helper function to escape URLs for use in XML attributes, and apply it to every URL used in `action=""` attributes and `<Redirect>` text content throughout the file.
 
-- Remove `bargeIn="true"` (invalid attribute)
-- Change `input="dtmf speech"` to `input="dtmf"` (more reliable for phone keypress scenarios)
-- Remove `numDigits="1"` (let it use the default behavior with timeout)
-
-Before:
-```xml
-<Gather input="dtmf speech" numDigits="1" timeout="15" bargeIn="true" action="...">
-  <Play>URL</Play>
-</Gather>
+```typescript
+function escapeXmlAttr(url: string): string {
+  return url.replace(/&/g, '&amp;');
+}
 ```
 
-After:
-```xml
-<Gather input="dtmf" numDigits="1" timeout="15" action="..." method="POST">
-  <Play>URL</Play>
-</Gather>
-```
+Apply to all TwiML URL references across these handler functions:
+- `handleIncoming` -- `gatherUrl`, `timeoutUrl` in `action` and `<Redirect>`
+- `handleOutbound` -- `responseUrl` in `action` (both the Play and Say paths)
+- `handleOutboundResponse` -- no URLs in attributes (just text content, already escaped)
+- `handleIncomingGather` -- `gatherUrl`, `timeoutUrl` in `action` and `<Redirect>`
+- `handleTimeout` -- `gatherUrl` in `action`
 
-Same change applies to the Polly `<Say>` fallback path below it.
+Every place a URL with query parameters appears in a TwiML attribute or element text.
 
 ### Files Modified
-- `supabase/functions/voice-handler/index.ts` -- remove invalid `bargeIn` attribute, switch to DTMF-only input
-
+- `supabase/functions/voice-handler/index.ts` -- add URL escaping for all TwiML attribute URLs
