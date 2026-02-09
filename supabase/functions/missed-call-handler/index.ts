@@ -77,10 +77,10 @@ serve(async (req) => {
       started_at: new Date().toISOString(),
     });
 
-    // Fetch company settings
+    // Fetch company settings including script templates
     const { data: company } = await supabase
       .from("companies")
-      .select("missed_call_action, name")
+      .select("missed_call_action, name, missed_call_sms_template, missed_call_callback_script")
       .eq("id", companyId)
       .single();
 
@@ -100,7 +100,10 @@ serve(async (req) => {
       if (signalwire_project_id && signalwire_api_token && signalwire_space_url) {
         const smsUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Messages.json`;
         const authHeader = "Basic " + btoa(`${signalwire_project_id}:${signalwire_api_token}`);
-        const smsBody = `Hi, we noticed we missed your call at ${companyName}. How can we help? Reply to this message or call us back at your convenience.`;
+        const defaultSms = `Hi, we noticed we missed your call at ${companyName}. How can we help? Reply to this message or call us back at your convenience.`;
+        const smsBody = company?.missed_call_sms_template
+          ? company.missed_call_sms_template.replace(/\{companyName\}/g, companyName)
+          : defaultSms;
 
         const smsParams = new URLSearchParams({
           From: normalizePhoneNumber(signalwire_phone_number),
@@ -153,7 +156,9 @@ serve(async (req) => {
             phone: normalizedFrom,
             name: "Missed Caller",
             purpose: "missed_call_callback",
-            message: `Hello, this is ${companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?`,
+            message: company?.missed_call_callback_script
+              ? company.missed_call_callback_script.replace(/\{companyName\}/g, companyName)
+              : `Hello, this is ${companyName} returning your call. We noticed we missed your call and wanted to follow up. How can we help you today?`,
           }),
         });
 

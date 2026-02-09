@@ -44,7 +44,25 @@ serve(async (req) => {
 
     const { signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url } = integration;
 
-    const reminderMessage = callScript || "This is a test voice reminder.";
+    // Fetch company reminder script template if no script provided
+    let reminderMessage = callScript || "";
+    if (!reminderMessage) {
+      const { data: companyData } = await supabase
+        .from("companies")
+        .select("reminder_call_script, name")
+        .eq("company_id", companyId)
+        .maybeSingle();
+      if (companyData?.reminder_call_script) {
+        reminderMessage = companyData.reminder_call_script
+          .replace(/\{companyName\}/g, companyData.name || '')
+          .replace(/\{customerName\}/g, 'Valued Customer')
+          .replace(/\{service\}/g, 'your upcoming service')
+          .replace(/\{dateTime\}/g, 'your scheduled time')
+          .replace(/\{employeeName\}/g, 'your technician');
+      } else {
+        reminderMessage = "This is a test voice reminder.";
+      }
+    }
 
     // Pre-generate TTS audio before calling SignalWire
     let preGeneratedAudioUrl = '';
