@@ -233,20 +233,54 @@ Deno.serve(async (req) => {
         );
       }
     } else {
+      // SignalWire sometimes replies 200/201 with an empty body (still a successful request).
+      // Treat empty bodies as success when the HTTP status is OK, and return diagnostic headers.
+      const requestId = signalwireResponse.headers.get('X-Request-Id') ??
+        signalwireResponse.headers.get('X-Request-ID') ??
+        signalwireResponse.headers.get('x-request-id');
+      const location = signalwireResponse.headers.get('Location') ?? signalwireResponse.headers.get('location');
+
+      if (signalwireResponse.ok) {
+        console.warn('SignalWire returned empty body but OK status:', {
+          status: signalwireResponse.status,
+          requestId,
+          location,
+        });
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            callSid: null,
+            status: 'initiated',
+            message: 'Call request accepted (SignalWire returned empty body)',
+            signalwire: {
+              http_status: signalwireResponse.status,
+              request_id: requestId,
+              location,
+            },
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+
       console.error('Empty response from SignalWire, status:', signalwireResponse.status);
       return new Response(
-        JSON.stringify({ 
-          error: 'Empty response from SignalWire - check credentials and phone number format', 
+        JSON.stringify({
+          error: 'Empty response from SignalWire - check credentials and phone number format',
           status: signalwireResponse.status,
           to: formattedPhone,
           from: normalizedFromNumber,
           credentials_check: {
             project_id: integration.signalwire_project_id?.substring(0, 5) + '***',
             has_api_token: !!integration.signalwire_api_token,
-            has_space_url: !!integration.signalwire_space_url
-          }
+            has_space_url: !!integration.signalwire_space_url,
+          },
+          signalwire: {
+            request_id: requestId,
+            location,
+          },
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
