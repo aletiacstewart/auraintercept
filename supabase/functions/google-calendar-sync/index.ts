@@ -19,7 +19,29 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { action, companyId, appointmentId, appointment } = body;
+    let { action, companyId, appointmentId, appointment } = body;
+
+    // If appointment object is missing but we have an appointmentId, fetch it
+    if (!appointment && appointmentId) {
+      const { data: fetchedAppt } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('id', appointmentId)
+        .single();
+      appointment = fetchedAppt;
+      if (!companyId && appointment) {
+        companyId = appointment.company_id;
+      }
+    }
+
+    // If we still don't have the appointment for sync actions, return early
+    if (action === 'sync_appointment' && !appointment) {
+      console.error('No appointment data available for sync, appointmentId:', appointmentId);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Appointment not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     console.log('Google Calendar Sync - Action:', action, 'Company:', companyId);
 
