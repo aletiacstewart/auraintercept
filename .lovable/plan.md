@@ -1,68 +1,55 @@
 
-## Make All Call and SMS Scripts Configurable Per Company
 
-Currently, the AI Agent Settings page only has two configurable text fields: **Voice Greeting** (for inbound calls) and **AI Agent Personality/Prompt**. All other outbound call and SMS messages are hardcoded in the backend functions. This plan adds configurable script templates for every outbound scenario.
+## Add AI Generation and Templates to Call & SMS Scripts
 
-### What Changes
+### Overview
+Each script field in the "Call & SMS Scripts" section will get:
+1. An **AI Generate** button (sparkle icon) next to the label -- reuses the existing `AIContentButton` component for "Generate New" and "Reword/Improve"
+2. A **Templates dropdown** with 2-3 pre-written industry templates per script type that populate the field with one click
 
-**1. Database: Add new columns to `companies` table**
+### Changes
 
-Add these template columns:
-- `missed_call_sms_template` (text) -- SMS sent when a call is missed
-- `missed_call_callback_script` (text) -- Voice script for return calls after a missed call
-- `reminder_call_script` (text) -- Voice script for appointment reminder calls
-- `followup_call_script` (text) -- Voice script for post-service follow-up calls
-- `default_outbound_script` (text) -- Fallback voice script for generic outbound calls
+**1. Edge Function: `supabase/functions/generate-website-content/index.ts`**
+- Add 5 new content type prompts to `CONTENT_PROMPTS`:
+  - `missed_call_sms` -- generates a friendly missed-call SMS
+  - `missed_call_callback` -- generates a return-call voice script
+  - `reminder_call` -- generates an appointment reminder script with token placeholders
+  - `followup_call` -- generates a post-service follow-up script
+  - `default_outbound` -- generates a general outbound call script
+- Each prompt instructs the AI to include the appropriate `{token}` placeholders in the output
 
-Each column will have a sensible default value (NULL, falling back to hardcoded defaults in the functions).
+**2. AIContentButton content types**
+- Add the 5 new types to the `ContentType` union in `AIContentButton.tsx`
 
-**2. Dashboard UI: Expand AIAgentSettings.tsx**
+**3. Frontend: `src/components/ai/AIAgentSettings.tsx`**
+- Add a new `ScriptTemplates` inline component (or simple dropdown) per script field offering 2-3 ready-made templates (e.g., "Professional", "Friendly", "Urgent")
+- Place the `AIContentButton` next to each script label, passing the current textarea value and an `onGenerate` callback that updates state
+- Template data will be defined as a constant map within the file
 
-Add a new card section called **"Call & SMS Scripts"** below the existing AI Agent Behavior card. It will contain:
+### Template Examples
 
-- **Missed Call SMS** -- textarea with placeholder tokens like `{companyName}`
-- **Missed Call Callback Script** -- textarea for what the AI says when returning a missed call
-- **Appointment Reminder Script** -- textarea with tokens `{customerName}`, `{service}`, `{dateTime}`, `{employeeName}`
-- **Follow-up Call Script** -- textarea with token `{customerName}`
-- **Default Outbound Script** -- textarea with token `{customerName}`
+**Missed Call SMS templates:**
+- Professional: "We missed your call at {companyName}. Reply here or call us back and we'll be happy to assist."
+- Friendly: "Hey! We saw we missed your call at {companyName}. Text us back or give us a ring -- we're here to help!"
 
-Each field shows a preview of available placeholder tokens below it. All fields save alongside the existing settings using the same Save button.
+**Appointment Reminder templates:**
+- Standard: "Hi {customerName}, this is {companyName} reminding you about your {service} appointment on {dateTime} with {employeeName}. Press 1 to confirm or 2 to reschedule."
+- Brief: "Hi {customerName}, reminder: {service} on {dateTime}. Press 1 to confirm, 2 to reschedule."
 
-**3. Backend Functions: Read templates from database instead of hardcoding**
-
-- **`missed-call-handler/index.ts`**: Already fetches `company.name` -- will also fetch the new template columns. Replace the hardcoded SMS body and callback message with the company's templates, substituting `{companyName}` at runtime.
-
-- **`outbound-call/index.ts`**: Already fetches company data -- will read the new script columns and use them based on `purpose` (reminder, followup, custom, missed_call_callback). Token substitution for `{customerName}`, `{service}`, `{dateTime}`, `{employeeName}`.
-
-- **`test-voice-reminder/index.ts`**: Will use the company's `reminder_call_script` template if set.
-
-### Placeholder Tokens
-
-Scripts support these tokens that get replaced at runtime:
-- `{companyName}` -- Company name
-- `{customerName}` -- Customer's name
-- `{service}` -- Service/appointment type
-- `{dateTime}` -- Formatted appointment date/time
-- `{employeeName}` -- Assigned technician/employee name
+Similar pattern for the other 3 script types.
 
 ### Technical Details
 
-**Database migration** adds 5 nullable text columns to the `companies` table.
+**Files modified:**
+- `src/components/ai/AIContentButton.tsx` -- add 5 new content types to the union
+- `supabase/functions/generate-website-content/index.ts` -- add 5 new prompt entries
+- `src/components/ai/AIAgentSettings.tsx` -- add AIContentButton + template dropdown to each script field
 
-**AIAgentSettings.tsx** changes:
-- Query expands to fetch the 5 new columns
-- 5 new `useState` hooks for the template values
-- Save mutation updates all columns at once
-- New "Call & SMS Scripts" card with textareas and token documentation
+**UI layout per script field:**
+```text
+[Label] ........................ [Template dropdown] [AI sparkle button]
+[Textarea                                                              ]
+[Token hints                                                           ]
+```
 
-**Edge function changes** (3 files):
-- Each function fetches the relevant template column from `companies`
-- A shared `replaceTokens(template, vars)` helper substitutes `{tokenName}` patterns
-- Falls back to current hardcoded text if the column is empty/null
-
-### Files Modified
-- Database migration (5 new columns on `companies`)
-- `src/components/ai/AIAgentSettings.tsx` -- new scripts card UI
-- `supabase/functions/missed-call-handler/index.ts` -- use templates
-- `supabase/functions/outbound-call/index.ts` -- use templates
-- `supabase/functions/test-voice-reminder/index.ts` -- use templates
+The template dropdown uses the existing `Select` component. Selecting a template populates the textarea. The AI button uses the existing `AIContentButton` with generate/reword actions.
