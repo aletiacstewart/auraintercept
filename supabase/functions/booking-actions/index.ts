@@ -417,7 +417,13 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
       const endTime = new Date(`${date}T${slot.end}:00`);
 
       while (currentTime.getTime() + serviceDuration * 60000 <= endTime.getTime()) {
-        const slotStart = currentTime.toISOString();
+        // Build datetime string manually to avoid UTC conversion shifting times
+        const yyyy = currentTime.getFullYear();
+        const mm = String(currentTime.getMonth() + 1).padStart(2, '0');
+        const dd = String(currentTime.getDate()).padStart(2, '0');
+        const hh = String(currentTime.getHours()).padStart(2, '0');
+        const min = String(currentTime.getMinutes()).padStart(2, '0');
+        const slotStart = `${yyyy}-${mm}-${dd}T${hh}:${min}:00`;
 
         // Check for conflicts
         const hasConflict = (existingAppointments || []).some((apt: any) => {
