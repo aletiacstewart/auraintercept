@@ -78,7 +78,50 @@ Deno.serve(async (req) => {
       callMessage = `Hello ${customerName}, thank you for your time.`;
     }
 
-    // Step 1: Pre-insert call_logs record to get an ID
+    // Step 1: Pre-generate TTS audio BEFORE calling SignalWire
+    let preGeneratedAudioUrl = '';
+    try {
+      const { elevenlabs_api_key, elevenlabs_voice_id } = integration;
+      if (elevenlabs_api_key) {
+        console.log('Pre-generating TTS audio...');
+        const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+        const ttsResponse = await fetch(
+          `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+          {
+            method: 'POST',
+            headers: {
+              'xi-api-key': elevenlabs_api_key,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: callMessage,
+              model_id: 'eleven_turbo_v2_5',
+              voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+            }),
+          }
+        );
+        if (ttsResponse.ok) {
+          const audioBuffer = await ttsResponse.arrayBuffer();
+          const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
+          const { error: uploadError } = await supabase.storage
+            .from('voice-audio')
+            .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
+          if (!uploadError) {
+            const { data: publicUrl } = supabase.storage.from('voice-audio').getPublicUrl(fileName);
+            preGeneratedAudioUrl = publicUrl.publicUrl;
+            console.log(`TTS pre-generated: ${preGeneratedAudioUrl}`);
+          } else {
+            console.error('TTS upload failed:', uploadError.message);
+          }
+        } else {
+          console.error('TTS generation failed:', ttsResponse.status);
+        }
+      }
+    } catch (ttsErr) {
+      console.error('TTS pre-generation failed, will use Polly fallback:', ttsErr);
+    }
+
+    // Step 2: Pre-insert call_logs record with audio URL
     const { data: callLogEntry, error: insertError } = await supabase
       .from('call_logs')
       .insert({
@@ -92,6 +135,7 @@ Deno.serve(async (req) => {
         status: 'initiating',
         metadata: {
           call_message: callMessage,
+          audio_url: preGeneratedAudioUrl || null,
           appointment_details: appointmentDetails || null,
         },
       })
@@ -104,9 +148,9 @@ Deno.serve(async (req) => {
     }
 
     const callLogId = callLogEntry.id;
-    console.log(`Created call log: ${callLogId}`);
+    console.log(`Created call log: ${callLogId}, audioUrl: ${preGeneratedAudioUrl ? 'yes' : 'no'}`);
 
-    // Step 2: Build short webhook URL
+    // Step 3: Build short webhook URL
     const webhookUrl = `${supabaseUrl}/functions/v1/voice-handler?action=outbound&callLogId=${callLogId}`;
     const statusCallbackUrl = `${supabaseUrl}/functions/v1/voice-handler?action=status&callLogId=${callLogId}`;
 
