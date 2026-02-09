@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, formatDistanceToNow } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   CheckCircle,
   XCircle,
@@ -352,7 +353,7 @@ const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref)
           {job.appointments?.datetime && (
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {format(new Date(job.appointments.datetime), 'MMM d, h:mm a')}
+              {format(parseUTCDateTime(job.appointments.datetime), 'MMM d, h:mm a')}
             </span>
           )}
           {job.customer_address && (

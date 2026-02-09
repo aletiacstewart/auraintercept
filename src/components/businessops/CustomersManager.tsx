@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   Dialog,
   DialogContent,
@@ -425,7 +426,7 @@ export function CustomersManager() {
                               <div>
                                 <p className="font-medium">{apt.service_type}</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {format(new Date(apt.datetime), 'PPp')}
+                                  {format(parseUTCDateTime(apt.datetime), 'PPp')}
                                 </p>
                               </div>
                               {getStatusBadge(apt.status)}

@@ -27,6 +27,7 @@ import {
   Activity
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { DispatcherMapView } from './DispatcherMapView';
 import { RealTimeETASidebar } from './RealTimeETASidebar';
 import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
@@ -380,7 +381,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
           <div className="text-right shrink-0">
             <div className="font-semibold text-accent">
               {job.appointments?.datetime 
-                ? format(new Date(job.appointments.datetime), 'h:mm a') 
+                ? format(parseUTCDateTime(job.appointments.datetime), 'h:mm a') 
                 : '-'}
             </div>
             <div className="text-xs text-muted-foreground mt-1">

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   Table,
   TableBody,
@@ -389,7 +390,7 @@ export function CustomerPreferencesManager() {
                       <div>
                         <p className="text-sm">{apt.service_type}</p>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(apt.datetime), "MMM d, yyyy")}
+                          {format(parseUTCDateTime(apt.datetime), "MMM d, yyyy")}
                         </p>
                       </div>
                     </TableCell>

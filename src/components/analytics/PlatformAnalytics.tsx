@@ -14,6 +14,7 @@ import {
   XCircle,
   MessageSquare
 } from 'lucide-react';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   BarChart, 
   Bar, 
@@ -121,7 +122,7 @@ export function PlatformAnalytics() {
       }
 
       data?.forEach(apt => {
-        const date = format(new Date(apt.datetime), 'MMM dd');
+        const date = format(parseUTCDateTime(apt.datetime), 'MMM dd');
         const entry = byDay.get(date);
         if (entry) {
           if (apt.status === 'scheduled') entry.scheduled++;

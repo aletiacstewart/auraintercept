@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { downloadAppointmentICS, getAppointmentIcsUrl } from '@/lib/calendarUtils';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 
 interface AppointmentData {
   id: string;
@@ -40,7 +41,7 @@ export function AddToCalendarButton({
   };
 
   const handleGoogleCalendar = () => {
-    const startDate = new Date(appointment.datetime);
+    const startDate = parseUTCDateTime(appointment.datetime);
     const endDate = new Date(startDate.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
     
     const formatGoogleDate = (date: Date) => 
@@ -58,7 +59,7 @@ export function AddToCalendarButton({
   };
 
   const handleOutlook = () => {
-    const startDate = new Date(appointment.datetime);
+    const startDate = parseUTCDateTime(appointment.datetime);
     const endDate = new Date(startDate.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
 
     const params = new URLSearchParams({

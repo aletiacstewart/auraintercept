@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
@@ -242,7 +243,7 @@ export function AppointmentCalendar() {
             job_employee_name: jobMap.get(apt.id)?.employee_name,
             calendar_sync: syncMap.get(apt.id) || null,
           }))
-          .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+          .sort((a, b) => parseUTCDateTime(a.datetime).getTime() - parseUTCDateTime(b.datetime).getTime());
       }
       
       // For employees: fetch via job_assignments to get assigned jobs
@@ -315,7 +316,7 @@ export function AppointmentCalendar() {
           calendar_sync: syncMap.get(ja.appointments!.id) || null,
         }))
         .filter(apt => {
-          const aptDate = new Date(apt.datetime);
+          const aptDate = parseUTCDateTime(apt.datetime);
           return aptDate >= start && aptDate <= end;
         });
 
@@ -333,7 +334,7 @@ export function AppointmentCalendar() {
       const allAppointments = [...assignedAppointments, ...directOnly];
       
       return allAppointments.sort((a, b) => 
-        new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+        parseUTCDateTime(a.datetime).getTime() - parseUTCDateTime(b.datetime).getTime()
       );
     },
     enabled: !!user?.id,
@@ -341,11 +342,11 @@ export function AppointmentCalendar() {
 
   // Get appointments for selected date
   const selectedDayAppointments = appointments?.filter(
-    (apt) => isSameDay(new Date(apt.datetime), selectedDate)
+    (apt) => isSameDay(parseUTCDateTime(apt.datetime), selectedDate)
   ) ?? [];
 
   // Get dates with appointments for highlighting
-  const datesWithAppointments = appointments?.map((apt) => new Date(apt.datetime)) ?? [];
+  const datesWithAppointments = appointments?.map((apt) => parseUTCDateTime(apt.datetime)) ?? [];
 
   // Calculate sync status summary
   const syncSummary = appointments?.reduce(
@@ -404,7 +405,7 @@ export function AppointmentCalendar() {
 
   // Group appointments by date for inline display
   const appointmentsByDate = appointments?.reduce((acc, apt) => {
-    const dateKey = format(new Date(apt.datetime), 'yyyy-MM-dd');
+    const dateKey = format(parseUTCDateTime(apt.datetime), 'yyyy-MM-dd');
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(apt);
     return acc;
@@ -427,9 +428,9 @@ export function AppointmentCalendar() {
             <div 
               key={apt.id} 
               className="text-[8px] leading-tight bg-accent/30 rounded px-0.5 truncate w-full text-center"
-              title={`${format(new Date(apt.datetime), 'h:mm a')} - ${apt.service_type}${apt.job_employee_name ? ` (${apt.job_employee_name})` : ''}`}
+              title={`${format(parseUTCDateTime(apt.datetime), 'h:mm a')} - ${apt.service_type}${apt.job_employee_name ? ` (${apt.job_employee_name})` : ''}`}
             >
-              {format(new Date(apt.datetime), 'h:mma').toLowerCase()}
+              {format(parseUTCDateTime(apt.datetime), 'h:mma').toLowerCase()}
             </div>
           ))}
           {dayAppointments.length > 2 && (
@@ -581,7 +582,7 @@ export function AppointmentCalendar() {
                     </div>
                     <div className="text-right space-y-1">
                       <p className="font-medium">
-                        {format(new Date(appointment.datetime), 'h:mm a')}
+                        {format(parseUTCDateTime(appointment.datetime), 'h:mm a')}
                       </p>
                       <div className="flex flex-col gap-1 items-end">
                         <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
@@ -628,7 +629,7 @@ export function AppointmentCalendar() {
           <DialogHeader>
             <DialogTitle>Appointment Details</DialogTitle>
             <DialogDescription>
-              {selectedAppointment && format(new Date(selectedAppointment.datetime), 'EEEE, MMMM d, yyyy')}
+              {selectedAppointment && format(parseUTCDateTime(selectedAppointment.datetime), 'EEEE, MMMM d, yyyy')}
             </DialogDescription>
           </DialogHeader>
 
@@ -661,7 +662,7 @@ export function AppointmentCalendar() {
                 <div className="flex items-center gap-3 text-sm">
                   <Clock className="w-4 h-4 text-muted-foreground" />
                   <span>
-                    {format(new Date(selectedAppointment.datetime), 'h:mm a')} - {selectedAppointment.duration_minutes} minutes
+                    {format(parseUTCDateTime(selectedAppointment.datetime), 'h:mm a')} - {selectedAppointment.duration_minutes} minutes
                   </span>
                 </div>
 

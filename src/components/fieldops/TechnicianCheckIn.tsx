@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   MapPin, 
   Navigation, 
@@ -232,10 +233,10 @@ export function TechnicianCheckIn() {
             {activeJob.appointments?.datetime && (
               <div className="text-right">
                 <div className="text-accent font-semibold">
-                  {format(new Date(activeJob.appointments.datetime), 'h:mm a')}
+                  {format(parseUTCDateTime(activeJob.appointments.datetime), 'h:mm a')}
                 </div>
                 <div className="text-xs text-primary-foreground/50">
-                  {format(new Date(activeJob.appointments.datetime), 'MMM d')}
+                  {format(parseUTCDateTime(activeJob.appointments.datetime), 'MMM d')}
                 </div>
               </div>
             )}

@@ -13,6 +13,7 @@ import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
 import { getAgentStyle } from '@/lib/agentStyles';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   Send, 
   Calendar, 
@@ -459,9 +460,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     
     let message = '';
     if (selectorAction === 'reschedule') {
-      message = `I need to reschedule the appointment for ${appointment.customer_name} (${appointment.service_type}) currently scheduled for ${format(new Date(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
+      message = `I need to reschedule the appointment for ${appointment.customer_name} (${appointment.service_type}) currently scheduled for ${format(parseUTCDateTime(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
     } else if (selectorAction === 'cancel') {
-      message = `I need to cancel the appointment for ${appointment.customer_name} (${appointment.service_type}) scheduled for ${format(new Date(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
+      message = `I need to cancel the appointment for ${appointment.customer_name} (${appointment.service_type}) scheduled for ${format(parseUTCDateTime(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
     }
     
     setSelectorAction(null);
@@ -661,8 +662,8 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
                             {apt.status}
                           </Badge>
                           <p className="text-xs text-muted-foreground">{apt.service_type}</p>
-                          <p className="text-xs font-medium">{format(new Date(apt.datetime), 'MMM d, yyyy')}</p>
-                          <p className="text-xs text-muted-foreground">{format(new Date(apt.datetime), 'h:mm a')}</p>
+                          <p className="text-xs font-medium">{format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy')}</p>
+                          <p className="text-xs text-muted-foreground">{format(parseUTCDateTime(apt.datetime), 'h:mm a')}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -738,8 +739,8 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
                               <p className="text-xs text-muted-foreground">{apt.service_type}</p>
                             </div>
                             <div className="text-right">
-                              <p className="text-xs font-medium">{format(new Date(apt.datetime), 'MMM d')}</p>
-                              <p className="text-xs text-muted-foreground">{format(new Date(apt.datetime), 'h:mm a')}</p>
+                              <p className="text-xs font-medium">{format(parseUTCDateTime(apt.datetime), 'MMM d')}</p>
+                              <p className="text-xs text-muted-foreground">{format(parseUTCDateTime(apt.datetime), 'h:mm a')}</p>
                             </div>
                           </div>
                         </CardContent>

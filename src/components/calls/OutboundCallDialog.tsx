@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   Select,
   SelectContent,
@@ -183,7 +184,7 @@ export function OutboundCallDialog({
               <p className="font-medium">Appointment Details:</p>
               <p className="text-muted-foreground">
                 {appointmentDetails.service} on{' '}
-                {new Date(appointmentDetails.datetime).toLocaleString()}
+                {parseUTCDateTime(appointmentDetails.datetime).toLocaleString()}
                 {appointmentDetails.employeeName && ` with ${appointmentDetails.employeeName}`}
               </p>
             </div>

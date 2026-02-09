@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow, format } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   Activity,
   Clock,
@@ -261,7 +262,7 @@ function JobCard({ job }: { job: JobAssignment }) {
         {/* Time */}
         <div className="text-right text-sm">
           <div className="font-medium">
-            {appointment?.datetime ? format(new Date(appointment.datetime), 'h:mm a') : '-'}
+            {appointment?.datetime ? format(parseUTCDateTime(appointment.datetime), 'h:mm a') : '-'}
           </div>
           <div className="text-muted-foreground">
             {formatDistanceToNow(new Date(job.assigned_at), { addSuffix: true })}

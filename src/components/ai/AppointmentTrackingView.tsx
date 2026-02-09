@@ -20,6 +20,7 @@ import {
   Timer
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 
 interface Appointment {
   id: string;
@@ -254,11 +255,11 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3 text-sm">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>{format(new Date(appointmentDetails.datetime), 'EEEE, MMMM d, yyyy')}</span>
+              <span>{format(parseUTCDateTime(appointmentDetails.datetime), 'EEEE, MMMM d, yyyy')}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              <span>{format(new Date(appointmentDetails.datetime), 'h:mm a')}</span>
+              <span>{format(parseUTCDateTime(appointmentDetails.datetime), 'h:mm a')}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <User className="h-4 w-4 text-muted-foreground" />
@@ -430,7 +431,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(apt.datetime), 'MMM d, yyyy h:mm a')}
+                      {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy h:mm a')}
                     </div>
                   </div>
                   <Badge variant={apt.status === 'completed' ? 'secondary' : 'default'}>

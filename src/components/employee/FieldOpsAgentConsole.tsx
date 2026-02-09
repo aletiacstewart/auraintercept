@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { useFieldOpsWorkflow } from '@/hooks/useFieldOpsWorkflow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -973,7 +974,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                           {appointment?.datetime && (
                             <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              {format(new Date(appointment.datetime), 'h:mm a')}
+                              {format(parseUTCDateTime(appointment.datetime), 'h:mm a')}
                             </p>
                           )}
                           {job.estimated_arrival_minutes && (

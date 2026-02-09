@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   Users, 
   Calendar, 
@@ -146,7 +147,7 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
       }
 
       data?.forEach(apt => {
-        const date = format(new Date(apt.datetime), 'MMM dd');
+        const date = format(parseUTCDateTime(apt.datetime), 'MMM dd');
         const entry = byDay.get(date);
         if (entry) {
           if (apt.status === 'scheduled') entry.scheduled++;
