@@ -318,7 +318,7 @@ const diagrams = {
         subgraph Integrations["Integrations"]
             Stripe[create-checkout]
             GoogleCal[google-calendar-sync]
-            Twilio[voice-handler]
+            SignalWire[voice-handler]
         end
         
         subgraph Voice["Voice AI"]
@@ -334,7 +334,7 @@ const diagrams = {
     
     subgraph External["External Services"]
         Resend[Resend Email]
-        TwilioExt[Twilio]
+        SignalWireExt[SignalWire]
         StripeExt[Stripe]
         ElevenLabsExt[ElevenLabs]
         GoogleExt[Google Calendar]

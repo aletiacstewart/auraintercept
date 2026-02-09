@@ -62,7 +62,7 @@ export function MissedCallSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('tenant_integrations')
-        .select('twilio_account_sid, twilio_auth_token, twilio_phone_number, elevenlabs_api_key')
+        .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, elevenlabs_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       if (error) throw error;
@@ -99,8 +99,8 @@ export function MissedCallSettings() {
     }
   }, [company]);
 
-  const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
-  const hasVoice = !!(hasTwilio && integrations?.elevenlabs_api_key);
+  const hasSignalWire = !!(integrations?.signalwire_project_id && integrations?.signalwire_phone_number);
+  const hasVoice = !!(hasSignalWire && integrations?.elevenlabs_api_key);
 
   const updateMutation = useMutation({
     mutationFn: async (updates: {
@@ -131,11 +131,11 @@ export function MissedCallSettings() {
 
   const handleActionChange = (value: MissedCallAction) => {
     if ((value === 'callback_only' || value === 'callback_then_sms') && !hasVoice) {
-      toast.error('AI callbacks require Twilio and ElevenLabs integrations');
+      toast.error('AI callbacks require SignalWire and ElevenLabs integrations');
       return;
     }
-    if (value === 'sms_only' && !hasTwilio) {
-      toast.error('SMS requires Twilio integration');
+    if (value === 'sms_only' && !hasSignalWire) {
+      toast.error('SMS requires SignalWire integration');
       return;
     }
     setLocalSettings(prev => ({ ...prev, missed_call_action: value }));
@@ -219,7 +219,7 @@ export function MissedCallSettings() {
               <Switch
                 checked={isEnabled}
                 onCheckedChange={handleToggleEnabled}
-                disabled={!hasTwilio}
+                disabled={!hasSignalWire}
               />
               <span className="text-sm font-medium">
                 {isEnabled ? 'Enabled' : 'Disabled'}
@@ -237,13 +237,13 @@ export function MissedCallSettings() {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {!hasTwilio && (
+          {!hasSignalWire && (
             <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-sm">
                 Missed call handling requires{' '}
                 <Link to="/integrations" className="text-secondary underline hover:no-underline">
-                  Twilio integration
+                  SignalWire integration
                 </Link>{' '}
                 to be configured.
               </AlertDescription>
@@ -257,7 +257,7 @@ export function MissedCallSettings() {
                 <Select
                   value={localSettings.missed_call_action}
                   onValueChange={handleActionChange}
-                  disabled={!hasTwilio}
+                  disabled={!hasSignalWire}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select action" />
@@ -319,7 +319,7 @@ export function MissedCallSettings() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="font-semibold text-card-foreground">2.</span>
-                    If the call is missed (no answer, busy, or failed), Twilio triggers the missed call handler
+                    If the call is missed (no answer, busy, or failed), SignalWire triggers the missed call handler
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="font-semibold text-card-foreground">3.</span>

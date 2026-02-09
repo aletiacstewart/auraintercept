@@ -371,12 +371,12 @@ const guideCategories = [
     title: 'Integrations Setup',
     guides: [
       {
-        title: 'Twilio Voice & SMS',
+        title: 'SignalWire Voice & SMS',
         duration: '15 min',
         steps: [
           'Navigate to Integrations → Voice Agent or SMS & Text',
-          'Create Twilio account at twilio.com',
-          'Obtain Account SID and Auth Token',
+          'Create SignalWire account at signalwire.com',
+          'Obtain Project ID and API Token',
           'Purchase a phone number with Voice and SMS',
           'Enter credentials in integration settings',
           'Configure call handling and SMS templates'

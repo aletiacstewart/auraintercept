@@ -40,10 +40,10 @@ import { CostCalculatorHelp, ExampleBreakdown } from './CostCalculatorHelp';
 
 // Pricing constants (approximate)
 const PRICING = {
-  twilio: {
-    phoneNumber: 1.15,
-    smsOutbound: 0.0079,
-    voiceOutbound: 0.014,
+  signalwire: {
+    phoneNumber: 2.00,
+    smsOutbound: 0.004,
+    voiceOutbound: 0.01,
     avgCallDuration: 0.5,
   },
   elevenlabs: {
@@ -155,14 +155,14 @@ export function CostCalculator() {
         
         // Calculate actual costs
         let emailCost = emailCount > PRICING.resend.freeEmails ? PRICING.resend.proPrice : 0;
-        let smsCost = smsCount > 0 ? PRICING.twilio.phoneNumber + (smsCount * PRICING.twilio.smsOutbound) : 0;
+        let smsCost = smsCount > 0 ? PRICING.signalwire.phoneNumber + (smsCount * PRICING.signalwire.smsOutbound) : 0;
         let voiceCost = voiceCount > 0 
-          ? PRICING.twilio.phoneNumber + (voiceCount * PRICING.twilio.avgCallDuration * PRICING.twilio.voiceOutbound)
+          ? PRICING.signalwire.phoneNumber + (voiceCount * PRICING.signalwire.avgCallDuration * PRICING.signalwire.voiceOutbound)
           : 0;
         
         // Add ElevenLabs cost for voice
         if (voiceCount > 0) {
-          const chars = voiceCount * PRICING.twilio.avgCallDuration * PRICING.elevenlabs.charsPerMinute;
+          const chars = voiceCount * PRICING.signalwire.avgCallDuration * PRICING.elevenlabs.charsPerMinute;
           if (chars > PRICING.elevenlabs.freeChars) {
             if (chars <= PRICING.elevenlabs.starterChars) voiceCost += PRICING.elevenlabs.starterPrice;
             else if (chars <= PRICING.elevenlabs.creatorChars) voiceCost += PRICING.elevenlabs.creatorPrice;
@@ -267,12 +267,12 @@ export function CostCalculator() {
     };
 
     const calculateSmsCost = (reminders: number) => {
-      return PRICING.twilio.phoneNumber + (reminders * PRICING.twilio.smsOutbound);
+      return PRICING.signalwire.phoneNumber + (reminders * PRICING.signalwire.smsOutbound);
     };
 
     const calculateVoiceCost = (reminders: number) => {
-      const totalMinutes = reminders * PRICING.twilio.avgCallDuration;
-      let twilioCost = PRICING.twilio.phoneNumber + (totalMinutes * PRICING.twilio.voiceOutbound);
+      const totalMinutes = reminders * PRICING.signalwire.avgCallDuration;
+      let signalwireCost = PRICING.signalwire.phoneNumber + (totalMinutes * PRICING.signalwire.voiceOutbound);
       
       const totalChars = totalMinutes * PRICING.elevenlabs.charsPerMinute;
       let elevenLabsCost = 0;
@@ -281,13 +281,13 @@ export function CostCalculator() {
         else if (totalChars <= PRICING.elevenlabs.creatorChars) elevenLabsCost = PRICING.elevenlabs.creatorPrice;
         else elevenLabsCost = 99;
       }
-      return twilioCost + elevenLabsCost;
+      return signalwireCost + elevenLabsCost;
     };
 
     // Calculate voice costs for ElevenLabs TTS
     const calculateVoiceCostByProvider = (reminders: number) => {
-      const totalMinutes = reminders * PRICING.twilio.avgCallDuration;
-      const twilioCost = PRICING.twilio.phoneNumber + (totalMinutes * PRICING.twilio.voiceOutbound);
+      const totalMinutes = reminders * PRICING.signalwire.avgCallDuration;
+      const signalwireCost = PRICING.signalwire.phoneNumber + (totalMinutes * PRICING.signalwire.voiceOutbound);
       const totalChars = totalMinutes * PRICING.elevenlabs.charsPerMinute;
 
       let ttsCost = 0;
@@ -296,7 +296,7 @@ export function CostCalculator() {
         else if (totalChars <= PRICING.elevenlabs.creatorChars) ttsCost = PRICING.elevenlabs.creatorPrice;
         else ttsCost = 99;
       }
-      return { twilioCost, ttsCost, total: twilioCost + ttsCost };
+      return { twilioCost: signalwireCost, ttsCost, total: signalwireCost + ttsCost };
     };
 
     const emailCost = channels.email ? calculateEmailCost(totalReminders) : 0;

@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
 });
 
 const THIRD_PARTY_INTEGRATIONS = [
-  { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Growth+ (for Voice)' },
+  { name: 'SignalWire', purpose: 'SMS & Voice Calls', cost: '$2/number + ~$0.004/SMS + ~$0.01/min', required: 'Growth+ (for Voice)' },
   { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Growth+ (for Voice)' },
   { name: 'Resend', purpose: 'Email Notifications', cost: '$0-20+/month based on volume', required: 'All Tiers' },
   { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'Optional (Growth+)' },
@@ -607,7 +607,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included Tools</Text>
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text) - embedded chat for website visitors</FeatureItem>
-        <FeatureItem>Talk to Aura (Voice) - voice conversations (requires ElevenLabs + Twilio)</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - voice conversations (requires ElevenLabs + SignalWire)</FeatureItem>
         <FeatureItem>Smart Link Sharing - website, menu, ordering links</FeatureItem>
         <FeatureItem>Knowledge Base for FAQs</FeatureItem>
       </View>
@@ -775,7 +775,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text)</FeatureItem>
         <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs</FeatureItem>
-        <FeatureItem>AI Outbound Calls for reminders - requires Twilio</FeatureItem>
+        <FeatureItem>AI Outbound Calls for reminders - requires SignalWire</FeatureItem>
         <FeatureItem>Choice of Social Media OR Web Presence (included)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
         <FeatureItem>Call to Book (no online scheduling - use Aura Performance for that)</FeatureItem>
@@ -989,7 +989,7 @@ const PricingSummaryPDF = () => (
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
               Required for Talk to Aura (Voice) and AI Calls:
             </Text>
-            <BulletPoint>Twilio: SMS & phone calls</BulletPoint>
+            <BulletPoint>SignalWire: SMS & phone calls</BulletPoint>
             <BulletPoint>ElevenLabs: AI voice synthesis</BulletPoint>
             <BulletPoint>Not needed for Business tier (text-only)</BulletPoint>
           </View>
