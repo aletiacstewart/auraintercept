@@ -254,9 +254,47 @@ Deno.serve(async (req) => {
     if (path === 'outbound' || url.searchParams.get('action') === 'outbound') {
       const formData = await req.formData();
       const callSid = formData.get('CallSid') as string;
-      const contextParam = url.searchParams.get('context');
+      const callLogId = url.searchParams.get('callLogId');
+      const contextParam = url.searchParams.get('context'); // backward compat
       
-      if (!contextParam) {
+      let context: any = null;
+
+      // Preferred: look up context from call_logs using callLogId
+      if (callLogId) {
+        console.log(`Outbound call: fetching context from call_logs id=${callLogId}`);
+        const { data: callLog, error: clError } = await supabase
+          .from('call_logs')
+          .select('company_id, customer_name, customer_phone, purpose, metadata')
+          .eq('id', callLogId)
+          .single();
+
+        if (clError || !callLog) {
+          console.error('Failed to fetch call_log for outbound context:', clError);
+          return new Response(
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <Response>
+              <Say voice="Polly.Joanna">Sorry, we encountered an error. Goodbye.</Say>
+              <Hangup/>
+            </Response>`,
+            { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+          );
+        }
+
+        const meta = callLog.metadata as any;
+        context = {
+          purpose: callLog.purpose,
+          customerName: callLog.customer_name,
+          customerPhone: callLog.customer_phone,
+          companyId: callLog.company_id,
+          appointmentDetails: meta?.appointmentDetails,
+          message: meta?.message,
+        };
+      } else if (contextParam) {
+        // Legacy fallback: decode context from URL
+        context = JSON.parse(decodeURIComponent(contextParam));
+      }
+      
+      if (!context) {
         return new Response(
           `<?xml version="1.0" encoding="UTF-8"?>
           <Response>
@@ -267,7 +305,6 @@ Deno.serve(async (req) => {
         );
       }
 
-      const context = JSON.parse(decodeURIComponent(contextParam));
       console.log(`Outbound call ${callSid} for ${context.purpose}:`, context);
 
       // Initialize conversation state for potential follow-up with TTL tracking
@@ -278,6 +315,9 @@ Deno.serve(async (req) => {
         customerPhone: context.customerPhone,
         createdAt: Date.now(),
       });
+
+      // Build the callLogId or context param for subsequent gather actions
+      const contextRef = callLogId ? `callLogId=${callLogId}` : `context=${contextParam}`;
 
       // Get ElevenLabs config
       const { data: integration } = await supabase
@@ -301,7 +341,7 @@ Deno.serve(async (req) => {
             `<?xml version="1.0" encoding="UTF-8"?>
             <Response>
               <Play>${audioUrl}</Play>
-              <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;context=${contextParam}">
+              <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;${contextRef}">
               </Gather>
               <Say voice="Polly.Joanna">We didn't receive a response. Thank you for your time. Goodbye!</Say>
               <Hangup/>
@@ -316,7 +356,7 @@ Deno.serve(async (req) => {
         `<?xml version="1.0" encoding="UTF-8"?>
         <Response>
           <Say voice="Polly.Joanna">${escapeXml(context.message)}</Say>
-          <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;context=${contextParam}">
+          <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;${contextRef}">
           </Gather>
           <Say voice="Polly.Joanna">We didn't receive a response. Thank you for your time. Goodbye!</Say>
           <Hangup/>
