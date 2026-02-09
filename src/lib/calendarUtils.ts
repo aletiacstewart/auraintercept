@@ -1,4 +1,5 @@
 // ICS Calendar Utilities
+import { parseUTCDateTime } from '@/lib/dateUtils';
 
 /**
  * Generate a webcal:// URL for subscribing to a calendar feed
@@ -68,7 +69,7 @@ export function generateAppointmentICS(appointment: {
     "BEGIN:VEVENT",
   ];
 
-  const startDate = new Date(appointment.datetime);
+  const startDate = parseUTCDateTime(appointment.datetime);
   const endDate = new Date(startDate.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
   const createdDate = appointment.created_at ? new Date(appointment.created_at) : new Date();
 

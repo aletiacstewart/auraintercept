@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   FileText, 
   Receipt, 
@@ -451,7 +452,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30 text-xs">
-                      {format(new Date(appt.datetime), 'MMM d, h:mm a')}
+                      {format(parseUTCDateTime(appt.datetime), 'MMM d, h:mm a')}
                     </Badge>
                   </div>
                 </div>

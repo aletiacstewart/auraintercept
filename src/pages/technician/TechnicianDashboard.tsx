@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDashboardLayout';
 import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
@@ -201,7 +202,7 @@ export default function TechnicianDashboard() {
                 </div>
                 {currentJob.appointment?.datetime && (
                   <span className="text-sm font-semibold text-accent">
-                    {format(new Date(currentJob.appointment.datetime), 'h:mm a')}
+                    {format(parseUTCDateTime(currentJob.appointment.datetime), 'h:mm a')}
                   </span>
                 )}
               </div>
@@ -269,7 +270,7 @@ export default function TechnicianDashboard() {
                 </Badge>
                 {nextJob.appointment?.datetime && (
                   <span className="text-sm text-white/70">
-                    {format(new Date(nextJob.appointment.datetime), 'h:mm a')}
+                    {format(parseUTCDateTime(nextJob.appointment.datetime), 'h:mm a')}
                   </span>
                 )}
               </div>

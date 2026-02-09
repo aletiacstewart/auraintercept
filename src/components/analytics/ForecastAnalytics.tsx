@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   TrendingUp, 
   Users, 
@@ -58,7 +59,7 @@ export function ForecastAnalytics({ companyId }: ForecastAnalyticsProps) {
       }
 
       appointments.data?.forEach(apt => {
-        const key = format(new Date(apt.datetime), 'MMM yyyy');
+        const key = format(parseUTCDateTime(apt.datetime), 'MMM yyyy');
         if (monthlyData.has(key)) {
           const existing = monthlyData.get(key)!;
           existing.appointments++;

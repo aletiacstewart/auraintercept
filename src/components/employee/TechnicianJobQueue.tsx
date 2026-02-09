@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow, differenceInMinutes } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   CheckCircle,
   XCircle,
@@ -263,7 +264,7 @@ export function TechnicianJobQueue() {
 
   const handleAccept = (job: JobAssignment) => {
     // Calculate estimated arrival based on scheduled time
-    const appointmentTime = job.appointments?.datetime ? new Date(job.appointments.datetime) : new Date();
+    const appointmentTime = job.appointments?.datetime ? parseUTCDateTime(job.appointments.datetime) : new Date();
     const now = new Date();
     const minutesUntilAppointment = Math.max(15, Math.round((appointmentTime.getTime() - now.getTime()) / 60000));
     
@@ -592,7 +593,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
       <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="w-4 h-4" />
-          <span>{format(new Date(appointment.datetime), 'MMM d, h:mm a')}</span>
+          <span>{format(parseUTCDateTime(appointment.datetime), 'MMM d, h:mm a')}</span>
         </div>
         {appointment.customer_phone && (
           <a 

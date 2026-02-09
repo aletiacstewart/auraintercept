@@ -10,6 +10,7 @@ import { Receipt, Send, ArrowLeft, Mail, MessageSquare, Loader2, Search, User, C
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 
@@ -438,7 +439,7 @@ export function InvoiceForm({
                 key={job.id} 
                 className="flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
               >
-                <span>{format(new Date(job.datetime), 'MMM d')} - {job.service_type}</span>
+                <span>{format(parseUTCDateTime(job.datetime), 'MMM d')} - {job.service_type}</span>
                 <button 
                   type="button" 
                   onClick={() => handleRemoveJob(job.id)}
@@ -502,7 +503,7 @@ export function InvoiceForm({
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 ml-6">
                     <Calendar className="h-3 w-3" />
-                    {format(new Date(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
+                    {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
                   </div>
                 </div>
               );

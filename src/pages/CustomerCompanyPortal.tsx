@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   ArrowLeft, 
   Bot, 
@@ -303,7 +304,7 @@ export default function CustomerCompanyPortal() {
                         <div className="space-y-1">
                           <p className="font-medium">{apt.service_type}</p>
                           <p className="text-sm text-muted-foreground">
-                            {format(new Date(apt.datetime), 'MMM d, yyyy h:mm a')}
+                            {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy h:mm a')}
                           </p>
                           {apt.customer_address && (
                             <p className="text-sm text-muted-foreground flex items-center gap-1">

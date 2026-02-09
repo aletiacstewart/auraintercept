@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { 
   Map, 
   List, 
@@ -920,7 +921,7 @@ function AgendaJobCard({
           <div className="text-right shrink-0">
             <div className="font-semibold text-accent">
               {job.appointments?.datetime 
-                ? format(new Date(job.appointments.datetime), 'h:mm a') 
+                ? format(parseUTCDateTime(job.appointments.datetime), 'h:mm a') 
                 : '-'}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
@@ -1010,7 +1011,7 @@ function CalendarView({ appointments, jobs, onAssign, onCancel }: CalendarViewPr
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {};
     appointments.forEach(apt => {
-      const date = format(new Date(apt.datetime), 'yyyy-MM-dd');
+      const date = format(parseUTCDateTime(apt.datetime), 'yyyy-MM-dd');
       if (!grouped[date]) grouped[date] = [];
       grouped[date].push(apt);
     });
@@ -1050,7 +1051,7 @@ function CalendarView({ appointments, jobs, onAssign, onCancel }: CalendarViewPr
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="text-accent font-mono font-semibold">
-                            {format(new Date(apt.datetime), 'h:mm a')}
+                            {format(parseUTCDateTime(apt.datetime), 'h:mm a')}
                           </div>
                           <div>
                             <p className="font-medium">{apt.customer_name}</p>

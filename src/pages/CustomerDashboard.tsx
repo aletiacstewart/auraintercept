@@ -28,6 +28,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import { CommunicationPreferencesCheckboxes, CommunicationPreferences } from '@/components/customer/CommunicationPreferencesCheckboxes';
 import { toast } from 'sonner';
 
@@ -288,7 +289,7 @@ export default function CustomerDashboard() {
 
   const { profile, appointments, invoices, quotes, referrals, company } = data;
   const upcomingAppointments = appointments.filter(a => 
-    new Date(a.datetime) >= new Date() && a.status !== 'cancelled'
+    parseUTCDateTime(a.datetime) >= new Date() && a.status !== 'cancelled'
   );
   const pendingInvoices = invoices.filter(i => i.status === 'pending' || i.status === 'sent');
 
@@ -454,7 +455,7 @@ export default function CustomerDashboard() {
                           <div className="space-y-1">
                             <p className="font-medium">{apt.service_type}</p>
                             <p className="text-sm text-muted-foreground">
-                              {format(new Date(apt.datetime), 'MMM d, yyyy h:mm a')}
+                              {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy h:mm a')}
                             </p>
                             {apt.customer_address && (
                               <p className="text-sm text-muted-foreground flex items-center gap-1">

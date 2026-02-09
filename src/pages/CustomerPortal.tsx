@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar } from '@/components/ui/calendar';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   Dialog,
   DialogContent,
@@ -231,7 +232,7 @@ export default function CustomerPortal() {
     );
   }
 
-  const appointmentDate = new Date(appointment.datetime);
+  const appointmentDate = parseUTCDateTime(appointment.datetime);
   const isPast = isBefore(appointmentDate, new Date());
   const canModify = appointment.status === 'scheduled' && !isPast;
 

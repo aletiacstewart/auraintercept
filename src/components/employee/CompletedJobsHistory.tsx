@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, differenceInMinutes, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { parseUTCDateTime } from '@/lib/dateUtils';
 import {
   CheckCircle,
   Clock,
@@ -333,7 +334,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Clock className="w-4 h-4" />
-              <span>Scheduled: {format(new Date(appointment.datetime), 'MMM d, h:mm a')}</span>
+              <span>Scheduled: {format(parseUTCDateTime(appointment.datetime), 'MMM d, h:mm a')}</span>
             </div>
             {appointment.customer_phone && (
               <a 
