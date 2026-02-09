@@ -154,19 +154,6 @@ Deno.serve(async (req) => {
         break;
     }
 
-    // Store call context for the voice handler
-    const callContext = {
-      purpose,
-      customerName,
-      customerPhone,
-      companyId,
-      appointmentDetails,
-      message: callMessage,
-    };
-
-    // Encode context to pass via URL
-    const encodedContext = encodeURIComponent(JSON.stringify(callContext));
-
     // Format phone number - ensure it has country code
     let formattedPhone = customerPhone.replace(/\D/g, ''); // Remove non-digits
     if (!formattedPhone.startsWith('1') && formattedPhone.length === 10) {
@@ -174,22 +161,52 @@ Deno.serve(async (req) => {
     }
     formattedPhone = '+' + formattedPhone;
 
-    // Initiate the call via SignalWire
-    const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls.json`;
-    
+    // Step 1: Insert call_logs BEFORE calling SignalWire so we have a reference ID
+    const { data: callLogEntry, error: preLogError } = await supabase
+      .from('call_logs')
+      .insert({
+        company_id: companyId,
+        direction: 'outbound',
+        status: 'pending',
+        from_number: integration.signalwire_phone_number,
+        to_number: customerPhone,
+        customer_name: customerName,
+        customer_phone: customerPhone,
+        purpose,
+        metadata: {
+          appointmentDetails,
+          message: callMessage,
+        },
+      })
+      .select('id')
+      .single();
+
+    if (preLogError || !callLogEntry) {
+      console.error('Failed to pre-insert call log:', preLogError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to create call log entry' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Pre-inserted call_log with id: ${callLogEntry.id}`);
+
+    // Step 2: Build short webhook URL using callLogId instead of full context
     const formData = new URLSearchParams();
     formData.append('To', formattedPhone);
     const normalizedFromNumber = normalizePhoneNumber(integration.signalwire_phone_number);
     formData.append('From', normalizedFromNumber);
-    formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&context=${encodedContext}`);
+    formData.append('Url', `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&callLogId=${callLogEntry.id}`);
     formData.append('StatusCallback', `${SUPABASE_URL}/functions/v1/voice-handler?action=status`);
     formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
     formData.append('Timeout', '30');
 
     const authHeader = btoa(`${integration.signalwire_project_id}:${integration.signalwire_api_token}`);
     
+    const webhookUrl = `${SUPABASE_URL}/functions/v1/voice-handler?action=outbound&callLogId=${callLogEntry.id}`;
     console.log(`Calling SignalWire API: ${signalwireUrl}`);
     console.log(`From: ${normalizedFromNumber} (raw: ${integration.signalwire_phone_number}), To: ${formattedPhone}`);
+    console.log(`Webhook URL length: ${webhookUrl.length} chars`);
     
     const signalwireResponse = await fetch(signalwireUrl, {
       method: 'POST',
@@ -203,7 +220,11 @@ Deno.serve(async (req) => {
 
     // Handle potential empty or non-JSON responses from SignalWire
     const responseText = await signalwireResponse.text();
-    console.log(`SignalWire response status: ${signalwireResponse.status}, body: ${responseText.substring(0, 500)}`);
+    // Log all response headers for diagnostics
+    const responseHeaders: Record<string, string> = {};
+    signalwireResponse.headers.forEach((value, key) => { responseHeaders[key] = value; });
+    console.log(`SignalWire response status: ${signalwireResponse.status}, headers:`, JSON.stringify(responseHeaders));
+    console.log(`SignalWire response body: ${responseText.substring(0, 500)}`);
     
     let signalwireData: Record<string, unknown> = {};
     
@@ -294,24 +315,17 @@ Deno.serve(async (req) => {
 
     console.log('Call initiated successfully:', signalwireData.sid);
 
-    // Log the outbound call
-    const { error: logError } = await supabase
+    // Step 3: Update the pre-inserted call_log with the SID
+    const { error: updateLogError } = await supabase
       .from('call_logs')
-      .insert({
-        company_id: companyId,
-        direction: 'outbound',
+      .update({
+        call_sid: signalwireData.sid as string,
         status: 'initiated',
-        from_number: integration.signalwire_phone_number,
-        to_number: customerPhone,
-        customer_name: customerName,
-        customer_phone: customerPhone,
-        call_sid: signalwireData.sid,
-        purpose,
-        metadata: { appointmentDetails },
-      });
+      })
+      .eq('id', callLogEntry.id);
 
-    if (logError) {
-      console.error('Error logging call:', logError);
+    if (updateLogError) {
+      console.error('Error updating call log with SID:', updateLogError);
     }
 
     return new Response(
