@@ -1,171 +1,117 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface ElevenLabsPostCallPayload {
-  conversation_id: string;
-  agent_id: string;
-  status: string;
-  transcript?: Array<{
-    role: string;
-    message: string;
-    time_in_call_secs?: number;
-  }>;
-  metadata?: {
-    start_time_unix_secs?: number;
-    end_time_unix_secs?: number;
-    call_duration_secs?: number;
-    cost?: number;
-    feedback?: {
-      overall_rating?: number;
-      likes?: string[];
-      dislikes?: string[];
-    };
-  };
-  analysis?: {
-    evaluation_criteria_results?: Record<string, {
-      criteria_id: string;
-      result: string;
-      rationale: string;
-    }>;
-    data_collection_results?: Record<string, {
-      data_collection_id: string;
-      value: string;
-      rationale: string;
-    }>;
-    call_successful?: string;
-    transcript_summary?: string;
-  };
-  recording_url?: string;
-}
-
-serve(async (req) => {
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const bodyText = await req.text();
+    let payload: any;
+    try {
+      payload = JSON.parse(bodyText);
+    } catch {
+      console.error('Invalid JSON in post-call webhook:', bodyText.substring(0, 200));
+      throw new Error('Invalid JSON body');
+    }
 
-    const payload: ElevenLabsPostCallPayload = await req.json();
-    console.log('ElevenLabs post-call webhook received:', JSON.stringify(payload, null, 2));
+    console.log('Post-call webhook received:', JSON.stringify(payload).substring(0, 500));
 
-    const { conversation_id, agent_id, transcript, metadata, analysis, recording_url, status } = payload;
+    const eventType = payload.type || payload.event_type || '';
 
-    if (!agent_id) {
-      console.error('Missing agent_id in payload');
+    // Only process post_call_transcription events
+    if (eventType !== 'post_call_transcription' && eventType !== '') {
+      console.log(`Ignoring event type: ${eventType}`);
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const data = payload.data || payload;
+    const agentId = data.agent_id || payload.agent_id || '';
+    const conversationId = data.conversation_id || payload.conversation_id || '';
+    const transcript = data.transcript || [];
+    const summary = data.call_summary || data.summary || '';
+    const duration = data.call_duration_secs || data.duration || 0;
+    const recordingUrl = data.recording_url || '';
+
+    // Extract customer info from data_collection_results
+    const collectionResults = data.data_collection_results || {};
+    let customerName = '';
+    let customerPhone = '';
+
+    if (collectionResults.customer_name) {
+      customerName = collectionResults.customer_name.value || '';
+    }
+    if (collectionResults.customer_phone || collectionResults.phone_number) {
+      customerPhone = (collectionResults.customer_phone?.value || collectionResults.phone_number?.value || '');
+    }
+
+    // Map agent_id to company_id via tenant_integrations
+    let companyId = '';
+    if (agentId) {
+      const { data: integration } = await supabase
+        .from('tenant_integrations')
+        .select('company_id')
+        .eq('elevenlabs_agent_id', agentId)
+        .maybeSingle();
+
+      companyId = integration?.company_id || '';
+    }
+
+    if (!companyId) {
+      console.error('Could not map agent_id to company:', agentId);
       return new Response(
-        JSON.stringify({ success: false, error: 'Missing agent_id' }),
+        JSON.stringify({ error: 'Could not identify company' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Look up company_id from tenant_integrations using agent_id
-    const { data: integration, error: integrationError } = await supabase
-      .from('tenant_integrations')
-      .select('company_id')
-      .eq('elevenlabs_agent_id', agent_id)
-      .single();
-
-    if (integrationError || !integration) {
-      console.error('Could not find company for agent_id:', agent_id, integrationError);
-      // Still return success to ElevenLabs to prevent retries
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Company not found for agent_id',
-          agent_id 
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const companyId = integration.company_id;
-
-    // Calculate duration from metadata
-    const durationSeconds = metadata?.call_duration_secs || 
-      (metadata?.start_time_unix_secs && metadata?.end_time_unix_secs 
-        ? metadata.end_time_unix_secs - metadata.start_time_unix_secs 
-        : null);
-
-    // Extract customer info from data collection if available
-    const dataCollection = analysis?.data_collection_results || {};
-    const customerName = dataCollection.customer_name?.value || 
-                         dataCollection.name?.value || 
-                         null;
-    const customerPhone = dataCollection.customer_phone?.value || 
-                          dataCollection.phone?.value || 
-                          null;
-
-    // Build the call log entry
-    const callLogEntry = {
+    // Insert call log
+    const { error: insertError } = await supabase.from('call_logs').insert({
       company_id: companyId,
-      direction: 'inbound' as const,
-      status: status === 'done' ? 'completed' : status || 'completed',
-      purpose: 'voice_booking_agent',
-      started_at: metadata?.start_time_unix_secs 
-        ? new Date(metadata.start_time_unix_secs * 1000).toISOString()
-        : new Date().toISOString(),
-      ended_at: metadata?.end_time_unix_secs
-        ? new Date(metadata.end_time_unix_secs * 1000).toISOString()
-        : null,
-      duration_seconds: durationSeconds,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      summary: analysis?.transcript_summary || null,
-      transcript: transcript || null,
-      recording_url: recording_url || null,
-      call_sid: conversation_id, // Use conversation_id as unique identifier
+      direction: 'inbound',
+      status: 'completed',
+      purpose: 'voice-chat',
+      customer_name: customerName || null,
+      customer_phone: customerPhone || null,
+      duration_seconds: duration,
+      recording_url: recordingUrl || null,
+      summary: summary || null,
+      transcript,
       metadata: {
-        elevenlabs_conversation_id: conversation_id,
-        elevenlabs_agent_id: agent_id,
-        call_successful: analysis?.call_successful,
-        evaluation_criteria: analysis?.evaluation_criteria_results,
-        data_collection: analysis?.data_collection_results,
-        cost: metadata?.cost,
-        feedback: metadata?.feedback
-      }
-    };
-
-    // Insert into call_logs
-    const { data: callLog, error: insertError } = await supabase
-      .from('call_logs')
-      .insert(callLogEntry)
-      .select()
-      .single();
+        conversation_id: conversationId,
+        agent_id: agentId,
+        source: 'elevenlabs_web',
+      },
+    });
 
     if (insertError) {
       console.error('Failed to insert call log:', insertError);
-      return new Response(
-        JSON.stringify({ success: false, error: 'Failed to log call', details: insertError.message }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('Failed to save call log');
     }
 
-    console.log('Call log created successfully:', callLog.id);
+    console.log(`Post-call log saved for company ${companyId}, conversation ${conversationId}`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        call_log_id: callLog.id,
-        company_id: companyId
-      }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ success: true }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
-  } catch (error: unknown) {
-    console.error('Error processing ElevenLabs post-call webhook:', error);
+  } catch (error) {
+    console.error('Post-call webhook error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: errorMessage }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
