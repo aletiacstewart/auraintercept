@@ -239,7 +239,12 @@ Deno.serve(async (req) => {
           error: 'Empty response from SignalWire - check credentials and phone number format', 
           status: signalwireResponse.status,
           to: formattedPhone,
-          from: integration.signalwire_phone_number
+          from: normalizedFromNumber,
+          credentials_check: {
+            project_id: integration.signalwire_project_id?.substring(0, 5) + '***',
+            has_api_token: !!integration.signalwire_api_token,
+            has_space_url: !!integration.signalwire_space_url
+          }
         }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
