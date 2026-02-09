@@ -308,7 +308,7 @@ const companyGuideCategories = [
           'Monitor conversation context and handoffs',
           'Test customer-facing interactions'
         ],
-        tips: ['Text Chat works on Core tier with no external dependencies. Voice requires ElevenLabs + Twilio.']
+        tips: ['Text Chat works on Core tier with no external dependencies. Voice requires ElevenLabs + SignalWire.']
       },
       {
         title: 'Field Operations Console',
@@ -383,7 +383,7 @@ const companyGuideCategories = [
           'Copy the embed code for your website',
           'Add the code to your website footer or page',
           'The Chat Widget works on ALL tiers including Core',
-          'No external dependencies required (no ElevenLabs or Twilio)',
+          'No external dependencies required (no ElevenLabs or SignalWire)',
           'Test the widget on your website'
         ],
         tips: ['Text-based chat works out of the box. Voice features require additional setup.']
@@ -394,9 +394,9 @@ const companyGuideCategories = [
         steps: [
           'Navigate to Integrations → Voice Agent',
           'NOTE: AI Voice (Speech-Based) requires Single-Point tier or higher',
-          'Create Twilio account at twilio.com',
-          'Obtain Account SID and Auth Token',
-          'Purchase a phone number from Twilio',
+          'Create SignalWire account at signalwire.com',
+          'Obtain Project ID and API Token',
+          'Purchase a phone number from SignalWire',
           'Create ElevenLabs account for natural voice synthesis',
           'Enter credentials in Voice settings',
           'Configure voice agent prompts',
@@ -405,12 +405,12 @@ const companyGuideCategories = [
         tips: ['Voice features use microphone/speakers. Text Chat Widget works without this setup.']
       },
       {
-        title: 'SMS Integration (Twilio)',
+        title: 'SMS Integration (SignalWire)',
         duration: '15 min',
         steps: [
           'Navigate to Integrations → SMS & Text',
-          'Ensure Twilio account is set up',
-          'Enable SMS on your Twilio number',
+          'Ensure SignalWire account is set up',
+          'Enable SMS on your SignalWire number',
           'Configure SMS templates in Settings',
           'Set up reminder schedules',
           'Test SMS to your number'

@@ -85,7 +85,7 @@ export function ReminderSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('tenant_integrations')
-        .select('elevenlabs_api_key, elevenlabs_voice_id, twilio_account_sid, twilio_auth_token, twilio_phone_number')
+        .select('elevenlabs_api_key, elevenlabs_voice_id, signalwire_project_id, signalwire_api_token, signalwire_phone_number')
         .eq('company_id', companyId)
         .maybeSingle();
       if (error) throw error;
@@ -94,7 +94,7 @@ export function ReminderSettings() {
     enabled: !!companyId,
   });
 
-  const hasVoiceSupport = !!(integrations?.elevenlabs_api_key && integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number);
+  const hasVoiceSupport = !!(integrations?.elevenlabs_api_key && integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number);
 
   const upsertMutation = useMutation({
     mutationFn: async (setting: Partial<ReminderSetting> & { company_id: string; reminder_type: string; hours_before: number }) => {

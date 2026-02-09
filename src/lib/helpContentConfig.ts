@@ -72,8 +72,8 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     features: [
       { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'starter' },
       { text: 'Intelligent customer triage and routing', tier: 'starter' },
-      { text: 'Talk to Aura (Voice) - microphone/speaker, requires ElevenLabs + Twilio', tier: 'scheduling' },
-      { text: 'Voice Reminders for appointments - requires ElevenLabs + Twilio', tier: 'scheduling' },
+      { text: 'Talk to Aura (Voice) - microphone/speaker, requires ElevenLabs + SignalWire', tier: 'scheduling' },
+      { text: 'Voice Reminders for appointments - requires ElevenLabs + SignalWire', tier: 'scheduling' },
       { text: 'Answer questions using your Knowledge Base', tier: 'starter' },
       { text: 'Automated follow-up sequences via Email/SMS', tier: 'scheduling' },
       { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'growth' },
@@ -434,7 +434,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Knowledge Base for FAQs',
       'Embeddable Chat Widget',
       '2 Employee Accounts',
-      'Requires ElevenLabs + Twilio integrations',
+      'Requires ElevenLabs + SignalWire integrations',
     ],
   },
   scheduling: {

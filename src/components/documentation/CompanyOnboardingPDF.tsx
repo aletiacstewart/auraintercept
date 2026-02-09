@@ -626,7 +626,7 @@ const AuditQuestionsPages = () => {
 // Integration Requirements Page
 const IntegrationRequirementsPage = () => {
   const integrations = [
-    { name: 'Twilio', purpose: 'Voice & SMS Communications', tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command' },
+    { name: 'SignalWire', purpose: 'Voice & SMS Communications', tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command' },
     { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command' },
     { name: 'Resend', purpose: 'Email Delivery', tiers: 'Flow, Single-Point, Multi-Track, Command (Required)' },
     { name: 'Stripe', purpose: 'Payment Processing', tiers: 'Multi-Track, Command (Required)' },
@@ -665,12 +665,12 @@ const IntegrationRequirementsPage = () => {
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Existing Account Details (if applicable)')}</Text>
       
       <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Twilio Account SID:')}</Text>
+        <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Project ID:')}</Text>
         <View style={styles.formLine} />
       </View>
       
       <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Twilio Phone Number:')}</Text>
+        <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Phone Number:')}</Text>
         <View style={styles.formLine} />
       </View>
       

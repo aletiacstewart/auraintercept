@@ -144,10 +144,10 @@ Aura Intercept is an AI-powered business automation platform with 24 AI Operativ
 - Settings: /dashboard/settings
 
 ## Common Troubleshooting
-- **Voice not working**: Requires ElevenLabs + Twilio integrations configured in Settings > Integrations
+- **Voice not working**: Requires ElevenLabs + SignalWire integrations configured in Settings > Integrations
 - **Agent not responding**: Check if agent is enabled in AI Operatives Hub or AI Agents page
 - **Calendar not syncing**: Verify Google Calendar connection in Settings > Integrations
-- **SMS not sending**: Check Twilio configuration and phone number verification
+- **SMS not sending**: Check SignalWire configuration and phone number verification
 - **Social posts failing**: Verify platform connections in Social Media settings
 
 Always be helpful, concise, and provide specific navigation paths when applicable. Use markdown formatting for clarity.`;

@@ -402,7 +402,7 @@ const guideCategories = [
           'Configure voice settings in Integrations',
           'Voice cloning available for brand voice',
           'Real-time transcription in console',
-          'Requires ElevenLabs + Twilio integrations'
+          'Requires ElevenLabs + SignalWire integrations'
         ],
         tips: ['Choose voice matching your brand personality', 'Test voice interactions before going live']
       },

@@ -342,7 +342,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How do I get started with Aura Intercept?"
-          answer="Getting started is simple: 1) Sign up for a subscription tier that fits your business needs, 2) Complete the onboarding questionnaire to configure your AI, 3) Set up required integrations (Twilio, Resend, etc.), 4) Train your Knowledge Base with business information, and 5) Launch your AI-powered communication channels."
+          answer="Getting started is simple: 1) Sign up for a subscription tier that fits your business needs, 2) Complete the onboarding questionnaire to configure your AI, 3) Set up required integrations (SignalWire, Resend, etc.), 4) Train your Knowledge Base with business information, and 5) Launch your AI-powered communication channels."
         />
         
         <FAQItem 
@@ -357,7 +357,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What do I need to prepare before onboarding?"
-          answer="Prepare the following: company branding (logo, colors), business hours and service areas, list of services offered with descriptions, FAQ content for customer questions, employee information, and accounts for required integrations (Twilio, Stripe, etc.)."
+          answer="Prepare the following: company branding (logo, colors), business hours and service areas, list of services offered with descriptions, FAQ content for customer questions, employee information, and accounts for required integrations (SignalWire, Stripe, etc.)."
         />
 
         <View style={styles.footer}>
@@ -390,7 +390,7 @@ const PlatformFAQPDF = () => {
           <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>Quick Start Checklist</Text>
           <BulletPoint>Complete company profile with branding</BulletPoint>
           <BulletPoint>Configure business hours and service areas</BulletPoint>
-          <BulletPoint>Set up required integrations (Twilio, Resend)</BulletPoint>
+          <BulletPoint>Set up required integrations (SignalWire, Resend)</BulletPoint>
           <BulletPoint>Train Knowledge Base with services and FAQs</BulletPoint>
           <BulletPoint>Enable AI Operatives for your workflow</BulletPoint>
           <BulletPoint>Test communication channels before going live</BulletPoint>

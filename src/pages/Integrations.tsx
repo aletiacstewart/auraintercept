@@ -260,7 +260,7 @@ export default function Integrations() {
           const statuses = [
             { name: 'Stripe', connected: isStripeConfigured, icon: CreditCard, color: 'bg-purple-500' },
             { name: 'Email', connected: !!integrations?.resend_api_key, icon: Mail, color: 'bg-emerald-500' },
-            { name: 'SMS', connected: !!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number), icon: Phone, color: 'bg-red-500' },
+            { name: 'SMS', connected: !!(integrations?.signalwire_project_id && integrations?.signalwire_api_token && integrations?.signalwire_phone_number), icon: Phone, color: 'bg-red-500' },
             { name: 'Voice', connected: isTTSConfigured, icon: Mic, color: 'bg-blue-500' },
           ];
           const connectedCount = statuses.filter(s => s.connected).length;

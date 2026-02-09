@@ -59,7 +59,7 @@ const AIAgent = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key, tts_provider, google_tts_api_key')
+        .select('signalwire_project_id, signalwire_phone_number, elevenlabs_api_key, tts_provider, google_tts_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -73,8 +73,8 @@ const AIAgent = () => {
   };
   
   const hasAnyTTS = connectedTTSProviders.elevenlabs;
-  const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
-  const hasVoice = hasTwilio && hasAnyTTS;
+  const hasSignalWire = !!(integrations?.signalwire_project_id && integrations?.signalwire_phone_number);
+  const hasVoice = hasSignalWire && hasAnyTTS;
 
   // Get current selected TTS provider info
   const selectedProvider = integrations?.tts_provider || 'elevenlabs';
@@ -172,7 +172,7 @@ const AIAgent = () => {
                     Active
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Twilio + {getConnectedProviderNames().join(', ')}
+                    SignalWire + {getConnectedProviderNames().join(', ')}
                   </p>
                 </>
               ) : (
@@ -183,10 +183,10 @@ const AIAgent = () => {
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
                     {canManageSettings ? (
-                      !hasTwilio && !hasAnyTTS 
-                        ? 'Configure Twilio & a TTS provider'
-                        : !hasTwilio 
-                          ? 'Configure Twilio'
+                      !hasSignalWire && !hasAnyTTS 
+                        ? 'Configure SignalWire & a TTS provider'
+                        : !hasSignalWire 
+                          ? 'Configure SignalWire'
                           : 'Configure a TTS provider'
                     ) : (
                       'Contact your admin to enable'
@@ -194,10 +194,10 @@ const AIAgent = () => {
                   </p>
                   {canManageSettings && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {!hasTwilio && (
+                      {!hasSignalWire && (
                         <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
-                          <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
-                            Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                          <a href="/dashboard/3rd-party-overview">
+                            SignalWire <ExternalLink className="w-3 h-3 ml-1" />
                           </a>
                         </Button>
                       )}
@@ -223,14 +223,14 @@ const AIAgent = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {hasTwilio ? (
+              {hasSignalWire ? (
                 <>
                   <Badge variant="default" className="bg-green-500">
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Active
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Twilio connected
+                    SignalWire connected
                   </p>
                 </>
               ) : (
@@ -240,12 +240,12 @@ const AIAgent = () => {
                     {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {canManageSettings ? 'Configure Twilio integration' : 'Contact your admin to enable'}
+                    {canManageSettings ? 'Configure SignalWire integration' : 'Contact your admin to enable'}
                   </p>
                   {canManageSettings && (
                     <Button variant="link" size="sm" className="h-auto p-0 text-xs mt-2" asChild>
-                      <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
-                        Sign up for Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                      <a href="/dashboard/3rd-party-overview">
+                        Setup SignalWire <ExternalLink className="w-3 h-3 ml-1" />
                       </a>
                     </Button>
                   )}

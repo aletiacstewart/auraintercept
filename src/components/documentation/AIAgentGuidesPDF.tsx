@@ -672,9 +672,9 @@ const INTEGRATIONS = [
     whatHappensWithout: 'No email reminders, confirmations, invoices, or marketing campaigns can be sent.',
   },
   {
-    name: 'Twilio',
+    name: 'SignalWire',
     purpose: 'SMS Messages & Voice Calls',
-    cost: '$1.15/phone number + ~$0.0079/SMS + ~$0.014/minute for calls',
+    cost: '$2/phone number + ~$0.004/SMS + ~$0.01/minute for calls',
     required: false,
     requiredFor: 'SMS reminders, voice call reminders, and AI Voice features. NOT required for the Text Chat Widget.',
     agentsAffected: ['AI Receptionist (Voice)', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent'],
@@ -726,7 +726,7 @@ const COMMUNICATION_CHANNELS = [
     inbound: 'AI Receptionist answers inbound voice calls via microphone/speakers',
     outbound: 'Follow-up Agent (reminders), Missed Call Callbacks via speakers',
     agents: ['AI Receptionist', 'Follow-up Agent'],
-    integration: 'Twilio + ElevenLabs (required)',
+    integration: 'SignalWire + ElevenLabs (required)',
     tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command',
   },
   {
@@ -735,7 +735,7 @@ const COMMUNICATION_CHANNELS = [
     inbound: 'AI Receptionist receives and responds to texts',
     outbound: 'Follow-up, ETA, Campaign, Review agents send messages',
     agents: ['AI Receptionist', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent', 'Review Agent'],
-    integration: 'Twilio',
+    integration: 'SignalWire',
     tiers: 'Single-Point and above',
   },
   {

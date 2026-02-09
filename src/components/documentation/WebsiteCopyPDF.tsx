@@ -627,7 +627,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Will this work with my existing software?</Text>
-        <Text style={styles.faqAnswer}>Aura Intercept integrates with popular calendar systems (Google Calendar), payment processors (Stripe), and communication platforms (Twilio). Our team will work with you during implementation to ensure smooth integration with your existing workflow.</Text>
+        <Text style={styles.faqAnswer}>Aura Intercept integrates with popular calendar systems (Google Calendar), payment processors (Stripe), and communication platforms (SignalWire). Our team will work with you during implementation to ensure smooth integration with your existing workflow.</Text>
       </View>
 
       <Footer />

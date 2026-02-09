@@ -51,7 +51,7 @@ export function PlatformAdminDashboard() {
         supabase.from('leads').select('id, status'),
         supabase.from('inventory_items').select('id, quantity, min_quantity'),
         supabase.from('companies').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
-        supabase.from('tenant_integrations').select('id, twilio_account_sid, elevenlabs_api_key, resend_api_key'),
+        supabase.from('tenant_integrations').select('id, signalwire_project_id, elevenlabs_api_key, resend_api_key'),
         supabase.from('ai_agent_events').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
       ]);
 
@@ -98,7 +98,7 @@ export function PlatformAdminDashboard() {
       const recentSignups = recentCompanies.count ?? 0;
       const integrationsData = integrations.data ?? [];
       const activeIntegrations = integrationsData.filter(i => 
-        i.twilio_account_sid || i.elevenlabs_api_key || i.resend_api_key
+        i.signalwire_project_id || i.elevenlabs_api_key || i.resend_api_key
       ).length;
       const recentAgentEvents = agentEvents.count ?? 0;
 
