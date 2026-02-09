@@ -132,10 +132,10 @@ async function handleIncoming(
   const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=incoming_${company_id}`;
 
   return twimlResponse(`
-    <Gather input="speech" timeout="5" speechTimeout="auto" action="${gatherUrl}" method="POST">
+    <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
       <Say voice="Polly.Joanna">${escapeXml(greeting)}</Say>
     </Gather>
-    <Redirect method="POST">${timeoutUrl}</Redirect>
+    <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
   `);
 }
 
@@ -170,8 +170,8 @@ async function handleOutbound(
   if (audioUrl) {
     // Use pre-generated audio — instant response, no TTS delay
     return twimlResponse(`
-      <Gather input="dtmf" numDigits="1" timeout="15" action="${responseUrl}" method="POST">
-        <Play>${audioUrl}</Play>
+      <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
+        <Play>${escapeXmlUrl(audioUrl)}</Play>
       </Gather>
       <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
       <Hangup/>
@@ -180,9 +180,9 @@ async function handleOutbound(
 
   // No pre-generated audio — use Polly directly (skip TTS to avoid delay)
   return twimlResponse(`
-    <Gather input="dtmf" numDigits="1" timeout="15" action="${responseUrl}" method="POST">
-      <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
-    </Gather>
+      <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
+        <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
+      </Gather>
     <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
     <Hangup/>
   `);
@@ -243,9 +243,9 @@ async function handleProcess(
   if (!speechResult) {
     return twimlResponse(`
       <Say voice="Polly.Joanna">I didn't catch that. Could you please repeat?</Say>
-      <Gather input="speech" timeout="5" speechTimeout="auto" action="${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}" method="POST">
+      <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
       </Gather>
-      <Redirect method="POST">${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}</Redirect>
+      <Redirect method="POST">${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`)}</Redirect>
     `);
   }
 
@@ -295,10 +295,10 @@ async function handleProcess(
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
     return twimlResponse(`
-      <Gather input="speech" timeout="5" speechTimeout="auto" action="${gatherUrl}" method="POST">
+      <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
         <Say voice="Polly.Joanna">${escapeXml(reply)}</Say>
       </Gather>
-      <Redirect method="POST">${timeoutUrl}</Redirect>
+      <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
     `);
   } catch (aiError) {
     console.error('AI response failed:', aiError);
@@ -407,4 +407,8 @@ function escapeXml(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+function escapeXmlUrl(url: string): string {
+  return url.replace(/&/g, '&amp;');
 }
