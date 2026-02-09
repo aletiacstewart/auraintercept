@@ -121,7 +121,10 @@ Deno.serve(async (req) => {
     formData.append('To', normalizedPhone);
     formData.append('From', signalwire_phone_number);
     formData.append('StatusCallback', statusCallbackUrl);
-    formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
+    formData.append('StatusCallbackEvent', 'initiated');
+    formData.append('StatusCallbackEvent', 'ringing');
+    formData.append('StatusCallbackEvent', 'answered');
+    formData.append('StatusCallbackEvent', 'completed');
     formData.append('StatusCallbackMethod', 'POST');
 
     console.log(`Calling SignalWire: ${signalwireUrl}`);
