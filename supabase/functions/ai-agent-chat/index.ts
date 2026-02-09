@@ -2192,7 +2192,7 @@ serve(async (req) => {
       business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
       // Aura Field Ops ($1,497/mo): + Field Operations Stack - 18 agents
       field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic) - 22 agents
+      // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic) - 23 agents
       // Excludes revenue and forecast (advanced analytics reserved for Command)
       performance: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
@@ -2200,32 +2200,32 @@ serve(async (req) => {
         'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance',                            // Analytics & Reports - Basic (2)
+        'insights', 'performance', 'analytics',              // Analytics & Reports - Basic (3)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ],                                                      // Total: 22 agents
-      // Aura Command ($5,497/mo): Full suite + Enterprise features - 24 agents
+      ],                                                      // Total: 23 agents
+      // Aura Command ($5,497/mo): Full suite + Enterprise features - 25 agents
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports - Full (4)
+        'insights', 'performance', 'analytics', 'revenue', 'forecast', // Analytics & Reports - Full (5)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ],                                                      // Total: 24 agents
+      ],                                                      // Total: 25 agents
       // Legacy tier name aliases for backward compatibility
       express: ['triage'],  // maps to starter
       aura_flow: ['triage', 'booking', 'followup'],  // maps to scheduling
       halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],  // maps to growth
       core: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to business
       single_point: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to field_ops
-      multi_track: [  // maps to performance (22 agents)
+      multi_track: [  // maps to performance (23 agents)
         'triage', 'booking', 'followup', 'review',
         'dispatch', 'route', 'eta', 'checkin',
         'admin', 'quoting', 'invoice', 'inventory',
         'campaign', 'lead', 'marketing',
         'social_content', 'social_scheduler', 'social_analytics',
-        'insights', 'performance',
+        'insights', 'performance', 'analytics',
         'creative', 'web_presence'
       ],
     };
