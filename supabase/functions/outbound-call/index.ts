@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     formattedPhone = '+' + formattedPhone;
 
     // Initiate the call via SignalWire
-    const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls`;
+    const signalwireUrl = `https://${integration.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration.signalwire_project_id}/Calls.json`;
     
     const formData = new URLSearchParams();
     formData.append('To', formattedPhone);
