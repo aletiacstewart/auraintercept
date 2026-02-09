@@ -252,7 +252,16 @@ ALWAYS use the capture_lead tool to save their information with:
 - notes: Summary of what service they wanted and why they didn't complete
 
 Use the check_availability tool to find open slots.
-Use the create_appointment tool to book appointments.`,
+Use the create_appointment tool to book appointments.
+
+CRITICAL - HANDLING NO AVAILABILITY:
+If check_availability returns ZERO available slots (empty array), do NOT ask the customer to guess another date.
+Instead, IMMEDIATELY call the find_next_available tool with the same service_type and the date that had no availability as start_date.
+Then present the closest dates with open slots to the customer like:
+"That date is fully booked, but I found availability on:
+- [Day], [Date] — available at [times]
+- [Day], [Date] — available at [times]
+Would any of these work for you?"`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
@@ -1007,6 +1016,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'find_next_available',
+        description: 'Find the next available dates when a requested date has no availability. Returns up to 3 upcoming dates with open slots. Use this IMMEDIATELY when check_availability returns zero slots instead of asking the customer to pick a new date.',
+        parameters: {
+          type: 'object',
+          properties: {
+            service_type: { type: 'string', description: 'The service type to check availability for' },
+            start_date: { type: 'string', description: 'The date that had no availability (YYYY-MM-DD). Will search from the day after this date.' },
+          },
+          required: ['service_type', 'start_date'],
         },
       },
     },
@@ -3406,6 +3430,51 @@ async function executeAgentTool(
           error: 'Unable to check availability: ' + error.message,
           date: dateStr
         };
+      }
+    }
+
+    case 'find_next_available': {
+      console.log('[AI Agent] Finding next available dates with args:', args);
+      
+      let startDateStr = args.start_date;
+      if (startDateStr) {
+        const parsed = new Date(startDateStr);
+        if (!isNaN(parsed.getTime())) {
+          startDateStr = parsed.toISOString().split('T')[0];
+        } else {
+          startDateStr = new Date().toISOString().split('T')[0];
+        }
+      } else {
+        startDateStr = new Date().toISOString().split('T')[0];
+      }
+      
+      try {
+        const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/booking-actions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            action: 'find_next_available',
+            company_id: companyId,
+            service_name: args.service_type || 'Standard Service Call / Diagnostic',
+            start_date: startDateStr,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[AI Agent] find_next_available error:', errorText);
+          return { success: false, error: 'Unable to find next available dates.' };
+        }
+        
+        const result = await response.json();
+        console.log('[AI Agent] find_next_available result:', JSON.stringify(result).substring(0, 500));
+        return result;
+      } catch (error: any) {
+        console.error('[AI Agent] Error finding next available:', error);
+        return { success: false, error: 'Unable to find next available dates: ' + error.message };
       }
     }
 
