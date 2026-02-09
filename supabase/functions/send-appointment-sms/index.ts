@@ -1,251 +1,135 @@
-import { createClient } from 'npm:@supabase/supabase-js@2';
-import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface AppointmentSmsRequest {
-  appointmentId: string;
-  type: 'confirmation' | 'cancellation' | 'reminder';
+function normalizePhoneNumber(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('1') && digits.length === 11) return `+${digits}`;
+  if (digits.length === 10) return `+1${digits}`;
+  if (phone.startsWith('+')) return phone;
+  return `+${digits}`;
 }
-
-interface CustomSmsRequest {
-  companyId: string;
-  toPhone: string;
-  message: string;
-  type: 'custom';
-}
-
-type SmsRequest = AppointmentSmsRequest | CustomSmsRequest;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const bodyText = await req.text();
+    let payload: any;
+    try {
+      payload = JSON.parse(bodyText);
+    } catch {
+      throw new Error('Invalid JSON body');
+    }
 
-    const body: SmsRequest = await req.json();
+    const { companyId, customerPhone, customerName, message, appointmentId } = payload;
 
-    // Handle custom SMS (direct message)
-    if (body.type === 'custom' && 'companyId' in body && 'toPhone' in body && 'message' in body) {
-      const { companyId, toPhone, message } = body;
+    if (!companyId) throw new Error('companyId is required');
+    if (!customerPhone) throw new Error('customerPhone is required');
+    if (!message) throw new Error('message is required');
 
-      console.log(`Processing custom SMS to ${toPhone} for company ${companyId}`);
+    const normalizedPhone = normalizePhoneNumber(customerPhone);
 
-      // Fetch company's SignalWire credentials
-      const { data: integrations, error: integrationsError } = await supabase
-        .from('tenant_integrations')
-        .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-        .eq('company_id', companyId)
-        .maybeSingle();
+    // Check SMS opt-out
+    const { data: profile } = await supabase
+      .from('customer_profiles')
+      .select('sms_opt_out')
+      .eq('company_id', companyId)
+      .eq('phone', normalizedPhone)
+      .maybeSingle();
 
-      if (integrationsError) {
-        console.error('Integration fetch error:', integrationsError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to fetch integrations' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
-        return new Response(
-          JSON.stringify({ error: 'SignalWire not configured for this company' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      // Send SMS via SignalWire
-      const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-      const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
-
-      const formData = new URLSearchParams();
-      formData.append('To', toPhone);
-      formData.append('From', normalizePhoneNumber(integrations.signalwire_phone_number));
-      formData.append('Body', message);
-
-      const signalwireResponse = await fetch(signalwireUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
-        },
-        body: formData.toString(),
-      });
-
-      const signalwireResult = await signalwireResponse.json();
-
-      if (!signalwireResponse.ok) {
-        console.error('SignalWire error:', signalwireResult);
-        return new Response(
-          JSON.stringify({ error: 'Failed to send SMS', details: signalwireResult }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      console.log('Custom SMS sent successfully:', signalwireResult.sid);
-
+    if (profile?.sms_opt_out) {
+      console.log(`Customer ${normalizedPhone} has opted out of SMS`);
       return new Response(
-        JSON.stringify({ success: true, messageSid: signalwireResult.sid }),
+        JSON.stringify({ success: false, reason: 'Customer opted out of SMS' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Handle appointment-based SMS
-    const { appointmentId, type } = body as AppointmentSmsRequest;
-
-    if (!appointmentId || !type) {
-      return new Response(
-        JSON.stringify({ error: 'appointmentId and type are required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log(`Processing ${type} SMS for appointment ${appointmentId}`);
-
-    // Fetch appointment with company details
-    const { data: appointment, error: appointmentError } = await supabase
-      .from('appointments')
-      .select(`
-        *,
-        companies:company_id (
-          id,
-          name
-        )
-      `)
-      .eq('id', appointmentId)
-      .single();
-
-    if (appointmentError || !appointment) {
-      console.error('Appointment fetch error:', appointmentError);
-      return new Response(
-        JSON.stringify({ error: 'Appointment not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!appointment.customer_phone) {
-      console.log('No customer phone provided, skipping SMS notification');
-      return new Response(
-        JSON.stringify({ success: true, message: 'No customer phone, skipped' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Fetch company's SignalWire credentials
-    const { data: integrations, error: integrationsError } = await supabase
+    // Fetch SignalWire credentials
+    const { data: integration, error: intError } = await supabase
       .from('tenant_integrations')
       .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
-      .eq('company_id', appointment.company_id)
+      .eq('company_id', companyId)
       .maybeSingle();
 
-    if (integrationsError) {
-      console.error('Integration fetch error:', integrationsError);
+    if (intError || !integration) {
+      throw new Error('SignalWire integration not configured');
     }
 
-    if (!integrations?.signalwire_project_id || !integrations?.signalwire_api_token || !integrations?.signalwire_phone_number || !integrations?.signalwire_space_url) {
-      console.log('SignalWire not configured for this company, skipping SMS');
-      return new Response(
-        JSON.stringify({ success: true, message: 'SignalWire not configured, skipped' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const { signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url } = integration;
 
-    const company = appointment.companies;
-    const companyName = company?.name || 'Our Business';
-
-    // Format appointment datetime
-    const appointmentDate = new Date(appointment.datetime);
-    const dateStr = appointmentDate.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-    const timeStr = appointmentDate.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-
-    // Fetch custom SMS template if exists
-    const { data: customTemplate } = await supabase
-      .from('sms_templates')
-      .select('*')
-      .eq('company_id', appointment.company_id)
-      .eq('template_type', type)
-      .maybeSingle();
-
-    // Default templates
-    const defaultTemplates: Record<string, string> = {
-      confirmation: `Hi ${appointment.customer_name}! Your ${appointment.service_type} appointment at ${companyName} is confirmed for ${dateStr} at ${timeStr}. Reply HELP for assistance.`,
-      cancellation: `Hi ${appointment.customer_name}, your appointment at ${companyName} on ${dateStr} at ${timeStr} has been cancelled. Contact us to rebook.`,
-      reminder: `Reminder: You have a ${appointment.service_type} appointment at ${companyName} on ${dateStr} at ${timeStr}. See you soon!`,
-    };
-
-    // Use custom template or default
-    let message: string;
-    
-    if (customTemplate?.message) {
-      // Replace placeholders in custom template
-      message = customTemplate.message
-        .replace(/\{\{company_name\}\}/g, companyName)
-        .replace(/\{\{customer_name\}\}/g, appointment.customer_name)
-        .replace(/\{\{service_type\}\}/g, appointment.service_type)
-        .replace(/\{\{date\}\}/g, dateStr)
-        .replace(/\{\{time\}\}/g, timeStr)
-        .replace(/\{\{duration\}\}/g, String(appointment.duration_minutes));
-    } else {
-      message = defaultTemplates[type];
+    if (!signalwire_project_id || !signalwire_api_token || !signalwire_phone_number || !signalwire_space_url) {
+      throw new Error('SignalWire credentials are incomplete');
     }
 
     // Send SMS via SignalWire
-    const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-    const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
+    const swUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Messages.json`;
+    const auth = btoa(`${signalwire_project_id}:${signalwire_api_token}`);
 
     const formData = new URLSearchParams();
-    formData.append('To', appointment.customer_phone);
-    formData.append('From', normalizePhoneNumber(integrations.signalwire_phone_number));
+    formData.append('From', signalwire_phone_number);
+    formData.append('To', normalizedPhone);
     formData.append('Body', message);
 
-    const signalwireResponse = await fetch(signalwireUrl, {
+    const response = await fetch(swUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${credentials}`,
+        'Authorization': `Basic ${auth}`,
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
       },
       body: formData.toString(),
     });
 
-    const signalwireResult = await signalwireResponse.json();
+    const responseText = await response.text();
+    console.log(`SMS send status: ${response.status}`);
 
-    if (!signalwireResponse.ok) {
-      console.error('SignalWire error:', signalwireResult);
-      return new Response(
-        JSON.stringify({ error: 'Failed to send SMS', details: signalwireResult }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!response.ok) {
+      console.error('SignalWire SMS error:', responseText);
+      throw new Error(`Failed to send SMS: ${response.status}`);
     }
 
-    console.log('SMS sent successfully:', signalwireResult.sid);
+    let messageSid = '';
+    try {
+      const result = JSON.parse(responseText);
+      messageSid = result.sid || '';
+    } catch { /* empty */ }
+
+    // Log SMS
+    await supabase.from('sms_logs').insert({
+      company_id: companyId,
+      from_number: signalwire_phone_number,
+      to_number: normalizedPhone,
+      message,
+      direction: 'outbound',
+      status: 'sent',
+      metadata: {
+        message_sid: messageSid,
+        appointment_id: appointmentId || null,
+        customer_name: customerName || null,
+      },
+    });
 
     return new Response(
-      JSON.stringify({ success: true, messageSid: signalwireResult.sid }),
+      JSON.stringify({ success: true, messageSid }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
-  } catch (error: unknown) {
-    console.error('Error sending SMS:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to send SMS';
+  } catch (error) {
+    console.error('Send SMS error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
