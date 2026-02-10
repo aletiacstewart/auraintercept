@@ -497,7 +497,7 @@ async function getDashboardData(supabase: any, profile: any) {
   // Fetch appointments for this customer
   const { data: appointments } = await supabase
     .from('appointments')
-    .select('id, customer_name, service_type, datetime, status, customer_address, notes')
+    .select('id, customer_name, service_type, datetime, status, customer_address, notes, delivery_type, meeting_link')
     .eq('company_id', companyId)
     .eq('customer_email', customerEmail)
     .order('datetime', { ascending: false })

@@ -56,6 +56,8 @@ interface Appointment {
   status: string;
   customer_address: string | null;
   notes: string | null;
+  delivery_type: string | null;
+  meeting_link: string | null;
 }
 
 interface Invoice {
@@ -461,6 +463,23 @@ export default function CustomerDashboard() {
                               <p className="text-sm text-muted-foreground flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
                                 {apt.customer_address}
+                              </p>
+                            )}
+                            {apt.delivery_type === 'virtual' && apt.meeting_link && (
+                              <a
+                                href={apt.meeting_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                              >
+                                <Phone className="w-3 h-3" />
+                                Join Video Session
+                              </a>
+                            )}
+                            {apt.delivery_type === 'virtual' && !apt.meeting_link && apt.status === 'scheduled' && (
+                              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                <Phone className="w-3 h-3" />
+                                Virtual session — details sent after confirmation
                               </p>
                             )}
                           </div>
