@@ -257,11 +257,18 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     enabled: !!companyId,
   });
 
+  // Debug: log feature flags to verify voice/phone icon gating
+  React.useEffect(() => {
+    if (featureFlags) {
+      console.log('[AIAgentConsole] Feature flags:', featureFlags);
+    }
+  }, [featureFlags]);
+
   const hasVoiceChat = !!featureFlags?.has_voice_chat;
   const hasSMS = !!featureFlags?.has_sms;
-  const twilioPhone = featureFlags?.twilio_phone_number;
-  // Phone icon: show if company has twilio phone OR dispatch phone
-  const callablePhone = twilioPhone || company?.dispatch_phone;
+  const signalwirePhone = featureFlags?.twilio_phone_number;
+  // Phone icon: show if company has signalwire phone OR dispatch phone
+  const callablePhone = signalwirePhone || company?.dispatch_phone;
   const hasPhone = !!callablePhone;
   // Build tabs dynamically based on tier and feature flags
   const TABS = React.useMemo(() => {
@@ -945,15 +952,15 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 For urgent issues that can't wait, contact us immediately.
               </p>
               
-              {twilioPhone ? (
+               {signalwirePhone ? (
                 <Button 
                   size="lg" 
                   variant="destructive"
                   className="mb-4 glow-accent"
-                  onClick={() => window.open(`tel:${twilioPhone}`, '_self')}
+                  onClick={() => window.open(`tel:${signalwirePhone}`, '_self')}
                 >
                   <Phone className="h-5 w-5 mr-2" />
-                  Call Now: {twilioPhone}
+                  Call Now: {signalwirePhone}
                 </Button>
               ) : (
                 <p className="text-sm text-muted-foreground mb-4">
