@@ -1,34 +1,87 @@
 
 
-# Fix: Restore TTS Audio Upload (Affects All Companies)
+# Fix: Speed Up Phone Booking from 15s to ~4s
 
-## Current Problem
+## Why Phone Booking Matters
 
-The last optimization changed the TTS output to `ulaw_8000` format with `audio/basic` content type. Supabase Storage rejects `audio/basic`, so **every TTS upload fails for every company**. The system falls back to a flat Polly "Hello" greeting and cannot generate conversational responses.
+Customers call the business number -- that's the primary way most people interact with a local business. Removing phone booking would force callers to hang up and visit a website, which defeats the purpose of having a phone agent. **Keep phone booking, fix the speed.**
 
-## Multi-Tenancy Status: Already Working
+## Root Cause: 3 Bugs in ai-agent-chat
 
-No multi-tenancy changes are needed. The voice system already resolves the correct company by matching the incoming phone number against `tenant_integrations.signalwire_phone_number`. Each company's ElevenLabs API key, voice ID, greeting, and AI prompt are loaded per-call from the database. When you onboard a new company, they just need their row in `tenant_integrations` populated.
+When someone says "I want to book an appointment," two sequential AI calls happen:
 
-## The Fix
+1. **AI Call 1** (initial): Decides to trigger a tool (e.g., `check_availability` or `handoff_to_agent`)
+2. **Tool execution**: Runs the tool (~0.5s)
+3. **AI Call 2** (follow-up): Generates the spoken response using tool results
 
-**File:** `supabase/functions/voice-handler/index.ts` (lines 524-563)
+The problem is threefold:
 
-Three changes inside the `generateTTSAudio` function:
+- **Bug A**: `ai-agent-chat` hardcodes `model: 'google/gemini-2.5-flash'` (line 2681), ignoring the `model: 'google/gemini-2.5-flash-lite'` that voice-handler sends. The faster model is never used.
+- **Bug B**: Follow-up AI calls (line 2826) don't apply phone limits -- they use full `max_tokens: 1000` and the unfiltered tool list instead of the phone-optimized `max_tokens: 150`.
+- **Bug C**: Follow-up calls also hardcode `gemini-2.5-flash` instead of using the requested model.
 
-1. **Output format**: Change `ulaw_8000` to `mp3_22050_32` (low-bitrate MP3 — 4x smaller than the original 44kHz/128kbps, supported by both Supabase Storage and SignalWire)
-2. **File extension**: Change `.wav` back to `.mp3`
-3. **Content type**: Change `audio/basic` back to `audio/mpeg`
+```text
+Current flow (booking request):
+  AI Call 1 (flash, 3-5s) --> Tool exec (0.5s) --> AI Call 2 (flash, 3-5s) --> TTS (1.5s) = ~10-15s
 
-All other optimizations stay in place:
-- `eleven_flash_v2_5` model (fastest TTS)
-- `google/gemini-2.5-flash-lite` (fastest AI for phone)
-- Parallel DB save + TTS generation
+Fixed flow:
+  AI Call 1 (flash-lite, 1-2s) --> Tool exec (0.5s) --> AI Call 2 (flash-lite, 1s) --> TTS (1.5s) = ~4-5s
+```
 
-## Expected Result
+## The Fix (1 file: ai-agent-chat/index.ts)
 
-- TTS uploads succeed again for all companies
-- Audio files are still ~4x smaller than the original format (faster upload/download)
-- Response latency stays at ~3-4 seconds (down from the original ~10 seconds)
-- Every onboarded company benefits from these speed improvements automatically since the code path is shared
+### Change 1: Respect the model from the request (line 2202, 2681)
 
+Extract the `model` field from the request payload (voice-handler already sends it) and use it when provided:
+
+```typescript
+// Line 2202 - add 'model' to destructuring:
+const { ..., model: requestModel } = await req.json();
+
+// Create a resolved model variable:
+const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
+
+// Line 2681 - use the resolved model:
+model: selectedModel,  // was: 'google/gemini-2.5-flash'
+```
+
+### Change 2: Apply phone limits to follow-up AI calls (lines 2826-2831)
+
+The follow-up call after tool execution must also use phone-optimized settings:
+
+```typescript
+// Line 2826-2831 - apply same optimizations:
+body: JSON.stringify({
+  model: selectedModel,  // was: 'google/gemini-2.5-flash'
+  messages,
+  tools: isPhoneChannel ? tools.filter((t: any) => {
+    const name = t.function?.name;
+    return name !== 'list_services' && name !== 'query_business_data';
+  }) : tools,  // was: tools (unfiltered)
+  tool_choice: 'auto',
+  temperature: 0.7,
+  max_tokens: isPhoneChannel ? 150 : 1000,  // was: 1000
+}),
+```
+
+### Change 3: Extract `model` from request body
+
+Add `model` to the destructured request payload at line 2202 so it's available throughout the function.
+
+## No Changes to voice-handler
+
+voice-handler already sends the correct model and channel. The problem is entirely in ai-agent-chat ignoring those values.
+
+## Expected Improvement
+
+| Step | Before | After |
+|------|--------|-------|
+| AI Call 1 | 3-5s (gemini-2.5-flash) | 1-2s (flash-lite) |
+| Tool execution | 0.5s | 0.5s |
+| AI Call 2 (follow-up) | 3-5s (flash, 1000 tokens) | 0.5-1s (flash-lite, 150 tokens) |
+| TTS + Upload | 1.5-2s | 1.5-2s |
+| **Total** | **8-15s** | **3.5-5.5s** |
+
+## Multi-tenant safe
+
+The `selectedModel` variable only applies when `isInternalRequest` is true (phone calls from voice-handler). External web chat requests continue using `gemini-2.5-flash` at full capacity. All tenants benefit equally since they share the same code path.
