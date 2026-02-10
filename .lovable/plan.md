@@ -1,62 +1,79 @@
 
 
-# Fix: Services Not Loading, Custom Voice Not Working, Email Handling
+# Fix: SWAIG Argument Parsing + Appointment Status Mismatch
 
-## Problems Found
+## Root Cause Found
 
-### 1. Services NEVER load -- wrong column name (critical bug)
-The `services` table uses `is_active` as the column name, but the code queries `.eq('active', true)` in THREE places:
-- `voice-handler/index.ts` line 372: `.eq('active', true)` -- loads 0 services every time
-- `voice-swaig/index.ts` line 236: `.eq('active', true)` -- service lookup for booking fails
-- `voice-swaig/index.ts` line 285: `.eq('active', true)` -- get_services returns "no services listed"
+### Critical Bug: `argument.parsed` is an ARRAY, not an object
 
-The logs confirm this: `"Loaded 0 active services for company 04c57cbe-358e-4036-a3ad-b777a55f5be0"` -- there IS one active service ("Aura Intercept Consultation, 45 min") but the query silently returns nothing.
+The logs prove it clearly:
 
-### 2. Custom ElevenLabs voice requires API key in SignalWire
-The voice ID `cgSgspJ2msm6clMCkdW9` is a custom/cloned voice, not one of SignalWire's built-in ElevenLabs voices. SignalWire can use built-in voices (Rachel, Sarah, etc.) without configuration, but custom voice IDs require your ElevenLabs API key to be added to your SignalWire account.
+```text
+args=[{"service_type":"Aura Intercept Consultation","preferred_date":"2026-02-11"}]
+```
 
-**You need to do this in SignalWire Dashboard:**
-1. Go to your SignalWire Space settings (or AI Agent settings)
-2. Look for "Integrations" or "TTS Provider" settings
-3. Add your ElevenLabs API key: `sk_4abda3d81bac2bcdaec7d9660d2e737da40e42e5314294c5`
+SignalWire sends `argument.parsed` as an **array** containing a single object. The current code does:
 
-If you can't find this setting, a fallback approach is to use one of SignalWire's built-in ElevenLabs voices (like "Rachel" or "Sarah") until the custom voice integration is confirmed.
+```typescript
+const args = body.argument?.parsed || {};
+```
 
-### 3. Email dictation still getting cut off
-Even with `end_of_speech_timeout` at 3000ms, email addresses have many natural pauses (spelling letters, saying "at", "dot"). The system prompt needs stronger guidance, and we should also add `barge_confidence` and `barge_match_string` tuning to prevent premature interruption.
+This assigns the raw array to `args`. Then when the functions do `args.service_type`, they get `undefined` because arrays don't have a `.service_type` property. Every SWAIG function silently fails -- no availability found, no booking possible, no services returned.
+
+### Secondary Bug: Appointment status mismatch
+
+The availability checker filters for `['pending', 'confirmed', 'in-progress']`, but existing appointments have status `scheduled`. This means "scheduled" appointments are invisible to the conflict checker, and the AI could double-book time slots.
 
 ## Changes
 
-### 1. Fix column name in `voice-handler/index.ts`
-- Line 372: Change `.eq('active', true)` to `.eq('is_active', true)`
+### 1. Fix argument parsing in `voice-swaig/index.ts` (line 29)
 
-### 2. Fix column name in `voice-swaig/index.ts` (two places)
-- Line 236: Change `.eq('active', true)` to `.eq('is_active', true)` (in `handleBookAppointment`)
-- Line 285: Change `.eq('active', true)` to `.eq('is_active', true)` (in `handleGetServices`)
+Change:
+```typescript
+const args = body.argument?.parsed || {};
+```
+To:
+```typescript
+const rawParsed = body.argument?.parsed;
+const args = Array.isArray(rawParsed) ? (rawParsed[0] || {}) : (rawParsed || {});
+```
 
-### 3. Add voice fallback in `voice-handler/index.ts`
-In `buildSWMLDocument`, if the voice ID is a custom clone ID, keep it but also add a fallback to a built-in voice name. Update the voice string to use the name format if the ID is not in SignalWire's recognized list. Alternatively, add a comment and log so we can debug if the voice doesn't activate.
+This single fix will make ALL SWAIG functions work -- `check_availability`, `book_appointment`, `get_services`, and `transfer_call` will all receive the correct arguments.
 
-### 4. Strengthen email handling in system prompt
-In `buildPhoneSystemPrompt`, add explicit instructions:
-- "When confirming an email address, spell it back letter by letter"
-- "Wait for the caller to finish spelling before repeating it back"
-- "If you're unsure about any part of the email, ask them to spell just that part"
+### 2. Fix appointment status filter in `voice-swaig/index.ts` (line 134)
 
-### 5. Add `barge_confidence` parameter
-In the SWML `params` block, add `barge_confidence: 0.7` (higher threshold means the AI is less likely to interrupt the caller based on partial speech detection).
+Change the status filter from:
+```typescript
+.in('status', ['pending', 'confirmed', 'in-progress'])
+```
+To:
+```typescript
+.in('status', ['pending', 'confirmed', 'in-progress', 'scheduled'])
+```
+
+This ensures scheduled appointments are included in conflict detection.
+
+### 3. Add argument logging for debugging
+
+After extracting args, log the raw `argument` object so we can verify the fix is working:
+```typescript
+console.log(`SWAIG raw argument:`, JSON.stringify(body.argument));
+```
 
 ## No Database Changes
 
-All fixes are edge function code only.
+All fixes are in `voice-swaig/index.ts` only.
 
 ## Expected Results
 
 | Issue | Before | After |
 |-------|--------|-------|
-| Services loaded | 0 (wrong column name) | 1 ("Aura Intercept Consultation") |
-| Service awareness | AI says "no services listed" | AI describes the consultation service |
-| Booking duration | Falls back to 60 min | Uses correct 45 min |
-| Email handling | Cuts off mid-dictation | Higher interruption threshold + prompt guidance |
-| Voice | May fall back to default (custom ID not recognized) | Fallback to built-in voice if custom fails |
+| SWAIG args | `undefined` (array not unwrapped) | Correctly parsed object |
+| Availability check | Fails silently, returns no slots | Returns actual available times |
+| Booking | Cannot book (all fields undefined) | Books with correct customer info |
+| Services query | Works (no args needed) | Still works |
+| Double-booking | "scheduled" status ignored | All active statuses checked |
 
+## What This Does NOT Fix (requires your action)
+
+**Custom ElevenLabs voice**: The Jessica voice (`cgSgspJ2msm6clMCkdW9`) still requires your ElevenLabs API key to be added in the SignalWire dashboard. Without it, SignalWire uses its default voice. This is a dashboard setting, not a code fix.
