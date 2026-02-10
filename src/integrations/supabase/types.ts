@@ -6521,6 +6521,15 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_company_feature_flags: {
+        Args: { p_company_id: string }
+        Returns: {
+          has_phone: boolean
+          has_sms: boolean
+          has_voice_chat: boolean
+          twilio_phone_number: string
+        }[]
+      }
       get_company_public_info: {
         Args: { p_slug: string }
         Returns: {
