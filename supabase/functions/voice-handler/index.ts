@@ -391,37 +391,53 @@ async function handleProcess(
     // Determine the active agent (supports handoffs across turns)
     const activeAgent = collectedInfo._activeAgent || 'triage';
 
-    const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
-      body: JSON.stringify({
-        message: speechResult,
-        systemPrompt,
-        model: 'google/gemini-2.5-flash-lite',
-        companyId,
-        agentType: activeAgent,
-        isInternalRequest: true,
-        channel: 'phone',
-        conversationHistory,
-      }),
-    });
+    // 8-second timeout to guarantee response before SignalWire's ~15s limit
+    const controller = new AbortController();
+    const aiTimeout = setTimeout(() => controller.abort(), 8000);
 
-    const aiText = await aiResponse.text();
     let reply = 'Thank you for your message. Someone will get back to you shortly.';
     try {
-      const aiData = JSON.parse(aiText);
-      reply = aiData.reply || aiData.response || aiData.message || reply;
+      const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+        body: JSON.stringify({
+          message: speechResult,
+          systemPrompt,
+          model: 'google/gemini-2.5-flash-lite',
+          companyId,
+          agentType: activeAgent,
+          isInternalRequest: true,
+          channel: 'phone',
+          conversationHistory,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(aiTimeout);
 
-      // Track agent handoffs for phone calls
-      if (aiData.handoff_to) {
-        collectedInfo._activeAgent = aiData.handoff_to;
-        console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
+      const aiText = await aiResponse.text();
+      try {
+        const aiData = JSON.parse(aiText);
+        reply = aiData.reply || aiData.response || aiData.message || reply;
+
+        // Track agent handoffs for phone calls
+        if (aiData.handoff_to) {
+          collectedInfo._activeAgent = aiData.handoff_to;
+          console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
+        }
+      } catch {
+        if (aiText && aiText.length < 500) reply = aiText;
       }
-    } catch {
-      if (aiText && aiText.length < 500) reply = aiText;
+    } catch (fetchErr: any) {
+      clearTimeout(aiTimeout);
+      if (fetchErr.name === 'AbortError') {
+        console.warn('[voice-handler] AI call timed out after 8s, using fallback');
+        reply = "I'm sorry, I'm having a moment. Could you repeat that?";
+      } else {
+        throw fetchErr;
+      }
     }
 
     // Clean any markdown/formatting from the reply

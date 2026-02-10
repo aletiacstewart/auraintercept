@@ -2684,9 +2684,9 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         model: selectedModel,
         messages,
         tools: isPhoneChannel ? tools.filter((t: any) => {
-          // On phone, remove verbose tools that list many items
+          // Phone: only allow handoff -- no data tools that trigger follow-up loops
           const name = t.function?.name;
-          return name !== 'list_services' && name !== 'query_business_data';
+          return name === 'handoff_to_agent';
         }) : tools,
         tool_choice: 'auto',
         temperature: 0.7,
@@ -2830,7 +2830,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             messages,
             tools: isPhoneChannel ? tools.filter((t: any) => {
               const name = t.function?.name;
-              return name !== 'list_services' && name !== 'query_business_data';
+              return name === 'handoff_to_agent';
             }) : tools,
             tool_choice: 'auto',
             temperature: 0.7,
