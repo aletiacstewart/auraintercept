@@ -233,7 +233,7 @@ async function handleBookAppointment(
     .select('id, duration_minutes, delivery_type')
     .eq('company_id', companyId)
     .ilike('name', `%${service_type}%`)
-    .eq('active', true)
+    .eq('is_active', true)
     .maybeSingle();
 
   const durationMinutes = serviceRecord?.duration_minutes || 60;
@@ -282,7 +282,7 @@ async function handleGetServices(
     .from('services')
     .select('name, description, duration_minutes, price')
     .eq('company_id', companyId)
-    .eq('active', true);
+    .eq('is_active', true);
 
   if (!services || services.length === 0) {
     return swaigResponse("We don't have any services listed at the moment. Can I help you with something else?");
