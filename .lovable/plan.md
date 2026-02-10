@@ -1,79 +1,61 @@
 
 
-# Fix: SWAIG Argument Parsing + Appointment Status Mismatch
+# Fix: Switch to Built-in Voice So Calls Actually Connect
 
-## Root Cause Found
+## The Problem
 
-### Critical Bug: `argument.parsed` is an ARRAY, not an object
+Everything on our side is working correctly:
+- Custom Aura Intercept prompt: loaded from database
+- Services: 1 active service loaded ("Aura Intercept Consultation, 45 min")
+- SWML document: returned successfully (HTTP 200, no errors)
+- SWAIG argument parsing: fixed
+- Status filter: fixed
 
-The logs prove it clearly:
+But SignalWire **crashes before any of this runs** because the voice string `elevenlabs.cgSgspJ2msm6clMCkdW9:eleven_flash_v2_5` references a custom/cloned ElevenLabs voice that requires an API key configured in SignalWire's dashboard. Without it, SignalWire cannot initialize the AI block and plays "your call cannot be completed."
 
-```text
-args=[{"service_type":"Aura Intercept Consultation","preferred_date":"2026-02-11"}]
-```
+## The Fix
 
-SignalWire sends `argument.parsed` as an **array** containing a single object. The current code does:
+### 1. Change voice to built-in Rachel in `voice-handler/index.ts` (line 125-129)
 
+Replace the current voice logic:
 ```typescript
-const args = body.argument?.parsed || {};
+const isCustomVoice = voiceId && voiceId.length > 15 && ...;
+if (isCustomVoice) { console.log(...); }
+const voice = `elevenlabs.${voiceId}:eleven_flash_v2_5`;
 ```
 
-This assigns the raw array to `args`. Then when the functions do `args.service_type`, they get `undefined` because arrays don't have a `.service_type` property. Every SWAIG function silently fails -- no availability found, no booking possible, no services returned.
-
-### Secondary Bug: Appointment status mismatch
-
-The availability checker filters for `['pending', 'confirmed', 'in-progress']`, but existing appointments have status `scheduled`. This means "scheduled" appointments are invisible to the conflict checker, and the AI could double-book time slots.
-
-## Changes
-
-### 1. Fix argument parsing in `voice-swaig/index.ts` (line 29)
-
-Change:
+With a fallback that uses a known built-in voice:
 ```typescript
-const args = body.argument?.parsed || {};
-```
-To:
-```typescript
-const rawParsed = body.argument?.parsed;
-const args = Array.isArray(rawParsed) ? (rawParsed[0] || {}) : (rawParsed || {});
-```
+// Built-in ElevenLabs voices that work without an API key in SignalWire
+const BUILTIN_VOICES = ['Rachel', 'Sarah', 'Laura', 'Charlie', 'George', 'Aria', 'Roger'];
+const isBuiltIn = BUILTIN_VOICES.includes(voiceId);
 
-This single fix will make ALL SWAIG functions work -- `check_availability`, `book_appointment`, `get_services`, and `transfer_call` will all receive the correct arguments.
-
-### 2. Fix appointment status filter in `voice-swaig/index.ts` (line 134)
-
-Change the status filter from:
-```typescript
-.in('status', ['pending', 'confirmed', 'in-progress'])
-```
-To:
-```typescript
-.in('status', ['pending', 'confirmed', 'in-progress', 'scheduled'])
+let voice: string;
+if (isBuiltIn) {
+  voice = `elevenlabs.${voiceId}`;
+} else {
+  // Custom voice ID requires ElevenLabs API key in SignalWire dashboard
+  // Fall back to Rachel (professional female voice) to prevent call failure
+  console.warn(`Custom ElevenLabs voice "${voiceId}" requires API key in SignalWire. Falling back to Rachel.`);
+  voice = 'elevenlabs.Rachel';
+}
 ```
 
-This ensures scheduled appointments are included in conflict detection.
+This is the ONLY change needed. Once this is deployed:
+- Calls will connect immediately
+- The AI will use the Rachel voice (professional, female)
+- Your custom Aura Intercept prompt will finally be heard
+- Services, booking, availability -- all the fixes we already made will work
 
-### 3. Add argument logging for debugging
+### 2. To get your custom Jessica voice back later
 
-After extracting args, log the raw `argument` object so we can verify the fix is working:
-```typescript
-console.log(`SWAIG raw argument:`, JSON.stringify(body.argument));
-```
+You need to add your ElevenLabs API key in SignalWire:
+1. Log into your SignalWire Space
+2. Go to Integrations or AI/TTS settings
+3. Add your ElevenLabs API key
+4. Once confirmed, we change the fallback logic to allow custom IDs through
 
 ## No Database Changes
 
-All fixes are in `voice-swaig/index.ts` only.
+Single line change in `voice-handler/index.ts`.
 
-## Expected Results
-
-| Issue | Before | After |
-|-------|--------|-------|
-| SWAIG args | `undefined` (array not unwrapped) | Correctly parsed object |
-| Availability check | Fails silently, returns no slots | Returns actual available times |
-| Booking | Cannot book (all fields undefined) | Books with correct customer info |
-| Services query | Works (no args needed) | Still works |
-| Double-booking | "scheduled" status ignored | All active statuses checked |
-
-## What This Does NOT Fix (requires your action)
-
-**Custom ElevenLabs voice**: The Jessica voice (`cgSgspJ2msm6clMCkdW9`) still requires your ElevenLabs API key to be added in the SignalWire dashboard. Without it, SignalWire uses its default voice. This is a dashboard setting, not a code fix.
