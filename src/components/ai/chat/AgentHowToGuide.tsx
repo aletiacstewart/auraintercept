@@ -36,7 +36,8 @@ import {
   Activity,
   MessageSquare,
   Mic,
-  Mail
+  Mail,
+  Video
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -168,7 +169,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Enter Details', description: 'Provide your contact information and service address' },
       { step: 4, title: 'Confirm Booking', description: 'Review and confirm your appointment details' },
     ],
-    tips: ['Book at least 24 hours in advance for best availability', 'You can reschedule or cancel anytime from your portal']
+    tips: ['Book at least 24 hours in advance for best availability', 'You can reschedule or cancel anytime from your portal', 'Virtual services are available — meeting details are sent after staff confirms']
   },
   {
     id: 'emergency',
@@ -228,10 +229,10 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     steps: [
       { step: 1, title: 'Enter Details', description: 'Provide your email or phone used during booking' },
       { step: 2, title: 'Find Appointment', description: 'Select your appointment from the list' },
-      { step: 3, title: 'View Status', description: 'See real-time status: confirmed, en-route, or completed' },
-      { step: 4, title: 'Get Updates', description: 'Receive notifications as technician approaches' },
+      { step: 3, title: 'View Status', description: 'See real-time status: confirmed, en-route, in-session, or completed' },
+      { step: 4, title: 'Get Updates', description: 'Receive notifications as your service professional approaches or session begins' },
     ],
-    tips: ['Enable SMS notifications for real-time updates', 'Track your technician location on the day of service']
+    tips: ['Enable SMS notifications for real-time updates', 'For in-person services, track your professional\'s location on the day of service', 'For virtual sessions, your meeting link will appear once confirmed']
   },
   {
     id: 'billing',
@@ -257,7 +258,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Add Comments', description: 'Share specific feedback or suggestions' },
       { step: 4, title: 'Submit', description: 'Your feedback helps us improve our service' },
     ],
-    tips: ['Your feedback is confidential and valued', 'Mention specific technicians to recognize great work']
+    tips: ['Your feedback is confidential and valued', 'Mention specific team members to recognize great work']
   },
   {
     id: 'review',
@@ -271,6 +272,19 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
       { step: 4, title: 'Post Review', description: 'Submit your review on the platform' },
     ],
     tips: ['Reviews help other customers find us', 'Mention what made your experience great']
+  },
+  {
+    id: 'join-video',
+    label: 'Join Video Session',
+    icon: Video,
+    description: 'Connect to your virtual appointment via Google Meet',
+    steps: [
+      { step: 1, title: 'Check Confirmation', description: 'Look for the meeting link in your email or SMS confirmation after staff accepts' },
+      { step: 2, title: 'Click Meeting Link', description: 'Open the Google Meet link from your confirmation or customer portal' },
+      { step: 3, title: 'Allow Camera/Mic', description: 'Grant browser permissions for camera and microphone when prompted' },
+      { step: 4, title: 'Join Session', description: 'Click Join to connect with your service professional' },
+    ],
+    tips: ['Meeting links are generated after your appointment is confirmed by staff', 'Test your camera and microphone before the session', 'You can also find the link in your customer portal under upcoming appointments']
   },
 ];
 
@@ -300,7 +314,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Accept Job', description: 'Click Accept to confirm you will handle this job' },
       { step: 4, title: 'Get Directions', description: 'AI will automatically prompt you to get directions to the job site' },
     ],
-    tips: ['Accept jobs promptly to avoid reassignment', 'Contact dispatch if you have scheduling conflicts', 'After accepting, follow the AI prompts for next steps']
+    tips: ['Accept jobs promptly to avoid reassignment', 'Contact dispatch if you have scheduling conflicts', 'After accepting, follow the AI prompts for next steps', 'For virtual appointments, a Google Meet link is auto-generated and sent to the customer upon acceptance']
   },
   {
     id: 'directions',
@@ -313,7 +327,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Follow Route', description: 'Follow the optimal route to the customer' },
       { step: 4, title: 'Mark En Route', description: 'AI will prompt you to mark yourself as en route' },
     ],
-    tips: ['Check traffic conditions before departing', 'Save customer address for future visits']
+    tips: ['Check traffic conditions before departing', 'Save customer address for future visits', 'Directions apply to in-person appointments only — virtual and at-business jobs skip this step']
   },
   {
     id: 'enroute',
@@ -326,7 +340,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Auto ETA', description: 'AI calculates and sends ETA to customer automatically' },
       { step: 4, title: 'Customer Notified', description: 'Customer receives SMS/email with your ETA' },
     ],
-    tips: ['Update status as soon as you leave', 'ETA is automatically sent to customer via SMS and email']
+    tips: ['Update status as soon as you leave', 'ETA is automatically sent to customer via SMS and email', 'This step is skipped for virtual and at-business appointments']
   },
   {
     id: 'eta',
@@ -352,7 +366,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Take Before Photos', description: 'Document the job site before starting work' },
       { step: 4, title: 'Begin Service', description: 'Start the service work for the customer' },
     ],
-    tips: ['Mark arrived immediately when on-site', 'Take before photos for documentation', 'Customer is automatically notified of your arrival']
+    tips: ['Mark arrived immediately when on-site', 'Take before photos for documentation', 'Customer is automatically notified of your arrival', 'For virtual appointments, use "Start Virtual Session" instead']
   },
   {
     id: 'complete',
@@ -404,6 +418,32 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Get Assistance', description: 'Dispatch will provide guidance' },
     ],
     tips: ['Use for urgent situations only', 'Have job details ready when calling']
+  },
+  {
+    id: 'virtual-session',
+    label: 'Start Virtual Session',
+    icon: Video,
+    description: 'Join a virtual appointment via Google Meet',
+    steps: [
+      { step: 1, title: 'Accept Virtual Job', description: 'Accept the job — a Google Meet link is auto-generated and sent to the customer' },
+      { step: 2, title: 'Open Meeting Link', description: 'Click "Start Virtual Session" to open Google Meet in your browser' },
+      { step: 3, title: 'Join & Conduct Session', description: 'Connect with the customer and perform the virtual consultation or service' },
+      { step: 4, title: 'Complete Job', description: 'Mark the job complete and add session notes as usual' },
+    ],
+    tips: ['Travel steps (directions, en route, arrive) are automatically hidden for virtual jobs', 'Ensure your camera and microphone work before the session', 'The meeting link is only generated after you accept the job']
+  },
+  {
+    id: 'phone-session',
+    label: 'Phone Call Appointments',
+    icon: Phone,
+    description: 'Handle appointments conducted over the phone',
+    steps: [
+      { step: 1, title: 'Accept Phone Job', description: 'Accept the phone appointment from your job queue' },
+      { step: 2, title: 'Call Customer', description: 'Use the customer\'s phone number to initiate the call at the scheduled time' },
+      { step: 3, title: 'Conduct Session', description: 'Perform the consultation, assessment, or service over the phone' },
+      { step: 4, title: 'Complete & Document', description: 'Mark complete and add call notes, follow-up actions, or quotes' },
+    ],
+    tips: ['Phone appointments skip travel steps just like virtual sessions', 'Have the customer file and service details open during the call', 'Generate a quote or invoice right after the call while details are fresh']
   },
 ];
 
@@ -469,10 +509,10 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     steps: [
       { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
       { step: 2, title: 'View Schedule', description: 'See all upcoming appointments' },
-      { step: 3, title: 'Create New', description: 'Add new appointment with customer details' },
-      { step: 4, title: 'Assign Tech', description: 'Assign available technician to the job' },
+      { step: 3, title: 'Create New', description: 'Add new appointment with customer details and delivery type (virtual, in-person, or at-business)' },
+      { step: 4, title: 'Assign Staff', description: 'Assign available team member to the job' },
     ],
-    tips: ['Check technician availability before booking', 'Send confirmation reminders automatically']
+    tips: ['Check staff availability before booking', 'Send confirmation reminders automatically', 'Virtual appointments auto-generate a Google Meet link when staff accepts', 'Delivery type controls whether travel steps appear in Field Ops']
   },
   {
     id: 'inventory',
@@ -817,16 +857,16 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
   },
   {
     id: 'assign-tech',
-    label: 'Assign Technician',
+    label: 'Assign Staff',
     icon: UserPlus,
-    description: 'Assign or reassign technicians to jobs',
+    description: 'Assign or reassign team members to jobs',
     steps: [
-      { step: 1, title: 'Find Unassigned Job', description: 'Locate jobs with pending or no technician assignment' },
-      { step: 2, title: 'Click Assign', description: 'Open the technician assignment dialog' },
-      { step: 3, title: 'Select Technician', description: 'Choose from available technicians based on location and workload' },
-      { step: 4, title: 'Confirm Assignment', description: 'Technician receives notification and job appears in their queue' },
+      { step: 1, title: 'Find Unassigned Job', description: 'Locate jobs with pending or no staff assignment' },
+      { step: 2, title: 'Click Assign', description: 'Open the staff assignment dialog' },
+      { step: 3, title: 'Select Team Member', description: 'Choose from available staff based on location and workload' },
+      { step: 4, title: 'Confirm Assignment', description: 'Team member receives notification and job appears in their queue' },
     ],
-    tips: ['Smart assignment considers distance, workload, and service history', 'You can reassign jobs if a technician becomes unavailable']
+    tips: ['Smart assignment considers distance, workload, and service history', 'You can reassign jobs if someone becomes unavailable', 'Terminology adapts by industry: Technician, Stylist, Agent, Therapist, etc.']
   },
   {
     id: 'real-time-eta',
@@ -886,12 +926,12 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     icon: CheckCircle,
     description: 'Understand job status indicators',
     steps: [
-      { step: 1, title: 'Pending (Yellow)', description: 'Job assigned but not yet accepted by technician' },
-      { step: 2, title: 'Accepted (Blue)', description: 'Technician has accepted the job assignment' },
-      { step: 3, title: 'En Route (Cyan)', description: 'Technician is traveling to customer location' },
-      { step: 4, title: 'On Site/In Progress (Orange)', description: 'Technician has arrived and is working on the job' },
+      { step: 1, title: 'Pending (Yellow)', description: 'Job assigned but not yet accepted by staff' },
+      { step: 2, title: 'Accepted (Blue)', description: 'Staff has accepted the job assignment' },
+      { step: 3, title: 'En Route (Cyan)', description: 'Staff is traveling to customer location (in-person only)' },
+      { step: 4, title: 'On Site/In Progress (Orange)', description: 'Staff has arrived or virtual session is underway' },
     ],
-    tips: ['Green indicates completed jobs', 'Status updates are real-time from technician app']
+    tips: ['Green indicates completed jobs', 'Status updates are real-time from the field ops app', 'Virtual appointments skip En Route — they go directly from Accepted to In Progress']
   },
 ];
 
@@ -911,7 +951,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
   customer: 'How to use our AI agents',
-  fieldops: 'How to use Technician-Field Ops Console and App',
+  fieldops: 'How to use Field Ops Console and App',
   businessops: 'How to use Business Mgt Ops Console',
   businessops_admin: 'How to use Business Mgt Ops Console',
   marketing: 'How to use Outreach & Sales Ops AI',
