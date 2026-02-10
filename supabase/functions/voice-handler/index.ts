@@ -672,7 +672,7 @@ async function handlePickup(
         pending_handoff: undefined,
         pickup_retries: undefined,
       },
-    }).eq('id', callLogId).catch(() => {});
+    }).eq('id', callLogId).then(() => {}).catch(() => {});
 
     // Race TTS against 4s deadline — fall back to Polly if too slow
     let replyAudioUrl: string | null = null;
