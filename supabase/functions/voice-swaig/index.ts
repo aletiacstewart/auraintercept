@@ -261,6 +261,24 @@ async function handleBookAppointment(
     return swaigResponse("I'm sorry, I wasn't able to book that appointment. Could you try again or call back in a few minutes?");
   }
 
+  // Create job assignment so it appears in the technician job queue
+  if (appointment?.id) {
+    const jobData: any = {
+      company_id: companyId,
+      appointment_id: appointment.id,
+      status: 'pending_acceptance',
+    };
+    if (employeeId) {
+      jobData.employee_id = employeeId;
+    }
+    const { error: jobError } = await supabase
+      .from('job_assignments')
+      .insert(jobData);
+    if (jobError) {
+      console.error('Failed to create job assignment:', jobError);
+    }
+  }
+
   // Update call log with appointment reference
   if (callLogId) {
     await supabase.from('call_logs').update({
