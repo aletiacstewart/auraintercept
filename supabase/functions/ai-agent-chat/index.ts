@@ -2914,18 +2914,28 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     // Internal/analytics agents don't use customer-facing handoff language
     
     if (handoffTo && !responseText.trim()) {
-      if (isInternalAgent || INTERNAL_AGENTS.includes(handoffTo)) {
-        // For internal agents, skip customer-facing message - they will respond directly
+      if ((isInternalAgent || INTERNAL_AGENTS.includes(handoffTo)) && !isPhoneChannel) {
+        // For internal dashboard agents, skip customer-facing message - they will respond directly
+        // But NEVER skip for phone calls - callers must always hear a spoken response
         responseText = '';
       } else {
+        // For phone calls and customer-facing channels, always provide a spoken response
         const handoffMessages: Record<string, string> = {
-          booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you.",
-          dispatch: "I can see this needs immediate attention. Let me connect you with our dispatch team who can get someone out to help you right away.",
-          quoting: "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing.",
+          booking: isPhoneChannel
+            ? "I'd be happy to help you book an appointment. What service are you looking for?"
+            : "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you.",
+          dispatch: isPhoneChannel
+            ? "Let me connect you with our dispatch team right away."
+            : "I can see this needs immediate attention. Let me connect you with our dispatch team who can get someone out to help you right away.",
+          quoting: isPhoneChannel
+            ? "I can help you get a quote. What service do you need?"
+            : "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing.",
           followup: "Let me connect you with our follow-up team to ensure everything is taken care of.",
-          review: "Thank you for your feedback! Let me connect you with our team to help with your review.",
-          invoice: "Let me transfer you to our billing team who can assist with your invoice.",
-          default: `I'll connect you with our ${handoffTo} specialist who can better assist you with this request.`,
+          review: "Thank you for your feedback! Let me help you with that.",
+          invoice: "Let me help you with your billing question.",
+          default: isPhoneChannel
+            ? "Sure, I can help you with that. Could you tell me a bit more?"
+            : `I'll connect you with our ${handoffTo} specialist who can better assist you with this request.`,
         };
         responseText = handoffMessages[handoffTo] || handoffMessages.default;
       }
