@@ -1,42 +1,73 @@
 
 
-# Fix: Shorten Greeting + Unify Config for Easy Onboarding
+# Fix: Call Hangs Up After Greeting Instead of Listening
 
-## What's Actually Happening
+## Root Cause
 
-Both phone and web **already use ElevenLabs**. The phone path correctly generates audio with the Jessica voice via ElevenLabs TTS. The problem is that your company's `ai_voice_greeting` in the database is still a 241-character monologue:
+The call flow is:
+1. `handleIncoming()` generates TTS audio, uploads it to storage, returns TwiML with `<Gather><Play>...</Play></Gather>`
+2. SignalWire plays the audio... then the call ends
 
-> "Hello! I'm Aura, your AI Intercept Agent. Before we dive in, could you please provide your name and a piece of contact info -- like an email or phone number -- just in case our connection drops? Perfect, thanks. Now, how can I assist you today?"
+The logs confirm only `action=incoming` fires -- no `action=process` ever triggers, meaning SignalWire never sends speech results back.
 
-This entire block plays as one audio file before the system starts listening. It asks for everything at once and even says "Perfect, thanks" before the caller has spoken.
+The problem is the combination of `<Play>` (pre-recorded audio URL) inside `<Gather input="speech">`. SignalWire has known compatibility issues with speech recognition inside `<Gather>` when using `<Play>` instead of `<Say>`. When the `<Play>` finishes and no speech is detected within the first moments, SignalWire falls through to the `<Redirect>` which calls the timeout handler, which says "I didn't hear anything" and hangs up.
 
-## The Fix (Two Parts)
+## The Fix
 
-### Part 1: Shorten the database greeting
+**Switch from `<Play>` inside `<Gather>` to a two-step approach:**
 
-Update your company's `ai_voice_greeting` to a short, simple greeting:
+1. First, play the greeting audio **outside** the `<Gather>` element
+2. Then open a `<Gather input="speech">` with a short `<Say>` prompt (or empty) to listen for the caller's response
 
-> "Hello! I'm Aura, your AI Intercept Agent. How can I help you today?"
+This ensures the high-quality ElevenLabs audio plays fully, and then SignalWire properly enters speech-listening mode.
 
-The sequential data collection (name, phone, email) is already handled by the AI model in follow-up turns -- it should not be in the greeting.
-
-### Part 2: Add a code safeguard to prevent future long greetings
-
-Update `handleIncoming()` in the voice-handler so that if any company's greeting exceeds 150 characters, it automatically gets replaced with a short default. This protects against the same problem when onboarding new companies.
+Apply the same pattern to all three `<Gather>` locations:
+- `handleIncoming()` -- initial greeting (line 203)
+- `handleProcess()` -- nudge when no speech (line 365)
+- `handleProcess()` -- AI response (line 433)
 
 ## Technical Details
 
-### Database change
-- Update `companies.ai_voice_greeting` for company `04c57cbe-358e-4036-a3ad-b777a55f5be0` to: `"Hello! I'm Aura, your AI Intercept Agent. How can I help you today?"`
+**File:** `supabase/functions/voice-handler/index.ts`
 
-### Code change: `supabase/functions/voice-handler/index.ts`
-- In `handleIncoming()` (lines 165-166), after reading the greeting, add a length check:
-  - If the greeting exceeds 150 characters, replace it with a short default
-- This is a small safeguard (3-4 lines of code)
+### Change 1: `handleIncoming()` (lines 203-208)
 
-### What you should also do (manual step)
-- In your ElevenLabs dashboard, update the "First message" field to match the short greeting. This keeps the web voice agent consistent with the phone experience.
+**Before:**
+```xml
+<Gather input="speech" timeout="12" speechTimeout="5" action="...">
+  <Play>https://...greeting.mp3</Play>
+</Gather>
+<Redirect>...timeout...</Redirect>
+```
 
-## Why This Matters for Onboarding
+**After:**
+```xml
+<Play>https://...greeting.mp3</Play>
+<Gather input="speech" timeout="12" speechTimeout="5" action="..." method="POST">
+  <Say voice="Polly.Joanna"> </Say>
+</Gather>
+<Redirect method="POST">...timeout...</Redirect>
+```
 
-When a new company signs up, the system already reads their ElevenLabs API key and voice ID from `tenant_integrations`. The greeting comes from `companies.ai_voice_greeting`. With the length safeguard in place, even if someone pastes a long greeting, the phone system will automatically shorten it. This means onboarding is simple: just add the API key, voice ID, and a short greeting -- both web and phone will work with ElevenLabs automatically.
+The `<Say>` with a space character is a minimal prompt that keeps the `<Gather>` valid (some SignalWire versions require content inside `<Gather>`). The greeting audio plays first, then the system enters listening mode.
+
+### Change 2: Update `ttsOrFallback()` (lines 24-35)
+
+Split the return into two pieces -- a "play" element and a "gather-safe" element -- or change the approach so the function returns just the audio URL and each call site handles placement. The simplest approach: have `ttsOrFallback()` return the raw audio URL (or `null` on failure), and let each call site place `<Play>` outside `<Gather>`.
+
+### Change 3: `handleProcess()` nudge (line 365) and AI response (line 433)
+
+Apply the same pattern: `<Play>` before `<Gather>`, not inside it.
+
+### Additional: Add `method="POST"` to all `<Gather>` tags
+
+Per the SignalWire compatibility standard in the memory notes, all `<Gather>` tags should have explicit `method="POST"`. The current code at line 204 is missing it.
+
+## Summary of Changes
+
+- **1 file modified:** `supabase/functions/voice-handler/index.ts`
+- **3 `<Gather>` blocks updated** to play audio before the gather, not inside it
+- **`ttsOrFallback()` refactored** to return audio URL separately so call sites can place `<Play>` outside `<Gather>`
+- **`method="POST"` added** to all `<Gather>` elements for SignalWire compatibility
+- No database changes
+
