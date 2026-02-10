@@ -1,49 +1,37 @@
 
 
-# Fix Customer Portal to Match Dashboard Console
+# Fix Voice Chat — Remove Broken Overrides That Kill Audio
 
-## Problem
+## Root Cause
 
-There are two completely different customer portal implementations:
+The console logs prove exactly what's happening:
 
-1. **Dashboard version** (at `/dashboard/ai-consoles/customer-portal`) -- Uses the `AIAgentConsole` component with a company selector dropdown. This is the correct one you designed.
+1. WebRTC connects successfully ("onConnect fired")
+2. ElevenLabs receives malformed override data where `prompt.prompt` shows `MaxDepthReached` (an object nesting error)
+3. ElevenLabs immediately disconnects the session — no audio ever plays
+4. `isSpeaking` stays `false` the entire time
 
-2. **Public version** (at `/customer-portal`) -- Uses a separate `CustomerPortalHome.tsx` page with company cards, search bar, "How to Use" section, favorites, etc. This is a different design that was NOT intended.
+The overrides structure added in the last edit is incompatible with the ElevenLabs React SDK v0.12.1. The SDK serializes the overrides object and the nested `{ prompt: { prompt: string } }` gets corrupted.
 
-When a customer clicks "Customer Portal" from the homepage, they get routed to the public version (#2), which looks completely different from what you see in the dashboard (#1).
+## Fix
 
-Additionally, when a customer clicks a company on that page, they go to `/customer-portal/:companySlug` which renders `UnifiedCustomerConsole` -- yet another different component from the dashboard's `AIAgentConsole`.
+**Remove all override logic from VoiceChat.tsx.** The ElevenLabs agent (agent_3601kg17fsmdfcnajfjfjsnbsspf) should already have its greeting and prompt configured in the ElevenLabs dashboard. Passing overrides from the client is unnecessary and is actively breaking the connection.
 
-## Solution
+### Changes to `src/components/ai/VoiceChat.tsx`
 
-Replace the public customer portal pages to use the **same `AIAgentConsole` component** that the dashboard uses, with company selection enabled. This ensures customers see the exact same console experience.
+1. Delete the overrides block (lines 286-293) that builds the `overrides` object
+2. Remove `overrides` from all three `startSession()` calls (lines 310-328)
+3. Keep everything else exactly the same — the connection logic, fallback strategy, and audio context handling are all correct
 
-### Changes
+### No other files need changes
 
-**1. Rewrite `CustomerPortalHome.tsx`** (the `/customer-portal` route)
-- Remove the custom card-based company browser UI
-- Instead, render the `AIAgentConsole` component with `allowCompanySelection={true}`
-- Keep basic customer auth check and sign-out button
-- This makes the public portal identical to the dashboard's "Customer View"
+The edge function can continue returning `firstMessage` and `systemPrompt` — they just won't be used as client overrides. This data may be useful for future features (like displaying the greeting as text).
 
-**2. Update `CustomerCompanyPortal.tsx`** (the `/customer-portal/:companySlug` route)
-- Remove the extra header ("DEMO STARTER COMPANY / Customer Portal")
-- Switch from `UnifiedCustomerConsole` to `AIAgentConsole` with the resolved `companyId` pre-selected
-- This ensures clicking a company link also shows the same console
+## Expected Result
 
-**3. No database or backend changes needed** -- both components already fetch data through the same queries.
-
-### Result
-
-```text
-BEFORE (3 different UIs):
-  Dashboard:           AIAgentConsole (with company selector)
-  /customer-portal:    CustomerPortalHome (cards, search, favorites)
-  /customer-portal/x:  UnifiedCustomerConsole (different chat UI)
-
-AFTER (1 unified UI):
-  Dashboard:           AIAgentConsole (with company selector)
-  /customer-portal:    AIAgentConsole (with company selector)
-  /customer-portal/x:  AIAgentConsole (pre-selected company)
-```
+After this fix:
+- WebRTC connects to the agent
+- ElevenLabs receives a clean session request with no malformed overrides
+- The agent speaks its configured greeting
+- Two-way audio works normally
 
