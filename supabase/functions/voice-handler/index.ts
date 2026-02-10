@@ -196,7 +196,7 @@ async function handleIncoming(
   const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
 
   return twimlResponse(`
-    <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
+    <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
       ${greetingTwiml}
     </Gather>
     <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
@@ -358,7 +358,7 @@ async function handleProcess(
     }
 
     return twimlResponse(`
-      <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
+      <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
         ${nudgeTwiml}
       </Gather>
       <Redirect method="POST">${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`)}</Redirect>
@@ -426,7 +426,7 @@ async function handleProcess(
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
     return twimlResponse(`
-      <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
+      <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
         ${responseTwiml}
       </Gather>
       <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
