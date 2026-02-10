@@ -200,6 +200,20 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
 
+    // Unlock audio playback immediately on user gesture (before any async work)
+    // Browsers require AudioContext.resume() during a click to allow audio in iframes
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      await ctx.resume();
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start();
+    } catch (e) {
+      console.warn("[VoiceChat] AudioContext unlock failed:", e);
+    }
+
     // Text mode: start local session; use our multi-agent backend for responses
     if (testMode) {
       setTestSessionActive(true);
