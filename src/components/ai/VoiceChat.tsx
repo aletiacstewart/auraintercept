@@ -84,8 +84,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         !autoRetryUsedRef.current &&
         lastConnectMethodRef.current === "webrtc" &&
         typeof connectedForMs === "number" &&
-        connectedForMs < 2000 &&
-        !!lastAuthRef.current?.signed_url;
+        connectedForMs < 2000;
 
       if (shouldAutoRetry) {
         autoRetryUsedRef.current = true;
@@ -95,12 +94,25 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
             title: "Reconnecting…",
             description: "Switching to a compatibility mode for your browser/network.",
           });
-          await conversation.startSession({
-            signedUrl: lastAuthRef.current!.signed_url!,
-          });
+
+          // Fallback chain: WebSocket (signed_url) → WebSocket (agentId)
+          if (lastAuthRef.current?.signed_url) {
+            lastConnectMethodRef.current = "ws_signed_url";
+            await conversation.startSession({
+              signedUrl: lastAuthRef.current.signed_url,
+            });
+          } else if (agentId) {
+            lastConnectMethodRef.current = "ws_agent_id";
+            await conversation.startSession({
+              agentId,
+              connectionType: "websocket",
+            });
+          } else {
+            throw new Error("No fallback connection method available");
+          }
           return;
         } catch (e) {
-          console.error("Auto-retry via signed_url failed:", e);
+          console.error("Auto-retry fallback failed:", e);
           setIsConnecting(false);
         }
       }
@@ -257,13 +269,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       }
     } catch (e) {
       console.error("Failed to start conversation:", e);
+      setIsConnecting(false);
       toast({
         variant: "destructive",
         title: "Connection Failed",
         description: e instanceof Error ? e.message : "Unable to start chat",
       });
-    } finally {
-      setIsConnecting(false);
     }
   }, [agentId, companyId, conversation, testMode, toast]);
 

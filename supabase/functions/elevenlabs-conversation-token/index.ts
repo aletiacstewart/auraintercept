@@ -54,30 +54,52 @@ Deno.serve(async (req) => {
       throw new Error('ElevenLabs API key not configured');
     }
 
-    // Get conversation token from ElevenLabs
-    const response = await fetch(
-      `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=${elevenLabsAgentId}`,
-      {
-        headers: { 'xi-api-key': elevenLabsApiKey },
+    // Fetch both WebRTC token and WebSocket signed_url in parallel
+    const [tokenRes, signedUrlRes] = await Promise.all([
+      fetch(
+        `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=${elevenLabsAgentId}`,
+        { headers: { 'xi-api-key': elevenLabsApiKey } }
+      ),
+      fetch(
+        `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${elevenLabsAgentId}`,
+        { headers: { 'xi-api-key': elevenLabsApiKey } }
+      ),
+    ]);
+
+    const tokenText = await tokenRes.text();
+    const signedUrlText = await signedUrlRes.text();
+
+    let token: string | undefined;
+    let signed_url: string | undefined;
+
+    if (tokenRes.ok) {
+      try {
+        const parsed = JSON.parse(tokenText);
+        token = parsed.token;
+      } catch {
+        console.error('Failed to parse token response:', tokenText);
       }
-    );
-
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      console.error('ElevenLabs token error:', response.status, responseText);
-      throw new Error(`ElevenLabs API error: ${response.status}`);
+    } else {
+      console.error('ElevenLabs token error:', tokenRes.status, tokenText);
     }
 
-    let tokenData: any;
-    try {
-      tokenData = JSON.parse(responseText);
-    } catch {
-      throw new Error('Invalid response from ElevenLabs');
+    if (signedUrlRes.ok) {
+      try {
+        const parsed = JSON.parse(signedUrlText);
+        signed_url = parsed.signed_url;
+      } catch {
+        console.error('Failed to parse signed_url response:', signedUrlText);
+      }
+    } else {
+      console.error('ElevenLabs signed_url error:', signedUrlRes.status, signedUrlText);
+    }
+
+    if (!token && !signed_url) {
+      throw new Error('Failed to get both token and signed_url from ElevenLabs');
     }
 
     return new Response(
-      JSON.stringify({ token: tokenData.token, agentId: elevenLabsAgentId }),
+      JSON.stringify({ token, signed_url, agentId: elevenLabsAgentId }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
