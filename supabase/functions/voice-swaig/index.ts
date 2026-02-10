@@ -45,6 +45,9 @@ Deno.serve(async (req) => {
       case 'book_appointment':
         return await handleBookAppointment(supabase, companyId, callLogId, args);
 
+      case 'get_services':
+        return await handleGetServices(supabase, companyId);
+
       case 'transfer_call':
         return await handleTransferCall(supabase, companyId);
 
@@ -88,7 +91,7 @@ async function handleCheckAvailability(
     .eq('job_type', 'technician');
 
   if (!assignments || assignments.length === 0) {
-    return swaigResponse("I'm sorry, we don't have any technicians available right now. Would you like to leave your information and we'll call you back?");
+    return swaigResponse("I'm sorry, we don't have any team members available right now. Would you like to leave your information and we'll call you back?");
   }
 
   const employeeIds = assignments.map((a: any) => a.employee_id);
@@ -224,6 +227,18 @@ async function handleBookAppointment(
     employeeId = assignments[0].employee_id;
   }
 
+  // Look up service to get correct duration and delivery type
+  const { data: serviceRecord } = await supabase
+    .from('services')
+    .select('id, duration_minutes, delivery_type')
+    .eq('company_id', companyId)
+    .ilike('name', `%${service_type}%`)
+    .eq('active', true)
+    .maybeSingle();
+
+  const durationMinutes = serviceRecord?.duration_minutes || 60;
+  const deliveryType = serviceRecord?.delivery_type || 'in_person_business';
+
   // Create the appointment
   const { data: appointment, error } = await supabase.from('appointments').insert({
     company_id: companyId,
@@ -232,9 +247,9 @@ async function handleBookAppointment(
     customer_email: customer_email || null,
     service_type,
     datetime,
-    duration_minutes: 60,
+    duration_minutes: durationMinutes,
     status: 'pending',
-    delivery_type: 'in_person_business',
+    delivery_type: deliveryType,
     employee_id: employeeId,
     notes: `Booked via phone call${callLogId ? ` (call: ${callLogId})` : ''}`,
   }).select('id').single();
@@ -257,6 +272,30 @@ async function handleBookAppointment(
   const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   return swaigResponse(`Great news, ${customer_name}! Your ${service_type} appointment is booked for ${dateDisplay} at ${timeDisplay}. You'll receive a confirmation shortly. Is there anything else I can help you with?`);
+}
+
+// === GET SERVICES ===
+async function handleGetServices(
+  supabase: any, companyId: string
+): Promise<Response> {
+  const { data: services } = await supabase
+    .from('services')
+    .select('name, description, duration_minutes, price')
+    .eq('company_id', companyId)
+    .eq('active', true);
+
+  if (!services || services.length === 0) {
+    return swaigResponse("We don't have any services listed at the moment. Can I help you with something else?");
+  }
+
+  const serviceDescriptions = services.map((s: any) => {
+    let desc = s.name;
+    if (s.duration_minutes) desc += `, ${s.duration_minutes} minutes`;
+    if (s.description) desc += `. ${s.description}`;
+    return desc;
+  }).join('. ');
+
+  return swaigResponse(`We offer the following services: ${serviceDescriptions}. Which service are you interested in?`);
 }
 
 // === TRANSFER CALL ===
