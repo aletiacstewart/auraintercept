@@ -122,11 +122,17 @@ function buildSWMLDocument(
 
   // Use ElevenLabs voice via SignalWire's native integration
   // If the voice ID looks like a custom/cloned ElevenLabs voice, log it and include a fallback note
-  const isCustomVoice = voiceId && voiceId.length > 15 && !['Rachel', 'Sarah', 'Laura', 'Charlie', 'George'].includes(voiceId);
-  if (isCustomVoice) {
-    console.log(`Using custom ElevenLabs voice ID: ${voiceId} — requires ElevenLabs API key configured in SignalWire`);
+  // Built-in ElevenLabs voices that work without an API key in SignalWire
+  const BUILTIN_VOICES = ['Rachel', 'Sarah', 'Laura', 'Charlie', 'George', 'Aria', 'Roger'];
+  const isBuiltIn = BUILTIN_VOICES.includes(voiceId);
+
+  let voice: string;
+  if (isBuiltIn) {
+    voice = `elevenlabs.${voiceId}`;
+  } else {
+    console.warn(`Custom ElevenLabs voice "${voiceId}" requires API key in SignalWire. Falling back to Rachel.`);
+    voice = 'elevenlabs.Rachel';
   }
-  const voice = `elevenlabs.${voiceId}:eleven_flash_v2_5`;
 
   // Build hints array — include company name, service names, and common booking terms
   const hints = [companyName, "appointment", "booking", "schedule"];
