@@ -1,88 +1,57 @@
 
+# Update AI Agent Prompts for Virtual/Delivery-Type Awareness
 
-# Update How-To Guides + Service-Aware Content for Virtual, Beauty/Salon, and Real Estate Workflows
+## What This Does
 
-## Overview
+The Field Ops AI agent prompts (dispatch, ETA, checkin) currently assume all jobs are in-person field service. Now that virtual and at-business appointments exist, these agents need to understand delivery types so they don't ask for addresses on virtual jobs or suggest routes for video calls.
 
-This update addresses two things:
+The booking agent already handles delivery types correctly -- no changes needed there.
 
-1. **Update the How-To Guide content** in `AgentHowToGuide.tsx` to include virtual/video session workflows, phone call appointment details, and industry-specific guidance for beauty/salon and real estate businesses.
+## Changes
 
-2. **Whether to add a new job role** -- the answer is **no new job role is needed**. The existing `technician` job type already handles all service professionals (stylists, agents, therapists). The system differentiates behavior through the `delivery_type` on appointments and `industry_vertical` on companies, not through separate job roles. Adding a new role would break the booking engine's availability logic (which filters by `technician` job type) and create unnecessary complexity.
+### File: `supabase/functions/ai-agent-chat/index.ts`
 
-## What Changes
+#### 1. ETA Agent Prompt (most important)
 
-### 1. Update Field Ops How-To Guide (FIELD_OPS_GUIDES)
+The ETA agent handles job status updates for technicians. It needs to know that virtual jobs skip travel steps.
 
-Add new guide entries and update existing ones:
+Add delivery-type awareness:
+- When listing jobs via `get_my_jobs`, note that some may be virtual (delivery_type: "virtual") or at-business
+- For virtual jobs: skip "en route" and "arrived" statuses -- go straight from "accepted" to "in_progress" to "completed"
+- For virtual jobs with a `meeting_link`: mention the link to the technician
+- Replace "technician arrival" language with "session" for virtual jobs
 
-- **New: "Start Virtual Session"** -- Steps for accepting a virtual job, receiving the meeting link, and joining the Google Meet session
-- **New: "Phone Call Appointments"** -- Steps for accepting a phone call job, when the system sends call details to the customer, and completing a phone session
-- **Update: "Accept Job"** -- Add note that for virtual appointments, a Google Meet link is automatically generated and sent to the customer upon acceptance
-- **Update: "Get Directions"** -- Add tip clarifying this applies to in-person appointments only (not virtual or at-business)
-- **Update: "Mark En Route"** -- Add tip noting this step is skipped for virtual and at-business appointments
+#### 2. Dispatch Agent Prompt
 
-### 2. Update Customer Portal How-To Guide (CUSTOMER_ENGAGEMENT_GUIDES)
+The dispatch agent collects customer info and assigns technicians. It should adapt for virtual emergencies:
+- If the service being dispatched is virtual, skip the address collection step
+- Replace "nearest available technician" with "next available staff" for virtual services
+- Adjust the example response to mention "video session" or "phone call" instead of physical arrival for virtual jobs
 
-- **New: "Join Video Session"** -- Steps for finding the meeting link in confirmations, joining Google Meet, and what to expect
-- **Update: "Book Appointment"** -- Mention that virtual services are available and meeting details are sent after staff confirms
-- **Update: "Track Appointment"** -- Update language from "technician approaches" to "service professional" and mention virtual session status tracking
+#### 3. Checkin Agent Prompt
 
-### 3. Update Dispatch How-To Guide (DISPATCH_FIELD_OPS_GUIDES)
+The checkin agent handles arrival verification and documentation. For virtual sessions:
+- Skip "verify arrival at job site" for virtual appointments
+- Replace with "verify session started" for virtual jobs
+- Photo documentation may not apply to virtual sessions -- note this as optional
 
-- **Update: "Status Legend"** -- Add virtual session statuses (e.g., "Virtual -- no travel steps shown")
-- **Update: "Assign Technician"** -- Change language to "Assign Staff" with a tip noting terminology adapts by industry (Stylist, Agent, Therapist)
+#### 4. Route Agent Prompt
 
-### 4. Update Business Ops How-To Guide (BUSINESS_OPS_BASE_GUIDES)
+Add a single line noting that route optimization only applies to in-person appointments. Virtual jobs should be excluded from route planning.
 
-- **Update: "Appts" guide** -- Add step/tip about delivery type (virtual vs in-person) and how meeting links are auto-generated
+## What Stays the Same
 
-### 5. Update Console Titles
-
-- Change `fieldops` title from "How to use Technician-Field Ops Console and App" to "How to use Field Ops Console and App" (removing hardcoded "Technician" to be industry-neutral)
-
-## Why No New Job Role
-
-The current architecture already handles this cleanly:
-
-- The `technician` job type in `employee_job_assignments` means "service professional who performs appointments" -- whether that's an HVAC tech, a stylist, a massage therapist, or a real estate agent
-- The `delivery_type` on services/appointments controls the workflow (virtual vs in-person vs at-business)
-- The `industry_vertical` on companies controls the terminology (Technician vs Stylist vs Agent)
-- Adding a separate `stylist` or `agent` job type would require duplicating all booking, availability, and dispatch logic
-
-The how-to guide updates will make this distinction clear to users by using inclusive language like "service professional" alongside industry-specific examples.
+- Booking agent -- already fully delivery-type aware
+- Triage agent -- routes to other agents, no job-type-specific logic
+- All tool definitions -- `get_my_jobs` already returns `delivery_type` and `meeting_link`
+- No database changes needed
+- No new dependencies
 
 ## Technical Details
 
-### File to modify:
-- `src/components/ai/chat/AgentHowToGuide.tsx`
+All changes are within the `SYSTEM_PROMPTS` object in `supabase/functions/ai-agent-chat/index.ts`:
 
-### Specific changes:
-
-**FIELD_OPS_GUIDES array** (lines 278-408):
-- Add "Start Virtual Session" guide entry with Video icon
-- Add "Phone Call Session" guide entry with Phone icon  
-- Update "Accept Job" tips to mention virtual meeting link generation
-- Update "Get Directions" tips about in-person only
-- Update "Mark En Route" tips about in-person only
-- Update "Arrive & Start Job" tips to mention virtual equivalent
-
-**CUSTOMER_ENGAGEMENT_GUIDES array** (lines 159-275):
-- Add "Join Video Session" guide entry
-- Update "Book Appointment" steps to mention virtual option
-- Update "Track Appointment" to use "service professional" language and mention virtual status
-
-**DISPATCH_FIELD_OPS_GUIDES array** (lines 791-896):
-- Update "Status Legend" to include virtual session info
-- Update "Assign Technician" label and language to be industry-neutral
-
-**BUSINESS_OPS_BASE_GUIDES array** (lines 411-529):
-- Update "Appts" guide to mention delivery types
-
-**CONSOLE_TITLES** (line 914):
-- Change fieldops title to remove "Technician-"
-
-### No database changes needed
-### No new dependencies needed
-### No breaking changes -- only content/text updates
-
+- **ETA prompt** (~lines 354-393): Add a "VIRTUAL JOB HANDLING" section explaining that virtual jobs skip en_route/arrived steps, and to surface the meeting_link when available
+- **Dispatch prompt** (~lines 303-339): Add delivery-type check after collecting info -- skip address for virtual, adjust final response example
+- **Checkin prompt** (~lines 395-409): Add note about virtual sessions not requiring physical check-in or photos
+- **Route prompt** (~lines 341-352): Add one line that virtual jobs are excluded from route optimization
