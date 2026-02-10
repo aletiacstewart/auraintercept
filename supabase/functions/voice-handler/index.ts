@@ -87,18 +87,16 @@ CRITICAL PHONE CALL RULES (override any conflicting instructions):
 - If the caller already provided some info (e.g. their name), skip that step and move to the next.
 - Be warm, friendly, and conversational. Use the caller's name once you know it.`;
 
-  let prompt = base + phoneRules;
+  const flowRules = `
 
-  // Append conversation history so the AI has full context
-  if (conversationHistory.length > 0) {
-    prompt += '\n\nCONVERSATION SO FAR:\n';
-    for (const msg of conversationHistory) {
-      prompt += `${msg.role === 'user' ? 'CALLER' : 'YOU'}: ${msg.content}\n`;
-    }
-    prompt += '\nContinue the conversation naturally. Ask for the NEXT piece of missing information.';
-  }
+STRICT FLOW RULES (never violate these):
+- Once the caller has mentioned a service, do NOT list services again. Move directly to collecting their name.
+- NEVER say "What else can I help you with?" during a booking flow.
+- Each response must contain exactly ONE question. Never combine questions.
+- After the caller mentions a service, your ONLY next response should be asking for their name.
+- Do NOT repeat information the caller has already provided.`;
 
-  return prompt;
+  return base + phoneRules + flowRules;
 }
 
 Deno.serve(async (req) => {
@@ -533,7 +531,7 @@ async function handleProcess(
     const aiRequestBody = {
       message: speechResult,
       systemPrompt,
-      model: 'google/gemini-2.5-flash-lite',
+      model: 'google/gemini-2.5-flash',
       companyId,
       agentType: activeAgent,
       isInternalRequest: true,
@@ -542,9 +540,10 @@ async function handleProcess(
     };
 
     // === TWO-PHASE RESPONSE: Race AI against 3-second deadline ===
+    // Create an AbortController so we can kill the original AI call if the timer wins
+    const primaryController = new AbortController();
     const aiPromise = (async () => {
-      const controller = new AbortController();
-      const aiTimeout = setTimeout(() => controller.abort(), 12000);
+      const aiTimeout = setTimeout(() => primaryController.abort(), 12000);
       try {
         const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
           method: 'POST',
@@ -553,7 +552,7 @@ async function handleProcess(
             'Authorization': `Bearer ${supabaseKey}`,
           },
           body: JSON.stringify(aiRequestBody),
-          signal: controller.signal,
+          signal: primaryController.signal,
         });
         clearTimeout(aiTimeout);
 
@@ -573,8 +572,8 @@ async function handleProcess(
       } catch (fetchErr: any) {
         clearTimeout(aiTimeout);
         if (fetchErr.name === 'AbortError') {
-          console.warn('[voice-handler] AI call timed out after 12s');
-          return { reply: "I'm sorry, I'm having a moment. Could you repeat that?", handoff: null };
+          console.warn('[voice-handler] Primary AI call aborted (timer won the race)');
+          return null; // Signal that this call was intentionally killed
         }
         throw fetchErr;
       }
@@ -584,8 +583,9 @@ async function handleProcess(
     const raceResult = await Promise.race([aiPromise, timer]);
 
     if (raceResult === 'timeout') {
-      // AI is still thinking — save state and return hold TwiML immediately
-      console.log('[voice-handler] AI exceeded 3s deadline, returning hold message');
+      // AI is still thinking — ABORT the original call so it doesn't compete with background
+      primaryController.abort();
+      console.log('[voice-handler] AI exceeded 3s deadline, aborted primary call, returning hold message');
 
       // Read existing metadata to preserve hold_audio_urls
       const existingLogData = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data;
@@ -845,7 +845,7 @@ async function handleProcessBackground(
       aiRequestBody = {
         message: metadata.pending_speech,
         systemPrompt: metadata.pending_system_prompt,
-        model: 'google/gemini-2.5-flash-lite',
+        model: 'google/gemini-2.5-flash',
         companyId: callLog.company_id,
         agentType: metadata.pending_agent || 'triage',
         isInternalRequest: true,
