@@ -45,9 +45,13 @@ Deno.serve(async (req) => {
           service_type,
           datetime,
           company_id,
+          delivery_type,
+          meeting_link,
+          customer_address,
           companies:company_id (
             id,
-            name
+            name,
+            address
           )
         ),
         employee:employee_id (
@@ -74,6 +78,59 @@ Deno.serve(async (req) => {
     const employee = jobAssignment.employee;
     const company = appointment?.companies;
     const companyName = company?.name || 'Our Business';
+    const deliveryType = appointment?.delivery_type || 'in_person_customer';
+    const isVirtual = deliveryType === 'virtual';
+    const isAtBusiness = deliveryType === 'in_person_business';
+
+    // Skip irrelevant notifications for virtual/at-business jobs
+    if (isVirtual && (notificationType === 'en_route' || notificationType === 'arrived')) {
+      console.log(`[Job Notification] Skipping ${notificationType} for virtual appointment`);
+      return new Response(
+        JSON.stringify({ success: true, skipped: true, reason: 'Not applicable for virtual appointments' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (isAtBusiness && notificationType === 'en_route') {
+      console.log(`[Job Notification] Skipping en_route for at-business appointment`);
+      return new Response(
+        JSON.stringify({ success: true, skipped: true, reason: 'Not applicable for at-business appointments' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // For virtual jobs: on acceptance, try to generate Google Meet link
+    let meetingLink = appointment?.meeting_link || null;
+    if (isVirtual && notificationType === 'accepted' && !meetingLink) {
+      try {
+        console.log('[Job Notification] Generating Google Meet link for virtual appointment');
+        const syncResponse = await fetch(`${supabaseUrl}/functions/v1/google-calendar-sync`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${serviceRoleKey}`,
+          },
+          body: JSON.stringify({
+            action: 'sync_appointment',
+            companyId: appointment.company_id,
+            appointmentId: appointment.id,
+            requestConference: true,
+          }),
+        });
+        const syncResult = await syncResponse.json();
+        if (syncResult.success && syncResult.meetingLink) {
+          meetingLink = syncResult.meetingLink;
+          // Save meeting link to appointment
+          await supabase
+            .from('appointments')
+            .update({ meeting_link: meetingLink })
+            .eq('id', appointment.id);
+          console.log('[Job Notification] Google Meet link generated:', meetingLink);
+        }
+      } catch (meetError) {
+        console.error('[Job Notification] Failed to generate Meet link:', meetError);
+      }
+    }
 
     // Format appointment datetime
     const appointmentDate = appointment?.datetime ? new Date(appointment.datetime) : new Date();
@@ -97,19 +154,22 @@ Deno.serve(async (req) => {
 
     const results: any = { sms: null, email: null };
 
-    // Generate appropriate message based on notification type and recipient
+    // Generate appropriate message based on notification type, recipient, and delivery type
     const messages = generateMessages(
       notificationType,
       recipientType,
       {
         customerName: appointment.customer_name,
-        employeeName: employee?.full_name || 'Technician',
+        employeeName: employee?.full_name || 'Your specialist',
         serviceType: appointment.service_type,
         companyName,
         dateStr,
         timeStr,
-        address: jobAssignment.customer_address || 'Address on file',
+        address: jobAssignment.customer_address || appointment.customer_address || company?.address || 'Address on file',
         estimatedArrival: jobAssignment.estimated_arrival_minutes,
+        deliveryType,
+        meetingLink,
+        customerPhone: appointment.customer_phone,
       }
     );
 
@@ -236,35 +296,62 @@ function generateMessages(
     timeStr: string;
     address: string;
     estimatedArrival?: number;
+    deliveryType?: string;
+    meetingLink?: string | null;
+    customerPhone?: string | null;
   }
 ): { sms: string; emailSubject: string; emailHtml: string } {
-  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival } = data;
+  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone } = data;
+
+  const isVirtual = deliveryType === 'virtual';
+  const isAtBusiness = deliveryType === 'in_person_business';
+
+  // Build virtual session info
+  const virtualInfo = meetingLink
+    ? `Join your video session here: ${meetingLink}`
+    : `We will call you at ${customerPhone || 'your phone number'} on ${dateStr} at ${timeStr}`;
+
+  const virtualHtmlInfo = meetingLink
+    ? `<p><strong>Join Your Session:</strong> <a href="${meetingLink}" style="color: #2563eb; text-decoration: underline;">Click here to join your video session</a></p>`
+    : `<p><strong>Phone Session:</strong> We will call you at <strong>${customerPhone || 'your phone number'}</strong> on ${dateStr} at ${timeStr}</p>`;
+
+  const locationInfo = isVirtual
+    ? (meetingLink ? `Video session link: ${meetingLink}` : `Phone call appointment`)
+    : isAtBusiness
+    ? `Visit us at: ${address}`
+    : `Address: ${address}`;
 
   const templates: Record<string, Record<string, { sms: string; emailSubject: string; emailHtml: string }>> = {
     assigned: {
       customer: {
-        sms: `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} service on ${dateStr} at ${timeStr}. We'll notify you when they're on their way.`,
-        emailSubject: `Technician Assigned - ${companyName}`,
+        sms: isVirtual
+          ? `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} session on ${dateStr} at ${timeStr}. We'll send you session details once confirmed.`
+          : isAtBusiness
+          ? `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} appointment on ${dateStr} at ${timeStr}. Visit us at ${address}.`
+          : `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} service on ${dateStr} at ${timeStr}. We'll notify you when they're on their way.`,
+        emailSubject: `Appointment Assigned - ${companyName}`,
         emailHtml: `
-          <h2>Your Technician Has Been Assigned</h2>
+          <h2>Your ${isVirtual ? 'Session' : 'Appointment'} Has Been Assigned</h2>
           <p>Hi ${customerName},</p>
-          <p><strong>${employeeName}</strong> has been assigned to your <strong>${serviceType}</strong> service.</p>
+          <p><strong>${employeeName}</strong> has been assigned to your <strong>${serviceType}</strong> ${isVirtual ? 'session' : 'appointment'}.</p>
           <p><strong>When:</strong> ${dateStr} at ${timeStr}</p>
-          <p>We'll send you updates when your technician is on their way.</p>
+          ${isVirtual ? '<p>You will receive session details once your appointment is confirmed.</p>' : isAtBusiness ? `<p><strong>Location:</strong> ${address}</p>` : '<p>We\'ll send you updates when your specialist is on their way.</p>'}
           <p>Thanks for choosing ${companyName}!</p>
         `,
       },
       employee: {
-        sms: `NEW JOB: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. Address: ${address}. Please accept or decline in your dashboard.`,
+        sms: isVirtual
+          ? `NEW JOB: ${serviceType} (Virtual) for ${customerName} on ${dateStr} at ${timeStr}. Please accept or decline in your dashboard.`
+          : `NEW JOB: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. ${locationInfo}. Please accept or decline in your dashboard.`,
         emailSubject: `New Job Assignment - ${serviceType}`,
         emailHtml: `
           <h2>New Job Assignment</h2>
-          <p>You have been assigned a new job:</p>
+          <p>You have been assigned a new ${isVirtual ? 'virtual ' : ''}job:</p>
           <ul>
-            <li><strong>Service:</strong> ${serviceType}</li>
+            <li><strong>Service:</strong> ${serviceType}${isVirtual ? ' (Virtual)' : isAtBusiness ? ' (At Business)' : ''}</li>
             <li><strong>Customer:</strong> ${customerName}</li>
             <li><strong>Date/Time:</strong> ${dateStr} at ${timeStr}</li>
-            <li><strong>Address:</strong> ${address}</li>
+            ${!isVirtual ? `<li><strong>${isAtBusiness ? 'Business Address' : 'Customer Address'}:</strong> ${address}</li>` : ''}
           </ul>
           <p>Please log into your dashboard to accept or decline this job.</p>
         `,
@@ -272,30 +359,36 @@ function generateMessages(
     },
     accepted: {
       customer: {
-        sms: `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}.${estimatedArrival ? ` Estimated arrival: ${estimatedArrival} minutes.` : ''} See you soon! - ${companyName}`,
+        sms: isVirtual
+          ? `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} session on ${dateStr} at ${timeStr}. ${virtualInfo} - ${companyName}`
+          : isAtBusiness
+          ? `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}. Visit us at ${address}. See you soon! - ${companyName}`
+          : `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}.${estimatedArrival ? ` Estimated arrival: ${estimatedArrival} minutes.` : ''} See you soon! - ${companyName}`,
         emailSubject: `Appointment Confirmed - ${companyName}`,
         emailHtml: `
-          <h2>Your Appointment is Confirmed</h2>
+          <h2>Your ${isVirtual ? 'Session' : 'Appointment'} is Confirmed</h2>
           <p>Hi ${customerName},</p>
-          <p><strong>${employeeName}</strong> has confirmed your appointment.</p>
+          <p><strong>${employeeName}</strong> has confirmed your ${isVirtual ? 'session' : 'appointment'}.</p>
           <p><strong>Service:</strong> ${serviceType}</p>
           <p><strong>When:</strong> ${dateStr} at ${timeStr}</p>
-          ${estimatedArrival ? `<p><strong>Estimated Arrival:</strong> ${estimatedArrival} minutes</p>` : ''}
+          ${isVirtual ? virtualHtmlInfo : isAtBusiness ? `<p><strong>Location:</strong> ${address}</p>` : (estimatedArrival ? `<p><strong>Estimated Arrival:</strong> ${estimatedArrival} minutes</p>` : '')}
           <p>We look forward to serving you!</p>
         `,
       },
       employee: {
-        sms: `Job accepted. ${customerName} has been notified. Address: ${address}`,
+        sms: isVirtual
+          ? `Job accepted. ${customerName} has been notified with ${meetingLink ? 'the video session link' : 'phone call details'}.`
+          : `Job accepted. ${customerName} has been notified. ${locationInfo}`,
         emailSubject: `Job Confirmed - ${serviceType}`,
-        emailHtml: `<p>You have accepted the job for ${customerName}. The customer has been notified.</p>`,
+        emailHtml: `<p>You have accepted the job for ${customerName}. The customer has been notified${isVirtual && meetingLink ? ` with the video session link: <a href="${meetingLink}">${meetingLink}</a>` : ''}.</p>`,
       },
     },
     en_route: {
       customer: {
         sms: `${employeeName} is on the way! ${estimatedArrival ? `ETA: ${estimatedArrival} minutes.` : ''} - ${companyName}`,
-        emailSubject: `Your Technician is On The Way - ${companyName}`,
+        emailSubject: `Your Specialist is On The Way - ${companyName}`,
         emailHtml: `
-          <h2>Your Technician is On The Way!</h2>
+          <h2>Your Specialist is On The Way!</h2>
           <p>Hi ${customerName},</p>
           <p><strong>${employeeName}</strong> is heading to your location now.</p>
           ${estimatedArrival ? `<p><strong>Estimated Arrival:</strong> ${estimatedArrival} minutes</p>` : ''}
@@ -310,10 +403,18 @@ function generateMessages(
     },
     arrived: {
       customer: {
-        sms: `${employeeName} has arrived! Please let them in. - ${companyName}`,
-        emailSubject: `Your Technician Has Arrived - ${companyName}`,
-        emailHtml: `
-          <h2>Your Technician Has Arrived</h2>
+        sms: isAtBusiness
+          ? `${employeeName} is ready for your ${serviceType} appointment! Please check in when you arrive. - ${companyName}`
+          : `${employeeName} has arrived! Please let them in. - ${companyName}`,
+        emailSubject: isAtBusiness ? `We're Ready For You - ${companyName}` : `Your Specialist Has Arrived - ${companyName}`,
+        emailHtml: isAtBusiness ? `
+          <h2>We're Ready For Your Appointment</h2>
+          <p>Hi ${customerName},</p>
+          <p><strong>${employeeName}</strong> is ready for your <strong>${serviceType}</strong> appointment.</p>
+          <p><strong>Location:</strong> ${address}</p>
+          <p>Please check in when you arrive!</p>
+        ` : `
+          <h2>Your Specialist Has Arrived</h2>
           <p>Hi ${customerName},</p>
           <p><strong>${employeeName}</strong> has arrived at your location.</p>
           <p>Please let them in so they can begin your ${serviceType} service.</p>
@@ -327,12 +428,12 @@ function generateMessages(
     },
     completed: {
       customer: {
-        sms: `Your ${serviceType} service is complete! Thank you for choosing ${companyName}. We'd love your feedback!`,
-        emailSubject: `Service Completed - ${companyName}`,
+        sms: `Your ${serviceType} ${isVirtual ? 'session' : 'service'} is complete! Thank you for choosing ${companyName}. We'd love your feedback!`,
+        emailSubject: `${isVirtual ? 'Session' : 'Service'} Completed - ${companyName}`,
         emailHtml: `
-          <h2>Service Completed</h2>
+          <h2>${isVirtual ? 'Session' : 'Service'} Completed</h2>
           <p>Hi ${customerName},</p>
-          <p>Your <strong>${serviceType}</strong> service has been completed by <strong>${employeeName}</strong>.</p>
+          <p>Your <strong>${serviceType}</strong> ${isVirtual ? 'session' : 'service'} has been completed by <strong>${employeeName}</strong>.</p>
           <p>Thank you for choosing ${companyName}!</p>
           <p>We'd love to hear about your experience. Please take a moment to leave us a review.</p>
         `,
@@ -346,8 +447,8 @@ function generateMessages(
   };
 
   return templates[type]?.[recipient] || {
-    sms: `Update from ${companyName}: Your service status has changed.`,
-    emailSubject: `Service Update - ${companyName}`,
-    emailHtml: `<p>Your service status has been updated.</p>`,
+    sms: `Update from ${companyName}: Your ${isVirtual ? 'session' : 'service'} status has changed.`,
+    emailSubject: `${isVirtual ? 'Session' : 'Service'} Update - ${companyName}`,
+    emailHtml: `<p>Your ${isVirtual ? 'session' : 'service'} status has been updated.</p>`,
   };
 }

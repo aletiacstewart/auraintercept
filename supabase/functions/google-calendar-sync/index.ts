@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    let { action, companyId, appointmentId, appointment } = body;
+    let { action, companyId, appointmentId, appointment, requestConference } = body;
 
     // If appointment object is missing but we have an appointmentId, fetch it
     if (!appointment && appointmentId) {
@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
     const companyName = company?.name || 'Service';
 
     if (action === 'sync_appointment') {
-      return await syncAppointmentToGoogle(supabase, accessToken, companyId, appointment, companyName);
+      return await syncAppointmentToGoogle(supabase, accessToken, companyId, appointment, companyName, requestConference);
     } else if (action === 'delete_event') {
       return await deleteEventFromGoogle(supabase, accessToken, companyId, appointmentId);
     } else if (action === 'sync_all' || action === 'full_sync' || action === 'manual_sync') {
@@ -160,7 +160,8 @@ async function syncAppointmentToGoogle(
   accessToken: string,
   companyId: string,
   appointment: any,
-  companyName: string
+  companyName: string,
+  requestConference?: boolean
 ): Promise<Response> {
   try {
     // Check if we already have a mapping for this appointment
@@ -174,7 +175,7 @@ async function syncAppointmentToGoogle(
     const startDateTime = new Date(appointment.datetime);
     const endDateTime = new Date(startDateTime.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
 
-    const eventData = {
+    const eventData: any = {
       summary: `${appointment.service_type} - ${appointment.customer_name}`,
       description: [
         `Customer: ${appointment.customer_name}`,
@@ -202,13 +203,29 @@ async function syncAppointmentToGoogle(
       },
     };
 
+    // Add conferenceData for virtual appointments when requested
+    const isVirtual = appointment.delivery_type === 'virtual';
+    const shouldAddConference = requestConference || isVirtual;
+    
+    if (shouldAddConference) {
+      eventData.conferenceData = {
+        createRequest: {
+          requestId: crypto.randomUUID(),
+          conferenceSolutionKey: { type: 'hangoutsMeet' },
+        },
+      };
+    }
+
+    // Determine API URL with conference support
+    const conferenceParam = shouldAddConference ? '?conferenceDataVersion=1' : '';
+
     let response;
     let googleEventId;
 
     if (existingMapping?.google_event_id) {
       // Update existing event
       response = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingMapping.google_event_id}`,
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingMapping.google_event_id}${conferenceParam}`,
         {
           method: 'PATCH',
           headers: {
@@ -222,7 +239,7 @@ async function syncAppointmentToGoogle(
     } else {
       // Create new event
       response = await fetch(
-        'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events${conferenceParam}`,
         {
           method: 'POST',
           headers: {
@@ -246,6 +263,18 @@ async function syncAppointmentToGoogle(
     }
 
     googleEventId = data.id;
+    
+    // Extract Google Meet link if available
+    const hangoutLink = data.hangoutLink || data.conferenceData?.entryPoints?.find((e: any) => e.entryPointType === 'video')?.uri || null;
+    
+    if (hangoutLink) {
+      console.log('Google Meet link generated:', hangoutLink);
+      // Save meeting link to appointment
+      await supabase
+        .from('appointments')
+        .update({ meeting_link: hangoutLink })
+        .eq('id', appointment.id);
+    }
 
     // Update or create mapping
     await supabase
@@ -271,7 +300,7 @@ async function syncAppointmentToGoogle(
     console.log('Appointment synced to Google Calendar:', appointment.id, '->', googleEventId);
 
     return new Response(
-      JSON.stringify({ success: true, googleEventId }),
+      JSON.stringify({ success: true, googleEventId, meetingLink: hangoutLink }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: any) {

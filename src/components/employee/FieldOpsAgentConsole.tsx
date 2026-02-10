@@ -39,7 +39,8 @@ import {
   Wrench,
   FileText,
   Receipt,
-  CreditCard
+  CreditCard,
+  Video
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -126,6 +127,8 @@ interface JobAssignment {
     service_type: string;
     datetime: string;
     customer_address: string | null;
+    delivery_type: string | null;
+    meeting_link: string | null;
   } | null;
 }
 
@@ -166,9 +169,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     return agents.filter(agent => agent.category === 'field_operations');
   }, [agents]);
   
-  // Show ALL quick actions to everyone - company/platform admins see them but with visual indicators
-  // All 9 Field Ops agents are visible to everyone for consistency
-  const availableActions = QUICK_ACTIONS;
+  // availableActions computed after assignedJobs query below
   
   const [inputValue, setInputValue] = useState('');
   const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
@@ -229,7 +230,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             customer_email,
             service_type,
             datetime,
-            customer_address
+            customer_address,
+            delivery_type,
+            meeting_link
           )
         `)
         .eq('employee_id', user.id)
@@ -246,6 +249,18 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     enabled: !!user?.id,
     refetchInterval: 30000,
   });
+
+  // Filter quick actions based on job delivery types
+  const availableActions = useMemo(() => {
+    const allVirtual = assignedJobs.length > 0 && assignedJobs.every(j => j.appointments?.delivery_type === 'virtual');
+    const allAtBusiness = assignedJobs.length > 0 && assignedJobs.every(j => j.appointments?.delivery_type === 'in_person_business');
+    
+    return QUICK_ACTIONS.filter(action => {
+      if (allVirtual) return !['directions', 'enroute', 'arrive_start'].includes(action.id);
+      if (allAtBusiness) return !['directions', 'enroute'].includes(action.id);
+      return true;
+    });
+  }, [assignedJobs]);
 
   // Filter jobs based on selector mode
   const getFilteredJobs = () => {

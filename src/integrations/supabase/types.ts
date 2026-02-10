@@ -385,11 +385,13 @@ export type Database = {
           datetime: string
           deal_stage: string | null
           deal_value: number | null
+          delivery_type: string
           duration_minutes: number
           email_opt_out: boolean
           employee_id: string | null
           id: string
           last_synced_at: string | null
+          meeting_link: string | null
           notes: string | null
           reminder_1h_sent: boolean | null
           reminder_1h_sent_at: string | null
@@ -417,11 +419,13 @@ export type Database = {
           datetime: string
           deal_stage?: string | null
           deal_value?: number | null
+          delivery_type?: string
           duration_minutes?: number
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
           last_synced_at?: string | null
+          meeting_link?: string | null
           notes?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
@@ -449,11 +453,13 @@ export type Database = {
           datetime?: string
           deal_stage?: string | null
           deal_value?: number | null
+          delivery_type?: string
           duration_minutes?: number
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
           last_synced_at?: string | null
+          meeting_link?: string | null
           notes?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
