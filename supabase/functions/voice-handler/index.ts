@@ -388,6 +388,9 @@ async function handleProcess(
   );
 
   try {
+    // Determine the active agent (supports handoffs across turns)
+    const activeAgent = collectedInfo._activeAgent || 'triage';
+
     const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
       method: 'POST',
       headers: {
@@ -399,8 +402,10 @@ async function handleProcess(
         systemPrompt,
         model: 'google/gemini-2.5-flash',
         companyId,
-        agentType: 'triage',
+        agentType: activeAgent,
         isInternalRequest: true,
+        channel: 'phone',
+        conversationHistory,
       }),
     });
 
@@ -409,6 +414,12 @@ async function handleProcess(
     try {
       const aiData = JSON.parse(aiText);
       reply = aiData.reply || aiData.response || aiData.message || reply;
+
+      // Track agent handoffs for phone calls
+      if (aiData.handoff_to) {
+        collectedInfo._activeAgent = aiData.handoff_to;
+        console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
+      }
     } catch {
       if (aiText && aiText.length < 500) reply = aiText;
     }
