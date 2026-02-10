@@ -1,39 +1,43 @@
 
 
-# Fix Voice Chat Audio — Remove ALL Overrides (For Real This Time)
+## Fix: Ensure Voice Icon Visibility on Customer Console
 
-## Problem
+### Problem
+The voice (Mic) icon and phone icon in the customer console header are conditionally rendered based on `get_company_feature_flags`. The database function and GlassHeader code are correct, but there may be a timing/state issue where the feature flags query runs before a company is fully selected, causing `hasVoiceChat` to remain `false`.
 
-The last fix added "conditional" overrides, but the edge function **always** returns `firstMessage` and `systemPrompt`, so `hasOverrides` is **always true**. The SDK continues sending the corrupted `MaxDepthReached` payload, and ElevenLabs silences the agent.
+### Root Cause Analysis
+In `AIAgentConsole.tsx`:
+- Line 260: `const hasVoiceChat = !!featureFlags?.has_voice_chat;`
+- Line 262: `const twilioPhone = featureFlags?.twilio_phone_number;` (still named "twilio" but returns SignalWire number)
+- The feature flags query at line 244-258 depends on `companyId`, which is only set after company selection on the `/customer-portal` route.
 
-## Root Cause
+The verified database query for company `04c57cbe-...` returns `has_voice_chat: true`, `has_phone: true`, `has_sms: true`. So the icons should appear once the company is selected.
 
-The ElevenLabs React SDK v0.12.1 cannot serialize the `{ prompt: { prompt: string } }` override structure. It produces `MaxDepthReached` errors. This is an SDK bug/limitation — no client-side override will work with this SDK version.
+### Changes
 
-## Fix
+#### 1. Add defensive logging for feature flag state
+Add a `console.log` in `AIAgentConsole.tsx` after the feature flags query resolves to confirm the values at runtime. This will help verify the icons are being correctly gated.
 
-**Delete ALL override-related code** from `VoiceChat.tsx`. No conditional logic, no "only if present" — just remove it entirely.
+#### 2. Rename misleading variable
+Rename `twilioPhone` to `signalwirePhone` (line 262) to match the actual data source and avoid confusion during future debugging.
 
-### Changes to `src/components/ai/VoiceChat.tsx`
+#### 3. Verify GlassHeader receives correct props
+Confirm that `showPhone` and `showVoice` props are being passed with the correct boolean values after company selection by checking the rendered component in the browser.
 
-1. **Remove lines 321-330** — the entire `sessionOverrides` construction block and `hasOverrides` variable
-2. **Remove `hasOverrides` from the debug log** on line 340
-3. **Clean all three `startSession()` calls** — remove the spread operator that injects overrides:
-   - WebRTC call (line 349): remove `...(hasOverrides ? { overrides: sessionOverrides } : {})`
-   - WebSocket signed_url call (line 356): same removal
-   - WebSocket agentId call (line 364): same removal
+### Technical Details
 
-### Result
+**File: `src/components/ai/AIAgentConsole.tsx`**
 
-The `startSession` calls become clean:
-```tsx
-await conversation.startSession({
-  conversationToken: data.token,
-  connectionType: "webrtc",
-});
-```
+- Rename `twilioPhone` variable to `signalwirePhone` on line 262
+- Update reference on line 264 (`callablePhone`) accordingly
+- Add a `useEffect` with console logging for `featureFlags` to trace the issue at runtime:
+  ```tsx
+  useEffect(() => {
+    if (featureFlags) {
+      console.log('[AIAgentConsole] Feature flags:', featureFlags);
+    }
+  }, [featureFlags]);
+  ```
 
-The agent will use its dashboard-configured greeting and prompt. The edge function can keep returning `firstMessage`/`systemPrompt` — we just won't pass them to the SDK.
-
-### No other files change.
+This is a minimal, low-risk change to verify and fix icon visibility. No database or edge function changes are needed — the backend is already returning the correct data.
 
