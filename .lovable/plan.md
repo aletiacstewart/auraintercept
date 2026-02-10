@@ -1,59 +1,121 @@
 
 
-# Fix: Make Jessica Fast, Intuitive, and Responsive
+# Rebuild: TwiML to SignalWire SWML AI Agent
 
-You do NOT need to switch to SignalWire's AI agent. The current system has the right architecture -- the problems are three specific bugs in the voice logic that cause Jessica to repeat herself and feel slow. Here's how we fix them.
+## Restore Point
 
-## What's Wrong (3 Root Causes)
+Your current codebase version is preserved in Lovable's Version History (clock icon in sidebar). You can restore to this exact state at any time if needed.
 
-1. **Two AI calls run at the same time.** When the 3-second timer fires, the original AI call keeps running alongside a new background call. Both produce different answers, and the wrong one often wins -- making Jessica say something that ignores what you just told her.
+## Summary
 
-2. **The AI sees the conversation history twice.** The system prompt includes the full conversation at the bottom ("CONVERSATION SO FAR:..."), AND the same history is sent separately. This confuses the AI into repeating earlier responses instead of moving forward.
+Replace the 1043-line TwiML voice pipeline with a ~350-line SWML-based system. SignalWire will handle AI, speech recognition, and text-to-speech natively, eliminating all hold loops and reducing response latency from 10-16 seconds to under 1 second.
 
-3. **The AI model is too slow for phone calls.** The current model (`gemini-2.5-flash-lite`) is cheap but regularly misses the 3-second deadline, triggering the hold loop on almost every turn. This makes Jessica feel unresponsive.
+## Changes
 
-## The Fixes
+### 1. Rewrite `supabase/functions/voice-handler/index.ts` (1043 lines down to ~350)
 
-### Fix 1: Kill the first AI call when the timer fires
-When the 3-second deadline passes, the original AI request will be cancelled so only ONE response is ever generated per turn. No more competing answers.
+**Remove entirely:**
+- `ttsAudioUrl()` helper
+- `buildPlayThenGather()` TwiML builder
+- `HOLD_PHRASES` constant
+- `startAIGreeting()` (replaced by SWML document builder)
+- `handleProcess()` (~160 lines of race/timer/abort/TTS pipeline)
+- `handlePickup()` (~130 lines of retry loop)
+- `handleProcessBackground()` (~110 lines of background AI)
+- `handleTimeout()` (~35 lines)
+- `generateTTSAudio()` (~40 lines of ElevenLabs TTS + Storage upload)
 
-### Fix 2: Remove duplicate conversation history
-The conversation history will only be sent once (as a parameter), not embedded in the system prompt too. This gives the AI clean, unambiguous context so it actually listens to what you said.
+**Keep as-is:**
+- `normalizePhoneNumber()`
+- `escapeXml()`, `escapeXmlUrl()`
+- `twimlResponse()` (still needed for ring-first dial and outbound one-way calls)
+- `handleOutbound()` (one-way reminder/followup calls stay TwiML-based)
+- `handleOutboundResponse()` (DTMF handling for one-way calls)
+- `handleStatus()` (call status callbacks)
+- `handleDialStatus()` (but rewritten to return SWML instead of calling startAIGreeting)
 
-### Fix 3: Add strict flow rules
-New rules will be added to prevent Jessica from re-listing services after you've already chosen one, and to enforce "one question at a time" strictly.
+**Rewrite:**
+- `handleIncoming()`: Look up company, build SWML document, return JSON response (not TwiML)
+- `handleDialStatus()`: When ring-first fails, return SWML document instead of TwiML greeting
+- Router switch statement: Remove `process`, `pickup`, `process-background`, `timeout` cases
 
-### Fix 4: Upgrade to a faster, smarter model
-Switch from `gemini-2.5-flash-lite` to `gemini-2.5-flash` for phone calls. This model is still fast but significantly better at following instructions, meaning it will respond within 3 seconds more often and understand context better.
+**New function: `buildSWMLDocument()`**
+Builds the SWML JSON containing:
+- Jessica's system prompt built from `buildPhoneSystemPrompt()` (kept)
+- ElevenLabs voice: `elevenlabs.<voice_id>:eleven_flash_v2_5` (pulled from `tenant_integrations.elevenlabs_voice_id`)
+- Custom greeting as `ai.prompt.first_sentence`
+- Speech fillers for natural pauses: `["one moment", "hmm", "let me check"]`
+- SWAIG function definitions pointing to the `voice-swaig` endpoint
+- `post_prompt_url` pointing to `voice-post-prompt` endpoint
+- Company ID and call log ID in `meta_data` so SWAIG functions know the context
 
-## Technical Details
+**Response format change for SWML routes:**
+- `handleIncoming` and `handleDialStatus` (AI takeover) will return `Content-Type: application/json` with the SWML document instead of `Content-Type: application/xml` with TwiML
+- SignalWire auto-detects the response format
 
-All changes are in one file: `supabase/functions/voice-handler/index.ts`
+### 2. Create `supabase/functions/voice-swaig/index.ts` (new, ~250 lines)
 
-### Change 1: AbortController in handleProcess (lines 544-584)
-- Create an AbortController BEFORE the race
-- When the 3-second timer wins, call `controller.abort()` to kill the original AI fetch
-- Only the background call will produce a response
+SWAIG webhook handler for SignalWire AI tool calls. When the AI agent decides to perform an action during conversation, SignalWire POSTs to this endpoint.
 
-### Change 2: Remove "CONVERSATION SO FAR" from buildPhoneSystemPrompt (lines 93-99)
-- Delete lines 93-99 that embed conversation history in the system prompt
-- Add new strict rules:
-  - "Once the caller mentions a service, do NOT list services again. Ask for their name immediately."
-  - "NEVER say 'What else can I help you with?' during a booking flow."
-  - "Each response must contain exactly ONE question."
+**Functions handled:**
+- `check_availability`: Queries `appointments` and `employees` tables, returns available time slots as text the AI speaks
+- `book_appointment`: Creates an appointment record in the database, returns confirmation text
+- `transfer_call`: Returns SWML action to connect caller to business owner's phone number
+- `end_call`: Returns goodbye message and hangup action
 
-### Change 3: Upgrade model (lines 536 and 848)
-- Change `google/gemini-2.5-flash-lite` to `google/gemini-2.5-flash` in both `handleProcess` and `handleProcessBackground`
+**How it works:**
+- SignalWire sends: `{ function: "check_availability", argument: { parsed: { service_type: "...", preferred_date: "..." } }, meta_data: { company_id: "...", call_log_id: "..." } }`
+- The function routes based on `function` name, queries the database using `meta_data.company_id`, and returns: `{ response: "Text the AI will speak" }`
+- For transfers, includes `action` array with SWML connect instructions
 
-## Expected Improvement
+### 3. Create `supabase/functions/voice-post-prompt/index.ts` (new, ~80 lines)
 
-| Issue | Before | After |
-|-------|--------|-------|
-| Response time | Regularly exceeds 3s, triggers hold loop | Faster model hits deadline more often |
-| Duplicate responses | Two AI calls compete | Original is cancelled, only one survives |
-| Repeating services | AI sees history twice, loops back | Single clean history, strict flow rules |
-| Ignoring caller input | Confused by duplicate context | Clear context, better model comprehension |
+Post-call summary handler. SignalWire sends conversation data after the AI call ends.
 
-## No database changes needed
-All changes are within the voice-handler edge function code only.
+**What it does:**
+- Receives the post-prompt summary from SignalWire
+- Extracts the AI-generated summary text
+- Updates the `call_logs` record (found via `meta_data.call_log_id`) with:
+  - `summary`: AI-generated conversation summary
+  - `status`: "completed"
+  - `ended_at`: timestamp
+
+### 4. Update `supabase/config.toml`
+
+Add two new function entries:
+```
+[functions.voice-swaig]
+verify_jwt = false
+
+[functions.voice-post-prompt]
+verify_jwt = false
+```
+
+Both use `verify_jwt = false` because SignalWire sends webhooks without JWT authentication.
+
+## What Stays Unchanged
+
+- **Outbound one-way calls** (reminders, follow-ups): These still use pre-generated TTS audio and TwiML since they are not interactive AI conversations. The `outbound-call` function and `handleOutbound`/`handleOutboundResponse` in voice-handler are untouched.
+- **Web voice chat**: ElevenLabs Conversational AI via `elevenlabs-conversation-token` is completely separate.
+- **SMS handling**: `sms-handler` is unrelated.
+- **Dashboard, call logs, booking system**: All existing UI and database tables work as-is.
+- **Company voice/prompt customization**: The database fields (`elevenlabs_voice_id`, `ai_agent_prompt`, `ai_voice_greeting`) are read dynamically and injected into SWML.
+
+## No Database Changes Needed
+
+All changes are edge function code only.
+
+## SignalWire Setup Required (one-time)
+
+No dashboard configuration needed. The SWML document returned by `voice-handler` tells SignalWire which ElevenLabs voice to use. However, for ElevenLabs voices specifically, you may need to add your ElevenLabs API key to SignalWire. If the voice doesn't work on the first test call, we'll check SignalWire's docs for the exact configuration step.
+
+## Expected Outcome
+
+| Metric | Before (TwiML) | After (SWML) |
+|--------|----------------|--------------|
+| Response latency | 10-16 seconds | Under 1 second |
+| Hold phrases per call | 2-3 | 0 |
+| Code lines (voice-handler) | 1043 | ~350 |
+| Edge function calls per turn | 3-5 | 0-1 (only tool calls) |
+| Conversation feel | Robotic, repetitive | Natural, real-time |
 
