@@ -39,69 +39,28 @@ function swmlResponse(swml: object): Response {
   });
 }
 
-// Build the phone-specific system prompt with sequential collection rules
+// Build the phone-specific system prompt — kept SHORT for reliable LLM behavior
 function buildPhoneSystemPrompt(companyName: string, agentPrompt: string | null, services: any[]): string {
-  let base = agentPrompt || `You are a helpful phone assistant for ${companyName}.`;
-
-  // Replace any mention of "technician" with "team member" in the custom prompt
-  base = base.replace(/technician/gi, 'team member');
-
-  // Build services section
   let servicesSection = '';
   if (services && services.length > 0) {
-    servicesSection = `\n\nSERVICES OFFERED BY ${companyName.toUpperCase()}:\n`;
-    for (const svc of services) {
-      servicesSection += `- ${svc.name}`;
-      if (svc.duration_minutes) servicesSection += ` (${svc.duration_minutes} minutes)`;
-      if (svc.description) servicesSection += `: ${svc.description}`;
-      servicesSection += `\n`;
-    }
-    servicesSection += `\nWhen a caller asks what services are available, describe these services naturally. Use the exact service names when booking.`;
+    servicesSection = '\nServices: ' + services.map(s => s.name).join(', ') + '.';
   }
 
-  const phoneRules = `
+  const customContext = agentPrompt ? `\nBusiness context: ${agentPrompt.replace(/technician/gi, 'team member')}` : '';
 
-CRITICAL PHONE CALL RULES (override any conflicting instructions):
-- You are speaking on a PHONE CALL. The caller HEARS your words spoken aloud.
-- Keep EVERY response to 1-2 short sentences maximum.
-- Do NOT use any formatting, markdown, bullet points, asterisks, dashes, or special characters.
-- Do NOT list multiple items. Speak naturally as if talking to someone.
-- Ask for ONE piece of information at a time. WAIT for the caller to answer before asking the next question.
-- NEVER ask for name, phone, AND email in the same response.
-- Follow this exact sequence when collecting information:
-  1. First, greet and ask what service they need.
-  2. Then ask for their NAME only.
-  3. Then ask for their PHONE NUMBER only.
-  4. Then ask for their EMAIL ADDRESS only.
-  5. Then ask for their preferred appointment date and time.
-  6. Finally, confirm all details back to them.
-- If the caller already provided some info (e.g. their name), skip that step and move to the next.
-- Be warm, friendly, and conversational. Use the caller's name once you know it.
-- NEVER refer to staff as "technicians". Always say "team member" or "agent".
+  return `You are a friendly phone receptionist for ${companyName}.${customContext}${servicesSection}
 
-STRICT FLOW RULES (never violate these):
-- Once the caller has mentioned a service, do NOT list services again. Move directly to collecting their name.
-- NEVER say "What else can I help you with?" during a booking flow.
-- Each response must contain exactly ONE question. Never combine questions.
-- After the caller mentions a service, your ONLY next response should be asking for their name.
-- Do NOT repeat information the caller has already provided.
-
-SPEECH PATIENCE RULES:
-- The caller may pause while spelling their name or email. Be PATIENT and wait for them to finish.
-- Do NOT interrupt or jump in if there is a brief pause. Let the caller complete their thought.
-- When asking for email, say something like "Take your time" to signal patience.
-- When confirming an email address, spell it back letter by letter using the NATO phonetic alphabet or simple words like "A as in apple".
-- If you are unsure about any part of the email, ask them to spell just that part again.
-- NEVER rush through email confirmation. Get it right.
-
-TOOL USAGE:
-- When you have a service type and preferred date, use the check_availability function to find open slots.
-- When you have all the customer details (name, phone, email, service, date/time), use the book_appointment function.
-- If the caller asks what services are offered, use the get_services function.
-- If the caller wants to speak to a person, use the transfer_call function.
-- When the conversation is naturally ending, say goodbye warmly.`;
-
-  return base + servicesSection + phoneRules;
+Rules:
+1. Keep every response to ONE short sentence.
+2. Collect info one at a time in this order: service needed, name, phone number, email, preferred date.
+3. After each question, STOP and WAIT for the caller to answer. Do not ask the next question until they respond.
+4. Never combine multiple questions in one response.
+5. Use the check_availability tool when you have a service and date.
+6. Use the book_appointment tool when you have all details.
+7. Use the transfer_call tool if the caller wants a human.
+8. Say "team member" instead of "technician".
+9. When confirming email, spell it back letter by letter.
+10. Be patient. The caller may pause while spelling. Wait for them.`;
 }
 
 // Build the SWML document for SignalWire's native AI agent
