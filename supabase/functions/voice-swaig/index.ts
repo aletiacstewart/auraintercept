@@ -26,11 +26,13 @@ Deno.serve(async (req) => {
   }
 
   const functionName = body.function || '';
-  const args = body.argument?.parsed || {};
+  const rawParsed = body.argument?.parsed;
+  const args = Array.isArray(rawParsed) ? (rawParsed[0] || {}) : (rawParsed || {});
   const metaData = body.meta_data || {};
   const companyId = metaData.company_id || '';
   const callLogId = metaData.call_log_id || '';
 
+  console.log(`SWAIG raw argument:`, JSON.stringify(body.argument));
   console.log(`SWAIG function: ${functionName} companyId=${companyId} callLogId=${callLogId} args=${JSON.stringify(args)}`);
 
   if (!companyId) {
@@ -131,7 +133,7 @@ async function handleCheckAvailability(
     .eq('company_id', companyId)
     .gte('datetime', dayStart)
     .lte('datetime', dayEnd)
-    .in('status', ['pending', 'confirmed', 'in-progress']);
+    .in('status', ['pending', 'confirmed', 'in-progress', 'scheduled']);
 
   // Find available slots
   const availableSlots: string[] = [];
