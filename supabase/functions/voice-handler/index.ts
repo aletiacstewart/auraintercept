@@ -150,6 +150,7 @@ function buildSWMLDocument(
             prompt: {
               text: systemPrompt,
               temperature: 0.7,
+              first_message: greeting,
             },
             post_prompt: {
               text: "Summarize the conversation. Include: customer name, phone number, email, service requested, appointment date/time if booked, and any other key details.",
