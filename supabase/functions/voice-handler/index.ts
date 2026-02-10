@@ -37,14 +37,23 @@ async function ttsAudioUrl(
 // Build TwiML: <Play> before <Gather> with a minimal <Say> inside, then <Redirect> for timeout
 function buildPlayThenGather(
   audioUrl: string | null, fallbackText: string,
-  gatherUrl: string, timeoutUrl: string
+  gatherUrl: string, timeoutUrl: string,
+  holdAudioUrls?: string[]
 ): string {
-  const playPart = audioUrl
-    ? `<Play>${escapeXmlUrl(audioUrl)}</Play>`
-    : '';
-  const gatherContent = audioUrl
-    ? '<Say voice="Polly.Joanna"> </Say>'
-    : `<Say voice="Polly.Joanna">${escapeXml(fallbackText)}</Say>`;
+  // Determine what to play: primary audioUrl, or a hold audio fallback, or Polly as last resort
+  let playPart = '';
+  let gatherContent = '<Say voice="Polly.Joanna"> </Say>';
+
+  if (audioUrl) {
+    playPart = `<Play>${escapeXmlUrl(audioUrl)}</Play>`;
+  } else if (holdAudioUrls && holdAudioUrls.length > 0) {
+    // Use a random pre-cached Jessica hold audio as fallback instead of Polly
+    const randomHold = holdAudioUrls[Math.floor(Math.random() * holdAudioUrls.length)];
+    playPart = `<Play>${escapeXmlUrl(randomHold)}</Play>`;
+  } else {
+    // Absolute last resort: Polly (no ElevenLabs creds at all)
+    gatherContent = `<Say voice="Polly.Joanna">${escapeXml(fallbackText)}</Say>`;
+  }
 
   return `
     ${playPart}
@@ -233,6 +242,13 @@ async function handleIncoming(
   return await startAIGreeting(supabase, supabaseUrl, company, company_id, logId, elevenlabs_api_key, elevenlabs_voice_id);
 }
 
+// Hold phrases to pre-generate in Jessica's voice at call start
+const HOLD_PHRASES = [
+  "Sure, let me look into that for you.",
+  "One moment, I'm just checking on that.",
+  "Almost ready, just one more second.",
+];
+
 // Helper: Start the AI greeting flow (used by both incoming and dial-status fallback)
 async function startAIGreeting(
   supabase: any, supabaseUrl: string, company: any, companyId: string,
@@ -246,14 +262,46 @@ async function startAIGreeting(
   }
 
   const voiceId = elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9';
-  const audioUrl = elevenlabsApiKey
-    ? await ttsAudioUrl(supabase, companyId, greeting, elevenlabsApiKey, voiceId)
-    : null;
 
+  if (elevenlabsApiKey) {
+    // Generate greeting + 3 hold phrases in parallel
+    const [greetingUrl, ...holdUrls] = await Promise.all([
+      ttsAudioUrl(supabase, companyId, greeting, elevenlabsApiKey, voiceId),
+      ...HOLD_PHRASES.map(phrase =>
+        ttsAudioUrl(supabase, companyId, phrase, elevenlabsApiKey, voiceId)
+      ),
+    ]);
+
+    // Filter out any failed TTS results
+    const validHoldUrls = holdUrls.filter((url): url is string => url !== null);
+    console.log(`[startAIGreeting] Generated ${validHoldUrls.length} hold audio clips`);
+
+    // Save hold audio URLs to call_logs metadata (fire-and-forget)
+    if (validHoldUrls.length > 0 && logId && !logId.startsWith('incoming_')) {
+      supabase.from('call_logs').update({
+        metadata: {
+          conversation_history: [],
+          collected_info: {},
+          hold_audio_urls: validHoldUrls,
+        },
+      }).eq('id', logId).then(() => {
+        console.log(`[startAIGreeting] Saved ${validHoldUrls.length} hold audio URLs to metadata`);
+      }).catch((err: any) => {
+        console.error('[startAIGreeting] Failed to save hold audio URLs:', err);
+      });
+    }
+
+    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
+    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
+
+    return twimlResponse(buildPlayThenGather(greetingUrl, greeting, gatherUrl, timeoutUrl, validHoldUrls));
+  }
+
+  // No ElevenLabs credentials — fall back to Polly
   const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
   const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
 
-  return twimlResponse(buildPlayThenGather(audioUrl, greeting, gatherUrl, timeoutUrl));
+  return twimlResponse(buildPlayThenGather(null, greeting, gatherUrl, timeoutUrl));
 }
 
 // === DIAL STATUS (ring-first callback) ===
@@ -539,11 +587,16 @@ async function handleProcess(
       // AI is still thinking — save state and return hold TwiML immediately
       console.log('[voice-handler] AI exceeded 3s deadline, returning hold message');
 
+      // Read existing metadata to preserve hold_audio_urls
+      const existingLogData = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data;
+      const existingHoldUrls = existingLogData?.metadata?.hold_audio_urls || [];
+
       // Fire-and-forget: don't block TwiML response
       supabase.from('call_logs').update({
         metadata: {
           conversation_history: conversationHistory,
           collected_info: collectedInfo,
+          hold_audio_urls: existingHoldUrls,
           ai_pending: true,
           pending_speech: speechResult,
           pending_system_prompt: systemPrompt,
@@ -567,6 +620,18 @@ async function handleProcess(
       }).catch(err => console.error('[voice-handler] Background fire-and-forget failed:', err));
 
       const holdUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
+
+      // Read hold audio URLs from metadata (already loaded above, but state may have been saved by now)
+      const holdAudioUrls: string[] = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data?.metadata?.hold_audio_urls || [];
+
+      if (holdAudioUrls.length > 0) {
+        return twimlResponse(`
+          <Play>${escapeXmlUrl(holdAudioUrls[0])}</Play>
+          <Redirect method="POST">${escapeXmlUrl(holdUrl)}</Redirect>
+        `);
+      }
+
+      // Fallback to Polly only if no pre-cached audio exists
       return twimlResponse(`
         <Say voice="Polly.Joanna">One moment please, let me check on that for you.</Say>
         <Pause length="4"/>
@@ -588,12 +653,17 @@ async function handleProcess(
     conversationHistory.push({ role: 'assistant', content: reply });
 
     // Run DB save and TTS generation in parallel for speed
+    // Preserve hold_audio_urls in metadata
+    const existingMeta = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data?.metadata || {};
+    const holdAudioUrlsForFallback: string[] = existingMeta.hold_audio_urls || [];
+
     const [_, replyAudioUrl] = await Promise.all([
       callLogId && !callLogId.startsWith('incoming_')
         ? supabase.from('call_logs').update({
             metadata: {
               conversation_history: conversationHistory,
               collected_info: collectedInfo,
+              hold_audio_urls: holdAudioUrlsForFallback,
             },
           }).eq('id', callLogId)
         : Promise.resolve(),
@@ -605,7 +675,7 @@ async function handleProcess(
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
-    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl));
+    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl, holdAudioUrlsForFallback));
   } catch (aiError) {
     console.error('AI response failed:', aiError);
     return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Someone will follow up with you. Goodbye.</Say><Hangup/>');
@@ -664,6 +734,7 @@ async function handlePickup(
       metadata: {
         conversation_history: conversationHistory,
         collected_info: collectedInfo,
+        hold_audio_urls: metadata.hold_audio_urls || [],
         ai_pending: undefined,
         pending_response: undefined,
         pending_speech: undefined,
@@ -687,7 +758,7 @@ async function handlePickup(
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
-    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl));
+    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl, metadata.hold_audio_urls || []));
   }
 
   // AI still processing
@@ -711,7 +782,7 @@ async function handlePickup(
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
-    return twimlResponse(buildPlayThenGather(null, fallback, gatherUrl, timeoutUrl));
+    return twimlResponse(buildPlayThenGather(null, fallback, gatherUrl, timeoutUrl, metadata.hold_audio_urls || []));
   }
 
   // Not ready yet — pause and redirect again
@@ -721,6 +792,18 @@ async function handlePickup(
   }).eq('id', callLogId);
 
   const pickupUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
+
+  // Use pre-cached Jessica hold audio (rotating phrases) instead of dead silence
+  const holdAudioUrls: string[] = metadata.hold_audio_urls || [];
+  if (holdAudioUrls.length > 0) {
+    const holdIndex = retries % holdAudioUrls.length;
+    return twimlResponse(`
+      <Play>${escapeXmlUrl(holdAudioUrls[holdIndex])}</Play>
+      <Redirect method="POST">${escapeXmlUrl(pickupUrl)}</Redirect>
+    `);
+  }
+
+  // Fallback: dead silence only if no pre-cached audio
   return twimlResponse(`
     <Pause length="3"/>
     <Redirect method="POST">${escapeXmlUrl(pickupUrl)}</Redirect>
