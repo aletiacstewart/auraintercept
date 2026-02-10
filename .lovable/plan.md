@@ -1,56 +1,73 @@
 
 
-# Fix: No Audio on Voice Chat (Autoplay Policy)
+# Fix: Voice Chat - No Audio on Start
 
-## Problem
+## Diagnosis
 
-The voice chat connects successfully (UI shows "Listening...") but produces no sound. This happens because:
+The backend is fully functional:
+- The `elevenlabs-conversation-token` edge function returns valid `token`, `signed_url`, and `agentId`
+- The ElevenLabs agent (`agent_3601kg17fsmdfcnajfjfjsnbsspf`) is configured with an API key
+- The SignalWire phone system is completely separate and has no impact on web voice chat
 
-1. The app runs inside a preview iframe
-2. Browsers block audio autoplay in iframes unless an `AudioContext` is explicitly resumed during a user gesture (click)
-3. The ElevenLabs SDK creates its own `AudioContext` internally, but by the time it does so (after async token fetch), the browser no longer considers it part of the original click gesture
+The issue is on the **frontend audio pipeline**. Two likely causes:
 
-## Solution
+1. **AudioContext unlock is async** - The current code uses `await ctx.resume()` which breaks the synchronous user-gesture chain. The browser may not recognize subsequent audio playback as user-initiated.
 
-**Pre-warm an AudioContext synchronously on the button click**, before any async operations. This "unlocks" audio playback for the page. The ElevenLabs SDK will then be able to play audio because the page's audio policy has already been satisfied.
+2. **No connection feedback** - There are no diagnostic logs visible to confirm whether the connection succeeds or fails silently. The user sees "Connecting..." but gets no audio and no error.
 
-### Changes to `src/components/ai/VoiceChat.tsx`
+## Changes
 
-In the `startConversation` function, add these lines **at the very top** (before any `await`):
+### 1. Fix AudioContext unlock to be truly synchronous (`VoiceChat.tsx`)
+
+The current `await ctx.resume()` breaks the user-gesture trust chain. Instead, create the AudioContext **without awaiting**, and store it so the ElevenLabs SDK can reuse the unlocked audio context.
 
 ```typescript
-const startConversation = useCallback(async () => {
-  setIsConnecting(true);
+// BEFORE (broken - await breaks gesture chain)
+const ctx = new AudioContext();
+await ctx.resume();  // <-- This can break the chain
 
-  // Unlock audio playback immediately on user gesture (before any async work)
-  // Browsers require AudioContext.resume() during a click to allow audio in iframes
-  try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    await ctx.resume();
-    // Play a silent buffer to fully unlock audio
-    const buffer = ctx.createBuffer(1, 1, 22050);
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(ctx.destination);
-    source.start();
-  } catch (e) {
-    console.warn("[VoiceChat] AudioContext unlock failed:", e);
-  }
-
-  // ... rest of existing startConversation logic unchanged
+// AFTER (correct - fire-and-forget, non-blocking)
+const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+ctx.resume();  // No await - keeps us in the gesture context
 ```
 
-This is a well-known pattern for unlocking audio in restricted browser contexts (iframes, mobile Safari, etc.).
+### 2. Add detailed diagnostic logging (`VoiceChat.tsx`)
 
-### Why This Works
+Add console logs at every critical step so we (and the user) can see exactly where audio fails:
+- Log when AudioContext is created and its state
+- Log the connection method chosen
+- Log when `onConnect` fires
+- Log when `onMessage` receives audio/transcript events
+- Log `conversation.isSpeaking` changes
 
-The browser tracks whether audio was "initiated by user gesture." By creating and resuming an AudioContext synchronously inside the click handler, we satisfy this requirement. When the ElevenLabs SDK later creates its own audio pipeline, the browser allows playback because the page already has audio permission.
+### 3. Add a visible status indicator for debugging
 
-## Summary
+Show a small debug badge during connection that displays:
+- Connection method (WebRTC vs WebSocket)
+- Whether AudioContext is in "running" state
+- Whether the agent is speaking
+
+This will be invaluable for diagnosing "it connects but no audio" vs "it never connects."
+
+### 4. Force WebSocket as the default connection method
+
+WebRTC has consistently caused silent failures in this environment. Change the default strategy to **always prefer WebSocket (signed_url)** regardless of iframe status, falling back to WebRTC only if no signed_url is available.
+
+```
+Connection priority (new):
+1. WebSocket (signed_url) -- most reliable
+2. WebSocket (agentId)    -- fallback
+3. WebRTC (token)         -- last resort
+```
+
+## Files Changed
 
 | File | Change |
 |------|--------|
-| `src/components/ai/VoiceChat.tsx` | Add AudioContext unlock at the start of `startConversation` (before async token fetch) |
+| `src/components/ai/VoiceChat.tsx` | Fix AudioContext unlock (remove await), switch default to WebSocket, add diagnostic logging and debug status indicator |
 
-No backend or edge function changes needed. This is a single ~10-line addition.
+## Why Not SignalWire-Related
 
+- SignalWire handles phone calls via `voice-handler`, `outbound-call`, and `missed-call-handler` edge functions
+- Web voice chat uses ElevenLabs React SDK (`useConversation` hook) and the `elevenlabs-conversation-token` edge function
+- These are completely independent systems with no shared code paths
