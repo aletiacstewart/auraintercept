@@ -158,6 +158,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         }
       }
     },
+    onDebug: (info: unknown) => {
+      console.log("[VoiceChat] 🔍 onDebug:", info);
+    },
+    onStatusChange: (status: { status: string }) => {
+      console.log("[VoiceChat] 📡 status changed:", status);
+    },
     onError: (error: unknown) => {
       console.error("[VoiceChat] ❌ onError:", error);
       setIsConnecting(false);
@@ -290,40 +296,40 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         signed_url: data?.signed_url,
       };
 
-      // Always prefer WebSocket (signed_url) — most reliable across all environments
-      // WebRTC has caused silent audio failures in iframes and preview contexts
+      // Try WebRTC first (native browser audio handling), fall back to WebSocket
+      // WebSocket audio pipeline has shown silent failures in iframe contexts
       const isIframe = window.self !== window.top;
 
-      console.log("[VoiceChat] Connection strategy: ALWAYS prefer WebSocket", {
+      console.log("[VoiceChat] Connection strategy: prefer WebRTC, fallback WebSocket", {
         isIframe,
         hasToken: !!data?.token,
         hasSignedUrl: !!data?.signed_url,
         agentId,
       });
 
-      if (data?.signed_url) {
-        // Priority 1: WebSocket via signed URL (most reliable)
+      if (data?.token) {
+        // Priority 1: WebRTC (native audio handling, most likely to produce sound)
+        lastConnectMethodRef.current = "webrtc";
+        console.log("[VoiceChat] ▶ Starting WebRTC session...");
+        await conversation.startSession({
+          conversationToken: data.token,
+          connectionType: "webrtc",
+        });
+      } else if (data?.signed_url) {
+        // Priority 2: WebSocket via signed URL
         lastConnectMethodRef.current = "ws_signed_url";
         console.log("[VoiceChat] ▶ Starting WebSocket (signed_url) session...");
         await conversation.startSession({ signedUrl: data.signed_url });
       } else if (agentId) {
-        // Priority 2: WebSocket via agentId
+        // Priority 3: WebSocket via agentId
         lastConnectMethodRef.current = "ws_agent_id";
         console.log("[VoiceChat] ▶ Starting WebSocket (agentId) session...");
         await conversation.startSession({
           agentId,
           connectionType: "websocket",
         });
-      } else if (data?.token) {
-        // Priority 3: WebRTC as last resort
-        lastConnectMethodRef.current = "webrtc";
-        console.log("[VoiceChat] ▶ Starting WebRTC session (last resort)...");
-        await conversation.startSession({
-          conversationToken: data.token,
-          connectionType: "webrtc",
-        });
       } else {
-        throw new Error("No connection method available — missing signed_url, agentId, and token");
+        throw new Error("No connection method available — missing token, signed_url, and agentId");
       }
     } catch (e) {
       console.error("Failed to start conversation:", e);
