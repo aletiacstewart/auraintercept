@@ -539,7 +539,8 @@ async function handleProcess(
       // AI is still thinking — save state and return hold TwiML immediately
       console.log('[voice-handler] AI exceeded 3s deadline, returning hold message');
 
-      await supabase.from('call_logs').update({
+      // Fire-and-forget: don't block TwiML response
+      supabase.from('call_logs').update({
         metadata: {
           conversation_history: conversationHistory,
           collected_info: collectedInfo,
@@ -549,7 +550,11 @@ async function handleProcess(
           pending_agent: activeAgent,
           pickup_retries: 0,
         },
-      }).eq('id', callLogId);
+      }).eq('id', callLogId).then(() => {
+        console.log('[voice-handler] Pending state saved');
+      }).catch(err => {
+        console.error('[voice-handler] Failed to save pending state:', err);
+      });
 
       // Fire-and-forget: kick off background processing
       fetch(`${supabaseUrl}/functions/v1/voice-handler?action=process-background&callLogId=${callLogId}`, {
@@ -654,24 +659,30 @@ async function handlePickup(
     const elevenlabsVoiceId = integration?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
 
     // Save state and generate TTS in parallel
-    const [_, replyAudioUrl] = await Promise.all([
-      supabase.from('call_logs').update({
-        metadata: {
-          conversation_history: conversationHistory,
-          collected_info: collectedInfo,
-          ai_pending: undefined,
-          pending_response: undefined,
-          pending_speech: undefined,
-          pending_system_prompt: undefined,
-          pending_agent: undefined,
-          pending_handoff: undefined,
-          pickup_retries: undefined,
-        },
-      }).eq('id', callLogId),
-      elevenlabsApiKey
-        ? ttsAudioUrl(supabase, callLog.company_id, reply, elevenlabsApiKey, elevenlabsVoiceId)
-        : Promise.resolve(null),
-    ]);
+    // DB save is fire-and-forget in pickup too
+    supabase.from('call_logs').update({
+      metadata: {
+        conversation_history: conversationHistory,
+        collected_info: collectedInfo,
+        ai_pending: undefined,
+        pending_response: undefined,
+        pending_speech: undefined,
+        pending_system_prompt: undefined,
+        pending_agent: undefined,
+        pending_handoff: undefined,
+        pickup_retries: undefined,
+      },
+    }).eq('id', callLogId).catch(() => {});
+
+    // Race TTS against 4s deadline — fall back to Polly if too slow
+    let replyAudioUrl: string | null = null;
+    if (elevenlabsApiKey) {
+      const ttsTimer = new Promise<null>(r => setTimeout(() => r(null), 4000));
+      replyAudioUrl = await Promise.race([
+        ttsAudioUrl(supabase, callLog.company_id, reply, elevenlabsApiKey, elevenlabsVoiceId),
+        ttsTimer,
+      ]);
+    }
 
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
