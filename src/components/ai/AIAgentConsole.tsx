@@ -9,8 +9,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Calendar, Clock, MessageSquare, Sparkles, ChevronRight,
-  AlertTriangle, DollarSign, MapPin, Star, Phone, TestTube2
+  Calendar, Clock, MessageSquare, ChevronRight,
+  AlertTriangle, Phone, TestTube2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -253,10 +253,30 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const hasVoiceChat = !!featureFlags?.has_voice_chat;
   const hasSMS = !!featureFlags?.has_sms;
   const twilioPhone = featureFlags?.twilio_phone_number;
-  // Build tabs dynamically - include all functional tabs
-  const TABS = [
-    { id: 'chat', label: 'Home', icon: MessageSquare },
-  ];
+  // Build tabs dynamically based on tier and feature flags
+  const TABS = React.useMemo(() => {
+    const tabs: { id: string; label: string; icon: typeof MessageSquare; variant?: 'default' | 'destructive'; featureColor?: string }[] = [
+      { id: 'chat', label: 'AI Assistant', icon: MessageSquare },
+    ];
+    
+    // Services tab - available for all tiers with portal access
+    tabs.push({ id: 'services', label: 'Services', icon: Calendar, featureColor: 'text-feature-customers' });
+    
+    // Appointments tab - for multi_track+ tiers
+    if (effectiveTier !== 'single_point' && effectiveTier !== 'core' && effectiveTier !== 'free') {
+      tabs.push({ id: 'book', label: 'Appointments', icon: Calendar, featureColor: 'text-feature-appointments' });
+    }
+    
+    // Voice tab - for companies with voice chat enabled
+    if (hasVoiceChat) {
+      tabs.push({ id: 'voice', label: 'Voice AI', icon: Phone, featureColor: 'text-feature-overview' });
+    }
+    
+    // Contact tab - always show (has hours + emergency + phone info)
+    tabs.push({ id: 'hours', label: 'Contact', icon: Clock, featureColor: 'text-feature-overview' });
+    
+    return tabs;
+  }, [effectiveTier, hasVoiceChat]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
