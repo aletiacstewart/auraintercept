@@ -1,76 +1,53 @@
 
 
-# Fix: Bookings Not Appearing in Job Queue
+# Fix: Voice Chat Immediately Disconnecting
 
-## The Problem
+## Problem
 
-When appointments are booked via the phone AI agent (voice-swaig), only an `appointments` record is created -- **no `job_assignments` record is created**. The technician dashboard and Field Ops console query `job_assignments`, so these bookings are invisible to staff.
-
-Additionally, some appointments have no `employee_id`, meaning they're completely unassigned.
+The "Start Voice Chat" button connects to ElevenLabs, gets a valid token, starts a WebRTC session, then immediately disconnects (under 2 seconds). The auto-retry fallback never fires because the edge function only provides a WebRTC token -- it never fetches a WebSocket signed URL as a fallback.
 
 ## Root Cause
 
-In `supabase/functions/voice-swaig/index.ts` (the `book_appointment` handler, lines 244-257), the code:
-1. Creates an appointment in the `appointments` table
-2. Syncs to Google Calendar
-3. ...but **never creates a `job_assignments` row**
+1. The `elevenlabs-conversation-token` edge function only calls the ElevenLabs `/conversation/token` endpoint (WebRTC)
+2. It never calls `/conversation/get-signed-url` (WebSocket fallback)
+3. In `VoiceChat.tsx`, the auto-retry at line 88 checks `lastAuthRef.current?.signed_url` which is always `undefined`
+4. WebRTC connections can fail in embedded/preview iframe environments
 
-Compare this to the AI chat booking flow (`ai-agent-chat`), which correctly creates both an appointment AND a job assignment.
+## Solution
 
-## The Fix
+### 1. Update edge function to return BOTH token and signed_url
 
-### Step 1: Create job assignment after booking in `voice-swaig`
+Modify `supabase/functions/elevenlabs-conversation-token/index.ts` to make two parallel calls to ElevenLabs:
+- `/v1/convai/conversation/token` for WebRTC token
+- `/v1/convai/conversation/get-signed-url` for WebSocket fallback
 
-After the appointment insert succeeds (line 257), add logic to create a corresponding `job_assignments` row -- matching the pattern used in `ai-agent-chat`:
-
-```typescript
-// After appointment creation succeeds...
-if (appointment?.id) {
-  const jobData: any = {
-    company_id: companyId,
-    appointment_id: appointment.id,
-    status: 'pending_acceptance',
-  };
-  if (employeeId) {
-    jobData.employee_id = employeeId;
-  }
-  const { error: jobError } = await supabase
-    .from('job_assignments')
-    .insert(jobData);
-  if (jobError) {
-    console.error('Failed to create job assignment:', jobError);
-  }
+Return both values in the response:
+```json
+{
+  "token": "...",
+  "signed_url": "wss://...",
+  "agentId": "agent_..."
 }
 ```
 
-### Step 2: Fix existing orphaned appointments
+### 2. Fix the `finally` block race condition in VoiceChat.tsx
 
-Run a one-time data fix to create `job_assignments` for the existing appointments that are missing them:
+Remove `setIsConnecting(false)` from the `finally` block (line 266). The `onConnect` callback at line 69 and `onDisconnect` at line 80 already handle this. The `finally` block fires immediately after `startSession` resolves, which can be before the connection is fully established, causing a brief UI flash.
 
-```sql
--- Create job assignments for appointments that don't have one
-INSERT INTO job_assignments (company_id, appointment_id, employee_id, status)
-SELECT a.company_id, a.id, a.employee_id, 'pending_acceptance'
-FROM appointments a
-LEFT JOIN job_assignments ja ON ja.appointment_id = a.id
-WHERE ja.id IS NULL
-  AND a.company_id = '04c57cbe-358e-4036-a3ad-b777a55f5be0'
-  AND a.status != 'cancelled';
+Only set `setIsConnecting(false)` in the `catch` block (on actual errors).
+
+### 3. Improve fallback logic in VoiceChat.tsx
+
+Update the auto-retry in `onDisconnect` to also try the `agentId` with WebSocket as a last resort if no signed_url is available:
+
+```
+WebRTC (token) --> WebSocket (signed_url) --> WebSocket (agentId)
 ```
 
-### Step 3: Ensure delivery-type-aware actions in job queue
+## Changes
 
-The `TechnicianJobQueue.tsx` already has accept/decline buttons for all pending jobs regardless of delivery type. After accepting:
-- For `virtual` or `in_person_business` jobs, the "En Route" / "Directions" steps are already hidden in the Field Ops console
-- The flow goes: Accept --> Start Session --> Complete
-
-No UI changes are needed -- the accept button already works for all delivery types. The only issue was that jobs weren't being created in the first place.
-
-## Summary
-
-| What | Change |
+| File | Change |
 |------|--------|
-| `voice-swaig/index.ts` | Add `job_assignments` insert after appointment creation |
-| Database | One-time fix for existing orphaned appointments |
-| UI | No changes needed -- accept flow already supports all delivery types |
+| `supabase/functions/elevenlabs-conversation-token/index.ts` | Fetch both token and signed_url from ElevenLabs in parallel |
+| `src/components/ai/VoiceChat.tsx` | Remove `setIsConnecting(false)` from finally block; add agentId WebSocket as last-resort fallback |
 
