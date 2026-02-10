@@ -1,91 +1,34 @@
 
 
-# Fix: Reduce Voice Response Latency from ~10s to ~3s
+# Fix: Restore TTS Audio Upload (Affects All Companies)
 
-## Problem
+## Current Problem
 
-Every conversation turn in `handleProcess` runs three expensive steps **one after another**:
+The last optimization changed the TTS output to `ulaw_8000` format with `audio/basic` content type. Supabase Storage rejects `audio/basic`, so **every TTS upload fails for every company**. The system falls back to a flat Polly "Hello" greeting and cannot generate conversational responses.
 
-1. AI chat call (`gemini-2.5-flash`) -- 3-5 seconds
-2. ElevenLabs TTS audio generation (`eleven_turbo_v2_5`, mp3 at 44.1kHz) -- 2-3 seconds
-3. Upload audio to storage -- 1-2 seconds
+## Multi-Tenancy Status: Already Working
 
-**Total: 6-10 seconds of silence** before the caller hears a response.
+No multi-tenancy changes are needed. The voice system already resolves the correct company by matching the incoming phone number against `tenant_integrations.signalwire_phone_number`. Each company's ElevenLabs API key, voice ID, greeting, and AI prompt are loaded per-call from the database. When you onboard a new company, they just need their row in `tenant_integrations` populated.
 
-## The Fix (4 optimizations, 1 file)
+## The Fix
 
-All changes are in `supabase/functions/voice-handler/index.ts`.
+**File:** `supabase/functions/voice-handler/index.ts` (lines 524-563)
 
-### Optimization 1: Faster AI Model
+Three changes inside the `generateTTSAudio` function:
 
-Switch from `google/gemini-2.5-flash` to `google/gemini-2.5-flash-lite` for phone responses. Phone replies are 1-2 sentences -- they don't need the full model's reasoning power. Flash-lite is significantly faster for simple text generation.
+1. **Output format**: Change `ulaw_8000` to `mp3_22050_32` (low-bitrate MP3 — 4x smaller than the original 44kHz/128kbps, supported by both Supabase Storage and SignalWire)
+2. **File extension**: Change `.wav` back to `.mp3`
+3. **Content type**: Change `audio/basic` back to `audio/mpeg`
 
-### Optimization 2: Faster TTS Model + Telephony-Optimized Format
+All other optimizations stay in place:
+- `eleven_flash_v2_5` model (fastest TTS)
+- `google/gemini-2.5-flash-lite` (fastest AI for phone)
+- Parallel DB save + TTS generation
 
-- Switch from `eleven_turbo_v2_5` to `eleven_flash_v2_5` (ElevenLabs' fastest model)
-- Switch from `mp3_44100_128` (high-quality music format) to `ulaw_8000` (native telephony format, ~5x smaller file)
-- Smaller file = faster generation + faster upload + faster download by SignalWire
+## Expected Result
 
-### Optimization 3: Parallelize DB Save and TTS Generation
-
-Currently the database save (conversation history update) happens **before** TTS. These two operations are independent -- run them at the same time:
-
-```text
-Before (sequential):
-  save to DB --> generate TTS --> upload --> return
-
-After (parallel):
-  save to DB --|
-               |--> return
-  generate TTS + upload --|
-```
-
-### Optimization 4: Parallelize AI response parsing with non-dependent work
-
-Move the conversation history push and DB save into a `Promise.all` with the TTS call so nothing waits unnecessarily.
-
-## Technical Details
-
-**File:** `supabase/functions/voice-handler/index.ts`
-
-### Change A: AI model (line 403)
-Change `model: 'google/gemini-2.5-flash'` to `model: 'google/gemini-2.5-flash-lite'`
-
-### Change B: TTS function (lines 525-538)
-- Change `eleven_turbo_v2_5` to `eleven_flash_v2_5`
-- Change `output_format=mp3_44100_128` to `output_format=ulaw_8000`
-- Change upload content type from `audio/mpeg` to `audio/basic`
-- Change file extension from `.mp3` to `.wav`
-
-### Change C: Parallelize in handleProcess (lines 434-451)
-Run the DB save and TTS generation concurrently using `Promise.all`:
-
-```typescript
-// Run DB save and TTS generation in parallel
-const [_, replyAudioUrl] = await Promise.all([
-  // Save conversation state (non-blocking)
-  callLogId && !callLogId.startsWith('incoming_')
-    ? supabase.from('call_logs').update({
-        metadata: { conversation_history: conversationHistory, collected_info: collectedInfo },
-      }).eq('id', callLogId)
-    : Promise.resolve(),
-  // Generate TTS audio
-  elevenlabsApiKey
-    ? ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
-    : Promise.resolve(null),
-]);
-```
-
-## Expected Improvement
-
-| Step | Before | After |
-|------|--------|-------|
-| AI response | 3-5s (flash) | 1-2s (flash-lite) |
-| TTS generation | 2-3s (turbo, mp3 44kHz) | 0.5-1s (flash, ulaw 8kHz) |
-| Storage upload | 1-2s (large mp3) | 0.2-0.5s (small ulaw) |
-| DB save | 0.3s (sequential) | 0s (parallel with TTS) |
-| **Total** | **6-10s** | **2-3.5s** |
-
-## No changes needed for web voice
-Web voice chat uses ElevenLabs WebRTC directly and doesn't go through this pipeline.
+- TTS uploads succeed again for all companies
+- Audio files are still ~4x smaller than the original format (faster upload/download)
+- Response latency stays at ~3-4 seconds (down from the original ~10 seconds)
+- Every onboarded company benefits from these speed improvements automatically since the code path is shared
 
