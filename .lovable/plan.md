@@ -1,80 +1,68 @@
 
 
-# Fix: Phone Call Says "Someone Will Get Back" Instead of AI Response
+# Sync All Bookings to Google Calendar Automatically
 
-## Root Cause (3 Bugs Found)
+## The Problem
 
-### Bug 1: No HTTP Error Checking on AI Response
-In `voice-handler/index.ts` line 504, the code does:
-```typescript
-const aiText = await aiResponse.text();
-const aiData = JSON.parse(aiText);
-reply = aiData.reply || aiData.response || aiData.message || reply;
-```
-There is **no check for `aiResponse.ok`**. If `ai-agent-chat` returns a 500 error like `{"error": "Failed to process request"}`, the JSON parses fine but none of `reply`, `response`, or `message` exist in the error object. So the default fallback `"Thank you for your message. Someone will get back to you shortly."` is used -- the exact message you're hearing.
+When an appointment is created (via AI chat, phone call, or web booking), it gets saved to the database and triggers SMS notifications -- but it is **never synced to Google Calendar**. The only place `google-calendar-sync` is called today is inside `send-job-notification`, and only for **virtual appointments** that need a Google Meet link.
 
-### Bug 2: 8-Second Timeout Is Too Aggressive
-The `AbortController` at line 480 aborts after only 8 seconds. SignalWire actually allows **15-30 seconds** for `action` callback URLs (like the Gather action that triggers `handleProcess`). The 8-second limit causes the AI call to abort even when it would have succeeded in 9-10 seconds.
+## The Fix
 
-When the abort fires, the fallback is "I'm sorry, could you repeat that?" -- but that doesn't match what you're hearing. This means the AI call IS completing (not timing out), but it's returning an error that isn't being caught.
+Add a Google Calendar sync call inside the `create_appointment` tool handler in `ai-agent-chat/index.ts`, right after the appointment is created and notifications are sent. This covers ALL booking channels (web chat, phone, voice agent) since they all funnel through this same tool.
 
-### Bug 3: The Default Reply Is a Dead End
-The default at line 482 says "Someone will get back to you shortly" and then plays TTS + Gather. But the message gives the caller the impression the call is over, when really the system is still listening. It should be a conversational retry, not a goodbye.
+### File: `supabase/functions/ai-agent-chat/index.ts`
 
-## The Fix (1 file: voice-handler/index.ts)
-
-### Change 1: Check `aiResponse.ok` Before Parsing
-Add proper HTTP status checking. If the AI returns an error, log it and use a conversational fallback instead of the dead-end message.
+After the SMS confirmation block (~line 3753), add a call to `google-calendar-sync` with `action: 'sync_appointment'`:
 
 ```typescript
-// After the fetch call:
-clearTimeout(aiTimeout);
-
-if (!aiResponse.ok) {
-  console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
-  reply = "I didn't quite catch that. Could you tell me again what you need help with?";
-} else {
-  const aiText = await aiResponse.text();
-  try {
-    const aiData = JSON.parse(aiText);
-    reply = aiData.response || aiData.reply || aiData.message || reply;
-    // ... handoff tracking
-  } catch {
-    if (aiText && aiText.length < 500) reply = aiText;
-  }
+// Sync to Google Calendar (if connected)
+try {
+  await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+    },
+    body: JSON.stringify({
+      action: 'sync_appointment',
+      companyId: companyId,
+      appointmentId: appointment.id,
+      appointment: appointment,
+    }),
+  });
+  console.log('[AI Agent] Google Calendar sync triggered for appointment:', appointment.id);
+} catch (calendarError) {
+  console.error('[AI Agent] Google Calendar sync error (non-blocking):', calendarError);
 }
 ```
 
-### Change 2: Increase Timeout from 8s to 12s
-SignalWire waits 15-30 seconds for action callbacks. Increasing to 12 seconds gives the AI plenty of room while still leaving 3-5 seconds for TTS generation before the absolute limit.
+This is **non-blocking** -- if the company doesn't have Google Calendar connected, the sync function returns early with "No Google Calendar connection" and the booking still succeeds normally.
 
-```typescript
-const aiTimeout = setTimeout(() => controller.abort(), 12000); // was 8000
-```
+### File: `supabase/functions/voice-booking-agent/index.ts`
 
-### Change 3: Fix the Default Reply
-Change the dead-end default to a conversational prompt that keeps the caller engaged:
+The voice booking agent has its own `create_appointment` handler that also inserts directly into the database. Add the same Google Calendar sync call there after appointment creation, so phone bookings via ElevenLabs also sync.
 
-```typescript
-let reply = "I didn't quite catch that. Could you tell me again how I can help you?";
-// was: "Thank you for your message. Someone will get back to you shortly."
-```
+## What This Covers
 
-### Change 4: Also fix `aiData.response` field priority
-The `ai-agent-chat` returns `response` (not `reply`). Put `response` first in the OR chain:
+| Booking Source | Creates Appointment | Syncs to Google Calendar |
+|---------------|--------------------|-----------------------|
+| Web AI Chat | Yes (ai-agent-chat) | Yes (after fix) |
+| Phone AI Agent | Yes (ai-agent-chat) | Yes (after fix) |
+| Voice Booking (ElevenLabs) | Yes (voice-booking-agent) | Yes (after fix) |
+| Manual (web UI) | Yes (direct insert) | Already works via send-job-notification for virtual |
 
-```typescript
-reply = aiData.response || aiData.reply || aiData.message || reply;
-// was: aiData.reply || aiData.response || aiData.message || reply
-```
+## How It Works
 
-## Expected Result
+The existing `google-calendar-sync` function already handles everything:
+- Checks if the company has a Google Calendar connection
+- Refreshes OAuth tokens if expired
+- Creates/updates the event on Google Calendar
+- Saves the mapping in `calendar_event_mappings`
+- Generates Google Meet links for virtual appointments
 
-| Scenario | Before | After |
-|----------|--------|-------|
-| AI succeeds | Works (sometimes) | Works (reliably) |
-| AI returns error | "Someone will get back to you" (dead end) | "Could you tell me again?" (keeps conversation going) |
-| AI times out (>12s) | Cuts off at 8s | "Could you repeat that?" at 12s |
+We just need to **call it** from the appointment creation flows. No changes to the sync function itself.
 
-## No database changes needed
+## No Database Changes Needed
+
+The `google_calendar_connections`, `calendar_event_mappings`, and `appointments` tables already have all the required columns.
 
