@@ -20,18 +20,39 @@ function twimlResponse(twiml: string): Response {
   });
 }
 
-// Helper: generate ElevenLabs TTS audio and return a <Play> URL, or fall back to Polly <Say>
-async function ttsOrFallback(
+// Helper: generate ElevenLabs TTS audio URL, or return null on failure
+async function ttsAudioUrl(
   supabase: any, companyId: string, text: string,
   apiKey: string, voiceId: string
-): Promise<string> {
+): Promise<string | null> {
   try {
     const audioUrl = await generateTTSAudio(supabase, apiKey, voiceId, text);
-    return `<Play>${escapeXmlUrl(audioUrl)}</Play>`;
+    return audioUrl;
   } catch (err) {
     console.error('ElevenLabs TTS failed, falling back to Polly:', err);
-    return `<Say voice="Polly.Joanna">${escapeXml(text)}</Say>`;
+    return null;
   }
+}
+
+// Build TwiML: <Play> before <Gather> with a minimal <Say> inside, then <Redirect> for timeout
+function buildPlayThenGather(
+  audioUrl: string | null, fallbackText: string,
+  gatherUrl: string, timeoutUrl: string
+): string {
+  const playPart = audioUrl
+    ? `<Play>${escapeXmlUrl(audioUrl)}</Play>`
+    : '';
+  const gatherContent = audioUrl
+    ? '<Say voice="Polly.Joanna"> </Say>'
+    : `<Say voice="Polly.Joanna">${escapeXml(fallbackText)}</Say>`;
+
+  return `
+    ${playPart}
+    <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
+      ${gatherContent}
+    </Gather>
+    <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
+  `;
 }
 
 // Build the phone-specific system prompt with sequential collection rules
@@ -189,23 +210,14 @@ async function handleIncoming(
 
   // Generate greeting with ElevenLabs Jessica (fall back to Polly)
   const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-  let greetingTwiml: string;
-
-  if (elevenlabs_api_key) {
-    greetingTwiml = await ttsOrFallback(supabase, company_id, greeting, elevenlabs_api_key, voiceId);
-  } else {
-    greetingTwiml = `<Say voice="Polly.Joanna">${escapeXml(greeting)}</Say>`;
-  }
+  const audioUrl = elevenlabs_api_key
+    ? await ttsAudioUrl(supabase, company_id, greeting, elevenlabs_api_key, voiceId)
+    : null;
 
   const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
   const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
 
-  return twimlResponse(`
-    <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
-      ${greetingTwiml}
-    </Gather>
-    <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
-  `);
+  return twimlResponse(buildPlayThenGather(audioUrl, greeting, gatherUrl, timeoutUrl));
 }
 
 // === OUTBOUND CALL (webhook from SignalWire when call connects) ===
@@ -355,19 +367,14 @@ async function handleProcess(
 
   if (!speechResult) {
     const nudge = "I'm still here. Take your time, what can I help you with?";
-    let nudgeTwiml: string;
-    if (elevenlabsApiKey) {
-      nudgeTwiml = await ttsOrFallback(supabase, companyId, nudge, elevenlabsApiKey, elevenlabsVoiceId);
-    } else {
-      nudgeTwiml = `<Say voice="Polly.Joanna">${escapeXml(nudge)}</Say>`;
-    }
+    const nudgeAudioUrl = elevenlabsApiKey
+      ? await ttsAudioUrl(supabase, companyId, nudge, elevenlabsApiKey, elevenlabsVoiceId)
+      : null;
 
-    return twimlResponse(`
-      <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
-        ${nudgeTwiml}
-      </Gather>
-      <Redirect method="POST">${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`)}</Redirect>
-    `);
+    const nudgeGatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
+    const nudgeTimeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
+
+    return twimlResponse(buildPlayThenGather(nudgeAudioUrl, nudge, nudgeGatherUrl, nudgeTimeoutUrl));
   }
 
   // Add user message to conversation history
@@ -420,22 +427,14 @@ async function handleProcess(
     }
 
     // Generate TTS response with ElevenLabs Jessica
-    let responseTwiml: string;
-    if (elevenlabsApiKey) {
-      responseTwiml = await ttsOrFallback(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId);
-    } else {
-      responseTwiml = `<Say voice="Polly.Joanna">${escapeXml(reply)}</Say>`;
-    }
+    const replyAudioUrl = elevenlabsApiKey
+      ? await ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
+      : null;
 
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
-    return twimlResponse(`
-      <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
-        ${responseTwiml}
-      </Gather>
-      <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
-    `);
+    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl));
   } catch (aiError) {
     console.error('AI response failed:', aiError);
     return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Someone will follow up with you. Goodbye.</Say><Hangup/>');
@@ -495,8 +494,10 @@ async function handleTimeout(supabase: any, supabaseUrl: string, callLogId: stri
 
     if (integration?.elevenlabs_api_key) {
       const voiceId = integration.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-      const twiml = await ttsOrFallback(supabase, companyId, timeoutMsg, integration.elevenlabs_api_key, voiceId);
-      return twimlResponse(`${twiml}<Hangup/>`);
+      const audioUrl = await ttsAudioUrl(supabase, companyId, timeoutMsg, integration.elevenlabs_api_key, voiceId);
+      if (audioUrl) {
+        return twimlResponse(`<Play>${escapeXmlUrl(audioUrl)}</Play><Hangup/>`);
+      }
     }
   }
 
