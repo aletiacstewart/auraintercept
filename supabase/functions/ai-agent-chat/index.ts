@@ -3591,6 +3591,18 @@ async function executeAgentTool(
         console.log(`[AI Agent] Assigning to employee: ${employees[0].full_name}`);
       }
 
+      // Look up delivery_type from the matched service
+      const { data: matchedService } = await supabase
+        .from('services')
+        .select('delivery_type')
+        .eq('company_id', companyId)
+        .ilike('name', `%${args.service_type}%`)
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle();
+
+      const deliveryType = matchedService?.delivery_type || 'in_person_customer';
+
       // Create the appointment with the properly parsed datetime
       const { data: appointment, error } = await supabase
         .from('appointments')
@@ -3607,6 +3619,7 @@ async function executeAgentTool(
           status: 'scheduled',
           employee_id: employeeId,
           customer_user_id: userId || null,
+          delivery_type: deliveryType,
         })
         .select()
         .single();
@@ -3892,7 +3905,9 @@ async function executeAgentTool(
             customer_email,
             service_type,
             datetime,
-            customer_address
+            customer_address,
+            delivery_type,
+            meeting_link
           )
         `)
         .eq('company_id', companyId)
@@ -3931,6 +3946,8 @@ async function executeAgentTool(
         address: j.customer_address || j.appointments?.customer_address || 'No address',
         scheduled_time: j.appointments?.datetime ? new Date(j.appointments.datetime).toLocaleString() : 'Not set',
         estimated_arrival_minutes: j.estimated_arrival_minutes,
+        delivery_type: j.appointments?.delivery_type || 'in_person_customer',
+        meeting_link: j.appointments?.meeting_link || null,
       }));
       
       return {

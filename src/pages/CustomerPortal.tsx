@@ -52,6 +52,8 @@ interface Appointment {
   sms_opt_out: boolean;
   email_opt_out: boolean;
   call_opt_out: boolean;
+  delivery_type: string | null;
+  meeting_link: string | null;
   companies: {
     id: string;
     name: string;
@@ -297,8 +299,39 @@ export default function CustomerPortal() {
                 </div>
               </div>
 
-              {appointment.customer_email && (
+              {/* Join Meeting button for virtual appointments */}
+              {appointment.meeting_link && appointment.status === 'scheduled' && (
                 <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                    <CalendarCheck className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <a
+                      href={appointment.meeting_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity"
+                    >
+                      Join Video Session
+                    </a>
+                    <p className="text-sm text-muted-foreground mt-1">Virtual appointment</p>
+                  </div>
+                </div>
+              )}
+
+              {appointment.delivery_type === 'virtual' && !appointment.meeting_link && appointment.status === 'scheduled' && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Phone Session</p>
+                    <p className="text-sm text-muted-foreground">We will call you at your scheduled time</p>
+                  </div>
+                </div>
+              )}
+
+              {appointment.customer_email && (
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Mail className="w-5 h-5 text-primary" />
                   </div>

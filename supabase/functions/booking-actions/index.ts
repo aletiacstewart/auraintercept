@@ -543,7 +543,7 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     }
   }
 
-  // Create appointment with company default preferences
+  // Create appointment with company default preferences and delivery type from service
   const { data: appointment, error } = await supabase
     .from('appointments')
     .insert({
@@ -559,7 +559,8 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
       status: 'scheduled',
       sms_opt_out: smsOptOut,
       email_opt_out: emailOptOut,
-      call_opt_out: callOptOut
+      call_opt_out: callOptOut,
+      delivery_type: service.delivery_type || 'in_person_customer',
     })
     .select()
     .single();
