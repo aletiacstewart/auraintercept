@@ -1,53 +1,56 @@
 
 
-# Fix: Voice Chat Immediately Disconnecting
+# Fix: No Audio on Voice Chat (Autoplay Policy)
 
 ## Problem
 
-The "Start Voice Chat" button connects to ElevenLabs, gets a valid token, starts a WebRTC session, then immediately disconnects (under 2 seconds). The auto-retry fallback never fires because the edge function only provides a WebRTC token -- it never fetches a WebSocket signed URL as a fallback.
+The voice chat connects successfully (UI shows "Listening...") but produces no sound. This happens because:
 
-## Root Cause
-
-1. The `elevenlabs-conversation-token` edge function only calls the ElevenLabs `/conversation/token` endpoint (WebRTC)
-2. It never calls `/conversation/get-signed-url` (WebSocket fallback)
-3. In `VoiceChat.tsx`, the auto-retry at line 88 checks `lastAuthRef.current?.signed_url` which is always `undefined`
-4. WebRTC connections can fail in embedded/preview iframe environments
+1. The app runs inside a preview iframe
+2. Browsers block audio autoplay in iframes unless an `AudioContext` is explicitly resumed during a user gesture (click)
+3. The ElevenLabs SDK creates its own `AudioContext` internally, but by the time it does so (after async token fetch), the browser no longer considers it part of the original click gesture
 
 ## Solution
 
-### 1. Update edge function to return BOTH token and signed_url
+**Pre-warm an AudioContext synchronously on the button click**, before any async operations. This "unlocks" audio playback for the page. The ElevenLabs SDK will then be able to play audio because the page's audio policy has already been satisfied.
 
-Modify `supabase/functions/elevenlabs-conversation-token/index.ts` to make two parallel calls to ElevenLabs:
-- `/v1/convai/conversation/token` for WebRTC token
-- `/v1/convai/conversation/get-signed-url` for WebSocket fallback
+### Changes to `src/components/ai/VoiceChat.tsx`
 
-Return both values in the response:
-```json
-{
-  "token": "...",
-  "signed_url": "wss://...",
-  "agentId": "agent_..."
-}
+In the `startConversation` function, add these lines **at the very top** (before any `await`):
+
+```typescript
+const startConversation = useCallback(async () => {
+  setIsConnecting(true);
+
+  // Unlock audio playback immediately on user gesture (before any async work)
+  // Browsers require AudioContext.resume() during a click to allow audio in iframes
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    await ctx.resume();
+    // Play a silent buffer to fully unlock audio
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start();
+  } catch (e) {
+    console.warn("[VoiceChat] AudioContext unlock failed:", e);
+  }
+
+  // ... rest of existing startConversation logic unchanged
 ```
 
-### 2. Fix the `finally` block race condition in VoiceChat.tsx
+This is a well-known pattern for unlocking audio in restricted browser contexts (iframes, mobile Safari, etc.).
 
-Remove `setIsConnecting(false)` from the `finally` block (line 266). The `onConnect` callback at line 69 and `onDisconnect` at line 80 already handle this. The `finally` block fires immediately after `startSession` resolves, which can be before the connection is fully established, causing a brief UI flash.
+### Why This Works
 
-Only set `setIsConnecting(false)` in the `catch` block (on actual errors).
+The browser tracks whether audio was "initiated by user gesture." By creating and resuming an AudioContext synchronously inside the click handler, we satisfy this requirement. When the ElevenLabs SDK later creates its own audio pipeline, the browser allows playback because the page already has audio permission.
 
-### 3. Improve fallback logic in VoiceChat.tsx
-
-Update the auto-retry in `onDisconnect` to also try the `agentId` with WebSocket as a last resort if no signed_url is available:
-
-```
-WebRTC (token) --> WebSocket (signed_url) --> WebSocket (agentId)
-```
-
-## Changes
+## Summary
 
 | File | Change |
 |------|--------|
-| `supabase/functions/elevenlabs-conversation-token/index.ts` | Fetch both token and signed_url from ElevenLabs in parallel |
-| `src/components/ai/VoiceChat.tsx` | Remove `setIsConnecting(false)` from finally block; add agentId WebSocket as last-resort fallback |
+| `src/components/ai/VoiceChat.tsx` | Add AudioContext unlock at the start of `startConversation` (before async token fetch) |
+
+No backend or edge function changes needed. This is a single ~10-line addition.
 
