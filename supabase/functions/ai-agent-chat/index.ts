@@ -2199,7 +2199,10 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel } = await req.json();
+    
+    // Use the requested model for internal requests (e.g. phone via voice-handler), default to flash
+    const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
     
     // Get client IP for rate limiting and logging
     const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
@@ -2678,7 +2681,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: selectedModel,
         messages,
         tools: isPhoneChannel ? tools.filter((t: any) => {
           // On phone, remove verbose tools that list many items
@@ -2823,12 +2826,15 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
+            model: selectedModel,
             messages,
-            tools,
+            tools: isPhoneChannel ? tools.filter((t: any) => {
+              const name = t.function?.name;
+              return name !== 'list_services' && name !== 'query_business_data';
+            }) : tools,
             tool_choice: 'auto',
             temperature: 0.7,
-            max_tokens: 1000,
+            max_tokens: isPhoneChannel ? 150 : 1000,
           }),
         });
         
