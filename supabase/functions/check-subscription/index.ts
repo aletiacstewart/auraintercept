@@ -49,24 +49,28 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     logStep("Authenticating user with token", { tokenLength: token.length });
 
-    // Create service-role client for DB operations
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+
+    // Auth client with user's token for JWT validation
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false },
+    });
+
+    // Service-role client for DB operations
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
 
-    // Validate JWT using getClaims (works reliably in edge functions)
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      logStep("getClaims failed, details", { error: claimsError?.message });
-      throw new Error(`Authentication error: ${claimsError?.message || 'Invalid token'}`);
+    // Validate JWT
+    const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser(token);
+    if (authError || !authUser) {
+      logStep("getUser failed", { error: authError?.message });
+      throw new Error(`Authentication error: ${authError?.message || 'Invalid token'}`);
     }
 
-    const userId = claimsData.claims.sub as string;
-    const userEmail = claimsData.claims.email as string;
-    if (!userId || !userEmail) throw new Error("User not authenticated or email not available");
-
-    const user = { id: userId, email: userEmail };
-    logStep("User authenticated via getClaims", { userId: user.id, email: user.email });
+    const user = { id: authUser.id, email: authUser.email! };
+    logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Get user's role
     const { data: roleData } = await supabaseClient
