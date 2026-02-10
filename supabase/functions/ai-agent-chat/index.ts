@@ -2199,7 +2199,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel } = await req.json();
     
     // Get client IP for rate limiting and logging
     const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
@@ -2484,7 +2484,13 @@ serve(async (req) => {
     }
 
     // Build the system prompt with handoff context
-    const basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
+    let basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
+    
+    // For phone channel: append caller-provided system prompt with phone-specific rules
+    const isPhoneChannel = channel === 'phone';
+    if (incomingSystemPrompt && isInternalRequest) {
+      basePrompt = incomingSystemPrompt; // Use the phone-optimized prompt which already includes the base + phone rules + history
+    }
     
     // Add handoff-specific instructions with customer info
     let handoffInstructions = '';
@@ -2529,7 +2535,7 @@ YOUR FIRST MESSAGE MUST:
     
     // === PROTOCOL DETECTION ===
     // Detect if we need to switch operational modes based on message content
-    const channel: 'voice' | 'text' = 'text'; // Default to text for chat; voice would be set by caller
+    const effectiveChannel: 'voice' | 'text' = isPhoneChannel ? 'voice' : 'text';
     const protocolResult = detectProtocolMode(message, []);
     let protocolPromptModifier = '';
     
@@ -2541,7 +2547,7 @@ YOUR FIRST MESSAGE MUST:
         supabase,
         companyId,
         contextId,
-        channel,
+        effectiveChannel,
         'normal',
         protocolResult.mode,
         protocolResult.triggerType,
@@ -2674,10 +2680,14 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages,
-        tools,
+        tools: isPhoneChannel ? tools.filter((t: any) => {
+          // On phone, remove verbose tools that list many items
+          const name = t.function?.name;
+          return name !== 'list_services' && name !== 'query_business_data';
+        }) : tools,
         tool_choice: 'auto',
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: isPhoneChannel ? 150 : 1000,
       }),
     });
 
