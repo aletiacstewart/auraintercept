@@ -253,6 +253,9 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const hasVoiceChat = !!featureFlags?.has_voice_chat;
   const hasSMS = !!featureFlags?.has_sms;
   const twilioPhone = featureFlags?.twilio_phone_number;
+  // Phone icon: show if company has twilio phone OR dispatch phone
+  const callablePhone = twilioPhone || company?.dispatch_phone;
+  const hasPhone = !!callablePhone;
   // Build tabs dynamically based on tier and feature flags
   const TABS = React.useMemo(() => {
     const tabs: { id: string; label: string; icon: typeof MessageSquare; variant?: 'default' | 'destructive'; featureColor?: string }[] = [
@@ -553,9 +556,9 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         agentLabel={activeLabel}
         agentColor={agentInfo.color}
         agentBgColor={agentInfo.bgColor}
-        showPhone={!!twilioPhone}
+        showPhone={hasPhone}
         showVoice={hasVoiceChat}
-        onPhoneClick={() => window.open(`tel:${twilioPhone}`, '_self')}
+        onPhoneClick={() => window.open(`tel:${callablePhone}`, '_self')}
         onVoiceClick={() => setActiveTab('voice')}
         useDefaultLogo={true}
         showBackButton={allowCompanySelection && !!selectedCompanyId}
