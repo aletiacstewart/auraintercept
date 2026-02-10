@@ -1,116 +1,91 @@
 
 
-# Fix: Phone Call Disconnects After Second Response ("consultation")
+# Fix: Hold Message Delayed by Blocking DB Write
 
 ## Root Cause
 
-The first fix worked -- the bridging message plays correctly now. But when the caller answers "consultation," the `ai-agent-chat` function executes **multiple tool calls** (get_services, get_available_times) before responding. Combined with TTS generation and storage upload, the total processing takes **7+ seconds**. SignalWire has a webhook response timeout (typically 5-10 seconds) and hangs up when the voice-handler doesn't return TwiML fast enough.
-
-Timeline from logs:
-```text
-15:12:02  "consultation" received by voice-handler
-15:12:06  AI iteration 1: calls get_services tool
-15:12:07  AI iteration 2: calls get_available_times tool
-15:12:07  AI text response ready: "I can help you with a consultation..."
-15:12:09  TTS audio uploaded to storage
-15:12:17  Edge function shuts down -- but SignalWire already gave up
-```
-
-## The Fix: Immediate TwiML Response + Background Processing
-
-Instead of making the caller wait while the AI thinks, return an **immediate "hold" TwiML response** with a brief message like "Let me check on that for you," then redirect back to pick up the real AI answer.
-
-### Strategy: Two-Phase Response
-
-**Phase 1 (immediate, under 3 seconds):** Return TwiML that plays a brief hold message, then redirects back to the voice-handler after a short pause.
-
-**Phase 2 (background):** While the hold message plays, a parallel process calls the AI and generates TTS. When the redirect hits, the response is ready.
-
-### File: `supabase/functions/voice-handler/index.ts`
-
-Modify `handleProcess` (line ~396):
-
-1. **Start the AI call as a background promise** -- don't await it immediately
-2. **Race against a 3-second timer** -- if the AI + TTS finishes in under 3 seconds, return normally
-3. **If it exceeds 3 seconds**, save the pending request to the call_logs metadata, return a brief "hold" TwiML (`<Say>One moment please</Say><Pause length="3"/><Redirect>voice-handler?action=process&callLogId=X&pickup=true</Redirect>`)
-4. **On the pickup redirect**, check if the AI response is now stored in call_logs metadata. If yes, generate TTS and respond. If not yet ready, play another brief pause and redirect again (max 3 retries before using a fallback response).
+In `voice-handler/index.ts` lines 538-569, when the AI exceeds the 3-second deadline, the code runs:
 
 ```typescript
-// Simplified flow in handleProcess:
-
-// 1. Fire off AI request (don't await yet)
-const aiPromise = fetchAIResponse(supabaseUrl, supabaseKey, speechResult, systemPrompt, companyId, activeAgent, conversationHistory);
-
-// 2. Race: AI vs 3-second deadline
-const timer = new Promise(resolve => setTimeout(() => resolve('timeout'), 3000));
-const result = await Promise.race([aiPromise, timer]);
-
-if (result === 'timeout') {
-  // AI is still thinking -- save pending state, return hold message
-  await supabase.from('call_logs').update({
-    metadata: { ...existingMetadata, pending_speech: speechResult, ai_pending: true }
-  }).eq('id', callLogId);
-
-  // Kick off background processing (fire-and-forget)
-  fetch(`${supabaseUrl}/functions/v1/voice-handler?action=process-background&callLogId=${callLogId}`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ speechResult, systemPrompt, companyId, activeAgent, conversationHistory }),
-  }).catch(() => {}); // fire and forget
-
-  const holdUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
-  return twimlResponse(`
-    <Say voice="Polly.Joanna">One moment please.</Say>
-    <Pause length="4"/>
-    <Redirect method="POST">${escapeXmlUrl(holdUrl)}</Redirect>
-  `);
+if (raceResult === 'timeout') {
+  await supabase.from('call_logs').update({...}).eq('id', callLogId);  // BLOCKS 5 seconds!
+  fetch(...).catch(...);  // fire-and-forget (fine)
+  return twimlResponse(...);  // Too late -- SignalWire gave up
 }
-
-// AI responded in time -- proceed normally with TTS
-const reply = result.response;
-// ... generate TTS, return Gather as before
 ```
 
-### New Action: `pickup`
+The `await` on the DB update blocks the TwiML response by ~5 seconds. Combined with the 3-second race timer, SignalWire receives the hold message at 8 seconds -- well past its timeout window. The call drops.
 
-A new action handler that checks if the background AI processing has completed:
+**Evidence from logs:**
+```
+15:19:06  "consultation" → process starts
+15:19:14  Hold message returned (8s later -- too slow)
+15:19:15  Background starts
+15:19:19  AI response saved -- but the call is already dead
+```
 
+## The Fix (1 file, 2 changes)
+
+### Change 1: Make DB update fire-and-forget in timeout branch
+
+Remove the `await` on the DB update so the TwiML returns immediately after the 3s race:
+
+**Before (line 542):**
 ```typescript
-case 'pickup':
-  return await handlePickup(supabase, supabaseUrl, supabaseKey, callLogId);
+await supabase.from('call_logs').update({
+  metadata: { ... ai_pending: true ... }
+}).eq('id', callLogId);
 ```
 
-The `handlePickup` function:
-- Reads `call_logs.metadata` for the pending AI response
-- If `ai_pending` is still true (not ready), play another short pause and redirect again (up to 3 times)
-- If the response is ready, generate TTS and return a normal Gather
-- After 3 retries, use a generic fallback: "Could you tell me a bit more about what you need?"
+**After:**
+```typescript
+// Fire-and-forget: don't block TwiML response
+supabase.from('call_logs').update({
+  metadata: { ... ai_pending: true ... }
+}).eq('id', callLogId).then(() => {
+  console.log('[voice-handler] Pending state saved');
+}).catch(err => {
+  console.error('[voice-handler] Failed to save pending state:', err);
+});
+```
 
-### New Action: `process-background`
+### Change 2: Add race timeout to pickup TTS generation
 
-A fire-and-forget handler that:
-- Calls `ai-agent-chat` with the saved speech
-- Saves the AI response text into `call_logs.metadata.pending_response`
-- Sets `ai_pending: false`
+In `handlePickup` (line 657), the TTS generation + DB save also runs synchronously. If TTS takes too long, the pickup response itself times out. Add a similar pattern: attempt TTS, but if it takes over 4 seconds, fall back to Polly.
 
-This runs as a separate edge function invocation so it doesn't block the TwiML response.
+**Before (line 657):**
+```typescript
+const [_, replyAudioUrl] = await Promise.all([
+  supabase.from('call_logs').update({...}).eq('id', callLogId),
+  elevenlabsApiKey ? ttsAudioUrl(...) : Promise.resolve(null),
+]);
+```
 
-## Expected Result
+**After:**
+```typescript
+// DB save is fire-and-forget in pickup too
+supabase.from('call_logs').update({...}).eq('id', callLogId).catch(() => {});
 
-| Step | Before (broken) | After (fixed) |
-|------|-----------------|---------------|
-| Caller says "consultation" | 7s silence, SignalWire timeout, hangup | Immediate "One moment please" |
-| AI processes + tools | Blocked the TwiML response | Runs in background |
-| After 4 seconds | Call already dead | Pickup redirect finds AI answer ready |
-| Caller hears | Nothing (disconnected) | "I can help you with a consultation. What day works best?" |
+// Race TTS against 4s deadline -- fall back to Polly if too slow
+let replyAudioUrl: string | null = null;
+if (elevenlabsApiKey) {
+  const ttsTimer = new Promise<null>(r => setTimeout(() => r(null), 4000));
+  replyAudioUrl = await Promise.race([
+    ttsAudioUrl(supabase, callLog.company_id, reply, elevenlabsApiKey, elevenlabsVoiceId),
+    ttsTimer,
+  ]);
+}
+```
 
-## No Database Changes Needed
+## Expected Timing After Fix
 
-Uses existing `call_logs.metadata` JSONB column to store pending state.
+| Step | Before | After |
+|------|--------|-------|
+| Race fires at 3s | DB write blocks 5s more | TwiML returns immediately |
+| Hold TwiML sent | ~8s (too late) | ~3.1s (well within limit) |
+| Pickup responds | ~4s (TTS blocks) | 4s max (Polly fallback) |
 
-## Summary of Changes
+## No New Files or DB Changes
 
-| File | Change |
-|------|--------|
-| `supabase/functions/voice-handler/index.ts` | Add Promise.race timeout pattern to handleProcess, add `pickup` and `process-background` action handlers |
+Same file, same functions -- just removing blocking `await` calls from the critical response path.
 
