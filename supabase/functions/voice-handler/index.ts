@@ -400,7 +400,7 @@ async function handleProcess(
       body: JSON.stringify({
         message: speechResult,
         systemPrompt,
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-2.5-flash-lite',
         companyId,
         agentType: activeAgent,
         isInternalRequest: true,
@@ -430,20 +430,22 @@ async function handleProcess(
     // Add assistant response to conversation history
     conversationHistory.push({ role: 'assistant', content: reply });
 
-    // Save updated conversation state back to call_logs
-    if (callLogId && !callLogId.startsWith('incoming_')) {
-      await supabase.from('call_logs').update({
-        metadata: {
-          conversation_history: conversationHistory,
-          collected_info: collectedInfo,
-        },
-      }).eq('id', callLogId);
-    }
-
-    // Generate TTS response with ElevenLabs Jessica
-    const replyAudioUrl = elevenlabsApiKey
-      ? await ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
-      : null;
+    // Run DB save and TTS generation in parallel for speed
+    const [_, replyAudioUrl] = await Promise.all([
+      // Save conversation state (non-blocking)
+      callLogId && !callLogId.startsWith('incoming_')
+        ? supabase.from('call_logs').update({
+            metadata: {
+              conversation_history: conversationHistory,
+              collected_info: collectedInfo,
+            },
+          }).eq('id', callLogId)
+        : Promise.resolve(),
+      // Generate TTS audio
+      elevenlabsApiKey
+        ? ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
+        : Promise.resolve(null),
+    ]);
 
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
@@ -523,7 +525,7 @@ async function generateTTSAudio(
   supabase: any, apiKey: string, voiceId: string, text: string
 ): Promise<string> {
   const ttsResponse = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=ulaw_8000`,
     {
       method: 'POST',
       headers: {
@@ -532,7 +534,7 @@ async function generateTTSAudio(
       },
       body: JSON.stringify({
         text,
-        model_id: 'eleven_turbo_v2_5',
+        model_id: 'eleven_flash_v2_5',
         voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
       }),
     }
@@ -544,11 +546,11 @@ async function generateTTSAudio(
   }
 
   const audioBuffer = await ttsResponse.arrayBuffer();
-  const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
+  const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.wav`;
 
   const { error: uploadError } = await supabase.storage
     .from('voice-audio')
-    .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
+    .upload(fileName, audioBuffer, { contentType: 'audio/basic', upsert: false });
 
   if (uploadError) {
     throw new Error(`Storage upload error: ${uploadError.message}`);
