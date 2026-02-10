@@ -130,6 +130,9 @@ Deno.serve(async (req) => {
       case 'incoming':
         return await handleIncoming(supabase, supabaseUrl, callerNumber, calledNumber);
 
+      case 'dial-status':
+        return await handleDialStatus(supabase, supabaseUrl, supabaseKey, callLogId, callerNumber, formParams);
+
       case 'outbound':
         return await handleOutbound(supabase, supabaseUrl, supabaseKey, callLogId);
 
@@ -176,22 +179,14 @@ async function handleIncoming(
 
   const { company_id, elevenlabs_api_key, elevenlabs_voice_id } = integration;
 
-  // Get company info
+  // Get company info including call routing settings
   const { data: company } = await supabase
     .from('companies')
-    .select('name, ai_voice_greeting, ai_agent_prompt')
+    .select('name, ai_voice_greeting, ai_agent_prompt, call_routing_mode, business_phone, ring_timeout_seconds')
     .eq('id', company_id)
     .single();
 
-  const defaultGreeting = `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
-  let greeting = company?.ai_voice_greeting || defaultGreeting;
-  // Safeguard: prevent long monologue greetings that block turn-taking
-  if (greeting.length > 150) {
-    console.warn(`Greeting too long (${greeting.length} chars), using default`);
-    greeting = defaultGreeting;
-  }
-
-  // Log inbound call with conversation state in metadata
+  // Log inbound call
   const { data: callLog } = await supabase.from('call_logs').insert({
     company_id,
     customer_phone: normalizedCaller,
@@ -208,16 +203,105 @@ async function handleIncoming(
 
   const logId = callLog?.id || `incoming_${company_id}`;
 
-  // Generate greeting with ElevenLabs Jessica (fall back to Polly)
-  const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-  const audioUrl = elevenlabs_api_key
-    ? await ttsAudioUrl(supabase, company_id, greeting, elevenlabs_api_key, voiceId)
+  // === RING FIRST MODE ===
+  // If company has ring_first mode and a business phone, ring the owner first
+  const routingMode = company?.call_routing_mode || 'ai_direct';
+  const businessPhone = company?.business_phone;
+  const ringTimeout = company?.ring_timeout_seconds || 15;
+
+  if (routingMode === 'ring_first' && businessPhone) {
+    const normalizedBusiness = normalizePhoneNumber(businessPhone);
+    console.log(`Ring-first mode: ringing ${normalizedBusiness} for ${ringTimeout}s before AI takeover`);
+
+    const dialStatusUrl = `${supabaseUrl}/functions/v1/voice-handler?action=dial-status&amp;callLogId=${logId}`;
+
+    return twimlResponse(`
+      <Dial timeout="${ringTimeout}" callerId="${escapeXml(normalizedCaller)}"
+            action="${dialStatusUrl}" method="POST">
+        <Number>${escapeXml(normalizedBusiness)}</Number>
+      </Dial>
+    `);
+  }
+
+  // === AI DIRECT MODE (default) ===
+  return await startAIGreeting(supabase, supabaseUrl, company, company_id, logId, elevenlabs_api_key, elevenlabs_voice_id);
+}
+
+// Helper: Start the AI greeting flow (used by both incoming and dial-status fallback)
+async function startAIGreeting(
+  supabase: any, supabaseUrl: string, company: any, companyId: string,
+  logId: string, elevenlabsApiKey: string, elevenlabsVoiceId: string
+): Promise<Response> {
+  const defaultGreeting = `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
+  let greeting = company?.ai_voice_greeting || defaultGreeting;
+  if (greeting.length > 150) {
+    console.warn(`Greeting too long (${greeting.length} chars), using default`);
+    greeting = defaultGreeting;
+  }
+
+  const voiceId = elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9';
+  const audioUrl = elevenlabsApiKey
+    ? await ttsAudioUrl(supabase, companyId, greeting, elevenlabsApiKey, voiceId)
     : null;
 
   const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
   const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
 
   return twimlResponse(buildPlayThenGather(audioUrl, greeting, gatherUrl, timeoutUrl));
+}
+
+// === DIAL STATUS (ring-first callback) ===
+// Called by SignalWire after the <Dial> attempt to the business phone completes
+async function handleDialStatus(
+  supabase: any, supabaseUrl: string, supabaseKey: string,
+  callLogId: string, callerNumber: string, formParams: Record<string, string>
+): Promise<Response> {
+  const dialStatus = formParams['DialCallStatus'] || '';
+  console.log(`Dial status callback: status=${dialStatus} callLogId=${callLogId}`);
+
+  // If the business owner answered and the call completed normally, we're done
+  if (dialStatus === 'completed') {
+    console.log('Business owner answered the call, marking as handled');
+    if (callLogId) {
+      await supabase.from('call_logs').update({
+        status: 'completed',
+        summary: 'Answered by business owner (ring-first mode)',
+        ended_at: new Date().toISOString(),
+      }).eq('id', callLogId);
+    }
+    return twimlResponse('<Hangup/>');
+  }
+
+  // Owner didn't answer (no-answer, busy, failed, cancel) -- AI takes over
+  console.log(`Business owner didn't answer (${dialStatus}), AI agent taking over`);
+
+  // Get company + integration info from the call log
+  let companyId = '';
+  if (callLogId && !callLogId.startsWith('incoming_')) {
+    const { data: callLog } = await supabase
+      .from('call_logs')
+      .select('company_id')
+      .eq('id', callLogId)
+      .single();
+    if (callLog) companyId = callLog.company_id;
+  }
+
+  if (!companyId) {
+    return twimlResponse('<Say voice="Polly.Joanna">Sorry, we could not connect your call. Please try again. Goodbye.</Say><Hangup/>');
+  }
+
+  // Fetch company and integration details in parallel
+  const [companyResult, integrationResult] = await Promise.all([
+    supabase.from('companies').select('name, ai_voice_greeting, ai_agent_prompt').eq('id', companyId).single(),
+    supabase.from('tenant_integrations').select('elevenlabs_api_key, elevenlabs_voice_id').eq('company_id', companyId).maybeSingle(),
+  ]);
+
+  return await startAIGreeting(
+    supabase, supabaseUrl,
+    companyResult.data, companyId, callLogId,
+    integrationResult.data?.elevenlabs_api_key || '',
+    integrationResult.data?.elevenlabs_voice_id || ''
+  );
 }
 
 // === OUTBOUND CALL (webhook from SignalWire when call connects) ===

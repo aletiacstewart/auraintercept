@@ -8,15 +8,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2, Save } from 'lucide-react';
+import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2, Save, PhoneForwarded, Bot } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 type MissedCallAction = 'disabled' | 'sms_only' | 'callback_only' | 'callback_then_sms';
+type CallRoutingMode = 'ai_direct' | 'ring_first';
 
 interface MissedCallCallback {
   id: string;
@@ -32,11 +34,13 @@ export function MissedCallSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
 
-  // Local state for form
   const [localSettings, setLocalSettings] = useState({
     missed_call_action: 'disabled' as MissedCallAction,
     callback_delay_seconds: 30,
     callback_retry_count: 3,
+    call_routing_mode: 'ai_direct' as CallRoutingMode,
+    business_phone: '',
+    ring_timeout_seconds: 15,
   });
   const [hasChanges, setHasChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -47,7 +51,7 @@ export function MissedCallSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('missed_call_action, callback_delay_seconds, callback_retry_count')
+        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -87,13 +91,15 @@ export function MissedCallSettings() {
     enabled: !!companyId,
   });
 
-  // Sync local state with fetched data
   useEffect(() => {
     if (company) {
       setLocalSettings({
         missed_call_action: (company.missed_call_action as MissedCallAction) || 'disabled',
         callback_delay_seconds: company.callback_delay_seconds || 30,
         callback_retry_count: company.callback_retry_count || 3,
+        call_routing_mode: (company.call_routing_mode as CallRoutingMode) || 'ai_direct',
+        business_phone: company.business_phone || '',
+        ring_timeout_seconds: company.ring_timeout_seconds || 15,
       });
       setHasChanges(false);
     }
@@ -103,11 +109,7 @@ export function MissedCallSettings() {
   const hasVoice = !!(hasSignalWire && integrations?.elevenlabs_api_key);
 
   const updateMutation = useMutation({
-    mutationFn: async (updates: {
-      missed_call_action?: MissedCallAction;
-      callback_delay_seconds?: number;
-      callback_retry_count?: number;
-    }) => {
+    mutationFn: async (updates: Record<string, any>) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
         .from('companies')
@@ -119,7 +121,7 @@ export function MissedCallSettings() {
       queryClient.invalidateQueries({ queryKey: ['company-missed-call-settings'] });
       setSaveStatus('saved');
       setHasChanges(false);
-      toast.success('Missed call settings saved');
+      toast.success('Settings saved');
       triggerSetupProgressRefresh();
       setTimeout(() => setSaveStatus('idle'), 2000);
     },
@@ -178,7 +180,7 @@ export function MissedCallSettings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <PhoneMissed className="h-5 w-5" />
-            Missed Call Handling
+            Call Routing & Missed Calls
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -201,18 +203,153 @@ export function MissedCallSettings() {
     }
     setHasChanges(true);
   };
+
   return (
     <div className="space-y-6">
+      {/* Call Routing Card */}
+      <Card className="border-border/50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <PhoneForwarded className="h-5 w-5" />
+                Call Routing
+              </CardTitle>
+              <CardDescription>
+                Control how incoming calls are handled — AI answers directly or rings your phone first
+              </CardDescription>
+            </div>
+            <Button 
+              onClick={handleSave} 
+              disabled={!hasChanges || saveStatus === 'saving'}
+              size="sm"
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save'}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {!hasSignalWire && (
+            <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
+              <AlertCircle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-sm">
+                Call routing requires{' '}
+                <Link to="/integrations" className="text-secondary underline hover:no-underline">
+                  SignalWire integration
+                </Link>{' '}
+                to be configured.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>When a customer calls your number</Label>
+              <Select
+                value={localSettings.call_routing_mode}
+                onValueChange={(value: CallRoutingMode) => {
+                  setLocalSettings(prev => ({ ...prev, call_routing_mode: value }));
+                  setHasChanges(true);
+                }}
+                disabled={!hasSignalWire}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select routing mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ai_direct">
+                    <div className="flex items-center gap-2">
+                      <Bot className="h-4 w-4" />
+                      AI Answers Directly — Agent picks up immediately
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="ring_first">
+                    <div className="flex items-center gap-2">
+                      <PhoneForwarded className="h-4 w-4" />
+                      Ring My Phone First — AI takes over if unanswered
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {localSettings.call_routing_mode === 'ring_first' && (
+              <div className="space-y-4 pl-1">
+                <div className="space-y-2">
+                  <Label>Your business/personal phone number</Label>
+                  <Input
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    value={localSettings.business_phone}
+                    onChange={(e) => {
+                      setLocalSettings(prev => ({ ...prev, business_phone: e.target.value }));
+                      setHasChanges(true);
+                    }}
+                    disabled={!hasSignalWire}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    This is the number that will ring first when a customer calls
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Ring timeout: {localSettings.ring_timeout_seconds} seconds</Label>
+                  <Slider
+                    value={[localSettings.ring_timeout_seconds]}
+                    onValueChange={([value]) => {
+                      setLocalSettings(prev => ({ ...prev, ring_timeout_seconds: value }));
+                      setHasChanges(true);
+                    }}
+                    min={10}
+                    max={30}
+                    step={5}
+                    disabled={!hasSignalWire}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    How long to ring your phone before the AI agent takes over (10–30 seconds)
+                  </p>
+                </div>
+
+                <div className="bg-primary/5 rounded-lg p-4 space-y-2 border border-primary/10">
+                  <h4 className="font-medium text-sm text-card-foreground">How Ring First works</h4>
+                  <ol className="text-sm text-card-foreground/70 space-y-1.5 list-decimal list-inside">
+                    <li>Customer calls your SignalWire number</li>
+                    <li>Your phone rings for {localSettings.ring_timeout_seconds} seconds</li>
+                    <li>If you answer — it's a normal call, AI stays out of the way</li>
+                    <li>If you don't answer — AI agent picks up instantly and helps the caller</li>
+                  </ol>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    The caller never gets voicemail or a dead line. Every call is handled.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {localSettings.call_routing_mode === 'ai_direct' && (
+              <div className="bg-primary/5 rounded-lg p-4 space-y-2 border border-primary/10">
+                <h4 className="font-medium text-sm text-card-foreground">AI Direct mode</h4>
+                <p className="text-sm text-card-foreground/70">
+                  Your AI agent answers every call immediately. Best for businesses that want 24/7 automated call handling without personal phone interruptions.
+                </p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Missed Call Handling Card */}
       <Card className="border-border/50">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <PhoneMissed className="h-5 w-5" />
-                Missed Call Handling
+                Missed Call Follow-up
               </CardTitle>
               <CardDescription>
-                Configure how to respond when customer calls are missed
+                Configure automated follow-up when calls are missed
               </CardDescription>
             </div>
             <div className="flex items-center gap-3">
@@ -224,32 +361,10 @@ export function MissedCallSettings() {
               <span className="text-sm font-medium">
                 {isEnabled ? 'Enabled' : 'Disabled'}
               </span>
-              <Button 
-                onClick={handleSave} 
-                disabled={!hasChanges || saveStatus === 'saving'}
-                size="sm"
-                className="gap-2 ml-2"
-              >
-                <Save className="h-4 w-4" />
-                {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save'}
-              </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {!hasSignalWire && (
-            <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
-              <AlertCircle className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-sm">
-                Missed call handling requires{' '}
-                <Link to="/integrations" className="text-secondary underline hover:no-underline">
-                  SignalWire integration
-                </Link>{' '}
-                to be configured.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {isEnabled && (
             <div className="space-y-4">
               <div className="space-y-2">
@@ -301,36 +416,8 @@ export function MissedCallSettings() {
                       Wait time before initiating AI callback (10-300 seconds)
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    This delay allows time for the customer to call back first
-                  </p>
                 </div>
               )}
-
-              <div className="bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
-                <h4 className="font-medium flex items-center gap-2 text-card-foreground">
-                  <MessageSquare className="h-4 w-4" />
-                  How it works
-                </h4>
-                <ul className="text-sm text-card-foreground/70 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="font-semibold text-card-foreground">1.</span>
-                    Customer calls your business phone number
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-semibold text-card-foreground">2.</span>
-                    If the call is missed (no answer, busy, or failed), SignalWire triggers the missed call handler
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-semibold text-card-foreground">3.</span>
-                    Based on your settings, the system either sends an SMS, initiates an AI callback, or both
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-semibold text-card-foreground">4.</span>
-                    AI callbacks use your ElevenLabs voice to greet the customer and help them book an appointment
-                  </li>
-                </ul>
-              </div>
             </div>
           )}
         </CardContent>
