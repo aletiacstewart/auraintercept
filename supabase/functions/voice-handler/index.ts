@@ -525,7 +525,7 @@ async function generateTTSAudio(
   supabase: any, apiKey: string, voiceId: string, text: string
 ): Promise<string> {
   const ttsResponse = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=ulaw_8000`,
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_22050_32`,
     {
       method: 'POST',
       headers: {
@@ -546,11 +546,11 @@ async function generateTTSAudio(
   }
 
   const audioBuffer = await ttsResponse.arrayBuffer();
-  const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.wav`;
+  const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
 
   const { error: uploadError } = await supabase.storage
     .from('voice-audio')
-    .upload(fileName, audioBuffer, { contentType: 'audio/basic', upsert: false });
+    .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
 
   if (uploadError) {
     throw new Error(`Storage upload error: ${uploadError.message}`);
