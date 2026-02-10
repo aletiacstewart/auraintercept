@@ -34,6 +34,9 @@ interface Company {
   secondary_color: string | null;
   ai_agent_prompt: string | null;
   ai_voice_greeting: string | null;
+  phone: string | null;
+  contact_phone: string | null;
+  business_phone: string | null;
 }
 
 interface Service {
@@ -62,11 +65,10 @@ export default function CustomerCompanyPortal() {
         .single();
 
       if (error) throw error;
-      // Return with null for sensitive fields that require authentication
       return { 
         ...data, 
         ai_agent_prompt: null, 
-        ai_voice_greeting: null 
+        ai_voice_greeting: null,
       } as Company;
     },
     enabled: !!companySlug,
@@ -342,14 +344,30 @@ export default function CustomerCompanyPortal() {
                     <span className="font-medium">AI Chat</span>
                     <span className="text-xs text-muted-foreground">Get instant answers</span>
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-auto py-4 flex flex-col items-center gap-2"
-                  >
-                    <Phone className="w-8 h-8 text-primary" />
-                    <span className="font-medium">Call Us</span>
-                    <span className="text-xs text-muted-foreground">Speak to a representative</span>
-                  </Button>
+                  {(() => {
+                    const companyPhone = company.contact_phone || company.business_phone || company.phone;
+                    return companyPhone ? (
+                      <Button 
+                        variant="outline" 
+                        className="h-auto py-4 flex flex-col items-center gap-2"
+                        onClick={() => window.open(`tel:${companyPhone}`, '_self')}
+                      >
+                        <Phone className="w-8 h-8 text-primary" />
+                        <span className="font-medium">Call Us</span>
+                        <span className="text-xs text-muted-foreground">{companyPhone}</span>
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        className="h-auto py-4 flex flex-col items-center gap-2 opacity-50"
+                        disabled
+                      >
+                        <Phone className="w-8 h-8 text-muted-foreground" />
+                        <span className="font-medium">Call Us</span>
+                        <span className="text-xs text-muted-foreground">Phone not available</span>
+                      </Button>
+                    );
+                  })()}
                 </div>
               </CardContent>
             </Card>
