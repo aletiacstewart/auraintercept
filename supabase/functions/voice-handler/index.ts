@@ -162,8 +162,13 @@ async function handleIncoming(
     .eq('id', company_id)
     .single();
 
-  const greeting = company?.ai_voice_greeting ||
-    `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
+  const defaultGreeting = `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
+  let greeting = company?.ai_voice_greeting || defaultGreeting;
+  // Safeguard: prevent long monologue greetings that block turn-taking
+  if (greeting.length > 150) {
+    console.warn(`Greeting too long (${greeting.length} chars), using default`);
+    greeting = defaultGreeting;
+  }
 
   // Log inbound call with conversation state in metadata
   const { data: callLog } = await supabase.from('call_logs').insert({
