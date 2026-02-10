@@ -76,6 +76,18 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       wasConnectedRef.current = true;
       setIsConnecting(false);
       setDebugInfo((prev) => ({ ...prev, method: lastConnectMethodRef.current }));
+
+      // Force-play any audio elements created by the SDK (iframe autoplay workaround)
+      setTimeout(() => {
+        const audioElements = document.querySelectorAll("audio");
+        audioElements.forEach((el) => {
+          if (el.paused) {
+            console.log("[VoiceChat] Found paused <audio>, forcing play...");
+            el.play().catch((e) => console.warn("[VoiceChat] audio.play() blocked:", e));
+          }
+        });
+      }, 200);
+
       toast({
         title: "Talk to Aura Connected",
         description: "You can now speak with the AI assistant",
@@ -182,9 +194,32 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
   });
 
+  // Ensure SDK audio elements stay unmuted and playing
+  useEffect(() => {
+    if (conversation.status !== "connected") return;
+    
+    // Set volume to max
+    try {
+      conversation.setVolume({ volume: 1 });
+    } catch (e) {
+      console.warn("[VoiceChat] setVolume failed:", e);
+    }
+
+    // Periodically check for paused audio elements (SDK creates them dynamically)
+    const interval = setInterval(() => {
+      const audioElements = document.querySelectorAll("audio");
+      audioElements.forEach((el) => {
+        if (el.paused && el.srcObject) {
+          console.log("[VoiceChat] Found paused WebRTC audio, forcing play...");
+          el.play().catch(() => {});
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [conversation.status, conversation]);
+
   // Don't eagerly request microphone — request on user gesture in startConversation
-  // This prevents the component from blocking with a "mic denied" message before
-  // the user even tries to start a conversation.
   useEffect(() => {
     if (testMode) {
       setHasPermission(true);
