@@ -171,6 +171,11 @@ export function ElevenLabsVoiceSetupGuide() {
                 <li>Copy the <strong>Agent ID</strong> (starts with "agent_")</li>
                 <li>Configure webhook tools for booking/scheduling (see advanced guide)</li>
               </ol>
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-destructive text-xs">
+                  <strong>⚠️ Critical Timing Settings:</strong> In your agent's <strong>Voice → Turn-taking</strong> section, set <strong>End of Speech Detection</strong> to <strong>4000ms</strong> and <strong>Interruption Sensitivity</strong> to <strong>Low</strong>. Without this, the agent will cut off callers before they finish speaking their name or phone number.
+                </p>
+              </div>
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
                   <strong>💡 Pro tip:</strong> After connecting your API key, an advanced ElevenLabs Agent Setup Guide will appear with full webhook tool configuration.
