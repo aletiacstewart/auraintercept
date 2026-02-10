@@ -158,10 +158,11 @@ function buildSWMLDocument(
             params: {
               static_greeting: greeting,
               swaig_allow_swml: true,
-              end_of_speech_timeout: 3000,
-              attention_timeout: 25000,
+              end_of_speech_timeout: 4000,
+              attention_timeout: 30000,
               inactivity_timeout: 60000,
-              barge_confidence: 0.7,
+              barge_confidence: 0.9,
+              interruption_threshold: 200,
             },
             languages: [
               {
