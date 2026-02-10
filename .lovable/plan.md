@@ -1,57 +1,50 @@
 
 
-# Fix: SWML AI Agent — Prompt, Knowledge, Terminology, and Speech Timing
+# Fix: Services Not Loading, Custom Voice Not Working, Email Handling
 
-## Problems Identified
+## Problems Found
 
-1. **Generic prompt, not Aura Intercept**: The `buildSWMLDocument` only reads `companies.ai_agent_prompt` but does NOT inject the company's services list or knowledge base content. The AI has no context about what Aura Intercept actually does.
+### 1. Services NEVER load -- wrong column name (critical bug)
+The `services` table uses `is_active` as the column name, but the code queries `.eq('active', true)` in THREE places:
+- `voice-handler/index.ts` line 372: `.eq('active', true)` -- loads 0 services every time
+- `voice-swaig/index.ts` line 236: `.eq('active', true)` -- service lookup for booking fails
+- `voice-swaig/index.ts` line 285: `.eq('active', true)` -- get_services returns "no services listed"
 
-2. **"Technician" spoken to callers**: In `voice-swaig.ts` line 91, the fallback message says "we don't have any technicians available." The internal `job_type` must stay as `technician` (per architecture standard), but the caller-facing language must say "agent" or "team member" instead.
+The logs confirm this: `"Loaded 0 active services for company 04c57cbe-358e-4036-a3ad-b777a55f5be0"` -- there IS one active service ("Aura Intercept Consultation, 45 min") but the query silently returns nothing.
 
-3. **No services loaded**: The SWML prompt doesn't fetch the `services` table. Aura Intercept has one service ("Aura Intercept Consultation, 45 min") but the AI doesn't know about it, so it can't guide the caller.
+### 2. Custom ElevenLabs voice requires API key in SignalWire
+The voice ID `cgSgspJ2msm6clMCkdW9` is a custom/cloned voice, not one of SignalWire's built-in ElevenLabs voices. SignalWire can use built-in voices (Rachel, Sarah, etc.) without configuration, but custom voice IDs require your ElevenLabs API key to be added to your SignalWire account.
 
-4. **Knowledge base not connected**: There are 9 knowledge documents uploaded (PDFs like pricing, FAQ, user guide) but their `content_text` is all NULL — meaning the text was never extracted. Even if it were extracted, the SWML prompt doesn't include it. For now, we'll inject the services and company context; knowledge base PDF extraction is a separate task.
+**You need to do this in SignalWire Dashboard:**
+1. Go to your SignalWire Space settings (or AI Agent settings)
+2. Look for "Integrations" or "TTS Provider" settings
+3. Add your ElevenLabs API key: `sk_4abda3d81bac2bcdaec7d9660d2e737da40e42e5314294c5`
 
-5. **Speech cut-off — `end_of_speech_timeout` too short**: Currently set to 1400ms (1.4 seconds). When a caller pauses briefly while saying their name or email, the AI thinks they're done and jumps in. This needs to be increased to ~3000ms (3 seconds) so callers have time to finish speaking.
+If you can't find this setting, a fallback approach is to use one of SignalWire's built-in ElevenLabs voices (like "Rachel" or "Sarah") until the custom voice integration is confirmed.
 
-6. **`attention_timeout` too short**: Set to 15 seconds. If the caller takes more than 15 seconds to respond, the AI prompts them. This should be increased to ~25 seconds to give callers time to think (especially for email/phone dictation).
+### 3. Email dictation still getting cut off
+Even with `end_of_speech_timeout` at 3000ms, email addresses have many natural pauses (spelling letters, saying "at", "dot"). The system prompt needs stronger guidance, and we should also add `barge_confidence` and `barge_match_string` tuning to prevent premature interruption.
 
 ## Changes
 
-### 1. Update `supabase/functions/voice-handler/index.ts`
+### 1. Fix column name in `voice-handler/index.ts`
+- Line 372: Change `.eq('active', true)` to `.eq('is_active', true)`
 
-**In `buildSWMLDocument()`:**
-- Accept a new `services` parameter (array of service objects)
-- Inject service names, descriptions, and durations into the system prompt so the AI knows what the company offers
-- Change `end_of_speech_timeout` from 1400 to 3000
-- Change `attention_timeout` from 15000 to 25000
-- Add service names to the `hints` array so SignalWire's speech recognition is primed for them
+### 2. Fix column name in `voice-swaig/index.ts` (two places)
+- Line 236: Change `.eq('active', true)` to `.eq('is_active', true)` (in `handleBookAppointment`)
+- Line 285: Change `.eq('active', true)` to `.eq('is_active', true)` (in `handleGetServices`)
 
-**In `handleIncoming()`:**
-- After fetching the company, also query the `services` table for active services belonging to that company
-- Pass the services array into `buildSWMLDocument()`
+### 3. Add voice fallback in `voice-handler/index.ts`
+In `buildSWMLDocument`, if the voice ID is a custom clone ID, keep it but also add a fallback to a built-in voice name. Update the voice string to use the name format if the ID is not in SignalWire's recognized list. Alternatively, add a comment and log so we can debug if the voice doesn't activate.
 
-**In `buildPhoneSystemPrompt()`:**
-- Append a "SERVICES OFFERED" section listing each service with name, description, and duration
-- Replace any mention of "technician" with "team member" in the prompt text
+### 4. Strengthen email handling in system prompt
+In `buildPhoneSystemPrompt`, add explicit instructions:
+- "When confirming an email address, spell it back letter by letter"
+- "Wait for the caller to finish spelling before repeating it back"
+- "If you're unsure about any part of the email, ask them to spell just that part"
 
-### 2. Update `supabase/functions/voice-swaig/index.ts`
-
-**In `handleCheckAvailability()`:**
-- Change line 91 from "we don't have any technicians available" to "we don't have any team members available right now"
-- Use the service's `duration_minutes` from the `services` table instead of hardcoded 60-minute slots when generating availability
-
-**In `handleBookAppointment()`:**
-- Look up the service by name from the `services` table to get the correct `duration_minutes` (currently hardcoded to 60; Aura Intercept Consultation is 45 min)
-- Use that duration when creating the appointment
-
-**Add a new SWAIG function `get_services`:**
-- Returns the list of available services so the AI can tell the caller what's offered
-- This matches the pattern from the existing `widget-api` and `booking-actions` functions
-
-### 3. Update SWAIG function definitions in `buildSWMLDocument()`
-
-Add a `get_services` function definition to the SWAIG functions array so the AI can call it when asked "what services do you offer?"
+### 5. Add `barge_confidence` parameter
+In the SWML `params` block, add `barge_confidence: 0.7` (higher threshold means the AI is less likely to interrupt the caller based on partial speech detection).
 
 ## No Database Changes
 
@@ -61,9 +54,9 @@ All fixes are edge function code only.
 
 | Issue | Before | After |
 |-------|--------|-------|
-| Prompt context | Generic "helpful assistant" | Includes Aura Intercept services and company details |
-| Terminology | "technicians" spoken to callers | "team members" or "agents" |
-| Services awareness | AI doesn't know what's offered | AI lists services with descriptions and durations |
-| Speech cut-off | 1.4s pause = AI interrupts | 3s pause tolerance, callers can finish speaking |
-| Appointment duration | Always 60 min | Uses actual service duration (45 min for consultation) |
+| Services loaded | 0 (wrong column name) | 1 ("Aura Intercept Consultation") |
+| Service awareness | AI says "no services listed" | AI describes the consultation service |
+| Booking duration | Falls back to 60 min | Uses correct 45 min |
+| Email handling | Cuts off mid-dictation | Higher interruption threshold + prompt guidance |
+| Voice | May fall back to default (custom ID not recognized) | Fallback to built-in voice if custom fails |
 
