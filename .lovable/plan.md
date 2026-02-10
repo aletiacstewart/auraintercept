@@ -1,36 +1,49 @@
 
 
-# Fix: Add First Message (Greeting) to SWML Document
+# Fix: Use `params.static_greeting` for Custom Greeting
 
-## The Bug
+## The Problem
 
-In `voice-handler/index.ts` line 117, the greeting is loaded from the database:
-```typescript
-const greeting = company?.ai_voice_greeting || `Thank you for calling ${companyName}. How can I help you today?`;
-```
+We put the greeting in `prompt.first_message`, but that is **not a valid SignalWire SWML field**. SignalWire silently ignores it and generates its own generic greeting from the LLM.
 
-But it is **never passed** into the SWML document built on lines 143-270. The `ai` block has no `first_message` property, so SignalWire defaults to a generic "Hello, how can I help you."
+The correct SWML parameter is `params.static_greeting` -- documented at [developer.signalwire.com/swml/methods/ai/params](https://developer.signalwire.com/swml/methods/ai/params/).
 
 ## The Fix
 
-Add the greeting as `prompt.first_message` inside the `ai` block of the SWML document (around line 151):
+In `supabase/functions/voice-handler/index.ts`, move the greeting from `prompt.first_message` to `params.static_greeting`:
 
-```typescript
-ai: {
-  prompt: {
-    text: systemPrompt,
-    temperature: 0.7,
-    first_message: greeting,   // <-- ADD THIS
-  },
-  ...
-}
+**Remove** from the `prompt` object (line 153):
+```
+first_message: greeting,
 ```
 
-This single addition will make the AI agent answer with your custom Aura Intercept greeting instead of the generic one.
+**Add** to the `params` object (around line 161):
+```
+static_greeting: greeting,
+```
 
-## No Other Changes Needed
+The resulting SWML `ai` block will look like:
 
-- The prompt (with services, phone rules, booking flow) is already loading correctly
-- The Rachel voice fallback is working
-- The SWAIG argument parsing is fixed
-- This is just the missing greeting line
+```text
+ai:
+  prompt:
+    text: <system prompt>
+    temperature: 0.7
+  params:
+    static_greeting: "Hello! I'm Aura, your AI Intercept Agent..."
+    end_of_speech_timeout: 3000
+    attention_timeout: 25000
+    ...
+```
+
+## What This Changes
+
+| Before | After |
+|--------|-------|
+| Generic "Hello, how can I help you" | Your custom Aura greeting from the database |
+| `prompt.first_message` (ignored by SignalWire) | `params.static_greeting` (official SWML parameter) |
+
+## No Other Changes
+
+Single field move. Everything else (prompt, services, voice fallback, SWAIG tools) stays the same.
+
