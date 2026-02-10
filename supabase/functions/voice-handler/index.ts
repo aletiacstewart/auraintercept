@@ -399,7 +399,7 @@ async function handleProcess(
         systemPrompt,
         model: 'google/gemini-2.5-flash',
         companyId,
-        agentType: 'phone',
+        agentType: 'triage',
         isInternalRequest: true,
       }),
     });
