@@ -20,6 +20,57 @@ function twimlResponse(twiml: string): Response {
   });
 }
 
+// Helper: generate ElevenLabs TTS audio and return a <Play> URL, or fall back to Polly <Say>
+async function ttsOrFallback(
+  supabase: any, companyId: string, text: string,
+  apiKey: string, voiceId: string
+): Promise<string> {
+  try {
+    const audioUrl = await generateTTSAudio(supabase, apiKey, voiceId, text);
+    return `<Play>${escapeXmlUrl(audioUrl)}</Play>`;
+  } catch (err) {
+    console.error('ElevenLabs TTS failed, falling back to Polly:', err);
+    return `<Say voice="Polly.Joanna">${escapeXml(text)}</Say>`;
+  }
+}
+
+// Build the phone-specific system prompt with sequential collection rules
+function buildPhoneSystemPrompt(companyName: string, agentPrompt: string | null, conversationHistory: Array<{role: string; content: string}>): string {
+  const base = agentPrompt || `You are a helpful phone assistant for ${companyName}.`;
+
+  const phoneRules = `
+
+CRITICAL PHONE CALL RULES (override any conflicting instructions):
+- You are speaking on a PHONE CALL. The caller HEARS your words spoken aloud.
+- Keep EVERY response to 1-2 short sentences maximum.
+- Do NOT use any formatting, markdown, bullet points, asterisks, dashes, or special characters.
+- Do NOT list multiple items. Speak naturally as if talking to someone.
+- Ask for ONE piece of information at a time. WAIT for the caller to answer before asking the next question.
+- NEVER ask for name, phone, AND email in the same response.
+- Follow this exact sequence when collecting information:
+  1. First, greet and ask what service they need.
+  2. Then ask for their NAME only.
+  3. Then ask for their PHONE NUMBER only.
+  4. Then ask for their EMAIL ADDRESS only.
+  5. Then ask for their ADDRESS or preferred appointment time.
+  6. Finally, confirm all details back to them.
+- If the caller already provided some info (e.g. their name), skip that step and move to the next.
+- Be warm, friendly, and conversational. Use the caller's name once you know it.`;
+
+  let prompt = base + phoneRules;
+
+  // Append conversation history so the AI has full context
+  if (conversationHistory.length > 0) {
+    prompt += '\n\nCONVERSATION SO FAR:\n';
+    for (const msg of conversationHistory) {
+      prompt += `${msg.role === 'user' ? 'CALLER' : 'YOU'}: ${msg.content}\n`;
+    }
+    prompt += '\nContinue the conversation naturally. Ask for the NEXT piece of missing information.';
+  }
+
+  return prompt;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -44,7 +95,6 @@ Deno.serve(async (req) => {
         formParams[key] = value as string;
       }
     } catch {
-      // May be JSON or empty body for some actions
       try {
         const text = await req.text();
         if (text) formParams = JSON.parse(text);
@@ -57,7 +107,7 @@ Deno.serve(async (req) => {
 
     switch (action) {
       case 'incoming':
-        return await handleIncoming(supabase, callerNumber, calledNumber);
+        return await handleIncoming(supabase, supabaseUrl, callerNumber, calledNumber);
 
       case 'outbound':
         return await handleOutbound(supabase, supabaseUrl, supabaseKey, callLogId);
@@ -72,7 +122,7 @@ Deno.serve(async (req) => {
         return await handleStatus(supabase, callLogId, callSid, formParams);
 
       case 'timeout':
-        return handleTimeout(supabaseUrl, callLogId);
+        return await handleTimeout(supabase, supabaseUrl, callLogId);
 
       default:
         console.log(`Unknown action: ${action}`);
@@ -86,12 +136,12 @@ Deno.serve(async (req) => {
 
 // === INCOMING CALL ===
 async function handleIncoming(
-  supabase: any, callerNumber: string, calledNumber: string
+  supabase: any, supabaseUrl: string, callerNumber: string, calledNumber: string
 ): Promise<Response> {
   const normalizedCalled = normalizePhoneNumber(calledNumber);
   const normalizedCaller = normalizePhoneNumber(callerNumber);
 
-  // Look up company by phone number
+  // Look up company by phone number + fetch ElevenLabs credentials
   const { data: integration } = await supabase
     .from('tenant_integrations')
     .select('company_id, elevenlabs_api_key, elevenlabs_voice_id')
@@ -103,20 +153,20 @@ async function handleIncoming(
     return twimlResponse('<Say voice="Polly.Joanna">Sorry, this number is not configured. Goodbye.</Say><Hangup/>');
   }
 
-  const { company_id } = integration;
+  const { company_id, elevenlabs_api_key, elevenlabs_voice_id } = integration;
 
   // Get company info
   const { data: company } = await supabase
     .from('companies')
-    .select('name, ai_voice_greeting')
+    .select('name, ai_voice_greeting, ai_agent_prompt')
     .eq('id', company_id)
     .single();
 
   const greeting = company?.ai_voice_greeting ||
     `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
 
-  // Log inbound call
-  await supabase.from('call_logs').insert({
+  // Log inbound call with conversation state in metadata
+  const { data: callLog } = await supabase.from('call_logs').insert({
     company_id,
     customer_phone: normalizedCaller,
     from_number: normalizedCaller,
@@ -124,16 +174,30 @@ async function handleIncoming(
     direction: 'inbound',
     status: 'in-progress',
     purpose: 'inbound',
-  });
+    metadata: {
+      conversation_history: [],
+      collected_info: {},
+    },
+  }).select('id').single();
 
-  // Use Polly for greeting (reliable fallback), then gather speech
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=incoming_${company_id}`;
-  const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=incoming_${company_id}`;
+  const logId = callLog?.id || `incoming_${company_id}`;
+
+  // Generate greeting with ElevenLabs Jessica (fall back to Polly)
+  const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+  let greetingTwiml: string;
+
+  if (elevenlabs_api_key) {
+    greetingTwiml = await ttsOrFallback(supabase, company_id, greeting, elevenlabs_api_key, voiceId);
+  } else {
+    greetingTwiml = `<Say voice="Polly.Joanna">${escapeXml(greeting)}</Say>`;
+  }
+
+  const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
+  const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
 
   return twimlResponse(`
-    <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
-      <Say voice="Polly.Joanna">${escapeXml(greeting)}</Say>
+    <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
+      ${greetingTwiml}
     </Gather>
     <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
   `);
@@ -147,7 +211,6 @@ async function handleOutbound(
     return twimlResponse('<Say voice="Polly.Joanna">Sorry, call configuration error. Goodbye.</Say><Hangup/>');
   }
 
-  // Fetch call context from database
   const { data: callLog, error } = await supabase
     .from('call_logs')
     .select('company_id, customer_name, customer_phone, purpose, metadata')
@@ -168,7 +231,6 @@ async function handleOutbound(
   const responseUrl = `${supabaseUrl}/functions/v1/voice-handler?action=outbound-response&callLogId=${callLogId}`;
 
   if (audioUrl) {
-    // Use pre-generated audio — instant response, no TTS delay
     return twimlResponse(`
       <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
         <Play>${escapeXmlUrl(audioUrl)}</Play>
@@ -178,7 +240,6 @@ async function handleOutbound(
     `);
   }
 
-  // No pre-generated audio — use Polly directly (skip TTS to avoid delay)
   return twimlResponse(`
       <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
         <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
@@ -202,7 +263,6 @@ async function handleOutboundResponse(
   if (digits === '1' || speechResult.toLowerCase().includes('confirm') || speechResult.toLowerCase().includes('yes')) {
     responseMessage = 'Great, your appointment is confirmed. Thank you and goodbye.';
 
-    // Update appointment if linked
     if (callLogId) {
       const { data: callLog } = await supabase
         .from('call_logs')
@@ -221,7 +281,6 @@ async function handleOutboundResponse(
     responseMessage = 'We\'ll have someone call you back shortly. Thank you and goodbye.';
   }
 
-  // Update call log
   if (callLogId) {
     await supabase.from('call_logs').update({
       metadata: { response: digits || speechResult },
@@ -232,7 +291,7 @@ async function handleOutboundResponse(
   return twimlResponse(`<Say voice="Polly.Joanna">${escapeXml(responseMessage)}</Say><Hangup/>`);
 }
 
-// === PROCESS SPEECH (inbound call speech processing) ===
+// === PROCESS SPEECH (inbound call speech processing with state) ===
 async function handleProcess(
   supabase: any, supabaseUrl: string, supabaseKey: string,
   callLogId: string, formParams: Record<string, string>
@@ -240,32 +299,81 @@ async function handleProcess(
   const speechResult = formParams['SpeechResult'] || '';
   console.log(`Processing speech: "${speechResult}" callLogId=${callLogId}`);
 
-  if (!speechResult) {
-    return twimlResponse(`
-      <Say voice="Polly.Joanna">I didn't catch that. Could you please repeat?</Say>
-      <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
-      </Gather>
-      <Redirect method="POST">${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`)}</Redirect>
-    `);
-  }
+  // Determine companyId and load conversation state
+  let companyId = '';
+  let conversationHistory: Array<{role: string; content: string}> = [];
+  let collectedInfo: Record<string, string> = {};
+  let elevenlabsApiKey = '';
+  let elevenlabsVoiceId = '';
 
-  // Extract company_id from callLogId format "incoming_<companyId>"
-  const companyId = callLogId.startsWith('incoming_') ? callLogId.replace('incoming_', '') : '';
+  // Try to load from call_logs (new flow with real callLogId)
+  if (callLogId && !callLogId.startsWith('incoming_')) {
+    const { data: callLog } = await supabase
+      .from('call_logs')
+      .select('company_id, metadata')
+      .eq('id', callLogId)
+      .single();
+
+    if (callLog) {
+      companyId = callLog.company_id;
+      conversationHistory = callLog.metadata?.conversation_history || [];
+      collectedInfo = callLog.metadata?.collected_info || {};
+    }
+  } else if (callLogId.startsWith('incoming_')) {
+    // Legacy format fallback
+    companyId = callLogId.replace('incoming_', '');
+  }
 
   if (!companyId) {
     return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Goodbye.</Say><Hangup/>');
   }
 
-  // Get company AI prompt
-  const { data: company } = await supabase
-    .from('companies')
-    .select('name, ai_agent_prompt, brand_tone')
-    .eq('id', companyId)
-    .single();
+  // Fetch ElevenLabs credentials + company info in parallel
+  const [integrationResult, companyResult] = await Promise.all([
+    supabase
+      .from('tenant_integrations')
+      .select('elevenlabs_api_key, elevenlabs_voice_id')
+      .eq('company_id', companyId)
+      .maybeSingle(),
+    supabase
+      .from('companies')
+      .select('name, ai_agent_prompt, brand_tone')
+      .eq('id', companyId)
+      .single(),
+  ]);
 
-  // Generate AI response
-  const systemPrompt = company?.ai_agent_prompt ||
-    `You are a helpful phone assistant for ${company?.name || 'our company'}. Keep responses brief and conversational. Do not use any formatting.`;
+  const integration = integrationResult.data;
+  const company = companyResult.data;
+
+  elevenlabsApiKey = integration?.elevenlabs_api_key || '';
+  elevenlabsVoiceId = integration?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+
+  if (!speechResult) {
+    const nudge = "I'm still here. Take your time, what can I help you with?";
+    let nudgeTwiml: string;
+    if (elevenlabsApiKey) {
+      nudgeTwiml = await ttsOrFallback(supabase, companyId, nudge, elevenlabsApiKey, elevenlabsVoiceId);
+    } else {
+      nudgeTwiml = `<Say voice="Polly.Joanna">${escapeXml(nudge)}</Say>`;
+    }
+
+    return twimlResponse(`
+      <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`)}" method="POST">
+        ${nudgeTwiml}
+      </Gather>
+      <Redirect method="POST">${escapeXmlUrl(`${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`)}</Redirect>
+    `);
+  }
+
+  // Add user message to conversation history
+  conversationHistory.push({ role: 'user', content: speechResult });
+
+  // Build the enhanced phone system prompt with history
+  const systemPrompt = buildPhoneSystemPrompt(
+    company?.name || 'our company',
+    company?.ai_agent_prompt || null,
+    conversationHistory
+  );
 
   try {
     const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
@@ -290,13 +398,36 @@ async function handleProcess(
       if (aiText && aiText.length < 500) reply = aiText;
     }
 
-    // Continue conversation
+    // Clean any markdown/formatting from the reply
+    reply = reply.replace(/[*_#`~\[\]]/g, '').replace(/\n/g, ' ').trim();
+
+    // Add assistant response to conversation history
+    conversationHistory.push({ role: 'assistant', content: reply });
+
+    // Save updated conversation state back to call_logs
+    if (callLogId && !callLogId.startsWith('incoming_')) {
+      await supabase.from('call_logs').update({
+        metadata: {
+          conversation_history: conversationHistory,
+          collected_info: collectedInfo,
+        },
+      }).eq('id', callLogId);
+    }
+
+    // Generate TTS response with ElevenLabs Jessica
+    let responseTwiml: string;
+    if (elevenlabsApiKey) {
+      responseTwiml = await ttsOrFallback(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId);
+    } else {
+      responseTwiml = `<Say voice="Polly.Joanna">${escapeXml(reply)}</Say>`;
+    }
+
     const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
     const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
 
     return twimlResponse(`
-      <Gather input="speech" timeout="5" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
-        <Say voice="Polly.Joanna">${escapeXml(reply)}</Say>
+      <Gather input="speech" timeout="8" speechTimeout="auto" action="${escapeXmlUrl(gatherUrl)}" method="POST">
+        ${responseTwiml}
       </Gather>
       <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
     `);
@@ -334,42 +465,55 @@ async function handleStatus(
 }
 
 // === TIMEOUT ===
-function handleTimeout(supabaseUrl: string, callLogId: string): Response {
-  return twimlResponse(`
-    <Say voice="Polly.Joanna">I didn't hear anything. If you need assistance, please call back. Goodbye.</Say>
-    <Hangup/>
-  `);
+async function handleTimeout(supabase: any, supabaseUrl: string, callLogId: string): Promise<Response> {
+  const timeoutMsg = "I didn't hear anything. If you need assistance, please call back. Goodbye.";
+
+  // Try to get ElevenLabs credentials for TTS
+  let companyId = '';
+  if (callLogId && !callLogId.startsWith('incoming_')) {
+    const { data: callLog } = await supabase
+      .from('call_logs')
+      .select('company_id')
+      .eq('id', callLogId)
+      .single();
+    if (callLog) companyId = callLog.company_id;
+  } else if (callLogId.startsWith('incoming_')) {
+    companyId = callLogId.replace('incoming_', '');
+  }
+
+  if (companyId) {
+    const { data: integration } = await supabase
+      .from('tenant_integrations')
+      .select('elevenlabs_api_key, elevenlabs_voice_id')
+      .eq('company_id', companyId)
+      .maybeSingle();
+
+    if (integration?.elevenlabs_api_key) {
+      const voiceId = integration.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+      const twiml = await ttsOrFallback(supabase, companyId, timeoutMsg, integration.elevenlabs_api_key, voiceId);
+      return twimlResponse(`${twiml}<Hangup/>`);
+    }
+  }
+
+  return twimlResponse(`<Say voice="Polly.Joanna">${escapeXml(timeoutMsg)}</Say><Hangup/>`);
 }
 
 // === TTS HELPER ===
 async function generateTTSAudio(
-  supabase: any, supabaseUrl: string, companyId: string, text: string
+  supabase: any, apiKey: string, voiceId: string, text: string
 ): Promise<string> {
-  // Fetch ElevenLabs credentials
-  const { data: integration } = await supabase
-    .from('tenant_integrations')
-    .select('elevenlabs_api_key, elevenlabs_voice_id')
-    .eq('company_id', companyId)
-    .maybeSingle();
-
-  if (!integration?.elevenlabs_api_key) {
-    throw new Error('No ElevenLabs API key configured');
-  }
-
-  const voiceId = integration.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9'; // Jessica default
-
   const ttsResponse = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
     {
       method: 'POST',
       headers: {
-        'xi-api-key': integration.elevenlabs_api_key,
+        'xi-api-key': apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         text,
         model_id: 'eleven_turbo_v2_5',
-        voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
       }),
     }
   );
@@ -382,7 +526,6 @@ async function generateTTSAudio(
   const audioBuffer = await ttsResponse.arrayBuffer();
   const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
 
-  // Upload to Supabase Storage
   const { error: uploadError } = await supabase.storage
     .from('voice-audio')
     .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
@@ -391,10 +534,7 @@ async function generateTTSAudio(
     throw new Error(`Storage upload error: ${uploadError.message}`);
   }
 
-  // Get public URL
   const { data: publicUrl } = supabase.storage.from('voice-audio').getPublicUrl(fileName);
-
-  // Schedule cleanup (delete after 1 hour via metadata)
   console.log(`TTS audio uploaded: ${publicUrl.publicUrl}`);
 
   return publicUrl.publicUrl;
