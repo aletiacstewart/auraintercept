@@ -175,6 +175,18 @@ async function syncAppointmentToGoogle(
     const startDateTime = new Date(appointment.datetime);
     const endDateTime = new Date(startDateTime.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
 
+    // Platform stores local times with +00 offset (treating UTC as local).
+    // Format as offset-free ISO string so Google uses the calendar's local timezone.
+    const formatLocalDateTime = (d: Date) => {
+      const year = d.getUTCFullYear();
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      const hours = String(d.getUTCHours()).padStart(2, '0');
+      const minutes = String(d.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(d.getUTCSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    };
+
     const eventData: any = {
       summary: `${appointment.service_type} - ${appointment.customer_name}`,
       description: [
@@ -187,12 +199,10 @@ async function syncAppointmentToGoogle(
       ].filter(Boolean).join('\n'),
       location: appointment.customer_address || undefined,
       start: {
-        dateTime: startDateTime.toISOString(),
-        timeZone: 'UTC',
+        dateTime: formatLocalDateTime(startDateTime),
       },
       end: {
-        dateTime: endDateTime.toISOString(),
-        timeZone: 'UTC',
+        dateTime: formatLocalDateTime(endDateTime),
       },
       extendedProperties: {
         private: {
