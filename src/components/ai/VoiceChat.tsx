@@ -251,17 +251,44 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         signed_url: data?.signed_url,
       };
 
-      if (data?.token) {
+      // Detect iframe/embedded environment — prefer WebSocket over WebRTC
+      // WebRTC often fails silently in iframes due to permission/policy restrictions
+      const isIframe = window.self !== window.top;
+      const preferWebSocket = isIframe;
+
+      console.log("[VoiceChat] Connection strategy:", {
+        isIframe,
+        preferWebSocket,
+        hasToken: !!data?.token,
+        hasSignedUrl: !!data?.signed_url,
+        agentId,
+      });
+
+      if (!preferWebSocket && data?.token) {
+        // Standard WebRTC path (non-iframe)
         lastConnectMethodRef.current = "webrtc";
+        console.log("[VoiceChat] Starting WebRTC session...");
         await conversation.startSession({
           conversationToken: data.token,
           connectionType: "webrtc",
         });
       } else if (data?.signed_url) {
+        // WebSocket via signed URL (preferred in iframes, or WebRTC fallback)
         lastConnectMethodRef.current = "ws_signed_url";
+        console.log("[VoiceChat] Starting WebSocket (signed_url) session...");
         await conversation.startSession({ signedUrl: data.signed_url });
+      } else if (data?.token) {
+        // Fallback to WebRTC even in iframe if no signed_url
+        lastConnectMethodRef.current = "webrtc";
+        console.log("[VoiceChat] Fallback: Starting WebRTC session...");
+        await conversation.startSession({
+          conversationToken: data.token,
+          connectionType: "webrtc",
+        });
       } else {
+        // Last resort: direct agentId WebSocket
         lastConnectMethodRef.current = "ws_agent_id";
+        console.log("[VoiceChat] Last resort: Starting WebSocket (agentId) session...");
         await conversation.startSession({
           agentId,
           connectionType: "websocket",
