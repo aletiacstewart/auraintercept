@@ -475,11 +475,11 @@ async function handleProcess(
     // Determine the active agent (supports handoffs across turns)
     const activeAgent = collectedInfo._activeAgent || 'triage';
 
-    // 8-second timeout to guarantee response before SignalWire's ~15s limit
+    // 12-second timeout — SignalWire allows 15-30s for action callbacks
     const controller = new AbortController();
-    const aiTimeout = setTimeout(() => controller.abort(), 8000);
+    const aiTimeout = setTimeout(() => controller.abort(), 12000);
 
-    let reply = 'Thank you for your message. Someone will get back to you shortly.';
+    let reply = "I didn't quite catch that. Could you tell me again how I can help you?";
     try {
       const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
         method: 'POST',
@@ -501,23 +501,28 @@ async function handleProcess(
       });
       clearTimeout(aiTimeout);
 
-      const aiText = await aiResponse.text();
-      try {
-        const aiData = JSON.parse(aiText);
-        reply = aiData.reply || aiData.response || aiData.message || reply;
+      if (!aiResponse.ok) {
+        console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
+        reply = "I didn't quite catch that. Could you tell me again what you need help with?";
+      } else {
+        const aiText = await aiResponse.text();
+        try {
+          const aiData = JSON.parse(aiText);
+          reply = aiData.response || aiData.reply || aiData.message || reply;
 
-        // Track agent handoffs for phone calls
-        if (aiData.handoff_to) {
-          collectedInfo._activeAgent = aiData.handoff_to;
-          console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
+          // Track agent handoffs for phone calls
+          if (aiData.handoff_to) {
+            collectedInfo._activeAgent = aiData.handoff_to;
+            console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
+          }
+        } catch {
+          if (aiText && aiText.length < 500) reply = aiText;
         }
-      } catch {
-        if (aiText && aiText.length < 500) reply = aiText;
       }
     } catch (fetchErr: any) {
       clearTimeout(aiTimeout);
       if (fetchErr.name === 'AbortError') {
-        console.warn('[voice-handler] AI call timed out after 8s, using fallback');
+        console.warn('[voice-handler] AI call timed out after 12s, using fallback');
         reply = "I'm sorry, I'm having a moment. Could you repeat that?";
       } else {
         throw fetchErr;
