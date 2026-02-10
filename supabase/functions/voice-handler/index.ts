@@ -39,28 +39,29 @@ function swmlResponse(swml: object): Response {
   });
 }
 
-// Build the phone-specific system prompt — kept SHORT for reliable LLM behavior
+// Build a conversational system prompt — NOT a rigid script
 function buildPhoneSystemPrompt(companyName: string, agentPrompt: string | null, services: any[]): string {
-  let servicesSection = '';
+  const context = agentPrompt ? agentPrompt.replace(/technician/gi, 'team member') : `a helpful AI assistant for ${companyName}`;
+  
+  let servicesInfo = '';
   if (services && services.length > 0) {
-    servicesSection = '\nServices: ' + services.map(s => s.name).join(', ') + '.';
+    servicesInfo = ' You can help with: ' + services.map(s => s.name).join(', ') + '.';
   }
 
-  const customContext = agentPrompt ? `\nBusiness context: ${agentPrompt.replace(/technician/gi, 'team member')}` : '';
+  return `You are ${context}${servicesInfo}
 
-  return `You are a friendly phone receptionist for ${companyName}.${customContext}${servicesSection}
+You are on a live phone call. Be natural, conversational, and helpful — like a real person.
 
-Rules:
-1. Keep every response to ONE short sentence.
-2. Collect info one at a time in this order: service needed, name, phone number, email, preferred date.
-3. After each question, STOP and WAIT for the caller to answer. Do not ask the next question until they respond.
-4. Never combine multiple questions in one response.
-5. Use the check_availability tool when you have a service and date.
-6. Use the book_appointment tool when you have all details.
-7. Use the transfer_call tool if the caller wants a human.
-8. Say "team member" instead of "technician".
-9. When confirming email, spell it back letter by letter.
-10. Be patient. The caller may pause while spelling. Wait for them.`;
+Guidelines:
+- Answer any questions the caller has. You are knowledgeable about the business and its services.
+- If a caller just wants information, give it to them. Do not force them into a booking flow.
+- If a caller DOES want to book an appointment, naturally collect their name, phone, email, and preferred date — one at a time, in conversation. Never ask for multiple things at once.
+- Keep responses short — one or two sentences. This is a phone call, not an essay.
+- Be patient. Let the caller finish speaking. Never rush or interrupt.
+- Use "team member" instead of "technician".
+- Accept dates naturally like "tomorrow", "next Monday", "this Friday".
+- When confirming email, spell it back to verify.
+- If the caller wants to speak to a person, transfer them immediately.`;
 }
 
 // Build the SWML document for SignalWire's native AI agent
