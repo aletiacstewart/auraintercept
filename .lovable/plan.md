@@ -1,54 +1,125 @@
 
 
-# Update ElevenLabs Setup Guides to Match New Dashboard UI
+# Fix Telephony Voice: Use ElevenLabs Jessica + Sequential Data Collection
 
-## Problem
+## Root Cause
 
-The ElevenLabs dashboard has updated its "Turn-taking" settings panel to a new "Conversational behavior" section with different controls. Our setup guides reference outdated terminology like "End of Speech Detection slider" and "Interruption Sensitivity" which no longer exist in the dashboard, causing confusion for users trying to configure their agents.
+Your platform has **two separate voice delivery paths** (as noted in the architecture):
 
-## New Settings (from screenshots)
+1. **Web Voice Chat** -- Uses the ElevenLabs Conversational AI Agent directly. The dashboard settings (Eagerness: Patient, etc.) and the system prompt we updated apply here.
+2. **Phone Calls (SignalWire)** -- Uses the `voice-handler` edge function. This path does NOT use the ElevenLabs Agent at all. It currently uses **Amazon Polly "Joanna"** for all speech and has no sequential data collection logic.
 
-The updated ElevenLabs dashboard now has:
+This is why you hear a different voice on the phone and why it doesn't pause -- the phone path completely bypasses your ElevenLabs Agent configuration.
 
-| Old Setting | New Setting | Recommended Value |
-|---|---|---|
-| End of Speech Detection (slider) | **Eagerness** (dropdown) | **Patient** |
-| Interruption Sensitivity | Replaced by Eagerness | N/A |
-| (new) | **Spelling patience** | **Auto** |
-| (new) | **Speculative turn** | **Off** |
-| (new) | **Take turn after silence** | **20 seconds** |
-| (new) | **End conversation after silence** | **20 seconds** |
-| (new) | **Soft timeout** | **8 seconds** with message |
-| (new) | **LLM cascade timeout** | **15 seconds** |
+## What Needs to Change
 
-## Changes
+### 1. Replace Polly with ElevenLabs TTS (Jessica) for Inbound Calls
 
-### 1. `src/components/integrations/ElevenLabsSetupGuide.tsx`
+The `voice-handler` already has a `generateTTSAudio()` helper function that uses ElevenLabs TTS with the Jessica voice, but it's **never called for inbound calls**. Currently, every inbound response uses `<Say voice="Polly.Joanna">`.
 
-**Step 2.5 "Configure Conversation Timing"** -- Replace the three current settings cards (End of Speech Detection, Interruption Sensitivity, Response Speed) with the new settings:
+**Fix:** For inbound calls, generate TTS audio via ElevenLabs (Jessica), upload it to storage, and use `<Play>` instead of `<Say>`. Fall back to Polly only if ElevenLabs fails.
 
-- Update the location reference from "Voice tab -> Turn-taking section" to "Agent Settings -> Conversational behavior"
-- Replace "Setting 1: End of Speech Detection = 4000ms" with "Setting 1: Eagerness = Patient"
-- Replace "Setting 2: Interruption Sensitivity = Low" with "Setting 2: Spelling patience = Auto"
-- Add "Setting 3: Take turn after silence = 20 seconds"
-- Add "Setting 4: End conversation after silence = 20 seconds"
-- Add "Setting 5 (Optional): Soft timeout = 8 seconds" with the recommended message
-- Update the troubleshooting alert text to reference "Eagerness" instead of "End of Speech Detection"
+### 2. Add Conversation State Tracking for Sequential Data Collection
 
-### 2. `src/components/integrations/ElevenLabsVoiceSetupGuide.tsx`
+The current inbound flow is stateless -- each speech turn goes to the AI, gets a response, and loops. There's no mechanism to enforce "ask for name first, then phone, then address."
 
-**Step 4 "Create Conversational Agent"** -- Update the critical timing settings warning:
+**Fix:** Add conversation state to the `call_logs.metadata` field to track:
+- What info has been collected (name, phone, address)
+- Conversation history (so the AI has context across turns)
 
-- Replace "End of Speech Detection to 4000ms and Interruption Sensitivity to Low" with "Eagerness to Patient and Spelling patience to Auto"
+Then update the system prompt sent to `ai-agent-chat` to include explicit sequential collection rules matching what we added to the ElevenLabs Agent prompt.
 
-### 3. `src/components/settings/AuraIntelligenceSettings.tsx`
+### 3. Update the AI System Prompt for Phone Calls
 
-No prompt content changes needed -- the system prompt instructions ("WAIT for their complete answer") remain valid regardless of dashboard UI changes. However, if there are references to specific dashboard setting names in comments, those will be updated.
+The current inbound prompt is minimal:
+```
+"You are a helpful phone assistant for [company]. Keep responses brief and conversational."
+```
 
-## What stays the same
+Replace this with the company's full `ai_agent_prompt` (which already has the sequential collection rules) plus phone-specific instructions like:
+- Keep responses under 2 sentences (for TTS cost/latency)
+- No markdown formatting, no bullet points
+- Ask for ONE piece of info at a time
 
-- All system prompt text (AGENT_PROMPT and generateElevenLabsPrompt) -- these are about agent behavior, not dashboard settings
-- Tool configurations and webhook URLs
-- No database changes
-- No new dependencies
+## Technical Changes
+
+### File: `supabase/functions/voice-handler/index.ts`
+
+**A. Update `handleIncoming()`:**
+- Fetch ElevenLabs credentials alongside company data
+- Generate the greeting via ElevenLabs TTS instead of Polly
+- Initialize conversation state in call_logs metadata
+- Fall back to Polly if TTS fails
+
+**B. Update `handleProcess()`:**
+- Load conversation history from call_logs metadata
+- Append the new user speech to conversation history
+- Send full history + enhanced system prompt to ai-agent-chat
+- Generate AI response audio via ElevenLabs TTS
+- Save updated conversation state back to call_logs
+- Use `<Play>` for the TTS audio, fall back to `<Say voice="Polly.Joanna">` if TTS fails
+
+**C. Update system prompt construction:**
+- Use the company's `ai_agent_prompt` if available
+- Append phone-specific rules:
+  - "You are speaking on a PHONE CALL. Keep responses to 1-2 short sentences."
+  - "Do NOT use any formatting, bullet points, or special characters."
+  - "Ask for ONE piece of information at a time. WAIT for the answer before asking the next question."
+  - "NEVER ask for name, phone, AND address in the same question."
+
+**D. Update `handleTimeout()`:**
+- Use ElevenLabs TTS for the timeout message too (with Polly fallback)
+
+### File: No other files need changes
+
+This is entirely a backend (edge function) change. The dashboard UI, web voice chat, and all frontend code remain unchanged.
+
+## Flow After Fix
+
+```text
+Phone call comes in via SignalWire
+        |
+        v
+voice-handler (action=incoming)
+        |
+        v
+Look up company + ElevenLabs credentials
+        |
+        v
+Generate greeting via ElevenLabs TTS (Jessica voice)
+Upload to storage, get public URL
+        |
+        v
+Return TwiML: <Gather><Play>[jessica-audio-url]</Play></Gather>
+        |
+        v
+Caller speaks -> SignalWire sends speech text
+        |
+        v
+voice-handler (action=process)
+        |
+        v
+Load conversation history from call_logs metadata
+Add user message to history
+        |
+        v
+Send to ai-agent-chat with sequential collection prompt
+AI responds with ONE question at a time
+        |
+        v
+Generate response via ElevenLabs TTS (Jessica voice)
+Save updated history to call_logs
+        |
+        v
+Return TwiML: <Gather><Play>[jessica-response-url]</Play></Gather>
+        |
+        v
+Loop until conversation ends
+```
+
+## Tradeoffs
+
+- **Latency**: Each turn now requires an ElevenLabs TTS API call + storage upload before responding. The `eleven_turbo_v2_5` model is optimized for speed, and the audio files are small (1-2 sentences). Expected added latency: 1-2 seconds per turn.
+- **Cost**: Each turn generates a small ElevenLabs TTS request. This is the same approach already used for outbound calls.
+- **Reliability**: Polly fallback ensures calls never hang up if ElevenLabs is down.
 
