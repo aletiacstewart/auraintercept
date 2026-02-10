@@ -1,116 +1,80 @@
 
-# Never Miss a Call: AI Agent Answers When the Business Doesn't
 
-## How It Works Today (The Problem)
+# Fix: Phone Call Says "Someone Will Get Back" Instead of AI Response
 
-Right now, calls to the **SignalWire number** go directly to the AI agent. But calls to the **business's real phone number** are completely separate -- SignalWire never sees them. If the business misses a call on their real number, nothing happens unless they manually set up carrier call forwarding.
+## Root Cause (3 Bugs Found)
 
-## The Solution: "Ring First, Then AI" Mode
+### Bug 1: No HTTP Error Checking on AI Response
+In `voice-handler/index.ts` line 504, the code does:
+```typescript
+const aiText = await aiResponse.text();
+const aiData = JSON.parse(aiText);
+reply = aiData.reply || aiData.response || aiData.message || reply;
+```
+There is **no check for `aiResponse.ok`**. If `ai-agent-chat` returns a 500 error like `{"error": "Failed to process request"}`, the JSON parses fine but none of `reply`, `response`, or `message` exist in the error object. So the default fallback `"Thank you for your message. Someone will get back to you shortly."` is used -- the exact message you're hearing.
 
-Instead of forcing businesses to forward their number, we flip the architecture. The SignalWire number becomes the **primary advertised number**, but when a call comes in, we **ring the business owner's real phone first**. If they don't pick up within a configurable number of seconds, the AI agent seamlessly takes over -- the caller never knows.
+### Bug 2: 8-Second Timeout Is Too Aggressive
+The `AbortController` at line 480 aborts after only 8 seconds. SignalWire actually allows **15-30 seconds** for `action` callback URLs (like the Gather action that triggers `handleProcess`). The 8-second limit causes the AI call to abort even when it would have succeeded in 9-10 seconds.
 
-```text
-Customer calls SignalWire number
-    |
-    v
-Ring business owner's phone (10-25 seconds)
-    |
-    +--> Owner answers? --> Connect the call (normal phone call)
-    |
-    +--> No answer / busy / declined?
-              |
-              v
-         AI Agent picks up instantly
-         "Hi, thanks for calling [Business]. How can I help?"
+When the abort fires, the fallback is "I'm sorry, could you repeat that?" -- but that doesn't match what you're hearing. This means the AI call IS completing (not timing out), but it's returning an error that isn't being caught.
+
+### Bug 3: The Default Reply Is a Dead End
+The default at line 482 says "Someone will get back to you shortly" and then plays TTS + Gather. But the message gives the caller the impression the call is over, when really the system is still listening. It should be a conversational retry, not a goodbye.
+
+## The Fix (1 file: voice-handler/index.ts)
+
+### Change 1: Check `aiResponse.ok` Before Parsing
+Add proper HTTP status checking. If the AI returns an error, log it and use a conversational fallback instead of the dead-end message.
+
+```typescript
+// After the fetch call:
+clearTimeout(aiTimeout);
+
+if (!aiResponse.ok) {
+  console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
+  reply = "I didn't quite catch that. Could you tell me again what you need help with?";
+} else {
+  const aiText = await aiResponse.text();
+  try {
+    const aiData = JSON.parse(aiText);
+    reply = aiData.response || aiData.reply || aiData.message || reply;
+    // ... handoff tracking
+  } catch {
+    if (aiText && aiText.length < 500) reply = aiText;
+  }
+}
 ```
 
-This means:
-- The business owner gets the FIRST chance to answer every call
-- If they're busy, on another call, or away, the AI takes over automatically
-- The caller NEVER gets voicemail or a dead line
-- The business never misses a lead
+### Change 2: Increase Timeout from 8s to 12s
+SignalWire waits 15-30 seconds for action callbacks. Increasing to 12 seconds gives the AI plenty of room while still leaving 3-5 seconds for TTS generation before the absolute limit.
 
-## Technical Implementation (3 Changes)
-
-### Change 1: Add "ring first" fields to the database
-
-Add two new columns to the `companies` table:
-
-- `call_routing_mode`: Either `'ai_direct'` (current behavior -- AI answers immediately) or `'ring_first'` (ring the business phone, then AI)
-- `business_phone`: The owner's personal/business phone to ring first
-- `ring_timeout_seconds`: How long to ring before AI takes over (default: 15 seconds)
-
-### Change 2: Update `voice-handler` incoming call logic
-
-Modify `handleIncoming` to check the company's `call_routing_mode`:
-
-**If `ai_direct`** (default, current behavior): AI answers immediately, no change.
-
-**If `ring_first`**: Return TwiML that uses SignalWire's `<Dial>` verb to ring the business phone, with an `action` callback URL. The `<Dial>` verb has a `timeout` attribute set to the company's `ring_timeout_seconds`.
-
-```xml
-<!-- Ring the business phone first -->
-<Response>
-  <Dial timeout="15" callerId="+1CALLER_NUMBER"
-        action="voice-handler?action=dial-status&amp;callLogId=XYZ"
-        method="POST">
-    <Number>+1BUSINESS_PHONE</Number>
-  </Dial>
-</Response>
+```typescript
+const aiTimeout = setTimeout(() => controller.abort(), 12000); // was 8000
 ```
 
-When the `<Dial>` finishes (answered, no-answer, busy, or failed), SignalWire hits the `action` URL.
+### Change 3: Fix the Default Reply
+Change the dead-end default to a conversational prompt that keeps the caller engaged:
 
-### Change 3: Add new `dial-status` action to `voice-handler`
+```typescript
+let reply = "I didn't quite catch that. Could you tell me again how I can help you?";
+// was: "Thank you for your message. Someone will get back to you shortly."
+```
 
-A new handler that checks the `DialCallStatus` parameter from SignalWire:
+### Change 4: Also fix `aiData.response` field priority
+The `ai-agent-chat` returns `response` (not `reply`). Put `response` first in the OR chain:
 
-- **`completed`** (owner answered and hung up): Log the call as handled, done.
-- **`no-answer`**, **`busy`**, **`failed`**: The owner didn't pick up. Now run the existing AI greeting flow (same code as current `handleIncoming`). The caller seamlessly hears "Thanks for calling [Business], how can I help?" from the AI.
+```typescript
+reply = aiData.response || aiData.reply || aiData.message || reply;
+// was: aiData.reply || aiData.response || aiData.message || reply
+```
 
-This reuses ALL existing AI logic -- no changes to the AI agent, TTS, or tool handling.
+## Expected Result
 
-### Change 4: Add UI controls for call routing
+| Scenario | Before | After |
+|----------|--------|-------|
+| AI succeeds | Works (sometimes) | Works (reliably) |
+| AI returns error | "Someone will get back to you" (dead end) | "Could you tell me again?" (keeps conversation going) |
+| AI times out (>12s) | Cuts off at 8s | "Could you repeat that?" at 12s |
 
-Add a "Call Routing" section to the Voice and SMS settings page where business owners can:
+## No database changes needed
 
-1. Choose routing mode: "AI answers directly" vs "Ring my phone first, then AI"
-2. Enter their business/personal phone number
-3. Set the ring timeout (slider: 10-30 seconds, default 15)
-
-The UI will include a clear explanation: "When someone calls your number, we'll ring your phone first. If you don't answer within the timeout, your AI agent will pick up automatically so you never miss a call."
-
-## What About Calls to Their Original Number?
-
-If a business already has an established phone number they give to customers, they have two options:
-
-1. **Recommended**: Update their marketing materials, Google listing, and business cards to use the SignalWire number. The AI handles everything.
-2. **Alternative**: Set up conditional call forwarding at the carrier level (forward on no-answer to the SignalWire number). We'll include brief instructions in the UI, but the "ring first" feature makes this less necessary since the SignalWire number already rings them.
-
-The "ring first" approach solves 90% of the problem because the business can start giving out their SignalWire number as their main number, knowing they'll still get calls to their personal phone -- with AI backup.
-
-## Expected Call Flow Timing
-
-| Step | Duration |
-|------|----------|
-| Customer calls | 0s |
-| Ring business phone | 0-15s (configurable) |
-| Owner answers? Call connected | Done |
-| No answer? AI greeting + TTS | 2-3s |
-| Caller talks to AI | Ongoing |
-| **Total to AI pickup** | **15-18s** |
-
-The caller hears normal ringing during the "ring first" phase, which is expected behavior.
-
-## Database Changes
-
-New columns on the `companies` table:
-- `call_routing_mode` (text, default `'ai_direct'`)
-- `business_phone` (text, nullable)
-- `ring_timeout_seconds` (integer, default 15)
-
-## Files to Change
-
-1. **Database migration**: Add 3 columns to `companies`
-2. **`supabase/functions/voice-handler/index.ts`**: Add `ring_first` logic in `handleIncoming` + new `dial-status` handler
-3. **`src/components/company/MissedCallSettings.tsx`** (or new component): Add call routing UI controls
