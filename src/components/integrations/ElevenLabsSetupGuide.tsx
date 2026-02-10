@@ -93,6 +93,8 @@ CRITICAL - CONVERSATIONAL PAUSES:
 - Never interrupt or rush the caller - give them plenty of time to speak
 - If they pause to think, say "Take your time" before continuing
 - After asking a question, wait at least 3-4 seconds for a response
+- NEVER ask for multiple pieces of information in one question (e.g., don't say "Can I get your name, phone, and address?")
+- Ask for ONE piece of info at a time, wait for the answer, then ask for the next
 
 CRITICAL - DATE & TIME HANDLING:
 - NEVER ask for dates in a specific format like "mm/dd/yyyy" or "month day year"
@@ -110,10 +112,12 @@ CRITICAL - DATE & TIME HANDLING:
 FLOW:
 1. Greet warmly, ask how you can help
 2. Ask what service they need (call get_services first)
-3. Collect: name, phone, address - give ample time for EACH answer
-4. Ask "What day works best for you?" - accept natural language, don't ask for specific format
-5. Confirm the date, then check available times (get_available_times)
-6. Confirm ALL details before booking (book_appointment)
+3. Ask: "Can I get your full name?" — WAIT for their complete answer before continuing
+4. Ask: "And a good phone number to reach you?" — WAIT for the full number
+5. Ask: "What's the address for the service?" — WAIT for complete address
+6. Ask "What day works best for you?" - accept natural language, don't ask for specific format
+7. Confirm the date, then check available times (get_available_times)
+8. Confirm ALL details before booking (book_appointment)
 
 GUIDELINES:
 - Be conversational, patient, and natural
@@ -245,7 +249,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                   <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     <span className="text-xs text-green-800 dark:text-green-200">
-                      Set slider to <strong>2000-4000ms</strong> (toward "Relaxed" end)
+                      Set slider to <strong>4000ms</strong> (toward "Relaxed" end)
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-2">
@@ -287,6 +291,13 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               <p className="text-xs font-medium text-foreground">
                 💡 Test your agent after adjusting these settings - callers should be able to say their full name and phone number without being cut off.
               </p>
+
+              <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-xs text-amber-800 dark:text-amber-200">
+                  <strong>Troubleshooting: Agent not waiting for answers?</strong> If the agent asks for name, phone, and address all at once or cuts off callers mid-answer, increase End of Speech Detection to <strong>4000ms</strong> and set Interruption Sensitivity to <strong>Low</strong>. Also re-copy the latest system prompt above — it now enforces one-question-at-a-time collection.
+                </AlertDescription>
+              </Alert>
             </AccordionContent>
           </AccordionItem>
 
