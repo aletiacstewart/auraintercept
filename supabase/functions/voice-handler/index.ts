@@ -398,6 +398,9 @@ async function handleProcess(
         message: speechResult,
         systemPrompt,
         model: 'google/gemini-2.5-flash',
+        companyId,
+        agentType: 'phone',
+        isInternalRequest: true,
       }),
     });
 
