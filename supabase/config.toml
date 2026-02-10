@@ -194,3 +194,9 @@ verify_jwt = true
 
 [functions.verify-domain]
 verify_jwt = true
+
+[functions.voice-swaig]
+verify_jwt = false
+
+[functions.voice-post-prompt]
+verify_jwt = false

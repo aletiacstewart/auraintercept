@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2"; // voice-handler
+import { createClient } from "npm:@supabase/supabase-js@2"; // voice-handler SWML
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +13,19 @@ function normalizePhoneNumber(phone: string): string {
   return `+${digits}`;
 }
 
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function escapeXmlUrl(url: string): string {
+  return url.replace(/&/g, '&amp;');
+}
+
 function twimlResponse(twiml: string): Response {
   const xml = `<?xml version="1.0" encoding="UTF-8"?><Response>${twiml}</Response>`;
   return new Response(xml, {
@@ -20,52 +33,14 @@ function twimlResponse(twiml: string): Response {
   });
 }
 
-// Helper: generate ElevenLabs TTS audio URL, or return null on failure
-async function ttsAudioUrl(
-  supabase: any, companyId: string, text: string,
-  apiKey: string, voiceId: string
-): Promise<string | null> {
-  try {
-    const audioUrl = await generateTTSAudio(supabase, apiKey, voiceId, text);
-    return audioUrl;
-  } catch (err) {
-    console.error('ElevenLabs TTS failed, falling back to Polly:', err);
-    return null;
-  }
-}
-
-// Build TwiML: <Play> before <Gather> with a minimal <Say> inside, then <Redirect> for timeout
-function buildPlayThenGather(
-  audioUrl: string | null, fallbackText: string,
-  gatherUrl: string, timeoutUrl: string,
-  holdAudioUrls?: string[]
-): string {
-  // Determine what to play: primary audioUrl, or a hold audio fallback, or Polly as last resort
-  let playPart = '';
-  let gatherContent = '<Say voice="Polly.Joanna"> </Say>';
-
-  if (audioUrl) {
-    playPart = `<Play>${escapeXmlUrl(audioUrl)}</Play>`;
-  } else if (holdAudioUrls && holdAudioUrls.length > 0) {
-    // Use a random pre-cached Jessica hold audio as fallback instead of Polly
-    const randomHold = holdAudioUrls[Math.floor(Math.random() * holdAudioUrls.length)];
-    playPart = `<Play>${escapeXmlUrl(randomHold)}</Play>`;
-  } else {
-    // Absolute last resort: Polly (no ElevenLabs creds at all)
-    gatherContent = `<Say voice="Polly.Joanna">${escapeXml(fallbackText)}</Say>`;
-  }
-
-  return `
-    ${playPart}
-    <Gather input="speech" timeout="12" speechTimeout="5" action="${escapeXmlUrl(gatherUrl)}" method="POST">
-      ${gatherContent}
-    </Gather>
-    <Redirect method="POST">${escapeXmlUrl(timeoutUrl)}</Redirect>
-  `;
+function swmlResponse(swml: object): Response {
+  return new Response(JSON.stringify(swml), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 }
 
 // Build the phone-specific system prompt with sequential collection rules
-function buildPhoneSystemPrompt(companyName: string, agentPrompt: string | null, conversationHistory: Array<{role: string; content: string}>): string {
+function buildPhoneSystemPrompt(companyName: string, agentPrompt: string | null): string {
   const base = agentPrompt || `You are a helpful phone assistant for ${companyName}.`;
 
   const phoneRules = `
@@ -82,21 +57,165 @@ CRITICAL PHONE CALL RULES (override any conflicting instructions):
   2. Then ask for their NAME only.
   3. Then ask for their PHONE NUMBER only.
   4. Then ask for their EMAIL ADDRESS only.
-  5. Then ask for their ADDRESS or preferred appointment time.
+  5. Then ask for their preferred appointment date and time.
   6. Finally, confirm all details back to them.
 - If the caller already provided some info (e.g. their name), skip that step and move to the next.
-- Be warm, friendly, and conversational. Use the caller's name once you know it.`;
-
-  const flowRules = `
+- Be warm, friendly, and conversational. Use the caller's name once you know it.
 
 STRICT FLOW RULES (never violate these):
 - Once the caller has mentioned a service, do NOT list services again. Move directly to collecting their name.
 - NEVER say "What else can I help you with?" during a booking flow.
 - Each response must contain exactly ONE question. Never combine questions.
 - After the caller mentions a service, your ONLY next response should be asking for their name.
-- Do NOT repeat information the caller has already provided.`;
+- Do NOT repeat information the caller has already provided.
 
-  return base + phoneRules + flowRules;
+TOOL USAGE:
+- When you have a service type and preferred date, use the check_availability function to find open slots.
+- When you have all the customer details (name, phone, email, service, date/time), use the book_appointment function.
+- If the caller wants to speak to a person, use the transfer_call function.
+- When the conversation is naturally ending, say goodbye warmly.`;
+
+  return base + phoneRules;
+}
+
+// Build the SWML document for SignalWire's native AI agent
+function buildSWMLDocument(
+  supabaseUrl: string,
+  company: any,
+  companyId: string,
+  callLogId: string,
+  voiceId: string,
+): object {
+  const companyName = company?.name || 'our company';
+  const greeting = company?.ai_voice_greeting || `Thank you for calling ${companyName}. How can I help you today?`;
+  const systemPrompt = buildPhoneSystemPrompt(companyName, company?.ai_agent_prompt || null);
+
+  const swaigUrl = `${supabaseUrl}/functions/v1/voice-swaig`;
+  const postPromptUrl = `${supabaseUrl}/functions/v1/voice-post-prompt`;
+
+  // Use ElevenLabs voice via SignalWire's native integration
+  // Format: elevenlabs.<voice_id>:<model>
+  const voice = `elevenlabs.${voiceId}:eleven_flash_v2_5`;
+
+  return {
+    version: "1.0.0",
+    sections: {
+      main: [
+        { answer: {} },
+        {
+          ai: {
+            prompt: {
+              text: systemPrompt,
+              temperature: 0.7,
+            },
+            post_prompt: {
+              text: "Summarize the conversation. Include: customer name, phone number, email, service requested, appointment date/time if booked, and any other key details.",
+            },
+            post_prompt_url: postPromptUrl,
+            params: {
+              swaig_allow_swml: true,
+              end_of_speech_timeout: 1400,
+              attention_timeout: 15000,
+              inactivity_timeout: 60000,
+            },
+            languages: [
+              {
+                name: "English",
+                code: "en-US",
+                voice,
+                speech_fillers: ["um", "uh"],
+                function_fillers: ["one moment", "let me check on that", "just a moment"],
+              },
+            ],
+            hints: [companyName, "appointment", "booking", "schedule"],
+            SWAIG: {
+              defaults: {
+                web_hook_url: swaigUrl,
+                meta_data: {
+                  company_id: companyId,
+                  call_log_id: callLogId,
+                },
+              },
+              functions: [
+                {
+                  function: "check_availability",
+                  description: "Check available appointment slots for a given service and date. Call this when the caller mentions a service and a preferred date.",
+                  parameters: {
+                    type: "object",
+                    properties: {
+                      service_type: {
+                        type: "string",
+                        description: "The type of service the caller is requesting",
+                      },
+                      preferred_date: {
+                        type: "string",
+                        description: "The preferred date in YYYY-MM-DD format",
+                      },
+                    },
+                    required: ["service_type"],
+                  },
+                  fillers: {
+                    "en-US": [
+                      "Let me check our availability for you.",
+                      "One moment while I look that up.",
+                    ],
+                  },
+                },
+                {
+                  function: "book_appointment",
+                  description: "Book an appointment after collecting all required information: customer name, phone, email, service type, and date/time.",
+                  parameters: {
+                    type: "object",
+                    properties: {
+                      customer_name: {
+                        type: "string",
+                        description: "The customer's full name",
+                      },
+                      customer_phone: {
+                        type: "string",
+                        description: "The customer's phone number",
+                      },
+                      customer_email: {
+                        type: "string",
+                        description: "The customer's email address",
+                      },
+                      service_type: {
+                        type: "string",
+                        description: "The type of service requested",
+                      },
+                      appointment_date: {
+                        type: "string",
+                        description: "The appointment date in YYYY-MM-DD format",
+                      },
+                      appointment_time: {
+                        type: "string",
+                        description: "The appointment time in HH:MM format (24-hour)",
+                      },
+                    },
+                    required: ["customer_name", "customer_phone", "service_type", "appointment_date", "appointment_time"],
+                  },
+                  fillers: {
+                    "en-US": [
+                      "Let me book that for you right now.",
+                      "One moment while I schedule that.",
+                    ],
+                  },
+                },
+                {
+                  function: "transfer_call",
+                  description: "Transfer the caller to speak with someone at the business. Use when the caller explicitly asks to speak with a person or manager.",
+                  parameters: {
+                    type: "object",
+                    properties: {},
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  };
 }
 
 Deno.serve(async (req) => {
@@ -138,28 +257,16 @@ Deno.serve(async (req) => {
         return await handleIncoming(supabase, supabaseUrl, callerNumber, calledNumber);
 
       case 'dial-status':
-        return await handleDialStatus(supabase, supabaseUrl, supabaseKey, callLogId, callerNumber, formParams);
+        return await handleDialStatus(supabase, supabaseUrl, callLogId, callerNumber, formParams);
 
       case 'outbound':
-        return await handleOutbound(supabase, supabaseUrl, supabaseKey, callLogId);
+        return await handleOutbound(supabase, supabaseUrl, callLogId);
 
       case 'outbound-response':
         return await handleOutboundResponse(supabase, callLogId, formParams);
 
-      case 'process':
-        return await handleProcess(supabase, supabaseUrl, supabaseKey, callLogId, formParams);
-
-      case 'pickup':
-        return await handlePickup(supabase, supabaseUrl, supabaseKey, callLogId);
-
-      case 'process-background':
-        return await handleProcessBackground(supabase, supabaseUrl, supabaseKey, callLogId, formParams);
-
       case 'status':
         return await handleStatus(supabase, callLogId, callSid, formParams);
-
-      case 'timeout':
-        return await handleTimeout(supabase, supabaseUrl, callLogId);
 
       default:
         console.log(`Unknown action: ${action}`);
@@ -171,17 +278,17 @@ Deno.serve(async (req) => {
   }
 });
 
-// === INCOMING CALL ===
+// === INCOMING CALL — returns SWML for AI or TwiML for ring-first ===
 async function handleIncoming(
   supabase: any, supabaseUrl: string, callerNumber: string, calledNumber: string
 ): Promise<Response> {
   const normalizedCalled = normalizePhoneNumber(calledNumber);
   const normalizedCaller = normalizePhoneNumber(callerNumber);
 
-  // Look up company by phone number + fetch ElevenLabs credentials
+  // Look up company by phone number + fetch ElevenLabs voice ID
   const { data: integration } = await supabase
     .from('tenant_integrations')
-    .select('company_id, elevenlabs_api_key, elevenlabs_voice_id')
+    .select('company_id, elevenlabs_voice_id')
     .eq('signalwire_phone_number', normalizedCalled)
     .maybeSingle();
 
@@ -190,7 +297,7 @@ async function handleIncoming(
     return twimlResponse('<Say voice="Polly.Joanna">Sorry, this number is not configured. Goodbye.</Say><Hangup/>');
   }
 
-  const { company_id, elevenlabs_api_key, elevenlabs_voice_id } = integration;
+  const { company_id, elevenlabs_voice_id } = integration;
 
   // Get company info including call routing settings
   const { data: company } = await supabase
@@ -208,16 +315,12 @@ async function handleIncoming(
     direction: 'inbound',
     status: 'in-progress',
     purpose: 'inbound',
-    metadata: {
-      conversation_history: [],
-      collected_info: {},
-    },
+    metadata: {},
   }).select('id').single();
 
   const logId = callLog?.id || `incoming_${company_id}`;
 
   // === RING FIRST MODE ===
-  // If company has ring_first mode and a business phone, ring the owner first
   const routingMode = company?.call_routing_mode || 'ai_direct';
   const businessPhone = company?.business_phone;
   const ringTimeout = company?.ring_timeout_seconds || 15;
@@ -236,82 +339,21 @@ async function handleIncoming(
     `);
   }
 
-  // === AI DIRECT MODE (default) ===
-  return await startAIGreeting(supabase, supabaseUrl, company, company_id, logId, elevenlabs_api_key, elevenlabs_voice_id);
-}
-
-// Hold phrases to pre-generate in Jessica's voice at call start
-const HOLD_PHRASES = [
-  "Sure, let me look into that for you.",
-  "One moment, I'm just checking on that.",
-  "Almost ready, just one more second.",
-];
-
-// Helper: Start the AI greeting flow (used by both incoming and dial-status fallback)
-async function startAIGreeting(
-  supabase: any, supabaseUrl: string, company: any, companyId: string,
-  logId: string, elevenlabsApiKey: string, elevenlabsVoiceId: string
-): Promise<Response> {
-  const defaultGreeting = `Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
-  let greeting = company?.ai_voice_greeting || defaultGreeting;
-  if (greeting.length > 150) {
-    console.warn(`Greeting too long (${greeting.length} chars), using default`);
-    greeting = defaultGreeting;
-  }
-
-  const voiceId = elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9';
-
-  if (elevenlabsApiKey) {
-    // Generate greeting + 3 hold phrases in parallel
-    const [greetingUrl, ...holdUrls] = await Promise.all([
-      ttsAudioUrl(supabase, companyId, greeting, elevenlabsApiKey, voiceId),
-      ...HOLD_PHRASES.map(phrase =>
-        ttsAudioUrl(supabase, companyId, phrase, elevenlabsApiKey, voiceId)
-      ),
-    ]);
-
-    // Filter out any failed TTS results
-    const validHoldUrls = holdUrls.filter((url): url is string => url !== null);
-    console.log(`[startAIGreeting] Generated ${validHoldUrls.length} hold audio clips`);
-
-    // Save hold audio URLs to call_logs metadata (fire-and-forget)
-    if (validHoldUrls.length > 0 && logId && !logId.startsWith('incoming_')) {
-      supabase.from('call_logs').update({
-        metadata: {
-          conversation_history: [],
-          collected_info: {},
-          hold_audio_urls: validHoldUrls,
-        },
-      }).eq('id', logId).then(() => {
-        console.log(`[startAIGreeting] Saved ${validHoldUrls.length} hold audio URLs to metadata`);
-      }).catch((err: any) => {
-        console.error('[startAIGreeting] Failed to save hold audio URLs:', err);
-      });
-    }
-
-    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
-    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
-
-    return twimlResponse(buildPlayThenGather(greetingUrl, greeting, gatherUrl, timeoutUrl, validHoldUrls));
-  }
-
-  // No ElevenLabs credentials — fall back to Polly
-  const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${logId}`;
-  const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${logId}`;
-
-  return twimlResponse(buildPlayThenGather(null, greeting, gatherUrl, timeoutUrl));
+  // === AI DIRECT MODE — return SWML document ===
+  const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+  console.log(`AI direct mode: returning SWML document for company ${company_id}`);
+  return swmlResponse(buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId));
 }
 
 // === DIAL STATUS (ring-first callback) ===
-// Called by SignalWire after the <Dial> attempt to the business phone completes
 async function handleDialStatus(
-  supabase: any, supabaseUrl: string, supabaseKey: string,
+  supabase: any, supabaseUrl: string,
   callLogId: string, callerNumber: string, formParams: Record<string, string>
 ): Promise<Response> {
   const dialStatus = formParams['DialCallStatus'] || '';
   console.log(`Dial status callback: status=${dialStatus} callLogId=${callLogId}`);
 
-  // If the business owner answered and the call completed normally, we're done
+  // If the business owner answered, we're done
   if (dialStatus === 'completed') {
     console.log('Business owner answered the call, marking as handled');
     if (callLogId) {
@@ -324,10 +366,9 @@ async function handleDialStatus(
     return twimlResponse('<Hangup/>');
   }
 
-  // Owner didn't answer (no-answer, busy, failed, cancel) -- AI takes over
-  console.log(`Business owner didn't answer (${dialStatus}), AI agent taking over`);
+  // Owner didn't answer — AI takes over with SWML
+  console.log(`Business owner didn't answer (${dialStatus}), AI agent taking over via SWML`);
 
-  // Get company + integration info from the call log
   let companyId = '';
   if (callLogId && !callLogId.startsWith('incoming_')) {
     const { data: callLog } = await supabase
@@ -345,20 +386,16 @@ async function handleDialStatus(
   // Fetch company and integration details in parallel
   const [companyResult, integrationResult] = await Promise.all([
     supabase.from('companies').select('name, ai_voice_greeting, ai_agent_prompt').eq('id', companyId).single(),
-    supabase.from('tenant_integrations').select('elevenlabs_api_key, elevenlabs_voice_id').eq('company_id', companyId).maybeSingle(),
+    supabase.from('tenant_integrations').select('elevenlabs_voice_id').eq('company_id', companyId).maybeSingle(),
   ]);
 
-  return await startAIGreeting(
-    supabase, supabaseUrl,
-    companyResult.data, companyId, callLogId,
-    integrationResult.data?.elevenlabs_api_key || '',
-    integrationResult.data?.elevenlabs_voice_id || ''
-  );
+  const voiceId = integrationResult.data?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+  return swmlResponse(buildSWMLDocument(supabaseUrl, companyResult.data, companyId, callLogId, voiceId));
 }
 
-// === OUTBOUND CALL (webhook from SignalWire when call connects) ===
+// === OUTBOUND CALL (one-way TwiML — reminders/follow-ups, NOT interactive AI) ===
 async function handleOutbound(
-  supabase: any, supabaseUrl: string, supabaseKey: string, callLogId: string
+  supabase: any, supabaseUrl: string, callLogId: string
 ): Promise<Response> {
   if (!callLogId) {
     return twimlResponse('<Say voice="Polly.Joanna">Sorry, call configuration error. Goodbye.</Say><Hangup/>');
@@ -394,15 +431,15 @@ async function handleOutbound(
   }
 
   return twimlResponse(`
-      <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
-        <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
-      </Gather>
+    <Gather input="dtmf" numDigits="1" timeout="15" action="${escapeXmlUrl(responseUrl)}" method="POST">
+      <Say voice="Polly.Joanna">${escapeXml(callMessage)}</Say>
+    </Gather>
     <Say voice="Polly.Joanna">We didn't hear a response. Goodbye.</Say>
     <Hangup/>
   `);
 }
 
-// === OUTBOUND RESPONSE (DTMF/speech after outbound message) ===
+// === OUTBOUND RESPONSE (DTMF after outbound message) ===
 async function handleOutboundResponse(
   supabase: any, callLogId: string, formParams: Record<string, string>
 ): Promise<Response> {
@@ -444,486 +481,6 @@ async function handleOutboundResponse(
   return twimlResponse(`<Say voice="Polly.Joanna">${escapeXml(responseMessage)}</Say><Hangup/>`);
 }
 
-// === PROCESS SPEECH (inbound call speech processing with state) ===
-async function handleProcess(
-  supabase: any, supabaseUrl: string, supabaseKey: string,
-  callLogId: string, formParams: Record<string, string>
-): Promise<Response> {
-  const speechResult = formParams['SpeechResult'] || '';
-  console.log(`Processing speech: "${speechResult}" callLogId=${callLogId}`);
-
-  // Determine companyId and load conversation state
-  let companyId = '';
-  let conversationHistory: Array<{role: string; content: string}> = [];
-  let collectedInfo: Record<string, string> = {};
-  let elevenlabsApiKey = '';
-  let elevenlabsVoiceId = '';
-
-  // Try to load from call_logs (new flow with real callLogId)
-  if (callLogId && !callLogId.startsWith('incoming_')) {
-    const { data: callLog } = await supabase
-      .from('call_logs')
-      .select('company_id, metadata')
-      .eq('id', callLogId)
-      .single();
-
-    if (callLog) {
-      companyId = callLog.company_id;
-      conversationHistory = callLog.metadata?.conversation_history || [];
-      collectedInfo = callLog.metadata?.collected_info || {};
-    }
-  } else if (callLogId.startsWith('incoming_')) {
-    // Legacy format fallback
-    companyId = callLogId.replace('incoming_', '');
-  }
-
-  if (!companyId) {
-    return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Goodbye.</Say><Hangup/>');
-  }
-
-  // Fetch ElevenLabs credentials + company info in parallel
-  const [integrationResult, companyResult] = await Promise.all([
-    supabase
-      .from('tenant_integrations')
-      .select('elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('company_id', companyId)
-      .maybeSingle(),
-    supabase
-      .from('companies')
-      .select('name, ai_agent_prompt, brand_tone')
-      .eq('id', companyId)
-      .single(),
-  ]);
-
-  const integration = integrationResult.data;
-  const company = companyResult.data;
-
-  elevenlabsApiKey = integration?.elevenlabs_api_key || '';
-  elevenlabsVoiceId = integration?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-
-  if (!speechResult) {
-    const nudge = "I'm still here. Take your time, what can I help you with?";
-    const nudgeAudioUrl = elevenlabsApiKey
-      ? await ttsAudioUrl(supabase, companyId, nudge, elevenlabsApiKey, elevenlabsVoiceId)
-      : null;
-
-    const nudgeGatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
-    const nudgeTimeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
-
-    return twimlResponse(buildPlayThenGather(nudgeAudioUrl, nudge, nudgeGatherUrl, nudgeTimeoutUrl));
-  }
-
-  // Add user message to conversation history
-  conversationHistory.push({ role: 'user', content: speechResult });
-
-  // Build the enhanced phone system prompt with history
-  const systemPrompt = buildPhoneSystemPrompt(
-    company?.name || 'our company',
-    company?.ai_agent_prompt || null,
-    conversationHistory
-  );
-
-  try {
-    // Determine the active agent (supports handoffs across turns)
-    const activeAgent = collectedInfo._activeAgent || 'triage';
-
-    // Build AI request body
-    const aiRequestBody = {
-      message: speechResult,
-      systemPrompt,
-      model: 'google/gemini-2.5-flash',
-      companyId,
-      agentType: activeAgent,
-      isInternalRequest: true,
-      channel: 'phone',
-      conversationHistory,
-    };
-
-    // === TWO-PHASE RESPONSE: Race AI against 3-second deadline ===
-    // Create an AbortController so we can kill the original AI call if the timer wins
-    const primaryController = new AbortController();
-    const aiPromise = (async () => {
-      const aiTimeout = setTimeout(() => primaryController.abort(), 12000);
-      try {
-        const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabaseKey}`,
-          },
-          body: JSON.stringify(aiRequestBody),
-          signal: primaryController.signal,
-        });
-        clearTimeout(aiTimeout);
-
-        if (!aiResponse.ok) {
-          console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
-          return { reply: "I didn't quite catch that. Could you tell me again what you need help with?", handoff: null };
-        }
-        const aiText = await aiResponse.text();
-        try {
-          const aiData = JSON.parse(aiText);
-          const reply = aiData.response || aiData.reply || aiData.message || "Could you tell me more?";
-          return { reply, handoff: aiData.handoff_to || null };
-        } catch {
-          if (aiText && aiText.length < 500) return { reply: aiText, handoff: null };
-          return { reply: "Could you tell me more about what you need?", handoff: null };
-        }
-      } catch (fetchErr: any) {
-        clearTimeout(aiTimeout);
-        if (fetchErr.name === 'AbortError') {
-          console.warn('[voice-handler] Primary AI call aborted (timer won the race)');
-          return null; // Signal that this call was intentionally killed
-        }
-        throw fetchErr;
-      }
-    })();
-
-    const timer = new Promise<'timeout'>(resolve => setTimeout(() => resolve('timeout'), 3000));
-    const raceResult = await Promise.race([aiPromise, timer]);
-
-    if (raceResult === 'timeout') {
-      // AI is still thinking — ABORT the original call so it doesn't compete with background
-      primaryController.abort();
-      console.log('[voice-handler] AI exceeded 3s deadline, aborted primary call, returning hold message');
-
-      // Read existing metadata to preserve hold_audio_urls
-      const existingLogData = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data;
-      const existingHoldUrls = existingLogData?.metadata?.hold_audio_urls || [];
-
-      // Fire-and-forget: don't block TwiML response
-      supabase.from('call_logs').update({
-        metadata: {
-          conversation_history: conversationHistory,
-          collected_info: collectedInfo,
-          hold_audio_urls: existingHoldUrls,
-          ai_pending: true,
-          pending_speech: speechResult,
-          pending_system_prompt: systemPrompt,
-          pending_agent: activeAgent,
-          pickup_retries: 0,
-        },
-      }).eq('id', callLogId).then(() => {
-        console.log('[voice-handler] Pending state saved');
-      }).catch(err => {
-        console.error('[voice-handler] Failed to save pending state:', err);
-      });
-
-      // Fire-and-forget: kick off background processing
-      fetch(`${supabaseUrl}/functions/v1/voice-handler?action=process-background&callLogId=${callLogId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aiRequestBody),
-      }).catch(err => console.error('[voice-handler] Background fire-and-forget failed:', err));
-
-      const holdUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
-
-      // Read hold audio URLs from metadata (already loaded above, but state may have been saved by now)
-      const holdAudioUrls: string[] = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data?.metadata?.hold_audio_urls || [];
-
-      if (holdAudioUrls.length > 0) {
-        return twimlResponse(`
-          <Play>${escapeXmlUrl(holdAudioUrls[0])}</Play>
-          <Redirect method="POST">${escapeXmlUrl(holdUrl)}</Redirect>
-        `);
-      }
-
-      // Fallback to Polly only if no pre-cached audio exists
-      return twimlResponse(`
-        <Say voice="Polly.Joanna">One moment please, let me check on that for you.</Say>
-        <Pause length="4"/>
-        <Redirect method="POST">${escapeXmlUrl(holdUrl)}</Redirect>
-      `);
-    }
-
-    // AI responded within 3 seconds — proceed normally
-    let reply = raceResult.reply;
-    if (raceResult.handoff) {
-      collectedInfo._activeAgent = raceResult.handoff;
-      console.log(`Phone handoff: ${activeAgent} -> ${raceResult.handoff}`);
-    }
-
-    // Clean any markdown/formatting from the reply
-    reply = reply.replace(/[*_#`~\[\]]/g, '').replace(/\n/g, ' ').trim();
-
-    // Add assistant response to conversation history
-    conversationHistory.push({ role: 'assistant', content: reply });
-
-    // Run DB save and TTS generation in parallel for speed
-    // Preserve hold_audio_urls in metadata
-    const existingMeta = (await supabase.from('call_logs').select('metadata').eq('id', callLogId).single())?.data?.metadata || {};
-    const holdAudioUrlsForFallback: string[] = existingMeta.hold_audio_urls || [];
-
-    const [_, replyAudioUrl] = await Promise.all([
-      callLogId && !callLogId.startsWith('incoming_')
-        ? supabase.from('call_logs').update({
-            metadata: {
-              conversation_history: conversationHistory,
-              collected_info: collectedInfo,
-              hold_audio_urls: holdAudioUrlsForFallback,
-            },
-          }).eq('id', callLogId)
-        : Promise.resolve(),
-      elevenlabsApiKey
-        ? ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
-        : Promise.resolve(null),
-    ]);
-
-    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
-    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
-
-    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl, holdAudioUrlsForFallback));
-  } catch (aiError) {
-    console.error('AI response failed:', aiError);
-    return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Someone will follow up with you. Goodbye.</Say><Hangup/>');
-  }
-}
-
-// === PICKUP: Check if background AI processing is done ===
-async function handlePickup(
-  supabase: any, supabaseUrl: string, supabaseKey: string, callLogId: string
-): Promise<Response> {
-  console.log(`[pickup] Checking for AI response, callLogId=${callLogId}`);
-
-  const { data: callLog } = await supabase
-    .from('call_logs')
-    .select('company_id, metadata')
-    .eq('id', callLogId)
-    .single();
-
-  if (!callLog) {
-    return twimlResponse('<Say voice="Polly.Joanna">Sorry, an error occurred. Goodbye.</Say><Hangup/>');
-  }
-
-  const metadata = callLog.metadata || {};
-  const retries = metadata.pickup_retries || 0;
-
-  if (metadata.ai_pending === false && metadata.pending_response) {
-    // AI response is ready — generate TTS and respond
-    console.log(`[pickup] AI response ready after ${retries} retries`);
-
-    let reply = metadata.pending_response;
-    reply = reply.replace(/[*_#`~\[\]]/g, '').replace(/\n/g, ' ').trim();
-
-    const conversationHistory = metadata.conversation_history || [];
-    const collectedInfo = metadata.collected_info || {};
-
-    // Track handoff
-    if (metadata.pending_handoff) {
-      collectedInfo._activeAgent = metadata.pending_handoff;
-    }
-
-    conversationHistory.push({ role: 'assistant', content: reply });
-
-    // Get ElevenLabs creds
-    const { data: integration } = await supabase
-      .from('tenant_integrations')
-      .select('elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('company_id', callLog.company_id)
-      .maybeSingle();
-
-    const elevenlabsApiKey = integration?.elevenlabs_api_key || '';
-    const elevenlabsVoiceId = integration?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-
-    // Save state and generate TTS in parallel
-    // DB save is fire-and-forget in pickup too
-    supabase.from('call_logs').update({
-      metadata: {
-        conversation_history: conversationHistory,
-        collected_info: collectedInfo,
-        hold_audio_urls: metadata.hold_audio_urls || [],
-        ai_pending: undefined,
-        pending_response: undefined,
-        pending_speech: undefined,
-        pending_system_prompt: undefined,
-        pending_agent: undefined,
-        pending_handoff: undefined,
-        pickup_retries: undefined,
-      },
-    }).eq('id', callLogId).then(() => {}).catch(() => {});
-
-    // Race TTS against 4s deadline — fall back to Polly if too slow
-    let replyAudioUrl: string | null = null;
-    if (elevenlabsApiKey) {
-      const ttsTimer = new Promise<null>(r => setTimeout(() => r(null), 4000));
-      replyAudioUrl = await Promise.race([
-        ttsAudioUrl(supabase, callLog.company_id, reply, elevenlabsApiKey, elevenlabsVoiceId),
-        ttsTimer,
-      ]);
-    }
-
-    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
-    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
-
-    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl, metadata.hold_audio_urls || []));
-  }
-
-  // AI still processing
-  if (retries >= 3) {
-    // Give up after ~16 seconds of total hold time, use fallback
-    console.warn(`[pickup] Max retries reached, using fallback`);
-    const fallback = "Could you tell me a bit more about what you need? I want to make sure I help you correctly.";
-
-    const conversationHistory = metadata.conversation_history || [];
-    conversationHistory.push({ role: 'assistant', content: fallback });
-
-    await supabase.from('call_logs').update({
-      metadata: {
-        ...metadata,
-        conversation_history: conversationHistory,
-        ai_pending: false,
-        pickup_retries: undefined,
-      },
-    }).eq('id', callLogId);
-
-    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
-    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
-
-    return twimlResponse(buildPlayThenGather(null, fallback, gatherUrl, timeoutUrl, metadata.hold_audio_urls || []));
-  }
-
-  // Not ready yet — pause and redirect again
-  console.log(`[pickup] AI still pending, retry ${retries + 1}/3`);
-  await supabase.from('call_logs').update({
-    metadata: { ...metadata, pickup_retries: retries + 1 },
-  }).eq('id', callLogId);
-
-  const pickupUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
-
-  // Use pre-cached Jessica hold audio (rotating phrases) instead of dead silence
-  const holdAudioUrls: string[] = metadata.hold_audio_urls || [];
-  if (holdAudioUrls.length > 0) {
-    const holdIndex = retries % holdAudioUrls.length;
-    return twimlResponse(`
-      <Play>${escapeXmlUrl(holdAudioUrls[holdIndex])}</Play>
-      <Redirect method="POST">${escapeXmlUrl(pickupUrl)}</Redirect>
-    `);
-  }
-
-  // Fallback: dead silence only if no pre-cached audio
-  return twimlResponse(`
-    <Pause length="3"/>
-    <Redirect method="POST">${escapeXmlUrl(pickupUrl)}</Redirect>
-  `);
-}
-
-// === PROCESS-BACKGROUND: Fire-and-forget AI call ===
-async function handleProcessBackground(
-  supabase: any, supabaseUrl: string, supabaseKey: string,
-  callLogId: string, formParams: Record<string, string>
-): Promise<Response> {
-  console.log(`[process-background] Starting background AI processing for callLogId=${callLogId}`);
-
-  try {
-    // Read the AI request from the POST body
-    let aiRequestBody: any = {};
-    try {
-      aiRequestBody = formParams;
-      // formParams might already be parsed JSON from the body
-    } catch { /* use empty */ }
-
-    // If formParams didn't have the AI fields, read from call_logs metadata
-    if (!aiRequestBody.message) {
-      const { data: callLog } = await supabase
-        .from('call_logs')
-        .select('company_id, metadata')
-        .eq('id', callLogId)
-        .single();
-
-      if (!callLog) {
-        console.error('[process-background] Call log not found');
-        return new Response('OK', { headers: corsHeaders });
-      }
-
-      const metadata = callLog.metadata || {};
-      const conversationHistory = metadata.conversation_history || [];
-
-      // Rebuild AI request from saved state
-      aiRequestBody = {
-        message: metadata.pending_speech,
-        systemPrompt: metadata.pending_system_prompt,
-        model: 'google/gemini-2.5-flash',
-        companyId: callLog.company_id,
-        agentType: metadata.pending_agent || 'triage',
-        isInternalRequest: true,
-        channel: 'phone',
-        conversationHistory,
-      };
-    }
-
-    const controller = new AbortController();
-    const aiTimeout = setTimeout(() => controller.abort(), 12000);
-
-    const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
-      body: JSON.stringify(aiRequestBody),
-      signal: controller.signal,
-    });
-    clearTimeout(aiTimeout);
-
-    let reply = "Could you tell me more about what you need?";
-    let handoff: string | null = null;
-
-    if (aiResponse.ok) {
-      const aiText = await aiResponse.text();
-      try {
-        const aiData = JSON.parse(aiText);
-        reply = aiData.response || aiData.reply || aiData.message || reply;
-        handoff = aiData.handoff_to || null;
-      } catch {
-        if (aiText && aiText.length < 500) reply = aiText;
-      }
-    } else {
-      console.error(`[process-background] AI returned ${aiResponse.status}`);
-    }
-
-    // Save the response to call_logs metadata for pickup
-    const { data: currentLog } = await supabase
-      .from('call_logs')
-      .select('metadata')
-      .eq('id', callLogId)
-      .single();
-
-    const currentMetadata = currentLog?.metadata || {};
-    await supabase.from('call_logs').update({
-      metadata: {
-        ...currentMetadata,
-        ai_pending: false,
-        pending_response: reply,
-        pending_handoff: handoff,
-      },
-    }).eq('id', callLogId);
-
-    console.log(`[process-background] AI response saved, ready for pickup`);
-  } catch (err) {
-    console.error('[process-background] Error:', err);
-    // Mark as no longer pending so pickup uses fallback
-    const { data: currentLog } = await supabase
-      .from('call_logs')
-      .select('metadata')
-      .eq('id', callLogId)
-      .single();
-
-    await supabase.from('call_logs').update({
-      metadata: {
-        ...(currentLog?.metadata || {}),
-        ai_pending: false,
-        pending_response: "I'm sorry, could you repeat that? I want to make sure I help you correctly.",
-        pending_handoff: null,
-      },
-    }).eq('id', callLogId);
-  }
-
-  return new Response('OK', { headers: corsHeaders });
-}
-
 // === STATUS CALLBACK ===
 async function handleStatus(
   supabase: any, callLogId: string, callSid: string,
@@ -949,95 +506,4 @@ async function handleStatus(
   }
 
   return new Response('OK', { headers: corsHeaders });
-}
-
-// === TIMEOUT ===
-async function handleTimeout(supabase: any, supabaseUrl: string, callLogId: string): Promise<Response> {
-  const timeoutMsg = "I didn't hear anything. If you need assistance, please call back. Goodbye.";
-
-  // Try to get ElevenLabs credentials for TTS
-  let companyId = '';
-  if (callLogId && !callLogId.startsWith('incoming_')) {
-    const { data: callLog } = await supabase
-      .from('call_logs')
-      .select('company_id')
-      .eq('id', callLogId)
-      .single();
-    if (callLog) companyId = callLog.company_id;
-  } else if (callLogId.startsWith('incoming_')) {
-    companyId = callLogId.replace('incoming_', '');
-  }
-
-  if (companyId) {
-    const { data: integration } = await supabase
-      .from('tenant_integrations')
-      .select('elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('company_id', companyId)
-      .maybeSingle();
-
-    if (integration?.elevenlabs_api_key) {
-      const voiceId = integration.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-      const audioUrl = await ttsAudioUrl(supabase, companyId, timeoutMsg, integration.elevenlabs_api_key, voiceId);
-      if (audioUrl) {
-        return twimlResponse(`<Play>${escapeXmlUrl(audioUrl)}</Play><Hangup/>`);
-      }
-    }
-  }
-
-  return twimlResponse(`<Say voice="Polly.Joanna">${escapeXml(timeoutMsg)}</Say><Hangup/>`);
-}
-
-// === TTS HELPER ===
-async function generateTTSAudio(
-  supabase: any, apiKey: string, voiceId: string, text: string
-): Promise<string> {
-  const ttsResponse = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_22050_32`,
-    {
-      method: 'POST',
-      headers: {
-        'xi-api-key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_flash_v2_5',
-        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.5, use_speaker_boost: true },
-      }),
-    }
-  );
-
-  if (!ttsResponse.ok) {
-    const errorText = await ttsResponse.text();
-    throw new Error(`ElevenLabs TTS error: ${ttsResponse.status} - ${errorText}`);
-  }
-
-  const audioBuffer = await ttsResponse.arrayBuffer();
-  const fileName = `call_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('voice-audio')
-    .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: false });
-
-  if (uploadError) {
-    throw new Error(`Storage upload error: ${uploadError.message}`);
-  }
-
-  const { data: publicUrl } = supabase.storage.from('voice-audio').getPublicUrl(fileName);
-  console.log(`TTS audio uploaded: ${publicUrl.publicUrl}`);
-
-  return publicUrl.publicUrl;
-}
-
-function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
-
-function escapeXmlUrl(url: string): string {
-  return url.replace(/&/g, '&amp;');
 }
