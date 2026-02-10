@@ -182,26 +182,13 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
   });
 
-  // Check microphone permission (voice mode only)
-  // Skip eager permission request in embed mode to prevent state churn
+  // Don't eagerly request microphone — request on user gesture in startConversation
+  // This prevents the component from blocking with a "mic denied" message before
+  // the user even tries to start a conversation.
   useEffect(() => {
     if (testMode) {
       setHasPermission(true);
-      return;
     }
-    
-    // Defer permission check in embed mode - only request when user initiates
-    const isEmbed = typeof window !== 'undefined' && 
-      new URLSearchParams(window.location.search).get('embed') === 'true';
-    if (isEmbed) {
-      // Don't eagerly request permission in embed mode; will request on startConversation
-      return;
-    }
-    
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(() => setHasPermission(true))
-      .catch(() => setHasPermission(false));
   }, [testMode]);
 
   // Fetch agent ID for this company (voice mode only)
@@ -516,8 +503,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
         <MicOff className="h-8 w-8 text-destructive" />
         <p className="text-sm text-center text-destructive">
-          Microphone access is required for voice chat. Please enable it in your browser settings.
+          Microphone access was denied. Please enable it in your browser settings.
         </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setHasPermission(null);
+            navigator.mediaDevices
+              .getUserMedia({ audio: true })
+              .then(() => setHasPermission(true))
+              .catch(() => setHasPermission(false));
+          }}
+        >
+          Retry Microphone Access
+        </Button>
       </div>
     );
   }
