@@ -138,6 +138,26 @@ serve(async (req) => {
           });
         }
 
+        // Sync to Google Calendar (if connected)
+        try {
+          await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+              action: 'sync_appointment',
+              companyId: companyId,
+              appointmentId: appointment.id,
+              appointment: appointment,
+            }),
+          });
+          console.log('[Voice Agent] Google Calendar sync triggered for appointment:', appointment.id);
+        } catch (calendarError) {
+          console.error('[Voice Agent] Google Calendar sync error (non-blocking):', calendarError);
+        }
+
         return new Response(JSON.stringify({
           success: true,
           appointment_id: appointment.id,
