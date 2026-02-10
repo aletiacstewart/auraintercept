@@ -1,37 +1,39 @@
 
 
-# Fix Voice Chat — Remove Broken Overrides That Kill Audio
+# Fix Voice Chat Audio — Remove ALL Overrides (For Real This Time)
+
+## Problem
+
+The last fix added "conditional" overrides, but the edge function **always** returns `firstMessage` and `systemPrompt`, so `hasOverrides` is **always true**. The SDK continues sending the corrupted `MaxDepthReached` payload, and ElevenLabs silences the agent.
 
 ## Root Cause
 
-The console logs prove exactly what's happening:
-
-1. WebRTC connects successfully ("onConnect fired")
-2. ElevenLabs receives malformed override data where `prompt.prompt` shows `MaxDepthReached` (an object nesting error)
-3. ElevenLabs immediately disconnects the session — no audio ever plays
-4. `isSpeaking` stays `false` the entire time
-
-The overrides structure added in the last edit is incompatible with the ElevenLabs React SDK v0.12.1. The SDK serializes the overrides object and the nested `{ prompt: { prompt: string } }` gets corrupted.
+The ElevenLabs React SDK v0.12.1 cannot serialize the `{ prompt: { prompt: string } }` override structure. It produces `MaxDepthReached` errors. This is an SDK bug/limitation — no client-side override will work with this SDK version.
 
 ## Fix
 
-**Remove all override logic from VoiceChat.tsx.** The ElevenLabs agent (agent_3601kg17fsmdfcnajfjfjsnbsspf) should already have its greeting and prompt configured in the ElevenLabs dashboard. Passing overrides from the client is unnecessary and is actively breaking the connection.
+**Delete ALL override-related code** from `VoiceChat.tsx`. No conditional logic, no "only if present" — just remove it entirely.
 
 ### Changes to `src/components/ai/VoiceChat.tsx`
 
-1. Delete the overrides block (lines 286-293) that builds the `overrides` object
-2. Remove `overrides` from all three `startSession()` calls (lines 310-328)
-3. Keep everything else exactly the same — the connection logic, fallback strategy, and audio context handling are all correct
+1. **Remove lines 321-330** — the entire `sessionOverrides` construction block and `hasOverrides` variable
+2. **Remove `hasOverrides` from the debug log** on line 340
+3. **Clean all three `startSession()` calls** — remove the spread operator that injects overrides:
+   - WebRTC call (line 349): remove `...(hasOverrides ? { overrides: sessionOverrides } : {})`
+   - WebSocket signed_url call (line 356): same removal
+   - WebSocket agentId call (line 364): same removal
 
-### No other files need changes
+### Result
 
-The edge function can continue returning `firstMessage` and `systemPrompt` — they just won't be used as client overrides. This data may be useful for future features (like displaying the greeting as text).
+The `startSession` calls become clean:
+```tsx
+await conversation.startSession({
+  conversationToken: data.token,
+  connectionType: "webrtc",
+});
+```
 
-## Expected Result
+The agent will use its dashboard-configured greeting and prompt. The edge function can keep returning `firstMessage`/`systemPrompt` — we just won't pass them to the SDK.
 
-After this fix:
-- WebRTC connects to the agent
-- ElevenLabs receives a clean session request with no malformed overrides
-- The agent speaks its configured greeting
-- Two-way audio works normally
+### No other files change.
 
