@@ -1,82 +1,88 @@
 
-# Virtual Job Acceptance: Send Meeting Details Only After Employee Confirms
 
-## What This Does
-Right now, when a virtual appointment is booked, the customer immediately gets a generic confirmation. The employee still needs to accept the job, but the customer never receives the meeting link or call details.
+# Update How-To Guides + Service-Aware Content for Virtual, Beauty/Salon, and Real Estate Workflows
 
-This update ensures:
-1. Virtual jobs still go through the normal **accept** flow (employee must accept first)
-2. Only **after** the employee accepts does the system generate a Google Meet link (or prepare phone call info) and send it to the customer
-3. The customer gets a clear message: "Your video session link is: [link]" or "We will call you at [phone] on [date/time]"
+## Overview
 
-## Implementation Steps
+This update addresses two things:
 
-### Step 1: Add `delivery_type` and `meeting_link` columns to appointments table
-- `delivery_type` (text, default `in_person_customer`) -- copied from the service at booking time
-- `meeting_link` (text, nullable) -- stores the Google Meet URL after generation
+1. **Update the How-To Guide content** in `AgentHowToGuide.tsx` to include virtual/video session workflows, phone call appointment details, and industry-specific guidance for beauty/salon and real estate businesses.
 
-### Step 2: Store `delivery_type` on appointment creation
-Update `booking-actions` and `ai-agent-chat` so when an appointment is created, the service's `delivery_type` is looked up and saved on the appointment record.
+2. **Whether to add a new job role** -- the answer is **no new job role is needed**. The existing `technician` job type already handles all service professionals (stylists, agents, therapists). The system differentiates behavior through the `delivery_type` on appointments and `industry_vertical` on companies, not through separate job roles. Adding a new role would break the booking engine's availability logic (which filters by `technician` job type) and create unnecessary complexity.
 
-### Step 3: Trigger Google Meet link generation on job acceptance
-Update `send-job-notification` so that when `notificationType` is `accepted` and the appointment's `delivery_type` is `virtual`:
-- Call `google-calendar-sync` with `conferenceDataVersion=1` to create a Google Meet link
-- Save the returned `hangoutLink` to `appointments.meeting_link`
-- Include the meeting link in the "accepted" SMS/email sent to the customer
+## What Changes
 
-If Google Calendar isn't connected, fall back to phone call messaging: "We will call you at [your phone] on [date] at [time]."
+### 1. Update Field Ops How-To Guide (FIELD_OPS_GUIDES)
 
-### Step 4: Update notification templates for virtual jobs
-Modify `generateMessages()` in `send-job-notification` to be delivery-type-aware:
-- **Virtual + meeting link**: "Your appointment is confirmed! Join your video session here: [link]"
-- **Virtual + no link (phone call)**: "Your appointment is confirmed! We will call you at [phone] on [date] at [time]"
-- **In-person at business**: "Your appointment is confirmed! Visit us at [address]"
-- **In-person at customer**: Keep current behavior ("technician is heading to you")
+Add new guide entries and update existing ones:
 
-Also skip irrelevant notifications for virtual jobs (e.g., don't send `en_route` or `arrived` notifications).
+- **New: "Start Virtual Session"** -- Steps for accepting a virtual job, receiving the meeting link, and joining the Google Meet session
+- **New: "Phone Call Appointments"** -- Steps for accepting a phone call job, when the system sends call details to the customer, and completing a phone session
+- **Update: "Accept Job"** -- Add note that for virtual appointments, a Google Meet link is automatically generated and sent to the customer upon acceptance
+- **Update: "Get Directions"** -- Add tip clarifying this applies to in-person appointments only (not virtual or at-business)
+- **Update: "Mark En Route"** -- Add tip noting this step is skipped for virtual and at-business appointments
 
-### Step 5: Update Google Calendar sync to support conference data
-Modify `google-calendar-sync/index.ts` to:
-- Accept a `requestConference` flag
-- Add `conferenceDataVersion=1` to the API URL
-- Include `conferenceData.createRequest` in the event body
-- Return `hangoutLink` from the response
+### 2. Update Customer Portal How-To Guide (CUSTOMER_ENGAGEMENT_GUIDES)
 
-### Step 6: Update Field Ops console quick actions for virtual jobs
-Modify `FieldOpsAgentConsole.tsx` so when the selected job's delivery type is `virtual`:
-- Hide "Directions", "En Route", "Arrive" buttons
-- Show "Start Virtual Session" (opens the meeting link) and "Complete"
-- The "Accept" button works the same way for all job types
+- **New: "Join Video Session"** -- Steps for finding the meeting link in confirmations, joining Google Meet, and what to expect
+- **Update: "Book Appointment"** -- Mention that virtual services are available and meeting details are sent after staff confirms
+- **Update: "Track Appointment"** -- Update language from "technician approaches" to "service professional" and mention virtual session status tracking
 
-### Step 7: Show meeting link in customer-facing pages
-Update `CustomerPortal.tsx` and `CustomerDashboard.tsx` to display a "Join Meeting" button when an appointment has a `meeting_link` value.
+### 3. Update Dispatch How-To Guide (DISPATCH_FIELD_OPS_GUIDES)
+
+- **Update: "Status Legend"** -- Add virtual session statuses (e.g., "Virtual -- no travel steps shown")
+- **Update: "Assign Technician"** -- Change language to "Assign Staff" with a tip noting terminology adapts by industry (Stylist, Agent, Therapist)
+
+### 4. Update Business Ops How-To Guide (BUSINESS_OPS_BASE_GUIDES)
+
+- **Update: "Appts" guide** -- Add step/tip about delivery type (virtual vs in-person) and how meeting links are auto-generated
+
+### 5. Update Console Titles
+
+- Change `fieldops` title from "How to use Technician-Field Ops Console and App" to "How to use Field Ops Console and App" (removing hardcoded "Technician" to be industry-neutral)
+
+## Why No New Job Role
+
+The current architecture already handles this cleanly:
+
+- The `technician` job type in `employee_job_assignments` means "service professional who performs appointments" -- whether that's an HVAC tech, a stylist, a massage therapist, or a real estate agent
+- The `delivery_type` on services/appointments controls the workflow (virtual vs in-person vs at-business)
+- The `industry_vertical` on companies controls the terminology (Technician vs Stylist vs Agent)
+- Adding a separate `stylist` or `agent` job type would require duplicating all booking, availability, and dispatch logic
+
+The how-to guide updates will make this distinction clear to users by using inclusive language like "service professional" alongside industry-specific examples.
 
 ## Technical Details
 
-### Data flow
-```text
-Service (delivery_type: "virtual")
-  -> Booking creates Appointment (delivery_type: "virtual", meeting_link: null)
-    -> Job Assignment created (status: "pending_acceptance")
-      -> Employee accepts job
-        -> send-job-notification (type: "accepted")
-          -> If virtual: call google-calendar-sync with conferenceData
-            -> Save meeting_link to appointment
-          -> SMS/Email to customer includes meeting link or phone call info
-```
+### File to modify:
+- `src/components/ai/chat/AgentHowToGuide.tsx`
 
-### Files to create/modify
-1. **Database migration** -- add `delivery_type` and `meeting_link` to `appointments`
-2. **`supabase/functions/booking-actions/index.ts`** -- store `delivery_type` from service
-3. **`supabase/functions/ai-agent-chat/index.ts`** -- store `delivery_type` on appointment creation
-4. **`supabase/functions/send-job-notification/index.ts`** -- trigger Meet link generation on acceptance for virtual jobs, update all notification templates
-5. **`supabase/functions/google-calendar-sync/index.ts`** -- add conferenceData support, return hangoutLink
-6. **`src/components/employee/FieldOpsAgentConsole.tsx`** -- conditional quick actions for virtual jobs
-7. **`src/pages/CustomerPortal.tsx`** -- "Join Meeting" button
-8. **`src/pages/CustomerDashboard.tsx`** -- meeting link display
+### Specific changes:
 
-### No breaking changes
-- Default `delivery_type` is `in_person_customer` -- all existing appointments keep current behavior
-- Google Meet links only generated for virtual services when Google Calendar is connected
-- Phone call fallback works without any extra integration
-- The accept flow remains identical for all job types -- only what happens after acceptance differs
+**FIELD_OPS_GUIDES array** (lines 278-408):
+- Add "Start Virtual Session" guide entry with Video icon
+- Add "Phone Call Session" guide entry with Phone icon  
+- Update "Accept Job" tips to mention virtual meeting link generation
+- Update "Get Directions" tips about in-person only
+- Update "Mark En Route" tips about in-person only
+- Update "Arrive & Start Job" tips to mention virtual equivalent
+
+**CUSTOMER_ENGAGEMENT_GUIDES array** (lines 159-275):
+- Add "Join Video Session" guide entry
+- Update "Book Appointment" steps to mention virtual option
+- Update "Track Appointment" to use "service professional" language and mention virtual status
+
+**DISPATCH_FIELD_OPS_GUIDES array** (lines 791-896):
+- Update "Status Legend" to include virtual session info
+- Update "Assign Technician" label and language to be industry-neutral
+
+**BUSINESS_OPS_BASE_GUIDES array** (lines 411-529):
+- Update "Appts" guide to mention delivery types
+
+**CONSOLE_TITLES** (line 914):
+- Change fieldops title to remove "Technician-"
+
+### No database changes needed
+### No new dependencies needed
+### No breaking changes -- only content/text updates
+
