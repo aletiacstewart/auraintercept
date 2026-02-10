@@ -30,6 +30,8 @@ Deno.serve(async (req) => {
 
     let elevenLabsAgentId = agentId || '';
     let elevenLabsApiKey = '';
+    let firstMessage = '';
+    let systemPrompt = '';
 
     if (companyId) {
       const { data: integration, error } = await supabase
@@ -44,6 +46,18 @@ Deno.serve(async (req) => {
 
       elevenLabsApiKey = integration.elevenlabs_api_key;
       elevenLabsAgentId = elevenLabsAgentId || integration.elevenlabs_agent_id || '';
+
+      // Fetch company greeting and prompt for overrides
+      const { data: company } = await supabase
+        .from('companies')
+        .select('ai_voice_greeting, ai_agent_prompt, name')
+        .eq('id', companyId)
+        .maybeSingle();
+
+      if (company) {
+        firstMessage = company.ai_voice_greeting || `Hello! I'm the AI assistant for ${company.name}. How can I help you?`;
+        systemPrompt = company.ai_agent_prompt || '';
+      }
     }
 
     if (!elevenLabsAgentId) {
@@ -99,7 +113,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ token, signed_url, agentId: elevenLabsAgentId }),
+      JSON.stringify({ token, signed_url, agentId: elevenLabsAgentId, firstMessage, systemPrompt }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
