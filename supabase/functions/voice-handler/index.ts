@@ -234,23 +234,38 @@ Deno.serve(async (req) => {
   console.log(`Voice handler: action=${action} callLogId=${callLogId}`);
 
   try {
-    // Parse form data from SignalWire webhook
+    // Parse request body — SWML mode sends JSON with a `call` object,
+    // while outbound/status callbacks still use form-encoded TwiML-style params
     let formParams: Record<string, string> = {};
+    let swmlCall: any = null;
+    
+    const clonedReq = req.clone();
     try {
-      const formData = await req.formData();
-      for (const [key, value] of formData.entries()) {
-        formParams[key] = value as string;
+      const jsonBody = await clonedReq.json();
+      // SWML mode: JSON body with { call: { from, to, call_id, ... } }
+      if (jsonBody && jsonBody.call) {
+        swmlCall = jsonBody.call;
+        console.log('SWML request body - call object:', JSON.stringify(swmlCall));
+      } else {
+        // Could be a JSON body without call object (some callbacks)
+        formParams = jsonBody;
       }
     } catch {
+      // Not JSON — try form-encoded (TwiML-style callbacks: outbound, status)
       try {
-        const text = await req.text();
-        if (text) formParams = JSON.parse(text);
+        const formData = await req.formData();
+        for (const [key, value] of formData.entries()) {
+          formParams[key] = value as string;
+        }
       } catch { /* empty body is fine */ }
     }
 
-    const callSid = formParams['CallSid'] || '';
-    const callerNumber = formParams['From'] || '';
-    const calledNumber = formParams['To'] || '';
+    // Extract caller info — SWML call object uses `from`/`to`, TwiML uses `From`/`To`
+    const callSid = swmlCall?.call_id || formParams['CallSid'] || '';
+    const callerNumber = swmlCall?.from || formParams['From'] || '';
+    const calledNumber = swmlCall?.to || formParams['To'] || '';
+    
+    console.log(`Parsed call info: from=${callerNumber} to=${calledNumber} sid=${callSid}`);
 
     switch (action) {
       case 'incoming':
