@@ -1,103 +1,59 @@
 
 
-# Fix: Use Jessica (ElevenLabs) Voice Everywhere -- Eliminate Polly
+# Fix: Make Jessica Fast, Intuitive, and Responsive
 
-## The Problem
+You do NOT need to switch to SignalWire's AI agent. The current system has the right architecture -- the problems are three specific bugs in the voice logic that cause Jessica to repeat herself and feel slow. Here's how we fix them.
 
-Every hold message, error message, and fallback currently uses `<Say voice="Polly.Joanna">`, which is a completely different voice from Jessica. This creates a jarring, robotic experience and breaks the illusion that the caller is speaking with one person.
+## What's Wrong (3 Root Causes)
 
-## The Solution: Pre-Generate Jessica Hold Audio at Call Start
+1. **Two AI calls run at the same time.** When the 3-second timer fires, the original AI call keeps running alongside a new background call. Both produce different answers, and the wrong one often wins -- making Jessica say something that ignores what you just told her.
 
-The reason Polly is used for hold messages is speed -- generating ElevenLabs audio mid-call adds seconds of latency. The fix is to **pre-generate a set of common hold/filler phrases in Jessica's voice when the call first connects**, then store those URLs and use `<Play>` throughout the call instead of `<Say voice="Polly.Joanna">`.
+2. **The AI sees the conversation history twice.** The system prompt includes the full conversation at the bottom ("CONVERSATION SO FAR:..."), AND the same history is sent separately. This confuses the AI into repeating earlier responses instead of moving forward.
 
-When a call comes in, we already generate the greeting via ElevenLabs. We'll generate 3 additional short phrases at the same time (in parallel), and store the audio URLs in the call log metadata. Then every hold message, retry, and fallback uses those pre-cached Jessica audio files.
+3. **The AI model is too slow for phone calls.** The current model (`gemini-2.5-flash-lite`) is cheap but regularly misses the 3-second deadline, triggering the hold loop on almost every turn. This makes Jessica feel unresponsive.
 
-## Technical Changes
+## The Fixes
 
-### File: `supabase/functions/voice-handler/index.ts`
+### Fix 1: Kill the first AI call when the timer fires
+When the 3-second deadline passes, the original AI request will be cancelled so only ONE response is ever generated per turn. No more competing answers.
 
-**1. Pre-generate hold phrases during `handleIncoming` (around line 233)**
+### Fix 2: Remove duplicate conversation history
+The conversation history will only be sent once (as a parameter), not embedded in the system prompt too. This gives the AI clean, unambiguous context so it actually listens to what you said.
 
-After the greeting TTS is generated, fire off parallel TTS requests for 3 short hold phrases:
+### Fix 3: Add strict flow rules
+New rules will be added to prevent Jessica from re-listing services after you've already chosen one, and to enforce "one question at a time" strictly.
 
-- "Sure, let me look into that for you."
-- "One moment, I'm just checking on that."
-- "Almost ready, just one more second."
+### Fix 4: Upgrade to a faster, smarter model
+Switch from `gemini-2.5-flash-lite` to `gemini-2.5-flash` for phone calls. This model is still fast but significantly better at following instructions, meaning it will respond within 3 seconds more often and understand context better.
 
-These are generated in parallel alongside the greeting so they don't add latency to call pickup. The resulting audio URLs are stored in the `call_logs.metadata` as `hold_audio_urls`.
+## Technical Details
 
-**2. Update timeout branch (line 570-574)**
+All changes are in one file: `supabase/functions/voice-handler/index.ts`
 
-Replace:
-```
-<Say voice="Polly.Joanna">One moment please, let me check on that for you.</Say>
-<Pause length="4"/>
-```
+### Change 1: AbortController in handleProcess (lines 544-584)
+- Create an AbortController BEFORE the race
+- When the 3-second timer wins, call `controller.abort()` to kill the original AI fetch
+- Only the background call will produce a response
 
-With:
-```
-<Play>{holdAudioUrls[0]}</Play>
-```
+### Change 2: Remove "CONVERSATION SO FAR" from buildPhoneSystemPrompt (lines 93-99)
+- Delete lines 93-99 that embed conversation history in the system prompt
+- Add new strict rules:
+  - "Once the caller mentions a service, do NOT list services again. Ask for their name immediately."
+  - "NEVER say 'What else can I help you with?' during a booking flow."
+  - "Each response must contain exactly ONE question."
 
-Uses the first pre-generated Jessica audio clip. No pause needed since the audio itself fills the silence.
+### Change 3: Upgrade model (lines 536 and 848)
+- Change `google/gemini-2.5-flash-lite` to `google/gemini-2.5-flash` in both `handleProcess` and `handleProcessBackground`
 
-**3. Update pickup retry (line 724-726)**
+## Expected Improvement
 
-Replace:
-```
-<Pause length="3"/>
-```
+| Issue | Before | After |
+|-------|--------|-------|
+| Response time | Regularly exceeds 3s, triggers hold loop | Faster model hits deadline more often |
+| Duplicate responses | Two AI calls compete | Original is cancelled, only one survives |
+| Repeating services | AI sees history twice, loops back | Single clean history, strict flow rules |
+| Ignoring caller input | Confused by duplicate context | Clear context, better model comprehension |
 
-With:
-```
-<Play>{holdAudioUrls[retryIndex]}</Play>
-```
-
-Uses a different pre-generated phrase for each retry so it doesn't repeat.
-
-**4. Update `buildPlayThenGather` fallback (line 46-47)**
-
-When no `audioUrl` is available for the main response, fall back to any available hold audio URL from metadata before resorting to Polly. Polly becomes the absolute last resort (error states only like "this number is not configured").
-
-**5. Keep Polly only for true error/edge cases**
-
-Polly will remain for situations where we have no ElevenLabs credentials at all (unconfigured numbers, system errors, hangup messages). These are rare edge cases where voice consistency doesn't matter since the call is ending anyway.
-
-## How It Works
-
-```text
-Call comes in
-  |
-  +--> Generate greeting TTS (Jessica)
-  +--> Generate hold phrase 1 TTS (Jessica)  } All 3 run
-  +--> Generate hold phrase 2 TTS (Jessica)  } in parallel
-  +--> Generate hold phrase 3 TTS (Jessica)  }
-  |
-  +--> Save all URLs to call_logs.metadata.hold_audio_urls
-  |
-  +--> Return greeting TwiML
-  
-...later, AI takes too long...
-  |
-  +--> Read hold_audio_urls from call_logs metadata
-  +--> Return <Play>{hold_audio_urls[0]}</Play> instead of <Say>
-  
-...pickup retry needed...
-  |
-  +--> Return <Play>{hold_audio_urls[1]}</Play> (different phrase)
-```
-
-## Expected Results
-
-| Scenario | Before | After |
-|----------|--------|-------|
-| Hold message | Polly robot voice | Jessica's voice |
-| Retry wait | Dead silence | Jessica saying a different phrase |
-| Voice consistency | Switches between 2 voices | Jessica throughout |
-| Hold message variety | Same phrase every time | 3 rotating phrases |
-| Call start latency | ~2s (1 TTS call) | ~2s (4 TTS calls in parallel) |
-
-## No Database Schema Changes
-
-The `hold_audio_urls` array is stored in the existing `metadata` JSONB column on `call_logs` -- no migration needed.
+## No database changes needed
+All changes are within the voice-handler edge function code only.
 
