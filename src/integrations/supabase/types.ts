@@ -901,7 +901,9 @@ export type Database = {
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
           brand_tone: string | null
+          business_phone: string | null
           calendar_feed_token: string | null
+          call_routing_mode: string
           callback_delay_seconds: number | null
           callback_retry_count: number | null
           chat_widget_subtitle: string | null
@@ -976,6 +978,7 @@ export type Database = {
           review_request_enabled: boolean | null
           review_sms_template: string | null
           review_yelp_url: string | null
+          ring_timeout_seconds: number
           secondary_color: string | null
           service_area_cities: string[] | null
           service_area_zip_codes: string[] | null
@@ -1021,7 +1024,9 @@ export type Database = {
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
           brand_tone?: string | null
+          business_phone?: string | null
           calendar_feed_token?: string | null
+          call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
           chat_widget_subtitle?: string | null
@@ -1096,6 +1101,7 @@ export type Database = {
           review_request_enabled?: boolean | null
           review_sms_template?: string | null
           review_yelp_url?: string | null
+          ring_timeout_seconds?: number
           secondary_color?: string | null
           service_area_cities?: string[] | null
           service_area_zip_codes?: string[] | null
@@ -1141,7 +1147,9 @@ export type Database = {
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
           brand_tone?: string | null
+          business_phone?: string | null
           calendar_feed_token?: string | null
+          call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
           chat_widget_subtitle?: string | null
@@ -1216,6 +1224,7 @@ export type Database = {
           review_request_enabled?: boolean | null
           review_sms_template?: string | null
           review_yelp_url?: string | null
+          ring_timeout_seconds?: number
           secondary_color?: string | null
           service_area_cities?: string[] | null
           service_area_zip_codes?: string[] | null
