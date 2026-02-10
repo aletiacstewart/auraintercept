@@ -3752,6 +3752,26 @@ async function executeAgentTool(
         console.error('[AI Agent] SMS confirmation error:', smsError);
       }
 
+      // Sync to Google Calendar (if connected)
+      try {
+        await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            action: 'sync_appointment',
+            companyId: companyId,
+            appointmentId: appointment.id,
+            appointment: appointment,
+          }),
+        });
+        console.log('[AI Agent] Google Calendar sync triggered for appointment:', appointment.id);
+      } catch (calendarError) {
+        console.error('[AI Agent] Google Calendar sync error (non-blocking):', calendarError);
+      }
+
       return { 
         success: true, 
         appointment_id: appointment.id, 
