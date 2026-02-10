@@ -1,39 +1,76 @@
 
 
-# Fix: Tune Speech Timing to Stop AI from Rushing
+# Fix: Bookings Not Appearing in Job Queue
 
 ## The Problem
 
-The greeting now plays correctly, but the AI agent is not waiting for you to respond with your name and phone number. This is caused by SignalWire's speech detection parameters being too aggressive:
+When appointments are booked via the phone AI agent (voice-swaig), only an `appointments` record is created -- **no `job_assignments` record is created**. The technician dashboard and Field Ops console query `job_assignments`, so these bookings are invisible to staff.
 
-- `barge_confidence: 0.7` -- too sensitive, background noise or breath triggers an interruption
-- `end_of_speech_timeout: 3000` (3s) -- reasonable but could be longer for dictation
-- No `barge_match_string` -- means ANY detected sound can interrupt the agent
+Additionally, some appointments have no `employee_id`, meaning they're completely unassigned.
+
+## Root Cause
+
+In `supabase/functions/voice-swaig/index.ts` (the `book_appointment` handler, lines 244-257), the code:
+1. Creates an appointment in the `appointments` table
+2. Syncs to Google Calendar
+3. ...but **never creates a `job_assignments` row**
+
+Compare this to the AI chat booking flow (`ai-agent-chat`), which correctly creates both an appointment AND a job assignment.
 
 ## The Fix
 
-In `supabase/functions/voice-handler/index.ts`, update the `params` block (lines 158-165):
+### Step 1: Create job assignment after booking in `voice-swaig`
 
-| Parameter | Current | New | Why |
-|-----------|---------|-----|-----|
-| `barge_confidence` | 0.7 | 0.9 | Only interrupt agent when very confident caller is speaking |
-| `end_of_speech_timeout` | 3000 | 4000 | Give callers 4 seconds to pause while spelling names/emails |
-| `attention_timeout` | 25000 | 30000 | Wait 30s before asking "are you still there?" |
-| `interruption_threshold` | (not set) | 200 | Agent must speak for at least 200ms before barge-in is allowed, preventing instant cutoff during greeting |
+After the appointment insert succeeds (line 257), add logic to create a corresponding `job_assignments` row -- matching the pattern used in `ai-agent-chat`:
 
-Updated params block:
 ```typescript
-params: {
-  static_greeting: greeting,
-  swaig_allow_swml: true,
-  end_of_speech_timeout: 4000,
-  attention_timeout: 30000,
-  inactivity_timeout: 60000,
-  barge_confidence: 0.9,
-  interruption_threshold: 200,
-},
+// After appointment creation succeeds...
+if (appointment?.id) {
+  const jobData: any = {
+    company_id: companyId,
+    appointment_id: appointment.id,
+    status: 'pending_acceptance',
+  };
+  if (employeeId) {
+    jobData.employee_id = employeeId;
+  }
+  const { error: jobError } = await supabase
+    .from('job_assignments')
+    .insert(jobData);
+  if (jobError) {
+    console.error('Failed to create job assignment:', jobError);
+  }
+}
 ```
 
-## No Other Changes
+### Step 2: Fix existing orphaned appointments
 
-Single block update in the params object. The prompt, voice, SWAIG tools, and greeting all stay the same.
+Run a one-time data fix to create `job_assignments` for the existing appointments that are missing them:
+
+```sql
+-- Create job assignments for appointments that don't have one
+INSERT INTO job_assignments (company_id, appointment_id, employee_id, status)
+SELECT a.company_id, a.id, a.employee_id, 'pending_acceptance'
+FROM appointments a
+LEFT JOIN job_assignments ja ON ja.appointment_id = a.id
+WHERE ja.id IS NULL
+  AND a.company_id = '04c57cbe-358e-4036-a3ad-b777a55f5be0'
+  AND a.status != 'cancelled';
+```
+
+### Step 3: Ensure delivery-type-aware actions in job queue
+
+The `TechnicianJobQueue.tsx` already has accept/decline buttons for all pending jobs regardless of delivery type. After accepting:
+- For `virtual` or `in_person_business` jobs, the "En Route" / "Directions" steps are already hidden in the Field Ops console
+- The flow goes: Accept --> Start Session --> Complete
+
+No UI changes are needed -- the accept button already works for all delivery types. The only issue was that jobs weren't being created in the first place.
+
+## Summary
+
+| What | Change |
+|------|--------|
+| `voice-swaig/index.ts` | Add `job_assignments` insert after appointment creation |
+| Database | One-time fix for existing orphaned appointments |
+| UI | No changes needed -- accept flow already supports all delivery types |
+
