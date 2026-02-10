@@ -142,6 +142,12 @@ Deno.serve(async (req) => {
       case 'process':
         return await handleProcess(supabase, supabaseUrl, supabaseKey, callLogId, formParams);
 
+      case 'pickup':
+        return await handlePickup(supabase, supabaseUrl, supabaseKey, callLogId);
+
+      case 'process-background':
+        return await handleProcessBackground(supabase, supabaseUrl, supabaseKey, callLogId, formParams);
+
       case 'status':
         return await handleStatus(supabase, callLogId, callSid, formParams);
 
@@ -475,58 +481,99 @@ async function handleProcess(
     // Determine the active agent (supports handoffs across turns)
     const activeAgent = collectedInfo._activeAgent || 'triage';
 
-    // 12-second timeout — SignalWire allows 15-30s for action callbacks
-    const controller = new AbortController();
-    const aiTimeout = setTimeout(() => controller.abort(), 12000);
+    // Build AI request body
+    const aiRequestBody = {
+      message: speechResult,
+      systemPrompt,
+      model: 'google/gemini-2.5-flash-lite',
+      companyId,
+      agentType: activeAgent,
+      isInternalRequest: true,
+      channel: 'phone',
+      conversationHistory,
+    };
 
-    let reply = "I didn't quite catch that. Could you tell me again how I can help you?";
-    try {
-      const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
-        body: JSON.stringify({
-          message: speechResult,
-          systemPrompt,
-          model: 'google/gemini-2.5-flash-lite',
-          companyId,
-          agentType: activeAgent,
-          isInternalRequest: true,
-          channel: 'phone',
-          conversationHistory,
-        }),
-        signal: controller.signal,
-      });
-      clearTimeout(aiTimeout);
+    // === TWO-PHASE RESPONSE: Race AI against 3-second deadline ===
+    const aiPromise = (async () => {
+      const controller = new AbortController();
+      const aiTimeout = setTimeout(() => controller.abort(), 12000);
+      try {
+        const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify(aiRequestBody),
+          signal: controller.signal,
+        });
+        clearTimeout(aiTimeout);
 
-      if (!aiResponse.ok) {
-        console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
-        reply = "I didn't quite catch that. Could you tell me again what you need help with?";
-      } else {
+        if (!aiResponse.ok) {
+          console.error(`[voice-handler] AI returned ${aiResponse.status}: ${await aiResponse.text()}`);
+          return { reply: "I didn't quite catch that. Could you tell me again what you need help with?", handoff: null };
+        }
         const aiText = await aiResponse.text();
         try {
           const aiData = JSON.parse(aiText);
-          reply = aiData.response || aiData.reply || aiData.message || reply;
-
-          // Track agent handoffs for phone calls
-          if (aiData.handoff_to) {
-            collectedInfo._activeAgent = aiData.handoff_to;
-            console.log(`Phone handoff: ${activeAgent} -> ${aiData.handoff_to}`);
-          }
+          const reply = aiData.response || aiData.reply || aiData.message || "Could you tell me more?";
+          return { reply, handoff: aiData.handoff_to || null };
         } catch {
-          if (aiText && aiText.length < 500) reply = aiText;
+          if (aiText && aiText.length < 500) return { reply: aiText, handoff: null };
+          return { reply: "Could you tell me more about what you need?", handoff: null };
         }
-      }
-    } catch (fetchErr: any) {
-      clearTimeout(aiTimeout);
-      if (fetchErr.name === 'AbortError') {
-        console.warn('[voice-handler] AI call timed out after 12s, using fallback');
-        reply = "I'm sorry, I'm having a moment. Could you repeat that?";
-      } else {
+      } catch (fetchErr: any) {
+        clearTimeout(aiTimeout);
+        if (fetchErr.name === 'AbortError') {
+          console.warn('[voice-handler] AI call timed out after 12s');
+          return { reply: "I'm sorry, I'm having a moment. Could you repeat that?", handoff: null };
+        }
         throw fetchErr;
       }
+    })();
+
+    const timer = new Promise<'timeout'>(resolve => setTimeout(() => resolve('timeout'), 3000));
+    const raceResult = await Promise.race([aiPromise, timer]);
+
+    if (raceResult === 'timeout') {
+      // AI is still thinking — save state and return hold TwiML immediately
+      console.log('[voice-handler] AI exceeded 3s deadline, returning hold message');
+
+      await supabase.from('call_logs').update({
+        metadata: {
+          conversation_history: conversationHistory,
+          collected_info: collectedInfo,
+          ai_pending: true,
+          pending_speech: speechResult,
+          pending_system_prompt: systemPrompt,
+          pending_agent: activeAgent,
+          pickup_retries: 0,
+        },
+      }).eq('id', callLogId);
+
+      // Fire-and-forget: kick off background processing
+      fetch(`${supabaseUrl}/functions/v1/voice-handler?action=process-background&callLogId=${callLogId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aiRequestBody),
+      }).catch(err => console.error('[voice-handler] Background fire-and-forget failed:', err));
+
+      const holdUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
+      return twimlResponse(`
+        <Say voice="Polly.Joanna">One moment please, let me check on that for you.</Say>
+        <Pause length="4"/>
+        <Redirect method="POST">${escapeXmlUrl(holdUrl)}</Redirect>
+      `);
+    }
+
+    // AI responded within 3 seconds — proceed normally
+    let reply = raceResult.reply;
+    if (raceResult.handoff) {
+      collectedInfo._activeAgent = raceResult.handoff;
+      console.log(`Phone handoff: ${activeAgent} -> ${raceResult.handoff}`);
     }
 
     // Clean any markdown/formatting from the reply
@@ -537,7 +584,6 @@ async function handleProcess(
 
     // Run DB save and TTS generation in parallel for speed
     const [_, replyAudioUrl] = await Promise.all([
-      // Save conversation state (non-blocking)
       callLogId && !callLogId.startsWith('incoming_')
         ? supabase.from('call_logs').update({
             metadata: {
@@ -546,7 +592,6 @@ async function handleProcess(
             },
           }).eq('id', callLogId)
         : Promise.resolve(),
-      // Generate TTS audio
       elevenlabsApiKey
         ? ttsAudioUrl(supabase, companyId, reply, elevenlabsApiKey, elevenlabsVoiceId)
         : Promise.resolve(null),
@@ -560,6 +605,229 @@ async function handleProcess(
     console.error('AI response failed:', aiError);
     return twimlResponse('<Say voice="Polly.Joanna">Thank you for calling. Someone will follow up with you. Goodbye.</Say><Hangup/>');
   }
+}
+
+// === PICKUP: Check if background AI processing is done ===
+async function handlePickup(
+  supabase: any, supabaseUrl: string, supabaseKey: string, callLogId: string
+): Promise<Response> {
+  console.log(`[pickup] Checking for AI response, callLogId=${callLogId}`);
+
+  const { data: callLog } = await supabase
+    .from('call_logs')
+    .select('company_id, metadata')
+    .eq('id', callLogId)
+    .single();
+
+  if (!callLog) {
+    return twimlResponse('<Say voice="Polly.Joanna">Sorry, an error occurred. Goodbye.</Say><Hangup/>');
+  }
+
+  const metadata = callLog.metadata || {};
+  const retries = metadata.pickup_retries || 0;
+
+  if (metadata.ai_pending === false && metadata.pending_response) {
+    // AI response is ready — generate TTS and respond
+    console.log(`[pickup] AI response ready after ${retries} retries`);
+
+    let reply = metadata.pending_response;
+    reply = reply.replace(/[*_#`~\[\]]/g, '').replace(/\n/g, ' ').trim();
+
+    const conversationHistory = metadata.conversation_history || [];
+    const collectedInfo = metadata.collected_info || {};
+
+    // Track handoff
+    if (metadata.pending_handoff) {
+      collectedInfo._activeAgent = metadata.pending_handoff;
+    }
+
+    conversationHistory.push({ role: 'assistant', content: reply });
+
+    // Get ElevenLabs creds
+    const { data: integration } = await supabase
+      .from('tenant_integrations')
+      .select('elevenlabs_api_key, elevenlabs_voice_id')
+      .eq('company_id', callLog.company_id)
+      .maybeSingle();
+
+    const elevenlabsApiKey = integration?.elevenlabs_api_key || '';
+    const elevenlabsVoiceId = integration?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+
+    // Save state and generate TTS in parallel
+    const [_, replyAudioUrl] = await Promise.all([
+      supabase.from('call_logs').update({
+        metadata: {
+          conversation_history: conversationHistory,
+          collected_info: collectedInfo,
+          ai_pending: undefined,
+          pending_response: undefined,
+          pending_speech: undefined,
+          pending_system_prompt: undefined,
+          pending_agent: undefined,
+          pending_handoff: undefined,
+          pickup_retries: undefined,
+        },
+      }).eq('id', callLogId),
+      elevenlabsApiKey
+        ? ttsAudioUrl(supabase, callLog.company_id, reply, elevenlabsApiKey, elevenlabsVoiceId)
+        : Promise.resolve(null),
+    ]);
+
+    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
+    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
+
+    return twimlResponse(buildPlayThenGather(replyAudioUrl, reply, gatherUrl, timeoutUrl));
+  }
+
+  // AI still processing
+  if (retries >= 3) {
+    // Give up after ~16 seconds of total hold time, use fallback
+    console.warn(`[pickup] Max retries reached, using fallback`);
+    const fallback = "Could you tell me a bit more about what you need? I want to make sure I help you correctly.";
+
+    const conversationHistory = metadata.conversation_history || [];
+    conversationHistory.push({ role: 'assistant', content: fallback });
+
+    await supabase.from('call_logs').update({
+      metadata: {
+        ...metadata,
+        conversation_history: conversationHistory,
+        ai_pending: false,
+        pickup_retries: undefined,
+      },
+    }).eq('id', callLogId);
+
+    const gatherUrl = `${supabaseUrl}/functions/v1/voice-handler?action=process&callLogId=${callLogId}`;
+    const timeoutUrl = `${supabaseUrl}/functions/v1/voice-handler?action=timeout&callLogId=${callLogId}`;
+
+    return twimlResponse(buildPlayThenGather(null, fallback, gatherUrl, timeoutUrl));
+  }
+
+  // Not ready yet — pause and redirect again
+  console.log(`[pickup] AI still pending, retry ${retries + 1}/3`);
+  await supabase.from('call_logs').update({
+    metadata: { ...metadata, pickup_retries: retries + 1 },
+  }).eq('id', callLogId);
+
+  const pickupUrl = `${supabaseUrl}/functions/v1/voice-handler?action=pickup&callLogId=${callLogId}`;
+  return twimlResponse(`
+    <Pause length="3"/>
+    <Redirect method="POST">${escapeXmlUrl(pickupUrl)}</Redirect>
+  `);
+}
+
+// === PROCESS-BACKGROUND: Fire-and-forget AI call ===
+async function handleProcessBackground(
+  supabase: any, supabaseUrl: string, supabaseKey: string,
+  callLogId: string, formParams: Record<string, string>
+): Promise<Response> {
+  console.log(`[process-background] Starting background AI processing for callLogId=${callLogId}`);
+
+  try {
+    // Read the AI request from the POST body
+    let aiRequestBody: any = {};
+    try {
+      aiRequestBody = formParams;
+      // formParams might already be parsed JSON from the body
+    } catch { /* use empty */ }
+
+    // If formParams didn't have the AI fields, read from call_logs metadata
+    if (!aiRequestBody.message) {
+      const { data: callLog } = await supabase
+        .from('call_logs')
+        .select('company_id, metadata')
+        .eq('id', callLogId)
+        .single();
+
+      if (!callLog) {
+        console.error('[process-background] Call log not found');
+        return new Response('OK', { headers: corsHeaders });
+      }
+
+      const metadata = callLog.metadata || {};
+      const conversationHistory = metadata.conversation_history || [];
+
+      // Rebuild AI request from saved state
+      aiRequestBody = {
+        message: metadata.pending_speech,
+        systemPrompt: metadata.pending_system_prompt,
+        model: 'google/gemini-2.5-flash-lite',
+        companyId: callLog.company_id,
+        agentType: metadata.pending_agent || 'triage',
+        isInternalRequest: true,
+        channel: 'phone',
+        conversationHistory,
+      };
+    }
+
+    const controller = new AbortController();
+    const aiTimeout = setTimeout(() => controller.abort(), 12000);
+
+    const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify(aiRequestBody),
+      signal: controller.signal,
+    });
+    clearTimeout(aiTimeout);
+
+    let reply = "Could you tell me more about what you need?";
+    let handoff: string | null = null;
+
+    if (aiResponse.ok) {
+      const aiText = await aiResponse.text();
+      try {
+        const aiData = JSON.parse(aiText);
+        reply = aiData.response || aiData.reply || aiData.message || reply;
+        handoff = aiData.handoff_to || null;
+      } catch {
+        if (aiText && aiText.length < 500) reply = aiText;
+      }
+    } else {
+      console.error(`[process-background] AI returned ${aiResponse.status}`);
+    }
+
+    // Save the response to call_logs metadata for pickup
+    const { data: currentLog } = await supabase
+      .from('call_logs')
+      .select('metadata')
+      .eq('id', callLogId)
+      .single();
+
+    const currentMetadata = currentLog?.metadata || {};
+    await supabase.from('call_logs').update({
+      metadata: {
+        ...currentMetadata,
+        ai_pending: false,
+        pending_response: reply,
+        pending_handoff: handoff,
+      },
+    }).eq('id', callLogId);
+
+    console.log(`[process-background] AI response saved, ready for pickup`);
+  } catch (err) {
+    console.error('[process-background] Error:', err);
+    // Mark as no longer pending so pickup uses fallback
+    const { data: currentLog } = await supabase
+      .from('call_logs')
+      .select('metadata')
+      .eq('id', callLogId)
+      .single();
+
+    await supabase.from('call_logs').update({
+      metadata: {
+        ...(currentLog?.metadata || {}),
+        ai_pending: false,
+        pending_response: "I'm sorry, could you repeat that? I want to make sure I help you correctly.",
+        pending_handoff: null,
+      },
+    }).eq('id', callLogId);
+  }
+
+  return new Response('OK', { headers: corsHeaders });
 }
 
 // === STATUS CALLBACK ===
