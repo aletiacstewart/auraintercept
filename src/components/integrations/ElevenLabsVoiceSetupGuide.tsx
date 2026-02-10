@@ -173,7 +173,7 @@ export function ElevenLabsVoiceSetupGuide() {
               </ol>
               <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
                 <p className="text-destructive text-xs">
-                  <strong>⚠️ Critical Timing Settings:</strong> In your agent's <strong>Voice → Turn-taking</strong> section, set <strong>End of Speech Detection</strong> to <strong>4000ms</strong> and <strong>Interruption Sensitivity</strong> to <strong>Low</strong>. Without this, the agent will cut off callers before they finish speaking their name or phone number.
+                  <strong>⚠️ Critical Timing Settings:</strong> In your agent's <strong>Conversational behavior</strong> section, set <strong>Eagerness</strong> to <strong>Patient</strong> and <strong>Spelling patience</strong> to <strong>Auto</strong>. Without this, the agent will cut off callers before they finish speaking their name or phone number.
                 </p>
               </div>
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">

@@ -236,20 +236,20 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
 
               <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-xs font-medium text-foreground mb-2">📍 Location in ElevenLabs Dashboard:</p>
-                <p className="text-xs">Agent Settings → <strong>Voice</strong> tab → Scroll down to <strong>Turn-taking</strong> section</p>
+                <p className="text-xs">Agent Settings → <strong>Conversational behavior</strong> section</p>
               </div>
 
               <div className="space-y-4">
                 <div className="border rounded-lg p-4 bg-background">
                   <div className="flex items-center gap-2 mb-2">
                     <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 1</Badge>
-                    <span className="font-medium text-foreground">End of Speech Detection</span>
+                    <span className="font-medium text-foreground">Eagerness</span>
                   </div>
-                  <p className="text-xs mb-2">How long the agent waits after you stop talking before responding.</p>
+                  <p className="text-xs mb-2">Controls how quickly the agent jumps in after the caller stops speaking.</p>
                   <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     <span className="text-xs text-green-800 dark:text-green-200">
-                      Set slider to <strong>4000ms</strong> (toward "Relaxed" end)
+                      Set to <strong>Patient</strong>
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-2">
@@ -260,29 +260,57 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                 <div className="border rounded-lg p-4 bg-background">
                   <div className="flex items-center gap-2 mb-2">
                     <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 2</Badge>
-                    <span className="font-medium text-foreground">Interruption Sensitivity</span>
+                    <span className="font-medium text-foreground">Spelling patience</span>
                   </div>
-                  <p className="text-xs mb-2">How easily the agent can be interrupted when speaking.</p>
+                  <p className="text-xs mb-2">How long the agent waits while callers spell out words letter by letter.</p>
                   <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     <span className="text-xs text-green-800 dark:text-green-200">
-                      Set to <strong>Low</strong> (toward left)
+                      Set to <strong>Auto</strong>
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-2">
-                    Prevents the agent from cutting in when the caller pauses to think.
+                    Prevents the agent from cutting in when callers spell names or addresses.
                   </p>
                 </div>
 
                 <div className="border rounded-lg p-4 bg-background">
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Optional</Badge>
-                    <span className="font-medium text-foreground">Response Speed</span>
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 3</Badge>
+                    <span className="font-medium text-foreground">Take turn after silence</span>
                   </div>
-                  <p className="text-xs mb-2">How quickly the agent starts responding after detecting end of speech.</p>
+                  <p className="text-xs mb-2">How long the agent waits in silence before prompting the caller.</p>
+                  <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span className="text-xs text-green-800 dark:text-green-200">
+                      Set to <strong>20 seconds</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-background">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Setting 4</Badge>
+                    <span className="font-medium text-foreground">End conversation after silence</span>
+                  </div>
+                  <p className="text-xs mb-2">How long before the agent ends the call if the caller stays silent.</p>
+                  <div className="bg-green-50 dark:bg-green-950/30 p-2 rounded flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span className="text-xs text-green-800 dark:text-green-200">
+                      Set to <strong>20 seconds</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-background">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Optional</Badge>
+                    <span className="font-medium text-foreground">Soft timeout</span>
+                  </div>
+                  <p className="text-xs mb-2">Sends a gentle re-engagement message after a period of silence.</p>
                   <div className="bg-blue-50 dark:bg-blue-950/30 p-2 rounded flex items-center gap-2">
                     <span className="text-xs text-blue-800 dark:text-blue-200">
-                      Keep at <strong>Normal</strong> or slightly toward <strong>Relaxed</strong>
+                      Set to <strong>8 seconds</strong> with message: <em>"Are you still there? Take your time — I'm here whenever you're ready."</em>
                     </span>
                   </div>
                 </div>
@@ -295,7 +323,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200">
                 <AlertCircle className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-xs text-amber-800 dark:text-amber-200">
-                  <strong>Troubleshooting: Agent not waiting for answers?</strong> If the agent asks for name, phone, and address all at once or cuts off callers mid-answer, increase End of Speech Detection to <strong>4000ms</strong> and set Interruption Sensitivity to <strong>Low</strong>. Also re-copy the latest system prompt above — it now enforces one-question-at-a-time collection.
+                  <strong>Troubleshooting: Agent not waiting for answers?</strong> If the agent asks for name, phone, and address all at once or cuts off callers mid-answer, set <strong>Eagerness</strong> to <strong>Patient</strong> and <strong>Spelling patience</strong> to <strong>Auto</strong>. Also re-copy the latest system prompt above — it now enforces one-question-at-a-time collection.
                 </AlertDescription>
               </Alert>
             </AccordionContent>
