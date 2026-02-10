@@ -1,53 +1,54 @@
 
 
-# Fix Voice Agent "Not Waiting" for Name/Contact Info
+# Update ElevenLabs Setup Guides to Match New Dashboard UI
 
 ## Problem
 
-The voice agent prompts in both `AuraIntelligenceSettings.tsx` and `ElevenLabsSetupGuide.tsx` currently have a single step that says:
+The ElevenLabs dashboard has updated its "Turn-taking" settings panel to a new "Conversational behavior" section with different controls. Our setup guides reference outdated terminology like "End of Speech Detection slider" and "Interruption Sensitivity" which no longer exist in the dashboard, causing confusion for users trying to configure their agents.
 
-> "3. Collect: name, phone, address - give ample time for EACH answer"
+## New Settings (from screenshots)
 
-AI voice models interpret this as a single conversational turn -- they ask for all three at once ("Can I get your name, phone number, and address?") instead of asking one at a time and waiting. The "give ample time" instruction is too vague for the model to follow reliably.
+The updated ElevenLabs dashboard now has:
 
-## Solution
+| Old Setting | New Setting | Recommended Value |
+|---|---|---|
+| End of Speech Detection (slider) | **Eagerness** (dropdown) | **Patient** |
+| Interruption Sensitivity | Replaced by Eagerness | N/A |
+| (new) | **Spelling patience** | **Auto** |
+| (new) | **Speculative turn** | **Off** |
+| (new) | **Take turn after silence** | **20 seconds** |
+| (new) | **End conversation after silence** | **20 seconds** |
+| (new) | **Soft timeout** | **8 seconds** with message |
+| (new) | **LLM cascade timeout** | **15 seconds** |
 
-### 1. Update the Booking Flow in both prompts to enforce one-field-at-a-time collection
+## Changes
 
-Replace the single "Collect: name, phone, address" step with explicit sequential steps and add a strict rule about never asking for multiple fields at once.
+### 1. `src/components/integrations/ElevenLabsSetupGuide.tsx`
 
-**Before (both files):**
-```
-3. Collect: name, phone, address - give ample time for EACH answer
-```
+**Step 2.5 "Configure Conversation Timing"** -- Replace the three current settings cards (End of Speech Detection, Interruption Sensitivity, Response Speed) with the new settings:
 
-**After:**
-```
-3. Ask: "Can I get your full name?" — WAIT for their complete answer before continuing
-4. Ask: "And a good phone number to reach you?" — WAIT for the full number
-5. Ask: "What's the address for the service?" — WAIT for complete address
-```
+- Update the location reference from "Voice tab -> Turn-taking section" to "Agent Settings -> Conversational behavior"
+- Replace "Setting 1: End of Speech Detection = 4000ms" with "Setting 1: Eagerness = Patient"
+- Replace "Setting 2: Interruption Sensitivity = Low" with "Setting 2: Spelling patience = Auto"
+- Add "Setting 3: Take turn after silence = 20 seconds"
+- Add "Setting 4: End conversation after silence = 20 seconds"
+- Add "Setting 5 (Optional): Soft timeout = 8 seconds" with the recommended message
+- Update the troubleshooting alert text to reference "Eagerness" instead of "End of Speech Detection"
 
-Plus add a new rule in the GUIDELINES / CONVERSATIONAL PAUSES section:
-```
-- NEVER ask for multiple pieces of information in one question (e.g., don't say "Can I get your name, phone, and address?")
-- Ask for ONE piece of info at a time, wait for the answer, then ask for the next
-```
+### 2. `src/components/integrations/ElevenLabsVoiceSetupGuide.tsx`
 
-### 2. Update the ElevenLabs Setup Guide timing recommendations
+**Step 4 "Create Conversational Agent"** -- Update the critical timing settings warning:
 
-In `ElevenLabsSetupGuide.tsx`, update the recommended End of Speech Detection value from "2000-4000ms" to a tighter recommendation of **4000ms**, and add a troubleshooting note about the "agent not waiting" issue.
+- Replace "End of Speech Detection to 4000ms and Interruption Sensitivity to Low" with "Eagerness to Patient and Spelling patience to Auto"
 
-### 3. Update the ElevenLabsVoiceSetupGuide.tsx (basic guide)
+### 3. `src/components/settings/AuraIntelligenceSettings.tsx`
 
-Add a new step or tip in the "Create Conversational Agent" section about configuring End of Speech Detection to 4000ms and Interruption Sensitivity to Low, since this is the most common issue users face.
+No prompt content changes needed -- the system prompt instructions ("WAIT for their complete answer") remain valid regardless of dashboard UI changes. However, if there are references to specific dashboard setting names in comments, those will be updated.
 
-## Files to Modify
+## What stays the same
 
-1. **`src/components/settings/AuraIntelligenceSettings.tsx`** -- Update the `generateElevenLabsPrompt()` function's BOOKING FLOW and CONVERSATIONAL PAUSES sections
-2. **`src/components/integrations/ElevenLabsSetupGuide.tsx`** -- Update the `AGENT_PROMPT` constant's FLOW and CONVERSATIONAL PAUSES sections, plus update the timing recommendation from "2000-4000ms" to "4000ms"
-3. **`src/components/integrations/ElevenLabsVoiceSetupGuide.tsx`** -- Add a tip in the Conversational Agent step about timing settings
+- All system prompt text (AGENT_PROMPT and generateElevenLabsPrompt) -- these are about agent behavior, not dashboard settings
+- Tool configurations and webhook URLs
+- No database changes
+- No new dependencies
 
-## No database changes, no new dependencies, no breaking changes
-
-The changes are prompt text and guide content only. Users who have already copied the old prompt will need to re-copy the updated version.
