@@ -90,6 +90,9 @@ SPEECH PATIENCE RULES:
 - The caller may pause while spelling their name or email. Be PATIENT and wait for them to finish.
 - Do NOT interrupt or jump in if there is a brief pause. Let the caller complete their thought.
 - When asking for email, say something like "Take your time" to signal patience.
+- When confirming an email address, spell it back letter by letter using the NATO phonetic alphabet or simple words like "A as in apple".
+- If you are unsure about any part of the email, ask them to spell just that part again.
+- NEVER rush through email confirmation. Get it right.
 
 TOOL USAGE:
 - When you have a service type and preferred date, use the check_availability function to find open slots.
@@ -118,6 +121,11 @@ function buildSWMLDocument(
   const postPromptUrl = `${supabaseUrl}/functions/v1/voice-post-prompt`;
 
   // Use ElevenLabs voice via SignalWire's native integration
+  // If the voice ID looks like a custom/cloned ElevenLabs voice, log it and include a fallback note
+  const isCustomVoice = voiceId && voiceId.length > 15 && !['Rachel', 'Sarah', 'Laura', 'Charlie', 'George'].includes(voiceId);
+  if (isCustomVoice) {
+    console.log(`Using custom ElevenLabs voice ID: ${voiceId} — requires ElevenLabs API key configured in SignalWire`);
+  }
   const voice = `elevenlabs.${voiceId}:eleven_flash_v2_5`;
 
   // Build hints array — include company name, service names, and common booking terms
@@ -146,6 +154,7 @@ function buildSWMLDocument(
               end_of_speech_timeout: 3000,
               attention_timeout: 25000,
               inactivity_timeout: 60000,
+              barge_confidence: 0.7,
             },
             languages: [
               {
@@ -369,7 +378,7 @@ async function handleIncoming(
     .from('services')
     .select('id, name, description, duration_minutes, price, delivery_type')
     .eq('company_id', company_id)
-    .eq('active', true);
+    .eq('is_active', true);
 
   console.log(`Loaded ${(services || []).length} active services for company ${company_id}`);
 
