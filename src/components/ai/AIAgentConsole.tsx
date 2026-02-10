@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, Clock, MessageSquare, ChevronRight,
-  AlertTriangle, Phone, TestTube2
+  AlertTriangle, Phone, TestTube2, Mail, MapPin, Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -68,6 +68,13 @@ interface Company {
   dispatch_phone: string | null;
   subscription_tier: string | null;
   trial_ends_at: string | null;
+  phone: string | null;
+  business_phone: string | null;
+  email: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  contact_address: string | null;
+  address: string | null;
 }
 
 interface BusinessHour {
@@ -171,7 +178,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       if (!companyId) return null;
       const { data } = await supabase
         .from('companies')
-        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url, dispatch_phone, subscription_tier, trial_ends_at')
+        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url, dispatch_phone, subscription_tier, trial_ends_at, phone, business_phone, email, contact_email, contact_phone, contact_address, address')
         .eq('id', companyId)
         .single();
       return data as (Company & { review_google_url?: string; review_facebook_url?: string; review_yelp_url?: string }) | null;
@@ -275,8 +282,11 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       tabs.push({ id: 'voice', label: 'Voice AI', icon: Phone, featureColor: 'text-feature-overview' });
     }
     
-    // Contact tab - always show (has hours + emergency + phone info)
-    tabs.push({ id: 'hours', label: 'Contact', icon: Clock, featureColor: 'text-feature-overview' });
+    // Contact tab - shows company contact information
+    tabs.push({ id: 'contact', label: 'Contact', icon: Building2, featureColor: 'text-feature-overview' });
+
+    // Hours tab - shows business hours
+    tabs.push({ id: 'hours', label: 'Hours', icon: Clock, featureColor: 'text-feature-overview' });
     
     return tabs;
   }, [effectiveTier, hasVoiceChat]);
@@ -807,6 +817,75 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                   Call {company.dispatch_phone}
                 </Button>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Contact Tab */}
+        {activeTab === 'contact' && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <h3 className="font-semibold text-lg mb-4 gradient-text">Contact Information</h3>
+            
+            <div className="space-y-3">
+              {/* Phone */}
+              {(callablePhone || company?.phone || company?.business_phone) && (
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <a 
+                      href={`tel:${callablePhone || company?.phone || company?.business_phone}`} 
+                      className="font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      {callablePhone || company?.phone || company?.business_phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Email */}
+              {(company?.contact_email || company?.email) && (
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '50ms' }}>
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Mail className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <a 
+                      href={`mailto:${company?.contact_email || company?.email}`} 
+                      className="font-medium text-foreground hover:text-primary transition-colors break-all"
+                    >
+                      {company?.contact_email || company?.email}
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Address */}
+              {(company?.contact_address || company?.address) && (
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '100ms' }}>
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <MapPin className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-muted-foreground">Address</p>
+                    <p className="font-medium text-foreground">{company?.contact_address || company?.address}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Company Name */}
+              <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '150ms' }}>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-muted-foreground">Company</p>
+                  <p className="font-medium text-foreground">{company?.name}</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
