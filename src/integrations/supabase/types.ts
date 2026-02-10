@@ -6524,9 +6524,12 @@ export type Database = {
       get_company_public_info: {
         Args: { p_slug: string }
         Returns: {
+          business_phone: string
+          contact_phone: string
           id: string
           logo_url: string
           name: string
+          phone: string
           primary_color: string
           public_app_url: string
           secondary_color: string
@@ -6539,9 +6542,12 @@ export type Database = {
       get_company_public_info_by_id: {
         Args: { p_id: string }
         Returns: {
+          business_phone: string
+          contact_phone: string
           id: string
           logo_url: string
           name: string
+          phone: string
           primary_color: string
           public_app_url: string
           secondary_color: string
