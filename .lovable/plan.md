@@ -1,68 +1,66 @@
 
+# Fix: Phone Call Disconnect After Booking Request
 
-# Sync All Bookings to Google Calendar Automatically
+## Root Cause (1 Bug)
 
-## The Problem
+In `ai-agent-chat/index.ts` line 2916-2931, when a handoff occurs with an empty AI response, the code checks `isInternalAgent`. Because voice-handler sends `isInternalRequest: true`, the code enters the internal agent branch and sets `responseText = ''` (empty). This was intended for admin-facing agents (inventory, campaign, etc.) but phone calls incorrectly get caught by the same check.
 
-When an appointment is created (via AI chat, phone call, or web booking), it gets saved to the database and triggers SMS notifications -- but it is **never synced to Google Calendar**. The only place `google-calendar-sync` is called today is inside `send-job-notification`, and only for **virtual appointments** that need a Google Meet link.
+The flow:
+1. Caller says "I'd like to book an appointment"
+2. AI triggers `handoff_to_agent(booking)` with no text (normal for tool calls)
+3. Bridging message code runs, sees `isInternalAgent = true` (because `isInternalRequest = true`)
+4. Sets `responseText = ''` instead of generating "I'd be happy to help you with booking..."
+5. voice-handler gets empty response, falls back to "I didn't quite catch that..."
+6. Caller is confused, stays silent, Gather times out at 12s, call hangs up
 
-## The Fix
+## The Fix (1 file, 1 change)
 
-Add a Google Calendar sync call inside the `create_appointment` tool handler in `ai-agent-chat/index.ts`, right after the appointment is created and notifications are sent. This covers ALL booking channels (web chat, phone, voice agent) since they all funnel through this same tool.
+### File: `supabase/functions/ai-agent-chat/index.ts` (~line 2916)
 
-### File: `supabase/functions/ai-agent-chat/index.ts`
+Add a check for `channel === 'phone'`. When the request comes from the phone channel, always generate the bridging message regardless of `isInternalAgent`:
 
-After the SMS confirmation block (~line 3753), add a call to `google-calendar-sync` with `action: 'sync_appointment'`:
-
+**Before:**
 ```typescript
-// Sync to Google Calendar (if connected)
-try {
-  await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-    },
-    body: JSON.stringify({
-      action: 'sync_appointment',
-      companyId: companyId,
-      appointmentId: appointment.id,
-      appointment: appointment,
-    }),
-  });
-  console.log('[AI Agent] Google Calendar sync triggered for appointment:', appointment.id);
-} catch (calendarError) {
-  console.error('[AI Agent] Google Calendar sync error (non-blocking):', calendarError);
+if (handoffTo && !responseText.trim()) {
+  if (isInternalAgent || INTERNAL_AGENTS.includes(handoffTo)) {
+    responseText = '';
+  } else {
+    // bridging messages...
+  }
 }
 ```
 
-This is **non-blocking** -- if the company doesn't have Google Calendar connected, the sync function returns early with "No Google Calendar connection" and the booking still succeeds normally.
+**After:**
+```typescript
+if (handoffTo && !responseText.trim()) {
+  const isPhoneCall = channel === 'phone';
+  if ((isInternalAgent || INTERNAL_AGENTS.includes(handoffTo)) && !isPhoneCall) {
+    // For internal dashboard agents, skip customer-facing message
+    responseText = '';
+  } else {
+    // For phone calls and customer-facing channels, always provide a spoken response
+    const handoffMessages: Record<string, string> = {
+      booking: "I'd be happy to help you book an appointment. What service are you looking for?",
+      dispatch: "Let me connect you with our dispatch team right away.",
+      quoting: "I can help you get a quote. What service do you need?",
+      followup: "Let me connect you with our follow-up team.",
+      review: "Thank you for your feedback! Let me help you with that.",
+      invoice: "Let me help you with your billing question.",
+      default: `Sure, I can help you with that. Could you tell me a bit more?`,
+    };
+    responseText = handoffMessages[handoffTo] || handoffMessages.default;
+  }
+}
+```
 
-### File: `supabase/functions/voice-booking-agent/index.ts`
+This ensures phone callers always hear a conversational response when a handoff occurs, while dashboard internal agents continue to work silently as intended.
 
-The voice booking agent has its own `create_appointment` handler that also inserts directly into the database. Add the same Google Calendar sync call there after appointment creation, so phone bookings via ElevenLabs also sync.
+## Expected Result
 
-## What This Covers
+| Scenario | Before | After |
+|----------|--------|-------|
+| Phone: "book appointment" | Empty response, fallback, timeout, hangup | "I'd be happy to help you book. What service?" |
+| Dashboard: internal handoff | Silent (correct) | Silent (unchanged) |
+| Web chat: handoff | Bridging message | Bridging message (unchanged) |
 
-| Booking Source | Creates Appointment | Syncs to Google Calendar |
-|---------------|--------------------|-----------------------|
-| Web AI Chat | Yes (ai-agent-chat) | Yes (after fix) |
-| Phone AI Agent | Yes (ai-agent-chat) | Yes (after fix) |
-| Voice Booking (ElevenLabs) | Yes (voice-booking-agent) | Yes (after fix) |
-| Manual (web UI) | Yes (direct insert) | Already works via send-job-notification for virtual |
-
-## How It Works
-
-The existing `google-calendar-sync` function already handles everything:
-- Checks if the company has a Google Calendar connection
-- Refreshes OAuth tokens if expired
-- Creates/updates the event on Google Calendar
-- Saves the mapping in `calendar_event_mappings`
-- Generates Google Meet links for virtual appointments
-
-We just need to **call it** from the appointment creation flows. No changes to the sync function itself.
-
-## No Database Changes Needed
-
-The `google_calendar_connections`, `calendar_event_mappings`, and `appointments` tables already have all the required columns.
-
+## No database changes needed
