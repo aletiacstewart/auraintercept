@@ -1,49 +1,39 @@
 
 
-# Fix: Use `params.static_greeting` for Custom Greeting
+# Fix: Tune Speech Timing to Stop AI from Rushing
 
 ## The Problem
 
-We put the greeting in `prompt.first_message`, but that is **not a valid SignalWire SWML field**. SignalWire silently ignores it and generates its own generic greeting from the LLM.
+The greeting now plays correctly, but the AI agent is not waiting for you to respond with your name and phone number. This is caused by SignalWire's speech detection parameters being too aggressive:
 
-The correct SWML parameter is `params.static_greeting` -- documented at [developer.signalwire.com/swml/methods/ai/params](https://developer.signalwire.com/swml/methods/ai/params/).
+- `barge_confidence: 0.7` -- too sensitive, background noise or breath triggers an interruption
+- `end_of_speech_timeout: 3000` (3s) -- reasonable but could be longer for dictation
+- No `barge_match_string` -- means ANY detected sound can interrupt the agent
 
 ## The Fix
 
-In `supabase/functions/voice-handler/index.ts`, move the greeting from `prompt.first_message` to `params.static_greeting`:
+In `supabase/functions/voice-handler/index.ts`, update the `params` block (lines 158-165):
 
-**Remove** from the `prompt` object (line 153):
+| Parameter | Current | New | Why |
+|-----------|---------|-----|-----|
+| `barge_confidence` | 0.7 | 0.9 | Only interrupt agent when very confident caller is speaking |
+| `end_of_speech_timeout` | 3000 | 4000 | Give callers 4 seconds to pause while spelling names/emails |
+| `attention_timeout` | 25000 | 30000 | Wait 30s before asking "are you still there?" |
+| `interruption_threshold` | (not set) | 200 | Agent must speak for at least 200ms before barge-in is allowed, preventing instant cutoff during greeting |
+
+Updated params block:
+```typescript
+params: {
+  static_greeting: greeting,
+  swaig_allow_swml: true,
+  end_of_speech_timeout: 4000,
+  attention_timeout: 30000,
+  inactivity_timeout: 60000,
+  barge_confidence: 0.9,
+  interruption_threshold: 200,
+},
 ```
-first_message: greeting,
-```
-
-**Add** to the `params` object (around line 161):
-```
-static_greeting: greeting,
-```
-
-The resulting SWML `ai` block will look like:
-
-```text
-ai:
-  prompt:
-    text: <system prompt>
-    temperature: 0.7
-  params:
-    static_greeting: "Hello! I'm Aura, your AI Intercept Agent..."
-    end_of_speech_timeout: 3000
-    attention_timeout: 25000
-    ...
-```
-
-## What This Changes
-
-| Before | After |
-|--------|-------|
-| Generic "Hello, how can I help you" | Your custom Aura greeting from the database |
-| `prompt.first_message` (ignored by SignalWire) | `params.static_greeting` (official SWML parameter) |
 
 ## No Other Changes
 
-Single field move. Everything else (prompt, services, voice fallback, SWAIG tools) stays the same.
-
+Single block update in the params object. The prompt, voice, SWAIG tools, and greeting all stay the same.
