@@ -1,87 +1,82 @@
 
 
-# Fix: Speed Up Phone Booking from 15s to ~4s
+# Fix: Prevent Phone Call Timeouts with Aggressive Latency Guards
 
-## Why Phone Booking Matters
+## Root Cause
 
-Customers call the business number -- that's the primary way most people interact with a local business. Removing phone booking would force callers to hang up and visit a website, which defeats the purpose of having a phone agent. **Keep phone booking, fix the speed.**
+The voice-handler calls ai-agent-chat with NO timeout protection. If the AI gateway is even slightly slow (cold start, rate limit queuing, etc.), the entire chain exceeds SignalWire's ~15s webhook timeout and the call drops.
 
-## Root Cause: 3 Bugs in ai-agent-chat
+The chain right now:
+```text
+SignalWire webhook --> voice-handler --> DB lookups (1s) --> ai-agent-chat --> AI Call 1 (2-5s) --> tool exec (0.5s) --> AI Call 2 follow-up (2-5s) --> return --> TTS (1-2s) --> upload (0.5s) --> return TwiML
+                                                                                                                                        Total: 7-14s (too close to 15s limit)
+```
 
-When someone says "I want to book an appointment," two sequential AI calls happen:
+Two problems:
+1. Phone calls still trigger data-fetching tools (`collect_customer_info`, `track_appointment`, `list_services`, `capture_lead`) which force a follow-up AI call -- doubling AI latency
+2. No AbortController timeout on the ai-agent-chat fetch, so if the AI is slow, voice-handler hangs until SignalWire gives up
 
-1. **AI Call 1** (initial): Decides to trigger a tool (e.g., `check_availability` or `handoff_to_agent`)
-2. **Tool execution**: Runs the tool (~0.5s)
-3. **AI Call 2** (follow-up): Generates the spoken response using tool results
+## The Fix (2 changes)
 
-The problem is threefold:
+### Change 1: Add 8-second timeout to ai-agent-chat fetch (voice-handler)
 
-- **Bug A**: `ai-agent-chat` hardcodes `model: 'google/gemini-2.5-flash'` (line 2681), ignoring the `model: 'google/gemini-2.5-flash-lite'` that voice-handler sends. The faster model is never used.
-- **Bug B**: Follow-up AI calls (line 2826) don't apply phone limits -- they use full `max_tokens: 1000` and the unfiltered tool list instead of the phone-optimized `max_tokens: 150`.
-- **Bug C**: Follow-up calls also hardcode `gemini-2.5-flash` instead of using the requested model.
+**File:** `supabase/functions/voice-handler/index.ts` (lines 394-410)
+
+Wrap the fetch call with an AbortController that aborts after 8 seconds. If it times out, return a short fallback response instead of hanging forever.
+
+```typescript
+// In handleProcess, around line 394:
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 8000);
+
+try {
+  const aiResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+    method: 'POST',
+    headers: { ... },
+    body: JSON.stringify({ ... }),
+    signal: controller.signal,
+  });
+  clearTimeout(timeout);
+  // ... process response
+} catch (err) {
+  clearTimeout(timeout);
+  if (err.name === 'AbortError') {
+    reply = "I'm sorry, I'm having a moment. Could you repeat that?";
+  } else {
+    throw err;
+  }
+}
+```
+
+This ensures voice-handler ALWAYS returns TwiML to SignalWire within ~10-11 seconds (8s AI + 2s TTS), well under the 15s limit.
+
+### Change 2: Strip data-fetching tools for phone channel (ai-agent-chat)
+
+**File:** `supabase/functions/ai-agent-chat/index.ts` (lines 2686-2690)
+
+The current filter only removes `list_services` and `query_business_data`. But other tools like `collect_customer_info`, `track_appointment`, `capture_lead` also trigger the expensive follow-up AI loop. For phone calls, only keep `handoff_to_agent` -- the triage agent just needs to route the caller.
+
+```typescript
+// Line 2686-2690: Replace current filter with phone-only whitelist
+tools: isPhoneChannel ? tools.filter((t: any) => {
+  const name = t.function?.name;
+  // Phone: only allow handoff (routing) -- no data tools that trigger follow-up loops
+  return name === 'handoff_to_agent';
+}) : tools,
+```
+
+Apply the same filter at line 2831 (follow-up call).
+
+This eliminates the follow-up AI call entirely for phone -- the AI either responds with text or triggers a handoff, done in one round trip.
+
+## Expected Timing After Fix
 
 ```text
-Current flow (booking request):
-  AI Call 1 (flash, 3-5s) --> Tool exec (0.5s) --> AI Call 2 (flash, 3-5s) --> TTS (1.5s) = ~10-15s
-
-Fixed flow:
-  AI Call 1 (flash-lite, 1-2s) --> Tool exec (0.5s) --> AI Call 2 (flash-lite, 1s) --> TTS (1.5s) = ~4-5s
+SignalWire webhook --> voice-handler --> DB lookups (1s) --> ai-agent-chat --> AI Call 1 only (1-2s) --> return --> TTS (1-2s) --> upload (0.5s) --> return TwiML
+                                                                                                                     Total: 3.5-5.5s (safely under 15s)
 ```
 
-## The Fix (1 file: ai-agent-chat/index.ts)
+Even in the worst case (8s AI timeout + 2s TTS), the response returns in ~11s -- still under the limit, and the caller hears "Could you repeat that?" instead of a dead line.
 
-### Change 1: Respect the model from the request (line 2202, 2681)
+## No database changes needed
 
-Extract the `model` field from the request payload (voice-handler already sends it) and use it when provided:
-
-```typescript
-// Line 2202 - add 'model' to destructuring:
-const { ..., model: requestModel } = await req.json();
-
-// Create a resolved model variable:
-const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
-
-// Line 2681 - use the resolved model:
-model: selectedModel,  // was: 'google/gemini-2.5-flash'
-```
-
-### Change 2: Apply phone limits to follow-up AI calls (lines 2826-2831)
-
-The follow-up call after tool execution must also use phone-optimized settings:
-
-```typescript
-// Line 2826-2831 - apply same optimizations:
-body: JSON.stringify({
-  model: selectedModel,  // was: 'google/gemini-2.5-flash'
-  messages,
-  tools: isPhoneChannel ? tools.filter((t: any) => {
-    const name = t.function?.name;
-    return name !== 'list_services' && name !== 'query_business_data';
-  }) : tools,  // was: tools (unfiltered)
-  tool_choice: 'auto',
-  temperature: 0.7,
-  max_tokens: isPhoneChannel ? 150 : 1000,  // was: 1000
-}),
-```
-
-### Change 3: Extract `model` from request body
-
-Add `model` to the destructured request payload at line 2202 so it's available throughout the function.
-
-## No Changes to voice-handler
-
-voice-handler already sends the correct model and channel. The problem is entirely in ai-agent-chat ignoring those values.
-
-## Expected Improvement
-
-| Step | Before | After |
-|------|--------|-------|
-| AI Call 1 | 3-5s (gemini-2.5-flash) | 1-2s (flash-lite) |
-| Tool execution | 0.5s | 0.5s |
-| AI Call 2 (follow-up) | 3-5s (flash, 1000 tokens) | 0.5-1s (flash-lite, 150 tokens) |
-| TTS + Upload | 1.5-2s | 1.5-2s |
-| **Total** | **8-15s** | **3.5-5.5s** |
-
-## Multi-tenant safe
-
-The `selectedModel` variable only applies when `isInternalRequest` is true (phone calls from voice-handler). External web chat requests continue using `gemini-2.5-flash` at full capacity. All tenants benefit equally since they share the same code path.
