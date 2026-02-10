@@ -6,8 +6,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft } from 'lucide-react';
-import { UnifiedCustomerConsole } from '@/components/customer/UnifiedCustomerConsole';
+import { LogOut } from 'lucide-react';
+import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
+import logo from '@/assets/aura-intercept-logo.png';
 
 interface Company {
   id: string;
@@ -53,6 +54,11 @@ export default function CustomerCompanyPortal() {
     updateInteraction();
   }, [user, company]);
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/customer-auth');
+  };
+
   if (companyLoading || authLoading) {
     return (
       <div className="min-h-screen bg-background p-4">
@@ -80,26 +86,27 @@ export default function CustomerCompanyPortal() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Minimal header with back button */}
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Minimal header */}
       <header className="border-b bg-card sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/customer-portal')}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-lg font-bold">{company.name}</h1>
-            <p className="text-xs text-muted-foreground">Customer Portal</p>
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg overflow-hidden">
+              <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+            </div>
+            <span className="text-sm font-semibold">Customer Portal</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+              <LogOut className="w-5 h-5" />
+            </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto">
-        <UnifiedCustomerConsole 
-          companyId={company.id} 
-          companySlug={company.slug}
-          userId={user?.id}
-        />
+      {/* Same AIAgentConsole with pre-selected company */}
+      <main className="flex-1 max-w-4xl mx-auto w-full">
+        <AIAgentConsole companyId={company.id} />
       </main>
     </div>
   );
