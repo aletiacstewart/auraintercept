@@ -283,15 +283,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         signed_url: data?.signed_url,
       };
 
-      // Build overrides from server-provided greeting/prompt
-      const overrides: Record<string, unknown> = {};
-      if (data?.firstMessage || data?.systemPrompt) {
-        overrides.agent = {
-          ...(data.firstMessage ? { firstMessage: data.firstMessage } : {}),
-          ...(data.systemPrompt ? { prompt: { prompt: data.systemPrompt } } : {}),
-        };
-      }
-
       // Try WebRTC first (native browser audio handling), fall back to WebSocket
       const isIframe = window.self !== window.top;
 
@@ -300,31 +291,25 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         hasToken: !!data?.token,
         hasSignedUrl: !!data?.signed_url,
         agentId,
-        hasOverrides: Object.keys(overrides).length > 0,
       });
 
       if (data?.token) {
-        // Priority 1: WebRTC (native audio handling, most likely to produce sound)
         lastConnectMethodRef.current = "webrtc";
         console.log("[VoiceChat] ▶ Starting WebRTC session...");
         await conversation.startSession({
           conversationToken: data.token,
           connectionType: "webrtc",
-          overrides,
         });
       } else if (data?.signed_url) {
-        // Priority 2: WebSocket via signed URL
         lastConnectMethodRef.current = "ws_signed_url";
         console.log("[VoiceChat] ▶ Starting WebSocket (signed_url) session...");
-        await conversation.startSession({ signedUrl: data.signed_url, overrides });
+        await conversation.startSession({ signedUrl: data.signed_url });
       } else if (agentId) {
-        // Priority 3: WebSocket via agentId
         lastConnectMethodRef.current = "ws_agent_id";
         console.log("[VoiceChat] ▶ Starting WebSocket (agentId) session...");
         await conversation.startSession({
           agentId,
           connectionType: "websocket",
-          overrides,
         });
       } else {
         throw new Error("No connection method available — missing token, signed_url, and agentId");
