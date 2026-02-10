@@ -256,9 +256,6 @@ Deno.serve(async (req) => {
       case 'incoming':
         return await handleIncoming(supabase, supabaseUrl, callerNumber, calledNumber);
 
-      case 'dial-status':
-        return await handleDialStatus(supabase, supabaseUrl, callLogId, callerNumber, formParams);
-
       case 'outbound':
         return await handleOutbound(supabase, supabaseUrl, callLogId);
 
@@ -270,11 +267,17 @@ Deno.serve(async (req) => {
 
       default:
         console.log(`Unknown action: ${action}`);
-        return twimlResponse('<Say voice="Polly.Joanna">Sorry, an error occurred.</Say><Hangup/>');
+        return swmlResponse({
+          version: "1.0.0",
+          sections: { main: [{ answer: {} }, { play: { url: "say:Sorry, an error occurred. Goodbye." } }, { hangup: {} }] },
+        });
     }
   } catch (error) {
     console.error('Voice handler error:', error);
-    return twimlResponse('<Say voice="Polly.Joanna">Sorry, we encountered an error. Goodbye.</Say><Hangup/>');
+    return swmlResponse({
+      version: "1.0.0",
+      sections: { main: [{ answer: {} }, { play: { url: "say:Sorry, we encountered an error. Goodbye." } }, { hangup: {} }] },
+    });
   }
 });
 
@@ -294,7 +297,10 @@ async function handleIncoming(
 
   if (!integration) {
     console.log('No company found for number:', normalizedCalled);
-    return twimlResponse('<Say voice="Polly.Joanna">Sorry, this number is not configured. Goodbye.</Say><Hangup/>');
+    return swmlResponse({
+      version: "1.0.0",
+      sections: { main: [{ answer: {} }, { play: { url: "say:Sorry, this number is not configured. Goodbye." } }, { hangup: {} }] },
+    });
   }
 
   const { company_id, elevenlabs_voice_id } = integration;
@@ -320,78 +326,41 @@ async function handleIncoming(
 
   const logId = callLog?.id || `incoming_${company_id}`;
 
-  // === RING FIRST MODE ===
+  // Determine voice ID
+  const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
+
+  // === RING FIRST MODE — SWML connect with AI fallback ===
   const routingMode = company?.call_routing_mode || 'ai_direct';
   const businessPhone = company?.business_phone;
   const ringTimeout = company?.ring_timeout_seconds || 15;
 
   if (routingMode === 'ring_first' && businessPhone) {
     const normalizedBusiness = normalizePhoneNumber(businessPhone);
-    console.log(`Ring-first mode: ringing ${normalizedBusiness} for ${ringTimeout}s before AI takeover`);
+    console.log(`Ring-first mode: SWML connect to ${normalizedBusiness} for ${ringTimeout}s, then AI fallback`);
 
-    const dialStatusUrl = `${supabaseUrl}/functions/v1/voice-handler?action=dial-status&amp;callLogId=${logId}`;
+    const swml = buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId);
+    // Insert connect verb before the ai block
+    const mainSection = (swml as any).sections.main;
+    // mainSection is [answer, ai] — insert connect between them
+    const aiBlock = mainSection.pop(); // remove ai
+    mainSection.push({
+      connect: {
+        from: normalizedCalled,
+        to: normalizedBusiness,
+        timeout: ringTimeout,
+      },
+    });
+    mainSection.push(aiBlock); // add ai back after connect
 
-    return twimlResponse(`
-      <Dial timeout="${ringTimeout}" callerId="${escapeXml(normalizedCaller)}"
-            action="${dialStatusUrl}" method="POST">
-        <Number>${escapeXml(normalizedBusiness)}</Number>
-      </Dial>
-    `);
+    return swmlResponse(swml);
   }
 
   // === AI DIRECT MODE — return SWML document ===
-  const voiceId = elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
   console.log(`AI direct mode: returning SWML document for company ${company_id}`);
   return swmlResponse(buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId));
 }
 
-// === DIAL STATUS (ring-first callback) ===
-async function handleDialStatus(
-  supabase: any, supabaseUrl: string,
-  callLogId: string, callerNumber: string, formParams: Record<string, string>
-): Promise<Response> {
-  const dialStatus = formParams['DialCallStatus'] || '';
-  console.log(`Dial status callback: status=${dialStatus} callLogId=${callLogId}`);
-
-  // If the business owner answered, we're done
-  if (dialStatus === 'completed') {
-    console.log('Business owner answered the call, marking as handled');
-    if (callLogId) {
-      await supabase.from('call_logs').update({
-        status: 'completed',
-        summary: 'Answered by business owner (ring-first mode)',
-        ended_at: new Date().toISOString(),
-      }).eq('id', callLogId);
-    }
-    return twimlResponse('<Hangup/>');
-  }
-
-  // Owner didn't answer — AI takes over with SWML
-  console.log(`Business owner didn't answer (${dialStatus}), AI agent taking over via SWML`);
-
-  let companyId = '';
-  if (callLogId && !callLogId.startsWith('incoming_')) {
-    const { data: callLog } = await supabase
-      .from('call_logs')
-      .select('company_id')
-      .eq('id', callLogId)
-      .single();
-    if (callLog) companyId = callLog.company_id;
-  }
-
-  if (!companyId) {
-    return twimlResponse('<Say voice="Polly.Joanna">Sorry, we could not connect your call. Please try again. Goodbye.</Say><Hangup/>');
-  }
-
-  // Fetch company and integration details in parallel
-  const [companyResult, integrationResult] = await Promise.all([
-    supabase.from('companies').select('name, ai_voice_greeting, ai_agent_prompt').eq('id', companyId).single(),
-    supabase.from('tenant_integrations').select('elevenlabs_voice_id').eq('company_id', companyId).maybeSingle(),
-  ]);
-
-  const voiceId = integrationResult.data?.elevenlabs_voice_id || 'cgSgspJ2msm6clMCkdW9';
-  return swmlResponse(buildSWMLDocument(supabaseUrl, companyResult.data, companyId, callLogId, voiceId));
-}
+// (handleDialStatus removed — ring-first now uses SWML connect verb with native AI fallback)
 
 // === OUTBOUND CALL (one-way TwiML — reminders/follow-ups, NOT interactive AI) ===
 async function handleOutbound(
