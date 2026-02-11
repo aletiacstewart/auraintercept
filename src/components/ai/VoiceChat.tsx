@@ -47,8 +47,44 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [testHistory, setTestHistory] = useState<TranscriptMsg[]>([]);
   const testSessionIdRef = useRef<string>(crypto.randomUUID());
 
-  // Voice hook — minimal callbacks, no overrides
+  // Helper to invoke voice-booking-agent edge function
+  const invokeBookingAgent = useCallback(async (toolName: string, params: Record<string, unknown> = {}) => {
+    console.log(`[VoiceChat] clientTool "${toolName}" called with:`, params);
+    try {
+      const { data, error } = await supabase.functions.invoke("voice-booking-agent", {
+        body: { toolName, agentId, companyId, ...params },
+      });
+      if (error) throw error;
+      console.log(`[VoiceChat] clientTool "${toolName}" response:`, data);
+      return typeof data === "string" ? data : JSON.stringify(data);
+    } catch (e) {
+      console.error(`[VoiceChat] clientTool "${toolName}" failed:`, e);
+      return JSON.stringify({ error: "Sorry, I had trouble with that request. Could you try again?" });
+    }
+  }, [agentId, companyId]);
+
+  // Voice hook — with clientTools for reliable tool execution
   const conversation = useConversation({
+    clientTools: {
+      get_services: async (_params: Record<string, unknown>) => {
+        return await invokeBookingAgent("get_services");
+      },
+      check_availability: async (params: Record<string, unknown>) => {
+        return await invokeBookingAgent("check_availability", {
+          preferred_date: params.preferred_date || params.date,
+          service_type: params.service_type || params.service,
+        });
+      },
+      create_appointment: async (params: Record<string, unknown>) => {
+        return await invokeBookingAgent("create_appointment", {
+          customer_name: params.customer_name || params.name,
+          customer_phone: params.customer_phone || params.phone,
+          service_type: params.service_type || params.service,
+          datetime: params.datetime || params.date_time || params.appointment_time,
+          duration: params.duration || params.duration_minutes || 60,
+        });
+      },
+    },
     onConnect: () => {
       console.log("[VoiceChat] ✅ Connected");
       setIsConnecting(false);
