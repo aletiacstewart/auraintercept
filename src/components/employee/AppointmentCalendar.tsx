@@ -141,7 +141,7 @@ export function AppointmentCalendar() {
       // Send confirmation notification to customer
       try {
         await supabase.functions.invoke('send-job-notification', {
-          body: { jobId, notificationType: 'accepted', recipientType: 'customer' }
+          body: { jobAssignmentId: jobId, notificationType: 'accepted', recipientType: 'customer' }
         });
       } catch (notifyError) {
         console.error('Failed to send acceptance notification:', notifyError);
