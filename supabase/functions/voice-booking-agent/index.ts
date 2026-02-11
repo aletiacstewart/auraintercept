@@ -39,6 +39,8 @@ serve(async (req) => {
     const toolName = (body.tool_name || body.toolName || "") as string;
     const toolParams = (body.parameters || body.tool_parameters || body) as Record<string, unknown>;
 
+    console.log("[voice-booking-agent] Received:", { agentId, toolName, hasParameters: !!body.parameters, bodyCompanyId: body.companyId, bodyCompany_id: body.company_id });
+
     // Map agent_id to company_id
     let companyId = "";
     if (agentId) {
@@ -50,14 +52,20 @@ serve(async (req) => {
 
       if (integration) {
         companyId = integration.company_id;
+        console.log("[voice-booking-agent] Resolved companyId from agentId:", companyId);
+      }
+    }
+
+    // Fallback: check both camelCase and snake_case from body and toolParams
+    if (!companyId) {
+      companyId = (body.companyId || body.company_id || toolParams.companyId || toolParams.company_id || "") as string;
+      if (companyId) {
+        console.log("[voice-booking-agent] Resolved companyId from body/params fallback:", companyId);
       }
     }
 
     if (!companyId) {
-      companyId = (toolParams.company_id || "") as string;
-    }
-
-    if (!companyId) {
+      console.error("[voice-booking-agent] Could not determine company. Body keys:", Object.keys(body), "ToolParams keys:", Object.keys(toolParams));
       return new Response(JSON.stringify({ error: "Could not determine company" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
