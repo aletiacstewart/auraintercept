@@ -164,6 +164,14 @@ async function syncAppointmentToGoogle(
   requestConference?: boolean
 ): Promise<Response> {
   try {
+    // Get company timezone for Google Calendar events
+    const { data: companyData } = await supabase
+      .from('companies')
+      .select('weekly_digest_timezone')
+      .eq('id', companyId)
+      .single();
+    const companyTimezone = companyData?.weekly_digest_timezone || 'America/Chicago';
+
     // Check if we already have a mapping for this appointment
     const { data: existingMapping } = await supabase
       .from('calendar_event_mappings')
@@ -200,9 +208,11 @@ async function syncAppointmentToGoogle(
       location: appointment.customer_address || undefined,
       start: {
         dateTime: formatLocalDateTime(startDateTime),
+        timeZone: companyTimezone,
       },
       end: {
         dateTime: formatLocalDateTime(endDateTime),
+        timeZone: companyTimezone,
       },
       extendedProperties: {
         private: {

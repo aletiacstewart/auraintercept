@@ -805,27 +805,27 @@ export function AppointmentCalendar() {
               </div>
 
               <div className="grid gap-3">
-                <div className="flex items-center gap-3 text-sm">
+                <div className="flex items-center gap-3 text-sm text-foreground">
                   <Clock className="w-4 h-4 text-muted-foreground" />
                   <span>
                     {format(parseUTCDateTime(selectedAppointment.datetime), 'h:mm a')} - {selectedAppointment.duration_minutes} minutes
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 text-sm">
+                <div className="flex items-center gap-3 text-sm text-foreground">
                   <FileText className="w-4 h-4 text-muted-foreground" />
                   <span>{selectedAppointment.service_type}</span>
                 </div>
 
                 {selectedAppointment.customer_address && (
-                  <div className="flex items-start gap-3 text-sm">
+                  <div className="flex items-start gap-3 text-sm text-foreground">
                     <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                     <span>{selectedAppointment.customer_address}</span>
                   </div>
                 )}
 
                 {selectedAppointment.customer_phone && (
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm text-foreground">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <a href={`tel:${selectedAppointment.customer_phone}`} className="text-primary hover:underline">
                       {selectedAppointment.customer_phone}
@@ -834,7 +834,7 @@ export function AppointmentCalendar() {
                 )}
 
                 {selectedAppointment.customer_email && (
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm text-foreground">
                     <Mail className="w-4 h-4 text-muted-foreground" />
                     <a href={`mailto:${selectedAppointment.customer_email}`} className="text-primary hover:underline">
                       {selectedAppointment.customer_email}
@@ -848,7 +848,7 @@ export function AppointmentCalendar() {
                       <MessageSquare className="w-4 h-4" />
                       Customer Notes
                     </p>
-                    <p className="text-sm bg-muted/50 p-3 rounded-lg whitespace-pre-wrap">{selectedAppointment.notes}</p>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg whitespace-pre-wrap text-foreground">{selectedAppointment.notes}</p>
                   </div>
                 )}
               </div>
