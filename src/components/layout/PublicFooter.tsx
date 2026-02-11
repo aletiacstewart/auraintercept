@@ -56,7 +56,7 @@ export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
           
           <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-white/70">© 2025 Aura Intercept. All rights reserved.</span>
+            <span className="text-sm text-white/70">© 2026 Aura Intercept. All rights reserved.</span>
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/')}>
                 Home

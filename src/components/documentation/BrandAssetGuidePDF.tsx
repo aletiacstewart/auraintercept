@@ -495,39 +495,39 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.colorCardTitle}>Subscription Tiers</Text>
             <ColorSwatch 
               color="#f97316" 
-              name="Aura Express Orange" 
+              name="Aura Starter Orange" 
               hex="#f97316" 
-              usage="Aura Express tier ($197/mo)"
+              usage="Aura Starter tier ($197/mo)"
             />
             <ColorSwatch 
               color="#14b8a6" 
-              name="Aura Flow Teal" 
+              name="Aura Scheduling Teal" 
               hex="#14b8a6" 
-              usage="Aura Flow tier ($297/mo)"
+              usage="Aura Scheduling tier ($397/mo)"
             />
             <ColorSwatch 
               color="#ec4899" 
-              name="Aura Halo Rose" 
+              name="Aura Growth Rose" 
               hex="#ec4899" 
-              usage="Aura Halo tier ($397/mo)"
+              usage="Aura Growth tier ($597/mo)"
             />
             <ColorSwatch 
               color="#3b82f6" 
-              name="Aura Core Blue" 
+              name="Aura Business Blue" 
               hex="#3b82f6" 
-              usage="Aura Core tier ($500/mo)"
+              usage="Aura Business tier ($797/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 
-              name="Multi-Track Purple" 
+              name="Aura Performance Purple" 
               hex="#8b5cf6" 
-              usage="Multi-Track tier ($3,997/mo)"
+              usage="Aura Performance tier ($3,497/mo)"
             />
             <ColorSwatch 
               color="#f59e0b" 
-              name="Pro Command Gold" 
+              name="Aura Command Gold" 
               hex="#f59e0b" 
-              usage="Pro Command tier ($5,997/mo)"
+              usage="Aura Command tier ($5,497/mo)"
             />
           </View>
         </View>

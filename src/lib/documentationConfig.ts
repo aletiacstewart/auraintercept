@@ -1,7 +1,7 @@
 /**
  * Master Documentation Configuration
  * Single source of truth for all platform data used across PDFs, Help pages, and guides.
- * Last updated: January 2026
+ * Last updated: February 2026
  */
 
 // ============================================

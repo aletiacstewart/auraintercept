@@ -70,130 +70,133 @@ const featureDescriptions: Record<string, string> = {
 const TIERS = [
   {
     id: 'express',
-    name: 'Aura Express',
+    name: 'Aura Starter',
     monthlyPrice: '$197',
     annualPrice: '$1,970',
     annualSavings: 'Save $394',
-    description: 'Restaurant voice + smart links',
+    description: 'AI Receptionist for 24/7 lead capture',
     popular: false,
     agentCount: 1,
     consoleCount: 0,
     highlights: [
+      'AI Receptionist (Triage)',
       'Message Aura (Text)',
       'Talk to Aura (Voice)',
       'Smart Link Sharing',
       'Knowledge Base for FAQs',
-      'Embeddable Chat Widget',
     ],
   },
   {
     id: 'aura_flow',
-    name: 'Aura Flow',
-    monthlyPrice: '$297',
-    annualPrice: '$2,970',
-    annualSavings: 'Save $594',
-    description: 'AI scheduling with calendar sync',
+    name: 'Aura Scheduling',
+    monthlyPrice: '$397',
+    annualPrice: '$3,970',
+    annualSavings: 'Save $794',
+    description: 'AI booking with calendar sync',
     popular: false,
     agentCount: 3,
-    consoleCount: 0,
+    consoleCount: 1,
     highlights: [
       'AI Receptionist (Triage)',
       'Scheduling Agent',
       'Follow-up Agent',
+      'Customer Portal Console',
       'Talk to Aura (Voice)',
-      'Message Aura (Text)',
       'Direct calendar sync',
     ],
   },
   {
     id: 'halo',
-    name: 'Aura Halo',
-    monthlyPrice: '$397',
-    annualPrice: '$3,970',
-    annualSavings: 'Save $794',
-    description: 'Beauty & wellness AI assistant',
+    name: 'Aura Growth',
+    monthlyPrice: '$597',
+    annualPrice: '$5,970',
+    annualSavings: 'Save $1,194',
+    description: '11 AI agents + Marketing Automation',
     popular: false,
-    agentCount: 3,
-    consoleCount: 1,
+    agentCount: 11,
+    consoleCount: 3,
     highlights: [
-      'AI Receptionist (Triage)',
-      'Scheduling Agent (Booking)',
-      'Follow-up Agent',
+      '11 AI Operatives',
+      '3 Control Centers',
+      'Marketing Automation',
+      'Outreach & Sales Ops',
+      'Social Media Console',
       'Talk to Aura (Voice)',
-      'Message Aura (Text)',
     ],
   },
   {
     id: 'core',
-    name: 'Aura Core',
-    monthlyPrice: '$500',
-    annualPrice: '$5,000',
-    annualSavings: 'Save $1,000',
-    description: 'Talk to Aura + Social Media + Aura Web Presence',
+    name: 'Aura Business',
+    monthlyPrice: '$797',
+    annualPrice: '$7,970',
+    annualSavings: 'Save $1,594',
+    description: 'Digital-only + Creative & Web Presence',
     popular: false,
-    agentCount: 0,
-    consoleCount: 0,
+    agentCount: 12,
+    consoleCount: 4,
     highlights: [
+      '12 AI Operatives',
+      '4 Control Centers',
+      'Creative & Web Presence',
       'Message Aura (Text)',
-      'Social Media',
-      'Web Presence (1pg)',
-      '2 Employee Accounts',
+      'Content Engine',
+      '8 Employee Accounts',
     ],
   },
   {
     id: 'single_point',
-    name: 'Single-Point',
-    monthlyPrice: '$1,500',
-    annualPrice: '$15,000',
-    annualSavings: 'Save $3,000',
-    description: 'Lead intake & reputation management',
-    popular: false,
-    agentCount: 3,
-    consoleCount: 1,
+    name: 'Aura Field Ops',
+    monthlyPrice: '$1,497',
+    annualPrice: '$14,970',
+    annualSavings: 'Save $2,994',
+    description: 'Field Operations + Business Management',
+    popular: true,
+    agentCount: 18,
+    consoleCount: 6,
     highlights: [
-      '3 AI Agents',
-      'Customer Portal Console',
+      '18 AI Operatives',
+      '6 Control Centers',
+      'Field Operations Console',
+      'Business Management Console',
       'Talk to Aura (Voice) & Calling',
-      '5 Employee Accounts',
-      'Choice: Social Media or Web Presence',
+      '15 Employee Accounts',
     ],
   },
   {
     id: 'multi_track',
-    name: 'Multi-Track',
-    monthlyPrice: '$3,997',
-    annualPrice: '$39,970',
-    annualSavings: 'Save $7,994',
-    description: 'Customer + Field Operations + Booking',
-    popular: true,
-    agentCount: 10,
-    consoleCount: 2,
+    name: 'Aura Performance',
+    monthlyPrice: '$3,497',
+    annualPrice: '$34,970',
+    annualSavings: 'Save $6,994',
+    description: 'Full automation + Analytics & Reports',
+    popular: false,
+    agentCount: 22,
+    consoleCount: 7,
     highlights: [
-      '10 AI Agents',
-      '2 Control Centers',
-      'Online Booking & Scheduling',
-      '10 Employee Accounts',
-      'Social Media',
-      'Web Presence (1pg)',
+      '22 AI Operatives',
+      'All 7 Control Centers',
+      'Analytics & Reports Console',
+      'Priority Support',
+      '25 Employee Accounts',
     ],
   },
   {
     id: 'command',
-    name: 'Aura Pro Command',
-    monthlyPrice: '$5,997',
-    annualPrice: '$59,970',
-    annualSavings: 'Save $11,994',
+    name: 'Aura Command',
+    monthlyPrice: '$5,497',
+    annualPrice: '$54,970',
+    annualSavings: 'Save $10,994',
     description: 'Full business automation suite',
     popular: false,
     agentCount: 24,
     consoleCount: 7,
     highlights: [
-      'All 24 AI Agents',
+      'All 24 AI Operatives',
       'All 7 Control Centers',
-      'White-Label Branding',
-      '25 Employee Accounts',
-      'Social Media',
-      'Web Presence (1pg)',
+      'AI Operatives Hub',
+      'Revenue & Forecast Agents',
+      'Dedicated Account Manager',
+      '50 Employee Accounts',
     ],
   },
 ];
@@ -201,21 +204,24 @@ const TIERS = [
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
   express: 2,
-  aura_flow: 2,
-  halo: 3,
-  core: 2,
-  single_point: 5,
-  multi_track: 10,
-  command: 25,
+  aura_flow: 3,
+  halo: 5,
+  core: 8,
+  single_point: 15,
+  multi_track: 25,
+  command: 50,
 };
 
 type FeatureValue = 'check' | 'x' | string;
 
 interface FeatureRow {
   name: string;
-  core: FeatureValue;
-  singlePoint: FeatureValue;
-  multiTrack: FeatureValue;
+  starter: FeatureValue;
+  scheduling: FeatureValue;
+  growth: FeatureValue;
+  business: FeatureValue;
+  fieldOps: FeatureValue;
+  performance: FeatureValue;
   command: FeatureValue;
 }
 
@@ -226,93 +232,91 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (0 / 3 / 10 / 24)',
+    title: 'AI Agents (1 / 3 / 11 / 12 / 18 / 22 / 24)',
     features: [
-      { name: 'AI Receptionist (Triage)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Follow-up Agent', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Review Agent', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Scheduling Agent (Booking)', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Dispatch Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Route Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'ETA Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Check-in Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Quote Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Invoice Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Admin Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Inventory Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Campaign Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Lead Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Marketing Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Scheduler', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Analytics', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Creative Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Web Presence Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Performance Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Revenue Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Insights Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Forecast Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'AI Receptionist (Triage)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Scheduling Agent (Booking)', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Follow-up Agent', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Review Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Campaign Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Lead Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Marketing Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Scheduler', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Analytics', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Dispatch Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Route Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'ETA Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Check-in Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Quote Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Invoice Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Admin Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      { name: 'Inventory Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      { name: 'Performance Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      { name: 'Insights Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      { name: 'Revenue Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
+      { name: 'Forecast Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
-    title: 'Control Centers (Consoles)',
+    title: 'Control Centers (0 / 1 / 3 / 4 / 6 / 7 / 7)',
     features: [
-      { name: 'Customer Portal Console', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Field Operations Console', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Business Management Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Outreach & Sales Ops Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Analytics & Reports Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
-      { name: 'Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
+      { name: 'Customer Portal Console', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Outreach & Sales Ops Console', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative & Web Presence Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Field Operations Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Business Management Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Analytics & Reports Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Communication Channels',
     features: [
-      { name: 'Message Aura (Text)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Talk to Aura (Voice)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Email Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'SMS Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Message Aura (Text)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Talk to Aura (Voice)', starter: 'check', scheduling: 'check', growth: 'check', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Email Reminders', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'SMS Reminders', starter: 'x', scheduling: 'check', growth: 'check', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Platform Limits & Features',
     features: [
-      { name: 'Appointments', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-      { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
-      { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
-      { name: 'White-Label Branding', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Aura Web Presence', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Social Media', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Embeddable Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Appointments', starter: 'x', scheduling: 'Unlimited', growth: 'Unlimited', business: 'Unlimited', fieldOps: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
+      { name: 'Employee Accounts', starter: '2 included', scheduling: '3 included', growth: '5 included', business: '8 included', fieldOps: '15 included', performance: '25 included', command: '50 included' },
+      { name: 'Additional Employees', starter: '$10/employee', scheduling: '$10/employee', growth: '$10/employee', business: '$10/employee', fieldOps: '$10/employee', performance: '$10/employee', command: '$10/employee' },
+      { name: 'White-Label Branding', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Embeddable Chat Widget', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Integration & Support',
     features: [
-      { name: 'Calendar Sync', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'API Access', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Priority Support', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Dedicated Account Manager', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Calendar Sync', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'API Access', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Priority Support', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
+      { name: 'Dedicated Account Manager', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
     title: 'Required 3rd Party Integrations',
     features: [
-      { name: 'Resend (Email)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Stripe (Payments)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'SignalWire (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Calendar Sync', core: 'x', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
-      { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
+      { name: 'Resend (Email)', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', starter: 'Optional', scheduling: 'Optional', growth: 'Optional', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Calendar Sync', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Social Media Accounts', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
     ],
   },
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', core: '$500', singlePoint: '$1,500', multiTrack: '$3,997', command: '$5,997' },
-      { name: 'Annual Price', core: '$5,000/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$59,970/year' },
-      { name: 'Annual Savings', core: 'Save $1,000', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $11,994' },
+      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$3,497', command: '$5,497' },
+      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$34,970/year', command: '$54,970/year' },
+      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $6,994', command: 'Save $10,994' },
     ],
   },
 ];
@@ -711,46 +715,48 @@ export default function Subscription() {
           <CardContent>
             <div className="overflow-x-auto">
               <TooltipProvider delayDuration={200}>
-                <table className="w-full text-sm table-fixed">
-                  <colgroup>
-                    <col className="w-[36%]" />
-                    <col className="w-[13%]" />
-                    <col className="w-[15%]" />
-                    <col className="w-[18%]" />
-                    <col className="w-[18%]" />
-                  </colgroup>
+                <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border bg-muted/50">
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
-                      <th className="text-center py-2.5 px-3 font-semibold text-card-foreground text-sm">
-                        <div>Core</div>
-                        <div className="text-xs font-normal text-muted-foreground">$500/mo</div>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Starter</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$197/mo</div>
                       </th>
-                      <th className="text-center py-2.5 px-3 font-semibold text-card-foreground text-sm">
-                        <div>Single-Point</div>
-                        <div className="text-xs font-normal text-muted-foreground">$1,500/mo</div>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Sched</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$397/mo</div>
                       </th>
-                      <th className="text-center py-2.5 px-3 font-semibold bg-primary/20 border-x border-primary/30 text-sm">
-                        <div className="text-primary">Multi-Track</div>
-                        <div className="text-xs font-normal text-muted-foreground">$3,997/mo</div>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Growth</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$597/mo</div>
                       </th>
-                      <th className="text-center py-2.5 px-3 font-semibold text-card-foreground text-sm">
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Biz</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$797/mo</div>
+                      </th>
+                      <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
+                        <div className="text-primary">Field Ops</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$1,497/mo</div>
+                      </th>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Perf</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
+                      </th>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Command</div>
-                        <div className="text-xs font-normal text-muted-foreground">$5,997/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$5,497/mo</div>
                       </th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {sections.map((section) => (
                       <>
-                        {/* Section Header */}
                         <tr key={`section-${section.title}`} className="bg-muted/30">
-                          <td colSpan={5} className="py-1.5 px-4 font-semibold text-primary">
+                          <td colSpan={8} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
                           </td>
                         </tr>
-                        
-                        {/* Section Rows */}
                         {section.features.map((feature) => {
                           const rowIndex = globalRowIndex++;
                           const isEven = rowIndex % 2 === 0;
@@ -760,9 +766,12 @@ export default function Subscription() {
                             <Tooltip key={feature.name}>
                               <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                                {renderFeatureValue(feature.core, false, feature.name)}
-                                {renderFeatureValue(feature.singlePoint, false, feature.name)}
-                                {renderFeatureValue(feature.multiTrack, true, feature.name)}
+                                {renderFeatureValue(feature.starter, false, feature.name)}
+                                {renderFeatureValue(feature.scheduling, false, feature.name)}
+                                {renderFeatureValue(feature.growth, false, feature.name)}
+                                {renderFeatureValue(feature.business, false, feature.name)}
+                                {renderFeatureValue(feature.fieldOps, true, feature.name)}
+                                {renderFeatureValue(feature.performance, false, feature.name)}
                                 {renderFeatureValue(feature.command, false, feature.name)}
                               </tr>
                             </Tooltip>
@@ -842,9 +851,9 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-card-foreground">What's the difference between Single-Point and Multi-Track?</h4>
+              <h4 className="font-medium text-card-foreground">What's the difference between Field Ops and Performance?</h4>
               <p className="text-sm text-muted-foreground">
-                Single-Point includes AI Voice (chat & calling) for customer engagement, but customers must call to book appointments. Multi-Track adds online booking, field operations, and quoting/invoicing capabilities.
+                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($3,497/mo) adds Analytics & Reports with 22 agents and Priority Support.
               </p>
             </div>
             <div>
@@ -856,7 +865,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Each tier includes a set number of employee accounts. Additional employees beyond your tier's limit cost $25/month per 10 employees.
+                Each tier includes a set number of employee accounts (2-50). Additional employees beyond your tier's limit cost $10/month each.
               </p>
             </div>
             <div>
