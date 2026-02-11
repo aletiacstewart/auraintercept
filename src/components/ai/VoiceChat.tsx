@@ -264,7 +264,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     const conv = await Conversation.startSession({
       ...sessionConfig,
       ...callbacks,
-    });
+    } as any);
     conversationRef.current = conv;
     return conv;
   }, [buildSessionCallbacks]);
@@ -527,16 +527,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }
   };
 
-  const isConnected = testMode ? testSessionActive : conversation.status === "connected";
-  const isSpeaking = !testMode && isConnected && conversation.isSpeaking;
+  const isConnected = testMode ? testSessionActive : convStatus === "connected";
+  const isSpeaking = !testMode && isConnected && convIsSpeaking;
 
   // Track isSpeaking changes for debug
   useEffect(() => {
     if (!testMode && isConnected) {
-      console.log("[VoiceChat] isSpeaking changed:", conversation.isSpeaking);
-      setDebugInfo((prev) => ({ ...prev, agentSpeaking: conversation.isSpeaking }));
+      console.log("[VoiceChat] isSpeaking changed:", convIsSpeaking);
+      setDebugInfo((prev) => ({ ...prev, agentSpeaking: convIsSpeaking }));
     }
-  }, [conversation.isSpeaking, isConnected, testMode]);
+  }, [convIsSpeaking, isConnected, testMode]);
 
   const getStatusText = () => {
     if (isConnecting) return "Connecting...";
