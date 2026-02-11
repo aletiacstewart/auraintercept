@@ -125,7 +125,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       '8 Employee Accounts',
       'API Access',
     ],
-    hasVoice: false,
+    hasVoice: true,
     hasAutomation: true,
   },
   single_point: {

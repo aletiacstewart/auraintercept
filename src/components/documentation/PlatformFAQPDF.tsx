@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your industry and needs: Aura Express ($197/mo) for restaurants, Aura Flow ($297/mo) for personal service businesses, Aura Halo ($397/mo) for salons and wellness, Aura Core ($500/mo) for digital marketing focus, Single-Point ($1,500/mo) for lead capture, Multi-Track ($3,997/mo) for field operations, and Aura Pro Command ($5,997/mo) for enterprise."
+          answer="Choose based on your business needs: Aura Starter ($197/mo) for basic AI reception, Aura Scheduling ($397/mo) for appointment automation, Aura Growth ($597/mo) for marketing and outreach, Aura Business ($797/mo) for creative and web presence, Aura Field Ops ($1,497/mo) for field service operations, Aura Performance ($3,497/mo) for advanced analytics, and Aura Command ($5,497/mo) for full enterprise suite. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 

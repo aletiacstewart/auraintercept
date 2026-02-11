@@ -473,7 +473,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'AI-powered website and blog',
       'SEO optimization',
       '8 Employee Accounts',
-      'Note: Voice features disabled (digital-only tier)',
+      'Voice, SMS & Email included',
     ],
   },
   field_ops: {

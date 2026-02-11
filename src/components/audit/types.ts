@@ -164,13 +164,13 @@ export const QUESTIONS: AuditQuestion[] = [
   {
     id: 'ai_interaction_mode',
     question: 'How would you prefer customers to interact with your AI assistant?',
-    description: 'Core is text-only; other tiers include voice capability',
+    description: 'All tiers include voice, SMS, and email capability',
     section: 'Communication Preferences',
     options: [
-      { label: 'Text chat only is fine', tierScores: { EXPRESS: 50, FLOW: 60, CORE: 95, HALO: 50, SINGLE_POINT: 55, MULTI_TRACK: 50, COMMAND: 45 } },
-      { label: 'Voice/speech capability is important', tierScores: { EXPRESS: 90, FLOW: 85, CORE: 15, HALO: 90, SINGLE_POINT: 90, MULTI_TRACK: 85, COMMAND: 80 } },
-      { label: 'Need both text and voice', tierScores: { EXPRESS: 85, FLOW: 90, CORE: 20, HALO: 85, SINGLE_POINT: 85, MULTI_TRACK: 90, COMMAND: 90 } },
-      { label: 'We want AI to make outbound calls', tierScores: { EXPRESS: 75, FLOW: 70, CORE: 5, HALO: 80, SINGLE_POINT: 80, MULTI_TRACK: 85, COMMAND: 95 } },
+      { label: 'Text chat only is fine', tierScores: { EXPRESS: 50, FLOW: 60, CORE: 80, HALO: 50, SINGLE_POINT: 55, MULTI_TRACK: 50, COMMAND: 45 } },
+      { label: 'Voice/speech capability is important', tierScores: { EXPRESS: 90, FLOW: 85, CORE: 80, HALO: 90, SINGLE_POINT: 90, MULTI_TRACK: 85, COMMAND: 80 } },
+      { label: 'Need both text and voice', tierScores: { EXPRESS: 85, FLOW: 90, CORE: 85, HALO: 85, SINGLE_POINT: 85, MULTI_TRACK: 90, COMMAND: 90 } },
+      { label: 'We want AI to make outbound calls', tierScores: { EXPRESS: 75, FLOW: 70, CORE: 70, HALO: 80, SINGLE_POINT: 80, MULTI_TRACK: 85, COMMAND: 95 } },
     ],
   },
   {

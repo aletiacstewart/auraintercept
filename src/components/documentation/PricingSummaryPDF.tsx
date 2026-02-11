@@ -725,7 +725,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>Aura Business Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>AI-ASSISTED DIGITAL FOUNDATION</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>CREATIVE & WEB PRESENCE FOCUS</Text>
         <Text style={styles.pricingTierName}>Aura Business</Text>
         <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.core.price}/month</Text>
         <Text style={styles.pricingAnnual}>or ${SUBSCRIPTION_TIERS.core.annualPrice.toLocaleString()}/year (billed annually)</Text>
@@ -740,6 +740,8 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included AI Operatives ({SUBSCRIPTION_TIERS.core.operatives})</Text>
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text) - AI chat for customer inquiries</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - Speech-based AI conversations</FeatureItem>
+        <FeatureItem>SMS & Email Reminders - Automated customer notifications</FeatureItem>
         <FeatureItem>Social Media Console - AI content creation for 6 platforms</FeatureItem>
         <FeatureItem>Web Presence Console - 1-page professional website</FeatureItem>
         <FeatureItem>Creative Agent - Unified content generation</FeatureItem>
@@ -753,17 +755,15 @@ const PricingSummaryPDF = () => (
       </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.noticeTitle}>AI-Assisted Tier</Text>
+        <Text style={styles.noticeTitle}>Creative & Web Presence Tier</Text>
         <Text style={styles.noticeText}>
-          Aura Business is an AI-assisted tier with {SUBSCRIPTION_TIERS.core.operatives} operatives and {SUBSCRIPTION_TIERS.core.consoles} consoles. 
-          It does NOT include Talk to Aura (Voice) or customer-facing automation like scheduling. 
-          This tier is designed for businesses that want AI-powered content and digital presence tools.
+          Aura Business includes {SUBSCRIPTION_TIERS.core.operatives} operatives and {SUBSCRIPTION_TIERS.core.consoles} consoles with full voice, SMS, and email capabilities. 
+          This tier is designed for businesses that want AI-powered content, digital presence tools, and complete communication channels.
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>What's NOT Included</Text>
+      <Text style={styles.subsectionTitle}>Not Included in This Tier</Text>
       <View style={styles.featureList}>
-        <FeatureItem>No Talk to Aura (Voice) - text only</FeatureItem>
         <FeatureItem>No Customer Portal Console</FeatureItem>
         <FeatureItem>No automated scheduling or follow-ups</FeatureItem>
         <FeatureItem>No Field Operations</FeatureItem>
@@ -1024,13 +1024,13 @@ const PricingSummaryPDF = () => (
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>Voice Features (Growth+)</Text>
+            <Text style={styles.columnTitle}>Voice Features (All Tiers)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
               Required for Talk to Aura (Voice) and AI Calls:
             </Text>
             <BulletPoint>SignalWire: SMS & phone calls</BulletPoint>
             <BulletPoint>ElevenLabs: AI voice synthesis</BulletPoint>
-            <BulletPoint>Not needed for Business tier (text-only)</BulletPoint>
+            <BulletPoint>Available on all subscription tiers</BulletPoint>
           </View>
         </View>
         <View style={styles.column}>
