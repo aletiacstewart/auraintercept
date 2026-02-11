@@ -194,6 +194,40 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
   });
 
+  // Connection timeout: warn if agent doesn't speak within 10s
+  const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (conversation.status === "connected") {
+      connectionTimeoutRef.current = setTimeout(() => {
+        if (!conversation.isSpeaking) {
+          console.warn("[VoiceChat] ⚠️ Agent has not spoken within 10s of connecting");
+          toast({
+            variant: "destructive",
+            title: "Agent Not Responding",
+            description: "The voice agent connected but hasn't spoken. Check agent configuration or try again.",
+          });
+        }
+      }, 10000);
+    } else {
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+        connectionTimeoutRef.current = null;
+      }
+    }
+    return () => {
+      if (connectionTimeoutRef.current) clearTimeout(connectionTimeoutRef.current);
+    };
+  }, [conversation.status, conversation.isSpeaking, toast]);
+
+  // Clear timeout once agent starts speaking
+  useEffect(() => {
+    if (conversation.isSpeaking && connectionTimeoutRef.current) {
+      clearTimeout(connectionTimeoutRef.current);
+      connectionTimeoutRef.current = null;
+    }
+  }, [conversation.isSpeaking]);
+
   // Ensure SDK audio elements stay unmuted and playing
   useEffect(() => {
     if (conversation.status !== "connected") return;
@@ -208,12 +242,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     // Periodically check for paused audio elements (SDK creates them dynamically)
     const interval = setInterval(() => {
       const audioElements = document.querySelectorAll("audio");
+      let found = 0;
       audioElements.forEach((el) => {
-        if (el.paused && el.srcObject) {
-          console.log("[VoiceChat] Found paused WebRTC audio, forcing play...");
+        const hasSource = !!(el.srcObject || el.src);
+        if (hasSource) found++;
+        if (el.paused && hasSource) {
+          console.log("[VoiceChat] Found paused audio element, forcing play...", {
+            hasSrcObject: !!el.srcObject,
+            hasSrc: !!el.src,
+          });
           el.play().catch(() => {});
         }
       });
+      if (found === 0) {
+        console.log("[VoiceChat] No audio elements with source found in DOM");
+      }
     }, 1000);
 
     return () => clearInterval(interval);
@@ -246,6 +289,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
 
+    // Pre-create Audio element synchronously during user gesture for autoplay compliance
+    const preloadAudio = new Audio();
+    preloadAudio.preload = "auto";
+
     // Unlock audio playback synchronously on user gesture (before any async work)
     // CRITICAL: Do NOT await ctx.resume() — it breaks the user-gesture trust chain
     try {
@@ -258,7 +305,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       source.start();
       console.log("[VoiceChat] AudioContext unlocked, state:", ctx.state);
       setDebugInfo((prev) => ({ ...prev, audioState: ctx.state }));
-      // Update debug info once it transitions to "running"
       ctx.onstatechange = () => {
         console.log("[VoiceChat] AudioContext state changed to:", ctx.state);
         setDebugInfo((prev) => ({ ...prev, audioState: ctx.state }));
@@ -328,18 +374,31 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         agentId,
       });
 
+      // Build overrides from edge function response
+      const overrides: any = {};
+      if (data?.firstMessage) {
+        overrides.agent = {
+          firstMessage: data.firstMessage,
+          prompt: data.systemPrompt ? { prompt: data.systemPrompt } : undefined,
+        };
+      }
+      const hasOverrides = Object.keys(overrides).length > 0;
+      console.log("[VoiceChat] Overrides:", hasOverrides ? overrides : "none");
+
       if (data?.token) {
         lastConnectMethodRef.current = "webrtc";
         console.log("[VoiceChat] ▶ Starting WebRTC session...");
         await conversation.startSession({
           conversationToken: data.token,
           connectionType: "webrtc",
+          overrides: hasOverrides ? overrides : undefined,
         });
       } else if (data?.signed_url) {
         lastConnectMethodRef.current = "ws_signed_url";
         console.log("[VoiceChat] ▶ Starting WebSocket (signed_url) session...");
         await conversation.startSession({
           signedUrl: data.signed_url,
+          overrides: hasOverrides ? overrides : undefined,
         });
       } else if (agentId) {
         lastConnectMethodRef.current = "ws_agent_id";
@@ -347,6 +406,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         await conversation.startSession({
           agentId,
           connectionType: "websocket",
+          overrides: hasOverrides ? overrides : undefined,
         });
       } else {
         throw new Error("No connection method available — missing token, signed_url, and agentId");
