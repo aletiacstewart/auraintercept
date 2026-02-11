@@ -72,7 +72,7 @@ serve(async (req) => {
         // 1. Get technician assignments for this company
         const { data: techAssignments } = await supabase
           .from("employee_job_assignments")
-          .select("employee_id, services")
+          .select("employee_id")
           .eq("company_id", companyId)
           .eq("job_type", "technician");
 
