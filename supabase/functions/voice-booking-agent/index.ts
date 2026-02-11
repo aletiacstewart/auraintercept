@@ -69,18 +69,48 @@ serve(async (req) => {
       case "check_availability": {
         const preferredDate = (toolParams.preferred_date || toolParams.date || "") as string;
 
-        // 1. Get technician assignments for this company
-        const { data: techAssignments } = await supabase
+        // 1. Get technician assignments and profiles in parallel
+        const techAssignmentsPromise = supabase
           .from("employee_job_assignments")
           .select("employee_id")
           .eq("company_id", companyId)
           .eq("job_type", "technician");
 
+        // Parse preferred date early (default to tomorrow)
+        let targetDate = preferredDate;
+        if (!targetDate) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          targetDate = tomorrow.toISOString().split("T")[0];
+        }
+
+        const [year, month, day] = targetDate.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const dayName = dayNames[dateObj.getDay()];
+
+        // Fetch appointments for the date in parallel with assignments
+        const dayStart = `${targetDate}T00:00:00`;
+        const dayEnd = `${targetDate}T23:59:59`;
+
+        const existingApptsPromise = supabase
+          .from("appointments")
+          .select("datetime, duration_minutes, employee_id")
+          .eq("company_id", companyId)
+          .gte("datetime", dayStart)
+          .lte("datetime", dayEnd)
+          .in("status", ["pending", "confirmed", "in-progress", "scheduled"]);
+
+        const [{ data: techAssignments }, { data: existingAppts }] = await Promise.all([
+          techAssignmentsPromise,
+          existingApptsPromise,
+        ]);
+
         if (!techAssignments || techAssignments.length === 0) {
           return new Response(JSON.stringify({
             available: false,
             slots: [],
-            message: "No team members are currently available. Would you like us to reach out when someone is available?",
+            message: "Let me check on that for you... Unfortunately, no team members are currently available. Would you like us to reach out when someone is available?",
           }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
@@ -96,36 +126,13 @@ serve(async (req) => {
           return new Response(JSON.stringify({
             available: false,
             slots: [],
-            message: "No team members are currently available.",
+            message: "Let me look into that... I'm sorry, no team members are currently available.",
           }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
-        // 3. Parse preferred date (default to tomorrow)
-        let targetDate = preferredDate;
-        if (!targetDate) {
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          targetDate = tomorrow.toISOString().split("T")[0];
-        }
+        // 3. No need to re-parse date or re-fetch appointments — already done above
 
-        const [year, month, day] = targetDate.split("-").map(Number);
-        const dateObj = new Date(year, month - 1, day);
-        const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-        const dayName = dayNames[dateObj.getDay()];
-
-        // 4. Get existing appointments for that date
-        const dayStart = `${targetDate}T00:00:00`;
-        const dayEnd = `${targetDate}T23:59:59`;
-
-        const { data: existingAppts } = await supabase
-          .from("appointments")
-          .select("datetime, duration_minutes, employee_id")
-          .eq("company_id", companyId)
-          .gte("datetime", dayStart)
-          .lte("datetime", dayEnd)
-          .in("status", ["pending", "confirmed", "in-progress", "scheduled"]);
-
-        // 5. Generate available slots from availability_json
+        // 4. Generate available slots from availability_json
         const availableSlots: string[] = [];
 
         for (const emp of techProfiles) {
@@ -159,11 +166,11 @@ serve(async (req) => {
           }
         }
 
-        // 6. Deduplicate and limit to 5
+        // 5. Deduplicate and limit to 5
         const uniqueSlots = [...new Set(availableSlots)].slice(0, 5);
 
         if (uniqueSlots.length === 0) {
-          // 7. Scan next 14 days for alternatives
+          // 6. Scan next 14 days for alternatives
           const suggestions: string[] = [];
           for (let i = 1; i <= 14 && suggestions.length < 3; i++) {
             const checkDate = new Date(year, month - 1, day + i);
@@ -183,8 +190,8 @@ serve(async (req) => {
           }
 
           const message = suggestions.length > 0
-            ? `No openings on that date. The next available dates are ${suggestions.join(", ")}. Would any of those work?`
-            : "No available slots in the next two weeks. Would you like a team member to reach out when something opens up?";
+            ? `Great question! Let me share what I found... No openings on that date, but the next available dates are ${suggestions.join(", ")}. Would any of those work for you?`
+            : "I've checked our schedule thoroughly, and unfortunately there are no available slots in the next two weeks. Would you like a team member to reach out when something opens up?";
 
           return new Response(JSON.stringify({
             available: false,
@@ -199,7 +206,7 @@ serve(async (req) => {
           available: true,
           date: targetDate,
           slots: uniqueSlots,
-          message: `Available times on ${dateDisplay}: ${uniqueSlots.join(", ")}. Which time works best?`,
+          message: `Great, let me share what's available! On ${dateDisplay}, we have these times open: ${uniqueSlots.join(", ")}. Which time works best for you?`,
         }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
@@ -268,7 +275,7 @@ serve(async (req) => {
         return new Response(JSON.stringify({
           success: true,
           appointment_id: appointment.id,
-          message: `Appointment booked for ${customerName} on ${datetime} for ${serviceType}.`,
+          message: `Wonderful, I've got that booked for you! Your appointment is set for ${customerName} on ${datetime} for ${serviceType}. Is there anything else I can help you with?`,
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -285,8 +292,8 @@ serve(async (req) => {
         return new Response(JSON.stringify({
           services: services || [],
           message: services?.length
-            ? `Available services: ${services.map((s: any) => s.name).join(", ")}`
-            : "No services are currently configured.",
+            ? `Here's what I found for you! We offer the following services: ${services.map((s: any) => s.name).join(", ")}. Which service are you interested in?`
+            : "I checked and it looks like no services are currently configured. Would you like to speak with someone from our team?",
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });

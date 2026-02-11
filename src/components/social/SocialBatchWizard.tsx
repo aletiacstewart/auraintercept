@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { 
   Sparkles, 
@@ -34,6 +35,7 @@ import {
   MapPin,
   MessageSquare,
   X,
+  ImageIcon,
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
@@ -86,7 +88,7 @@ export function SocialBatchWizard({ companyId, onCancel, onSuccess }: SocialBatc
   // Generation state
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generationPhase, setGenerationPhase] = useState('');
-
+  const [generateImages, setGenerateImages] = useState(false);
   // Check Tavily status
   const { data: hasTavily } = useQuery({
     queryKey: ['tavily-configured', companyId],
@@ -207,6 +209,38 @@ export function SocialBatchWizard({ companyId, onCancel, onSuccess }: SocialBatc
       });
 
       if (error) throw error;
+
+      // Generate images for each topic if enabled
+      if (generateImages && data?.posts?.length) {
+        setGenerationPhase('Generating AI images for posts...');
+        setGenerationProgress(75);
+
+        const imagePromises = validTopics.map(async (t) => {
+          try {
+            const { data: imgData } = await supabase.functions.invoke('generate-content-image', {
+              body: { topic: t.topic, companyId, style: 'social media graphic' },
+            });
+            return { topic: t.topic, image_url: imgData?.image_url || null };
+          } catch {
+            return { topic: t.topic, image_url: null };
+          }
+        });
+
+        const imageResults = await Promise.allSettled(imagePromises);
+        
+        // Update posts with image URLs
+        for (const result of imageResults) {
+          if (result.status === 'fulfilled' && result.value.image_url) {
+            const matchingPost = data.posts?.find((p: any) => p.topic === result.value.topic);
+            if (matchingPost) {
+              await supabase
+                .from('scheduled_social_posts')
+                .update({ image_url: result.value.image_url })
+                .eq('id', matchingPost.id);
+            }
+          }
+        }
+      }
       
       setGenerationProgress(100);
       return data;
@@ -358,6 +392,18 @@ export function SocialBatchWizard({ companyId, onCancel, onSuccess }: SocialBatc
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* AI Image Generation Toggle */}
+            <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+              <div className="flex items-center gap-3">
+                <ImageIcon className="h-4 w-4 text-pink-400" />
+                <div>
+                  <p className="text-sm font-medium">Generate AI Images</p>
+                  <p className="text-xs text-muted-foreground">Create matching visuals for each post topic</p>
+                </div>
+              </div>
+              <Switch checked={generateImages} onCheckedChange={setGenerateImages} />
             </div>
 
             <div className="flex justify-end gap-2 pt-4">

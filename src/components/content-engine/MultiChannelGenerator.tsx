@@ -21,8 +21,11 @@ import {
   Wand2,
   Calendar,
   ArrowRight,
-  Save
+  Save,
+  ImageIcon,
+  Download,
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -58,6 +61,9 @@ export function MultiChannelGenerator() {
   const [activeResultTab, setActiveResultTab] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [savingChannel, setSavingChannel] = useState<string | null>(null);
+  const [generateImage, setGenerateImage] = useState(false);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   // Get company ID from profile if not in context
   const { data: profile } = useQuery({
@@ -116,8 +122,25 @@ export function MultiChannelGenerator() {
 
     setGenerating(true);
     setResults({});
+    setGeneratedImageUrl(null);
 
     try {
+      // Generate image in parallel if enabled
+      const imagePromise = generateImage ? (async () => {
+        setGeneratingImage(true);
+        try {
+          const { data, error } = await supabase.functions.invoke('generate-content-image', {
+            body: { topic: topic.trim(), companyId: effectiveCompanyId, style: 'professional social media graphic' },
+          });
+          if (error) throw error;
+          if (data?.image_url) setGeneratedImageUrl(data.image_url);
+        } catch (e) {
+          console.error('Image generation failed:', e);
+        } finally {
+          setGeneratingImage(false);
+        }
+      })() : Promise.resolve();
+
       // Generate content for each selected channel in parallel
       const promises = selectedChannels.map(async (channel) => {
         const { data, error } = await supabase.functions.invoke('content-engine', {
@@ -151,6 +174,7 @@ export function MultiChannelGenerator() {
         }
       });
 
+      await imagePromise;
       setResults(newResults);
       setActiveResultTab(selectedChannels[0]);
 
@@ -540,6 +564,17 @@ export function MultiChannelGenerator() {
             </div>
           </div>
 
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+            <div className="flex items-center gap-3">
+              <ImageIcon className="h-4 w-4 text-pink-400" />
+              <div>
+                <p className="text-sm font-medium">Generate AI Image</p>
+                <p className="text-xs text-muted-foreground">Create a matching visual for the topic</p>
+              </div>
+            </div>
+            <Switch checked={generateImage} onCheckedChange={setGenerateImage} />
+          </div>
+
           <Button 
             className="w-full" 
             onClick={handleGenerate}
@@ -565,13 +600,40 @@ export function MultiChannelGenerator() {
         <CardHeader>
           <CardTitle>Generated Content</CardTitle>
           <CardDescription>
-            {Object.keys(results).length > 0 
-              ? `${Object.keys(results).length} channel(s) generated`
+          {Object.keys(results).length > 0 
+              ? `${Object.keys(results).length} channel(s) generated${generatedImageUrl ? ' + image' : ''}`
               : 'Results will appear here'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {Object.keys(results).length > 0 ? (
+            <div className="space-y-4">
+              {/* Generated Image */}
+              {(generatingImage || generatedImageUrl) && (
+                <div className="rounded-lg border border-border overflow-hidden">
+                  {generatingImage ? (
+                    <div className="flex items-center justify-center h-48 bg-muted/50">
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-6 w-6 animate-spin text-pink-400" />
+                        <p className="text-xs text-muted-foreground">Generating image...</p>
+                      </div>
+                    </div>
+                  ) : generatedImageUrl ? (
+                    <div className="relative group">
+                      <img src={generatedImageUrl} alt="Generated content" className="w-full h-48 object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button size="sm" variant="secondary" onClick={() => window.open(generatedImageUrl, '_blank')} className="gap-1">
+                          <Download className="h-3 w-3" /> Download
+                        </Button>
+                        <Button size="sm" variant="secondary" onClick={() => copyToClipboard(generatedImageUrl, 'image-url')} className="gap-1">
+                          {copiedField === 'image-url' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />} URL
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
             <Tabs value={activeResultTab} onValueChange={setActiveResultTab}>
               <TabsList className="mb-4">
                 {selectedChannels.map((channel) => {
@@ -598,6 +660,7 @@ export function MultiChannelGenerator() {
                 </TabsContent>
               ))}
             </Tabs>
+            </div>
           ) : (
             <div className="text-center py-12 text-muted-foreground">
               <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
