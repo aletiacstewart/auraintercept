@@ -816,9 +816,9 @@ export const SalesPitchDataPDF: React.FC = () => (
       </View>
 
       <View style={styles.tierCard}>
-        <View style={styles.tierHeader}>
+         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Single-Point</Text>
-          <Text style={styles.tierPrice}>$1,500/mo</Text>
+          <Text style={styles.tierPrice}>$1,497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Service businesses focused on lead capture and reputation</Text>
         <Text style={styles.tierBullet}>- 1-5 person operations</Text>

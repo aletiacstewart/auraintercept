@@ -333,7 +333,7 @@ export const PricingComparisonTable = () => {
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Aura Field Ops</div>
-              <div className="text-xs font-normal text-white/70">$1,500/mo</div>
+              <div className="text-xs font-normal text-white/70">$1,497/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
               <div className="text-sky-300">Aura Performance</div>

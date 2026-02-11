@@ -549,7 +549,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Single-Point - $1,500/mo</Text>
+        <Text style={styles.copyLabel}>Single-Point - $1,497/mo</Text>
         <Text style={styles.copyHeadline}>Lead Capture Excellence</Text>
         <Text style={styles.copyBody}>
           Stop missing calls and start building your reputation. 24/7 AI reception with automated follow-up and review collection.{'\n\n'}

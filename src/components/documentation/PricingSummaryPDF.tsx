@@ -788,9 +788,9 @@ const PricingSummaryPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTierName}>Aura Field Ops</Text>
-        <Text style={styles.pricingPrice}>$1,500/month</Text>
-        <Text style={styles.pricingAnnual}>or $15,000/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$3,000 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$1,497/month</Text>
+        <Text style={styles.pricingAnnual}>or $14,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$2,994 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
