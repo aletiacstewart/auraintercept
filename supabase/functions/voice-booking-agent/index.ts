@@ -232,10 +232,19 @@ serve(async (req) => {
         const datetime = (toolParams.datetime || toolParams.date || "") as string;
         const durationMinutes = Number(toolParams.duration_minutes || toolParams.duration || 60);
 
+        if (!customerPhone || customerPhone.trim().length < 7) {
+          return new Response(JSON.stringify({
+            success: false,
+            message: "I need the customer's phone number before I can book. Please ask them for their phone number.",
+          }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
         if (!datetime) {
           return new Response(JSON.stringify({
             success: false,
-            message: "A date and time is required to book an appointment.",
+            message: "I need a specific date and time to book. Please ask the customer when they'd like to come in, then check availability first.",
           }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
