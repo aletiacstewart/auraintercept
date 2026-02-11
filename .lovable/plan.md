@@ -1,66 +1,82 @@
 
 
-## Add "Accept" Button on Calendar + Pending Disclaimer on All Booking Channels
+## Add Decline and Reschedule Buttons to Calendar and Field Ops Console
 
-### Overview
-Instead of requiring the Field Ops console to accept appointments, we'll add an **"Accept" button** directly on the calendar appointment card (when job status is `pending_acceptance`). We'll also add a **pending disclaimer** to the booking confirmation messages across all 3 channels (voice chat, phone AI, and AI chat) so customers know their appointment needs acceptance before it's confirmed.
+### Question 1: How Do Lower-Tier Plans See Appointments?
+
+The `/dashboard/appointments` page (which includes the AppointmentCalendar with the new Accept button, Job Queue, and History tabs) is already accessible to **all roles and all tiers** -- there's no tier gate on it. Company admins on Starter or Scheduling plans can see and manage appointments there. The sidebar shows "My Schedule" for employees and the Appointments page is available to company admins. So this is already covered -- no changes needed.
+
+### Question 2: Add Decline and Reschedule
+
+We'll add **Decline** and **Reschedule** buttons in two places:
 
 ---
 
-### Part 1: Accept Button on Calendar Appointments
+### Part A: AppointmentCalendar (all tiers)
 
 **File: `src/components/employee/AppointmentCalendar.tsx`**
 
-1. **Add an "Accept Job" mutation** -- similar to the existing `completeMutation`, this will update `job_assignments.status` from `pending_acceptance` to `accepted` and send a confirmation notification to the customer.
+1. **Add a `declineMutation`** -- Updates `job_assignments.status` to `'declined'` and the appointment status to `'cancelled'`, then sends a cancellation notification to the customer.
 
-2. **Add an "Accept" button on the appointment card** (the list view, lines 561-613) -- when `job_status === 'pending_acceptance'`, show a green "Accept" button below the Pending badge. Clicking it accepts the job without needing to open the detail dialog.
+2. **Add a Reschedule dialog** -- A new dialog with a date/time picker that updates the appointment's `datetime` field and notifies the customer of the new time.
 
-3. **Add an "Accept" button in the appointment detail dialog** (lines 636-788) -- when `job_status === 'pending_acceptance'`, show an "Accept Appointment" button alongside the existing Mark Complete and Cancel buttons.
+3. **On the appointment card** (list view, lines 624-642) -- Add a red "Decline" button next to the existing green "Accept" button when `job_status === 'pending_acceptance'`.
 
-4. **On accept, send confirmation notification** -- after updating the status, invoke `send-job-notification` with `notificationType: 'accepted'` and `recipientType: 'customer'` so the customer receives their confirmation.
+4. **In the appointment detail dialog** (lines 793-806) -- Add "Decline" and "Reschedule" buttons alongside the existing "Accept Appointment" button when `job_status === 'pending_acceptance'`. Also add a "Reschedule" option for accepted/scheduled appointments.
+
+5. **Add a decline confirmation AlertDialog** -- similar to the existing cancel confirmation dialog, asking "Are you sure you want to decline this appointment?"
+
+6. **Add a reschedule dialog** -- with a calendar date picker and time input, pre-filled with the current appointment date/time.
 
 ---
 
-### Part 2: Pending Disclaimer in Booking Responses
+### Part B: FieldOpsAgentConsole (Field Ops tier)
 
-Update the success messages in all 3 booking channels to tell customers their appointment is pending acceptance:
+**File: `src/components/employee/FieldOpsAgentConsole.tsx`**
 
-**File: `supabase/functions/voice-booking-agent/index.ts`** (line 319)
-- Change the message from "I've got that booked for you!" to include: "Please note, your appointment is pending confirmation. Once accepted, you'll receive a confirmation message."
+1. **Add a "Decline" quick action** to `QUICK_ACTIONS` array and `TABS` -- A new tab/button with an X icon that opens the job selector filtered to `pending_acceptance` jobs.
 
-**File: `supabase/functions/voice-swaig/index.ts`** (line 294)
-- Update the phone AI response to include the same pending disclaimer.
+2. **Add a `handleSelectJobForDecline` handler** -- Updates `job_assignments.status` to `'declined'`, updates the appointment to `'cancelled'`, sends notification, and informs the AI chat.
 
-**File: `supabase/functions/ai-agent-chat/index.ts`** (line 3790)
-- Update the chat agent response message to include the pending disclaimer.
+3. **Add a "Reschedule" quick action** to `QUICK_ACTIONS` and `TABS` -- Opens a job selector, then shows a date/time picker to set the new appointment time.
+
+4. **Add a `handleSelectJobForReschedule` handler** -- Updates the appointment's datetime, sends notification to the customer with the new time.
+
+5. **Update `SelectorMode` type** to include `'decline'` and `'reschedule'`.
+
+6. **Update `getSelectorConfig`** to add selector configs for decline and reschedule modes.
 
 ---
 
 ### Technical Details
 
-**Accept mutation logic (AppointmentCalendar.tsx):**
+**Decline flow:**
 ```text
-1. Update job_assignments SET status = 'accepted' WHERE id = job_id
-2. Invoke send-job-notification with notificationType 'accepted', recipientType 'customer'
-3. Invalidate calendar query to refresh UI
-4. Show success toast
+1. User clicks "Decline" on a pending_acceptance job
+2. Confirmation dialog appears
+3. On confirm:
+   a. Update job_assignments SET status = 'declined'
+   b. Update appointments SET status = 'cancelled'
+   c. Invoke send-job-notification with notificationType 'cancelled', recipientType 'customer'
+   d. Invalidate queries / refetch jobs
+   e. Show success toast
 ```
 
-**Accept button placement on card:**
-- Renders below the "Pending" badge on the right side of the appointment card
-- Small green button with CheckCircle icon and "Accept" text
-- Stops event propagation so clicking Accept doesn't open the detail dialog
+**Reschedule flow:**
+```text
+1. User clicks "Reschedule" on any active appointment
+2. Reschedule dialog opens with date picker + time input
+3. On submit:
+   a. Update appointments SET datetime = new_datetime
+   b. Invoke send-appointment-email with type 'reschedule'
+   c. Invoke send-appointment-sms with type 'reschedule'
+   d. Invalidate queries / refetch jobs
+   e. Show success toast
+```
 
-**Accept button in detail dialog:**
-- Appears above the existing "Mark Complete" / "Cancel" row when job_status is `pending_acceptance`
-- Full-width green button
-
-**Disclaimer text (consistent across all channels):**
-> "Your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details."
+**New icons needed:** `XCircle` (already imported), `CalendarClock` from lucide-react for reschedule.
 
 ### Files to Modify
-- `src/components/employee/AppointmentCalendar.tsx` -- Add accept mutation, accept button on card and in detail dialog
-- `supabase/functions/voice-booking-agent/index.ts` -- Update success message with pending disclaimer
-- `supabase/functions/voice-swaig/index.ts` -- Update success message with pending disclaimer
-- `supabase/functions/ai-agent-chat/index.ts` -- Update success message with pending disclaimer
+- `src/components/employee/AppointmentCalendar.tsx` -- Add decline mutation, reschedule mutation, decline confirmation dialog, reschedule dialog, buttons on card and detail views
+- `src/components/employee/FieldOpsAgentConsole.tsx` -- Add decline/reschedule quick actions, tabs, handlers, selector configs
 
