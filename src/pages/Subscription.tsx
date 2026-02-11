@@ -176,7 +176,7 @@ const TIERS = [
       '22 AI Operatives',
       'All 7 Control Centers',
       'Analytics & Reports Console',
-      'Priority Support',
+      'Customer Support',
       '25 Employee Accounts',
     ],
   },
@@ -195,7 +195,7 @@ const TIERS = [
       'All 7 Control Centers',
       'AI Operatives Hub',
       'Revenue & Forecast Agents',
-      'Dedicated Account Manager',
+      'Customer Support',
       '50 Employee Accounts',
     ],
   },
@@ -296,8 +296,8 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Calendar Sync', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'API Access', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Priority Support', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Dedicated Account Manager', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
+      { name: 'Customer Support', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'A2P 10DLC Compliance', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
     ],
   },
   {
@@ -853,7 +853,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Field Ops and Performance?</h4>
               <p className="text-sm text-muted-foreground">
-                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($3,497/mo) adds Analytics & Reports with 22 agents and Priority Support.
+                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($3,497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
               </p>
             </div>
             <div>
