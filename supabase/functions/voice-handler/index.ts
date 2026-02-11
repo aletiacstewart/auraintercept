@@ -61,7 +61,10 @@ Guidelines:
 - Use "team member" instead of "technician".
 - Accept dates naturally like "tomorrow", "next Monday", "this Friday".
 - When confirming email, spell it back to verify.
-- If the caller wants to speak to a person, transfer them immediately.`;
+- If the caller wants to speak to a person, transfer them immediately.
+- Use filler words like "um" or "uh" sparingly and only when you are genuinely pausing to think or look something up. Never use them as a habit after every response.
+- NEVER re-ask for information the caller has already provided in this conversation. If you collected their name, phone number, or email earlier, use it — do not ask again.
+- Do NOT ask "would you like to leave your contact info" if you already have it from earlier in the conversation.`;
 }
 
 // Build the SWML document for SignalWire's native AI agent

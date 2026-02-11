@@ -93,7 +93,7 @@ async function handleCheckAvailability(
     .eq('job_type', 'technician');
 
   if (!assignments || assignments.length === 0) {
-    return swaigResponse("I'm sorry, we don't have any team members available right now. Would you like to leave your information and we'll call you back?");
+    return swaigResponse("I'm sorry, we don't have any team members available right now. Would you like me to have a team member reach out to you?");
   }
 
   const employeeIds = assignments.map((a: any) => a.employee_id);
@@ -197,7 +197,7 @@ async function handleCheckAvailability(
       return swaigResponse(`I'm sorry, we don't have any openings on that date. The next available dates are ${suggestions.join(', ')}. Would any of those work for you?`);
     }
 
-    return swaigResponse("I'm sorry, we don't have any available slots in the next two weeks. Would you like to leave your information and we'll reach out when something opens up?");
+    return swaigResponse("I'm sorry, we don't have any available slots in the next two weeks. I can have a team member reach out to you when something opens up. Would you like that?");
   }
 
   const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
