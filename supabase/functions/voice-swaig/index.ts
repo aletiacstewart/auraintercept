@@ -88,7 +88,7 @@ async function handleCheckAvailability(
   // Get employees with technician assignments for this company
   const { data: assignments } = await supabase
     .from('employee_job_assignments')
-    .select('employee_id, services')
+    .select('employee_id')
     .eq('company_id', companyId)
     .eq('job_type', 'technician');
 
