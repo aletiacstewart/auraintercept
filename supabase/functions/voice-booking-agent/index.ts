@@ -167,9 +167,27 @@ serve(async (req) => {
         });
       }
 
+      case "get_services":
+      case "list_services": {
+        const { data: services } = await supabase
+          .from("services")
+          .select("name, description, duration_minutes, price, delivery_type")
+          .eq("company_id", companyId)
+          .eq("is_active", true);
+
+        return new Response(JSON.stringify({
+          services: services || [],
+          message: services?.length
+            ? `Available services: ${services.map((s: any) => s.name).join(", ")}`
+            : "No services are currently configured.",
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       default: {
         return new Response(JSON.stringify({
-          message: `Tool '${toolName}' is not supported. Available tools: check_availability, create_appointment.`,
+          message: `Tool '${toolName}' is not supported. Available tools: check_availability, create_appointment, get_services.`,
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
