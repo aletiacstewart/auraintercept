@@ -291,7 +291,7 @@ async function handleBookAppointment(
   const timeDisplay = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  return swaigResponse(`Great news, ${customer_name}! Your ${service_type} appointment is booked for ${dateDisplay} at ${timeDisplay}. You'll receive a confirmation shortly. Is there anything else I can help you with?`);
+  return swaigResponse(`Great news, ${customer_name}! Your ${service_type} appointment is booked for ${dateDisplay} at ${timeDisplay}. Please note, your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details. Is there anything else I can help you with?`);
 }
 
 // === GET SERVICES ===

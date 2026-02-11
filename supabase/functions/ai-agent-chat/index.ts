@@ -3787,7 +3787,7 @@ async function executeAgentTool(
         appointment_id: appointment.id, 
         employee_id: employeeId,
         job_assignment_id: jobAssignment?.id,
-        message: `Appointment created successfully${employeeId ? '. Technician has been assigned and notified.' : ''}` 
+        message: `Appointment created successfully. Your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details.${employeeId ? ' A team member has been assigned and notified.' : ''}` 
       };
     }
 

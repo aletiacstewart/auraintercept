@@ -128,6 +128,38 @@ export function AppointmentCalendar() {
     },
   });
 
+  // Accept job mutation
+  const acceptMutation = useMutation({
+    mutationFn: async (jobId: string) => {
+      const { error } = await supabase
+        .from('job_assignments')
+        .update({ status: 'accepted' })
+        .eq('id', jobId);
+      
+      if (error) throw error;
+
+      // Send confirmation notification to customer
+      try {
+        await supabase.functions.invoke('send-job-notification', {
+          body: { jobId, notificationType: 'accepted', recipientType: 'customer' }
+        });
+      } catch (notifyError) {
+        console.error('Failed to send acceptance notification:', notifyError);
+      }
+
+      return jobId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
+      toast.success('Appointment accepted! Customer will be notified.');
+      setSelectedAppointment(null);
+    },
+    onError: (error) => {
+      console.error('Failed to accept appointment:', error);
+      toast.error('Failed to accept appointment');
+    },
+  });
+
   // Complete appointment mutation
   const completeMutation = useMutation({
     mutationFn: async (appointmentId: string) => {
@@ -589,6 +621,25 @@ export function AppointmentCalendar() {
                           {appointment.status}
                         </Badge>
                         {getJobStatusBadge(appointment.job_status)}
+                        {appointment.job_status === 'pending_acceptance' && appointment.job_id && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-6 px-2 text-xs bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
+                            disabled={acceptMutation.isPending}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              acceptMutation.mutate(appointment.job_id!);
+                            }}
+                          >
+                            {acceptMutation.isPending ? (
+                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                            ) : (
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                            )}
+                            Accept
+                          </Button>
+                        )}
                         <CalendarSyncBadge
                           syncStatus={appointment.calendar_sync?.sync_status}
                           lastSyncedAt={appointment.calendar_sync?.last_synced_at}
@@ -736,6 +787,21 @@ export function AppointmentCalendar() {
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
                   Assign Technician
+                </Button>
+              )}
+
+              {selectedAppointment.job_status === 'pending_acceptance' && selectedAppointment.job_id && (
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => acceptMutation.mutate(selectedAppointment.job_id!)}
+                  disabled={acceptMutation.isPending}
+                >
+                  {acceptMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                  )}
+                  Accept Appointment
                 </Button>
               )}
 
