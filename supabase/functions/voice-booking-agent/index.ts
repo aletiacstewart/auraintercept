@@ -67,33 +67,140 @@ serve(async (req) => {
     // Handle tool calls
     switch (toolName) {
       case "check_availability": {
-        const serviceType = (toolParams.service_type || "") as string;
-        const preferredDate = (toolParams.preferred_date || "") as string;
+        const preferredDate = (toolParams.preferred_date || toolParams.date || "") as string;
 
-        const startDate = preferredDate || new Date().toISOString().split("T")[0];
-        const endDate = new Date(new Date(startDate).getTime() + 7 * 86400000).toISOString().split("T")[0];
+        // 1. Get technician assignments for this company
+        const { data: techAssignments } = await supabase
+          .from("employee_job_assignments")
+          .select("employee_id, services")
+          .eq("company_id", companyId)
+          .eq("job_type", "technician");
 
-        const { data: appointments } = await supabase
+        if (!techAssignments || techAssignments.length === 0) {
+          return new Response(JSON.stringify({
+            available: false,
+            slots: [],
+            message: "No team members are currently available. Would you like us to reach out when someone is available?",
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        const employeeIds = techAssignments.map((a: any) => a.employee_id);
+
+        // 2. Get employee profiles with availability_json
+        const { data: techProfiles } = await supabase
+          .from("profiles")
+          .select("id, full_name, availability_json")
+          .in("id", employeeIds);
+
+        if (!techProfiles || techProfiles.length === 0) {
+          return new Response(JSON.stringify({
+            available: false,
+            slots: [],
+            message: "No team members are currently available.",
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        // 3. Parse preferred date (default to tomorrow)
+        let targetDate = preferredDate;
+        if (!targetDate) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          targetDate = tomorrow.toISOString().split("T")[0];
+        }
+
+        const [year, month, day] = targetDate.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const dayName = dayNames[dateObj.getDay()];
+
+        // 4. Get existing appointments for that date
+        const dayStart = `${targetDate}T00:00:00`;
+        const dayEnd = `${targetDate}T23:59:59`;
+
+        const { data: existingAppts } = await supabase
           .from("appointments")
           .select("datetime, duration_minutes, employee_id")
           .eq("company_id", companyId)
-          .gte("datetime", startDate)
-          .lte("datetime", endDate)
-          .in("status", ["confirmed", "pending"]);
+          .gte("datetime", dayStart)
+          .lte("datetime", dayEnd)
+          .in("status", ["pending", "confirmed", "in-progress", "scheduled"]);
 
-        const { data: hours } = await supabase
-          .from("business_hours")
-          .select("*")
-          .eq("company_id", companyId);
+        // 5. Generate available slots from availability_json
+        const availableSlots: string[] = [];
 
+        for (const emp of techProfiles) {
+          const availability = (emp as any).availability_json || {};
+          const daySlots = availability[dayName];
+          if (!daySlots || !Array.isArray(daySlots) || daySlots.length === 0) continue;
+
+          for (const slot of daySlots) {
+            const startHour = parseInt(slot.start?.split(":")[0] || "8", 10);
+            const endHour = parseInt(slot.end?.split(":")[0] || "17", 10);
+
+            for (let hour = startHour; hour < endHour; hour++) {
+              const timeStr = `${hour.toString().padStart(2, "0")}:00`;
+              const slotDateTime = `${targetDate}T${timeStr}:00`;
+
+              // Check conflicts with existing appointments for this employee
+              const hasConflict = (existingAppts || []).some((apt: any) => {
+                if (apt.employee_id !== (emp as any).id) return false;
+                const aptTime = new Date(apt.datetime);
+                const slotTime = new Date(slotDateTime);
+                const aptEnd = new Date(aptTime.getTime() + (apt.duration_minutes || 60) * 60000);
+                return slotTime >= aptTime && slotTime < aptEnd;
+              });
+
+              if (!hasConflict) {
+                const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+                const ampm = hour >= 12 ? "PM" : "AM";
+                availableSlots.push(`${displayHour}:00 ${ampm}`);
+              }
+            }
+          }
+        }
+
+        // 6. Deduplicate and limit to 5
+        const uniqueSlots = [...new Set(availableSlots)].slice(0, 5);
+
+        if (uniqueSlots.length === 0) {
+          // 7. Scan next 14 days for alternatives
+          const suggestions: string[] = [];
+          for (let i = 1; i <= 14 && suggestions.length < 3; i++) {
+            const checkDate = new Date(year, month - 1, day + i);
+            const checkDayName = dayNames[checkDate.getDay()];
+
+            const hasAvailability = techProfiles.some((emp: any) => {
+              const avail = emp.availability_json || {};
+              const slots = avail[checkDayName];
+              return slots && Array.isArray(slots) && slots.length > 0;
+            });
+
+            if (hasAvailability) {
+              const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+              const dn = dayNames[checkDate.getDay()];
+              suggestions.push(`${dn.charAt(0).toUpperCase() + dn.slice(1)}, ${monthNames[checkDate.getMonth()]} ${checkDate.getDate()}`);
+            }
+          }
+
+          const message = suggestions.length > 0
+            ? `No openings on that date. The next available dates are ${suggestions.join(", ")}. Would any of those work?`
+            : "No available slots in the next two weeks. Would you like a team member to reach out when something opens up?";
+
+          return new Response(JSON.stringify({
+            available: false,
+            slots: [],
+            suggestions: suggestions,
+            message,
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        const dateDisplay = dateObj.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
         return new Response(JSON.stringify({
           available: true,
-          existing_appointments: (appointments || []).length,
-          business_hours: hours || [],
-          message: `There are ${(appointments || []).length} existing appointments this week. Business hours are configured.`,
-        }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+          date: targetDate,
+          slots: uniqueSlots,
+          message: `Available times on ${dateDisplay}: ${uniqueSlots.join(", ")}. Which time works best?`,
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
       case "create_appointment":
