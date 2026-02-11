@@ -26,7 +26,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus, CalendarClock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
@@ -66,6 +67,10 @@ export function AppointmentCalendar() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [month, setMonth] = useState<Date>(new Date());
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState<Date | undefined>(undefined);
+  const [rescheduleTime, setRescheduleTime] = useState('');
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
 
   // Check if Google Calendar is connected for this company
@@ -125,6 +130,80 @@ export function AppointmentCalendar() {
     onError: (error) => {
       console.error('Failed to cancel appointment:', error);
       toast.error('Failed to cancel appointment');
+    },
+  });
+
+  // Decline job mutation
+  const declineMutation = useMutation({
+    mutationFn: async ({ jobId, appointmentId }: { jobId: string; appointmentId: string }) => {
+      const { error: jobError } = await supabase
+        .from('job_assignments')
+        .update({ status: 'declined' })
+        .eq('id', jobId);
+      if (jobError) throw jobError;
+
+      const { error: aptError } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled' })
+        .eq('id', appointmentId);
+      if (aptError) throw aptError;
+
+      try {
+        await supabase.functions.invoke('send-job-notification', {
+          body: { jobAssignmentId: jobId, notificationType: 'cancelled', recipientType: 'customer' }
+        });
+      } catch (notifyError) {
+        console.error('Failed to send decline notification:', notifyError);
+      }
+
+      return jobId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
+      toast.success('Appointment declined. Customer will be notified.');
+      setSelectedAppointment(null);
+      setDeclineDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error('Failed to decline appointment:', error);
+      toast.error('Failed to decline appointment');
+    },
+  });
+
+  // Reschedule appointment mutation
+  const rescheduleMutation = useMutation({
+    mutationFn: async ({ appointmentId, newDatetime }: { appointmentId: string; newDatetime: string }) => {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ datetime: newDatetime, status: 'scheduled' })
+        .eq('id', appointmentId);
+      if (error) throw error;
+
+      try {
+        await supabase.functions.invoke('send-appointment-email', {
+          body: { appointmentId, type: 'reschedule' }
+        });
+      } catch (e) { console.error('Reschedule email failed:', e); }
+
+      try {
+        await supabase.functions.invoke('send-appointment-sms', {
+          body: { appointmentId, type: 'reschedule' }
+        });
+      } catch (e) { console.error('Reschedule SMS failed:', e); }
+
+      return appointmentId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
+      toast.success('Appointment rescheduled! Customer will be notified.');
+      setSelectedAppointment(null);
+      setRescheduleDialogOpen(false);
+      setRescheduleDate(undefined);
+      setRescheduleTime('');
+    },
+    onError: (error) => {
+      console.error('Failed to reschedule appointment:', error);
+      toast.error('Failed to reschedule appointment');
     },
   });
 
@@ -622,23 +701,39 @@ export function AppointmentCalendar() {
                         </Badge>
                         {getJobStatusBadge(appointment.job_status)}
                         {appointment.job_status === 'pending_acceptance' && appointment.job_id && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-6 px-2 text-xs bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
-                            disabled={acceptMutation.isPending}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              acceptMutation.mutate(appointment.job_id!);
-                            }}
-                          >
-                            {acceptMutation.isPending ? (
-                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                            ) : (
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                            )}
-                            Accept
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-6 px-2 text-xs bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
+                              disabled={acceptMutation.isPending}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                acceptMutation.mutate(appointment.job_id!);
+                              }}
+                            >
+                              {acceptMutation.isPending ? (
+                                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                              ) : (
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                              )}
+                              Accept
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-6 px-2 text-xs bg-red-500/10 text-red-600 border-red-500/30 hover:bg-red-500/20"
+                              disabled={declineMutation.isPending}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedAppointment(appointment);
+                                setDeclineDialogOpen(true);
+                              }}
+                            >
+                              <XCircle className="w-3 h-3 mr-1" />
+                              Decline
+                            </Button>
+                          </div>
                         )}
                         <CalendarSyncBadge
                           syncStatus={appointment.calendar_sync?.sync_status}
@@ -791,17 +886,45 @@ export function AppointmentCalendar() {
               )}
 
               {selectedAppointment.job_status === 'pending_acceptance' && selectedAppointment.job_id && (
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => acceptMutation.mutate(selectedAppointment.job_id!)}
+                    disabled={acceptMutation.isPending}
+                  >
+                    {acceptMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                    )}
+                    Accept
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={() => setDeclineDialogOpen(true)}
+                    disabled={declineMutation.isPending}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Decline
+                  </Button>
+                </div>
+              )}
+
+              {/* Reschedule button for active appointments */}
+              {selectedAppointment.status !== 'cancelled' && selectedAppointment.status !== 'completed' && (
                 <Button
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  onClick={() => acceptMutation.mutate(selectedAppointment.job_id!)}
-                  disabled={acceptMutation.isPending}
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    const aptDate = parseUTCDateTime(selectedAppointment.datetime);
+                    setRescheduleDate(aptDate);
+                    setRescheduleTime(format(aptDate, 'HH:mm'));
+                    setRescheduleDialogOpen(true);
+                  }}
                 >
-                  {acceptMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                  )}
-                  Accept Appointment
+                  <CalendarClock className="w-4 h-4 mr-2" />
+                  Reschedule
                 </Button>
               )}
 
@@ -887,7 +1010,99 @@ export function AppointmentCalendar() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Technician Assignment Dialog */}
+      {/* Decline Confirmation Dialog */}
+      <AlertDialog open={declineDialogOpen} onOpenChange={setDeclineDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Decline Appointment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to decline this appointment with {selectedAppointment?.customer_name}? 
+              The appointment will be cancelled and the customer will be notified.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Appointment</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedAppointment?.job_id && declineMutation.mutate({ 
+                jobId: selectedAppointment.job_id, 
+                appointmentId: selectedAppointment.id 
+              })}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={declineMutation.isPending}
+            >
+              {declineMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Declining...
+                </>
+              ) : (
+                'Yes, Decline Appointment'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reschedule Dialog */}
+      <Dialog open={rescheduleDialogOpen} onOpenChange={setRescheduleDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reschedule Appointment</DialogTitle>
+            <DialogDescription>
+              Choose a new date and time for {selectedAppointment?.customer_name}'s appointment.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div>
+              <p className="text-sm font-medium mb-2">Select Date</p>
+              <Calendar
+                mode="single"
+                selected={rescheduleDate}
+                onSelect={setRescheduleDate}
+                disabled={(date) => date < new Date()}
+                className="rounded-md border"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium mb-2">Select Time</p>
+              <Input
+                type="time"
+                value={rescheduleTime}
+                onChange={(e) => setRescheduleTime(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                className="flex-1"
+                disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
+                onClick={() => {
+                  if (selectedAppointment && rescheduleDate && rescheduleTime) {
+                    const [hours, minutes] = rescheduleTime.split(':').map(Number);
+                    const newDatetime = new Date(rescheduleDate);
+                    newDatetime.setHours(hours, minutes, 0, 0);
+                    rescheduleMutation.mutate({
+                      appointmentId: selectedAppointment.id,
+                      newDatetime: newDatetime.toISOString(),
+                    });
+                  }
+                }}
+              >
+                {rescheduleMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <CalendarClock className="w-4 h-4 mr-2" />
+                )}
+                Confirm Reschedule
+              </Button>
+              <Button variant="outline" onClick={() => setRescheduleDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {selectedAppointment && (
         <TechnicianAssignmentDialog
           open={assignDialogOpen}
