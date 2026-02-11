@@ -1,64 +1,66 @@
 
 
-## Fix: Voice Chat Booking Without Collecting Required Information
+## Add "Accept" Button on Calendar + Pending Disclaimer on All Booking Channels
 
-### Problem
-The web voice agent books appointments without asking for:
-1. **Preferred date and time** -- it defaults to "tomorrow 9am" instead of asking
-2. **Phone number** -- it accepts an empty string and books anyway
+### Overview
+Instead of requiring the Field Ops console to accept appointments, we'll add an **"Accept" button** directly on the calendar appointment card (when job status is `pending_acceptance`). We'll also add a **pending disclaimer** to the booking confirmation messages across all 3 channels (voice chat, phone AI, and AI chat) so customers know their appointment needs acceptance before it's confirmed.
 
-The ElevenLabs agent prompt (configured in the dashboard) should guide the conversation, but the server-side code currently has no guardrails -- it happily books with missing data.
+---
 
-### Solution: Server-Side Validation in voice-booking-agent
+### Part 1: Accept Button on Calendar Appointments
 
-**File: `supabase/functions/voice-booking-agent/index.ts`**
+**File: `src/components/employee/AppointmentCalendar.tsx`**
 
-In the `create_appointment` handler (line 227-267), add validation that **rejects** the booking and returns an instructive message to the agent if required fields are missing:
+1. **Add an "Accept Job" mutation** -- similar to the existing `completeMutation`, this will update `job_assignments.status` from `pending_acceptance` to `accepted` and send a confirmation notification to the customer.
 
-1. **Reject empty phone number** -- If `customer_phone` is empty, return a message telling the agent: "Please ask the customer for their phone number before booking."
+2. **Add an "Accept" button on the appointment card** (the list view, lines 561-613) -- when `job_status === 'pending_acceptance'`, show a green "Accept" button below the Pending badge. Clicking it accepts the job without needing to open the detail dialog.
 
-2. **Reject missing datetime** -- This check already exists (line 235), but strengthen the response message to instruct the agent to ask for a preferred date and time.
+3. **Add an "Accept" button in the appointment detail dialog** (lines 636-788) -- when `job_status === 'pending_acceptance'`, show an "Accept Appointment" button alongside the existing Mark Complete and Cancel buttons.
 
-3. **Reject if check_availability was never called** -- Add a note in the response encouraging the agent to check availability first so it offers real time slots rather than guessing.
+4. **On accept, send confirmation notification** -- after updating the status, invoke `send-job-notification` with `notificationType: 'accepted'` and `recipientType: 'customer'` so the customer receives their confirmation.
 
-The updated validation block (inserted before the database insert at line 244):
+---
 
-```typescript
-// Require phone number
-if (!customerPhone) {
-  return new Response(JSON.stringify({
-    success: false,
-    message: "I need the customer's phone number before I can book. Please ask them for their phone number.",
-  }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
+### Part 2: Pending Disclaimer in Booking Responses
 
-// Require explicit datetime (not a guess)
-if (!datetime) {
-  return new Response(JSON.stringify({
-    success: false,
-    message: "I need a specific date and time to book. Please ask the customer when they'd like to come in, then check availability first.",
-  }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
+Update the success messages in all 3 booking channels to tell customers their appointment is pending acceptance:
+
+**File: `supabase/functions/voice-booking-agent/index.ts`** (line 319)
+- Change the message from "I've got that booked for you!" to include: "Please note, your appointment is pending confirmation. Once accepted, you'll receive a confirmation message."
+
+**File: `supabase/functions/voice-swaig/index.ts`** (line 294)
+- Update the phone AI response to include the same pending disclaimer.
+
+**File: `supabase/functions/ai-agent-chat/index.ts`** (line 3790)
+- Update the chat agent response message to include the pending disclaimer.
+
+---
+
+### Technical Details
+
+**Accept mutation logic (AppointmentCalendar.tsx):**
+```text
+1. Update job_assignments SET status = 'accepted' WHERE id = job_id
+2. Invoke send-job-notification with notificationType 'accepted', recipientType 'customer'
+3. Invalidate calendar query to refresh UI
+4. Show success toast
 ```
 
-### Dashboard Action (Manual -- You Must Do This)
+**Accept button placement on card:**
+- Renders below the "Pending" badge on the right side of the appointment card
+- Small green button with CheckCircle icon and "Accept" text
+- Stops event propagation so clicking Accept doesn't open the detail dialog
 
-In the ElevenLabs dashboard for agent `agent_0501kh...`, update the agent's **system prompt** to include a data collection requirement:
+**Accept button in detail dialog:**
+- Appears above the existing "Mark Complete" / "Cancel" row when job_status is `pending_acceptance`
+- Full-width green button
 
-> "Before booking an appointment, you MUST collect the following from the customer:
-> 1. What service they need (call get_services first)
-> 2. Their preferred date and time (call check_availability to verify)
-> 3. Their full name
-> 4. Their phone number
-> 
-> Do NOT call create_appointment until you have all four pieces of information."
-
-This ensures the agent asks before booking, and the server-side validation acts as a safety net if it tries to skip steps.
+**Disclaimer text (consistent across all channels):**
+> "Your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details."
 
 ### Files to Modify
-- **`supabase/functions/voice-booking-agent/index.ts`** -- Add validation rejecting bookings with missing phone or datetime, with instructive error messages that guide the agent to collect the data
+- `src/components/employee/AppointmentCalendar.tsx` -- Add accept mutation, accept button on card and in detail dialog
+- `supabase/functions/voice-booking-agent/index.ts` -- Update success message with pending disclaimer
+- `supabase/functions/voice-swaig/index.ts` -- Update success message with pending disclaimer
+- `supabase/functions/ai-agent-chat/index.ts` -- Update success message with pending disclaimer
 
