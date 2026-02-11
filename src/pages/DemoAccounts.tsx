@@ -97,7 +97,7 @@ const demoAccounts = [
   {
     tier: 'Aura Command',
     tierColor: 'bg-emerald-500/20 text-emerald-600',
-    price: '$5,497/mo',
+    price: '$3,497/mo',
     companyAdmin: 'companycmd@demo.com',
     employee: 'employeecmd@demo.com',
     customer: 'customercmd@demo.com',

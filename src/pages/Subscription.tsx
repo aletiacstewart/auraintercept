@@ -165,9 +165,9 @@ const TIERS = [
   {
     id: 'multi_track',
     name: 'Aura Performance',
-    monthlyPrice: '$3,497',
-    annualPrice: '$34,970',
-    annualSavings: 'Save $6,994',
+    monthlyPrice: '$2,497',
+    annualPrice: '$24,970',
+    annualSavings: 'Save $4,994',
     description: 'Full automation + Analytics & Reports',
     popular: false,
     agentCount: 22,
@@ -183,9 +183,9 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Command',
-    monthlyPrice: '$5,497',
-    annualPrice: '$54,970',
-    annualSavings: 'Save $10,994',
+    monthlyPrice: '$3,497',
+    annualPrice: '$34,970',
+    annualSavings: 'Save $6,994',
     description: 'Full business automation suite',
     popular: false,
     agentCount: 24,
@@ -314,9 +314,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$3,497', command: '$5,497' },
-      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$34,970/year', command: '$54,970/year' },
-      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $6,994', command: 'Save $10,994' },
+      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$2,497', command: '$3,497' },
+      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$24,970/year', command: '$34,970/year' },
+      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $4,994', command: 'Save $6,994' },
     ],
   },
 ];
@@ -741,11 +741,11 @@ export default function Subscription() {
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Perf</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$2,497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Command</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$5,497/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -853,7 +853,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Field Ops and Performance?</h4>
               <p className="text-sm text-muted-foreground">
-                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($3,497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
+                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($2,497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
               </p>
             </div>
             <div>

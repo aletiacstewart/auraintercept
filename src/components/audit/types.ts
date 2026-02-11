@@ -519,7 +519,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   MULTI_TRACK: {
     tier: 'MULTI_TRACK',
     label: 'Aura Performance',
-    price: '$3,997/mo',
+    price: '$2,497/mo',
     description: 'Full field operations automation for growing service businesses',
     keyFeatures: [
       'All Aura Field Ops features',
@@ -537,7 +537,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   COMMAND: {
     tier: 'COMMAND',
     label: 'Aura Command',
-    price: '$5,997/mo',
+    price: '$3,497/mo',
     description: 'Enterprise solution for 15+ technician teams and multi-location operations',
     keyFeatures: [
       '⭐ For 15+ technicians or multi-location',
