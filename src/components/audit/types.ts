@@ -500,7 +500,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   SINGLE_POINT: {
     tier: 'SINGLE_POINT',
     label: 'Aura Field Ops',
-    price: '$1,500/mo',
+    price: '$1,497/mo',
     description: 'AI Receptionist with voice capability for teams focused on lead capture',
     keyFeatures: [
       'AI Receptionist (Triage Agent)',

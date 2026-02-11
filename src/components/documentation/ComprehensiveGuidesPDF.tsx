@@ -993,7 +993,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>Subscription Tiers</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
+          <Text style={styles.bulletText}>Single-Point ($1,497/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
