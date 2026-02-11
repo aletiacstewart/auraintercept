@@ -28,7 +28,9 @@ import {
   User,
   Loader2,
   X,
+  XCircle,
   Calendar,
+  CalendarClock,
   LucideIcon,
   Zap,
   ChevronRight,
@@ -80,11 +82,13 @@ const FIELD_OPS_AGENTS = [
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare, featureColor: 'text-feature-fieldops' },
   { id: 'accept', label: 'Accept', icon: UserCheck, featureColor: 'text-feature-fieldops' },
+  { id: 'decline', label: 'Decline', icon: XCircle, featureColor: 'text-destructive' },
   { id: 'directions', label: 'Directions', icon: Navigation, featureColor: 'text-feature-fieldops' },
   { id: 'enroute', label: 'En Route', icon: Truck, featureColor: 'text-feature-fieldops' },
   { id: 'eta', label: 'ETA', icon: Clock, featureColor: 'text-feature-appointments' },
   { id: 'arrive_start', label: 'Arrive', icon: Play, featureColor: 'text-feature-fieldops' },
   { id: 'complete', label: 'Complete', icon: CheckCircle, variant: 'destructive' as const, featureColor: 'text-feature-fieldops' },
+  { id: 'reschedule', label: 'Reschedule', icon: CalendarClock, featureColor: 'text-feature-appointments' },
   { id: 'quote', label: 'Quote', icon: FileText, featureColor: 'text-feature-quotes' },
   { id: 'invoice', label: 'Invoice', icon: Receipt, featureColor: 'text-feature-invoices' },
 ];
@@ -104,11 +108,13 @@ const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrive_
 // Field Operations AI Agent quick actions - optimized workflow
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
   { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job.", featureColor: 'text-feature-fieldops' },
+  { id: 'decline', label: 'Decline Job', icon: XCircle, message: "I want to decline a job.", featureColor: 'text-destructive' },
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job", featureColor: 'text-feature-fieldops' },
   { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer.", featureColor: 'text-feature-fieldops' },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job.", featureColor: 'text-feature-appointments' },
   { id: 'arrive_start', label: 'Arrive & Start', icon: Play, message: "I have arrived at the customer's location and I'm ready to start the job.", featureColor: 'text-feature-fieldops' },
   { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive', featureColor: 'text-feature-fieldops' },
+  { id: 'reschedule', label: 'Reschedule', icon: CalendarClock, message: "I need to reschedule an appointment.", featureColor: 'text-feature-appointments' },
   { id: 'quote', label: 'Generate Quote', icon: FileText, message: "I need to create a quote for this job.", featureColor: 'text-feature-quotes' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: "I need to create an invoice for this completed job.", featureColor: 'text-feature-invoices' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch", featureColor: 'text-feature-fieldops' },
@@ -148,7 +154,7 @@ interface JobContextForForms {
   appointmentId?: string;
 }
 
-type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrive_start' | 'complete' | 'quote' | 'invoice' | null;
+type SelectorMode = 'accept' | 'decline' | 'directions' | 'enroute' | 'eta' | 'arrive_start' | 'complete' | 'reschedule' | 'quote' | 'invoice' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId, userRole } = useAuth();
@@ -175,6 +181,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
   const [processingJobId, setProcessingJobId] = useState<string | null>(null);
   const [selectedJobForEta, setSelectedJobForEta] = useState<JobAssignment | null>(null);
+  const [selectedJobForReschedule, setSelectedJobForReschedule] = useState<JobAssignment | null>(null);
+  const [rescheduleDate, setRescheduleDate] = useState('');
+  const [rescheduleTime, setRescheduleTime] = useState('');
   const [etaMinutes, setEtaMinutes] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [navigationAddress, setNavigationAddress] = useState<string | null>(null);
@@ -267,6 +276,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'accept') {
       return assignedJobs.filter(job => job.status === 'pending_acceptance');
     }
+    if (selectorMode === 'decline') {
+      return assignedJobs.filter(job => job.status === 'pending_acceptance');
+    }
     if (selectorMode === 'enroute') {
       return assignedJobs.filter(job => job.status === 'accepted');
     }
@@ -278,6 +290,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
     if (selectorMode === 'complete') {
       return assignedJobs.filter(job => ['arrived', 'in_progress'].includes(job.status));
+    }
+    if (selectorMode === 'reschedule') {
+      return assignedJobs.filter(job => ['pending_acceptance', 'accepted', 'en_route'].includes(job.status));
     }
     return assignedJobs;
   };
@@ -314,6 +329,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       return;
     }
     
+    // Decline job opens job selector
+    if (action.id === 'decline') {
+      setSelectorMode('decline');
+      return;
+    }
+    
     // Directions opens job selector to pick which job to navigate to
     if (action.id === 'directions') {
       setSelectorMode('directions');
@@ -347,6 +368,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     // Quote opens the quote form
     if (action.id === 'quote') {
       setSelectorMode('quote');
+      return;
+    }
+
+    // Reschedule opens job selector
+    if (action.id === 'reschedule') {
+      setSelectorMode('reschedule');
       return;
     }
     
@@ -523,6 +550,112 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   }, [processingJobId, refetchJobs, sendMessage]);
 
+  // Decline job handler
+  const handleSelectJobForDecline = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'declined',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) throw updateError;
+
+      // Cancel the appointment
+      if (job.appointments?.id) {
+        await supabase
+          .from('appointments')
+          .update({ status: 'cancelled' })
+          .eq('id', job.appointments.id);
+      }
+
+      // Notify customer
+      await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: job.id,
+          notificationType: 'cancelled',
+          recipientType: 'customer'
+        }
+      });
+
+      toast.success(`Job declined for ${customerName}`, { description: 'Customer has been notified' });
+      refetchJobs();
+      setSelectorMode(null);
+      sendMessage(`I have declined the ${job.appointments?.service_type || 'service'} job for ${customerName}. The appointment has been cancelled and the customer was notified.`);
+
+    } catch (error) {
+      console.error('Decline job error:', error);
+      toast.error('Failed to decline job', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
+
+  // Reschedule job handler
+  const handleSelectJobForReschedule = useCallback((job: JobAssignment) => {
+    setSelectedJobForReschedule(job);
+    // Pre-fill with current date/time
+    if (job.appointments?.datetime) {
+      const dt = parseUTCDateTime(job.appointments.datetime);
+      setRescheduleDate(format(dt, 'yyyy-MM-dd'));
+      setRescheduleTime(format(dt, 'HH:mm'));
+    }
+  }, []);
+
+  const handleSendReschedule = useCallback(async () => {
+    if (!selectedJobForReschedule || !rescheduleDate || !rescheduleTime || processingJobId) return;
+    
+    setProcessingJobId(selectedJobForReschedule.id);
+    const customerName = selectedJobForReschedule.appointments?.customer_name || 'Customer';
+    const appointmentId = selectedJobForReschedule.appointments?.id;
+    
+    try {
+      const newDatetime = new Date(`${rescheduleDate}T${rescheduleTime}:00`).toISOString();
+
+      if (appointmentId) {
+        const { error } = await supabase
+          .from('appointments')
+          .update({ datetime: newDatetime, status: 'scheduled' })
+          .eq('id', appointmentId);
+        if (error) throw error;
+
+        // Send reschedule notifications
+        try {
+          await supabase.functions.invoke('send-appointment-email', {
+            body: { appointmentId, type: 'reschedule' }
+          });
+        } catch (e) { console.error('Reschedule email failed:', e); }
+
+        try {
+          await supabase.functions.invoke('send-appointment-sms', {
+            body: { appointmentId, type: 'reschedule' }
+          });
+        } catch (e) { console.error('Reschedule SMS failed:', e); }
+      }
+
+      toast.success(`Appointment rescheduled for ${customerName}`, { description: 'Customer has been notified' });
+      refetchJobs();
+      setSelectorMode(null);
+      setSelectedJobForReschedule(null);
+      setRescheduleDate('');
+      setRescheduleTime('');
+      sendMessage(`I have rescheduled ${customerName}'s ${selectedJobForReschedule.appointments?.service_type || 'service'} appointment to ${rescheduleDate} at ${rescheduleTime}.`);
+
+    } catch (error) {
+      console.error('Reschedule error:', error);
+      toast.error('Failed to reschedule', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [selectedJobForReschedule, rescheduleDate, rescheduleTime, processingJobId, refetchJobs, sendMessage]);
+
   // Combined Arrive & Start handler - marks as arrived, notifies customer, then starts job
   const handleSelectJobForArriveAndStart = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
@@ -672,14 +805,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   // Get active label based on selector mode - show "Home" when no action is active
   const getActiveLabel = () => {
     if (selectorMode === 'accept') return 'Job Accept';
+    if (selectorMode === 'decline') return 'Job Decline';
     if (selectorMode === 'directions') return 'Directions';
     if (selectorMode === 'enroute') return 'En Route';
     if (selectorMode === 'eta') return 'ETA Update';
     if (selectorMode === 'arrive_start') return 'Arrival';
     if (selectorMode === 'complete') return 'Completion';
+    if (selectorMode === 'reschedule') return 'Reschedule';
     if (selectorMode === 'quote') return 'Quoting';
     if (selectorMode === 'invoice') return 'Invoicing';
-    if (messages.length > 0) return agentInfo.label; // Show agent label during chat
+    if (messages.length > 0) return agentInfo.label;
     return 'Home';
   };
   
@@ -753,6 +888,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         onSelect: handleSelectJobForAccept,
       };
     }
+    if (selectorMode === 'decline') {
+      return {
+        icon: XCircle,
+        title: 'Select job to decline',
+        emptyMessage: 'No pending jobs to decline',
+        actionIcon: XCircle,
+        onSelect: handleSelectJobForDecline,
+      };
+    }
     if (selectorMode === 'directions') {
       return {
         icon: Navigation,
@@ -796,6 +940,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         emptyMessage: 'No active jobs to complete',
         actionIcon: CheckCircle,
         onSelect: handleSelectJobForComplete,
+      };
+    }
+    if (selectorMode === 'reschedule') {
+      return {
+        icon: CalendarClock,
+        title: selectedJobForReschedule ? 'Set new date & time' : 'Select appointment to reschedule',
+        emptyMessage: 'No active appointments to reschedule',
+        actionIcon: CalendarClock,
+        onSelect: handleSelectJobForReschedule,
       };
     }
     return null;
@@ -888,6 +1041,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               setSelectorMode(null);
               setSelectedJobForEta(null);
               setEtaMinutes('');
+              setSelectedJobForReschedule(null);
+              setRescheduleDate('');
+              setRescheduleTime('');
             }}>
               <X className="h-4 w-4" />
             </Button>
@@ -929,6 +1085,53 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                     </>
                   )}
                 </Button>
+              </div>
+              <p className="text-[10px] text-foreground/60 mt-1">
+                Customer will be notified via SMS & email
+              </p>
+            </div>
+          )}
+
+          {/* Reschedule Input Form - shown after job selection */}
+          {selectorMode === 'reschedule' && selectedJobForReschedule && (
+            <div className="mb-3 p-2.5 rounded-lg border bg-background">
+              <div className="flex items-center gap-2 mb-2">
+                <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForReschedule.status))} />
+                <span className="font-medium text-sm text-foreground">{selectedJobForReschedule.appointments?.customer_name}</span>
+                <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                  {selectedJobForReschedule.status.replace('_', ' ')}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <Input
+                  type="date"
+                  value={rescheduleDate}
+                  onChange={(e) => setRescheduleDate(e.target.value)}
+                  className="h-8 text-sm"
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="time"
+                    value={rescheduleTime}
+                    onChange={(e) => setRescheduleTime(e.target.value)}
+                    className="h-8 text-sm flex-1"
+                  />
+                  <Button 
+                    size="sm" 
+                    className="h-8"
+                    onClick={handleSendReschedule}
+                    disabled={!rescheduleDate || !rescheduleTime || processingJobId === selectedJobForReschedule.id}
+                  >
+                    {processingJobId === selectedJobForReschedule.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <CalendarClock className="h-3.5 w-3.5 mr-1" />
+                        Reschedule
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
               <p className="text-[10px] text-foreground/60 mt-1">
                 Customer will be notified via SMS & email
