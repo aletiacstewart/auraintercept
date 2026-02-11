@@ -12,7 +12,7 @@ interface ElevenLabsSetupGuideProps {
   agentId?: string;
 }
 
-const WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-booking-agent';
+// Webhook URL kept for post-call webhook (Step 7)
 const POST_CALL_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/elevenlabs-post-call';
 
 // Tool definitions for form-based setup with clearer structure
@@ -36,51 +36,34 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
   {
     id: 'get_services',
     name: 'get_services',
-    description: 'Get available services. Call this first to know what services the company offers.',
+    description: 'Get available services the company offers. Call this first so you know what to offer the customer.',
     icon: Wrench,
     bodyParams: [
-      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_services' },
-      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId }
+      { identifier: 'service_type', description: 'Optional filter — leave empty to get all services', required: false, valueType: 'llm_prompt' }
     ]
   },
   {
-    id: 'get_available_dates',
-    name: 'get_available_dates',
-    description: 'Get available booking dates for a service type.',
+    id: 'check_availability',
+    name: 'check_availability',
+    description: 'Check available appointment slots for a given date and service. Returns specific time slots with technician availability.',
     icon: Calendar,
     bodyParams: [
-      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_available_dates' },
-      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
-      { identifier: 'service_type', description: 'The service type selected by the customer', required: true, valueType: 'llm_prompt' }
+      { identifier: 'preferred_date', description: 'The date to check in YYYY-MM-DD format. Convert natural language like "tomorrow" or "next Monday" to this format.', required: true, valueType: 'llm_prompt' },
+      { identifier: 'service_type', description: 'The service type to check availability for', required: false, valueType: 'llm_prompt' }
     ]
   },
   {
-    id: 'get_available_times',
-    name: 'get_available_times',
-    description: 'Get available time slots for a specific date.',
-    icon: Clock,
-    bodyParams: [
-      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_available_times' },
-      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
-      { identifier: 'date', description: 'The appointment date. Convert natural language (tomorrow, next Monday, etc.) to YYYY-MM-DD format based on current date', required: true, valueType: 'llm_prompt' },
-      { identifier: 'service_type', description: 'The service type', required: true, valueType: 'llm_prompt' }
-    ]
-  },
-  {
-    id: 'book_appointment',
-    name: 'book_appointment',
-    description: 'Book an appointment with all customer details.',
+    id: 'create_appointment',
+    name: 'create_appointment',
+    description: 'Create and confirm a booking with all customer details.',
     icon: Phone,
     bodyParams: [
-      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'book_appointment' },
-      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
       { identifier: 'customer_name', description: 'Customer full name', required: true, valueType: 'llm_prompt' },
       { identifier: 'customer_phone', description: 'Customer phone number', required: true, valueType: 'llm_prompt' },
       { identifier: 'customer_email', description: 'Customer email address', required: false, valueType: 'llm_prompt' },
-      { identifier: 'customer_address', description: 'Service address', required: true, valueType: 'llm_prompt' },
       { identifier: 'service_type', description: 'Service type being booked', required: true, valueType: 'llm_prompt' },
-      { identifier: 'date', description: 'Appointment date converted to YYYY-MM-DD. Interpret natural language like tomorrow, next week, Wednesday, etc.', required: true, valueType: 'llm_prompt' },
-      { identifier: 'time', description: 'Appointment time in HH:MM format (24hr). Convert "4pm" to 16:00, "9am" to 09:00, etc.', required: true, valueType: 'llm_prompt' },
+      { identifier: 'datetime', description: 'Full date and time in ISO format (YYYY-MM-DDTHH:MM:SS). Combine date and chosen time slot.', required: true, valueType: 'llm_prompt' },
+      { identifier: 'duration_minutes', description: 'Appointment duration in minutes (default: 60)', required: false, valueType: 'llm_prompt' },
       { identifier: 'notes', description: 'Additional notes about the service request', required: false, valueType: 'llm_prompt' }
     ]
   }
@@ -329,7 +312,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </AccordionContent>
           </AccordionItem>
 
-          {/* Step 3: Add Tools using Form Mode */}
+          {/* Step 3: Add Client Tools */}
           <AccordionItem value="step-3">
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
@@ -338,35 +321,26 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-4">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>Use Form Mode</strong> (not JSON Mode) - it's more reliable. Follow the step-by-step instructions below for each tool.
+              <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200">
+                <AlertCircle className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-xs text-blue-800 dark:text-blue-200">
+                  <strong>These are Client Tools</strong> — they run in the customer's browser, not via server webhooks. The browser SDK intercepts each tool call and routes it to your backend automatically. <strong>No webhook URL is needed.</strong>
                 </AlertDescription>
               </Alert>
 
-              {/* Webhook URL */}
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-xs font-medium text-foreground mb-2">Webhook URL (same for all tools):</p>
-                <div className="flex items-center gap-2">
-                  <code className="text-xs bg-background px-2 py-1 rounded flex-1 overflow-x-auto">{WEBHOOK_URL}</code>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0"
-                    onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook-url')}
-                  >
-                    {copiedItems['webhook-url'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  </Button>
-                </div>
-              </div>
+              <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-xs text-amber-800 dark:text-amber-200">
+                  <strong>Migrating from webhooks?</strong> If you previously had 4 webhook tools (get_services, get_available_dates, get_available_times, book_appointment), remove them and create these 3 client tools instead.
+                </AlertDescription>
+              </Alert>
 
-              <p className="font-medium text-foreground">Create all 4 tools below. For each tool:</p>
+              <p className="font-medium text-foreground">Create all 3 client tools below. For each tool:</p>
               
               <ol className="list-decimal list-inside space-y-1 text-foreground text-xs bg-primary/5 p-3 rounded-lg">
-                <li>Go to <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
-                <li>Make sure you're in <strong>Form Mode</strong> (not JSON Mode)</li>
-                <li>Fill in the fields as shown below</li>
+                <li>Go to <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Client</strong></li>
+                <li>Set the <strong>Name</strong> and <strong>Description</strong> exactly as shown</li>
+                <li>Add the parameters listed below</li>
                 <li>Click <strong>Add Tool</strong></li>
               </ol>
 
@@ -385,7 +359,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                       {/* Configuration Section */}
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
-                          📋 Configuration Tab
+                          📋 Tool Settings
                         </p>
                         <table className="w-full text-xs border-collapse">
                           <tbody>
@@ -421,38 +395,22 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                 </div>
                               </td>
                             </tr>
-                            <tr className="border-b">
-                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">Method</td>
-                              <td className="py-1.5"><code className="bg-muted px-2 py-0.5 rounded">POST</code></td>
-                            </tr>
                             <tr>
-                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">URL</td>
-                              <td className="py-1.5 text-xs text-muted-foreground italic">Use the webhook URL above</td>
+                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">Type</td>
+                              <td className="py-1.5"><Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 text-[10px]">Client</Badge></td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
 
-                      {/* Body Parameters Section - Card-based layout */}
+                      {/* Parameters Section */}
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
-                          📝 Body Parameters Tab
+                          📝 Parameters
                         </p>
                         
-                        {/* Legend */}
-                        <div className="bg-muted/30 p-2 rounded-lg mb-3 flex flex-wrap gap-3 text-[10px]">
-                          <div className="flex items-center gap-1.5">
-                            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 text-[10px] px-1.5">Value</Badge>
-                            <span className="text-muted-foreground">= Fixed constant (you paste it)</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100 text-[10px] px-1.5">LLM Prompt</Badge>
-                            <span className="text-muted-foreground">= AI fills from conversation</span>
-                          </div>
-                        </div>
-                        
                         <p className="text-xs text-muted-foreground mb-3">
-                          Click <strong>+ Add Parameter</strong> for each step below:
+                          Add each parameter below. The AI agent will fill these from the conversation automatically.
                         </p>
                         
                         {/* Parameter Cards */}
@@ -564,7 +522,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
-              <p>After adding all 4 tools:</p>
+              <p>After adding all 3 client tools:</p>
               <ol className="list-decimal list-inside space-y-2">
                 <li>Click <strong>"Talk to Agent"</strong> in ElevenLabs to test</li>
                 <li>Say: <em>"I need to schedule a plumbing repair"</em></li>
