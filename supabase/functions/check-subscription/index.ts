@@ -62,14 +62,20 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
-    // Validate JWT
-    const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser(token);
-    if (authError || !authUser) {
-      logStep("getUser failed", { error: authError?.message });
-      throw new Error(`Authentication error: ${authError?.message || 'Invalid token'}`);
+    // Validate JWT using getClaims (works even when session is expired/missing)
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      logStep("getClaims failed, falling back to getUser", { error: claimsError?.message });
+      // Fallback to getUser
+      const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser(token);
+      if (authError || !authUser) {
+        logStep("getUser also failed", { error: authError?.message });
+        throw new Error(`Authentication error: ${authError?.message || 'Invalid token'}`);
+      }
+      var user = { id: authUser.id, email: authUser.email! };
+    } else {
+      var user = { id: claimsData.claims.sub as string, email: claimsData.claims.email as string };
     }
-
-    const user = { id: authUser.id, email: authUser.email! };
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Get user's role
