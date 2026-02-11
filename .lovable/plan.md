@@ -1,48 +1,33 @@
 
 
-## Clean Rewrite: VoiceChat Component
-
-### Problem
-
-The current VoiceChat.tsx is 654 lines with accumulated debugging hacks (AudioContext unlock, force-play intervals, connection timeouts, debug badges, auto-retry refs) that obscure the actual issue and make debugging impossible. Despite multiple fix attempts, the agent connects then immediately disconnects.
-
-### Approach
-
-Strip the component down to a clean, minimal implementation that follows the ElevenLabs React SDK documentation exactly. Keep text mode separate and untouched.
+## Fix: Contextual Fillers, No Re-Asking, and SWAIG Fallback Messages
 
 ### Changes
 
-**File: `src/components/ai/VoiceChat.tsx`** -- Full rewrite
+**1. `supabase/functions/voice-handler/index.ts`**
 
-The new component will:
+- **Keep `speech_fillers`** but add a prompt instruction telling the AI to only use fillers when actively thinking or processing, not after every sentence. Add to the system prompt:
+  - "Use filler words like 'um' or 'uh' sparingly and only when you are genuinely pausing to think or look something up. Never use them as a habit after every response."
+- **Add no-repeat rule** to the prompt:
+  - "NEVER re-ask for information the caller has already provided. If you collected their name, phone, or email earlier, use it."
+  - "Do NOT ask 'would you like to leave your contact info' if you already have it from earlier in the conversation."
 
-1. Use `useConversation` hook with only `onConnect`, `onDisconnect`, `onMessage`, `onError` callbacks
-2. Call `startSession` with ONLY `{ agentId, connectionType: "webrtc" }` -- no token fetching, no signed URL fallback, no dual-path logic. Use the public agent connection first to verify the agent works at all
-3. Remove all "reliability" hacks (AudioContext unlock, force-play interval, connection timeout, debug badge) -- these were masking the real problem
-4. Keep text mode (test mode) logic intact since it works fine
-5. Request microphone permission on button click, then immediately start session
+**2. `supabase/functions/voice-swaig/index.ts`**
 
-### Simplified Voice Flow
+- **Line 96**: Change "Would you like to leave your information and we'll call you back?" to "Would you like me to have a team member reach out to you?"
+- **Line 200**: Change "Would you like to leave your information and we'll reach out when something opens up?" to "I can have a team member reach out when something opens up. Would you like that?"
 
-```text
-User clicks "Start Voice Chat"
-  -> getUserMedia({ audio: true })
-  -> conversation.startSession({ agentId, connectionType: "webrtc" })
-  -> onConnect fires -> show "Connected"
-  -> onDisconnect fires -> show "Ended"
-```
+These changes prevent the SWAIG responses from triggering the AI to re-collect info it already has.
 
-### Why This Will Work
+**3. `supabase/functions/voice-booking-agent/index.ts`**
 
-By removing the token-based authentication layer and connecting directly with `agentId`, we eliminate the edge function as a failure point. If the agent still disconnects immediately with this minimal setup, the problem is in the ElevenLabs agent configuration itself (not our code), and we'll know exactly where to look.
+- Add a `get_services` / `list_services` tool handler so the ElevenLabs web voice agent can look up company services (mirroring what `voice-swaig` already does for phone calls).
 
-If the direct `agentId` connection works, we can then layer back token-based auth as a second step.
+### Technical Summary
 
-### Edge Function
-
-No changes to `elevenlabs-conversation-token` -- we're bypassing it initially to isolate the issue. Once the direct connection works, we'll re-add token auth.
-
-### Files Changed
-
-- `src/components/ai/VoiceChat.tsx` -- Clean rewrite with minimal voice connection logic
+| File | What Changes |
+|------|-------------|
+| `voice-handler/index.ts` | Add prompt lines for contextual filler usage and no-repeat info gathering |
+| `voice-swaig/index.ts` | Update 2 fallback messages to stop triggering re-collection of caller info |
+| `voice-booking-agent/index.ts` | Add `get_services` tool handler for web voice chat |
 
