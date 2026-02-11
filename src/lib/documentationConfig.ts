@@ -590,36 +590,43 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'SignalWire',
     purpose: 'SMS & Voice Calls',
     cost: '$2/number + ~$20-80/mo usage (40% cheaper SMS)',
-    requiredFor: 'Halo+ (for Voice)',
+    requiredFor: 'All Tiers (Voice & SMS)',
     optional: false,
   },
   {
     name: 'ElevenLabs',
     purpose: 'AI Voice Synthesis (Proxy Voice Chat)',
     cost: '$0-99+/month based on usage',
-    requiredFor: 'Halo+ (for Voice)',
+    requiredFor: 'All Tiers (Voice)',
     optional: false,
   },
   {
     name: 'Resend',
     purpose: 'Email Notifications',
     cost: '$0-20+/month based on volume',
-    requiredFor: 'All Tiers',
+    requiredFor: 'All Tiers (Email)',
+    optional: false,
+  },
+  {
+    name: 'A2P 10DLC Compliance',
+    purpose: 'US SMS Regulatory Compliance (via SignalWire)',
+    cost: 'Included with SignalWire registration',
+    requiredFor: 'All Tiers (SMS)',
     optional: false,
   },
   {
     name: 'Google Calendar',
     purpose: 'Calendar Sync (Two-way)',
     cost: 'Free',
-    requiredFor: 'Optional for Halo+',
+    requiredFor: 'Scheduling+ (booking/scheduling agents)',
     optional: true,
   },
   {
     name: 'Stripe',
     purpose: 'Invoice Payments',
     cost: '2.9% + $0.30/transaction',
-    requiredFor: 'All Tiers',
-    optional: false,
+    requiredFor: 'Field Ops+ (invoicing)',
+    optional: true,
   },
   {
     name: 'Social Media Accounts',
@@ -738,7 +745,7 @@ export function formatEmployees(employees: number | 'Unlimited'): string {
 // INTEGRATION REQUIREMENTS BY TIER
 // ============================================
 
-export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar';
+export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar' | 'a2p_10dlc';
 
 export interface IntegrationRequirement {
   required: boolean; // true = auto-enabled + locked, false = optional (soft lock)
@@ -751,11 +758,12 @@ export interface IntegrationRequirement {
 export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
   express: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
-    resend: { required: false, reason: 'Optional for email notifications' },
+    resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Not included in your plan' },
     calendar: { required: false, reason: 'Optional for appointment sync' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   aura_flow: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
@@ -764,30 +772,34 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     resend: { required: true, reason: 'Required for email follow-ups' },
     tavily: { required: false, reason: 'Not included in your plan' },
     calendar: { required: true, reason: 'Required for Scheduling Agent calendar sync' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   halo: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
-    resend: { required: false, reason: 'Optional for email notifications' },
+    resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Not included in your plan' },
     calendar: { required: true, reason: 'Required for Customer Portal scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
-    signalwire: { required: false, reason: 'Voice not included - use Message Aura (text)' },
-    elevenlabs: { required: false, reason: 'Voice not included in your plan' },
-    resend: { required: false, reason: 'Optional for email notifications' },
+    signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: false, reason: 'Optional for appointment sync' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   single_point: {
-    stripe: { required: false, reason: 'Optional for invoice payments' },
+    stripe: { required: true, reason: 'Required for invoice payments' },
     signalwire: { required: true, reason: 'Required for voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email reminders' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: false, reason: 'Optional for appointment sync' },
+    calendar: { required: true, reason: 'Required for field operations scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   multi_track: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
@@ -796,6 +808,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   command: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
@@ -804,6 +817,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     resend: { required: true, reason: 'Required for email campaigns' },
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for enterprise scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
   },
   // Fallback for free/unknown tiers
   free: {
@@ -813,6 +827,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     resend: { required: false, reason: 'Subscribe to enable email' },
     tavily: { required: false, reason: 'Subscribe to enable AI research' },
     calendar: { required: false, reason: 'Subscribe to enable calendar sync' },
+    a2p_10dlc: { required: false, reason: 'Subscribe to enable SMS compliance' },
   },
 };
 

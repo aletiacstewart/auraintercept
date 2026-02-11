@@ -297,7 +297,6 @@ const sections: FeatureSection[] = [
       { name: 'Calendar Sync', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'API Access', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'Customer Support', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'A2P 10DLC Compliance', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
     ],
   },
   {
@@ -307,6 +306,7 @@ const sections: FeatureSection[] = [
       { name: 'Stripe (Payments)', starter: 'Optional', scheduling: 'Optional', growth: 'Optional', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'A2P 10DLC Compliance', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Calendar Sync', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Social Media Accounts', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
     ],
