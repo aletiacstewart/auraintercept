@@ -374,39 +374,26 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         agentId,
       });
 
-      // Build overrides from edge function response
-      const overrides: any = {};
-      if (data?.firstMessage) {
-        overrides.agent = {
-          firstMessage: data.firstMessage,
-          prompt: data.systemPrompt ? { prompt: data.systemPrompt } : undefined,
-        };
-      }
-      const hasOverrides = Object.keys(overrides).length > 0;
-      console.log("[VoiceChat] Overrides:", hasOverrides ? overrides : "none");
-
+      // No overrides — agent uses its own configured greeting/prompt from ElevenLabs dashboard
       if (data?.token) {
         lastConnectMethodRef.current = "webrtc";
-        console.log("[VoiceChat] ▶ Starting WebRTC session...");
+        console.log("[VoiceChat] ▶ Starting WebRTC session (no overrides)...");
         await conversation.startSession({
           conversationToken: data.token,
           connectionType: "webrtc",
-          overrides: hasOverrides ? overrides : undefined,
         });
       } else if (data?.signed_url) {
         lastConnectMethodRef.current = "ws_signed_url";
-        console.log("[VoiceChat] ▶ Starting WebSocket (signed_url) session...");
+        console.log("[VoiceChat] ▶ Starting WebSocket (signed_url, no overrides)...");
         await conversation.startSession({
           signedUrl: data.signed_url,
-          overrides: hasOverrides ? overrides : undefined,
         });
       } else if (agentId) {
         lastConnectMethodRef.current = "ws_agent_id";
-        console.log("[VoiceChat] ▶ Starting WebSocket (agentId) session...");
+        console.log("[VoiceChat] ▶ Starting WebSocket (agentId, no overrides)...");
         await conversation.startSession({
           agentId,
           connectionType: "websocket",
-          overrides: hasOverrides ? overrides : undefined,
         });
       } else {
         throw new Error("No connection method available — missing token, signed_url, and agentId");
