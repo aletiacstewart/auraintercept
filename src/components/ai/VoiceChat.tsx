@@ -164,6 +164,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         agentId,
         connectionType: "webrtc",
       });
+
+      // Inject today's date so the agent can resolve "tomorrow", "next Monday", etc.
+      const today = new Date();
+      const formatted = today.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      });
+      conversation.sendContextualUpdate(
+        `Today's date is ${formatted} (${today.toISOString().split('T')[0]}).`
+      );
+      console.log("[VoiceChat] Sent date context:", formatted);
     } catch (e) {
       console.error("[VoiceChat] Start failed:", e);
       setIsConnecting(false);

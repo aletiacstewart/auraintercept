@@ -84,12 +84,18 @@ serve(async (req) => {
           .eq("company_id", companyId)
           .eq("job_type", "technician");
 
-        // Parse preferred date early (default to tomorrow)
+        // Parse preferred date — resolve relative terms server-side as safety net
         let targetDate = preferredDate;
-        if (!targetDate) {
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          targetDate = tomorrow.toISOString().split("T")[0];
+        if (!targetDate || targetDate.toLowerCase() === "tomorrow") {
+          const d = new Date();
+          if (!targetDate || targetDate.toLowerCase() === "tomorrow") {
+            d.setDate(d.getDate() + 1);
+          }
+          targetDate = d.toISOString().split("T")[0];
+          console.log("[voice-booking-agent] Resolved relative date to:", targetDate);
+        } else if (targetDate.toLowerCase() === "today") {
+          targetDate = new Date().toISOString().split("T")[0];
+          console.log("[voice-booking-agent] Resolved 'today' to:", targetDate);
         }
 
         const [year, month, day] = targetDate.split("-").map(Number);
@@ -258,6 +264,24 @@ serve(async (req) => {
           }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
+        }
+
+        // Create job_assignments record so appointment appears in calendar & technician queue
+        try {
+          const { error: jaError } = await supabase
+            .from("job_assignments")
+            .insert({
+              company_id: companyId,
+              appointment_id: appointment.id,
+              status: "pending_acceptance",
+            });
+          if (jaError) {
+            console.error("[voice-booking-agent] job_assignments insert failed:", jaError);
+          } else {
+            console.log("[voice-booking-agent] job_assignments created for appointment:", appointment.id);
+          }
+        } catch (jaErr) {
+          console.error("[voice-booking-agent] job_assignments error (non-blocking):", jaErr);
         }
 
         // Sync to Google Calendar (if connected)
