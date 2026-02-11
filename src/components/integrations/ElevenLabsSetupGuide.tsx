@@ -22,6 +22,7 @@ interface BodyParam {
   required: boolean;
   valueType: 'value' | 'llm_prompt';
   value?: string;
+  llmPrompt?: string;
 }
 
 interface ToolConfig {
@@ -39,7 +40,7 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
     description: 'Get available services the company offers. Call this first so you know what to offer the customer.',
     icon: Wrench,
     bodyParams: [
-      { identifier: 'service_type', description: 'Optional filter — leave empty to get all services', required: false, valueType: 'llm_prompt' }
+      { identifier: 'service_type', description: 'Optional filter — leave empty to get all services', required: false, valueType: 'llm_prompt', llmPrompt: 'Extract the type of service the customer is asking about. If they haven\'t mentioned a specific service yet, leave this empty.' }
     ]
   },
   {
@@ -48,8 +49,8 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
     description: 'Check available appointment slots for a given date and service. Returns specific time slots with technician availability.',
     icon: Calendar,
     bodyParams: [
-      { identifier: 'preferred_date', description: 'The date to check in YYYY-MM-DD format. Convert natural language like "tomorrow" or "next Monday" to this format.', required: true, valueType: 'llm_prompt' },
-      { identifier: 'service_type', description: 'The service type to check availability for', required: false, valueType: 'llm_prompt' }
+      { identifier: 'preferred_date', description: 'The date to check in YYYY-MM-DD format. Convert natural language like "tomorrow" or "next Monday" to this format.', required: true, valueType: 'llm_prompt', llmPrompt: 'Extract the date the customer wants to book. Convert natural language like "tomorrow", "next Monday", "this Friday" into YYYY-MM-DD format. If the customer says "tomorrow" and today is 2026-02-11, return "2026-02-12".' },
+      { identifier: 'service_type', description: 'The service type to check availability for', required: false, valueType: 'llm_prompt', llmPrompt: 'Extract the service type the customer wants to check availability for from the conversation context.' }
     ]
   },
   {
@@ -58,13 +59,13 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
     description: 'Create and confirm a booking with all customer details.',
     icon: Phone,
     bodyParams: [
-      { identifier: 'customer_name', description: 'Customer full name', required: true, valueType: 'llm_prompt' },
-      { identifier: 'customer_phone', description: 'Customer phone number', required: true, valueType: 'llm_prompt' },
-      { identifier: 'customer_email', description: 'Customer email address', required: false, valueType: 'llm_prompt' },
-      { identifier: 'service_type', description: 'Service type being booked', required: true, valueType: 'llm_prompt' },
-      { identifier: 'datetime', description: 'Full date and time in ISO format (YYYY-MM-DDTHH:MM:SS). Combine date and chosen time slot.', required: true, valueType: 'llm_prompt' },
-      { identifier: 'duration_minutes', description: 'Appointment duration in minutes (default: 60)', required: false, valueType: 'llm_prompt' },
-      { identifier: 'notes', description: 'Additional notes about the service request', required: false, valueType: 'llm_prompt' }
+      { identifier: 'customer_name', description: 'Customer full name', required: true, valueType: 'llm_prompt', llmPrompt: 'Extract the customer\'s full name from the conversation. Listen for when they state their name after being asked.' },
+      { identifier: 'customer_phone', description: 'Customer phone number', required: true, valueType: 'llm_prompt', llmPrompt: 'Extract the customer\'s phone number from the conversation. It may be spoken digit by digit or as a full number.' },
+      { identifier: 'customer_email', description: 'Customer email address', required: false, valueType: 'llm_prompt', llmPrompt: 'Extract the customer\'s email address if they provided one during the conversation.' },
+      { identifier: 'service_type', description: 'Service type being booked', required: true, valueType: 'llm_prompt', llmPrompt: 'Extract which service the customer selected for their appointment from the conversation.' },
+      { identifier: 'datetime', description: 'Full date and time in ISO format (YYYY-MM-DDTHH:MM:SS). Combine date and chosen time slot.', required: true, valueType: 'llm_prompt', llmPrompt: 'Combine the confirmed date and time slot into ISO format (YYYY-MM-DDTHH:MM:SS). Use the date from check_availability and the specific time the customer chose.' },
+      { identifier: 'duration_minutes', description: 'Appointment duration in minutes (default: 60)', required: false, valueType: 'llm_prompt', llmPrompt: 'Extract the appointment duration in minutes if discussed. Default to 60 if not mentioned.' },
+      { identifier: 'notes', description: 'Additional notes about the service request', required: false, valueType: 'llm_prompt', llmPrompt: 'Extract any additional notes, special requests, or details the customer mentioned about their service needs.' }
     ]
   }
 ];
@@ -493,8 +494,23 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                   </div>
                                 )}
                                 
-                                {/* LLM Prompt note */}
-                                {param.valueType === 'llm_prompt' && (
+                                {/* LLM Prompt - copyable extraction text */}
+                                {param.valueType === 'llm_prompt' && param.llmPrompt && (
+                                  <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-950/30 p-2 rounded">
+                                    <span className="text-[10px] text-purple-700 dark:text-purple-300 w-20 shrink-0">LLM Prompt:</span>
+                                    <span className="text-xs bg-white dark:bg-purple-900/50 px-2 py-1 rounded flex-1 text-purple-800 dark:text-purple-200">{param.llmPrompt}</span>
+                                    <Button
+                                      variant="secondary"
+                                      size="sm"
+                                      className="h-6 px-2 shrink-0 text-[10px]"
+                                      onClick={() => copyToClipboard(param.llmPrompt!, `${tool.id}-param-${paramIndex}-llm`)}
+                                    >
+                                      {copiedItems[`${tool.id}-param-${paramIndex}-llm`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                      <span className="ml-1">Copy</span>
+                                    </Button>
+                                  </div>
+                                )}
+                                {param.valueType === 'llm_prompt' && !param.llmPrompt && (
                                   <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-950/30 p-2 rounded">
                                     <span className="text-[10px] text-purple-700 dark:text-purple-300">
                                       💡 The AI will extract this from the conversation automatically
