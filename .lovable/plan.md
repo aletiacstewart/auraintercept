@@ -1,61 +1,48 @@
 
 
-## Fix: Revert to useConversation Hook (Remove Raw Conversation Class)
+## Clean Rewrite: VoiceChat Component
 
-### Root Cause
+### Problem
 
-The refactor from `useConversation` hook to the raw `Conversation` class from `@elevenlabs/client` removed critical audio pipeline setup. The hook internally configures microphone input, audio output, and proper WebRTC/WebSocket lifecycle management. The raw class requires explicit input/output configuration that our code doesn't provide, causing the connection to establish briefly then immediately drop.
+The current VoiceChat.tsx is 654 lines with accumulated debugging hacks (AudioContext unlock, force-play intervals, connection timeouts, debug badges, auto-retry refs) that obscure the actual issue and make debugging impossible. Despite multiple fix attempts, the agent connects then immediately disconnects.
 
-The original concern about the hook "injecting overrides" was incorrect -- the hook only sends overrides if you explicitly pass them. The previous code was explicitly constructing override objects with `undefined` values, which the hook dutifully sent.
+### Approach
 
-### Fix
+Strip the component down to a clean, minimal implementation that follows the ElevenLabs React SDK documentation exactly. Keep text mode separate and untouched.
 
-Revert `VoiceChat.tsx` to use the `useConversation` hook from `@elevenlabs/react`, but call `startSession` with ONLY the connection config (token/signedUrl/agentId) and NO overrides.
+### Changes
 
-### Changes to `src/components/ai/VoiceChat.tsx`
+**File: `src/components/ai/VoiceChat.tsx`** -- Full rewrite
 
-1. **Replace import**: Change `import { Conversation } from "@elevenlabs/client"` back to `import { useConversation } from "@elevenlabs/react"`
+The new component will:
 
-2. **Remove manual state management**: Delete `conversationRef`, `convStatus`, `convIsSpeaking` state variables and the manual cleanup `useEffect`
+1. Use `useConversation` hook with only `onConnect`, `onDisconnect`, `onMessage`, `onError` callbacks
+2. Call `startSession` with ONLY `{ agentId, connectionType: "webrtc" }` -- no token fetching, no signed URL fallback, no dual-path logic. Use the public agent connection first to verify the agent works at all
+3. Remove all "reliability" hacks (AudioContext unlock, force-play interval, connection timeout, debug badge) -- these were masking the real problem
+4. Keep text mode (test mode) logic intact since it works fine
+5. Request microphone permission on button click, then immediately start session
 
-3. **Replace `buildSessionCallbacks` + `startDirectSession`** with the `useConversation` hook:
-   ```
-   const conversation = useConversation({
-     onConnect: () => { ... },
-     onDisconnect: () => { ... },
-     onMessage: (message) => { ... },
-     onError: (error) => { ... },
-   });
-   ```
+### Simplified Voice Flow
 
-4. **Update startSession calls** to use `conversation.startSession()` with NO overrides:
-   - WebRTC: `conversation.startSession({ conversationToken: data.token, connectionType: "webrtc" })`
-   - WebSocket signed URL: `conversation.startSession({ signedUrl: data.signed_url })`
-   - WebSocket agent ID: `conversation.startSession({ agentId, connectionType: "websocket" })`
+```text
+User clicks "Start Voice Chat"
+  -> getUserMedia({ audio: true })
+  -> conversation.startSession({ agentId, connectionType: "webrtc" })
+  -> onConnect fires -> show "Connected"
+  -> onDisconnect fires -> show "Ended"
+```
 
-5. **Update state references**:
-   - `convStatus` references become `conversation.status`
-   - `convIsSpeaking` references become `conversation.isSpeaking`
-   - `conversationRef.current.endSession()` becomes `conversation.endSession()`
-   - `conversationRef.current.setVolume()` becomes `conversation.setVolume()`
+### Why This Will Work
 
-6. **Keep all reliability features**: AudioContext unlock, force-play interval, connection timeout, and debug badge all remain
+By removing the token-based authentication layer and connecting directly with `agentId`, we eliminate the edge function as a failure point. If the agent still disconnects immediately with this minimal setup, the problem is in the ElevenLabs agent configuration itself (not our code), and we'll know exactly where to look.
 
-### Why This Works
+If the direct `agentId` connection works, we can then layer back token-based auth as a second step.
 
-The `useConversation` hook from `@elevenlabs/react` wraps the `Conversation` class and handles:
-- Microphone input stream acquisition and piping
-- Audio output device configuration
-- Proper WebRTC peer connection lifecycle
-- State synchronization (status, isSpeaking)
-- Cleanup on unmount
+### Edge Function
 
-Without overrides being passed, the ElevenLabs agent will use its dashboard-configured first message and prompt.
+No changes to `elevenlabs-conversation-token` -- we're bypassing it initially to isolate the issue. Once the direct connection works, we'll re-add token auth.
 
 ### Files Changed
 
-- `src/components/ai/VoiceChat.tsx` -- Revert to `useConversation` hook, remove raw `Conversation` class usage
+- `src/components/ai/VoiceChat.tsx` -- Clean rewrite with minimal voice connection logic
 
-### Not a SignalWire Conflict
-
-SignalWire handles phone calls through separate edge functions (`voice-handler`, `voice-swaig`). The web voice chat uses ElevenLabs directly via WebRTC/WebSocket. These two systems are completely independent and do not interact.
