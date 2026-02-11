@@ -316,7 +316,7 @@ serve(async (req) => {
         return new Response(JSON.stringify({
           success: true,
           appointment_id: appointment.id,
-          message: `Wonderful, I've got that booked for you! Your appointment is set for ${customerName} on ${datetime} for ${serviceType}. Is there anything else I can help you with?`,
+          message: `Wonderful, I've got that booked for you! Your appointment is set for ${customerName} on ${datetime} for ${serviceType}. Please note, your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details. Is there anything else I can help you with?`,
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
