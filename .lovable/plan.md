@@ -1,48 +1,159 @@
 
 
-## Fix: Availability Check and Booking for Phone AI and Web Voice Chat
+# Complete Platform Audit Report
 
-### Root Cause
+## Overview
 
-There are two separate edge functions handling availability, and one of them is completely broken:
+After a deep dive into the entire codebase -- all pages, consoles, PDFs, help docs, configs, landing page, subscription page, export documents, and legal pages -- I've identified **6 critical categories** of issues requiring fixes.
 
-1. **`voice-swaig`** (phone AI): Has proper availability logic -- queries technician assignments, checks `availability_json`, generates hourly slots, filters out conflicts. This works correctly but uses `['pending', 'confirmed', 'in-progress', 'scheduled']` status filter which is good.
+---
 
-2. **`voice-booking-agent`** (web voice chat): The `check_availability` handler is broken. It only counts existing appointments and returns a generic message like "There are 2 existing appointments this week. Business hours are configured." It never actually queries technician availability, never checks `availability_json`, and never returns available time slots. The AI agent receives no usable data and tells the user there are no times available.
+## Category 1: Pricing and Tier Name Inconsistencies (CRITICAL)
 
-### Fix
+The platform has **3 different sets of pricing/naming** depending on where you look. The single source of truth (`documentationConfig.ts`) says one thing, while the Subscription page and several PDFs say another.
 
-**File: `supabase/functions/voice-booking-agent/index.ts`**
+### Source of Truth (`documentationConfig.ts` + `subscriptionAgentConfig.ts`)
 
-Rewrite the `check_availability` case to mirror the working logic from `voice-swaig`:
+| Internal ID | Display Name | Price |
+|---|---|---|
+| express / starter | Aura Starter | $197 |
+| aura_flow / scheduling | Aura Scheduling | $397 |
+| halo / growth | Aura Growth | $597 |
+| core / business | Aura Business | $797 |
+| single_point / field_ops | Aura Field Ops | $1,497 |
+| multi_track / performance | Aura Performance | $3,497 |
+| command | Aura Command | $5,497 |
 
-1. Query `employee_job_assignments` for technicians in the company
-2. Query `profiles` for those employees' `availability_json`
-3. Parse the preferred date to get the day of week
-4. Generate hourly time slots based on `availability_json` ranges
-5. Filter out slots that conflict with existing appointments (using status filter `['pending', 'confirmed', 'in-progress', 'scheduled']`)
-6. Return the actual available time slots (up to 5) in a structured response
-7. If no slots on the requested date, scan the next 14 days for alternatives (same fallback logic as `voice-swaig`)
+### Subscription Page (`Subscription.tsx`) -- WRONG
 
-This gives the ElevenLabs web voice agent real slot data to work with, enabling it to offer specific times and book appointments.
+| What it shows | Source of Truth |
+|---|---|
+| "Aura Express" $197 | Should be "Aura Starter" $197 |
+| "Aura Flow" $297 | Should be "Aura Scheduling" $397 |
+| "Aura Halo" $397 | Should be "Aura Growth" $597 |
+| "Aura Core" $500 | Should be "Aura Business" $797 |
+| "Single-Point" $1,500 | Should be "Aura Field Ops" $1,497 |
+| "Multi-Track" $3,997 | Should be "Aura Performance" $3,497 |
+| "Aura Pro Command" $5,997 | Should be "Aura Command" $5,497 |
+| Employee limits: 2/2/3/2/5/10/25 | Should be: 2/3/5/8/15/25/50 |
 
-### Technical Details
+### Subscription Page Feature Comparison Table -- WRONG
 
-The rewritten `check_availability` case will:
+The `sections` array in `Subscription.tsx` only shows 4 columns (Core, Single-Point, Multi-Track, Command) using old names and old prices. Should show all 7 tiers with correct names.
 
-```text
-1. Get technician assignments for companyId
-2. Get profiles with availability_json for those employee IDs
-3. Parse preferred_date (or default to tomorrow)
-4. Map date to day name (monday, tuesday, etc.)
-5. For each employee's availability slots on that day:
-   - Generate hourly time slots (e.g., 08:00, 09:00, ...)
-   - Filter out conflicts with existing appointments
-6. Return unique slots (max 5) with a human-readable message
-7. If none found, scan next 14 days and suggest alternatives
-```
+### PricingSummaryPDF Comparison Table -- PARTIALLY WRONG
 
-### Files Changed
+- Page title says "Complete 7-Tier Comparison" but only shows 6 columns (missing Scheduling tier)
+- Uses old variable names but pulls correct prices from `documentationConfig.ts`
+- Text on line 434 says "five subscription tiers" -- should say seven
+- Hardcoded prices in the comparison table rows ($500, $1,500, $3,997, $5,997) don't match source of truth
 
-- `supabase/functions/voice-booking-agent/index.ts` -- Rewrite `check_availability` with real slot-finding logic
+### Agent/Console Counts -- Inconsistent
+
+| Tier | Source of Truth | Subscription Page |
+|---|---|---|
+| Growth | 11 agents, 3 consoles | 3 agents, 1 console |
+| Business | 12 agents, 4 consoles | 0 agents, 0 consoles |
+| Field Ops | 18 agents, 6 consoles | 3 agents, 1 console |
+| Performance | 22 agents, 7 consoles | 10 agents, 2 consoles |
+| Command | 24 agents, 7 consoles | 24 agents, 7 consoles |
+
+### Files Affected
+- `src/pages/Subscription.tsx` -- Wrong names, prices, agent/console counts, employee limits, feature table
+- `src/components/documentation/PricingSummaryPDF.tsx` -- Hardcoded wrong prices in comparison table, says "five tiers"
+- `src/components/documentation/PlatformDocumentPDF.tsx` -- References $297 for "Aura Flow", old tier structure
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx` -- Old names and prices ($1,500, $3,997, $5,997)
+- `src/components/documentation/BrandAssetGuidePDF.tsx` -- Old tier names in color swatches ("Aura Express Orange", "Aura Flow Teal", "Multi-Track Purple")
+- `src/components/documentation/SalesPitchDataPDF.tsx` -- ROI calculations using old pricing
+
+---
+
+## Category 2: Landing Page and Public-Facing Content
+
+### `PricingComparisonTable.tsx` (Landing Page) -- CORRECT (mostly)
+This file uses the NEW names (Starter, Scheduling, Growth, Business, Field Ops, Performance, Command) and correct pricing ($197, $397, $597, $797, $1,497, $3,497, $5,497). However:
+- Line 62/68: References "Twilio" instead of "SignalWire" in feature descriptions and integration table (lines 188-189)
+- Line 188: Integration row says "Twilio (SMS & Voice)" -- platform uses SignalWire, not Twilio
+
+### `Index.tsx` (Landing Page)
+- Integration cost section (lines 1149-1226) uses old tier names: "Halo, Single-Point, Multi-Track, Command" instead of new names
+- Same "Required for" descriptions reference old names
+
+---
+
+## Category 3: Help Content Config Misalignment
+
+### `helpContentConfig.ts`
+- Uses `SubscriptionTier` type names correctly (starter, scheduling, growth, etc.)
+- BUT the `social_media` console (line 211) lists tabs as `['Home', 'Social Posts', 'Content Engine', 'Web Presence', 'Blog']` which includes Content Engine and Web Presence tabs that belong to the `creative_web_presence` console, not Social Media
+- Social Media console in `documentationConfig.ts` lists tabs as `['Home', 'Social Posts', 'Analytics']` -- these don't match
+- Field Operations console tabs (line 104): Lists action-oriented labels like "Accept Job", "Get Directions" etc. while `documentationConfig.ts` lists structural tabs like "Map View", "Schedule", "Dispatch", "Check-in" -- inconsistent representation
+- Business Management console help lists `Admin Agent` at tier `performance` but `documentationConfig.ts` lists it at tier `command`
+- Business Management help lists `Quoting Agent` at tier `field_ops` but `documentationConfig.ts` lists it at tier `multi_track`
+
+---
+
+## Category 4: Copyright and Date Issues
+
+### Outdated Copyright
+- `PublicFooter.tsx` line 59: Shows "2025" -- should be "2026" (current date is Feb 2026)
+
+### Documentation Timestamp
+- `documentationConfig.ts` line 4: Says "Last updated: January 2026" -- should be updated to February 2026
+
+---
+
+## Category 5: Integration Naming ("Twilio" vs "SignalWire")
+
+The platform uses **SignalWire** for SMS and voice, but several files still reference **Twilio**:
+
+- `PricingComparisonTable.tsx` lines 62, 68, 188: "Twilio (SMS & Voice)"
+- This is a **compliance and accuracy issue** -- customers reading the feature comparison will configure the wrong service
+
+The rest of the platform correctly uses "SignalWire" in:
+- `documentationConfig.ts` integrations
+- `Subscription.tsx` (ironically uses the old names but correct vendor)
+- All edge functions
+
+---
+
+## Category 6: Subscription Page Feature Comparison Table Structure
+
+The `Subscription.tsx` feature comparison table (lines 227-318) has a fundamentally broken structure:
+- Only shows 4 columns: Core, Single-Point, Multi-Track, Command
+- Missing 3 tiers entirely: Starter, Scheduling, Growth
+- Uses `FeatureRow` interface with only `core`, `singlePoint`, `multiTrack`, `command` properties
+- Should mirror the 7-column layout from `PricingComparisonTable.tsx` which is correct
+
+---
+
+## Implementation Plan
+
+### Phase 1: Fix Source of Truth Date
+1. Update `documentationConfig.ts` header to "February 2026"
+2. Update `PublicFooter.tsx` copyright to "2026"
+
+### Phase 2: Fix Subscription Page (Highest Impact)
+1. Replace the hardcoded `TIERS` array with data from `documentationConfig.ts` using the `SUBSCRIPTION_TIERS` import
+2. Update the feature comparison `sections` to 7-column layout matching `PricingComparisonTable.tsx`
+3. Update the `TIER_EMPLOYEE_LIMITS` to match source of truth (2/3/5/8/15/25/50)
+
+### Phase 3: Fix PDFs
+1. `PricingSummaryPDF.tsx`: Fix hardcoded prices in comparison table, change "five" to "seven", add missing Scheduling column
+2. `PlatformDocumentPDF.tsx`: Update Aura Flow reference to Aura Scheduling with $397
+3. `ComprehensiveGuidesPDF.tsx`: Update old tier names and prices
+4. `BrandAssetGuidePDF.tsx`: Update color swatch tier names
+5. `SalesPitchDataPDF.tsx`: Update ROI calculations
+
+### Phase 4: Fix Landing Page
+1. `PricingComparisonTable.tsx`: Change "Twilio" to "SignalWire" (3 locations)
+2. `Index.tsx`: Update integration section tier name references
+
+### Phase 5: Fix Help Content
+1. `helpContentConfig.ts`: Fix Social Media console tabs to remove Content Engine/Web Presence tabs, align agent tier requirements with source of truth
+
+### Estimated Scope
+- **13 files** need updates
+- **~50+ individual data points** are mismatched
+- Priority: Subscription page and PDFs (customer-facing documents with wrong pricing)
 
