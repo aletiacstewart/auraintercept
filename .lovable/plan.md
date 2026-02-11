@@ -1,33 +1,61 @@
 
 
-## Fix: Remove Conversation Overrides Causing Agent Disconnect
+## Fix: Revert to useConversation Hook (Remove Raw Conversation Class)
 
 ### Root Cause
 
-The previous fix added `overrides` to `conversation.startSession()`, but:
-1. The ElevenLabs React SDK v0.12.1 serializes ALL override fields (including ones we didn't set like `language`, `voice_id`, `text_only`) as explicit `undefined` values in `conversation_config_override`
-2. Per ElevenLabs docs, overrides **must be enabled in the ElevenLabs Web UI** for the specific agent — if not enabled, the agent rejects the override payload and silently disconnects
-3. The Aura Intercept agent already has its first message and prompt configured in the ElevenLabs dashboard, so overrides are unnecessary
+The refactor from `useConversation` hook to the raw `Conversation` class from `@elevenlabs/client` removed critical audio pipeline setup. The hook internally configures microphone input, audio output, and proper WebRTC/WebSocket lifecycle management. The raw class requires explicit input/output configuration that our code doesn't provide, causing the connection to establish briefly then immediately drop.
+
+The original concern about the hook "injecting overrides" was incorrect -- the hook only sends overrides if you explicitly pass them. The previous code was explicitly constructing override objects with `undefined` values, which the hook dutifully sent.
 
 ### Fix
 
-**File: `src/components/ai/VoiceChat.tsx`**
+Revert `VoiceChat.tsx` to use the `useConversation` hook from `@elevenlabs/react`, but call `startSession` with ONLY the connection config (token/signedUrl/agentId) and NO overrides.
 
-Remove the override-building logic and pass NO overrides to `startSession()`. The agent will use its own configured greeting and prompt from the ElevenLabs dashboard.
+### Changes to `src/components/ai/VoiceChat.tsx`
 
-Changes:
-- Remove the override object construction (lines 377-386)
-- Remove `overrides` parameter from all three `startSession` calls (WebRTC, WebSocket signed URL, WebSocket agent ID)
-- Keep all other reliability improvements (audio pre-creation, force-play interval, connection timeout)
+1. **Replace import**: Change `import { Conversation } from "@elevenlabs/client"` back to `import { useConversation } from "@elevenlabs/react"`
 
-### Why This Fixes It
+2. **Remove manual state management**: Delete `conversationRef`, `convStatus`, `convIsSpeaking` state variables and the manual cleanup `useEffect`
 
-The agent connects, receives no conflicting overrides, uses its own configured first message, speaks the greeting, and the conversation proceeds normally. The connection timeout safety net remains in case there are other issues.
+3. **Replace `buildSessionCallbacks` + `startDirectSession`** with the `useConversation` hook:
+   ```
+   const conversation = useConversation({
+     onConnect: () => { ... },
+     onDisconnect: () => { ... },
+     onMessage: (message) => { ... },
+     onError: (error) => { ... },
+   });
+   ```
 
-### Technical Details
+4. **Update startSession calls** to use `conversation.startSession()` with NO overrides:
+   - WebRTC: `conversation.startSession({ conversationToken: data.token, connectionType: "webrtc" })`
+   - WebSocket signed URL: `conversation.startSession({ signedUrl: data.signed_url })`
+   - WebSocket agent ID: `conversation.startSession({ agentId, connectionType: "websocket" })`
 
-```text
-Before: startSession({ conversationToken, connectionType: "webrtc", overrides: {...} })
-After:  startSession({ conversationToken, connectionType: "webrtc" })
-```
+5. **Update state references**:
+   - `convStatus` references become `conversation.status`
+   - `convIsSpeaking` references become `conversation.isSpeaking`
+   - `conversationRef.current.endSession()` becomes `conversation.endSession()`
+   - `conversationRef.current.setVolume()` becomes `conversation.setVolume()`
 
+6. **Keep all reliability features**: AudioContext unlock, force-play interval, connection timeout, and debug badge all remain
+
+### Why This Works
+
+The `useConversation` hook from `@elevenlabs/react` wraps the `Conversation` class and handles:
+- Microphone input stream acquisition and piping
+- Audio output device configuration
+- Proper WebRTC peer connection lifecycle
+- State synchronization (status, isSpeaking)
+- Cleanup on unmount
+
+Without overrides being passed, the ElevenLabs agent will use its dashboard-configured first message and prompt.
+
+### Files Changed
+
+- `src/components/ai/VoiceChat.tsx` -- Revert to `useConversation` hook, remove raw `Conversation` class usage
+
+### Not a SignalWire Conflict
+
+SignalWire handles phone calls through separate edge functions (`voice-handler`, `voice-swaig`). The web voice chat uses ElevenLabs directly via WebRTC/WebSocket. These two systems are completely independent and do not interact.
