@@ -902,7 +902,7 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-primary">$3,497</span>
+                        <span className="text-sm font-bold text-primary">$2,497</span>
                         <span className="text-[10px] text-muted-foreground">/mo</span>
                       </div>
                     </div>
@@ -937,7 +937,7 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-purple-600">$5,497</span>
+                        <span className="text-sm font-bold text-purple-600">$3,497</span>
                         <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>

@@ -563,7 +563,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Multi-Track - $3,997/mo</Text>
+        <Text style={styles.copyLabel}>Multi-Track - $2,497/mo</Text>
         <Text style={styles.copyHeadline}>Field Operations Command</Text>
         <Text style={styles.copyBody}>
           Scale your operations without the chaos. Intelligent scheduling, dispatch optimization, and complete financial automation.{'\n\n'}
@@ -577,7 +577,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro Command - $5,997/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro Command - $3,497/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 24-agent suite handles every operational task from marketing to analytics.{'\n\n'}

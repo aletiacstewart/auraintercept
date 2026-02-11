@@ -83,7 +83,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Run your field team automatically',
   },
   performance: {
-    // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic Analytics)
+    // Aura Performance ($2,497/mo): + Business Intelligence Stack (Basic Analytics)
     // 22 agents - excludes revenue and forecast (advanced analytics for Command only)
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal (4)
@@ -96,11 +96,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports'],  // All 7 consoles
     label: 'Aura Performance',
-    price: '$3,497/mo',
+    price: '$2,497/mo',
     description: 'Run your entire company with AI and basic analytics',
   },
   command: {
-    // Aura Command ($5,497/mo): All agents + enterprise features
+    // Aura Command ($3,497/mo): All agents + enterprise features
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
     // 24 Total Agents - Full suite including advanced analytics (revenue, forecast)
     agents: [
@@ -121,7 +121,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Command',
-    price: '$5,497/mo',
+    price: '$3,497/mo',
     description: 'AI Operating System with predictive intelligence',
   },
 };

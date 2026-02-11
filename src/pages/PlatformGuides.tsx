@@ -122,8 +122,8 @@ const guideCategories = [
           'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation + Outreach & Sales',
           'Aura Business ($797/mo): 12 AI Operatives + Creative & Web Presence console',
           'Aura Field Ops ($1,497/mo): 18 AI Operatives + Field Operations + Business Management',
-          'Aura Performance ($3,497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
-          'Aura Command ($5,497/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
+          'Aura Performance ($2,497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
+          'Aura Command ($3,497/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
           'Performance tier includes insights + performance agents; Command adds revenue + forecast agents',
           'Employee limits: 2 (Starter), 3 (Scheduling), 5 (Growth), 8 (Business), 15 (Field Ops), 25 (Performance), 50 (Command)',
           'All tiers include API Access, White-Label Branding, and Chat Widget'
