@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Conversation } from "@elevenlabs/client";
+import { useConversation } from "@elevenlabs/react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,11 +51,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [testHistory, setTestHistory] = useState<TranscriptMsg[]>([]);
   const testSessionIdRef = useRef<string>(crypto.randomUUID());
 
-  // Direct Conversation instance (bypasses useConversation hook to avoid override injection)
-  const conversationRef = useRef<any>(null);
-  const [convStatus, setConvStatus] = useState<string>("disconnected");
-  const [convIsSpeaking, setConvIsSpeaking] = useState(false);
-
   // Avoid stale state inside callbacks
   const wasConnectedRef = useRef(false);
   const connectStartedAtRef = useRef<number | null>(null);
@@ -74,23 +69,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     agentSpeaking: boolean;
   }>({ method: null, audioState: null, agentSpeaking: false });
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (conversationRef.current) {
-        try { conversationRef.current.endSession(); } catch {}
-        conversationRef.current = null;
-      }
-    };
-  }, []);
-
-  // Build callbacks for Conversation.startSession (no useConversation hook)
-  const buildSessionCallbacks = useCallback(() => ({
+  // useConversation hook — NO overrides passed
+  const conversation = useConversation({
     onConnect: () => {
       console.log("[VoiceChat] ✅ onConnect fired — connection established");
       wasConnectedRef.current = true;
       setIsConnecting(false);
-      setConvStatus("connected");
       setDebugInfo((prev) => ({ ...prev, method: lastConnectMethodRef.current }));
 
       setTimeout(() => {
@@ -110,9 +94,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
     onDisconnect: () => {
       console.log("[VoiceChat] onDisconnect fired");
-      setConvStatus("disconnected");
-      setConvIsSpeaking(false);
-      conversationRef.current = null;
       setIsConnecting(false);
 
       if (wasConnectedRef.current) {
@@ -141,18 +122,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         }
       }
     },
-    onModeChange: ({ mode }: { mode: string }) => {
-      console.log("[VoiceChat] mode changed:", mode);
-      setConvIsSpeaking(mode === "speaking");
-      setDebugInfo((prev) => ({ ...prev, agentSpeaking: mode === "speaking" }));
-    },
-    onStatusChange: ({ status }: { status: string }) => {
-      console.log("[VoiceChat] 📡 status changed:", status);
-      setConvStatus(status);
-    },
-    onDebug: (info: unknown) => {
-      console.log("[VoiceChat] 🔍 onDebug:", info);
-    },
     onError: (error: unknown) => {
       console.error("[VoiceChat] ❌ onError:", error);
       setIsConnecting(false);
@@ -169,14 +138,15 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: errorMessage,
       });
     },
-  }), [onTranscript, toast]);
+  });
+
   // Connection timeout: warn if agent doesn't speak within 10s
   const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (convStatus === "connected") {
+    if (conversation.status === "connected") {
       connectionTimeoutRef.current = setTimeout(() => {
-        if (!convIsSpeaking) {
+        if (!conversation.isSpeaking) {
           console.warn("[VoiceChat] ⚠️ Agent has not spoken within 10s of connecting");
           toast({
             variant: "destructive",
@@ -194,22 +164,22 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     return () => {
       if (connectionTimeoutRef.current) clearTimeout(connectionTimeoutRef.current);
     };
-  }, [convStatus, convIsSpeaking, toast]);
+  }, [conversation.status, conversation.isSpeaking, toast]);
 
   // Clear timeout once agent starts speaking
   useEffect(() => {
-    if (convIsSpeaking && connectionTimeoutRef.current) {
+    if (conversation.isSpeaking && connectionTimeoutRef.current) {
       clearTimeout(connectionTimeoutRef.current);
       connectionTimeoutRef.current = null;
     }
-  }, [convIsSpeaking]);
+  }, [conversation.isSpeaking]);
 
   // Ensure SDK audio elements stay unmuted and playing
   useEffect(() => {
-    if (convStatus !== "connected") return;
+    if (conversation.status !== "connected") return;
 
     try {
-      conversationRef.current?.setVolume?.({ volume: 1 });
+      conversation.setVolume({ volume: 1 });
     } catch (e) {
       console.warn("[VoiceChat] setVolume failed:", e);
     }
@@ -231,7 +201,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [convStatus]);
+  }, [conversation.status, conversation]);
 
   // Don't eagerly request microphone — request on user gesture in startConversation
   useEffect(() => {
@@ -256,18 +226,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
     if (companyId) fetchAgentId();
   }, [companyId]);
-
-  // Helper to start a session using Conversation directly (no override injection)
-  const startDirectSession = useCallback(async (sessionConfig: Record<string, any>) => {
-    const callbacks = buildSessionCallbacks();
-    console.log("[VoiceChat] ▶ Starting direct session (NO conversation_config_override)...", sessionConfig);
-    const conv = await Conversation.startSession({
-      ...sessionConfig,
-      ...callbacks,
-    } as any);
-    conversationRef.current = conv;
-    return conv;
-  }, [buildSessionCallbacks]);
 
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
@@ -353,18 +311,18 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       if (data?.token) {
         lastConnectMethodRef.current = "webrtc";
-        await startDirectSession({
+        await conversation.startSession({
           conversationToken: data.token,
           connectionType: "webrtc",
         });
       } else if (data?.signed_url) {
         lastConnectMethodRef.current = "ws_signed_url";
-        await startDirectSession({
+        await conversation.startSession({
           signedUrl: data.signed_url,
         });
       } else if (agentId) {
         lastConnectMethodRef.current = "ws_agent_id";
-        await startDirectSession({
+        await conversation.startSession({
           agentId,
           connectionType: "websocket",
         });
@@ -380,7 +338,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: e instanceof Error ? e.message : "Unable to start chat",
       });
     }
-  }, [agentId, companyId, startDirectSession, testMode, toast]);
+  }, [agentId, companyId, conversation, testMode, toast]);
 
   const stopConversation = useCallback(async () => {
     if (testMode) {
@@ -395,10 +353,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
     try {
       wasConnectedRef.current = false;
-      if (conversationRef.current) {
-        await conversationRef.current.endSession();
-        conversationRef.current = null;
-      }
+      await conversation.endSession();
       toast({
         title: "Talk to Aura Ended",
         description: "The conversation has been disconnected",
@@ -527,16 +482,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }
   };
 
-  const isConnected = testMode ? testSessionActive : convStatus === "connected";
-  const isSpeaking = !testMode && isConnected && convIsSpeaking;
+  const isConnected = testMode ? testSessionActive : conversation.status === "connected";
+  const isSpeaking = !testMode && isConnected && conversation.isSpeaking;
 
   // Track isSpeaking changes for debug
   useEffect(() => {
     if (!testMode && isConnected) {
-      console.log("[VoiceChat] isSpeaking changed:", convIsSpeaking);
-      setDebugInfo((prev) => ({ ...prev, agentSpeaking: convIsSpeaking }));
+      console.log("[VoiceChat] isSpeaking changed:", conversation.isSpeaking);
+      setDebugInfo((prev) => ({ ...prev, agentSpeaking: conversation.isSpeaking }));
     }
-  }, [convIsSpeaking, isConnected, testMode]);
+  }, [conversation.isSpeaking, isConnected, testMode]);
 
   const getStatusText = () => {
     if (isConnecting) return "Connecting...";
