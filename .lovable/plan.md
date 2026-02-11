@@ -1,34 +1,39 @@
 
 
-## Fix: Add LLM Prompt Extraction Text for Each Tool Parameter
+## Fix: Ensure Voice Booking Agent Works for All Companies
 
 ### Problem
-When creating client tools in the ElevenLabs dashboard, selecting "LLM Prompt" as the parameter type reveals a required text field: *"This field will be passed to the LLM and should describe in detail how to extract the data from the transcript."* The current setup guide does not provide this text, leaving users stuck.
+The voice booking tools (get_services, check_availability, create_appointment) are configured correctly in the ElevenLabs dashboard as Client tools, but there are reliability issues preventing them from working consistently across all companies.
+
+### Root Causes
+
+1. **companyId fallback bug in the edge function**: When the `agentId` lookup fails (e.g., agent not in `tenant_integrations`), the fallback on line 57 of `voice-booking-agent/index.ts` checks `toolParams.company_id` (snake_case), but VoiceChat.tsx sends `companyId` (camelCase). This means the fallback silently fails and returns "Could not determine company."
+
+2. **No companyId sent directly**: The `invokeBookingAgent` helper sends `companyId` as a top-level body parameter, but the edge function extracts `toolParams` from `body.parameters || body.tool_parameters || body`. Since there's no `parameters` key, `toolParams` becomes the entire `body` object -- so `toolParams.companyId` exists but the code only checks `toolParams.company_id`.
+
+3. **Single agent shared across companies**: Only one ElevenLabs agent exists (agent_0501kh...), but the VoiceChat component fetches the `elevenlabs_agent_id` per company. Companies without an agent configured in `tenant_integrations` will show "Voice agent not configured" and never connect.
 
 ### Solution
-Update the `getToolConfigs` data and the parameter rendering to include a dedicated `llmPrompt` field for each parameter. This text will be shown as a copyable field in the guide, telling users exactly what to paste into the ElevenLabs LLM Prompt box.
 
-### Changes
+**File: `supabase/functions/voice-booking-agent/index.ts`**
 
-**File: `src/components/integrations/ElevenLabsSetupGuide.tsx`**
+1. Fix the companyId extraction to check both camelCase and snake_case variants:
+   - Line 38: Also check `body.companyId`
+   - Line 57: Check both `toolParams.company_id` and `toolParams.companyId`
 
-1. Add `llmPrompt` property to the `ToolConfig` type's `bodyParams`
-2. Add specific LLM prompt extraction instructions for each parameter:
+2. Add a direct `body.companyId` check before the `toolParams` fallback (since VoiceChat sends it as a top-level param alongside `toolName`):
+   ```
+   // After agentId lookup fails, check direct body params
+   if (!companyId) {
+     companyId = (body.companyId || body.company_id || toolParams.companyId || toolParams.company_id || "") as string;
+   }
+   ```
 
-   **get_services:**
-   - `service_type`: "Extract the type of service the customer is asking about. If they haven't mentioned a specific service yet, leave this empty."
+3. Add better logging so failed tool calls are visible in edge function logs.
 
-   **check_availability:**
-   - `preferred_date`: "Extract the date the customer wants to book. Convert natural language like 'tomorrow', 'next Monday', 'this Friday' into YYYY-MM-DD format. If the customer says 'tomorrow' and today is 2026-02-11, return '2026-02-12'."
-   - `service_type`: "Extract the service type the customer wants to check availability for from the conversation context."
+### Technical Details
 
-   **create_appointment:**
-   - `customer_name`: "Extract the customer's full name from the conversation. Listen for when they state their name after being asked."
-   - `customer_phone`: "Extract the customer's phone number from the conversation. It may be spoken digit by digit or as a full number."
-   - `customer_email`: "Extract the customer's email address if they provided one during the conversation."
-   - `service_type`: "Extract which service the customer selected for their appointment from the conversation."
-   - `datetime`: "Combine the confirmed date and time slot into ISO format (YYYY-MM-DDTHH:MM:SS). Use the date from check_availability and the specific time the customer chose."
-   - `duration_minutes`: "Extract the appointment duration in minutes if discussed. Default to 60 if not mentioned."
-   - `notes`: "Extract any additional notes, special requests, or details the customer mentioned about their service needs."
+The fix is small but critical -- a single snake_case vs camelCase mismatch in the edge function prevents the company from being resolved when the agentId-based lookup doesn't return a result. This one-line class of bug silently returns a 400 error ("Could not determine company") that the clientTool swallows and returns as a generic error to the ElevenLabs agent.
 
-3. Update the parameter card UI to show this LLM prompt text as a copyable field (similar to the "Value" field styling but in purple) instead of just the generic note.
+### Files to Modify
+- `supabase/functions/voice-booking-agent/index.ts` -- Fix companyId resolution to handle both camelCase and snake_case
