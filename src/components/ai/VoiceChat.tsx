@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useConversation } from "@elevenlabs/react";
+import { Conversation } from "@elevenlabs/client";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +51,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [testHistory, setTestHistory] = useState<TranscriptMsg[]>([]);
   const testSessionIdRef = useRef<string>(crypto.randomUUID());
 
-  // Avoid stale state inside useConversation callbacks
+  // Direct Conversation instance (bypasses useConversation hook to avoid override injection)
+  const conversationRef = useRef<any>(null);
+  const [convStatus, setConvStatus] = useState<string>("disconnected");
+  const [convIsSpeaking, setConvIsSpeaking] = useState(false);
+
+  // Avoid stale state inside callbacks
   const wasConnectedRef = useRef(false);
   const connectStartedAtRef = useRef<number | null>(null);
   const lastConnectMethodRef = useRef<
@@ -69,15 +74,25 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     agentSpeaking: boolean;
   }>({ method: null, audioState: null, agentSpeaking: false });
 
-  // ElevenLabs conversation hook (VOICE mode only)
-  const conversation = useConversation({
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (conversationRef.current) {
+        try { conversationRef.current.endSession(); } catch {}
+        conversationRef.current = null;
+      }
+    };
+  }, []);
+
+  // Build callbacks for Conversation.startSession (no useConversation hook)
+  const buildSessionCallbacks = useCallback(() => ({
     onConnect: () => {
       console.log("[VoiceChat] ✅ onConnect fired — connection established");
       wasConnectedRef.current = true;
       setIsConnecting(false);
+      setConvStatus("connected");
       setDebugInfo((prev) => ({ ...prev, method: lastConnectMethodRef.current }));
 
-      // Force-play any audio elements created by the SDK (iframe autoplay workaround)
       setTimeout(() => {
         const audioElements = document.querySelectorAll("audio");
         audioElements.forEach((el) => {
@@ -93,52 +108,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: "You can now speak with the AI assistant",
       });
     },
-    onDisconnect: async () => {
+    onDisconnect: () => {
       console.log("[VoiceChat] onDisconnect fired");
-      const connectedForMs = connectStartedAtRef.current
-        ? Date.now() - connectStartedAtRef.current
-        : null;
-
+      setConvStatus("disconnected");
+      setConvIsSpeaking(false);
+      conversationRef.current = null;
       setIsConnecting(false);
-
-      const shouldAutoRetry =
-        !testMode &&
-        !autoRetryUsedRef.current &&
-        lastConnectMethodRef.current === "webrtc" &&
-        typeof connectedForMs === "number" &&
-        connectedForMs < 2000;
-
-      if (shouldAutoRetry) {
-        autoRetryUsedRef.current = true;
-        try {
-          setIsConnecting(true);
-          toast({
-            title: "Reconnecting…",
-            description: "Switching to a compatibility mode for your browser/network.",
-          });
-
-          if (lastAuthRef.current?.signed_url) {
-            lastConnectMethodRef.current = "ws_signed_url";
-            console.log("[VoiceChat] Auto-retry: WebSocket (signed_url)");
-            await conversation.startSession({
-              signedUrl: lastAuthRef.current.signed_url,
-            });
-          } else if (agentId) {
-            lastConnectMethodRef.current = "ws_agent_id";
-            console.log("[VoiceChat] Auto-retry: WebSocket (agentId)");
-            await conversation.startSession({
-              agentId,
-              connectionType: "websocket",
-            });
-          } else {
-            throw new Error("No fallback connection method available");
-          }
-          return;
-        } catch (e) {
-          console.error("[VoiceChat] Auto-retry fallback failed:", e);
-          setIsConnecting(false);
-        }
-      }
 
       if (wasConnectedRef.current) {
         toast({
@@ -146,35 +121,37 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
           description: "The voice conversation has been disconnected",
         });
       }
-
       wasConnectedRef.current = false;
       setDebugInfo({ method: null, audioState: null, agentSpeaking: false });
     },
-    onMessage: (message) => {
-      const msg = message as unknown as Record<string, unknown>;
-      console.log("[VoiceChat] onMessage:", msg.type || Object.keys(msg).join(","));
+    onMessage: (message: any) => {
+      console.log("[VoiceChat] onMessage:", message?.type || "unknown");
 
-      if (msg.user_transcription_event) {
-        const event = msg.user_transcription_event as Record<string, unknown>;
-        const userText = event.user_transcript as string | undefined;
+      if (message?.user_transcription_event) {
+        const userText = message.user_transcription_event.user_transcript;
         if (userText) {
           console.log("[VoiceChat] User transcript:", userText);
           onTranscript?.("user", userText);
         }
-      } else if (msg.agent_response_event) {
-        const event = msg.agent_response_event as Record<string, unknown>;
-        const agentText = event.agent_response as string | undefined;
+      } else if (message?.agent_response_event) {
+        const agentText = message.agent_response_event.agent_response;
         if (agentText) {
           console.log("[VoiceChat] Agent response:", agentText);
           onTranscript?.("assistant", agentText);
         }
       }
     },
+    onModeChange: ({ mode }: { mode: string }) => {
+      console.log("[VoiceChat] mode changed:", mode);
+      setConvIsSpeaking(mode === "speaking");
+      setDebugInfo((prev) => ({ ...prev, agentSpeaking: mode === "speaking" }));
+    },
+    onStatusChange: ({ status }: { status: string }) => {
+      console.log("[VoiceChat] 📡 status changed:", status);
+      setConvStatus(status);
+    },
     onDebug: (info: unknown) => {
       console.log("[VoiceChat] 🔍 onDebug:", info);
-    },
-    onStatusChange: (status: { status: string }) => {
-      console.log("[VoiceChat] 📡 status changed:", status);
     },
     onError: (error: unknown) => {
       console.error("[VoiceChat] ❌ onError:", error);
@@ -192,15 +169,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: errorMessage,
       });
     },
-  });
-
+  }), [onTranscript, toast]);
   // Connection timeout: warn if agent doesn't speak within 10s
   const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (conversation.status === "connected") {
+    if (convStatus === "connected") {
       connectionTimeoutRef.current = setTimeout(() => {
-        if (!conversation.isSpeaking) {
+        if (!convIsSpeaking) {
           console.warn("[VoiceChat] ⚠️ Agent has not spoken within 10s of connecting");
           toast({
             variant: "destructive",
@@ -218,28 +194,26 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     return () => {
       if (connectionTimeoutRef.current) clearTimeout(connectionTimeoutRef.current);
     };
-  }, [conversation.status, conversation.isSpeaking, toast]);
+  }, [convStatus, convIsSpeaking, toast]);
 
   // Clear timeout once agent starts speaking
   useEffect(() => {
-    if (conversation.isSpeaking && connectionTimeoutRef.current) {
+    if (convIsSpeaking && connectionTimeoutRef.current) {
       clearTimeout(connectionTimeoutRef.current);
       connectionTimeoutRef.current = null;
     }
-  }, [conversation.isSpeaking]);
+  }, [convIsSpeaking]);
 
   // Ensure SDK audio elements stay unmuted and playing
   useEffect(() => {
-    if (conversation.status !== "connected") return;
-    
-    // Set volume to max
+    if (convStatus !== "connected") return;
+
     try {
-      conversation.setVolume({ volume: 1 });
+      conversationRef.current?.setVolume?.({ volume: 1 });
     } catch (e) {
       console.warn("[VoiceChat] setVolume failed:", e);
     }
 
-    // Periodically check for paused audio elements (SDK creates them dynamically)
     const interval = setInterval(() => {
       const audioElements = document.querySelectorAll("audio");
       let found = 0;
@@ -247,10 +221,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         const hasSource = !!(el.srcObject || el.src);
         if (hasSource) found++;
         if (el.paused && hasSource) {
-          console.log("[VoiceChat] Found paused audio element, forcing play...", {
-            hasSrcObject: !!el.srcObject,
-            hasSrc: !!el.src,
-          });
+          console.log("[VoiceChat] Found paused audio element, forcing play...");
           el.play().catch(() => {});
         }
       });
@@ -260,7 +231,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [conversation.status, conversation]);
+  }, [convStatus]);
 
   // Don't eagerly request microphone — request on user gesture in startConversation
   useEffect(() => {
@@ -286,6 +257,18 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     if (companyId) fetchAgentId();
   }, [companyId]);
 
+  // Helper to start a session using Conversation directly (no override injection)
+  const startDirectSession = useCallback(async (sessionConfig: Record<string, any>) => {
+    const callbacks = buildSessionCallbacks();
+    console.log("[VoiceChat] ▶ Starting direct session (NO conversation_config_override)...", sessionConfig);
+    const conv = await Conversation.startSession({
+      ...sessionConfig,
+      ...callbacks,
+    });
+    conversationRef.current = conv;
+    return conv;
+  }, [buildSessionCallbacks]);
+
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
 
@@ -293,11 +276,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     const preloadAudio = new Audio();
     preloadAudio.preload = "auto";
 
-    // Unlock audio playback synchronously on user gesture (before any async work)
-    // CRITICAL: Do NOT await ctx.resume() — it breaks the user-gesture trust chain
+    // Unlock audio playback synchronously on user gesture
     try {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      ctx.resume(); // Fire-and-forget — keeps us in the gesture context
+      ctx.resume();
       const buffer = ctx.createBuffer(1, 1, 22050);
       const source = ctx.createBufferSource();
       source.buffer = buffer;
@@ -313,7 +295,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       console.warn("[VoiceChat] AudioContext unlock failed:", e);
     }
 
-    // Text mode: start local session; use our multi-agent backend for responses
+    // Text mode: start local session
     if (testMode) {
       setTestSessionActive(true);
       setTestAgent("triage");
@@ -327,7 +309,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       return;
     }
 
-    // Voice mode: connect to ElevenLabs agent
+    // Voice mode: connect to ElevenLabs agent using Conversation directly
     autoRetryUsedRef.current = false;
     connectStartedAtRef.current = Date.now();
 
@@ -341,14 +323,11 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       const { data, error } = await supabase.functions.invoke(
         "elevenlabs-conversation-token",
-        {
-          body: { company_id: companyId },
-        }
+        { body: { company_id: companyId } }
       );
 
       if (error) throw new Error(error.message || "Failed to get token");
 
-      // Handle voice locked error (subscription tier gating)
       if (data?.error === 'voice_locked') {
         toast({
           variant: 'destructive',
@@ -364,9 +343,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         signed_url: data?.signed_url,
       };
 
-      // Try WebRTC first (native browser audio handling), fall back to WebSocket
       const isIframe = window.self !== window.top;
-
       console.log("[VoiceChat] Connection strategy: prefer WebRTC, fallback WebSocket", {
         isIframe,
         hasToken: !!data?.token,
@@ -374,24 +351,20 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         agentId,
       });
 
-      // No overrides — agent uses its own configured greeting/prompt from ElevenLabs dashboard
       if (data?.token) {
         lastConnectMethodRef.current = "webrtc";
-        console.log("[VoiceChat] ▶ Starting WebRTC session (no overrides)...");
-        await conversation.startSession({
+        await startDirectSession({
           conversationToken: data.token,
           connectionType: "webrtc",
         });
       } else if (data?.signed_url) {
         lastConnectMethodRef.current = "ws_signed_url";
-        console.log("[VoiceChat] ▶ Starting WebSocket (signed_url, no overrides)...");
-        await conversation.startSession({
+        await startDirectSession({
           signedUrl: data.signed_url,
         });
       } else if (agentId) {
         lastConnectMethodRef.current = "ws_agent_id";
-        console.log("[VoiceChat] ▶ Starting WebSocket (agentId, no overrides)...");
-        await conversation.startSession({
+        await startDirectSession({
           agentId,
           connectionType: "websocket",
         });
@@ -407,7 +380,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: e instanceof Error ? e.message : "Unable to start chat",
       });
     }
-  }, [agentId, companyId, conversation, testMode, toast]);
+  }, [agentId, companyId, startDirectSession, testMode, toast]);
 
   const stopConversation = useCallback(async () => {
     if (testMode) {
@@ -422,7 +395,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
     try {
       wasConnectedRef.current = false;
-      await conversation.endSession();
+      if (conversationRef.current) {
+        await conversationRef.current.endSession();
+        conversationRef.current = null;
+      }
       toast({
         title: "Talk to Aura Ended",
         description: "The conversation has been disconnected",
@@ -430,7 +406,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     } catch (e) {
       console.error("Error ending session:", e);
     }
-  }, [conversation, testMode, toast]);
+  }, [testMode, toast]);
 
   const invokeMultiAgent = useCallback(
     async (userMessage: string) => {
