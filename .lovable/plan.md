@@ -1,33 +1,48 @@
 
 
-## Fix: Contextual Fillers, No Re-Asking, and SWAIG Fallback Messages
+## Fix: Availability Check and Booking for Phone AI and Web Voice Chat
 
-### Changes
+### Root Cause
 
-**1. `supabase/functions/voice-handler/index.ts`**
+There are two separate edge functions handling availability, and one of them is completely broken:
 
-- **Keep `speech_fillers`** but add a prompt instruction telling the AI to only use fillers when actively thinking or processing, not after every sentence. Add to the system prompt:
-  - "Use filler words like 'um' or 'uh' sparingly and only when you are genuinely pausing to think or look something up. Never use them as a habit after every response."
-- **Add no-repeat rule** to the prompt:
-  - "NEVER re-ask for information the caller has already provided. If you collected their name, phone, or email earlier, use it."
-  - "Do NOT ask 'would you like to leave your contact info' if you already have it from earlier in the conversation."
+1. **`voice-swaig`** (phone AI): Has proper availability logic -- queries technician assignments, checks `availability_json`, generates hourly slots, filters out conflicts. This works correctly but uses `['pending', 'confirmed', 'in-progress', 'scheduled']` status filter which is good.
 
-**2. `supabase/functions/voice-swaig/index.ts`**
+2. **`voice-booking-agent`** (web voice chat): The `check_availability` handler is broken. It only counts existing appointments and returns a generic message like "There are 2 existing appointments this week. Business hours are configured." It never actually queries technician availability, never checks `availability_json`, and never returns available time slots. The AI agent receives no usable data and tells the user there are no times available.
 
-- **Line 96**: Change "Would you like to leave your information and we'll call you back?" to "Would you like me to have a team member reach out to you?"
-- **Line 200**: Change "Would you like to leave your information and we'll reach out when something opens up?" to "I can have a team member reach out when something opens up. Would you like that?"
+### Fix
 
-These changes prevent the SWAIG responses from triggering the AI to re-collect info it already has.
+**File: `supabase/functions/voice-booking-agent/index.ts`**
 
-**3. `supabase/functions/voice-booking-agent/index.ts`**
+Rewrite the `check_availability` case to mirror the working logic from `voice-swaig`:
 
-- Add a `get_services` / `list_services` tool handler so the ElevenLabs web voice agent can look up company services (mirroring what `voice-swaig` already does for phone calls).
+1. Query `employee_job_assignments` for technicians in the company
+2. Query `profiles` for those employees' `availability_json`
+3. Parse the preferred date to get the day of week
+4. Generate hourly time slots based on `availability_json` ranges
+5. Filter out slots that conflict with existing appointments (using status filter `['pending', 'confirmed', 'in-progress', 'scheduled']`)
+6. Return the actual available time slots (up to 5) in a structured response
+7. If no slots on the requested date, scan the next 14 days for alternatives (same fallback logic as `voice-swaig`)
 
-### Technical Summary
+This gives the ElevenLabs web voice agent real slot data to work with, enabling it to offer specific times and book appointments.
 
-| File | What Changes |
-|------|-------------|
-| `voice-handler/index.ts` | Add prompt lines for contextual filler usage and no-repeat info gathering |
-| `voice-swaig/index.ts` | Update 2 fallback messages to stop triggering re-collection of caller info |
-| `voice-booking-agent/index.ts` | Add `get_services` tool handler for web voice chat |
+### Technical Details
+
+The rewritten `check_availability` case will:
+
+```text
+1. Get technician assignments for companyId
+2. Get profiles with availability_json for those employee IDs
+3. Parse preferred_date (or default to tomorrow)
+4. Map date to day name (monday, tuesday, etc.)
+5. For each employee's availability slots on that day:
+   - Generate hourly time slots (e.g., 08:00, 09:00, ...)
+   - Filter out conflicts with existing appointments
+6. Return unique slots (max 5) with a human-readable message
+7. If none found, scan next 14 days and suggest alternatives
+```
+
+### Files Changed
+
+- `supabase/functions/voice-booking-agent/index.ts` -- Rewrite `check_availability` with real slot-finding logic
 
