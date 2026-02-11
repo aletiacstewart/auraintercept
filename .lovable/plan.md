@@ -1,49 +1,60 @@
 
-
-## Fix: Voice Chat Appointments Not Being Created
+## Update: ElevenLabs Setup Guide for Client-Side Tools
 
 ### Root Cause
+The ElevenLabs setup guide in `src/components/integrations/ElevenLabsSetupGuide.tsx` still instructs users to create server-side webhook tools with the old naming scheme:
+- `get_services`
+- `get_available_dates` 
+- `get_available_times`
+- `book_appointment`
 
-The `VoiceChat.tsx` connects to ElevenLabs via `agentId` with `connectionType: "webrtc"`, but has **no `clientTools` defined**. This means all tool calls (like `create_appointment`, `check_availability`, `get_services`) rely entirely on ElevenLabs' server-side webhook to reach your `voice-booking-agent` edge function. If ElevenLabs cannot reach the edge function (URL misconfiguration, authentication, or network issues on their end), the tool call silently fails -- the AI may say "I've booked that for you" but nothing actually gets created in the database.
-
-The edge function logs confirm this: there were **zero tool call invocations** during your voice chat session. Only a "shutdown" log exists.
+However, the VoiceChat component was just updated to use **client-side tool interception** via `clientTools`, which means:
+1. Tools should be configured as **"client" tools** (not "webhook" tools) in the ElevenLabs dashboard
+2. The tool names must match exactly: `get_services`, `check_availability`, `create_appointment` (3 tools instead of 4)
+3. The execution path is now browser-based, not server-side webhook
 
 ### Solution
 
-Implement **client-side tool interception** using ElevenLabs' `clientTools` option in the `useConversation` hook. This routes tool calls through the user's browser to the edge function, bypassing the unreliable server-to-server path.
+Update the ElevenLabsSetupGuide component to:
 
-### Changes
+1. **Change Step 3 instructions** to clarify that tools must be **"client" tools** (not webhook tools)
+2. **Simplify the tool list** from 4 tools to 3 client tools:
+   - `get_services` - Get available services
+   - `check_availability` - Check availability for a date and service
+   - `create_appointment` - Create a booking
+3. **Remove deprecated tools** from the config:
+   - Remove `get_available_dates`
+   - Remove `get_available_times`
+   - Merge their functionality into the new 3-tool model
+4. **Update descriptions and parameter guidance** to reflect client-side execution
+5. **Add a critical note** explaining that these are client tools that run in the browser, not server webhooks
+6. **Update tool body parameters** to match what the `voice-booking-agent` edge function expects when called via `supabase.functions.invoke()`
 
-**File: `src/components/ai/VoiceChat.tsx`**
+### Technical Changes
 
-1. Add three `clientTools` to the `useConversation` hook:
-   - `get_services` -- calls `voice-booking-agent` with `toolName: "get_services"`
-   - `check_availability` -- calls `voice-booking-agent` with `toolName: "check_availability"` and passes the `preferred_date` parameter
-   - `create_appointment` -- calls `voice-booking-agent` with `toolName: "create_appointment"` and passes customer details (name, phone, service, datetime, duration)
+**File: `src/components/integrations/ElevenLabsSetupGuide.tsx`**
 
-2. Each client tool will:
-   - Invoke the `voice-booking-agent` edge function via `supabase.functions.invoke()`
-   - Pass the `agentId` so the function can resolve the `company_id`
-   - Return the response data (message, slots, appointment details) back to the ElevenLabs agent so it can speak the result
+1. Update `getToolConfigs()` function to define only 3 tools: `get_services`, `check_availability`, `create_appointment`
+2. Modify tool descriptions to clarify these are client tools
+3. Update Step 3 title/description to emphasize "Client Tools" instead of "Webhook Tools"
+4. Add a prominent alert explaining that tools must be marked as "client" tools in ElevenLabs dashboard, not server/webhook tools
+5. Remove references to "Form Mode" vs "JSON Mode" since client tools work differently
+6. Update the webhook URL section to note that for client tools, this URL is not needed (the browser calls the edge function directly)
 
-3. The tool names in `clientTools` must exactly match the tool names configured in the ElevenLabs agent dashboard.
+### Implementation Notes
 
-### How It Works
+- Client tools in ElevenLabs SDK are configured in `clientTools` object in the hook, not in the ElevenLabs dashboard agent config
+- The guide should clarify the 3 tools and their purposes clearly
+- Parameter mapping should be simplified since client-side tools receive parameters directly from the ElevenLabs agent
+- Users may already have the old 4-tool webhook setup configured — they should replace it with the new 3-tool client setup
 
-```text
-Before (broken):
-  User speaks --> ElevenLabs Agent --> (server webhook) --> voice-booking-agent
-                                       ^ This path is failing silently
+### Key Updates Summary
 
-After (fix):
-  User speaks --> ElevenLabs Agent --> clientTools (browser) --> voice-booking-agent
-                                       ^ Reliable, runs in user's browser
-```
-
-### Technical Notes
-
-- `clientTools` functions return a string value that gets passed back to the ElevenLabs agent as the tool response
-- The tools must be configured as "client" tools in the ElevenLabs dashboard (not server tools) for this to work
-- Per project memory, no `overrides` are passed to `startSession` (they cause disconnects); `clientTools` are different -- they're part of the hook initialization, not session overrides
-- The existing `voice-booking-agent` edge function logic remains unchanged; only the invocation path changes from server-side to client-side
+| Old Setup (Server Webhook) | New Setup (Client Tools) |
+|---|---|
+| 4 tools: get_services, get_available_dates, get_available_times, book_appointment | 3 tools: get_services, check_availability, create_appointment |
+| Tools configured in ElevenLabs agent dashboard → Tools → Webhook | Tools auto-configured by browser SDK in `clientTools` |
+| Execution: ElevenLabs → Server Webhook → edge function | Execution: ElevenLabs Agent → Browser clientTools → edge function |
+| Webhook URL required | No webhook needed |
+| Server-side, can fail silently if ElevenLabs can't reach endpoint | Browser-based, reliable client-side execution |
 
