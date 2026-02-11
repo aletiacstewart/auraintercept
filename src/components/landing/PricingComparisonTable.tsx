@@ -58,14 +58,14 @@ const featureDescriptions: Record<string, string> = {
   'All 7 Control Centers': 'Full access to all 7 specialized control consoles.',
   
   // Communication Channels - Chat vs Voice distinction
-  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required (no ElevenLabs or Twilio needed). Customers type questions and receive text responses.',
-  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for natural voice synthesis and Twilio for telephony. Not available on Business tier.',
+  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required (no ElevenLabs or SignalWire needed). Customers type questions and receive text responses.',
+  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for natural voice synthesis and SignalWire for telephony. Not available on Business tier.',
   'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
   'SMS Reminders': 'Text message reminders to reduce no-shows and keep customers informed.',
   
   // 3rd Party Integrations - Clarify voice-only requirements
   'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based conversations). NOT required for Message Aura (Text) which works on all tiers without any external dependencies.',
-  'Twilio (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text).',
+  'SignalWire (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text).',
   
   // Platform features
   'Calendar Sync': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
@@ -185,7 +185,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Resend (Email)', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Stripe (Payments)', starter: 'Optional', scheduling: 'Optional', growth: 'Optional', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Twilio (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Calendar Sync', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Social Media Accounts', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },

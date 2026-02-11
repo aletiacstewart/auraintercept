@@ -431,7 +431,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>Executive Pricing Summary</Text>
       
       <Text style={styles.paragraph}>
-        Aura Intercept offers five subscription tiers designed to scale with your business needs. 
+        Aura Intercept offers seven subscription tiers designed to scale with your business needs. 
         All automated tiers include access to our AI-powered platform with varying levels of operatives, 
         consoles, and features. Save 16% with annual billing.
       </Text>
@@ -538,6 +538,7 @@ const PricingSummaryPDF = () => (
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Starter</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Sched</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Growth</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Biz</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Field</Text>
@@ -545,34 +546,35 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { category: 'Monthly Price', express: '$197', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$5,997' },
-          { category: 'Annual Price', express: '$1,970', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
-          { category: 'Annual Savings', express: '~$400', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
-          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: 'All 24' },
-          { category: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
-          { category: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
-          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Message Aura (Text)', express: 'Yes', halo: 'Yes', core: 'Yes', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Talk to Aura (Voice)', express: 'Yes', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Online Booking', express: '-', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
-          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'Customer Portal', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Field Operations', express: '-', halo: '-', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
-          { category: 'Business Ops', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
-          { category: 'Marketing Console', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
-          { category: 'Analytics Console', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', biz: '$797', field: '$1,497', perf: '$3,497', command: '$5,497' },
+          { category: 'Annual Price', starter: '$1,970', scheduling: '$3,970', growth: '$5,970', biz: '$7,970', field: '$14,970', perf: '$34,970', command: '$54,970' },
+          { category: 'Annual Savings', starter: '~$394', scheduling: '~$794', growth: '~$1,194', biz: '~$1,594', field: '~$2,994', perf: '~$6,994', command: '~$10,994' },
+          { category: '', starter: '', scheduling: '', growth: '', biz: '', field: '', perf: '', command: '' },
+          { category: 'AI Operatives', starter: '1', scheduling: '3', growth: '11', biz: '12', field: '18', perf: '22', command: 'All 24' },
+          { category: 'Consoles', starter: '0', scheduling: '1', growth: '3', biz: '4', field: '6', perf: '7', command: 'All 7' },
+          { category: 'Employees', starter: '2', scheduling: '3', growth: '5', biz: '8', field: '15', perf: '25', command: '50' },
+          { category: '', starter: '', scheduling: '', growth: '', biz: '', field: '', perf: '', command: '' },
+          { category: 'AI Automation', starter: '-', scheduling: 'Yes', growth: 'Yes', biz: 'Yes', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Message Aura (Text)', starter: 'Yes', scheduling: 'Yes', growth: 'Yes', biz: 'Yes', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Talk to Aura (Voice)', starter: 'Yes', scheduling: 'Yes', growth: 'Yes', biz: '-', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Online Booking', starter: '-', scheduling: 'Yes', growth: 'Yes', biz: '-', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: '', starter: '', scheduling: '', growth: '', biz: '', field: '', perf: '', command: '' },
+          { category: 'Customer Portal', starter: '-', scheduling: 'Yes', growth: 'Yes', biz: 'Yes', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Field Operations', starter: '-', scheduling: '-', growth: '-', biz: '-', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Business Ops', starter: '-', scheduling: '-', growth: '-', biz: '-', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Marketing Console', starter: '-', scheduling: '-', growth: 'Yes', biz: 'Yes', field: 'Yes', perf: 'Yes', command: 'Yes' },
+          { category: 'Analytics Console', starter: '-', scheduling: '-', growth: '-', biz: '-', field: '-', perf: 'Yes', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
                 <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
-                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{(row as any).express}</Text>
-                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.halo}</Text>
-                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.core}</Text>
-                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.single}</Text>
-                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.multi}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.starter}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.scheduling}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.growth}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.biz}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.field}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.perf}</Text>
                 <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.command}</Text>
               </>
             )}
@@ -625,30 +627,29 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Growth Tier */}
+    {/* Aura Scheduling Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Growth Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Scheduling Tier</Text>
 
-      <View style={styles.pricingCardRose}>
-        <Text style={{ fontSize: 9, color: colors.rose, fontWeight: 700, marginBottom: 4 }}>BEAUTY & WELLNESS</Text>
-        <Text style={styles.pricingTierName}>Aura Growth</Text>
+      <View style={[styles.pricingCard, { backgroundColor: colors.greenLight, borderLeftColor: colors.green }]}>
+        <Text style={{ fontSize: 9, color: colors.green, fontWeight: 700, marginBottom: 4 }}>PERSONAL ASSISTANT</Text>
+        <Text style={styles.pricingTierName}>Aura Scheduling</Text>
         <Text style={styles.pricingPrice}>$397/month</Text>
         <Text style={styles.pricingAnnual}>or $3,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$800 with annual billing</Text>
+        <Text style={styles.pricingSavings}>Save ~$794 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.halo.bestFor}
+          {SUBSCRIPTION_TIERS.aura_flow.bestFor}
         </Text>
       </View>
 
       <Text style={styles.subsectionTitle}>Included AI Operatives (3)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist - 24/7 customer engagement and triage</FeatureItem>
-        <FeatureItem>Scheduling Agent - Online appointment booking</FeatureItem>
+        <FeatureItem>Scheduling Agent - Online appointment booking with calendar sync</FeatureItem>
         <FeatureItem>Follow-up Agent - SMS/Email confirmations and reminders</FeatureItem>
-        <FeatureItem>Aura Assistant - Voice and text navigation</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Console (1)</Text>
@@ -659,19 +660,57 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text)</FeatureItem>
-        <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs + SignalWire</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>3 employee accounts included</FeatureItem>
         <FeatureItem>$499 implementation fee</FeatureItem>
       </View>
 
-      <View style={styles.noticeBox}>
-        <Text style={styles.noticeTitle}>Designed for Salons & Wellness</Text>
-        <Text style={styles.noticeText}>
-          Aura Growth is specifically designed for nail salons, hair salons, barbers, massage centers, 
-          spas, and wellness businesses. It includes online booking and voice capabilities at an 
-          accessible price point.
+      <View style={styles.footer}>
+        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+      </View>
+    </Page>
+
+    {/* Aura Growth Tier */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Aura Intercept - Pricing Guide" />
+      <Text style={styles.sectionTitle}>Aura Growth Tier</Text>
+
+      <View style={styles.pricingCardRose}>
+        <Text style={{ fontSize: 9, color: colors.rose, fontWeight: 700, marginBottom: 4 }}>SALONS & WELLNESS</Text>
+        <Text style={styles.pricingTierName}>Aura Growth</Text>
+        <Text style={styles.pricingPrice}>$597/month</Text>
+        <Text style={styles.pricingAnnual}>or $5,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,194 with annual billing</Text>
+        
+        <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
+          {SUBSCRIPTION_TIERS.halo.bestFor}
         </Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Included AI Operatives (11)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>AI Receptionist, Scheduling, Follow-up Agents</FeatureItem>
+        <FeatureItem>Review, Campaign, Lead, Marketing Agents</FeatureItem>
+        <FeatureItem>Social Media, Social Scheduler, Social Analytics Agents</FeatureItem>
+        <FeatureItem>Creative Agent</FeatureItem>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Consoles (3)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Customer Portal Console</FeatureItem>
+        <FeatureItem>Outreach & Sales Ops Console</FeatureItem>
+        <FeatureItem>Social Media Console</FeatureItem>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
+        <FeatureItem>Marketing Automation + Social Media</FeatureItem>
+        <FeatureItem>5 employee accounts included</FeatureItem>
+        <FeatureItem>$499 implementation fee</FeatureItem>
       </View>
 
       <View style={styles.footer}>

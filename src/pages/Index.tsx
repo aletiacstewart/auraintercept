@@ -1146,7 +1146,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Optional for: Halo, Single-Point, Multi-Track, Command</p>
+                <p className="text-[10px] text-white/60">Optional for: Scheduling, Field Ops, Performance, Command</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1157,7 +1157,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Email Notifications</p>
                 <p className="text-[10px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
                 <p className="text-[10px] text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command</p>
+                <p className="text-[10px] text-white/60">Required for: Growth, Field Ops, Performance, Command</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1168,7 +1168,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">AI Voice Synthesis (Voice features only)</p>
                 <p className="text-[10px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-[10px] text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
+                <p className="text-[10px] text-white/60">Required for: Growth, Field Ops, Performance, Command (not needed for Business)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1179,7 +1179,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (40% cheaper SMS)</p>
                 <p className="text-[10px] text-white/70">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
+                <p className="text-[10px] text-white/60">Required for: Growth, Field Ops, Performance, Command (not needed for Business)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1201,7 +1201,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Single-Point, Multi-Track, Command (Invoicing)</p>
+                <p className="text-[10px] text-white/60">Required for: Field Ops, Performance, Command (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1212,7 +1212,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white/60">Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point</p>
+                <p className="text-[10px] text-white/60">Required for: Business, Performance, Command • Optional for: Growth, Field Ops</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1223,7 +1223,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">AI Content Generation</p>
                 <p className="text-[10px] text-white/90 font-medium">Free: 15 requests/min</p>
                 <p className="text-[10px] text-white/70">Powers blog posts, social media, emails & marketing</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers (Core, Halo, Single-Point, Multi-Track, Command)</p>
+                <p className="text-[10px] text-white/60">Required for: All tiers (Business, Growth, Field Ops, Performance, Command)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>

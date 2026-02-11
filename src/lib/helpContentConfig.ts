@@ -208,7 +208,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     icon: Share2,
     description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
     requiredTier: 'growth',  // Available at Growth tier
-    tabs: ['Home', 'Social Posts', 'Content Engine', 'Web Presence', 'Blog'],
+    tabs: ['Home', 'Social Posts', 'Analytics'],
     agents: [
       { name: 'Social Media Agent', tier: 'growth' },
       { name: 'Social Media Scheduler', tier: 'growth' },
