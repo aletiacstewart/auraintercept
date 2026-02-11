@@ -124,7 +124,7 @@ Aura Intercept is an AI-powered business automation platform with 24 AI Operativ
 - **Starter ($197/mo)**: 1 agent (AI Receptionist), 0 consoles, 2 employees
 - **Scheduling ($397/mo)**: 3 agents, 1 console (Customer Portal), 3 employees
 - **Growth ($597/mo)**: 11 agents, 3 consoles, 5 employees
-- **Business ($797/mo)**: 12 agents, 4 consoles (adds Creative & Web Presence), 8 employees, digital-only (no voice)
+- **Business ($797/mo)**: 12 agents, 4 consoles (adds Creative & Web Presence), 8 employees, voice/SMS/email included
 - **Field Ops ($1,497/mo)**: 18 agents, 6 consoles, 15 employees
 - **Performance ($3,497/mo)**: 22 agents, 7 consoles, 25 employees, priority support
 - **Command ($5,497/mo)**: All 24 agents, 8 consoles (includes AI Operatives Hub), 50 employees, dedicated account manager

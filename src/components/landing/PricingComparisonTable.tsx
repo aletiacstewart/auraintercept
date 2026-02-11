@@ -59,7 +59,7 @@ const featureDescriptions: Record<string, string> = {
   
   // Communication Channels - Chat vs Voice distinction
   'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required (no ElevenLabs or SignalWire needed). Customers type questions and receive text responses.',
-  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for natural voice synthesis and SignalWire for telephony. Not available on Business tier.',
+  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for natural voice synthesis and SignalWire for telephony. Available on ALL tiers.',
   'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
   'SMS Reminders': 'Text message reminders to reduce no-shows and keep customers informed.',
   
@@ -155,9 +155,9 @@ const sections: FeatureSection[] = [
     title: 'Communication Channels',
     features: [
       { name: 'Message Aura (Text)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Talk to Aura (Voice)', starter: 'check', scheduling: 'check', growth: 'check', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Email Reminders', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'SMS Reminders', starter: 'x', scheduling: 'check', growth: 'check', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Talk to Aura (Voice)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'Email Reminders', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
+      { name: 'SMS Reminders', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
@@ -183,10 +183,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Required 3rd Party Integrations',
     features: [
-      { name: 'Resend (Email)', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Resend (Email)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Stripe (Payments)', starter: 'Optional', scheduling: 'Optional', growth: 'Optional', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Calendar Sync', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Social Media Accounts', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
       { name: 'Tavily (AI Research)', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
