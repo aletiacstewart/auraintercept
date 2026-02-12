@@ -39,6 +39,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [isSendingText, setIsSendingText] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
+  const [isProcessingTool, setIsProcessingTool] = useState(false);
 
   // Text mode state
   const [testSessionActive, setTestSessionActive] = useState(false);
@@ -67,22 +68,29 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const conversation = useConversation({
     clientTools: {
       get_services: async (_params: Record<string, unknown>) => {
-        return await invokeBookingAgent("get_services");
+        setIsProcessingTool(true);
+        try { return await invokeBookingAgent("get_services"); } finally { setIsProcessingTool(false); }
       },
       check_availability: async (params: Record<string, unknown>) => {
-        return await invokeBookingAgent("check_availability", {
-          preferred_date: params.preferred_date || params.date,
-          service_type: params.service_type || params.service,
-        });
+        setIsProcessingTool(true);
+        try {
+          return await invokeBookingAgent("check_availability", {
+            preferred_date: params.preferred_date || params.date,
+            service_type: params.service_type || params.service,
+          });
+        } finally { setIsProcessingTool(false); }
       },
       create_appointment: async (params: Record<string, unknown>) => {
-        return await invokeBookingAgent("create_appointment", {
-          customer_name: params.customer_name || params.name,
-          customer_phone: params.customer_phone || params.phone,
-          service_type: params.service_type || params.service,
-          datetime: params.datetime || params.date_time || params.appointment_time,
-          duration: params.duration || params.duration_minutes || 60,
-        });
+        setIsProcessingTool(true);
+        try {
+          return await invokeBookingAgent("create_appointment", {
+            customer_name: params.customer_name || params.name,
+            customer_phone: params.customer_phone || params.phone,
+            service_type: params.service_type || params.service,
+            datetime: params.datetime || params.date_time || params.appointment_time,
+            duration: params.duration || params.duration_minutes || 60,
+          });
+        } finally { setIsProcessingTool(false); }
       },
     },
     onConnect: () => {
@@ -171,7 +179,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
       });
       conversation.sendContextualUpdate(
-        `Today's date is ${formatted} (${today.toISOString().split('T')[0]}).`
+        `Today's date is ${formatted} (${today.toISOString().split('T')[0]}). IMPORTANT: Before using any tool, always say a brief filler like 'Let me check on that for you' or 'One moment while I look that up' so the caller knows you're still here. Never go silent.`
       );
       console.log("[VoiceChat] Sent date context:", formatted);
     } catch (e) {
@@ -284,6 +292,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const getStatusText = () => {
     if (isConnecting) return "Connecting...";
     if (testMode && isConnected) return testIsLoading ? "Thinking…" : "Text mode active - type to chat";
+    if (isProcessingTool) return "Processing your request...";
     if (isSpeaking) return "AI is speaking...";
     if (isConnected) return "Listening...";
     return testMode ? "Click to start text mode" : "Click to start voice chat";
@@ -291,6 +300,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
   const getStatusColor = () => {
     if (testMode && isConnected) return "bg-blue-500";
+    if (isProcessingTool) return "bg-amber-500";
     if (isSpeaking) return "bg-secondary";
     if (isConnected) return "bg-green-500";
     if (isConnecting) return "bg-amber-500";
