@@ -22,9 +22,9 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 19700, // $197 in cents (unchanged)
   },
   scheduling: {
-    price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
-    name: "Aura Scheduling",
-    price: 39700, // $397 in cents (was $297)
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 39700, // $397 in cents
   },
   growth: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
@@ -32,14 +32,14 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 59700, // $597 in cents (was $397)
   },
   business: {
-    price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
-    name: "Aura Business",
-    price: 79700, // $797 in cents (was $500)
+    price_id: "price_1T028dJ9fo9y8fGH92xnAk1x",
+    name: "Aura Presence",
+    price: 79700, // $797 in cents
   },
   field_ops: {
-    price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
-    name: "Aura Field Ops",
-    price: 149700, // $1,497 in cents (was $1,500)
+    price_id: "price_1T028oJ9fo9y8fGHIiNuzVSC",
+    name: "Aura Logistics",
+    price: 149700, // $1,497 in cents
   },
   performance: {
     price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
@@ -58,8 +58,8 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 19700,
   },
   aura_flow: {
-    price_id: "price_1SxfFNJ9fo9y8fGH2rcByvoY",
-    name: "Aura Scheduling",
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
     price: 39700,
   },
   halo: {
@@ -68,13 +68,13 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 59700,
   },
   core: {
-    price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
-    name: "Aura Business",
+    price_id: "price_1T028dJ9fo9y8fGH92xnAk1x",
+    name: "Aura Presence",
     price: 79700,
   },
   single_point: {
-    price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
-    name: "Aura Field Ops",
+    price_id: "price_1T028oJ9fo9y8fGHIiNuzVSC",
+    name: "Aura Logistics",
     price: 149700,
   },
   multi_track: {

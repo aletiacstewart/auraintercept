@@ -501,9 +501,9 @@ export const BrandAssetGuidePDF: React.FC = () => (
             />
             <ColorSwatch 
               color="#14b8a6" 
-              name="Aura Scheduling Teal" 
+              name="Aura Connect Teal" 
               hex="#14b8a6" 
-              usage="Aura Scheduling tier ($397/mo)"
+              usage="Aura Connect tier ($397/mo)"
             />
             <ColorSwatch 
               color="#ec4899" 
@@ -513,9 +513,9 @@ export const BrandAssetGuidePDF: React.FC = () => (
             />
             <ColorSwatch 
               color="#3b82f6" 
-              name="Aura Business Blue" 
+              name="Aura Presence Blue" 
               hex="#3b82f6" 
-              usage="Aura Business tier ($797/mo)"
+              usage="Aura Presence tier ($797/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 

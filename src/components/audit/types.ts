@@ -445,8 +445,8 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   FLOW: {
     tier: 'FLOW',
-    label: 'Aura Scheduling',
-    price: '$297/mo',
+    label: 'Aura Connect',
+    price: '$397/mo',
     description: 'AI Personal Assistant with scheduling via direct calendar sync',
     keyFeatures: [
       'AI Receptionist (24/7 Engagement)',
@@ -463,8 +463,8 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   CORE: {
     tier: 'CORE',
-    label: 'Aura Business',
-    price: '$500/mo',
+    label: 'Aura Presence',
+    price: '$797/mo',
     description: 'AI-assisted tools for digital presence — you stay in control, no automation',
     keyFeatures: [
       'Talk to Aura (Chat Tool)',
@@ -499,7 +499,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   SINGLE_POINT: {
     tier: 'SINGLE_POINT',
-    label: 'Aura Field Ops',
+    label: 'Aura Logistics',
     price: '$1,497/mo',
     description: 'AI Receptionist with voice capability for teams focused on lead capture',
     keyFeatures: [
@@ -522,7 +522,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     price: '$2,497/mo',
     description: 'Full field operations automation for growing service businesses',
     keyFeatures: [
-      'All Aura Field Ops features',
+      'All Aura Logistics features',
       '+6 Field Ops Agents (Dispatch, Route, ETA, Check-in, Quote, Invoice)',
       'Online Booking Agent',
       'Field Ops Console',

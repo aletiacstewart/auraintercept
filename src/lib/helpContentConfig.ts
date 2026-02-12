@@ -438,7 +438,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     ],
   },
   scheduling: {
-    title: 'Aura Scheduling',
+    title: 'Aura Connect',
     description: 'Turn conversations into booked appointments with automated booking and reminders.',
     highlights: [
       'Everything in Starter',
@@ -464,7 +464,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     ],
   },
   business: {
-    title: 'Aura Business',
+    title: 'Aura Presence',
     description: 'Run your office automatically with web presence and management dashboards.',
     highlights: [
       'Everything in Growth',
@@ -477,7 +477,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     ],
   },
   field_ops: {
-    title: 'Aura Field Ops',
+    title: 'Aura Logistics',
     description: 'Run your field team automatically with dispatch, routing, and job management.',
     highlights: [
       'Everything in Business',
@@ -494,7 +494,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     title: 'Aura Performance',
     description: 'Run your entire company with AI and business intelligence.',
     highlights: [
-      'Everything in Field Ops',
+      'Everything in Logistics',
       'Admin and Inventory Agents',
       'Insights, Performance, Revenue, and Forecast Agents',
       'Analytics & Reports Console',

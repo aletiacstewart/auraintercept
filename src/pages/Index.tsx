@@ -707,10 +707,10 @@ export default function Index() {
               <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">Scale Your Operations</h3>
               <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
 
-            {/* Aura Field Ops Plan */}
+            {/* Aura Logistics Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-5">
-                <h3 className="text-lg font-bold mb-1">Aura Field Ops</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Logistics</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Field Service Teams)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$1,497</span>
@@ -925,14 +925,14 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Scheduling */}
+            {/* Aura Connect */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-cyan-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-cyan-500 text-white border-0 text-[10px]">
                   Booking Focus
                 </Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Scheduling</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
                   Personal Assistants • Real Estate • Consultants
                 </p>
@@ -1047,15 +1047,15 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Business */}
+            {/* Aura Presence */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
               <CardContent className="p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">Digital-First</Badge>
+                  <Badge className="bg-emerald-500 text-white border-0 text-[10px]">Web Presence</Badge>
                   <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">No Voice</Badge>
                 </div>
-                <h3 className="text-lg font-bold mb-1">Aura Business</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Presence</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Web Presence Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-emerald-400">$797</span>

@@ -2241,13 +2241,13 @@ serve(async (req) => {
       free: [],
       // Aura Starter ($197/mo): Lead Capture Stack only - 1 agent
       starter: ['triage'],
-      // Aura Scheduling ($397/mo): Lead Capture + Booking Automation - 3 agents
+      // Aura Connect ($397/mo): Lead Capture + Booking Automation - 3 agents
       scheduling: ['triage', 'booking', 'followup'],
       // Aura Growth ($597/mo): + Marketing Automation Stack - 11 agents
       growth: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Aura Business ($797/mo): + Office Automation Stack - 12 agents
+      // Aura Presence ($797/mo): + Office Automation Stack - 12 agents
       business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Field Ops ($1,497/mo): + Field Operations Stack - 18 agents
+      // Aura Logistics ($1,497/mo): + Field Operations Stack - 18 agents
       field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
       // Aura Performance ($3,497/mo): + Business Intelligence Stack (Basic) - 23 agents
       // Excludes revenue and forecast (advanced analytics reserved for Command)

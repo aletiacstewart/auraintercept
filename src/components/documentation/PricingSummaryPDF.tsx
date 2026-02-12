@@ -402,10 +402,10 @@ const PricingSummaryPDF = () => (
           { title: 'Executive Pricing Summary', page: '3' },
           { title: '7-Tier Comparison Table', page: '4' },
           { title: 'Aura Starter Tier (Restaurants)', page: '5' },
-          { title: 'Aura Scheduling Tier (Personal Assistant)', page: '6' },
+          { title: 'Aura Connect Tier (Personal Assistant)', page: '6' },
           { title: 'Aura Growth Tier (Salons/Wellness)', page: '7' },
-          { title: 'Aura Business Tier (AI-Assisted Tools)', page: '8' },
-          { title: 'Aura Field Ops Tier Details', page: '9' },
+          { title: 'Aura Presence Tier (AI-Assisted Tools)', page: '8' },
+          { title: 'Aura Logistics Tier Details', page: '9' },
           { title: 'Aura Performance Tier Details', page: '10' },
           { title: 'Aura Command Tier (Enterprise)', page: '11' },
           { title: 'Annual Discount Savings', page: '12' },
@@ -444,7 +444,7 @@ const PricingSummaryPDF = () => (
           <Text style={{ fontSize: 8, color: colors.amber, marginTop: 4 }}>Restaurants</Text>
         </View>
         <View style={[styles.summaryCard, { backgroundColor: colors.greenLight }]}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA SCHEDULING</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CONNECT</Text>
           <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.aura_flow.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>Personal Assistant</Text>
@@ -456,13 +456,13 @@ const PricingSummaryPDF = () => (
           <Text style={{ fontSize: 8, color: colors.rose, marginTop: 4 }}>Salons/Wellness</Text>
         </View>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BUSINESS</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA PRESENCE</Text>
           <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.core.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.gray, marginTop: 4 }}>{SUBSCRIPTION_TIERS.core.operatives} Operatives</Text>
         </View>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA FIELD OPS</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA LOGISTICS</Text>
           <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.single_point.price.toLocaleString()}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>{SUBSCRIPTION_TIERS.single_point.operatives} Operatives</Text>
@@ -627,14 +627,14 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Scheduling Tier */}
+    {/* Aura Connect Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Scheduling Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Connect Tier</Text>
 
       <View style={[styles.pricingCard, { backgroundColor: colors.greenLight, borderLeftColor: colors.green }]}>
         <Text style={{ fontSize: 9, color: colors.green, fontWeight: 700, marginBottom: 4 }}>PERSONAL ASSISTANT</Text>
-        <Text style={styles.pricingTierName}>Aura Scheduling</Text>
+        <Text style={styles.pricingTierName}>Aura Connect</Text>
         <Text style={styles.pricingPrice}>$397/month</Text>
         <Text style={styles.pricingAnnual}>or $3,970/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save ~$794 with annual billing</Text>
@@ -719,14 +719,14 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Business Tier */}
+    {/* Aura Presence Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Business Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Presence Tier</Text>
 
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>CREATIVE & WEB PRESENCE FOCUS</Text>
-        <Text style={styles.pricingTierName}>Aura Business</Text>
+        <Text style={styles.pricingTierName}>Aura Presence</Text>
         <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.core.price}/month</Text>
         <Text style={styles.pricingAnnual}>or ${SUBSCRIPTION_TIERS.core.annualPrice.toLocaleString()}/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save ~${SUBSCRIPTION_TIERS.core.annualSavings.toLocaleString()} with annual billing</Text>
@@ -757,7 +757,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Creative & Web Presence Tier</Text>
         <Text style={styles.noticeText}>
-          Aura Business includes {SUBSCRIPTION_TIERS.core.operatives} operatives and {SUBSCRIPTION_TIERS.core.consoles} consoles with full voice, SMS, and email capabilities. 
+          Aura Presence includes {SUBSCRIPTION_TIERS.core.operatives} operatives and {SUBSCRIPTION_TIERS.core.consoles} consoles with full voice, SMS, and email capabilities. 
           This tier is designed for businesses that want AI-powered content, digital presence tools, and complete communication channels.
         </Text>
       </View>
@@ -781,13 +781,13 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Field Ops Tier */}
+    {/* Aura Logistics Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Field Ops Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Logistics Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Aura Field Ops</Text>
+        <Text style={styles.pricingTierName}>Aura Logistics</Text>
         <Text style={styles.pricingPrice}>$1,497/month</Text>
         <Text style={styles.pricingAnnual}>or $14,970/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save ~$2,994 with annual billing</Text>
@@ -957,8 +957,8 @@ const PricingSummaryPDF = () => (
         </View>
         {[
           { tier: 'Aura Growth', monthly: '$397', yearlyPath: '$4,764', annual: '$3,970', savings: '~$800' },
-          { tier: 'Aura Business', monthly: '$500', yearlyPath: '$6,000', annual: '$5,000', savings: '~$1,000' },
-          { tier: 'Aura Field Ops', monthly: '$1,500', yearlyPath: '$18,000', annual: '$15,000', savings: '~$3,000' },
+          { tier: 'Aura Presence', monthly: '$797', yearlyPath: '$9,564', annual: '$7,970', savings: '~$1,594' },
+          { tier: 'Aura Logistics', monthly: '$1,497', yearlyPath: '$17,964', annual: '$14,970', savings: '~$2,994' },
           { tier: 'Aura Performance', monthly: '$2,497', yearlyPath: '$29,964', annual: '$24,970', savings: '~$4,994' },
           { tier: 'Aura Command', monthly: '$3,497', yearlyPath: '$41,964', annual: '$34,970', savings: '~$6,994' },
         ].map((row, i) => (
@@ -1059,7 +1059,7 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Premium Add-Ons</Text>
       <Text style={styles.paragraph}>
-        Available for Aura Field Ops and Aura Performance tiers. Command tier includes all features.
+        Available for Aura Logistics and Aura Performance tiers. Command tier includes all features.
       </Text>
 
       <View style={styles.table}>
@@ -1090,8 +1090,8 @@ const PricingSummaryPDF = () => (
         </View>
         {[
           { tier: 'Aura Growth', fee: '$499', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Business', fee: '$499', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Field Ops', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Presence', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Logistics', fee: '$499', includes: 'Onboarding, setup, training' },
           { tier: 'Aura Performance', fee: '$499', includes: 'Onboarding, setup, training' },
           { tier: 'Aura Command', fee: 'Custom', includes: 'Enterprise onboarding, custom setup' },
         ].map((row, i) => (

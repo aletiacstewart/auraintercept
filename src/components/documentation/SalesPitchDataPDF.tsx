@@ -528,7 +528,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Scheduling</Text>
+              <Text style={styles.tierName}>Aura Connect</Text>
               <Text style={styles.tierPrice}>$397/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Personal Assistant</Text>
@@ -553,7 +553,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Business</Text>
+              <Text style={styles.tierName}>Aura Presence</Text>
               <Text style={styles.tierPrice}>$797/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Digital Foundation</Text>
@@ -566,7 +566,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <View style={styles.column}>
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Field Ops</Text>
+              <Text style={styles.tierName}>Aura Logistics</Text>
               <Text style={styles.tierPrice}>$1,497/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Field Operations</Text>
