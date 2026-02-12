@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Bot, User, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Detect URLs in text and render them as clickable links
+function renderContentWithLinks(text: string): React.ReactNode {
+  const urlRegex = /(https?:\/\/[^\s)<>]+)/g;
+  const parts = text.split(urlRegex);
+  if (parts.length === 1) return text;
+  
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      // Reset lastIndex since we reuse the regex
+      urlRegex.lastIndex = 0;
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline hover:opacity-80 break-all"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
 
 interface ChatBubbleProps {
   role: 'user' | 'assistant';
@@ -67,7 +93,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
             <span className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
           </div>
         ) : (
-          <p className="text-sm whitespace-pre-wrap leading-relaxed">{content}</p>
+          <p className="text-sm whitespace-pre-wrap leading-relaxed">{renderContentWithLinks(content)}</p>
         )}
       </div>
 
