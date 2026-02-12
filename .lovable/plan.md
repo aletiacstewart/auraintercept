@@ -1,57 +1,60 @@
 
 
-## Smart Links in Voice Chat (ElevenLabs + Browser Voice)
+## Fix: ElevenLabs Voice Not Working for Customer Portal Users
 
-### Problem
-Currently, the AI agents in voice chat have no tool to look up and share smart links. The `getSmartLinkForIntent` function exists in the backend but is only triggered passively through the `contextual_sharing` protocol mode (keyword detection). The AI cannot proactively fetch and share a link when a customer asks for one, or as a fallback when scheduling is unavailable.
+### Root Cause
+
+The `tenant_integrations` table has RLS policies that only allow `company_admin` and `platform_admin` roles to read. When a customer logs in and selects Aura Intercept on the customer portal, the `VoiceChat` component queries `tenant_integrations` for the `elevenlabs_agent_id` -- but RLS blocks the read, returning `null`. This triggers the browser voice fallback.
 
 ### Solution
-Add a `get_smart_link` tool to the triage and booking agents so they can actively fetch and share relevant smart links. Update the voice chat frontends to render links as clickable elements. Update agent prompts to use this tool when:
-1. A customer explicitly asks for a link (e.g., "Can you send me your booking link?")
-2. The company doesn't have scheduling/services configured, so the AI offers a smart link instead of the booking flow
 
-### Changes
+Add a new RLS policy on `tenant_integrations` that allows authenticated users with the `customer` role to **read only** the `elevenlabs_agent_id` column for their associated company. Since RLS operates at the row level (not column level), the safest approach is to create a secure database function that customers can call to fetch just the agent ID.
 
-**1. Backend: `supabase/functions/ai-agent-chat/index.ts`**
+### Implementation
 
-- **Add `get_smart_link` tool definition** to both the `triage` and `booking` entries in `AGENT_TOOLS`:
-  ```
-  name: 'get_smart_link'
-  description: 'Look up a smart link for the company by category (booking, payment, review, quote, menu, website, etc). Use when customer asks for a link or when scheduling is not available.'
-  parameters: { category: string (required), search_term: string (optional) }
-  ```
+**1. Create a secure RPC function: `get_elevenlabs_agent_id`**
 
-- **Add tool execution** in `executeAgentTool` that calls the existing `getSmartLinkForIntent()` function and returns the link URL, name, and description.
+A new database function that accepts a `company_id` parameter and returns the `elevenlabs_agent_id`. This avoids exposing the full `tenant_integrations` row (which may contain API keys and other secrets) to customers.
 
-- **Update triage prompt** (~line 98-185): Add instruction:
-  - "If no services are configured for online booking, use the `get_smart_link` tool with category 'booking' to offer the customer a direct scheduling link instead."
-  - "When a customer asks to 'send me a link' or 'share the booking page', use `get_smart_link` with the relevant category."
+```sql
+CREATE OR REPLACE FUNCTION public.get_elevenlabs_agent_id(p_company_id uuid)
+RETURNS text
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT elevenlabs_agent_id
+  FROM public.tenant_integrations
+  WHERE company_id = p_company_id
+  LIMIT 1;
+$$;
+```
 
-- **Update booking prompt** (~line 187+): Add similar fallback instruction for when services list is empty.
+Using `SECURITY DEFINER` bypasses RLS safely while exposing only the agent ID (which is a public-facing identifier anyway, since it's used client-side in the ElevenLabs SDK).
 
-- **Update `contextual_sharing` prompt** (~line 3358-3370): Remove the misleading instruction about "scheduling link for booking" that causes hallucination, and instead reference the new tool.
+**2. Update `VoiceChat.tsx` (~line 144-152)**
 
-**2. Frontend: Transcript Link Rendering**
+Replace the direct `supabase.from('tenant_integrations').select(...)` query with a call to the new RPC function:
 
-- **`src/components/ai/AIAgentConsole.tsx`** (~line 1036): Update the transcript message bubble to detect URLs in the AI response text and render them as clickable `<a>` tags (target="_blank"). This ensures links the AI shares are tappable in the text transcript area.
+```typescript
+// Before
+const { data } = await supabase
+  .from("tenant_integrations")
+  .select("elevenlabs_agent_id")
+  .eq("company_id", companyId)
+  .maybeSingle();
+if (data?.elevenlabs_agent_id) setAgentId(data.elevenlabs_agent_id);
 
-**3. ElevenLabs Voice**
-- No changes needed to `VoiceChat.tsx` client tools -- the `get_smart_link` tool is server-side (called by the LLM via the edge function), not a client tool. The AI will verbally tell the customer the link and it will appear in the transcript.
+// After
+const { data } = await supabase.rpc("get_elevenlabs_agent_id", {
+  p_company_id: companyId,
+});
+if (data) setAgentId(data);
+```
 
-**4. Browser Voice**
-- No changes needed to `useBrowserVoiceChat.ts` -- it already routes through `ai-agent-chat`, so it gets the same tool access automatically.
+This ensures all authenticated users (including customers) can retrieve the ElevenLabs agent ID without exposing other integration secrets.
 
-### Expected Behavior
+### Why Not Just Add an RLS Policy?
 
-| Scenario | Before | After |
-|----------|--------|-------|
-| Customer asks "send me your booking link" | AI hallucinates or ignores | AI calls `get_smart_link(category: 'booking')`, shares the URL |
-| No services configured, customer wants to book | AI says "no services available, call us" | AI fetches booking smart link as fallback and shares it |
-| Customer asks for payment/review link | Only works if contextual_sharing keyword triggers | AI proactively uses `get_smart_link` tool |
-
-### Technical Details
-
-- The `get_smart_link` tool reuses the existing `getSmartLinkForIntent()` function -- no new database queries needed
-- Links in voice mode are spoken aloud ("Here's our booking page: ...") and appear in the transcript as clickable text
-- The tool returns a structured response: `{ found: true, url, name, description }` or `{ found: false, message }` so the AI can respond gracefully if no link is configured
+The `tenant_integrations` table likely contains sensitive fields (API keys, webhook secrets, etc.). Adding a broad `SELECT` policy for customers would expose all columns. The RPC approach with `SECURITY DEFINER` is the most secure option -- it returns only the agent ID.
 
