@@ -94,10 +94,10 @@ export default function CustomerCompanyPortal() {
             <div className="w-8 h-8 rounded-lg overflow-hidden">
               <img src={logo} alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-sm font-semibold">Customer Portal</span>
+            <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>

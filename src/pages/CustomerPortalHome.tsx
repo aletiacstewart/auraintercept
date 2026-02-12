@@ -60,16 +60,16 @@ export default function CustomerPortalHome() {
             <div className="w-8 h-8 rounded-lg overflow-hidden">
               <img src={logo} alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-sm font-semibold">Customer Portal</span>
+            <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
           </div>
           <div className="flex items-center gap-2">
             {isInstallable && !isInstalled && (
-              <Button variant="outline" size="sm" onClick={promptInstall} className="gap-2">
+              <Button variant="outline" size="sm" onClick={promptInstall} className="gap-2 text-card-foreground">
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Install App</span>
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
