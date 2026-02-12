@@ -111,6 +111,12 @@ Before routing a customer for booking, CHECK the AVAILABLE SERVICES section in y
   "I apologize, but we don't have any services configured for online booking at this time. Please call us directly to schedule an appointment."
 - Use the list_services tool if you need to check or display available services.
 - ONLY route to booking if the customer wants a service that EXISTS in your available services list.
+- If NO services are configured, use the get_smart_link tool with category 'booking' to offer the customer a direct scheduling link instead of just telling them to call.
+
+SMART LINK SHARING:
+- When a customer asks you to "send me a link", "share the booking page", "give me your website", or similar requests for a link, use the get_smart_link tool with the relevant category (booking, payment, review, quote, menu, website, etc.).
+- NEVER hallucinate or make up links. ONLY share links returned by the get_smart_link tool.
+- If the tool returns no link, tell the customer you don't have that link available and offer to help another way.
 
 CRITICAL - INTENT DETECTION (CHECK IN THIS ORDER!):
 1. TRACKING: If message contains "track", "tracking", "status", "where is", "check on", "look up" + "appointment" → This is TRACKING, NOT booking!
@@ -206,7 +212,12 @@ CRITICAL: Check the delivery_type in AVAILABLE SERVICES before asking for addres
 - For IN_PERSON_CUSTOMER services: Ask "What's the address where you'd like the service performed?"
 
 If a customer requests a service that is NOT in your available services list, politely inform them what services you DO offer.
-If NO services are configured, tell the customer to call directly.
+If NO services are configured, use the get_smart_link tool with category 'booking' to offer the customer a direct scheduling link instead of just telling them to call.
+
+SMART LINK SHARING:
+- When a customer asks for a link (booking link, payment link, review link, etc.), use the get_smart_link tool with the relevant category.
+- NEVER make up or hallucinate links. ONLY share links returned by the get_smart_link tool.
+- If the tool returns no link, tell the customer you don't have that link available.
 
 APPOINTMENT TRACKING:
 If a customer asks to TRACK or CHECK STATUS of an appointment:
@@ -937,6 +948,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'get_smart_link',
+        description: 'Look up a smart link for the company by category (booking, payment, review, quote, menu, website, etc). Use when customer asks for a link or when scheduling is not available.',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'The link category to look up: booking, payment, review, quote, menu, website, social, referral, support, custom' },
+            search_term: { type: 'string', description: 'Optional search term to help find the right link' },
+          },
+          required: ['category'],
+        },
+      },
+    },
   ],
   booking: [
     {
@@ -1082,6 +1108,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Lead priority based on interest level' },
           },
           required: ['name'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_smart_link',
+        description: 'Look up a smart link for the company by category (booking, payment, review, quote, menu, website, etc). Use when customer asks for a link or when scheduling is not available.',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'The link category to look up: booking, payment, review, quote, menu, website, social, referral, support, custom' },
+            search_term: { type: 'string', description: 'Optional search term to help find the right link' },
+          },
+          required: ['category'],
         },
       },
     },
@@ -3362,11 +3403,11 @@ CONTEXTUAL SHARING MODE ACTIVE - PROACTIVE INFO
 The customer is seeking specific information (detected: "${triggerValue}").
 
 CRITICAL RULES:
-1. Be PROACTIVE - don't wait until end of conversation to share relevant links
-2. VERBALLY CONFIRM when sending information: "I'm sending that link to you now"
-3. For VOICE calls: Trigger SMS with the link while confirming verbally
-4. For TEXT chat: Embed the link directly in your response
-5. Match the info to their exact request - scheduling link for booking, payment link for invoices, etc.
+1. Use the get_smart_link tool to fetch the relevant link for the customer's request.
+2. VERBALLY CONFIRM when sharing: "Here's the link for you"
+3. For TEXT chat: Embed the link directly in your response so it's clickable.
+4. NEVER make up or hallucinate links. ONLY share links returned by the get_smart_link tool.
+5. If no link is found, tell the customer and offer to help another way.
 `;
 
     default:
@@ -3387,6 +3428,25 @@ async function executeAgentTool(
 
   // Simulated tool execution - in production, these would connect to real systems
   switch (toolName) {
+    case 'get_smart_link': {
+      console.log('[AI Agent] Looking up smart link with args:', args);
+      const category = args.category || 'booking';
+      const searchTerm = args.search_term || '';
+      const smartLink = await getSmartLinkForIntent(supabase, companyId, category, searchTerm);
+      if (smartLink && smartLink.url) {
+        return {
+          found: true,
+          url: smartLink.url,
+          name: smartLink.name,
+          description: smartLink.description || '',
+          message: `Found a ${category} link: ${smartLink.name} - ${smartLink.url}`,
+        };
+      }
+      return {
+        found: false,
+        message: `No ${category} link is configured for this company. Offer to help the customer another way.`,
+      };
+    }
     case 'check_availability': {
       console.log('[AI Agent] Checking availability with args:', args);
       
