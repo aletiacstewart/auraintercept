@@ -27,9 +27,9 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 39700, // $397 in cents
   },
   growth: {
-    price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
+    price_id: "price_1T02LLJ9fo9y8fGHMVJDpK7p",
     name: "Aura Growth",
-    price: 59700, // $597 in cents (was $397)
+    price: 59700, // $597 in cents
   },
   business: {
     price_id: "price_1T028dJ9fo9y8fGH92xnAk1x",
@@ -42,14 +42,14 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 149700, // $1,497 in cents
   },
   performance: {
-    price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Performance",
-    price: 349700, // $3,497 in cents (was $3,997)
+    price: 249700, // $2,497 in cents
   },
   command: {
-    price_id: "price_1StwYSJ9fo9y8fGHpPa6JL5I",
+    price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
     name: "Aura Command",
-    price: 549700, // $5,497 in cents (was $5,997)
+    price: 349700, // $3,497 in cents
   },
   // Legacy tier name aliases for backward compatibility
   express: {
@@ -63,7 +63,7 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 39700,
   },
   halo: {
-    price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
+    price_id: "price_1T02LLJ9fo9y8fGHMVJDpK7p",
     name: "Aura Growth",
     price: 59700,
   },
@@ -78,9 +78,9 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     price: 149700,
   },
   multi_track: {
-    price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Performance",
-    price: 349700,
+    price: 249700,
   },
 };
 
