@@ -13,9 +13,11 @@ import {
   PhoneOff,
   Send,
   Volume2,
+  
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useBrowserVoiceChat } from "@/hooks/useBrowserVoiceChat";
 
 interface VoiceChatProps {
   companyId: string;
@@ -47,6 +49,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [testAgent, setTestAgent] = useState<string>("triage");
   const [testHistory, setTestHistory] = useState<TranscriptMsg[]>([]);
   const testSessionIdRef = useRef<string>(crypto.randomUUID());
+
+  // Browser voice chat fallback hook
+  const browserVoice = useBrowserVoiceChat({ companyId, onTranscript });
+  const useBrowserFallback = !testMode && !agentId;
 
   // Helper to invoke voice-booking-agent edge function
   const invokeBookingAgent = useCallback(async (toolName: string, params: Record<string, unknown> = {}) => {
@@ -157,7 +163,40 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       return;
     }
 
-    // Voice mode — minimal path
+    // Browser voice fallback (no ElevenLabs configured)
+    if (useBrowserFallback) {
+      if (!browserVoice.recognitionSupported || !browserVoice.speechSupported) {
+        toast({
+          variant: "destructive",
+          title: "Browser Not Supported",
+          description: "Your browser doesn't support voice features. Try Chrome or Edge.",
+        });
+        return;
+      }
+      setIsConnecting(true);
+      try {
+        await browserVoice.startSession();
+        toast({
+          title: "Browser Voice Started",
+          description: "Using free browser voice — no ElevenLabs credits used.",
+        });
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "NotAllowedError") {
+          setHasPermission(false);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Connection Failed",
+            description: e instanceof Error ? e.message : "Unable to start chat",
+          });
+        }
+      } finally {
+        setIsConnecting(false);
+      }
+      return;
+    }
+
+    // Voice mode — ElevenLabs
     setIsConnecting(true);
 
     try {
@@ -166,14 +205,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       if (!agentId) throw new Error("No ElevenLabs agent configured for this company");
 
-      // Direct agentId connection — bypasses edge function to isolate the issue
       console.log("[VoiceChat] Starting with agentId:", agentId);
       await conversation.startSession({
         agentId,
         connectionType: "webrtc",
       });
 
-      // Inject today's date so the agent can resolve "tomorrow", "next Monday", etc.
       const today = new Date();
       const formatted = today.toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -197,7 +234,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: e instanceof Error ? e.message : "Unable to start chat",
       });
     }
-  }, [agentId, conversation, testMode, toast]);
+  }, [agentId, conversation, testMode, toast, useBrowserFallback, browserVoice]);
 
   const stopConversation = useCallback(async () => {
     if (testMode) {
@@ -206,12 +243,17 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       toast({ title: "Text Mode Ended", description: "The testing session has ended." });
       return;
     }
+    if (useBrowserFallback) {
+      browserVoice.endSession();
+      toast({ title: "Browser Voice Ended", description: "The voice session has ended." });
+      return;
+    }
     try {
       await conversation.endSession();
     } catch (e) {
       console.error("[VoiceChat] End session error:", e);
     }
-  }, [conversation, testMode, toast]);
+  }, [conversation, testMode, toast, useBrowserFallback, browserVoice]);
 
   // Text mode multi-agent calls
   const invokeMultiAgent = useCallback(
@@ -286,22 +328,29 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }
   };
 
-  const isConnected = testMode ? testSessionActive : conversation.status === "connected";
-  const isSpeaking = !testMode && isConnected && conversation.isSpeaking;
+  const isConnected = testMode
+    ? testSessionActive
+    : useBrowserFallback
+      ? browserVoice.status === "connected"
+      : conversation.status === "connected";
+  const isSpeakingNow = useBrowserFallback
+    ? browserVoice.isSpeaking
+    : (!testMode && isConnected && conversation.isSpeaking);
+  const isBrowserProcessing = useBrowserFallback && browserVoice.isProcessing;
 
   const getStatusText = () => {
     if (isConnecting) return "Connecting...";
     if (testMode && isConnected) return testIsLoading ? "Thinking…" : "Text mode active - type to chat";
-    if (isProcessingTool) return "Processing your request...";
-    if (isSpeaking) return "AI is speaking...";
+    if (isProcessingTool || isBrowserProcessing) return "Processing your request...";
+    if (isSpeakingNow) return "AI is speaking...";
     if (isConnected) return "Listening...";
     return testMode ? "Click to start text mode" : "Click to start voice chat";
   };
 
   const getStatusColor = () => {
     if (testMode && isConnected) return "bg-blue-500";
-    if (isProcessingTool) return "bg-amber-500";
-    if (isSpeaking) return "bg-secondary";
+    if (isProcessingTool || isBrowserProcessing) return "bg-amber-500";
+    if (isSpeakingNow) return "bg-secondary";
     if (isConnected) return "bg-green-500";
     if (isConnecting) return "bg-amber-500";
     return "bg-muted";
@@ -324,16 +373,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     );
   }
 
-  if (!testMode && !agentId) {
-    return (
-      <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-muted/50 border border-border">
-        <Mic className="h-8 w-8 text-muted-foreground" />
-        <p className="text-sm text-center text-muted-foreground">
-          Voice agent not configured. Please add an ElevenLabs Agent ID in the Integrations settings.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center gap-4 p-4">
@@ -343,17 +382,23 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
           Text Mode (No Voice Credits)
         </Badge>
       )}
+      {useBrowserFallback && (
+        <Badge variant="outline" className="gap-1 border-primary/30 text-primary">
+          <Mic className="h-3 w-3" />
+          Browser Voice (Free)
+        </Badge>
+      )}
 
       <div className={cn(
         "relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300",
         getStatusColor(),
-        (isConnected || isSpeaking) && "animate-pulse"
+        (isConnected || isSpeakingNow) && "animate-pulse"
       )}>
         {isConnecting ? (
           <Loader2 className="h-10 w-10 text-white animate-spin" />
         ) : testMode && isConnected ? (
           <MessageSquare className="h-10 w-10 text-white" />
-        ) : isSpeaking ? (
+        ) : isSpeakingNow ? (
           <Volume2 className="h-10 w-10 text-white animate-pulse" />
         ) : isConnected ? (
           <Mic className="h-10 w-10 text-white" />
@@ -363,7 +408,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
           <Mic className="h-10 w-10 text-muted-foreground" />
         )}
 
-        {(isConnected || isSpeaking) && (
+        {(isConnected || isSpeakingNow) && (
           <>
             <div className="absolute inset-0 rounded-full border-2 border-current opacity-20 animate-ping" />
             <div className="absolute inset-[-4px] rounded-full border border-current opacity-10 animate-pulse" />
