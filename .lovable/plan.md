@@ -1,37 +1,71 @@
 
 
-## Fix: Add "Thinking" Audio/Visual Feedback During AI Processing
+## Build Web Speech API Fallback + TTS Utility
 
-### Problem
-When the AI agent processes tool calls (checking availability, creating appointments, fetching services), there are several seconds of pure silence that makes it feel like the call disconnected.
+### Overview
 
-### Solution (Two-Pronged Approach)
+Two additions that reduce ElevenLabs costs and provide voice capabilities to all tiers:
 
-### 1. Prompt-Level Fix (Highest Impact, Zero Risk)
-Add a contextual update instruction telling the agent to always verbally acknowledge before processing a tool call. This uses the existing `sendContextualUpdate` method already in VoiceChat.tsx.
+1. **Web Speech API fallback for VoiceChat** -- when no ElevenLabs agent is configured, use the browser's free built-in speech synthesis + recognition instead of showing "not configured"
+2. **Standalone TTS utility** -- a reusable `speak()` function for reading notifications, confirmations, and other UI text aloud using the browser voice (zero cost)
 
-**After the date context is sent (line 173-176), add:**
-```
-"IMPORTANT: Before using any tool, always say a brief filler like 
-'Let me check on that for you' or 'One moment while I look that up' 
-so the caller knows you're still here. Never go silent."
-```
+### Cost Impact
 
-This is the safest and most effective fix -- the AI will naturally fill the silence with a verbal acknowledgment before each tool call.
+- Starter/free tier users get a basic voice chat experience at zero cost
+- The standalone TTS utility uses no ElevenLabs credits at all
+- ElevenLabs is still used for paid tiers that have it configured (no change there)
+- Phone calls via SignalWire are completely unaffected
 
-### 2. Visual "Processing" Indicator (Client-Side Enhancement)
-Track when a client tool is actively running and show a distinct visual state on the orb/status text.
+---
 
-- Add an `isProcessingTool` state variable
-- Set it to `true` at the start of each `clientTools` handler, `false` when it resolves
-- Update the status orb to show an amber/processing color and "Processing your request..." text
-- This gives visual confirmation even if the audio filler is brief
+### Technical Details
 
-### Files Modified
-- `src/components/ai/VoiceChat.tsx` -- both changes in one file
+#### 1. New file: `src/lib/browserTts.ts`
 
-### Risk Assessment
-- **Prompt injection**: None -- `sendContextualUpdate` is already used and proven stable
-- **ElevenLabs SDK**: No API changes, just using existing hooks
-- **Voice credits**: Minimal impact -- filler phrases are short (5-10 words)
-- **Tool execution**: No change to tool logic, only wrapping with state updates
+A shared utility that centralizes all Web Speech API logic:
+
+- `speak(text, options?)` -- speaks text aloud, returns a Promise that resolves when done
+- `stopSpeaking()` -- cancels current speech
+- `isSpeechSupported()` -- checks browser support
+- `getVoices()` -- lists available browser voices
+- Options: `rate`, `pitch`, `volume`, `lang`, `voiceName`
+- Picks a natural-sounding female English voice by default (matching "Aura" branding)
+
+This replaces the duplicated `speakWithBrowser` functions in `AIAgentSettings.tsx` and `TTSProviderSettings.tsx`.
+
+#### 2. Updated: `src/components/ai/VoiceChat.tsx`
+
+When `agentId` is null (no ElevenLabs configured), instead of showing "Voice agent not configured":
+
+- Use the browser's `SpeechRecognition` API for listening
+- Use `speak()` from the new utility for responses  
+- Route user speech through the existing `ai-agent-chat` edge function (same text-mode multi-agent pipeline already in place)
+- Show a "Browser Voice" badge so users know it's the free tier experience
+- The orb, status text, and start/stop buttons work the same way
+
+This means the conversational AI logic (booking tools, triage, etc.) still works -- only the voice layer changes.
+
+#### 3. Updated: `src/components/ai/AIAgentSettings.tsx` and `TTSProviderSettings.tsx`
+
+- Replace inline `speakWithBrowser` with import from `src/lib/browserTts.ts`
+- No behavior change, just deduplication
+
+#### 4. New hook: `src/hooks/useBrowserVoiceChat.ts`
+
+Encapsulates the browser-based voice chat logic (SpeechRecognition + speechSynthesis + ai-agent-chat calls) so VoiceChat.tsx stays clean. Returns the same interface shape (`status`, `isSpeaking`, `startSession`, `endSession`) for easy switching.
+
+### File Summary
+
+| File | Action |
+|------|--------|
+| `src/lib/browserTts.ts` | Create -- shared TTS utility |
+| `src/hooks/useBrowserVoiceChat.ts` | Create -- browser voice chat hook |
+| `src/components/ai/VoiceChat.tsx` | Update -- add browser fallback path |
+| `src/components/ai/AIAgentSettings.tsx` | Update -- use shared utility |
+| `src/components/ai/TTSProviderSettings.tsx` | Update -- use shared utility |
+
+### Browser Compatibility Note
+
+- `speechSynthesis` (TTS): Supported in all modern browsers
+- `SpeechRecognition`: Supported in Chrome, Edge, Safari 17+. Firefox has limited support. A "not supported" message will show for unsupported browsers.
+
