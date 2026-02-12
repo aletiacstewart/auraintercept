@@ -32,12 +32,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Never miss a lead again - 24/7 AI answering and lead capture',
   },
   scheduling: {
-    // Aura Scheduling ($397/mo): Lead Capture + Booking Automation
+    // Aura Connect ($397/mo): Lead Capture + Booking Automation
     agents: [
       'triage', 'booking', 'followup',  // Lead Capture + Booking Stack
     ],
     consoles: ['customer_portal'],  // Now includes Customer Portal (has booking/followup)
-    label: 'Aura Scheduling',
+    label: 'Aura Connect',
     price: '$397/mo',
     description: 'Turn conversations into booked appointments',
   },
@@ -55,7 +55,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Start growing automatically with marketing automation',
   },
   business: {
-    // Aura Business ($797/mo): + Office Automation Stack
+    // Aura Presence ($797/mo): + Office Automation Stack
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
@@ -63,12 +63,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'creative', 'web_presence',  // Creative & Web Presence
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],  // 4 consoles
-    label: 'Aura Business',
+    label: 'Aura Presence',
     price: '$797/mo',
     description: 'Run your office automatically with web presence',
   },
   field_ops: {
-    // Aura Field Ops ($1,497/mo): + Field Operations Stack
+    // Aura Logistics ($1,497/mo): + Field Operations Stack
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
@@ -78,7 +78,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'quoting', 'invoice',  // Business Operations (partial)
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence'],  // 6 consoles
-    label: 'Aura Field Ops',
+    label: 'Aura Logistics',
     price: '$1,497/mo',
     description: 'Run your field team automatically',
   },

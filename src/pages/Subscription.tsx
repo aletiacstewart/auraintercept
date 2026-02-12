@@ -88,7 +88,7 @@ const TIERS = [
   },
   {
     id: 'aura_flow',
-    name: 'Aura Scheduling',
+    name: 'Aura Connect',
     monthlyPrice: '$397',
     annualPrice: '$3,970',
     annualSavings: 'Save $794',
@@ -126,7 +126,7 @@ const TIERS = [
   },
   {
     id: 'core',
-    name: 'Aura Business',
+    name: 'Aura Presence',
     monthlyPrice: '$797',
     annualPrice: '$7,970',
     annualSavings: 'Save $1,594',
@@ -145,7 +145,7 @@ const TIERS = [
   },
   {
     id: 'single_point',
-    name: 'Aura Field Ops',
+    name: 'Aura Logistics',
     monthlyPrice: '$1,497',
     annualPrice: '$14,970',
     annualSavings: 'Save $2,994',

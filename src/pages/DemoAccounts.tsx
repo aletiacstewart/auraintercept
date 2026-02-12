@@ -40,7 +40,7 @@ const demoAccounts = [
     consoles: 0,
   },
   {
-    tier: 'Aura Scheduling',
+    tier: 'Aura Connect',
     tierColor: 'bg-rose-500/20 text-rose-600',
     price: '$397/mo',
     companyAdmin: 'companysched@demo.com',
@@ -62,7 +62,7 @@ const demoAccounts = [
     consoles: 3,
   },
   {
-    tier: 'Aura Business',
+    tier: 'Aura Presence',
     tierColor: 'bg-gray-500/20 text-gray-600',
     price: '$797/mo',
     companyAdmin: 'companybiz@demo.com',
@@ -73,7 +73,7 @@ const demoAccounts = [
     consoles: 4,
   },
   {
-    tier: 'Aura Field Ops',
+    tier: 'Aura Logistics',
     tierColor: 'bg-blue-500/20 text-blue-600',
     price: '$1,497/mo',
     companyAdmin: 'companyfops@demo.com',
@@ -203,7 +203,7 @@ const tierFeatures: Record<string, string[]> = {
     'Smart Link Sharing',
     'Lead Capture',
   ],
-  'Aura Scheduling': [
+  'Aura Connect': [
     'All Starter features',
     'Scheduling Agent',
     'Follow-up Agent',
@@ -211,21 +211,21 @@ const tierFeatures: Record<string, string[]> = {
     'Calendar Integration',
   ],
   'Aura Growth': [
-    'All Scheduling features',
+    'All Connect features',
     '11 AI Agents',
     'Outreach & Sales Console',
     'Social Media Console',
     'Marketing Automation',
   ],
-  'Aura Business': [
+  'Aura Presence': [
     'All Growth features',
     '12 AI Agents',
     'Creative & Web Console',
     'Web Presence Agent',
     'Brand Management',
   ],
-  'Aura Field Ops': [
-    'All Business features',
+  'Aura Logistics': [
+    'All Presence features',
     '18 AI Agents',
     'Field Operations Console',
     'Business Management Console',

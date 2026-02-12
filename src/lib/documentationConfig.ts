@@ -52,7 +52,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   },
   aura_flow: {
     id: 'aura_flow',
-    name: 'Aura Scheduling',
+    name: 'Aura Connect',
     price: 397,
     annualPrice: 3970,
     annualSavings: 794,
@@ -104,7 +104,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   },
   core: {
     id: 'core',
-    name: 'Aura Business',
+    name: 'Aura Presence',
     price: 797,
     annualPrice: 7970,
     annualSavings: 1594,
@@ -130,7 +130,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   },
   single_point: {
     id: 'single_point',
-    name: 'Aura Field Ops',
+    name: 'Aura Logistics',
     price: 1497,
     annualPrice: 14970,
     annualSavings: 2994,
@@ -169,7 +169,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     description: 'Full business automation with basic analytics and intelligence.',
     bestFor: 'Growing companies needing comprehensive automation and basic analytics.',
     highlights: [
-      'Everything in Field Ops',
+      'Everything in Logistics',
       '22 AI Operatives (basic analytics)',
       'All 7 Consoles',
       'Business Operations console (Admin, Inventory)',

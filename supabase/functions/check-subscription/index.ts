@@ -17,10 +17,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 const PRICE_TO_TIER: Record<string, string> = {
   // New tier price IDs mapped to NEW tier names
   "price_1SuzwwJ9fo9y8fGH0rJZBw5q": "starter",      // Aura Starter - $197/month
-  "price_1SxfFNJ9fo9y8fGH2rcByvoY": "scheduling",   // Aura Scheduling - $297/month
-  "price_1StwXbJ9fo9y8fGHMaCGdnDV": "growth",       // Aura Growth - $397/month
-  "price_1StwXqJ9fo9y8fGHwzQk17IN": "business",     // Aura Business - $500/month
-  "price_1StwY2J9fo9y8fGHwOIrLZ8q": "field_ops",    // Aura Field Ops - $1,500/month
+  "price_1SxfFNJ9fo9y8fGH2rcByvoY": "scheduling",   // Aura Connect (legacy price)
+  "price_1T0285J9fo9y8fGHURkfEnLp": "scheduling",   // Aura Connect - $397/month
+  "price_1StwXqJ9fo9y8fGHwzQk17IN": "business",     // Aura Presence (legacy price)
+  "price_1T028dJ9fo9y8fGH92xnAk1x": "business",     // Aura Presence - $797/month
+  "price_1StwY2J9fo9y8fGHwOIrLZ8q": "field_ops",    // Aura Logistics (legacy price)
+  "price_1T028oJ9fo9y8fGHIiNuzVSC": "field_ops",    // Aura Logistics - $1,497/month
   "price_1StwYEJ9fo9y8fGHdwAoYr5E": "performance",  // Aura Performance - $3,997/month
   "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",      // Aura Command - $5,997/month
   // Legacy Enterprise -> Command (backward compatibility)
