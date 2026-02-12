@@ -1,71 +1,46 @@
 
+## Fix: Improve Browser Voice Selection for Female Voice
 
-## Build Web Speech API Fallback + TTS Utility
+### Problem
+The current `pickDefaultVoice()` function in `src/lib/browserTts.ts` uses a narrow regex pattern that only matches specific hardcoded voice names like "Samantha", "Karen", "Victoria", etc. On most systems, these exact names don't exist, so the function falls back to:
+1. Any English voice (which defaults to the system's first voice)
+2. First available voice
 
-### Overview
+This results in a deep male voice being selected instead of a natural female voice.
 
-Two additions that reduce ElevenLabs costs and provide voice capabilities to all tiers:
+### Root Cause
+- Browser voice names vary significantly by OS and browser (e.g., "Google English Female", "Microsoft Zira", "Google US English")
+- The regex pattern is too specific and only matches a few hardcoded names
+- The fallback strategy doesn't explicitly filter for female voices
 
-1. **Web Speech API fallback for VoiceChat** -- when no ElevenLabs agent is configured, use the browser's free built-in speech synthesis + recognition instead of showing "not configured"
-2. **Standalone TTS utility** -- a reusable `speak()` function for reading notifications, confirmations, and other UI text aloud using the browser voice (zero cost)
+### Solution
+Improve `pickDefaultVoice()` in `src/lib/browserTts.ts` with a multi-step selection strategy:
 
-### Cost Impact
+1. **First priority**: Look for voices with "female" in the name AND English language
+2. **Second priority**: Filter out male voices and select any other English voice (assumes default is female on most systems)
+3. **Third priority**: Return the first voice if no English voice found
+4. **Safety check**: If the selected voice name contains "male", try to find an alternative
 
-- Starter/free tier users get a basic voice chat experience at zero cost
-- The standalone TTS utility uses no ElevenLabs credits at all
-- ElevenLabs is still used for paid tiers that have it configured (no change there)
-- Phone calls via SignalWire are completely unaffected
+### Implementation Details
 
----
+**File to modify**: `src/lib/browserTts.ts`
 
-### Technical Details
-
-#### 1. New file: `src/lib/browserTts.ts`
-
-A shared utility that centralizes all Web Speech API logic:
-
-- `speak(text, options?)` -- speaks text aloud, returns a Promise that resolves when done
-- `stopSpeaking()` -- cancels current speech
-- `isSpeechSupported()` -- checks browser support
-- `getVoices()` -- lists available browser voices
-- Options: `rate`, `pitch`, `volume`, `lang`, `voiceName`
-- Picks a natural-sounding female English voice by default (matching "Aura" branding)
-
-This replaces the duplicated `speakWithBrowser` functions in `AIAgentSettings.tsx` and `TTSProviderSettings.tsx`.
-
-#### 2. Updated: `src/components/ai/VoiceChat.tsx`
-
-When `agentId` is null (no ElevenLabs configured), instead of showing "Voice agent not configured":
-
-- Use the browser's `SpeechRecognition` API for listening
-- Use `speak()` from the new utility for responses  
-- Route user speech through the existing `ai-agent-chat` edge function (same text-mode multi-agent pipeline already in place)
-- Show a "Browser Voice" badge so users know it's the free tier experience
-- The orb, status text, and start/stop buttons work the same way
-
-This means the conversational AI logic (booking tools, triage, etc.) still works -- only the voice layer changes.
-
-#### 3. Updated: `src/components/ai/AIAgentSettings.tsx` and `TTSProviderSettings.tsx`
-
-- Replace inline `speakWithBrowser` with import from `src/lib/browserTts.ts`
-- No behavior change, just deduplication
-
-#### 4. New hook: `src/hooks/useBrowserVoiceChat.ts`
-
-Encapsulates the browser-based voice chat logic (SpeechRecognition + speechSynthesis + ai-agent-chat calls) so VoiceChat.tsx stays clean. Returns the same interface shape (`status`, `isSpeaking`, `startSession`, `endSession`) for easy switching.
-
-### File Summary
-
-| File | Action |
-|------|--------|
-| `src/lib/browserTts.ts` | Create -- shared TTS utility |
-| `src/hooks/useBrowserVoiceChat.ts` | Create -- browser voice chat hook |
-| `src/components/ai/VoiceChat.tsx` | Update -- add browser fallback path |
-| `src/components/ai/AIAgentSettings.tsx` | Update -- use shared utility |
-| `src/components/ai/TTSProviderSettings.tsx` | Update -- use shared utility |
+Replace the `pickDefaultVoice()` function with improved logic:
+- Explicitly search for voices containing "female" in the name (case-insensitive)
+- If no female voice found, search for voices that DON'T contain "male" in the name
+- Prioritize natural/premium voices by checking localService flag
+- Add a comment explaining browser voice naming conventions across different systems
 
 ### Browser Compatibility Note
+Different browsers return different voice names:
+- Chrome/Edge: "Google US English Female", "Microsoft Zira" (Windows)
+- Safari: "Samantha", "Victoria" (macOS) 
+- Firefox: Limited voice support, often only default system voice
 
-- `speechSynthesis` (TTS): Supported in all modern browsers
-- `SpeechRecognition`: Supported in Chrome, Edge, Safari 17+. Firefox has limited support. A "not supported" message will show for unsupported browsers.
+This improved logic will work across all these variants.
+
+### Impact
+- Users will now get a natural female voice in the browser voice mode instead of a deep male voice
+- No changes needed to other files (the utility is used transparently by `useBrowserVoiceChat.ts`)
+- Zero breaking changes—existing functionality remains the same
 
