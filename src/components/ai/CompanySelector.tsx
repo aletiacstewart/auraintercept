@@ -30,13 +30,10 @@ export const CompanySelector: React.FC<CompanySelectorProps> = ({
   const { data: companies, isLoading } = useQuery({
     queryKey: ['available-companies'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('companies')
-        .select('id, name, logo_url, primary_color')
-        .order('name');
+      const { data, error } = await supabase.rpc('list_companies_public');
       
       if (error) throw error;
-      return data as Company[];
+      return (data as unknown as Company[]) ?? [];
     },
   });
 

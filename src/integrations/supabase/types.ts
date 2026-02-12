@@ -6704,6 +6704,16 @@ export type Database = {
         Returns: boolean
       }
       is_customer: { Args: { _user_id: string }; Returns: boolean }
+      list_companies_public: {
+        Args: never
+        Returns: {
+          id: string
+          logo_url: string
+          name: string
+          primary_color: string
+          slug: string
+        }[]
+      }
       log_appointment_access: {
         Args: {
           p_access_type: string
