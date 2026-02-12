@@ -7,39 +7,39 @@ const corsHeaders = {
 
 // Demo company configurations
 const DEMO_COMPANIES = {
-  business: {
+  presence: {
     id: 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
-    name: 'Demo Business Company',
-    slug: 'demo-business'
+    name: 'Demo Presence',
+    slug: 'demo-presence'
   },
   growth: {
     id: 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
-    name: 'Demo Growth Company',
+    name: 'Demo Growth',
     slug: 'demo-growth'
   },
-  field_ops: {
+  logistics: {
     id: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
-    name: 'Demo Field Ops Company',
-    slug: 'demo-fieldops'
+    name: 'Demo Logistics',
+    slug: 'demo-logistics'
   },
   performance: {
     id: '4f85ed98-0e98-480c-b904-1c33424e26ad',
-    name: 'Demo Performance Company',
+    name: 'Demo Performance',
     slug: 'demo-performance'
   },
   command: {
     id: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
-    name: 'Demo Command Company',
+    name: 'Demo Command',
     slug: 'demo-command'
   },
-  scheduling: {
+  connect: {
     id: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
-    name: 'Demo Scheduling Company',
-    slug: 'demo-scheduling'
+    name: 'Demo Connect',
+    slug: 'demo-connect'
   },
   starter: {
     id: 'd4a6c195-c89a-4208-a818-981902af6c51',
-    name: 'Demo Starter Company',
+    name: 'Demo Starter',
     slug: 'demo-starter'
   }
 };
