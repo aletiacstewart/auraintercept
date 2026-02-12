@@ -354,19 +354,8 @@ export const AIAgentSettings = () => {
       return;
     }
 
-    const speakWithBrowser = (text: string) => {
-      if (!('speechSynthesis' in window)) return false;
-      try {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-        return true;
-      } catch {
-        return false;
-      }
-    };
+    const { speakSimple } = await import('@/lib/browserTts');
+    const speakWithBrowser = (text: string) => speakSimple(text);
 
     setIsPreviewingGreeting(true);
     try {
@@ -442,19 +431,8 @@ export const AIAgentSettings = () => {
       return;
     }
 
-    const speakWithBrowser = (text: string) => {
-      if (!('speechSynthesis' in window)) return false;
-      try {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-        return true;
-      } catch {
-        return false;
-      }
-    };
+    const { speakSimple } = await import('@/lib/browserTts');
+    const speakWithBrowser = (text: string) => speakSimple(text);
 
     const testText = "Hello! I'm your AI assistant. How can I help you today?";
 
