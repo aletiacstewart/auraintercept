@@ -43,11 +43,35 @@ export function getVoices(): SpeechSynthesisVoice[] {
 }
 
 /**
- * Pick a natural-sounding female English voice to match "Aura" branding.
- * Falls back to the first English voice, then the default voice.
+ * Wait for voices to be loaded (browsers load them async).
+ * Resolves immediately if already available.
  */
-function pickDefaultVoice(): SpeechSynthesisVoice | undefined {
-  const voices = getVoices();
+function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
+  return new Promise((resolve) => {
+    const voices = getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
+      return;
+    }
+    // Chrome fires voiceschanged when voices load
+    const handler = () => {
+      window.speechSynthesis.removeEventListener('voiceschanged', handler);
+      resolve(getVoices());
+    };
+    window.speechSynthesis.addEventListener('voiceschanged', handler);
+    // Safety timeout — resolve with whatever we have after 2s
+    setTimeout(() => {
+      window.speechSynthesis.removeEventListener('voiceschanged', handler);
+      resolve(getVoices());
+    }, 2000);
+  });
+}
+
+/**
+ * Pick a natural-sounding female English voice to match "Aura" branding.
+ * Uses a multi-step strategy to work across Chrome, Edge, Safari, Firefox.
+ */
+function pickDefaultVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
   if (voices.length === 0) return undefined;
 
   const enVoices = voices.filter((v) => v.lang.startsWith('en'));
@@ -75,32 +99,31 @@ function pickDefaultVoice(): SpeechSynthesisVoice | undefined {
  * Speak text aloud using the browser's built-in speech synthesis.
  * Returns a Promise that resolves when speech finishes (or rejects on error).
  */
-export function speak(text: string, options?: SpeakOptions): Promise<void> {
+export async function speak(text: string, options?: SpeakOptions): Promise<void> {
+  if (!isSpeechSupported()) {
+    throw new Error('Speech synthesis not supported in this browser');
+  }
+
+  window.speechSynthesis.cancel();
+
+  const voices = await waitForVoices();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = options?.lang ?? 'en-US';
+  utterance.rate = options?.rate ?? 1.0;
+  utterance.pitch = options?.pitch ?? 1.0;
+  utterance.volume = options?.volume ?? 1.0;
+
+  if (options?.voiceName) {
+    const match = voices.find((v) => v.name === options.voiceName);
+    if (match) utterance.voice = match;
+  } else {
+    const defaultVoice = pickDefaultVoice(voices);
+    if (defaultVoice) utterance.voice = defaultVoice;
+  }
+
   return new Promise((resolve, reject) => {
-    if (!isSpeechSupported()) {
-      reject(new Error('Speech synthesis not supported in this browser'));
-      return;
-    }
-
-    window.speechSynthesis.cancel(); // stop any in-progress speech
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = options?.lang ?? 'en-US';
-    utterance.rate = options?.rate ?? 1.0;
-    utterance.pitch = options?.pitch ?? 1.0;
-    utterance.volume = options?.volume ?? 1.0;
-
-    if (options?.voiceName) {
-      const match = getVoices().find((v) => v.name === options.voiceName);
-      if (match) utterance.voice = match;
-    } else {
-      const defaultVoice = pickDefaultVoice();
-      if (defaultVoice) utterance.voice = defaultVoice;
-    }
-
     utterance.onend = () => resolve();
     utterance.onerror = (e) => reject(e);
-
     window.speechSynthesis.speak(utterance);
   });
 }
@@ -113,9 +136,8 @@ export function stopSpeaking(): void {
 }
 
 /**
- * Simple fire-and-forget browser TTS.
+ * Simple fire-and-forget browser TTS with female voice selection.
  * Returns true if speech started, false if unsupported.
- * Used as a drop-in replacement for the old inline `speakWithBrowser` helpers.
  */
 export function speakSimple(text: string, lang = 'en-US', rate = 1): boolean {
   if (!isSpeechSupported()) return false;
@@ -123,6 +145,10 @@ export function speakSimple(text: string, lang = 'en-US', rate = 1): boolean {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     utterance.rate = rate;
+
+    const voice = pickDefaultVoice(getVoices());
+    if (voice) utterance.voice = voice;
+
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
     return true;
