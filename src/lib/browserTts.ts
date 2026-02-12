@@ -50,20 +50,25 @@ function pickDefaultVoice(): SpeechSynthesisVoice | undefined {
   const voices = getVoices();
   if (voices.length === 0) return undefined;
 
-  // Prefer a natural / premium female English voice
-  const preferred = voices.find(
-    (v) =>
-      v.lang.startsWith('en') &&
-      /female|samantha|karen|victoria|zira|hazel|susan/i.test(v.name) &&
-      (v.localService || v.name.toLowerCase().includes('natural'))
+  const enVoices = voices.filter((v) => v.lang.startsWith('en'));
+  if (enVoices.length === 0) return voices[0];
+
+  // 1. Explicit "female" in name (Chrome: "Google US English Female")
+  const explicitFemale = enVoices.find((v) => /female/i.test(v.name));
+  if (explicitFemale) return explicitFemale;
+
+  // 2. Known female voice names across OS/browser
+  const knownFemale = enVoices.find((v) =>
+    /samantha|victoria|karen|zira|hazel|susan|fiona|moira|tessa|allison/i.test(v.name)
   );
-  if (preferred) return preferred;
+  if (knownFemale) return knownFemale;
 
-  // Any English voice
-  const english = voices.find((v) => v.lang.startsWith('en'));
-  if (english) return english;
+  // 3. Any English voice that does NOT contain "male" in name
+  const nonMale = enVoices.find((v) => !/\bmale\b/i.test(v.name));
+  if (nonMale) return nonMale;
 
-  return voices[0];
+  // 4. Fallback to first English voice
+  return enVoices[0];
 }
 
 /**
