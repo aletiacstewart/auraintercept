@@ -5,12 +5,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
 import { supabase } from '@/integrations/supabase/client';
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { DashboardLayoutWithTutorial } from '@/components/dashboard/DashboardLayout';
 import { PlatformAdminDashboard } from '@/components/dashboard/PlatformAdminDashboard';
 import { CompanyAdminDashboard } from '@/components/dashboard/CompanyAdminDashboard';
 import { EmployeeDashboard } from '@/components/dashboard/EmployeeDashboard';
 import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTutorialContext } from '@/components/tutorial/DashboardTutorial';
+import { Button } from '@/components/ui/button';
+import { GraduationCap } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, loading, userRole, companyId } = useAuth();
@@ -109,7 +112,8 @@ export default function Dashboard() {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayoutWithTutorial>
+      <TutorialStartBanner />
       {renderDashboard()}
       
       <WelcomeModal
@@ -120,6 +124,22 @@ export default function Dashboard() {
         companyName={companyData?.name}
         jobTypes={jobTypes}
       />
-    </DashboardLayout>
+    </DashboardLayoutWithTutorial>
+  );
+}
+
+function TutorialStartBanner() {
+  const { start, isActive } = useTutorialContext();
+  if (isActive) return null;
+  return (
+    <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <GraduationCap className="w-5 h-5 text-primary" />
+        <span className="text-sm font-medium text-foreground">New here? Take a guided tutorial of the platform.</span>
+      </div>
+      <Button size="sm" onClick={start} className="gradient-primary text-xs">
+        Start Tutorial
+      </Button>
+    </div>
   );
 }
