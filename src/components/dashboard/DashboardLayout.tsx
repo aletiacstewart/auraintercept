@@ -59,6 +59,8 @@ import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
+import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
+import { Clapperboard } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -182,6 +184,7 @@ const navGroups: NavGroup[] = [
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Demo Accounts', icon: Users, href: '/dashboard/demo-accounts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
+      { label: 'AI Agent Demo', icon: Clapperboard, href: '/dashboard/ai-agent-demo', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
@@ -362,7 +365,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5">
+        <div data-tour-id="sidebar-logo" className="flex items-center gap-3 px-4 py-5">
           <div className="w-10 h-10 rounded-xl gradient-primary p-0.5 flex-shrink-0">
             <div className="w-full h-full rounded-xl bg-sidebar flex items-center justify-center overflow-hidden">
               <img src={logo} alt="Aura Intercept" className="w-8 h-8 object-contain" />
@@ -398,10 +401,35 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
                     const displayLabel = item.label;
 
+                    const tourId = item.href === '/dashboard/quick-setup' ? 'nav-quick-setup'
+                      : item.href === '/dashboard/ai-consoles/customer-portal' ? 'nav-customer-portal'
+                      : item.href === '/dashboard/customer-website-app' ? 'nav-customer-website-app'
+                      : item.href === '/dashboard/ai-consoles/business-mgt-ops' ? 'nav-business-mgt-ops'
+                      : item.href === '/dashboard/ai-consoles/analytics' ? 'nav-analytics-reports'
+                      : item.href === '/dashboard/ai-consoles/marketing-sales' ? 'nav-marketing-sales'
+                      : item.href === '/dashboard/ai-consoles/social-media' ? 'nav-social-media'
+                      : item.href === '/dashboard/smart-website' ? 'nav-web-presence'
+                      : item.href === '/dashboard/ai-consoles/field-ops' ? 'nav-field-ops'
+                      : item.href === '/dashboard/dispatch-field-ops' ? 'nav-dispatch-ops'
+                      : item.href === '/dashboard/ai-agents' ? 'nav-ai-operatives'
+                      : item.href === '/dashboard/knowledge' ? 'nav-knowledge-base'
+                      : item.href === '/dashboard/calculators' ? 'nav-calculators'
+                      : item.href === '/dashboard/3rd-party-overview' ? 'nav-integrations-overview'
+                      : item.href === '/dashboard/integrations/voice' ? 'nav-voice-agent'
+                      : item.href === '/dashboard/integrations/sms' ? 'nav-voice-sms'
+                      : item.href === '/dashboard/integrations/email' ? 'nav-email'
+                      : item.href === '/dashboard/integrations/calendar' ? 'nav-calendar'
+                      : item.href === '/dashboard/integrations/social' ? 'nav-social-integration'
+                      : item.href === '/dashboard/integrations/tavily' ? 'nav-ai-research'
+                      : item.href === '/dashboard/subscription' ? 'nav-subscription'
+                      : item.href === '/dashboard/help' ? 'nav-help'
+                      : undefined;
+
                     return (
                       <Button
                         key={item.href}
                         variant="ghost"
+                        data-tour-id={tourId}
                         className={cn(
                           'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
                           isActive && 'bg-sidebar-accent text-sidebar-foreground',
@@ -512,7 +540,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main ref={mainRef} className="flex-1 overflow-auto">
+      <main ref={mainRef} className="flex-1 overflow-auto" data-tour-id="main-content">
         {/* Header with notification bell */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
           <div className="container max-w-7xl flex items-center justify-end py-2 px-4">
@@ -527,5 +555,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Unified Aura Floating Button */}
       <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
     </div>
+  );
+}
+
+export function DashboardLayoutWithTutorial({ children }: { children: React.ReactNode }) {
+  return (
+    <DashboardTutorialProvider>
+      <DashboardLayout>{children}</DashboardLayout>
+    </DashboardTutorialProvider>
   );
 }

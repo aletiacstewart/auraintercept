@@ -683,6 +683,20 @@ export default function Auth() {
             {/* Left Column - What's Included (only for company mode) */}
             {mode === 'company' && (
               <div className="space-y-4 h-fit">
+                {/* Free Trial Banner */}
+                <div className="p-4 rounded-xl bg-gradient-to-br from-primary/20 via-purple-500/15 to-amber-500/10 border border-primary/30 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl">👑</span>
+                      <h3 className="text-sm font-bold text-foreground">30-Day Free Trial — Full Access</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Header */}
                 <div className="text-center md:text-left">
                   <h2 className="text-lg font-bold flex items-center gap-2 justify-center md:justify-start">
@@ -690,7 +704,7 @@ export default function Auth() {
                     Choose Your Plan
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Start with a 30-day free trial. No credit card required.
+                    Select your plan — trial includes everything.
                   </p>
                 </div>
 
