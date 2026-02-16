@@ -203,3 +203,6 @@ verify_jwt = false
 
 [functions.generate-content-image]
 verify_jwt = true
+
+[functions.social-webhook]
+verify_jwt = false
