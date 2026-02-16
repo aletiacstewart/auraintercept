@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink, Instagram, Facebook, Linkedin, Video, Building2, Webhook, DollarSign } from 'lucide-react';
+import { Copy, Check, ExternalLink, Instagram, Facebook, Linkedin, Video, Building2, Webhook, DollarSign, Shield } from 'lucide-react';
 
 interface SocialMediaSetupGuideProps {
   platform: 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'google_business';
@@ -24,37 +24,80 @@ const PLATFORM_CONFIG = {
       {
         title: 'Create a Meta App',
         content: [
-          'Go to Meta for Developers',
-          'Click "Create App" and select "Business" type',
-          'Enter your app name and contact email',
-          'Complete the security check',
+          'Go to developers.facebook.com → My Apps → Create App',
+          'Select "Other" for use case, then "Business" as app type',
+          'Enter your app name (e.g., "Aura Intercept") and contact email',
+          'Link to your Meta Business Account (create one if needed)',
         ],
       },
       {
-        title: 'Configure Facebook Login',
+        title: 'Add Required Use Cases',
         content: [
-          'In your app dashboard, click "Add Product"',
-          'Select "Facebook Login" and click "Set Up"',
-          'Choose "Web" as platform',
-          'Add your OAuth redirect URL',
+          'In App Dashboard → Use Cases → click "Customize" or "Add"',
+          '✅ "Manage everything on your Page" — required to publish posts to Facebook Pages',
+          '✅ "Manage messaging & content on Instagram" — required for Instagram posting',
+          '✅ "Engage with customers on Messenger from Meta" — for Messenger integration (optional)',
+          'For each use case, click "Customize" and add all required permissions',
+        ],
+      },
+      {
+        title: 'Configure Facebook Login for Business',
+        content: [
+          'In Use Cases → "Manage everything on your Page" → Customize',
+          'Go to "API setup with Facebook login" section',
+          'Add your OAuth Redirect URI (see URL below)',
+          'Under Settings → Basic, set your App Domains, Privacy Policy URL, and Terms of Service URL',
+        ],
+      },
+      {
+        title: 'Set Required URLs in App Settings',
+        content: [
+          'Go to Settings → Basic in your Meta App',
+          'Set Privacy Policy URL (required for review)',
+          'Set Terms of Service URL (required for review)',
+          'Under Settings → Advanced, add Deauthorize Callback URL',
+          'Add Data Deletion Request URL (GDPR compliance)',
         ],
       },
       {
         title: 'Get App Credentials',
         content: [
           'Go to Settings → Basic',
-          'Copy your App ID (public)',
-          'Click "Show" to reveal App Secret',
-          'Store App Secret securely',
+          'Copy your App ID (public — safe to share)',
+          'Click "Show" to reveal App Secret (keep private!)',
+          'Store App Secret in the integration settings on this page',
         ],
       },
       {
-        title: 'Request Permissions',
+        title: 'Required Permissions (Facebook)',
         content: [
-          'pages_manage_posts - Post to your Pages',
-          'pages_read_engagement - View post insights',
-          'pages_show_list - List your Pages',
-          'Submit for App Review if publishing publicly',
+          'pages_manage_posts — Publish and manage posts on your Pages',
+          'pages_read_engagement — View post insights and engagement data',
+          'pages_show_list — Allow users to select which Page to connect',
+          'pages_read_user_content — Read user-posted content on Pages',
+          'business_management — Manage business assets',
+          'All permissions must be approved via App Review before going live',
+        ],
+      },
+      {
+        title: 'Configure Messenger Webhooks (if using Messenger)',
+        content: [
+          'In Use Cases → "Messenger from Meta" → Customize',
+          'Go to Messenger API Settings → Configure webhooks',
+          'Set Callback URL (see webhook URL below)',
+          'Set a Verify Token (any secret string — save it securely)',
+          'Click "Verify and save"',
+          'Subscribe to: messages, messaging_postbacks, messaging_optins',
+        ],
+      },
+      {
+        title: 'Submit for App Review',
+        content: [
+          'Go to App Review → Requests in your Meta App',
+          'Submit each permission with a description of how you use it',
+          'Provide a screencast demo showing the integration in action',
+          'Review typically takes 1-5 business days',
+          'Until approved, only users with Admin/Developer/Tester roles can use the app',
         ],
       },
     ],
@@ -67,42 +110,105 @@ const PLATFORM_CONFIG = {
     description: 'Publish photos and content to your Instagram Business or Creator account.',
     consoleUrl: 'https://developers.facebook.com/apps',
     authUrl: 'https://www.facebook.com/v24.0/dialog/oauth',
-    docsUrl: 'https://developers.facebook.com/docs/instagram-api/',
+    docsUrl: 'https://developers.facebook.com/docs/instagram-platform/',
     steps: [
       {
         title: 'Prerequisites',
         content: [
-          'Instagram Business or Creator account required',
-          'Account must be connected to a Facebook Page',
-          'Use the same Meta App as Facebook integration',
-          'No personal Instagram accounts supported',
+          'Instagram Business or Creator account required (not personal)',
+          'Instagram account MUST be connected to a Facebook Page',
+          'Uses the same Meta App as Facebook integration — create one app for both',
+          'Meta Business Account must be linked to the app',
         ],
       },
       {
-        title: 'Enable Instagram Graph API',
+        title: 'Add Instagram API Use Case',
         content: [
-          'In your Meta App, go to "Add Product"',
-          'Select "Instagram Graph API"',
-          'Complete the product setup wizard',
-          'Link your Instagram Business account',
+          'In your Meta App → Use Cases → Add "Instagram API"',
+          'Click "Customize" on the Instagram API use case',
+          'You will see two setup paths: "API setup with Instagram login" and "API setup with Facebook login"',
+          'Use "API setup with Facebook login" — this is required for content publishing',
         ],
       },
       {
-        title: 'Request Instagram Permissions',
+        title: 'Add Required Content Permissions (Facebook Login path)',
         content: [
-          'instagram_basic - Access profile info',
-          'instagram_content_publish - Publish media',
-          'instagram_manage_comments - Manage comments',
-          'Submit for review before going live',
+          'Under "Manage content on Instagram" section, click "Add required content permissions"',
+          'instagram_basic — Access profile info and media',
+          'instagram_content_publishing — Create and publish media',
+          'pages_read_engagement — Read page engagement data',
+          'business_management — Manage business assets',
+          'pages_show_list — List pages connected to Instagram',
+        ],
+      },
+      {
+        title: 'Add Messaging Permissions (optional)',
+        content: [
+          'Under "Send messages on Instagram" section (if needed):',
+          'instagram_manage_messages — Send and receive DMs',
+          'instagram_basic — Already added above',
+          'pages_read_engagement — Already added above',
+          'pages_show_list — Already added above',
+          'business_management — Already added above',
+        ],
+      },
+      {
+        title: 'Add Instagram Login Permissions (alternative path)',
+        content: [
+          'Under "API setup with Instagram login" section:',
+          'instagram_business_basic — Access business profile info',
+          'instagram_manage_comments — Read and manage comments',
+          'instagram_business_manage_messages — Send and receive DMs',
+          'Click "Add all required permissions" to enable them',
+        ],
+      },
+      {
+        title: 'Configure Instagram Webhooks',
+        content: [
+          'In Instagram API → Customize → Webhooks section',
+          'Set Callback URL (see webhook URL below)',
+          'Set a Verify Token (any secret string you choose — save it)',
+          'Click "Verify and save"',
+          'Subscribe to: comments, messages (optional), story_insights',
+          'Note: App must be in "Published" state to receive webhooks',
+        ],
+      },
+      {
+        title: 'Set Up Instagram Business Login',
+        content: [
+          'In Instagram API → Customize → "Set up Instagram business login"',
+          'Click "Set up" and configure OAuth redirect URI',
+          'This enables your tenant users to connect their Instagram accounts',
+          'Make sure your redirect URI matches the OAuth Callback URL below',
+        ],
+      },
+      {
+        title: 'Generate Access Tokens (Testing)',
+        content: [
+          'In Instagram API → "Generate access tokens" section',
+          'Click "Add account" to connect your Instagram test account',
+          'Before adding, assign "Instagram Tester" role in Roles tab',
+          'The tester must accept the invitation on Instagram',
+          'Generate a token to test API calls before going live',
         ],
       },
       {
         title: 'Content Requirements',
         content: [
-          'Images must be JPEG format, max 8MB',
-          'Aspect ratio between 4:5 and 1.91:1',
-          'Videos: MP4, max 100MB, 3-60 seconds',
-          'Carousel posts: 2-10 items',
+          'Images: JPEG format, max 8MB, aspect ratio between 4:5 and 1.91:1',
+          'Videos: MP4, max 100MB, 3-60 seconds, minimum 720p',
+          'Carousel posts: 2-10 items (images or videos)',
+          'Reels: MP4, 0-90 seconds, 9:16 aspect ratio recommended',
+          'All media must be hosted on a publicly accessible URL before publishing',
+        ],
+      },
+      {
+        title: 'Complete App Review',
+        content: [
+          'Go to App Review → submit permissions for review',
+          'Instagram requires successful app review before accessing live data',
+          'Provide clear use-case descriptions and a screencast demo',
+          'Until approved, only users with Tester/Admin roles can use the integration',
         ],
       },
     ],
@@ -274,8 +380,11 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
 
   const publishedDomain = getPublishedDomain();
   const OAUTH_CALLBACK_URL = `${publishedDomain}/api/social-oauth/callback`;
-  const _DEAUTHORIZE_URL = `${publishedDomain}/api/social-oauth/deauthorize`;
-  const _DATA_DELETION_URL = `${publishedDomain}/api/social-oauth/data-deletion`;
+  const DEAUTHORIZE_URL = `${publishedDomain}/api/social-oauth/deauthorize`;
+  const DATA_DELETION_URL = `${publishedDomain}/api/social-oauth/data-deletion`;
+  const WEBHOOK_URL = `${publishedDomain}/api/social-webhook`;
+
+  const isMetaPlatform = platform === 'facebook' || platform === 'instagram';
 
   return (
     <Card className="guide-card guide-card-social">
@@ -335,6 +444,79 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
               </div>
             </AccordionContent>
           </AccordionItem>
+
+          {/* Webhook URL — for platforms that need it */}
+          {isMetaPlatform && (
+            <AccordionItem value="webhook">
+              <AccordionTrigger className="text-sm">
+                <span className="flex items-center gap-2">
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">
+                    <Webhook className="w-3 h-3" />
+                  </Badge>
+                  Webhook Callback URL
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-foreground/80 space-y-3">
+                <p>Use this URL for Messenger and Instagram webhook configuration:</p>
+                <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
+                  <code className="text-xs break-all text-foreground font-mono">{WEBHOOK_URL}</code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook')}
+                  >
+                    {copiedItems['webhook'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">You'll also need to set a Verify Token — use any secret string and save it in your integration settings.</p>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
+          {/* Meta-specific: Deauthorize & Data Deletion URLs */}
+          {isMetaPlatform && (
+            <AccordionItem value="meta-urls">
+              <AccordionTrigger className="text-sm">
+                <span className="flex items-center gap-2">
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">
+                    <Shield className="w-3 h-3" />
+                  </Badge>
+                  Deauthorize & Data Deletion URLs (Meta Required)
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-foreground/80 space-y-4">
+                <p>Meta requires these URLs in Settings → Advanced. They are mandatory for App Review:</p>
+                
+                <div>
+                  <p className="text-xs font-medium mb-1">Deauthorize Callback URL:</p>
+                  <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
+                    <code className="text-xs break-all text-foreground font-mono">{DEAUTHORIZE_URL}</code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(DEAUTHORIZE_URL, 'deauthorize')}
+                    >
+                      {copiedItems['deauthorize'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium mb-1">Data Deletion Request URL:</p>
+                  <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
+                    <code className="text-xs break-all text-foreground font-mono">{DATA_DELETION_URL}</code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(DATA_DELETION_URL, 'data-deletion')}
+                    >
+                      {copiedItems['data-deletion'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
 
           {/* Pricing */}
           <AccordionItem value="pricing">
