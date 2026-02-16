@@ -1,44 +1,55 @@
 
 
-## Fix All Integration URLs to Use Published Domain
+# Rewrite Meta (Facebook/Instagram) Setup Guide to Match Actual Developer Portal
 
-### Problem
-Multiple integration setup guides and components use `window.location.origin` to generate OAuth callback URLs and webhook URLs. When accessed from the Lovable preview environment, this produces URLs like `https://id-preview--xxxxx.lovable.app/...` which third-party services (Facebook, LinkedIn, TikTok, Google) reject.
+## Problem
+The current setup instructions in `SocialMediaSetupGuide.tsx` don't accurately reflect the current Meta Developer Portal (developers.facebook.com/apps) layout, navigation, and workflow. Steps reference outdated flows (e.g., selecting "Other" then "Business" app type) and don't match the portal's sidebar structure.
 
-### Solution
-Replace all `window.location.origin` references in integration-facing URLs with `getPublishedDomain()` from `src/lib/url.ts`, which returns `https://auraintercept.ai`.
+## What Changes
 
-### Files to Change
+### Facebook Steps (Complete Rewrite - 13 Steps)
 
-**1. `src/components/integrations/SocialMediaSetupGuide.tsx`** (line 274)
-- Change: `window.location.origin` to `getPublishedDomain()`
-- Affects: OAuth callback URL shown to users for Facebook, LinkedIn, TikTok, Google Business
-- Also add two additional URLs for Facebook's required Deauthorize and Data Deletion callbacks
+The steps will be reordered and rewritten to match the actual portal sidebar navigation and the use-case-based app creation flow:
 
-**2. `src/components/integrations/GoogleCalendarSettings.tsx`** (lines 105, 447)
-- Already references `auraintercept.ai` in toast messages -- no functional change needed, but will verify the redirect URI display also uses the published domain consistently
+1. **Register as a Meta Developer** -- Go to developers.facebook.com, register, verify account
+2. **Create a New App** -- Click "Create App", select use cases (checkboxes):
+   - "Authenticate and request data from users with Facebook Login"
+   - "Manage everything on your Page"
+   - "Engage with customers on Messenger from Meta"
+   - Enter app name, contact email, link Business Portfolio, click Create
+3. **App Dashboard -- Overview** -- Note App ID at top, see added use cases and products
+4. **Settings -- Basic** -- Copy App ID and App Secret, set App Domains, Privacy Policy URL, Terms of Service URL, paste Data Deletion Request URL and Deauthorize Callback URL, Save Changes
+   - URLs embedded: `dataDeletion`, `deauthorize`
+5. **Settings -- Advanced** -- Review server IP allowlists, API version settings (optional)
+6. **Use Cases -- Customize Facebook Login** -- Click Customize on "Authenticate and request data from users with Facebook Login", go to Facebook Login > Settings, paste Valid OAuth Redirect URI, Save
+   - URLs embedded: `oauth`
+7. **Use Cases -- Customize Page Permissions** -- Click Customize on "Manage everything on your Page", add permissions: `pages_manage_posts`, `pages_read_engagement`, `pages_show_list`, `pages_read_user_content`, `pages_manage_metadata`
+8. **Use Cases -- Customize Messenger** -- Click Customize on "Engage with customers on Messenger from Meta":
+   - Configure webhooks: paste Callback URL, set Verify Token, click Verify and Save
+   - Generate access tokens: Add Page, grant permissions, Add Subscriptions (messages, messaging_postbacks, messaging_optins), Generate token
+   - URLs embedded: `webhook`
+9. **Webhooks (Global Sidebar)** -- Select "Page" object, subscribe to fields: `feed` (required), `messages`, `messaging_postbacks`, `messaging_optins`. Leave all metadata fields (affiliation, attire, parking, etc.) unsubscribed. Use v24.0.
+   - URLs embedded: `webhook`
+10. **App Roles -- Roles** -- Add People (Admin/Developer/Tester), testers must accept invitation. Only role holders can use app in Development mode.
+11. **Exchange for Long-Lived Token** -- API call to exchange short-lived token:
+    ```
+    GET https://graph.facebook.com/v24.0/oauth/access_token
+      ?grant_type=fb_exchange_token
+      &client_id=YOUR_APP_ID
+      &client_secret=YOUR_APP_SECRET
+      &fb_exchange_token=SHORT_LIVED_TOKEN
+    ```
+12. **App Review -- Requests** -- Submit each permission for review with descriptions and screencast demo (2-5 min). Review takes 1-5 business days.
+13. **Go Live** -- Settings > Basic > toggle App Mode to "Live". Final checklist: permissions approved, webhook active, long-lived token stored, Privacy/ToS URLs accessible, Data Deletion and Deauthorize URLs configured, OAuth Redirect URI set.
 
-**3. `src/components/widget/DirectLinkCode.tsx`** (line 15)
-- Change: Use `getPublishedDomain()` for the direct chat link so the copyable URL always points to production
+### Instagram Steps (Minor Update)
+- Update prerequisite to reference the new Facebook app creation flow
+- Clarify that the use case to add is "Manage messaging and content on Instagram" during app creation or later via Use Cases sidebar
+- Keep existing permission and webhook steps (already accurate)
 
-**4. `src/components/widget/IframeEmbedCode.tsx`** (line 15)
-- Change: Use `getPublishedDomain()` for the iframe embed `src` URL
-
-**5. `src/components/widget/PlatformInstallGuide.tsx`** (line 30)
-- Change: Use `getPublishedDomain()` for the embed/direct link URLs shown in WordPress/Wix/Squarespace install guides
-
-**6. `src/components/widget/CustomerPortalInstallPrompt.tsx`** (line 20)
-- Change: Use `getPublishedDomain()` for the customer portal install URL
-
-**7. `src/pages/CustomerPortalAppInstall.tsx`** (line 22)
-- Change: Use `getPublishedDomain()` for the install URL displayed to customers
-
-### What Will NOT Change
-- `Auth.tsx` redirect URLs (`emailRedirectTo`) -- these must use `window.location.origin` because the user needs to return to whichever domain they signed up from
-- `ForgotPasswordDialog.tsx` -- same reason, password reset must redirect back to current domain
-- `FieldOpsAppCard.tsx`, `DispatchFieldOpsAppCard.tsx`, `BusinessMgtOpsAppCard.tsx` -- these already have smart logic using `normalizedPublicBaseUrl` with preview detection fallback
-- `OAuthGoogleCalendar.tsx` -- stores return URL for internal navigation, correctly uses current origin
-
-### Technical Detail
-All changed files will import `getPublishedDomain` from `@/lib/url` and replace `window.location.origin` with the function call. This ensures every URL shown to users for pasting into third-party developer consoles always points to `https://auraintercept.ai`.
+### Technical Details
+- File to edit: `src/components/integrations/SocialMediaSetupGuide.tsx`
+- Only the `facebook.steps` and `instagram.steps` arrays in `PLATFORM_CONFIG` will be rewritten
+- The `SetupStep` interface (`title`, `content`, `urls`) and rendering logic remain unchanged
+- All URLs continue using the existing `urlMap` with `oauth`, `webhook`, `deauthorize`, `dataDeletion` keys
 
