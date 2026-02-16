@@ -1,135 +1,128 @@
 
-# Option A: Platform-Level OAuth for All Social Media
+# Implementation: Platform-Level OAuth with "Add Later" Credentials
 
-## What Changes
+## Overview
+Build the full Option A architecture but instead of requiring secrets upfront, create a **Platform Credentials Settings** section where the platform admin can input their API keys when ready. The secrets will be stored securely as backend environment variables.
 
-Instead of each tenant company creating their own developer apps and entering API credentials manually, **Aura Intercept registers ONE app per platform** (as a Tech Provider). Tenants simply click "Connect with Facebook/LinkedIn/TikTok/Google" and authorize through a standard OAuth popup.
+## What Gets Built
 
-## Architecture Shift
+### 1. New Edge Functions (3 files)
 
-**Current flow (per-tenant):**
-Tenant creates Meta App --> copies App ID/Secret --> pastes into form --> manually generates tokens
+**`supabase/functions/social-oauth/index.ts`**
+- Handles `/init` (generate OAuth URL) and `/callback` (exchange code for tokens)
+- Reads platform credentials from environment secrets: `META_APP_ID`, `META_APP_SECRET`, `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- Platform-specific flows: Meta long-lived token exchange, LinkedIn org fetch, TikTok open_id, Google refresh tokens
+- Stores tokens in `tenant_integrations` and creates `social_accounts` records
+- Returns clear error if platform credentials are not yet configured
 
-**New flow (platform app):**
-Tenant clicks "Connect Facebook" --> OAuth popup --> authorizes Aura Intercept --> tokens stored automatically
+**`supabase/functions/social-oauth-deauthorize/index.ts`**
+- Handles Meta deauthorization callbacks
+- Marks social accounts as inactive when users revoke access
 
-The platform's App ID and App Secret for each platform become **backend secrets** (environment variables), not per-tenant fields. The `tenant_integrations` table still stores each tenant's **access tokens, page IDs, and account IDs** -- but no longer stores `meta_app_id`, `meta_app_secret`, `linkedin_client_id`, etc.
+**`supabase/functions/social-oauth-data-deletion/index.ts`**
+- Handles Meta GDPR data deletion requests
+- Returns confirmation URL and tracking code as required by Meta
 
-## Implementation Steps
+### 2. Platform Credentials Management
 
-### 1. Create `social-oauth` Edge Function
-A new backend function that handles the complete OAuth flow for all 4 platforms:
-- **`/init`** -- Generates the OAuth authorization URL with the correct scopes and redirect URI, returns it to the frontend to open in a popup
-- **`/callback`** -- Receives the authorization code from the platform, exchanges it for access tokens, fetches page/account details, and stores everything in `tenant_integrations` and `social_accounts`
+**New component: `src/components/integrations/PlatformCredentialsSettings.tsx`**
+- Only visible to `platform_admin` role
+- Shows a card for each platform (Meta, LinkedIn, TikTok, Google)
+- Each card has fields for the platform's Client ID and Secret
+- Saves credentials by calling a new edge function that sets them as backend secrets
+- Shows status: "Configured" or "Not configured" for each platform
+- Includes help text explaining these are ONE-TIME platform-level settings, not per-tenant
 
-Platform-specific logic:
-- **Meta (Facebook/Instagram):** Exchange code for user token, then get Page tokens, then exchange for long-lived tokens (60 days). Fetch linked Instagram Business Account ID automatically.
-- **LinkedIn:** Exchange code for access token (60-day expiry). Fetch organization list for company pages.
-- **TikTok:** Exchange code for access token + refresh token. Fetch user open_id.
-- **Google Business:** Exchange code for access token + refresh token. Fetch account and location IDs.
+**New edge function: `supabase/functions/manage-platform-secrets/index.ts`**
+- Accepts platform credential key-value pairs from the admin UI
+- Validates the caller is a platform_admin
+- Stores values as Supabase secrets (Deno.env won't persist -- we'll store in a `platform_settings` table instead)
 
-### 2. Create `social-oauth-deauthorize` Edge Function
-Handles deauthorization callbacks from Meta (required for App Review).
+**Actually -- simpler approach:** Store platform credentials in a new `platform_settings` table (key-value, RLS restricted to platform_admin). The OAuth edge functions read from this table. This avoids needing to manage secrets dynamically.
 
-### 3. Create `social-oauth-data-deletion` Edge Function
-Handles data deletion requests from Meta (required for App Review and GDPR compliance). Returns a confirmation URL and tracking code.
+### 3. Database Changes
 
-### 4. Add Platform Secrets
-The following secrets need to be configured (these are YOUR platform-level credentials, not per-tenant):
-- `META_APP_ID` and `META_APP_SECRET` -- From your Meta Tech Provider app
-- `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` -- From your LinkedIn Developer app
-- `TIKTOK_CLIENT_KEY` and `TIKTOK_CLIENT_SECRET` -- From your TikTok Developer app
-- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` already exist as secrets
+**New table: `platform_settings`**
+- `id` (uuid, primary key)
+- `setting_key` (text, unique) -- e.g. 'META_APP_ID', 'META_APP_SECRET'
+- `setting_value` (text) -- encrypted at rest by database
+- `updated_at` (timestamptz)
+- `updated_by` (uuid, references auth.users)
+- RLS: Only `platform_admin` can SELECT, INSERT, UPDATE, DELETE
 
-### 5. Update `SocialMediaIntegration.tsx` Page
-- **Remove** the manual credential input dialog (App ID/Secret fields)
-- **Replace** with "Connect with [Platform]" buttons that trigger the OAuth popup flow
-- Show connection status with account name, connected date, and a disconnect button
-- The `SOCIAL_INTEGRATIONS` array drops the `fields` property entirely
+### 4. Updated Frontend Files
 
-### 6. Rewrite `SocialMediaSetupGuide.tsx` -- All 5 Platforms
-The guides shift from "how to create your own developer app" to **"how Aura Intercept's platform admin registers the master app once"**. This is a one-time setup by the platform owner, not by each tenant.
+**`src/pages/integrations/SocialMediaIntegration.tsx`** -- Major rewrite:
+- Remove manual credential input dialog (App ID/Secret per-tenant fields)
+- Replace with "Connect with [Platform]" buttons that open OAuth popup
+- Show connection status with account name, connected date, disconnect button
+- If platform credentials aren't configured, show a message directing platform admin to set them up
+- Remove the `fields` property from `SOCIAL_INTEGRATIONS` array
 
-**Meta (Facebook + Instagram) -- New Guide:**
-1. Register as a Meta Developer at developers.facebook.com
-2. Create a "Business" type app and select "Tech Provider" use case
-3. In Settings > Basic: set App Domains, Privacy Policy URL, Terms of Service URL, Data Deletion URL, Deauthorize Callback URL (copyable URLs provided)
-4. Configure Facebook Login product: add Valid OAuth Redirect URI (copyable)
-5. Add permissions: pages_manage_posts, pages_read_engagement, pages_show_list, instagram_basic, instagram_content_publish, instagram_manage_messages
-6. Configure Webhooks: set Callback URL and Verify Token, subscribe to feed, messages, messaging_postbacks
-7. Business Verification: upload legal documents (business license, utility bill, etc.)
-8. App Review: submit all permissions with screencast demo and use-case descriptions
-9. Go Live: toggle from Development to Live mode
-10. Required documents checklist: Privacy Policy, Terms of Service, Data Processing Agreement
+**`src/components/integrations/SocialMediaSetupGuide.tsx`** -- Complete rewrite:
+- All 5 platform guides rewritten for the Tech Provider model
+- Guides explain how the platform admin registers the master app ONCE
+- Detailed step-by-step for Meta, LinkedIn, TikTok, Google Business
+- Includes required documents checklists, copyable URLs, review timelines
+- Each guide references where to input credentials (Platform Credentials Settings)
 
-**LinkedIn -- New Guide:**
-1. Go to linkedin.com/developers/apps and create app
-2. Link to a LinkedIn Company Page (verified admin required)
-3. In Auth tab: add OAuth Redirect URI (copyable), note Client ID and Secret
-4. Request Products: "Share on LinkedIn" (instant) and "Sign In with LinkedIn using OpenID Connect"
-5. For Company Page posting: apply for "Marketing Developer Platform" (include use-case description, expected volume, company website)
-6. Required scopes: w_member_social, r_liteprofile, r_organization_social, w_organization_social
-7. Submit verification documents if requested
+### 5. Updated Backend Files
 
-**TikTok -- New Guide:**
-1. Register at developers.tiktok.com
-2. Create app, select "Content Posting API" use case
-3. Add OAuth Redirect URI (copyable)
-4. Enable Login Kit and Content Posting products
-5. Request "Direct Post" scope
-6. Submit for review with use-case description and demo video
-7. Note: AI-generated content must include is_aigc flag (handled automatically)
+**`supabase/functions/_shared/social-platforms/token-refresh.ts`**
+- Read `META_APP_ID`/`META_APP_SECRET` from `platform_settings` table instead of per-tenant `tenant_integrations`
+- Same for LinkedIn, TikTok, Google credentials
 
-**Google Business -- New Guide:**
-1. Go to Google Cloud Console, create/select project
-2. Enable "Business Profile API" and "My Business Business Information API"
-3. Create OAuth 2.0 credentials (Web Application type), add redirect URI (copyable)
-4. Configure OAuth Consent Screen: add business.manage scope
-5. Submit verification request for production access
-6. Add test users during development
+**`supabase/functions/publish-social-content/index.ts`**
+- Minor update: platform credentials come from `platform_settings` table via token-refresh
 
-Each guide includes:
-- Required documents (Privacy Policy, ToS, etc.)
-- Copyable URLs for OAuth redirect, webhooks, deauthorize, data deletion endpoints
-- Direct links to developer consoles and documentation
-- Estimated review timelines
+### 6. Config Updates
 
-### 7. Update `token-refresh.ts`
-Change Meta token refresh to use platform-level secrets (`META_APP_ID`, `META_APP_SECRET` from environment) instead of reading `meta_app_id`/`meta_app_secret` from the `tenant_integrations` table. Same for LinkedIn, TikTok -- use platform secrets.
+**`supabase/config.toml`** -- Add entries for new edge functions:
+- `social-oauth` (verify_jwt = false, since OAuth callbacks come from external platforms)
+- `social-oauth-deauthorize` (verify_jwt = false)
+- `social-oauth-data-deletion` (verify_jwt = false)
+- `manage-platform-secrets` is not needed since we use a table approach
 
-### 8. Update `publish-social-content` Function
-Minor change: when fetching credentials for token refresh, pass platform-level secrets from environment instead of per-tenant credentials.
+## Technical Details
 
-## Database Changes
-- No new tables needed
-- The existing `tenant_integrations` columns for per-tenant app credentials (`meta_app_id`, `meta_app_secret`, `linkedin_client_id`, `linkedin_client_secret`, `tiktok_client_key`, `tiktok_client_secret`) become unused (can be deprecated later)
-- The token and account ID columns remain (`meta_page_access_token`, `meta_page_id`, `linkedin_access_token`, etc.)
+### OAuth Flow
+1. Tenant clicks "Connect with Facebook"
+2. Frontend calls `social-oauth?action=init&platform=facebook&tenant_id=xxx`
+3. Edge function reads `META_APP_ID` from `platform_settings`, builds OAuth URL with correct scopes
+4. Returns URL, frontend opens popup
+5. User authorizes, redirected to callback URL
+6. `social-oauth?action=callback` receives code, exchanges for tokens
+7. Stores tokens in `tenant_integrations`, creates `social_accounts` record
+8. Frontend detects success, refreshes connection status
 
-## Files to Create
-- `supabase/functions/social-oauth/index.ts` -- OAuth init + callback handler
-- `supabase/functions/social-oauth-deauthorize/index.ts` -- Meta deauth handler
-- `supabase/functions/social-oauth-data-deletion/index.ts` -- Meta data deletion handler
+### Platform Settings Table Approach
+Using a database table instead of environment secrets because:
+- Platform admin can update credentials through the UI without redeploying
+- Edge functions can read from the table using the service role key
+- RLS ensures only platform_admin can view/edit
+- Simpler than dynamic secret management
 
-## Files to Modify
-- `src/components/integrations/SocialMediaSetupGuide.tsx` -- Complete rewrite of all 5 platform guides for Option A
-- `src/pages/integrations/SocialMediaIntegration.tsx` -- Replace manual credential forms with OAuth connect buttons
-- `supabase/functions/_shared/social-platforms/token-refresh.ts` -- Use platform env secrets
-- `supabase/functions/publish-social-content/index.ts` -- Pass platform secrets from env
+### Files to Create
+- `supabase/functions/social-oauth/index.ts`
+- `supabase/functions/social-oauth-deauthorize/index.ts`
+- `supabase/functions/social-oauth-data-deletion/index.ts`
+- `src/components/integrations/PlatformCredentialsSettings.tsx`
 
-## Secrets to Add
-- `META_APP_ID` -- Your platform Meta App ID
-- `META_APP_SECRET` -- Your platform Meta App Secret
-- `LINKEDIN_CLIENT_ID` -- Your platform LinkedIn Client ID
-- `LINKEDIN_CLIENT_SECRET` -- Your platform LinkedIn Client Secret
-- `TIKTOK_CLIENT_KEY` -- Your platform TikTok Client Key
-- `TIKTOK_CLIENT_SECRET` -- Your platform TikTok Client Secret
-- `GOOGLE_CLIENT_ID` already exists
-- `GOOGLE_CLIENT_SECRET` already exists
+### Files to Modify
+- `src/components/integrations/SocialMediaSetupGuide.tsx`
+- `src/pages/integrations/SocialMediaIntegration.tsx`
+- `supabase/functions/_shared/social-platforms/token-refresh.ts`
+- `supabase/functions/publish-social-content/index.ts`
 
-## Tenant Experience After Implementation
-1. Tenant goes to Social Media integrations page
-2. Reads the setup guide (now simplified -- explains what the platform does, what permissions are needed)
-3. Clicks "Connect with Facebook"
-4. OAuth popup opens, tenant logs in and authorizes their Page
-5. Tokens and Page IDs are captured and stored automatically
-6. Tenant's Social Media AI agents can now generate and post content -- no change to how agents work
+### Database Migration
+- Create `platform_settings` table with RLS policies for platform_admin only
+
+## Implementation Order
+1. Create `platform_settings` table with RLS
+2. Create `PlatformCredentialsSettings.tsx` component and add to the Social Media integration page
+3. Create `social-oauth` edge function (init + callback)
+4. Create `social-oauth-deauthorize` and `social-oauth-data-deletion` edge functions
+5. Rewrite `SocialMediaSetupGuide.tsx` with all 5 platform guides for Tech Provider model
+6. Rewrite `SocialMediaIntegration.tsx` with OAuth connect buttons
+7. Update `token-refresh.ts` to read from `platform_settings`
+8. Update `publish-social-content` to use platform-level credentials
