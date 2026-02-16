@@ -1,4 +1,5 @@
 import React, { useState, forwardRef } from 'react';
+import { getPublishedDomain } from '@/lib/url';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +28,7 @@ export const PlatformInstallGuide = forwardRef<HTMLDivElement, PlatformInstallGu
     const [copiedCode, setCopiedCode] = useState<string | null>(null);
     const [selectedPlatform, setSelectedPlatform] = useState<Platform>('wordpress');
 
-    const baseUrl = window.location.origin;
+    const baseUrl = getPublishedDomain();
     const iframeSrc = `${baseUrl}/chat/${companySlug}?embed=true`;
     const directLink = `${baseUrl}/chat/${companySlug}`;
     const widgetUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-widget`;

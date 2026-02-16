@@ -17,9 +17,10 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
+import { getPublishedDomain } from '@/lib/url';
 
 export default function CustomerPortalAppInstall() {
-  const installUrl = `${window.location.origin}/customer-portal-install`;
+  const installUrl = `${getPublishedDomain()}/customer-portal-install`;
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(installUrl);
