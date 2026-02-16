@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getPublishedDomain } from '@/lib/url';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Copy, Check } from 'lucide-react';
@@ -12,7 +13,7 @@ export const IframeEmbedCode = ({ companySlug }: IframeEmbedCodeProps) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = window.location.origin;
+  const baseUrl = getPublishedDomain();
   const iframeCode = `<iframe 
   src="${baseUrl}/chat/${companySlug}?embed=true" 
   width="400" 

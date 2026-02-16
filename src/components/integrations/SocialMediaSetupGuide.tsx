@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getPublishedDomain } from '@/lib/url';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -271,7 +272,10 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
     }
   };
 
-  const OAUTH_CALLBACK_URL = `${window.location.origin}/api/social-oauth/callback`;
+  const publishedDomain = getPublishedDomain();
+  const OAUTH_CALLBACK_URL = `${publishedDomain}/api/social-oauth/callback`;
+  const _DEAUTHORIZE_URL = `${publishedDomain}/api/social-oauth/deauthorize`;
+  const _DATA_DELETION_URL = `${publishedDomain}/api/social-oauth/data-deletion`;
 
   return (
     <Card className="guide-card guide-card-social">

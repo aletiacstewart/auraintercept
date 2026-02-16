@@ -1,4 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
+import { getPublishedDomain } from '@/lib/url';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Smartphone, X, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,8 +17,7 @@ export function CustomerPortalInstallPrompt({
 }: CustomerPortalInstallPromptProps) {
   // Get the base URL for the install page
   const getInstallUrl = () => {
-    // Use the current origin, which will work in both preview and production
-    const baseUrl = window.location.origin;
+    const baseUrl = getPublishedDomain();
     return `${baseUrl}/customer-portal-install`;
   };
 
