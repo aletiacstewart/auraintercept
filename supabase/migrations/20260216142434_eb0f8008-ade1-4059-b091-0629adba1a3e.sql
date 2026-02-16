@@ -1,0 +1,25 @@
+
+-- Add social media API credential columns to tenant_integrations
+ALTER TABLE public.tenant_integrations
+  ADD COLUMN IF NOT EXISTS meta_app_id text,
+  ADD COLUMN IF NOT EXISTS meta_app_secret text,
+  ADD COLUMN IF NOT EXISTS meta_page_access_token text,
+  ADD COLUMN IF NOT EXISTS meta_page_id text,
+  ADD COLUMN IF NOT EXISTS meta_instagram_account_id text,
+  ADD COLUMN IF NOT EXISTS meta_token_expires_at timestamptz,
+  ADD COLUMN IF NOT EXISTS linkedin_client_id text,
+  ADD COLUMN IF NOT EXISTS linkedin_client_secret text,
+  ADD COLUMN IF NOT EXISTS linkedin_access_token text,
+  ADD COLUMN IF NOT EXISTS linkedin_organization_id text,
+  ADD COLUMN IF NOT EXISTS linkedin_token_expires_at timestamptz,
+  ADD COLUMN IF NOT EXISTS tiktok_client_key text,
+  ADD COLUMN IF NOT EXISTS tiktok_client_secret text,
+  ADD COLUMN IF NOT EXISTS tiktok_access_token text,
+  ADD COLUMN IF NOT EXISTS tiktok_open_id text,
+  ADD COLUMN IF NOT EXISTS tiktok_token_expires_at timestamptz,
+  ADD COLUMN IF NOT EXISTS google_business_client_id text,
+  ADD COLUMN IF NOT EXISTS google_business_client_secret text,
+  ADD COLUMN IF NOT EXISTS google_business_access_token text,
+  ADD COLUMN IF NOT EXISTS google_business_refresh_token text,
+  ADD COLUMN IF NOT EXISTS google_business_account_id text,
+  ADD COLUMN IF NOT EXISTS google_business_location_id text;

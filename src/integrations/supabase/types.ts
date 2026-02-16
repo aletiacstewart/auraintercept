@@ -5808,6 +5808,12 @@ export type Database = {
           elevenlabs_voice_speed: number | null
           elevenlabs_voice_stability: number | null
           elevenlabs_voice_style: number | null
+          google_business_access_token: string | null
+          google_business_account_id: string | null
+          google_business_client_id: string | null
+          google_business_client_secret: string | null
+          google_business_location_id: string | null
+          google_business_refresh_token: string | null
           google_calendar_enabled: boolean | null
           google_calendar_id: string | null
           google_refresh_token: string | null
@@ -5815,6 +5821,17 @@ export type Database = {
           google_tts_model: string | null
           google_tts_voice: string | null
           id: string
+          linkedin_access_token: string | null
+          linkedin_client_id: string | null
+          linkedin_client_secret: string | null
+          linkedin_organization_id: string | null
+          linkedin_token_expires_at: string | null
+          meta_app_id: string | null
+          meta_app_secret: string | null
+          meta_instagram_account_id: string | null
+          meta_page_access_token: string | null
+          meta_page_id: string | null
+          meta_token_expires_at: string | null
           openai_api_key: string | null
           openai_tts_model: string | null
           openai_tts_voice: string | null
@@ -5827,6 +5844,11 @@ export type Database = {
           stripe_secret_key: string | null
           stripe_webhook_secret: string | null
           tavily_api_key: string | null
+          tiktok_access_token: string | null
+          tiktok_client_key: string | null
+          tiktok_client_secret: string | null
+          tiktok_open_id: string | null
+          tiktok_token_expires_at: string | null
           tts_monthly_limit: number | null
           tts_provider: string | null
           twilio_account_sid: string | null
@@ -5845,6 +5867,12 @@ export type Database = {
           elevenlabs_voice_speed?: number | null
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
+          google_business_access_token?: string | null
+          google_business_account_id?: string | null
+          google_business_client_id?: string | null
+          google_business_client_secret?: string | null
+          google_business_location_id?: string | null
+          google_business_refresh_token?: string | null
           google_calendar_enabled?: boolean | null
           google_calendar_id?: string | null
           google_refresh_token?: string | null
@@ -5852,6 +5880,17 @@ export type Database = {
           google_tts_model?: string | null
           google_tts_voice?: string | null
           id?: string
+          linkedin_access_token?: string | null
+          linkedin_client_id?: string | null
+          linkedin_client_secret?: string | null
+          linkedin_organization_id?: string | null
+          linkedin_token_expires_at?: string | null
+          meta_app_id?: string | null
+          meta_app_secret?: string | null
+          meta_instagram_account_id?: string | null
+          meta_page_access_token?: string | null
+          meta_page_id?: string | null
+          meta_token_expires_at?: string | null
           openai_api_key?: string | null
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
@@ -5864,6 +5903,11 @@ export type Database = {
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null
           tavily_api_key?: string | null
+          tiktok_access_token?: string | null
+          tiktok_client_key?: string | null
+          tiktok_client_secret?: string | null
+          tiktok_open_id?: string | null
+          tiktok_token_expires_at?: string | null
           tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
@@ -5882,6 +5926,12 @@ export type Database = {
           elevenlabs_voice_speed?: number | null
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
+          google_business_access_token?: string | null
+          google_business_account_id?: string | null
+          google_business_client_id?: string | null
+          google_business_client_secret?: string | null
+          google_business_location_id?: string | null
+          google_business_refresh_token?: string | null
           google_calendar_enabled?: boolean | null
           google_calendar_id?: string | null
           google_refresh_token?: string | null
@@ -5889,6 +5939,17 @@ export type Database = {
           google_tts_model?: string | null
           google_tts_voice?: string | null
           id?: string
+          linkedin_access_token?: string | null
+          linkedin_client_id?: string | null
+          linkedin_client_secret?: string | null
+          linkedin_organization_id?: string | null
+          linkedin_token_expires_at?: string | null
+          meta_app_id?: string | null
+          meta_app_secret?: string | null
+          meta_instagram_account_id?: string | null
+          meta_page_access_token?: string | null
+          meta_page_id?: string | null
+          meta_token_expires_at?: string | null
           openai_api_key?: string | null
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
@@ -5901,6 +5962,11 @@ export type Database = {
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null
           tavily_api_key?: string | null
+          tiktok_access_token?: string | null
+          tiktok_client_key?: string | null
+          tiktok_client_secret?: string | null
+          tiktok_open_id?: string | null
+          tiktok_token_expires_at?: string | null
           tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
