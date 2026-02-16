@@ -618,21 +618,28 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'Google Calendar',
     purpose: 'Calendar Sync (Two-way)',
     cost: 'Free',
-    requiredFor: 'Scheduling+ (booking/scheduling agents)',
+    requiredFor: 'Connect+ (booking/scheduling agents)',
     optional: true,
   },
   {
     name: 'Stripe',
     purpose: 'Invoice Payments',
     cost: '2.9% + $0.30/transaction',
-    requiredFor: 'Field Ops+ (invoicing)',
+    requiredFor: 'Logistics+ (invoicing)',
     optional: true,
   },
   {
-    name: 'Social Media Accounts',
-    purpose: 'Content Publishing',
-    cost: 'Free (platform accounts)',
-    requiredFor: 'Core+ (for Social Media)',
+    name: 'Social Media (Platform OAuth)',
+    purpose: 'Content Publishing via Meta, LinkedIn, TikTok, Google',
+    cost: 'Free (platform-level OAuth configured by platform admin)',
+    requiredFor: 'Growth+ (Social Media Ops)',
+    optional: true,
+  },
+  {
+    name: 'Tavily',
+    purpose: 'AI Web Research for Enhanced Content',
+    cost: 'Free (1,000 searches/mo) or paid plans',
+    requiredFor: 'Optional for all tiers (enhances AI content)',
     optional: true,
   },
 ];
@@ -745,7 +752,7 @@ export function formatEmployees(employees: number | 'Unlimited'): string {
 // INTEGRATION REQUIREMENTS BY TIER
 // ============================================
 
-export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar' | 'a2p_10dlc';
+export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar' | 'a2p_10dlc' | 'social_media';
 
 export interface IntegrationRequirement {
   required: boolean; // true = auto-enabled + locked, false = optional (soft lock)
@@ -761,27 +768,30 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
-    tavily: { required: false, reason: 'Not included in your plan' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: false, reason: 'Optional for appointment sync' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: false, reason: 'Not available on Starter tier' },
   },
   aura_flow: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email follow-ups' },
-    tavily: { required: false, reason: 'Not included in your plan' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for Scheduling Agent calendar sync' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: false, reason: 'Not available on Connect tier' },
   },
   halo: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
-    tavily: { required: false, reason: 'Not included in your plan' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for Customer Portal scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Growth tier)' },
   },
   core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
@@ -791,6 +801,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: false, reason: 'Optional for appointment sync' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Presence tier)' },
   },
   single_point: {
     stripe: { required: true, reason: 'Required for invoice payments' },
@@ -800,6 +811,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Logistics tier)' },
   },
   multi_track: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
@@ -809,6 +821,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Performance tier)' },
   },
   command: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
@@ -818,8 +831,8 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for enterprise scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Command tier)' },
   },
-  // Fallback for free/unknown tiers
   free: {
     stripe: { required: false, reason: 'Subscribe to enable payments' },
     signalwire: { required: false, reason: 'Subscribe to enable voice/SMS' },
@@ -828,6 +841,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Subscribe to enable AI research' },
     calendar: { required: false, reason: 'Subscribe to enable calendar sync' },
     a2p_10dlc: { required: false, reason: 'Subscribe to enable SMS compliance' },
+    social_media: { required: false, reason: 'Subscribe to enable social media' },
   },
 };
 

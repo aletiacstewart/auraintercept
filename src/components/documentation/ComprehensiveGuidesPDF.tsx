@@ -193,7 +193,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier (Starter, Scheduling, Growth, Business, Field Ops, Performance, or Command)',
+          'Review your subscription tier (Aura Starter, Aura Connect, Aura Growth, Aura Presence, Aura Logistics, Aura Performance, or Aura Command)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -433,17 +433,33 @@ const guideCategories = [
         tips: ['Stripe handles all PCI compliance']
       },
       {
-        title: 'Web Presence Widget Embed',
+        title: 'Social Media Integration (Platform OAuth)',
         duration: '10 min',
         steps: [
-          'Navigate to Integrations → Website Embed',
-          'Choose embed method (JavaScript or iframe)',
-          'Copy embed code for your method',
-          'Paste into your website',
-          'Customize widget position and colors'
+          'Social media uses platform-level OAuth (one-time setup by platform admin)',
+          'Platform admin registers master apps for Meta, LinkedIn, TikTok, Google',
+          'Navigate to Integrations → Social Media → Platform Credentials Settings',
+          'Enter Client ID and Secret for each platform',
+          'Once configured, tenants connect with one-click "Connect with [Platform]" buttons',
+          'Tenant tokens stored securely per-company',
+          'Supports Instagram, Facebook, LinkedIn, TikTok, Google Business'
         ],
-        tips: ['Iframe works on most website builders']
-      }
+        tips: ['Platform admin does this once; tenants just click Connect', 'Meta requires Business Verification for production use']
+      },
+      {
+        title: 'Tavily AI Research',
+        duration: '8 min',
+        steps: [
+          'Navigate to Integrations → AI Research',
+          'Optional integration for enhanced AI content research',
+          'Create Tavily account at tavily.com (1,000 free searches/month)',
+          'Generate and enter API key',
+          'Content Engine uses Tavily for real-time industry research',
+          'Improves accuracy of social, blog, and campaign content',
+          'Status shown via Tavily badge on content creation forms'
+        ],
+        tips: ['Great for industry-specific content', 'Free tier sufficient for most businesses']
+      },
     ]
   },
   {
@@ -672,13 +688,14 @@ const guideCategories = [
         title: 'Social Media Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Command tier)',
+          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
           'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
           'Supports 6 platforms: IG, FB, LI, TT, GMB, SMS',
           'AI-powered content generation and scheduling',
-          'Cross-platform analytics tracking'
+          'Cross-platform analytics tracking',
+          'Connect accounts via OAuth in Social Media Settings'
         ],
-        tips: ['Start with content templates']
+        tips: ['Platform admin must configure OAuth credentials first']
       },
       {
         title: '3-Step Content Wizard',
@@ -697,12 +714,14 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Social Media Ops → Settings',
-          'Connect social accounts via OAuth',
+          'Connect accounts via "Connect with [Platform]" OAuth buttons',
+          'Platform admin configures global credentials in Platform Credentials Settings',
+          'Tenants authorize with one-click per platform',
           'Configure default hashtags and mentions',
           'Set brand voice guidelines',
           'Enable/disable specific platforms'
         ],
-        tips: ['Use consistent branding across platforms']
+        tips: ['Use consistent branding across platforms', 'Contact platform admin if "Not Configured" appears']
       },
       {
         title: 'Social Analytics',
@@ -881,7 +900,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>Guides</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>22</Text>
+              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>24</Text>
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>AI Agents</Text>
             </View>
           </View>
@@ -964,7 +983,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Header title="Quick Reference" />
         <Text style={styles.sectionTitle}>Quick Reference</Text>
         
-        <Text style={styles.categoryTitle}>AI Agent Categories (22 Total)</Text>
+        <Text style={styles.categoryTitle}>AI Agent Categories (24 Total)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Customer Portal (4 agents): AI Receptionist, Scheduling, Follow-up, Review</Text>
@@ -987,21 +1006,41 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Creative & Web Presence (2 agents): Creative Agent, Web Presence Agent</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Analytics & Reports (4 agents): Insights, Performance, Revenue, Forecast</Text>
         </View>
 
-        <Text style={styles.categoryTitle}>Subscription Tiers</Text>
+        <Text style={styles.categoryTitle}>Subscription Tiers (7-Tier Growth Ladder)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Single-Point ($1,497/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
+          <Text style={styles.bulletText}>Aura Starter ($197/mo): 1 agent (AI Receptionist), 0 consoles</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Multi-Track ($2,497/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing</Text>
+          <Text style={styles.bulletText}>Aura Connect ($397/mo): 3 agents, 1 console (Customer Portal)</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Command ($3,497/mo): Full 19 agent suite including Social Media & Analytics</Text>
+          <Text style={styles.bulletText}>Aura Growth ($597/mo): 11 agents, 3 consoles</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Aura Presence ($797/mo): 12 agents, 4 consoles</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Aura Logistics ($1,497/mo): 18 agents, 6 consoles</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Aura Performance ($2,497/mo): 22 agents, 7 consoles</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Aura Command ($3,497/mo): All 24 agents, 7 consoles + AI Operatives Hub</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

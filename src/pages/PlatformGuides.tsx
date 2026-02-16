@@ -94,7 +94,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier in the bottom left (Starter, Scheduling, Growth, Business, Field Ops, Performance, or Command)',
+          'Review your subscription tier in the bottom left (Aura Starter, Connect, Growth, Presence, Logistics, Performance, or Command)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -1011,7 +1011,7 @@ const guideCategories = [
         title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Outreach & Sales Ops from sidebar (Command tier)',
+          'Navigate to Outreach & Sales Ops from sidebar (Growth+ tier)',
           'Quick Action Tabs: Campaign, Leads, Marketing',
           'Create and manage marketing campaigns',
           'Configure promo codes and discounts',
@@ -1102,7 +1102,7 @@ const guideCategories = [
         title: 'Social Media Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Command tier)',
+          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
           'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
           'Supports 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
           'AI-powered content generation and scheduling',
@@ -1128,14 +1128,15 @@ const guideCategories = [
         title: 'Platform Configuration',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops → Settings',
-          'Connect social accounts (OAuth for major platforms)',
-          'Configure default hashtags and mentions',
-          'Set brand voice guidelines',
-          'Enable/disable specific platforms',
-          'Configure posting schedules per platform'
+          'Navigate to Integrations → Social Media',
+          'Platform admin configures global OAuth credentials in Platform Credentials Settings',
+          'Tenants click "Connect with [Platform]" buttons to authorize accounts',
+          'Supports Meta (Facebook/Instagram), LinkedIn, TikTok, Google Business',
+          'Configure default hashtags and mentions per platform',
+          'Set brand voice guidelines for AI content',
+          'Enable/disable specific platforms per tenant'
         ],
-        tips: ['Use consistent branding across platforms', 'Different content works better on different platforms']
+        tips: ['Platform admin does one-time setup; tenants just click Connect', 'Contact admin if "Not Configured" error appears']
       },
       {
         title: 'Social Analytics',
@@ -1163,7 +1164,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports Ops from sidebar (Command tier)',
+          'Navigate to Analytics & Reports Ops from sidebar (Performance+ tier)',
           'Quick Action Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Social, Reminders, Export',
           'Form-based interfaces for structured reporting',
           'AI Insights Agent for natural language queries',
