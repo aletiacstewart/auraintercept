@@ -1,24 +1,39 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { publishToFacebook, publishToInstagram } from "../_shared/social-platforms/meta.ts";
+import { publishToTikTok } from "../_shared/social-platforms/tiktok.ts";
+import { publishToLinkedIn } from "../_shared/social-platforms/linkedin.ts";
+import { publishToGoogleBusiness } from "../_shared/social-platforms/google-business.ts";
+import { ensureFreshTokens } from "../_shared/social-platforms/token-refresh.ts";
+import { SocialPostRequest, SocialPostResult } from "../_shared/social-platforms/types.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface PublishRequest {
   draftId: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { draftId } = await req.json() as PublishRequest;
+    const bodyText = await req.text();
+    let body: PublishRequest;
+    try {
+      body = JSON.parse(bodyText);
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    console.log("[publish-social-content] Publishing draft:", draftId);
+    const { draftId } = body;
 
     if (!draftId) {
       return new Response(
@@ -27,9 +42,10 @@ serve(async (req) => {
       );
     }
 
+    console.log("[publish-social-content] Publishing draft:", draftId);
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get the draft
@@ -47,76 +63,115 @@ serve(async (req) => {
       );
     }
 
-    // Simulate publishing to the respective platform
     const platform = draft.platform;
     const content = draft.edited_content || draft.generated_content;
     const imageUrl = draft.image_url;
+    const companyId = draft.company_id;
 
-    console.log(`[publish-social-content] Simulating publish to ${platform}`);
-    console.log(`[publish-social-content] Content: ${content.substring(0, 100)}...`);
-    if (imageUrl) {
-      console.log(`[publish-social-content] Image: ${imageUrl}`);
-    }
+    // Get fresh access token
+    const tokenResult = await ensureFreshTokens(companyId, platform, supabase);
+    if (!tokenResult.accessToken) {
+      console.error("[publish-social-content] No access token:", tokenResult.error);
+      
+      // Update draft status to failed
+      await supabase
+        .from("social_content_drafts")
+        .update({ status: "failed", api_metadata: { error: tokenResult.error } })
+        .eq("id", draftId);
 
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // In a real implementation, you would call the respective platform APIs:
-    // - Instagram: Graph API
-    // - Google Business: Business Profile API
-    // - Facebook: Graph API
-    // - SMS: Twilio or similar
-
-    const simulatedResults: Record<string, { success: boolean; postId?: string; message?: string }> = {
-      instagram: {
-        success: true,
-        postId: `ig_${Date.now()}`,
-        message: "Post published successfully to Instagram",
-      },
-      google_business: {
-        success: true,
-        postId: `gbp_${Date.now()}`,
-        message: "Update posted to Google Business Profile",
-      },
-      facebook: {
-        success: true,
-        postId: `fb_${Date.now()}`,
-        message: "Post published to Facebook page",
-      },
-      sms: {
-        success: true,
-        message: "SMS template saved and ready to send",
-      },
-    };
-
-    const result = simulatedResults[platform] || { success: true, message: "Published" };
-
-    // Update the draft status
-    const { error: updateError } = await supabase
-      .from("social_content_drafts")
-      .update({
-        status: "published",
-        published_at: new Date().toISOString(),
-      })
-      .eq("id", draftId);
-
-    if (updateError) {
-      console.error("[publish-social-content] Update error:", updateError);
       return new Response(
-        JSON.stringify({ error: "Failed to update draft status" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: tokenResult.error || "No access token available" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`[publish-social-content] Successfully published to ${platform}`);
+    // Get platform-specific IDs
+    const { data: integrations } = await supabase
+      .from("tenant_integrations")
+      .select("*")
+      .eq("company_id", companyId)
+      .single();
+
+    // Build the request
+    const postRequest: SocialPostRequest = {
+      content,
+      imageUrl: imageUrl || undefined,
+      accessToken: tokenResult.accessToken,
+      hashtags: draft.hashtags || undefined,
+    };
+
+    // Route to platform adapter
+    let result: SocialPostResult;
+    console.log(`[publish-social-content] Publishing to ${platform}`);
+
+    switch (platform) {
+      case "facebook":
+        postRequest.pageId = integrations?.meta_page_id || undefined;
+        result = await publishToFacebook(postRequest);
+        break;
+
+      case "instagram":
+        postRequest.accountId = integrations?.meta_instagram_account_id || undefined;
+        result = await publishToInstagram(postRequest);
+        break;
+
+      case "tiktok":
+        result = await publishToTikTok(postRequest);
+        break;
+
+      case "linkedin":
+        postRequest.accountId = integrations?.linkedin_organization_id || undefined;
+        result = await publishToLinkedIn(postRequest);
+        break;
+
+      case "google_business":
+        postRequest.accountId = integrations?.google_business_account_id || undefined;
+        postRequest.locationId = integrations?.google_business_location_id || undefined;
+        result = await publishToGoogleBusiness(postRequest);
+        break;
+
+      default:
+        result = { success: false, error: `Unsupported platform: ${platform}` };
+    }
+
+    // Update draft based on result
+    if (result.success) {
+      await supabase
+        .from("social_content_drafts")
+        .update({
+          status: "published",
+          published_at: new Date().toISOString(),
+          external_post_id: result.postId || null,
+          external_post_url: result.platformUrl || null,
+          api_metadata: result.metadata || null,
+        })
+        .eq("id", draftId);
+
+      console.log(`[publish-social-content] Successfully published to ${platform}:`, result.postId);
+    } else {
+      await supabase
+        .from("social_content_drafts")
+        .update({
+          status: "failed",
+          api_metadata: { error: result.error },
+        })
+        .eq("id", draftId);
+
+      console.error(`[publish-social-content] Failed to publish to ${platform}:`, result.error);
+    }
 
     return new Response(
       JSON.stringify({
-        success: true,
+        success: result.success,
         platform,
-        result,
+        postId: result.postId,
+        platformUrl: result.platformUrl,
+        error: result.error,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        status: result.success ? 200 : 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   } catch (error) {
     console.error("[publish-social-content] Error:", error);
