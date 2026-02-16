@@ -362,13 +362,14 @@ const companyGuideCategories = [
         title: 'Social Media Ops Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Social Media Ops (Command tier)',
+          'Access via AI Consoles → Social Media Ops (Growth+ tier)',
           'Create AI-generated content for 6 platforms',
           'Schedule posts using the Content Calendar',
           'Track engagement metrics across channels',
-          'Use platform-specific templates and character limits'
+          'Use platform-specific templates and character limits',
+          'Connect social accounts via OAuth in Integration Settings'
         ],
-        tips: ['AI handles IG, FB, LinkedIn, TikTok, GMB, SMS']
+        tips: ['AI handles IG, FB, LinkedIn, TikTok, GMB, SMS', 'Platform admin must configure OAuth credentials first']
       }
     ]
   },
@@ -446,18 +447,33 @@ const companyGuideCategories = [
         tips: ['Use dedicated calendar for business']
       },
       {
-        title: 'Web Presence Widget Embed',
-        duration: '10 min',
+        title: 'Social Media Integration (Platform OAuth)',
+        duration: '12 min',
         steps: [
-          'Navigate to Customer App',
-          'Choose embed method (JS, iframe, link)',
-          'Copy embed code',
-          'Paste into your website',
-          'Customize widget appearance',
-          'Test on live website'
+          'Social media uses platform-level OAuth (setup by platform admin)',
+          'Navigate to Social Media Ops → Settings',
+          'Click "Connect with [Platform]" for each social account',
+          'Authorize access when prompted by the platform',
+          'Supported: Instagram, Facebook, LinkedIn, TikTok, Google Business',
+          'If "Not Configured" appears, contact your platform admin',
+          'Platform admin configures global credentials in Platform Credentials Settings'
         ],
-        tips: ['Use iframe for WordPress/Wix']
-      }
+        tips: ['Connect business accounts, not personal', 'Each platform requires separate authorization']
+      },
+      {
+        title: 'Tavily AI Research',
+        duration: '8 min',
+        steps: [
+          'Navigate to Integrations → AI Research',
+          'Optional enhancement for AI content quality',
+          'Create Tavily account at tavily.com',
+          'Generate and enter API key',
+          'Content Engine uses Tavily for real-time research',
+          'Improves social, blog, and campaign content',
+          'Free tier: 1,000 searches/month'
+        ],
+        tips: ['Optional but recommended for content-heavy businesses']
+      },
     ]
   },
   {
