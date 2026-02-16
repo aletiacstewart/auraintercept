@@ -1,100 +1,134 @@
 
-# Unified Social Media Publishing: Architecture Options
 
-## Current State
-Your `publish-social-content` edge function currently **simulates** publishing -- it doesn't actually call any platform APIs. The `social-webhook` function only handles Meta webhook verification. This means you're starting from scratch for real publishing, which is actually a good position to pick the right architecture.
+# Make All AI Agents and Features Fully Functional
 
-## Option Comparison
+## Overview
 
-| Approach | Cost | Pros | Cons |
-|----------|------|------|------|
-| **UniAPI (browser automation)** | Free (self-hosted) | No API approval needed, bypasses rate limits | Requires a server running Playwright 24/7, fragile (breaks when platforms update UI), violates platform ToS, accounts can get banned |
-| **Mixpost (self-hosted)** | Free (self-hosted) | Full-featured, Laravel-based, 11 platforms, scheduling, analytics | Requires separate VPS, PHP/Laravel stack (different from your architecture), heavy to maintain |
-| **SocialRing (self-hosted)** | Free (self-hosted) | OAuth-based (legitimate), open source, self-hosted | Early-stage project, limited platform support |
-| **Postproxy (hosted API)** | Paid per post | Single API call for all platforms, handles OAuth/tokens, delivery guarantees | Monthly cost, external dependency |
-| **Build a Unified Edge Function (recommended)** | Free (API-level) | Fits your existing architecture, uses official APIs you're already setting up credentials for, no extra servers | You still need per-platform API credentials (which you're already configuring) |
+After a thorough audit of the codebase, here is every simulated, stubbed, or placeholder feature that needs to be replaced with real functionality. The work is grouped into priority tiers.
 
-## Recommendation: Unified Social Publisher Edge Function
+---
 
-Since you're already walking users through setting up Meta, LinkedIn, TikTok, and Google Business API credentials via the setup guide, the most practical approach is to **replace your simulated publisher with a real unified edge function** that routes to each platform's official API through a single interface.
+## Tier 1: Orchestrator Test Console (Largest Simulation)
 
-This avoids:
-- Running a separate server (browser automation needs Playwright/Puppeteer running 24/7)
-- ToS violations and account bans (browser automation risk)
-- Monthly fees from third-party services
-- Maintaining a separate tech stack (PHP/Laravel for Mixpost)
+**File**: `supabase/functions/ai-orchestrator/index.ts` (lines 484-915)
 
-## Implementation Plan
+The `handleTestAgent()` function is a massive block of hardcoded canned responses for all 24 agent types (triage, booking, dispatch, route, ETA, check-in, quoting, invoice, inventory, warranty, follow-up, review, promo, referral, win-back, seasonal, admin, lead, campaign, marketing, social_content, social_scheduler, social_analytics, performance, revenue, creative, web_presence). None of these responses come from AI -- they are pattern-matched regex strings returning fake data.
 
-### 1. Create a shared social API adapter layer
+**Fix**: Replace `handleTestAgent()` with a call to the `ai-agent-chat` edge function, passing the test message through the real AI agent pipeline. This way the "Test Console" in the AI Operatives Hub actually exercises the real agent logic.
 
-Create `supabase/functions/_shared/social-platforms/` with platform-specific posting modules:
+---
 
-- `meta.ts` -- Handles both Facebook and Instagram via Graph API v24.0
-- `tiktok.ts` -- TikTok Content Posting API
-- `linkedin.ts` -- LinkedIn Share API (UGC Posts)
-- `google-business.ts` -- Google Business Profile API
+## Tier 2: Simulated Tools in `ai-agent-chat`
 
-Each adapter exports a unified interface:
-```typescript
-interface SocialPostResult {
-  success: boolean;
-  postId?: string;
-  platformUrl?: string;
-  error?: string;
-}
+**File**: `supabase/functions/ai-agent-chat/index.ts`
 
-interface SocialPostRequest {
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  accessToken: string;
-  pageId?: string;      // For Facebook/Instagram
-  accountId?: string;   // For platform-specific IDs
-}
+### 2a. `calculate_eta` (line 4011-4017)
+Returns random ETA and hardcoded "5.2 miles" / "moderate" traffic. No real distance or routing calculation.
 
-export async function publishToMeta(req: SocialPostRequest): Promise<SocialPostResult>
-export async function publishToTikTok(req: SocialPostRequest): Promise<SocialPostResult>
-export async function publishToLinkedIn(req: SocialPostRequest): Promise<SocialPostResult>
-export async function publishToGoogleBusiness(req: SocialPostRequest): Promise<SocialPostResult>
+**Fix**: Integrate with a free routing API (OSRM -- Open Source Routing Machine, which is free and self-hostable, or use the Leaflet routing already in the project). Pass technician location and customer address to get real distance and travel time.
+
+### 2b. `check_tech_availability` fallback (lines 3873-3882)
+When no real employees exist in the database, returns hardcoded fake technicians ("John Smith", "Sarah Johnson") with random distances/ETAs.
+
+**Fix**: Return an honest empty result with a clear message instead of fake data. If no employees are configured, tell the agent so it can inform the customer appropriately.
+
+### 2c. `check_tech_availability` random distances (lines 3864-3871)
+Even when real employees ARE found, the distance and ETA values are `Math.random()` -- not real calculations.
+
+**Fix**: Same as 2a -- use real geocoding/routing to calculate actual distance and ETA from employee location to the job address.
+
+### 2d. `send_payment_link` placeholder URL (lines 4848-4850)
+Generates a fake URL (`/pay/{invoice_id}`) instead of creating a real Stripe Payment Link.
+
+**Fix**: Call the Stripe API to create a real Payment Link using the invoice amount, then return the actual Stripe URL. Requires a Stripe secret key (already required by the platform for Logistics+ tiers).
+
+### 2e. `send_quote` -- status update only (lines 4662-4694)
+Marks the quote as "sent" in the database but does NOT actually send anything (no email, no SMS).
+
+**Fix**: After updating the status, call the existing `send-appointment-email` or a new `send-quote-email` edge function to actually deliver the quote to the customer via email/SMS.
+
+### 2f. `send_payment_reminder` -- status update only (lines 4863-4893)
+Updates invoice status to "overdue" but does NOT send any actual reminder.
+
+**Fix**: After updating status, call the existing email/SMS infrastructure to actually deliver the payment reminder to the customer.
+
+### 2g. Misleading comment (line 3429)
+The comment says "Simulated tool execution" but most tools below it (check_availability, create_appointment, track_appointment, inventory, warranty, campaigns) are actually real and database-connected.
+
+**Fix**: Remove the misleading comment. Add accurate comments distinguishing which tools are real vs which still need work.
+
+---
+
+## Tier 3: Event Processing Stub
+
+**File**: `supabase/functions/ai-orchestrator/index.ts` (lines 420-482)
+
+`handleProcessPendingEvents()` marks events as "processed" without actually routing them to agent handlers. The TODO comment on line 447 says "Route to specific agent handler based on target_agent."
+
+**Fix**: Implement real event routing by calling the `ai-agent-chat` edge function for each pending event, passing the event payload as context to the target agent. This enables the multi-agent handoff chain (e.g., triage -> booking -> dispatch -> ETA) to actually work end-to-end.
+
+---
+
+## Implementation Sequence
+
+The work should be done in this order to avoid breaking dependencies:
+
+1. **Clean up comments** -- Remove the misleading "Simulated" comment (quick win, no risk)
+2. **Remove fake technician fallback** -- Return empty results instead of fake data
+3. **Replace orchestrator test handler** -- Route test messages through the real AI agent pipeline
+4. **Connect send_quote / send_payment_reminder to email/SMS** -- Wire up to existing notification infrastructure
+5. **Integrate Stripe for send_payment_link** -- Create real Stripe Payment Links
+6. **Integrate routing API for calculate_eta** -- Use OSRM or similar for real distance/ETA
+7. **Implement event processing** -- Route pending events to real agent handlers
+
+## Technical Details
+
+### Orchestrator Test Handler Replacement
+```
+// Instead of the 400+ line switch statement with canned responses:
+// Forward the test message to the real ai-agent-chat function
+const response = await fetch(
+  `${supabaseUrl}/functions/v1/ai-agent-chat`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${supabaseServiceKey}`,
+    },
+    body: JSON.stringify({
+      companyId,
+      agentType,
+      message: payload.message,
+      conversationHistory: [],
+    }),
+  }
+);
 ```
 
-### 2. Rewrite `publish-social-content` edge function
+### ETA Calculation with OSRM (free, no API key needed)
+```
+// OSRM public demo server (or self-host for production)
+const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${techLon},${techLat};${custLon},${custLat}?overview=false`;
+const routeData = await fetch(osrmUrl).then(r => r.json());
+const distanceKm = routeData.routes[0].distance / 1000;
+const durationMin = Math.ceil(routeData.routes[0].duration / 60);
+```
 
-Replace the simulated logic with real API calls:
-- Read the draft from `social_content_drafts`
-- Look up the tenant's stored credentials from `tenant_integrations`
-- Route to the correct platform adapter
-- Handle errors, retries, and status updates
-- Return the real post ID and URL
+### Stripe Payment Link Creation
+```
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+const paymentLink = await stripe.paymentLinks.create({
+  line_items: [{ price_data: { currency: 'usd', product_data: { name: `Invoice ${invoice.invoice_number}` }, unit_amount: Math.round(invoice.total * 100) }, quantity: 1 }],
+});
+return { payment_link: paymentLink.url };
+```
 
-### 3. Add a token refresh utility
+### Files to Modify
+- `supabase/functions/ai-orchestrator/index.ts` -- Replace handleTestAgent, implement event routing
+- `supabase/functions/ai-agent-chat/index.ts` -- Fix calculate_eta, check_tech_availability fallback, send_payment_link, send_quote, send_payment_reminder, remove misleading comment
 
-Create `supabase/functions/_shared/social-platforms/token-refresh.ts`:
-- Auto-refresh Meta long-lived tokens (they expire after 60 days)
-- Handle LinkedIn token refresh
-- Store updated tokens back in `tenant_integrations`
+### Prerequisites
+- Stripe secret key must be configured (for payment links)
+- Employee profiles should have location data stored (for real ETA calculations)
+- No new database tables needed -- all existing tables support these changes
 
-### 4. Update the setup guide
-
-Add a "Test Connection" step at the end of each platform's setup that calls the edge function with a test post to verify credentials are working.
-
-## Files to Create/Modify
-
-- **Create**: `supabase/functions/_shared/social-platforms/types.ts` -- Shared interfaces
-- **Create**: `supabase/functions/_shared/social-platforms/meta.ts` -- Facebook + Instagram posting
-- **Create**: `supabase/functions/_shared/social-platforms/tiktok.ts` -- TikTok posting
-- **Create**: `supabase/functions/_shared/social-platforms/linkedin.ts` -- LinkedIn posting
-- **Create**: `supabase/functions/_shared/social-platforms/google-business.ts` -- Google Business posting
-- **Create**: `supabase/functions/_shared/social-platforms/token-refresh.ts` -- Token management
-- **Modify**: `supabase/functions/publish-social-content/index.ts` -- Replace simulation with real API calls
-
-## Why Not Browser Automation?
-
-Browser automation (UniAPI, social-poster) is tempting but comes with serious risks:
-- **Account bans**: Platforms actively detect and ban automated browser sessions
-- **Fragility**: Any UI change by the platform breaks your automation
-- **Infrastructure**: Requires a persistent server running headless browsers (not possible in edge functions)
-- **ToS violations**: Can result in permanent account suspension for your clients
-
-Since you're already guiding users through official API setup, you already have the credentials needed -- you just need the code to use them.
