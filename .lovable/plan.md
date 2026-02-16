@@ -1,128 +1,160 @@
 
-# Implementation: Platform-Level OAuth with "Add Later" Credentials
+# Platform-Wide Audit & Update Plan
 
-## Overview
-Build the full Option A architecture but instead of requiring secrets upfront, create a **Platform Credentials Settings** section where the platform admin can input their API keys when ready. The secrets will be stored securely as backend environment variables.
+## Executive Summary
 
-## What Gets Built
+After a deep review of the entire codebase -- all 7 integration pages, 24 AI operatives, the orchestrator, help center, setup guides, PDF exports, and the centralized documentation config -- here are the issues found and the updates needed.
 
-### 1. New Edge Functions (3 files)
+---
 
-**`supabase/functions/social-oauth/index.ts`**
-- Handles `/init` (generate OAuth URL) and `/callback` (exchange code for tokens)
-- Reads platform credentials from environment secrets: `META_APP_ID`, `META_APP_SECRET`, `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-- Platform-specific flows: Meta long-lived token exchange, LinkedIn org fetch, TikTok open_id, Google refresh tokens
-- Stores tokens in `tenant_integrations` and creates `social_accounts` records
-- Returns clear error if platform credentials are not yet configured
+## Part 1: Integration Audit Findings
 
-**`supabase/functions/social-oauth-deauthorize/index.ts`**
-- Handles Meta deauthorization callbacks
-- Marks social accounts as inactive when users revoke access
+### Current 3rd-Party Integrations (7 Total)
+| Integration | Purpose | Per-Tenant? | Status |
+|---|---|---|---|
+| SignalWire | Voice & SMS | Yes (per-tenant account) | Good -- well-documented, A2P 10DLC covered |
+| ElevenLabs | AI Voice Synthesis | Yes (per-tenant key) | Good -- detailed guide with tool configs |
+| Resend | Email Notifications | Yes (per-tenant key) | Good -- webhook + domain setup guide |
+| Google Calendar | Calendar Sync | Yes (per-tenant OAuth) | Good -- 3 sync methods (ICS, CalDAV, Google) |
+| Stripe | Invoice Payments | Yes (per-tenant) | Good -- required for Logistics+ tiers |
+| Social Media (Meta/LinkedIn/TikTok/Google) | Content Publishing | Platform-level OAuth (new) | Just implemented -- needs testing |
+| Tavily | AI Web Research | Yes (per-tenant key) | **Issue found** (see below) |
 
-**`supabase/functions/social-oauth-data-deletion/index.ts`**
-- Handles Meta GDPR data deletion requests
-- Returns confirmation URL and tracking code as required by Meta
+### Integration Issues Found
 
-### 2. Platform Credentials Management
+**1. Tavily is NOT listed in `THIRD_PARTY_INTEGRATIONS` config array**
+- `documentationConfig.ts` line 588-638 lists 7 integrations but does NOT include Tavily
+- Tavily IS listed in `INTEGRATION_REQUIREMENTS` (lines 748-831) with its own `IntegrationId`
+- The `TavilyIntegration.tsx` page and `TavilySetupGuide.tsx` exist and work
+- **Fix**: Add Tavily to `THIRD_PARTY_INTEGRATIONS` array
 
-**New component: `src/components/integrations/PlatformCredentialsSettings.tsx`**
-- Only visible to `platform_admin` role
-- Shows a card for each platform (Meta, LinkedIn, TikTok, Google)
-- Each card has fields for the platform's Client ID and Secret
-- Saves credentials by calling a new edge function that sets them as backend secrets
-- Shows status: "Configured" or "Not configured" for each platform
-- Includes help text explaining these are ONE-TIME platform-level settings, not per-tenant
+**2. `THIRD_PARTY_INTEGRATIONS` still references "Google Gemini" from old memory**
+- Memory file `3rd-party-requirements-standard.md` mentions "Google Gemini" as required for all tiers
+- The actual codebase uses Lovable AI gateway (not a per-tenant Google Gemini key)
+- There is NO Google Gemini integration page or setup
+- **Fix**: Confirm this is handled by Lovable AI and remove from any docs referencing it as a separate integration
 
-**New edge function: `supabase/functions/manage-platform-secrets/index.ts`**
-- Accepts platform credential key-value pairs from the admin UI
-- Validates the caller is a platform_admin
-- Stores values as Supabase secrets (Deno.env won't persist -- we'll store in a `platform_settings` table instead)
+**3. Social Media integration config is outdated in `THIRD_PARTY_INTEGRATIONS`**
+- Currently listed as "Social Media Accounts" with `requiredFor: 'Core+'`
+- After Option A implementation, this should reference the new platform-level OAuth model
+- **Fix**: Update description and `requiredFor` to reflect new architecture (Growth+ since `social_content` agent starts at `aura_flow`)
 
-**Actually -- simpler approach:** Store platform credentials in a new `platform_settings` table (key-value, RLS restricted to platform_admin). The OAuth edge functions read from this table. This avoids needing to manage secrets dynamically.
+**4. `documentationConfig.ts` `INTEGRATION_REQUIREMENTS` is missing social media as a tracked integration**
+- The `IntegrationId` type only includes: `stripe`, `signalwire`, `elevenlabs`, `resend`, `tavily`, `calendar`, `a2p_10dlc`
+- Social media is not tracked per-tier in `INTEGRATION_REQUIREMENTS`
+- **Fix**: Add `social_media` to `IntegrationId` and populate per-tier requirements
 
-### 3. Database Changes
+---
 
-**New table: `platform_settings`**
-- `id` (uuid, primary key)
-- `setting_key` (text, unique) -- e.g. 'META_APP_ID', 'META_APP_SECRET'
-- `setting_value` (text) -- encrypted at rest by database
-- `updated_at` (timestamptz)
-- `updated_by` (uuid, references auth.users)
-- RLS: Only `platform_admin` can SELECT, INSERT, UPDATE, DELETE
+## Part 2: AI Agent / Orchestrator Audit Findings
 
-### 4. Updated Frontend Files
+### Orchestrator `AGENT_TYPES` is Missing 7 Agents
+The `ai-orchestrator/index.ts` (line 10-37) defines only **17** agent types:
+- `triage`, `booking`, `followup`, `review`
+- `dispatch`, `route`, `eta`, `checkin`
+- `quoting`, `invoice`, `inventory`, `admin`
+- `marketing` (consolidated)
+- `insights`, `forecast`, `revenue`, `performance`
 
-**`src/pages/integrations/SocialMediaIntegration.tsx`** -- Major rewrite:
-- Remove manual credential input dialog (App ID/Secret per-tenant fields)
-- Replace with "Connect with [Platform]" buttons that open OAuth popup
-- Show connection status with account name, connected date, disconnect button
-- If platform credentials aren't configured, show a message directing platform admin to set them up
-- Remove the `fields` property from `SOCIAL_INTEGRATIONS` array
+**Missing from orchestrator** (7 agents):
+1. `campaign` -- Campaign Agent (marketing_sales console)
+2. `lead` -- Lead Agent (marketing_sales console)
+3. `social_content` -- Social Media Agent (social_media console)
+4. `social_scheduler` -- Social Scheduler (social_media console)
+5. `social_analytics` -- Social Analytics (social_media console)
+6. `creative` -- Creative Agent (creative_web_presence console)
+7. `web_presence` -- Web Presence Agent (creative_web_presence console)
 
-**`src/components/integrations/SocialMediaSetupGuide.tsx`** -- Complete rewrite:
-- All 5 platform guides rewritten for the Tech Provider model
-- Guides explain how the platform admin registers the master app ONCE
-- Detailed step-by-step for Meta, LinkedIn, TikTok, Google Business
-- Includes required documents checklists, copyable URLs, review timelines
-- Each guide references where to input credentials (Platform Credentials Settings)
+These 7 agents exist in `documentationConfig.ts` as part of the 24 operatives but the orchestrator cannot route events to them, configure them, or test them.
 
-### 5. Updated Backend Files
+### EVENT_ROUTING References Non-Existent Agents
+The orchestrator's `EVENT_ROUTING` (line 40-57) references agents that don't exist in `AGENT_TYPES`:
+- `waitlist` (line 43) -- not a defined agent
+- `invoicing` (lines 48-50) -- should be `invoice`
+- `predictive` (lines 51, 53) -- not a defined agent
 
-**`supabase/functions/_shared/social-platforms/token-refresh.ts`**
-- Read `META_APP_ID`/`META_APP_SECRET` from `platform_settings` table instead of per-tenant `tenant_integrations`
-- Same for LinkedIn, TikTok, Google credentials
+### Missing Event Routes for New Agents
+No event routing exists for:
+- Marketing stack events (campaign created, lead qualified, etc.)
+- Social media events (content generated, post scheduled, post published)
+- Creative events (content generated, blog published)
+- Web presence events (SEO scan complete, site updated)
 
-**`supabase/functions/publish-social-content/index.ts`**
-- Minor update: platform credentials come from `platform_settings` table via token-refresh
+---
 
-### 6. Config Updates
+## Part 3: Help Center & Documentation Issues
 
-**`supabase/config.toml`** -- Add entries for new edge functions:
-- `social-oauth` (verify_jwt = false, since OAuth callbacks come from external platforms)
-- `social-oauth-deauthorize` (verify_jwt = false)
-- `social-oauth-data-deletion` (verify_jwt = false)
-- `manage-platform-secrets` is not needed since we use a table approach
+### AIHelpCenter System Prompt Inconsistencies
+The help center (`AIHelpCenter.tsx` line 70-153) has several mismatches with actual configuration:
 
-## Technical Details
+1. **Console count**: Says "8 Control Centers" -- should be "7 Control Centers + 1 Management Interface (AI Operatives Hub)"
+2. **Tier names don't match**: Uses old names (Starter, Scheduling, Growth, Business, Field Ops, Performance, Command) but actual tier names in `documentationConfig.ts` are (Aura Starter, Aura Connect, Aura Growth, Aura Presence, Aura Logistics, Aura Performance, Aura Command)
+3. **Agent counts per tier don't match**: Says "Starter: 1 agent, 0 consoles" but `documentationConfig.ts` says Express has 1 operative and 0 consoles (correct count but wrong name)
+4. **Troubleshooting section**: No mention of social media OAuth troubleshooting (new system)
+5. **Missing integration paths**: No mention of `/dashboard/integrations/social` for social OAuth or `/dashboard/integrations/tavily` for AI research
 
-### OAuth Flow
-1. Tenant clicks "Connect with Facebook"
-2. Frontend calls `social-oauth?action=init&platform=facebook&tenant_id=xxx`
-3. Edge function reads `META_APP_ID` from `platform_settings`, builds OAuth URL with correct scopes
-4. Returns URL, frontend opens popup
-5. User authorizes, redirected to callback URL
-6. `social-oauth?action=callback` receives code, exchanges for tokens
-7. Stores tokens in `tenant_integrations`, creates `social_accounts` record
-8. Frontend detects success, refreshes connection status
+### ComprehensiveGuidesPDF and CompanyGuidesPDF
+These PDFs are generated from hardcoded guide data inside each component, NOT from `documentationConfig.ts`. This means:
+- Any changes to tier names, prices, or agent counts need to be updated in multiple places
+- Social media guides in the PDFs still reference the old per-tenant credential model
+- The Option A (platform OAuth) flow is not reflected in any PDF
 
-### Platform Settings Table Approach
-Using a database table instead of environment secrets because:
-- Platform admin can update credentials through the UI without redeploying
-- Edge functions can read from the table using the service role key
-- RLS ensures only platform_admin can view/edit
-- Simpler than dynamic secret management
+### PlatformGuides Page
+- Contains hardcoded guide categories (not from centralized config)
+- Social media sections need to reference the new OAuth model
+- Integration troubleshooting guides need updating
 
-### Files to Create
-- `supabase/functions/social-oauth/index.ts`
-- `supabase/functions/social-oauth-deauthorize/index.ts`
-- `supabase/functions/social-oauth-data-deletion/index.ts`
-- `src/components/integrations/PlatformCredentialsSettings.tsx`
+---
 
-### Files to Modify
-- `src/components/integrations/SocialMediaSetupGuide.tsx`
-- `src/pages/integrations/SocialMediaIntegration.tsx`
-- `supabase/functions/_shared/social-platforms/token-refresh.ts`
-- `supabase/functions/publish-social-content/index.ts`
+## Part 4: Implementation Plan
 
-### Database Migration
-- Create `platform_settings` table with RLS policies for platform_admin only
+### Step 1: Fix Orchestrator -- Add Missing 7 Agents
+Update `supabase/functions/ai-orchestrator/index.ts`:
+- Add `campaign`, `lead`, `social_content`, `social_scheduler`, `social_analytics`, `creative`, `web_presence` to `AGENT_TYPES`
+- Fix `EVENT_ROUTING`: rename `invoicing` to `invoice`, remove `waitlist` and `predictive`, add routes for new agent events
+- Add new event types: `content_generated`, `post_scheduled`, `post_published`, `campaign_created`, `lead_qualified`, `blog_published`, `seo_scan_complete`
 
-## Implementation Order
-1. Create `platform_settings` table with RLS
-2. Create `PlatformCredentialsSettings.tsx` component and add to the Social Media integration page
-3. Create `social-oauth` edge function (init + callback)
-4. Create `social-oauth-deauthorize` and `social-oauth-data-deletion` edge functions
-5. Rewrite `SocialMediaSetupGuide.tsx` with all 5 platform guides for Tech Provider model
-6. Rewrite `SocialMediaIntegration.tsx` with OAuth connect buttons
-7. Update `token-refresh.ts` to read from `platform_settings`
-8. Update `publish-social-content` to use platform-level credentials
+### Step 2: Update `documentationConfig.ts`
+- Add Tavily to `THIRD_PARTY_INTEGRATIONS` array
+- Add `social_media` to `IntegrationId` type and populate per-tier requirements
+- Update Social Media entry to reflect platform-level OAuth model
+- Verify all tier names and prices are consistent
+
+### Step 3: Update AIHelpCenter System Prompt
+- Fix console count to "7 Control Centers + AI Operatives Hub management interface"
+- Update tier names to match (Aura Starter, Aura Connect, etc.)
+- Add social media OAuth troubleshooting
+- Add missing integration navigation paths
+- Add new agent descriptions for campaign, lead, social content, social scheduler, social analytics, creative, web presence
+
+### Step 4: Update PDF Export Documents
+- Update `ComprehensiveGuidesPDF.tsx` social media sections for Option A OAuth model
+- Update `CompanyGuidesPDF.tsx` integration sections
+- Ensure tier names and prices match `documentationConfig.ts`
+
+### Step 5: Update PlatformGuides Page
+- Update social media guide sections for OAuth model
+- Add Tavily/AI Research guide section if missing
+- Ensure consistency with documentationConfig
+
+### Step 6: Update Setup Guides
+- `SocialMediaSetupGuide.tsx` -- Already updated for Option A (verified)
+- `ElevenLabsSetupGuide.tsx` -- Good as-is
+- `SignalWireSetupGuide.tsx` -- Good as-is
+- `ResendSetupGuide.tsx` -- Good as-is
+- `TavilySetupGuide.tsx` -- Good as-is
+
+---
+
+## Technical Summary of Files to Modify
+
+| File | Changes |
+|---|---|
+| `supabase/functions/ai-orchestrator/index.ts` | Add 7 missing agents to AGENT_TYPES, fix EVENT_ROUTING |
+| `src/lib/documentationConfig.ts` | Add Tavily to THIRD_PARTY_INTEGRATIONS, add social_media IntegrationId |
+| `src/components/help/AIHelpCenter.tsx` | Update system prompt (tier names, console count, new agents, OAuth troubleshooting) |
+| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | Update social media + integration sections for Option A |
+| `src/components/documentation/CompanyGuidesPDF.tsx` | Update integration references |
+| `src/pages/PlatformGuides.tsx` | Update social media guide content |
+
+No new files needed. No database changes needed.
