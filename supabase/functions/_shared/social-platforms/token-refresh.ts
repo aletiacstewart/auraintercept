@@ -6,8 +6,28 @@ import { refreshGoogleBusinessToken } from "./google-business.ts";
 import { TokenRefreshResult } from "./types.ts";
 
 /**
+ * Helper to read platform-level credentials from the platform_settings table.
+ */
+async function getPlatformSetting(
+  supabase: ReturnType<typeof createClient>,
+  key: string
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("platform_settings")
+    .select("setting_value")
+    .eq("setting_key", key)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data.setting_value;
+}
+
+/**
  * Check and refresh tokens for a company's social integrations if they're
  * expiring within the threshold (default: 7 days).
+ * 
+ * Platform-level credentials (App ID/Secret) are read from the platform_settings table
+ * instead of per-tenant tenant_integrations.
  */
 export async function ensureFreshTokens(
   companyId: string,
@@ -39,10 +59,11 @@ export async function ensureFreshTokens(
 
       // Check if token needs refresh
       if (expiresAt && new Date(expiresAt).getTime() - now < REFRESH_THRESHOLD_MS) {
-        const appId = integrations.meta_app_id;
-        const appSecret = integrations.meta_app_secret;
+        // Read platform-level credentials
+        const appId = await getPlatformSetting(supabase, "META_APP_ID");
+        const appSecret = await getPlatformSetting(supabase, "META_APP_SECRET");
         if (!appId || !appSecret) {
-          return { accessToken: token, error: "Cannot refresh: missing Meta App ID or Secret" };
+          return { accessToken: token, error: "Cannot refresh: platform Meta App ID or Secret not configured" };
         }
 
         const result = await refreshMetaToken(appId, appSecret, token);
@@ -73,12 +94,6 @@ export async function ensureFreshTokens(
       }
 
       if (expiresAt && new Date(expiresAt).getTime() - now < REFRESH_THRESHOLD_MS) {
-        const clientId = integrations.linkedin_client_id;
-        const clientSecret = integrations.linkedin_client_secret;
-        if (!clientId || !clientSecret) {
-          return { accessToken: token, error: "Cannot refresh: missing LinkedIn client credentials" };
-        }
-
         // LinkedIn doesn't support refresh_token for all app types
         // Return existing token with a warning
         console.warn("[token-refresh] LinkedIn token expiring soon, manual re-auth may be needed");
@@ -96,12 +111,6 @@ export async function ensureFreshTokens(
       }
 
       if (expiresAt && new Date(expiresAt).getTime() - now < REFRESH_THRESHOLD_MS) {
-        const clientKey = integrations.tiktok_client_key;
-        const clientSecret = integrations.tiktok_client_secret;
-        if (!clientKey || !clientSecret) {
-          return { accessToken: token, error: "Cannot refresh: missing TikTok client credentials" };
-        }
-
         // TikTok uses refresh tokens but we'd need to store them separately
         // For now, warn about expiring token
         console.warn("[token-refresh] TikTok token expiring soon, manual re-auth may be needed");
@@ -120,10 +129,10 @@ export async function ensureFreshTokens(
 
       // Google tokens expire after 1 hour, always refresh if we have a refresh token
       if (refreshToken) {
-        const clientId = integrations.google_business_client_id;
-        const clientSecret = integrations.google_business_client_secret;
+        const clientId = await getPlatformSetting(supabase, "GOOGLE_CLIENT_ID");
+        const clientSecret = await getPlatformSetting(supabase, "GOOGLE_CLIENT_SECRET");
         if (!clientId || !clientSecret) {
-          return { accessToken: token, error: "Cannot refresh: missing Google Business client credentials" };
+          return { accessToken: token, error: "Cannot refresh: platform Google Client ID or Secret not configured" };
         }
 
         const result = await refreshGoogleBusinessToken(clientId, clientSecret, refreshToken);
