@@ -206,3 +206,12 @@ verify_jwt = true
 
 [functions.social-webhook]
 verify_jwt = false
+
+[functions.social-oauth]
+verify_jwt = false
+
+[functions.social-oauth-deauthorize]
+verify_jwt = false
+
+[functions.social-oauth-data-deletion]
+verify_jwt = false
