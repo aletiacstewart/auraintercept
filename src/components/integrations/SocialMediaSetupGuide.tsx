@@ -379,10 +379,11 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
   };
 
   const publishedDomain = getPublishedDomain();
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
   const OAUTH_CALLBACK_URL = `${publishedDomain}/api/social-oauth/callback`;
-  const DEAUTHORIZE_URL = `${publishedDomain}/api/social-oauth/deauthorize`;
-  const DATA_DELETION_URL = `${publishedDomain}/api/social-oauth/data-deletion`;
-  const WEBHOOK_URL = `${publishedDomain}/api/social-webhook`;
+  const DEAUTHORIZE_URL = `${supabaseUrl}/functions/v1/social-oauth-deauthorize`;
+  const DATA_DELETION_URL = `${supabaseUrl}/functions/v1/social-oauth-data-deletion`;
+  const WEBHOOK_URL = `${supabaseUrl}/functions/v1/social-webhook`;
 
   const isMetaPlatform = platform === 'facebook' || platform === 'instagram';
 
