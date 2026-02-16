@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink, Instagram, Facebook, Linkedin, Video, Building2, Webhook, DollarSign, Shield } from 'lucide-react';
+import { Copy, Check, ExternalLink, Instagram, Facebook, Linkedin, Video, Building2, DollarSign } from 'lucide-react';
 
 interface SocialMediaSetupGuideProps {
   platform: 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'google_business';
@@ -45,8 +45,11 @@ const PLATFORM_CONFIG = {
         content: [
           'In Use Cases → "Manage everything on your Page" → Customize',
           'Go to "API setup with Facebook login" section',
-          'Add your OAuth Redirect URI (see URL below)',
+          'Add the OAuth Redirect URI below to "Valid OAuth Redirect URIs"',
           'Under Settings → Basic, set your App Domains, Privacy Policy URL, and Terms of Service URL',
+        ],
+        urls: [
+          { label: 'OAuth Redirect URI', urlKey: 'oauth' as const },
         ],
       },
       {
@@ -55,8 +58,12 @@ const PLATFORM_CONFIG = {
           'Go to Settings → Basic in your Meta App',
           'Set Privacy Policy URL (required for review)',
           'Set Terms of Service URL (required for review)',
-          'Under Settings → Advanced, add Deauthorize Callback URL',
-          'Add Data Deletion Request URL (GDPR compliance)',
+          'Under Settings → Advanced, paste the Deauthorize Callback URL below',
+          'Paste the Data Deletion Request URL below (GDPR compliance)',
+        ],
+        urls: [
+          { label: 'Deauthorize Callback URL', urlKey: 'deauthorize' as const },
+          { label: 'Data Deletion Request URL', urlKey: 'dataDeletion' as const },
         ],
       },
       {
@@ -84,10 +91,13 @@ const PLATFORM_CONFIG = {
         content: [
           'In Use Cases → "Messenger from Meta" → Customize',
           'Expand "1. Configure webhooks" section',
-          'Set Callback URL to the Webhook URL shown below',
+          'Paste the Callback URL below into the "Callback URL" field',
           'Set Verify Token to a secret string you choose (save it securely)',
           'Click "Verify and save" — Meta will send a GET request to verify your endpoint',
           'If verification fails, ensure your webhook function is deployed and the verify token matches',
+        ],
+        urls: [
+          { label: 'Webhook Callback URL', urlKey: 'webhook' as const },
         ],
       },
       {
@@ -205,20 +215,25 @@ const PLATFORM_CONFIG = {
         title: 'Configure Instagram Webhooks',
         content: [
           'In Instagram API → Customize → Webhooks section',
-          'Set Callback URL (see webhook URL below)',
+          'Paste the Callback URL below into the "Callback URL" field',
           'Set a Verify Token (any secret string you choose — save it)',
           'Click "Verify and save"',
           'Subscribe to: comments, messages (optional), story_insights',
           'Note: App must be in "Published" state to receive webhooks',
+        ],
+        urls: [
+          { label: 'Webhook Callback URL', urlKey: 'webhook' as const },
         ],
       },
       {
         title: 'Set Up Instagram Business Login',
         content: [
           'In Instagram API → Customize → "Set up Instagram business login"',
-          'Click "Set up" and configure OAuth redirect URI',
+          'Click "Set up" and paste the OAuth redirect URI below',
           'This enables your tenant users to connect their Instagram accounts',
-          'Make sure your redirect URI matches the OAuth Callback URL below',
+        ],
+        urls: [
+          { label: 'OAuth Redirect URI', urlKey: 'oauth' as const },
         ],
       },
       {
@@ -275,9 +290,12 @@ const PLATFORM_CONFIG = {
         title: 'Configure OAuth 2.0',
         content: [
           'Go to Auth tab in your app',
-          'Add your OAuth 2.0 redirect URL',
+          'Paste the OAuth redirect URL below into "Authorized redirect URLs"',
           'Note the Client ID and Client Secret',
           'Enable required scopes',
+        ],
+        urls: [
+          { label: 'OAuth Redirect URL', urlKey: 'oauth' as const },
         ],
       },
       {
@@ -323,9 +341,12 @@ const PLATFORM_CONFIG = {
         title: 'Configure Redirect URI',
         content: [
           'Go to your app settings',
-          'Add your OAuth redirect URI',
+          'Paste the OAuth redirect URI below',
           'Enable "Login Kit" product',
           'Note your Client Key and Secret',
+        ],
+        urls: [
+          { label: 'OAuth Redirect URI', urlKey: 'oauth' as const },
         ],
       },
       {
@@ -373,7 +394,10 @@ const PLATFORM_CONFIG = {
           'Go to APIs & Services → Credentials',
           'Create OAuth 2.0 Client ID',
           'Select "Web application" type',
-          'Add your redirect URI',
+          'Paste the redirect URI below into "Authorized redirect URIs"',
+        ],
+        urls: [
+          { label: 'OAuth Redirect URI', urlKey: 'oauth' as const },
         ],
       },
       {
@@ -419,12 +443,14 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
 
   const publishedDomain = getPublishedDomain();
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-  const OAUTH_CALLBACK_URL = `${publishedDomain}/api/social-oauth/callback`;
-  const DEAUTHORIZE_URL = `${supabaseUrl}/functions/v1/social-oauth-deauthorize`;
-  const DATA_DELETION_URL = `${supabaseUrl}/functions/v1/social-oauth-data-deletion`;
-  const WEBHOOK_URL = `${supabaseUrl}/functions/v1/social-webhook`;
+  const urlMap: Record<string, string> = {
+    oauth: `${publishedDomain}/api/social-oauth/callback`,
+    webhook: `${supabaseUrl}/functions/v1/social-webhook`,
+    deauthorize: `${supabaseUrl}/functions/v1/social-oauth-deauthorize`,
+    dataDeletion: `${supabaseUrl}/functions/v1/social-oauth-data-deletion`,
+  };
 
-  const isMetaPlatform = platform === 'facebook' || platform === 'instagram';
+  
 
   return (
     <Card className="guide-card guide-card-social">
@@ -456,107 +482,28 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
                     <li key={i}>{item}</li>
                   ))}
                 </ol>
+                {step.urls && step.urls.length > 0 && (
+                  <div className="space-y-2 mt-3">
+                    {step.urls.map((urlItem, i) => (
+                      <div key={i}>
+                        <p className="text-xs font-medium mb-1 text-foreground">{urlItem.label}:</p>
+                        <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
+                          <code className="text-xs break-all text-foreground font-mono">{urlMap[urlItem.urlKey]}</code>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(urlMap[urlItem.urlKey], `${urlItem.urlKey}-${index}-${i}`)}
+                          >
+                            {copiedItems[`${urlItem.urlKey}-${index}-${i}`] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </AccordionContent>
             </AccordionItem>
           ))}
-
-          {/* OAuth Callback URL */}
-          <AccordionItem value="callback">
-            <AccordionTrigger className="text-sm">
-              <span className="flex items-center gap-2">
-                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-amber-500 text-white border-amber-500">
-                  <Webhook className="w-3 h-3" />
-                </Badge>
-                OAuth Callback URL
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="text-sm text-foreground/80 space-y-3">
-              <p>Add this URL as your OAuth redirect/callback URI in the {config.name} developer console:</p>
-              <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
-                <code className="text-xs break-all text-foreground font-mono">{OAUTH_CALLBACK_URL}</code>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(OAUTH_CALLBACK_URL, 'callback')}
-                >
-                  {copiedItems['callback'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-          {/* Webhook URL — for platforms that need it */}
-          {isMetaPlatform && (
-            <AccordionItem value="webhook">
-              <AccordionTrigger className="text-sm">
-                <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">
-                    <Webhook className="w-3 h-3" />
-                  </Badge>
-                  Webhook Callback URL
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-foreground/80 space-y-3">
-                <p>Use this URL for Messenger and Instagram webhook configuration:</p>
-                <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
-                  <code className="text-xs break-all text-foreground font-mono">{WEBHOOK_URL}</code>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook')}
-                  >
-                    {copiedItems['webhook'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">You'll also need to set a Verify Token — use any secret string and save it in your integration settings.</p>
-              </AccordionContent>
-            </AccordionItem>
-          )}
-
-          {/* Meta-specific: Deauthorize & Data Deletion URLs */}
-          {isMetaPlatform && (
-            <AccordionItem value="meta-urls">
-              <AccordionTrigger className="text-sm">
-                <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">
-                    <Shield className="w-3 h-3" />
-                  </Badge>
-                  Deauthorize & Data Deletion URLs (Meta Required)
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-foreground/80 space-y-4">
-                <p>Meta requires these URLs in Settings → Advanced. They are mandatory for App Review:</p>
-                
-                <div>
-                  <p className="text-xs font-medium mb-1">Deauthorize Callback URL:</p>
-                  <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
-                    <code className="text-xs break-all text-foreground font-mono">{DEAUTHORIZE_URL}</code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(DEAUTHORIZE_URL, 'deauthorize')}
-                    >
-                      {copiedItems['deauthorize'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-medium mb-1">Data Deletion Request URL:</p>
-                  <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
-                    <code className="text-xs break-all text-foreground font-mono">{DATA_DELETION_URL}</code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(DATA_DELETION_URL, 'data-deletion')}
-                    >
-                      {copiedItems['data-deletion'] ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </Button>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          )}
 
           {/* Pricing */}
           <AccordionItem value="pricing">
