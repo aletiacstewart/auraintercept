@@ -3426,7 +3426,7 @@ async function executeAgentTool(
 ): Promise<any> {
   console.log(`[AI Agent] Executing tool: ${toolName} for ${agentType}`);
 
-  // Simulated tool execution - in production, these would connect to real systems
+  // Tool execution - routes to real database queries, APIs, and notification systems
   switch (toolName) {
     case 'get_smart_link': {
       console.log('[AI Agent] Looking up smart link with args:', args);
@@ -3861,25 +3861,63 @@ async function executeAgentTool(
         .eq('company_id', companyId)
         .not('availability_json', 'is', null);
 
-      const technicians = employees?.map((emp: any, idx: number) => ({
-        id: emp.id,
-        name: emp.full_name || `Technician ${idx + 1}`,
-        skills: ['General Service'],
-        distance: `${Math.floor(Math.random() * 10) + 2} miles`,
-        phone: emp.phone_number,
-        eta_minutes: Math.floor(Math.random() * 25) + 10,
-      })) || [];
-
-      if (technicians.length === 0) {
-        // Return simulated data if no real employees
+      if (!employees || employees.length === 0) {
         return {
-          success: true,
-          available_technicians: [
-            { id: 'tech1', name: 'John Smith', skills: ['HVAC', 'Electrical'], distance: '5 miles', eta_minutes: 20 },
-            { id: 'tech2', name: 'Sarah Johnson', skills: ['Plumbing', 'HVAC'], distance: '8 miles', eta_minutes: 25 },
-          ],
+          success: false,
+          available_technicians: [],
+          message: 'No technicians are currently configured in the system. Please add employee profiles with availability data to enable technician dispatch.',
         };
       }
+
+      // Get customer location for real distance/ETA calculation
+      const customerAddress = args.customer_address || args.address || '';
+      
+      const technicians = await Promise.all(employees.map(async (emp: any, idx: number) => {
+        const tech: any = {
+          id: emp.id,
+          name: emp.full_name || `Technician ${idx + 1}`,
+          skills: ['General Service'],
+          phone: emp.phone_number,
+        };
+
+        // Try to calculate real distance/ETA using OSRM if we have location data
+        if (customerAddress && emp.availability_json?.latitude && emp.availability_json?.longitude) {
+          try {
+            // Geocode customer address using Nominatim
+            const geoResp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(customerAddress)}&limit=1`, {
+              headers: { 'User-Agent': 'AuraServiceApp/1.0' },
+            });
+            const geoData = await geoResp.json();
+            if (geoData?.[0]) {
+              const custLat = geoData[0].lat;
+              const custLon = geoData[0].lon;
+              const techLat = emp.availability_json.latitude;
+              const techLon = emp.availability_json.longitude;
+              
+              const osrmResp = await fetch(
+                `https://router.project-osrm.org/route/v1/driving/${techLon},${techLat};${custLon},${custLat}?overview=false`
+              );
+              const routeData = await osrmResp.json();
+              if (routeData?.routes?.[0]) {
+                const distanceMiles = (routeData.routes[0].distance / 1609.34).toFixed(1);
+                const durationMin = Math.ceil(routeData.routes[0].duration / 60);
+                tech.distance = `${distanceMiles} miles`;
+                tech.eta_minutes = durationMin;
+              }
+            }
+          } catch (routeErr) {
+            console.error('[AI Agent] Routing calculation error (non-blocking):', routeErr);
+          }
+        }
+
+        // Fallback if routing didn't work
+        if (!tech.distance) {
+          tech.distance = 'unknown';
+          tech.eta_minutes = null;
+        }
+
+        return tech;
+      }));
 
       return {
         success: true,
@@ -4008,13 +4046,72 @@ async function executeAgentTool(
       };
     }
 
-    case 'calculate_eta':
+    case 'calculate_eta': {
+      console.log('[AI Agent] Calculating ETA with args:', args);
+      
+      const techLat = args.technician_latitude || args.from_latitude;
+      const techLon = args.technician_longitude || args.from_longitude;
+      const custLat = args.customer_latitude || args.to_latitude;
+      const custLon = args.customer_longitude || args.to_longitude;
+      const custAddress = args.customer_address || args.destination;
+      
+      let etaMinutes: number | null = null;
+      let routeDistance = 'unknown';
+      let trafficConditions = 'unknown';
+      
+      try {
+        let destLat = custLat;
+        let destLon = custLon;
+        
+        // If we have an address but no coordinates, geocode it
+        if (!destLat && custAddress) {
+          const geoResp = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(custAddress)}&limit=1`,
+            { headers: { 'User-Agent': 'AuraServiceApp/1.0' } }
+          );
+          const geoData = await geoResp.json();
+          if (geoData?.[0]) {
+            destLat = parseFloat(geoData[0].lat);
+            destLon = parseFloat(geoData[0].lon);
+          }
+        }
+        
+        if (techLat && techLon && destLat && destLon) {
+          const osrmResp = await fetch(
+            `https://router.project-osrm.org/route/v1/driving/${techLon},${techLat};${destLon},${destLat}?overview=false`
+          );
+          const routeData = await osrmResp.json();
+          
+          if (routeData?.routes?.[0]) {
+            const distanceMiles = (routeData.routes[0].distance / 1609.34).toFixed(1);
+            etaMinutes = Math.ceil(routeData.routes[0].duration / 60);
+            routeDistance = `${distanceMiles} miles`;
+            // Estimate traffic based on time of day
+            const hour = new Date().getHours();
+            trafficConditions = (hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 18) ? 'heavy' : (hour >= 10 && hour <= 15) ? 'light' : 'moderate';
+          }
+        }
+      } catch (routeErr) {
+        console.error('[AI Agent] ETA calculation error:', routeErr);
+      }
+      
+      if (etaMinutes === null) {
+        return {
+          success: false,
+          error: 'Could not calculate ETA. Location data (coordinates or address) is required for both technician and customer.',
+          eta_minutes: null,
+          traffic_conditions: trafficConditions,
+          route_distance: routeDistance,
+        };
+      }
+      
       return {
         success: true,
-        eta_minutes: Math.floor(Math.random() * 30) + 15,
-        traffic_conditions: 'moderate',
-        route_distance: '5.2 miles',
+        eta_minutes: etaMinutes,
+        traffic_conditions: trafficConditions,
+        route_distance: routeDistance,
       };
+    }
 
     // ==========================================
     // ETA TOOLS (For Technicians)
@@ -4683,13 +4780,60 @@ async function executeAgentTool(
         .update({ status: 'sent' })
         .eq('id', args.quote_id);
 
+      const recipientEmail = args.customer_contact || quote.customer_email;
+      const recipientPhone = quote.customer_phone;
+      const channel = args.channel || 'email';
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+      // Actually send the quote via email/SMS
+      const lineItemsSummary = (quote.quote_line_items || [])
+        .map((li: any) => `• ${li.description}: $${li.total?.toFixed(2)}`)
+        .join('\n');
+      const quoteMessage = `Your quote from us:\n\n${lineItemsSummary}\n\nTotal: $${quote.total_amount?.toFixed(2)}\nValid until: ${quote.valid_until || 'N/A'}\n\nReply to this message or call us to approve.`;
+
+      if (channel === 'sms' && recipientPhone) {
+        try {
+          await fetch(`${supabaseUrl}/functions/v1/send-appointment-sms`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey}` },
+            body: JSON.stringify({
+              companyId,
+              customerPhone: recipientPhone,
+              customerName: quote.customer_name || 'Customer',
+              message: quoteMessage,
+            }),
+          });
+        } catch (smsErr) {
+          console.error('[AI Agent] Quote SMS error:', smsErr);
+        }
+      } else if (recipientEmail) {
+        try {
+          await fetch(`${supabaseUrl}/functions/v1/send-appointment-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey}` },
+            body: JSON.stringify({
+              companyId,
+              appointmentId: quote.appointment_id,
+              customerEmail: recipientEmail,
+              customerName: quote.customer_name || 'Customer',
+              subject: `Your Quote - $${quote.total_amount?.toFixed(2)}`,
+              body: quoteMessage,
+              type: 'quote',
+            }),
+          });
+        } catch (emailErr) {
+          console.error('[AI Agent] Quote email error:', emailErr);
+        }
+      }
+
       return {
         success: true,
         quote_id: args.quote_id,
-        sent_to: args.customer_contact || quote.customer_email || quote.customer_phone,
-        channel: args.channel,
+        sent_to: recipientEmail || recipientPhone || 'customer',
+        channel,
         total: quote.total_amount,
-        message: `Quote sent to ${args.customer_contact || 'customer'} via ${args.channel}`,
+        message: `Quote sent to ${recipientEmail || recipientPhone || 'customer'} via ${channel}`,
       };
     }
 
@@ -4845,16 +4989,87 @@ async function executeAgentTool(
         .update({ status: 'sent' })
         .eq('id', args.invoice_id);
 
-      // Generate payment link (in production, would create Stripe Payment Link)
-      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
-      const paymentLink = `${baseUrl}/pay/${invoice.id}`;
+      // Create a real Stripe Payment Link if Stripe is configured
+      const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+      let paymentLink = '';
+      
+      if (stripeKey) {
+        try {
+          const { default: Stripe } = await import('https://esm.sh/stripe@18.5.0');
+          const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' });
+          
+          const session = await stripe.checkout.sessions.create({
+            line_items: [{
+              price_data: {
+                currency: 'usd',
+                product_data: { name: `Invoice ${invoice.invoice_number || invoice.id.substring(0, 8)}` },
+                unit_amount: Math.round((invoice.total || 0) * 100),
+              },
+              quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app'}/payment-success?invoice=${invoice.id}`,
+            cancel_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app'}/invoices`,
+            metadata: { invoice_id: invoice.id, company_id: companyId },
+          });
+          paymentLink = session.url || '';
+        } catch (stripeErr) {
+          console.error('[AI Agent] Stripe Payment Link error:', stripeErr);
+        }
+      }
+      
+      if (!paymentLink) {
+        const baseUrl = Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app';
+        paymentLink = `${baseUrl}/pay/${invoice.id}`;
+        console.warn('[AI Agent] Stripe not configured, using fallback payment URL');
+      }
+
+      // Send payment link via SMS/email
+      const supabaseUrl2 = Deno.env.get('SUPABASE_URL')!;
+      const serviceKey2 = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const paymentMessage = `Invoice ${invoice.invoice_number || ''}: $${invoice.total} is due. Pay securely here: ${paymentLink}`;
+      
+      if (invoice.customer_phone) {
+        try {
+          await fetch(`${supabaseUrl2}/functions/v1/send-appointment-sms`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey2}` },
+            body: JSON.stringify({
+              companyId,
+              customerPhone: invoice.customer_phone,
+              customerName: invoice.customer_name || 'Customer',
+              message: paymentMessage,
+            }),
+          });
+        } catch (smsErr) {
+          console.error('[AI Agent] Payment link SMS error:', smsErr);
+        }
+      }
+      if (invoice.customer_email) {
+        try {
+          await fetch(`${supabaseUrl2}/functions/v1/send-appointment-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey2}` },
+            body: JSON.stringify({
+              companyId,
+              customerEmail: invoice.customer_email,
+              customerName: invoice.customer_name || 'Customer',
+              subject: `Payment Due - Invoice ${invoice.invoice_number || ''}`,
+              body: paymentMessage,
+              type: 'payment_link',
+            }),
+          });
+        } catch (emailErr) {
+          console.error('[AI Agent] Payment link email error:', emailErr);
+        }
+      }
 
       return {
         success: true,
         invoice_id: args.invoice_id,
         payment_link: paymentLink,
         total: invoice.total,
-        sent_to: args.customer_contact || invoice.customer_email,
+        sent_to: args.customer_contact || invoice.customer_email || invoice.customer_phone,
         channel: args.channel,
         message: `Payment link sent for $${invoice.total}. Link: ${paymentLink}`,
       };
@@ -4882,12 +5097,56 @@ async function executeAgentTool(
           .eq('id', args.invoice_id);
       }
 
+      const daysOverdue = args.days_overdue || Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / (24 * 60 * 60 * 1000));
+      const supabaseUrl3 = Deno.env.get('SUPABASE_URL')!;
+      const serviceKey3 = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const reminderMessage = `Reminder: Invoice ${invoice.invoice_number || ''} for $${invoice.total} is ${daysOverdue > 0 ? `${daysOverdue} days overdue` : 'due soon'}. Please make your payment at your earliest convenience.`;
+
+      // Send reminder via SMS
+      if (invoice.customer_phone) {
+        try {
+          await fetch(`${supabaseUrl3}/functions/v1/send-appointment-sms`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey3}` },
+            body: JSON.stringify({
+              companyId,
+              customerPhone: invoice.customer_phone,
+              customerName: invoice.customer_name || 'Customer',
+              message: reminderMessage,
+            }),
+          });
+        } catch (smsErr) {
+          console.error('[AI Agent] Reminder SMS error:', smsErr);
+        }
+      }
+
+      // Send reminder via email
+      if (invoice.customer_email) {
+        try {
+          await fetch(`${supabaseUrl3}/functions/v1/send-appointment-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${serviceKey3}` },
+            body: JSON.stringify({
+              companyId,
+              customerEmail: invoice.customer_email,
+              customerName: invoice.customer_name || 'Customer',
+              subject: `Payment Reminder - Invoice ${invoice.invoice_number || ''} (${daysOverdue > 0 ? `${daysOverdue} days overdue` : 'Due Soon'})`,
+              body: reminderMessage,
+              type: 'payment_reminder',
+            }),
+          });
+        } catch (emailErr) {
+          console.error('[AI Agent] Reminder email error:', emailErr);
+        }
+      }
+
       return {
         success: true,
         invoice_id: args.invoice_id,
         invoice_number: invoice.invoice_number,
         total: invoice.total,
-        days_overdue: args.days_overdue || Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / (24 * 60 * 60 * 1000)),
+        days_overdue: daysOverdue,
+        notification_sent: !!(invoice.customer_phone || invoice.customer_email),
         message: `Payment reminder sent for invoice ${invoice.invoice_number}. Amount due: $${invoice.total}`,
       };
     }
