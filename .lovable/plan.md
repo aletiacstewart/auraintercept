@@ -1,134 +1,135 @@
 
+# Option A: Platform-Level OAuth for All Social Media
 
-# Make All AI Agents and Features Fully Functional
+## What Changes
 
-## Overview
+Instead of each tenant company creating their own developer apps and entering API credentials manually, **Aura Intercept registers ONE app per platform** (as a Tech Provider). Tenants simply click "Connect with Facebook/LinkedIn/TikTok/Google" and authorize through a standard OAuth popup.
 
-After a thorough audit of the codebase, here is every simulated, stubbed, or placeholder feature that needs to be replaced with real functionality. The work is grouped into priority tiers.
+## Architecture Shift
 
----
+**Current flow (per-tenant):**
+Tenant creates Meta App --> copies App ID/Secret --> pastes into form --> manually generates tokens
 
-## Tier 1: Orchestrator Test Console (Largest Simulation)
+**New flow (platform app):**
+Tenant clicks "Connect Facebook" --> OAuth popup --> authorizes Aura Intercept --> tokens stored automatically
 
-**File**: `supabase/functions/ai-orchestrator/index.ts` (lines 484-915)
+The platform's App ID and App Secret for each platform become **backend secrets** (environment variables), not per-tenant fields. The `tenant_integrations` table still stores each tenant's **access tokens, page IDs, and account IDs** -- but no longer stores `meta_app_id`, `meta_app_secret`, `linkedin_client_id`, etc.
 
-The `handleTestAgent()` function is a massive block of hardcoded canned responses for all 24 agent types (triage, booking, dispatch, route, ETA, check-in, quoting, invoice, inventory, warranty, follow-up, review, promo, referral, win-back, seasonal, admin, lead, campaign, marketing, social_content, social_scheduler, social_analytics, performance, revenue, creative, web_presence). None of these responses come from AI -- they are pattern-matched regex strings returning fake data.
+## Implementation Steps
 
-**Fix**: Replace `handleTestAgent()` with a call to the `ai-agent-chat` edge function, passing the test message through the real AI agent pipeline. This way the "Test Console" in the AI Operatives Hub actually exercises the real agent logic.
+### 1. Create `social-oauth` Edge Function
+A new backend function that handles the complete OAuth flow for all 4 platforms:
+- **`/init`** -- Generates the OAuth authorization URL with the correct scopes and redirect URI, returns it to the frontend to open in a popup
+- **`/callback`** -- Receives the authorization code from the platform, exchanges it for access tokens, fetches page/account details, and stores everything in `tenant_integrations` and `social_accounts`
 
----
+Platform-specific logic:
+- **Meta (Facebook/Instagram):** Exchange code for user token, then get Page tokens, then exchange for long-lived tokens (60 days). Fetch linked Instagram Business Account ID automatically.
+- **LinkedIn:** Exchange code for access token (60-day expiry). Fetch organization list for company pages.
+- **TikTok:** Exchange code for access token + refresh token. Fetch user open_id.
+- **Google Business:** Exchange code for access token + refresh token. Fetch account and location IDs.
 
-## Tier 2: Simulated Tools in `ai-agent-chat`
+### 2. Create `social-oauth-deauthorize` Edge Function
+Handles deauthorization callbacks from Meta (required for App Review).
 
-**File**: `supabase/functions/ai-agent-chat/index.ts`
+### 3. Create `social-oauth-data-deletion` Edge Function
+Handles data deletion requests from Meta (required for App Review and GDPR compliance). Returns a confirmation URL and tracking code.
 
-### 2a. `calculate_eta` (line 4011-4017)
-Returns random ETA and hardcoded "5.2 miles" / "moderate" traffic. No real distance or routing calculation.
+### 4. Add Platform Secrets
+The following secrets need to be configured (these are YOUR platform-level credentials, not per-tenant):
+- `META_APP_ID` and `META_APP_SECRET` -- From your Meta Tech Provider app
+- `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` -- From your LinkedIn Developer app
+- `TIKTOK_CLIENT_KEY` and `TIKTOK_CLIENT_SECRET` -- From your TikTok Developer app
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` already exist as secrets
 
-**Fix**: Integrate with a free routing API (OSRM -- Open Source Routing Machine, which is free and self-hostable, or use the Leaflet routing already in the project). Pass technician location and customer address to get real distance and travel time.
+### 5. Update `SocialMediaIntegration.tsx` Page
+- **Remove** the manual credential input dialog (App ID/Secret fields)
+- **Replace** with "Connect with [Platform]" buttons that trigger the OAuth popup flow
+- Show connection status with account name, connected date, and a disconnect button
+- The `SOCIAL_INTEGRATIONS` array drops the `fields` property entirely
 
-### 2b. `check_tech_availability` fallback (lines 3873-3882)
-When no real employees exist in the database, returns hardcoded fake technicians ("John Smith", "Sarah Johnson") with random distances/ETAs.
+### 6. Rewrite `SocialMediaSetupGuide.tsx` -- All 5 Platforms
+The guides shift from "how to create your own developer app" to **"how Aura Intercept's platform admin registers the master app once"**. This is a one-time setup by the platform owner, not by each tenant.
 
-**Fix**: Return an honest empty result with a clear message instead of fake data. If no employees are configured, tell the agent so it can inform the customer appropriately.
+**Meta (Facebook + Instagram) -- New Guide:**
+1. Register as a Meta Developer at developers.facebook.com
+2. Create a "Business" type app and select "Tech Provider" use case
+3. In Settings > Basic: set App Domains, Privacy Policy URL, Terms of Service URL, Data Deletion URL, Deauthorize Callback URL (copyable URLs provided)
+4. Configure Facebook Login product: add Valid OAuth Redirect URI (copyable)
+5. Add permissions: pages_manage_posts, pages_read_engagement, pages_show_list, instagram_basic, instagram_content_publish, instagram_manage_messages
+6. Configure Webhooks: set Callback URL and Verify Token, subscribe to feed, messages, messaging_postbacks
+7. Business Verification: upload legal documents (business license, utility bill, etc.)
+8. App Review: submit all permissions with screencast demo and use-case descriptions
+9. Go Live: toggle from Development to Live mode
+10. Required documents checklist: Privacy Policy, Terms of Service, Data Processing Agreement
 
-### 2c. `check_tech_availability` random distances (lines 3864-3871)
-Even when real employees ARE found, the distance and ETA values are `Math.random()` -- not real calculations.
+**LinkedIn -- New Guide:**
+1. Go to linkedin.com/developers/apps and create app
+2. Link to a LinkedIn Company Page (verified admin required)
+3. In Auth tab: add OAuth Redirect URI (copyable), note Client ID and Secret
+4. Request Products: "Share on LinkedIn" (instant) and "Sign In with LinkedIn using OpenID Connect"
+5. For Company Page posting: apply for "Marketing Developer Platform" (include use-case description, expected volume, company website)
+6. Required scopes: w_member_social, r_liteprofile, r_organization_social, w_organization_social
+7. Submit verification documents if requested
 
-**Fix**: Same as 2a -- use real geocoding/routing to calculate actual distance and ETA from employee location to the job address.
+**TikTok -- New Guide:**
+1. Register at developers.tiktok.com
+2. Create app, select "Content Posting API" use case
+3. Add OAuth Redirect URI (copyable)
+4. Enable Login Kit and Content Posting products
+5. Request "Direct Post" scope
+6. Submit for review with use-case description and demo video
+7. Note: AI-generated content must include is_aigc flag (handled automatically)
 
-### 2d. `send_payment_link` placeholder URL (lines 4848-4850)
-Generates a fake URL (`/pay/{invoice_id}`) instead of creating a real Stripe Payment Link.
+**Google Business -- New Guide:**
+1. Go to Google Cloud Console, create/select project
+2. Enable "Business Profile API" and "My Business Business Information API"
+3. Create OAuth 2.0 credentials (Web Application type), add redirect URI (copyable)
+4. Configure OAuth Consent Screen: add business.manage scope
+5. Submit verification request for production access
+6. Add test users during development
 
-**Fix**: Call the Stripe API to create a real Payment Link using the invoice amount, then return the actual Stripe URL. Requires a Stripe secret key (already required by the platform for Logistics+ tiers).
+Each guide includes:
+- Required documents (Privacy Policy, ToS, etc.)
+- Copyable URLs for OAuth redirect, webhooks, deauthorize, data deletion endpoints
+- Direct links to developer consoles and documentation
+- Estimated review timelines
 
-### 2e. `send_quote` -- status update only (lines 4662-4694)
-Marks the quote as "sent" in the database but does NOT actually send anything (no email, no SMS).
+### 7. Update `token-refresh.ts`
+Change Meta token refresh to use platform-level secrets (`META_APP_ID`, `META_APP_SECRET` from environment) instead of reading `meta_app_id`/`meta_app_secret` from the `tenant_integrations` table. Same for LinkedIn, TikTok -- use platform secrets.
 
-**Fix**: After updating the status, call the existing `send-appointment-email` or a new `send-quote-email` edge function to actually deliver the quote to the customer via email/SMS.
+### 8. Update `publish-social-content` Function
+Minor change: when fetching credentials for token refresh, pass platform-level secrets from environment instead of per-tenant credentials.
 
-### 2f. `send_payment_reminder` -- status update only (lines 4863-4893)
-Updates invoice status to "overdue" but does NOT send any actual reminder.
+## Database Changes
+- No new tables needed
+- The existing `tenant_integrations` columns for per-tenant app credentials (`meta_app_id`, `meta_app_secret`, `linkedin_client_id`, `linkedin_client_secret`, `tiktok_client_key`, `tiktok_client_secret`) become unused (can be deprecated later)
+- The token and account ID columns remain (`meta_page_access_token`, `meta_page_id`, `linkedin_access_token`, etc.)
 
-**Fix**: After updating status, call the existing email/SMS infrastructure to actually deliver the payment reminder to the customer.
+## Files to Create
+- `supabase/functions/social-oauth/index.ts` -- OAuth init + callback handler
+- `supabase/functions/social-oauth-deauthorize/index.ts` -- Meta deauth handler
+- `supabase/functions/social-oauth-data-deletion/index.ts` -- Meta data deletion handler
 
-### 2g. Misleading comment (line 3429)
-The comment says "Simulated tool execution" but most tools below it (check_availability, create_appointment, track_appointment, inventory, warranty, campaigns) are actually real and database-connected.
+## Files to Modify
+- `src/components/integrations/SocialMediaSetupGuide.tsx` -- Complete rewrite of all 5 platform guides for Option A
+- `src/pages/integrations/SocialMediaIntegration.tsx` -- Replace manual credential forms with OAuth connect buttons
+- `supabase/functions/_shared/social-platforms/token-refresh.ts` -- Use platform env secrets
+- `supabase/functions/publish-social-content/index.ts` -- Pass platform secrets from env
 
-**Fix**: Remove the misleading comment. Add accurate comments distinguishing which tools are real vs which still need work.
+## Secrets to Add
+- `META_APP_ID` -- Your platform Meta App ID
+- `META_APP_SECRET` -- Your platform Meta App Secret
+- `LINKEDIN_CLIENT_ID` -- Your platform LinkedIn Client ID
+- `LINKEDIN_CLIENT_SECRET` -- Your platform LinkedIn Client Secret
+- `TIKTOK_CLIENT_KEY` -- Your platform TikTok Client Key
+- `TIKTOK_CLIENT_SECRET` -- Your platform TikTok Client Secret
+- `GOOGLE_CLIENT_ID` already exists
+- `GOOGLE_CLIENT_SECRET` already exists
 
----
-
-## Tier 3: Event Processing Stub
-
-**File**: `supabase/functions/ai-orchestrator/index.ts` (lines 420-482)
-
-`handleProcessPendingEvents()` marks events as "processed" without actually routing them to agent handlers. The TODO comment on line 447 says "Route to specific agent handler based on target_agent."
-
-**Fix**: Implement real event routing by calling the `ai-agent-chat` edge function for each pending event, passing the event payload as context to the target agent. This enables the multi-agent handoff chain (e.g., triage -> booking -> dispatch -> ETA) to actually work end-to-end.
-
----
-
-## Implementation Sequence
-
-The work should be done in this order to avoid breaking dependencies:
-
-1. **Clean up comments** -- Remove the misleading "Simulated" comment (quick win, no risk)
-2. **Remove fake technician fallback** -- Return empty results instead of fake data
-3. **Replace orchestrator test handler** -- Route test messages through the real AI agent pipeline
-4. **Connect send_quote / send_payment_reminder to email/SMS** -- Wire up to existing notification infrastructure
-5. **Integrate Stripe for send_payment_link** -- Create real Stripe Payment Links
-6. **Integrate routing API for calculate_eta** -- Use OSRM or similar for real distance/ETA
-7. **Implement event processing** -- Route pending events to real agent handlers
-
-## Technical Details
-
-### Orchestrator Test Handler Replacement
-```
-// Instead of the 400+ line switch statement with canned responses:
-// Forward the test message to the real ai-agent-chat function
-const response = await fetch(
-  `${supabaseUrl}/functions/v1/ai-agent-chat`,
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${supabaseServiceKey}`,
-    },
-    body: JSON.stringify({
-      companyId,
-      agentType,
-      message: payload.message,
-      conversationHistory: [],
-    }),
-  }
-);
-```
-
-### ETA Calculation with OSRM (free, no API key needed)
-```
-// OSRM public demo server (or self-host for production)
-const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${techLon},${techLat};${custLon},${custLat}?overview=false`;
-const routeData = await fetch(osrmUrl).then(r => r.json());
-const distanceKm = routeData.routes[0].distance / 1000;
-const durationMin = Math.ceil(routeData.routes[0].duration / 60);
-```
-
-### Stripe Payment Link Creation
-```
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-const paymentLink = await stripe.paymentLinks.create({
-  line_items: [{ price_data: { currency: 'usd', product_data: { name: `Invoice ${invoice.invoice_number}` }, unit_amount: Math.round(invoice.total * 100) }, quantity: 1 }],
-});
-return { payment_link: paymentLink.url };
-```
-
-### Files to Modify
-- `supabase/functions/ai-orchestrator/index.ts` -- Replace handleTestAgent, implement event routing
-- `supabase/functions/ai-agent-chat/index.ts` -- Fix calculate_eta, check_tech_availability fallback, send_payment_link, send_quote, send_payment_reminder, remove misleading comment
-
-### Prerequisites
-- Stripe secret key must be configured (for payment links)
-- Employee profiles should have location data stored (for real ETA calculations)
-- No new database tables needed -- all existing tables support these changes
-
+## Tenant Experience After Implementation
+1. Tenant goes to Social Media integrations page
+2. Reads the setup guide (now simplified -- explains what the platform does, what permissions are needed)
+3. Clicks "Connect with Facebook"
+4. OAuth popup opens, tenant logs in and authorizes their Page
+5. Tokens and Page IDs are captured and stored automatically
+6. Tenant's Social Media AI agents can now generate and post content -- no change to how agents work
