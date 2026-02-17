@@ -955,6 +955,7 @@ export type Database = {
           monthly_digest_timezone: string | null
           name: string
           phone: string | null
+          phone_number_setup_type: string | null
           primary_color: string | null
           public_app_url: string | null
           quarterly_digest_day: number | null
@@ -1078,6 +1079,7 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name: string
           phone?: string | null
+          phone_number_setup_type?: string | null
           primary_color?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null
@@ -1201,6 +1203,7 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name?: string
           phone?: string | null
+          phone_number_setup_type?: string | null
           primary_color?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null

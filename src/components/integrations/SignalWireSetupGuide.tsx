@@ -407,11 +407,50 @@ export function SignalWireSetupGuide() {
             </AccordionContent>
           </AccordionItem>
 
-          {/* Step 7: Enter Credentials */}
+          {/* Step 7: Connect Your Existing Business Number */}
           <AccordionItem value="step-7">
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
-                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-green-500 text-white border-green-500">7</Badge>
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-purple-500 text-white border-purple-500">7</Badge>
+                Connect Your Existing Business Number
+                <Badge variant="outline" className="ml-2 text-xs bg-green-100 text-green-700 border-green-300">Optional</Badge>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
+              <p>You don't have to change or give up your current business phone number. Choose one of these options:</p>
+              
+              <div className="space-y-2">
+                <div className="bg-muted p-3 rounded-lg">
+                  <p className="font-medium text-foreground text-xs">1. Conditional Call Forwarding (Recommended)</p>
+                  <p className="text-xs text-foreground/70 mt-1">Your phone rings first — only forwards to AI on no-answer. Dial carrier-specific codes from your phone.</p>
+                </div>
+                <div className="bg-muted p-3 rounded-lg">
+                  <p className="font-medium text-foreground text-xs">2. Port Your Number</p>
+                  <p className="text-xs text-foreground/70 mt-1">Transfer your number to SignalWire permanently for full Ring First control and SMS.</p>
+                </div>
+                <div className="bg-muted p-3 rounded-lg">
+                  <p className="font-medium text-foreground text-xs">3. Unconditional Forwarding</p>
+                  <p className="text-xs text-foreground/70 mt-1">Forward all calls to the AI immediately. Your phone won't ring.</p>
+                </div>
+                <div className="bg-muted p-3 rounded-lg">
+                  <p className="font-medium text-foreground text-xs">4. Use the New AI Number</p>
+                  <p className="text-xs text-foreground/70 mt-1">Use your SignalWire number directly and update business listings.</p>
+                </div>
+              </div>
+
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                <p className="text-green-600 dark:text-green-400 text-xs">
+                  <strong>💡 Tip:</strong> Configure this in Settings → Missed Calls → "How is your number connected?" for carrier-specific dial codes and automatic routing setup.
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 8: Enter Credentials */}
+          <AccordionItem value="step-8">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-green-500 text-white border-green-500">8</Badge>
                 Enter Credentials Below
               </span>
             </AccordionTrigger>
