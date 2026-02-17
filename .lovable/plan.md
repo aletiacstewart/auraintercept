@@ -1,160 +1,108 @@
 
-# Platform-Wide Audit & Update Plan
+# Phone Number Setup Wizard & Carrier Forwarding Guide
 
-## Executive Summary
+## What We're Building
 
-After a deep review of the entire codebase -- all 7 integration pages, 24 AI operatives, the orchestrator, help center, setup guides, PDF exports, and the centralized documentation config -- here are the issues found and the updates needed.
-
----
-
-## Part 1: Integration Audit Findings
-
-### Current 3rd-Party Integrations (7 Total)
-| Integration | Purpose | Per-Tenant? | Status |
-|---|---|---|---|
-| SignalWire | Voice & SMS | Yes (per-tenant account) | Good -- well-documented, A2P 10DLC covered |
-| ElevenLabs | AI Voice Synthesis | Yes (per-tenant key) | Good -- detailed guide with tool configs |
-| Resend | Email Notifications | Yes (per-tenant key) | Good -- webhook + domain setup guide |
-| Google Calendar | Calendar Sync | Yes (per-tenant OAuth) | Good -- 3 sync methods (ICS, CalDAV, Google) |
-| Stripe | Invoice Payments | Yes (per-tenant) | Good -- required for Logistics+ tiers |
-| Social Media (Meta/LinkedIn/TikTok/Google) | Content Publishing | Platform-level OAuth (new) | Just implemented -- needs testing |
-| Tavily | AI Web Research | Yes (per-tenant key) | **Issue found** (see below) |
-
-### Integration Issues Found
-
-**1. Tavily is NOT listed in `THIRD_PARTY_INTEGRATIONS` config array**
-- `documentationConfig.ts` line 588-638 lists 7 integrations but does NOT include Tavily
-- Tavily IS listed in `INTEGRATION_REQUIREMENTS` (lines 748-831) with its own `IntegrationId`
-- The `TavilyIntegration.tsx` page and `TavilySetupGuide.tsx` exist and work
-- **Fix**: Add Tavily to `THIRD_PARTY_INTEGRATIONS` array
-
-**2. `THIRD_PARTY_INTEGRATIONS` still references "Google Gemini" from old memory**
-- Memory file `3rd-party-requirements-standard.md` mentions "Google Gemini" as required for all tiers
-- The actual codebase uses Lovable AI gateway (not a per-tenant Google Gemini key)
-- There is NO Google Gemini integration page or setup
-- **Fix**: Confirm this is handled by Lovable AI and remove from any docs referencing it as a separate integration
-
-**3. Social Media integration config is outdated in `THIRD_PARTY_INTEGRATIONS`**
-- Currently listed as "Social Media Accounts" with `requiredFor: 'Core+'`
-- After Option A implementation, this should reference the new platform-level OAuth model
-- **Fix**: Update description and `requiredFor` to reflect new architecture (Growth+ since `social_content` agent starts at `aura_flow`)
-
-**4. `documentationConfig.ts` `INTEGRATION_REQUIREMENTS` is missing social media as a tracked integration**
-- The `IntegrationId` type only includes: `stripe`, `signalwire`, `elevenlabs`, `resend`, `tavily`, `calendar`, `a2p_10dlc`
-- Social media is not tracked per-tier in `INTEGRATION_REQUIREMENTS`
-- **Fix**: Add `social_media` to `IntegrationId` and populate per-tier requirements
+A comprehensive **Phone Number Setup Wizard** that walks companies through all 4 options for connecting their existing phone number to the AI receptionist system, plus updates to the Missed Call Settings page so the system auto-configures the correct routing mode based on how the number is set up.
 
 ---
 
-## Part 2: AI Agent / Orchestrator Audit Findings
+## The 4 Options
 
-### Orchestrator `AGENT_TYPES` is Missing 7 Agents
-The `ai-orchestrator/index.ts` (line 10-37) defines only **17** agent types:
-- `triage`, `booking`, `followup`, `review`
-- `dispatch`, `route`, `eta`, `checkin`
-- `quoting`, `invoice`, `inventory`, `admin`
-- `marketing` (consolidated)
-- `insights`, `forecast`, `revenue`, `performance`
-
-**Missing from orchestrator** (7 agents):
-1. `campaign` -- Campaign Agent (marketing_sales console)
-2. `lead` -- Lead Agent (marketing_sales console)
-3. `social_content` -- Social Media Agent (social_media console)
-4. `social_scheduler` -- Social Scheduler (social_media console)
-5. `social_analytics` -- Social Analytics (social_media console)
-6. `creative` -- Creative Agent (creative_web_presence console)
-7. `web_presence` -- Web Presence Agent (creative_web_presence console)
-
-These 7 agents exist in `documentationConfig.ts` as part of the 24 operatives but the orchestrator cannot route events to them, configure them, or test them.
-
-### EVENT_ROUTING References Non-Existent Agents
-The orchestrator's `EVENT_ROUTING` (line 40-57) references agents that don't exist in `AGENT_TYPES`:
-- `waitlist` (line 43) -- not a defined agent
-- `invoicing` (lines 48-50) -- should be `invoice`
-- `predictive` (lines 51, 53) -- not a defined agent
-
-### Missing Event Routes for New Agents
-No event routing exists for:
-- Marketing stack events (campaign created, lead qualified, etc.)
-- Social media events (content generated, post scheduled, post published)
-- Creative events (content generated, blog published)
-- Web presence events (SEO scan complete, site updated)
+| Option | How It Works | Best For |
+|---|---|---|
+| **1. Conditional Call Forwarding (CFNA)** | Carrier rings business phone first; forwards to AI only on no-answer/busy | Companies who want to keep their number AND answer calls themselves first |
+| **2. Number Porting** | Transfer existing number to SignalWire permanently | Cleanest setup -- full control over Ring First logic and SMS |
+| **3. Unconditional Forwarding** | All calls forward from carrier to SignalWire immediately | Companies okay with AI handling 100% of calls but want to keep carrier |
+| **4. New AI Number** | Use the SignalWire number as-is, update listings | New businesses or those okay with a new number |
 
 ---
 
-## Part 3: Help Center & Documentation Issues
+## Changes
 
-### AIHelpCenter System Prompt Inconsistencies
-The help center (`AIHelpCenter.tsx` line 70-153) has several mismatches with actual configuration:
+### 1. New Component: PhoneNumberSetupWizard
 
-1. **Console count**: Says "8 Control Centers" -- should be "7 Control Centers + 1 Management Interface (AI Operatives Hub)"
-2. **Tier names don't match**: Uses old names (Starter, Scheduling, Growth, Business, Field Ops, Performance, Command) but actual tier names in `documentationConfig.ts` are (Aura Starter, Aura Connect, Aura Growth, Aura Presence, Aura Logistics, Aura Performance, Aura Command)
-3. **Agent counts per tier don't match**: Says "Starter: 1 agent, 0 consoles" but `documentationConfig.ts` says Express has 1 operative and 0 consoles (correct count but wrong name)
-4. **Troubleshooting section**: No mention of social media OAuth troubleshooting (new system)
-5. **Missing integration paths**: No mention of `/dashboard/integrations/social` for social OAuth or `/dashboard/integrations/tavily` for AI research
+A step-by-step wizard component with:
+- **Option selector** (4 cards with icons explaining each approach)
+- **Carrier-specific instructions** for Conditional Forwarding (AT&T, Verizon, T-Mobile, Comcast/Xfinity, Spectrum, RingCentral, Grasshopper, generic VoIP)
+  - Includes exact dial codes (e.g., `*61*[SignalWire#]*11*20#` for AT&T CFNA with 20-second delay)
+- **Number porting guide** with timeline expectations and what to tell SignalWire support
+- **Unconditional forwarding codes** per carrier
+- **"New number" flow** with tips on updating Google Business Profile, Yelp, social media, etc.
+- Auto-recommendation of the correct `call_routing_mode`:
+  - Conditional Forwarding --> `ai_direct` (carrier already rang the phone)
+  - Number Porting --> `ring_first` (SignalWire controls the ring)
+  - Unconditional Forwarding --> `ai_direct` (all calls go straight to AI)
+  - New AI Number --> either mode (user's choice)
 
-### ComprehensiveGuidesPDF and CompanyGuidesPDF
-These PDFs are generated from hardcoded guide data inside each component, NOT from `documentationConfig.ts`. This means:
-- Any changes to tier names, prices, or agent counts need to be updated in multiple places
-- Social media guides in the PDFs still reference the old per-tenant credential model
-- The Option A (platform OAuth) flow is not reflected in any PDF
+### 2. Update MissedCallSettings.tsx
 
-### PlatformGuides Page
-- Contains hardcoded guide categories (not from centralized config)
-- Social media sections need to reference the new OAuth model
-- Integration troubleshooting guides need updating
+- Add a **"How is your number connected?"** selector above the routing mode:
+  - Conditional Forwarding / Ported to SignalWire / Unconditional Forwarding / New AI Number
+- When "Conditional Forwarding" is selected, auto-set `call_routing_mode` to `ai_direct` and show an info box explaining why (the carrier already performed the ring delay)
+- When "Ported" is selected, default to `ring_first` and show the business phone / timeout controls
+- Add a link to the Phone Number Setup Wizard for companies that haven't configured yet
 
----
+### 3. Database: Add `phone_number_setup_type` Column
 
-## Part 4: Implementation Plan
+Add a new column to the `companies` table:
+- `phone_number_setup_type` (text, nullable): `'conditional_forwarding'` | `'ported'` | `'unconditional_forwarding'` | `'new_number'`
+- This persists the company's choice and drives smart defaults in MissedCallSettings
 
-### Step 1: Fix Orchestrator -- Add Missing 7 Agents
-Update `supabase/functions/ai-orchestrator/index.ts`:
-- Add `campaign`, `lead`, `social_content`, `social_scheduler`, `social_analytics`, `creative`, `web_presence` to `AGENT_TYPES`
-- Fix `EVENT_ROUTING`: rename `invoicing` to `invoice`, remove `waitlist` and `predictive`, add routes for new agent events
-- Add new event types: `content_generated`, `post_scheduled`, `post_published`, `campaign_created`, `lead_qualified`, `blog_published`, `seo_scan_complete`
+### 4. Update SignalWireSetupGuide.tsx
 
-### Step 2: Update `documentationConfig.ts`
-- Add Tavily to `THIRD_PARTY_INTEGRATIONS` array
-- Add `social_media` to `IntegrationId` type and populate per-tier requirements
-- Update Social Media entry to reflect platform-level OAuth model
-- Verify all tier names and prices are consistent
+- Add a new accordion step (after "Purchase a Phone Number") titled **"Connect Your Existing Business Number"**
+- Links to the Phone Number Setup Wizard component
+- Brief summary of all 4 options with a recommendation
 
-### Step 3: Update AIHelpCenter System Prompt
-- Fix console count to "7 Control Centers + AI Operatives Hub management interface"
-- Update tier names to match (Aura Starter, Aura Connect, etc.)
-- Add social media OAuth troubleshooting
-- Add missing integration navigation paths
-- Add new agent descriptions for campaign, lead, social content, social scheduler, social analytics, creative, web presence
+### 5. Update PlatformGuides.tsx
 
-### Step 4: Update PDF Export Documents
-- Update `ComprehensiveGuidesPDF.tsx` social media sections for Option A OAuth model
-- Update `CompanyGuidesPDF.tsx` integration sections
-- Ensure tier names and prices match `documentationConfig.ts`
+- Add a "Phone Number Setup" guide section under the Voice/SMS category
+- Include carrier-specific instructions and the option comparison table
 
-### Step 5: Update PlatformGuides Page
-- Update social media guide sections for OAuth model
-- Add Tavily/AI Research guide section if missing
-- Ensure consistency with documentationConfig
+### 6. Update AIHelpCenter System Prompt
 
-### Step 6: Update Setup Guides
-- `SocialMediaSetupGuide.tsx` -- Already updated for Option A (verified)
-- `ElevenLabsSetupGuide.tsx` -- Good as-is
-- `SignalWireSetupGuide.tsx` -- Good as-is
-- `ResendSetupGuide.tsx` -- Good as-is
-- `TavilySetupGuide.tsx` -- Good as-is
+- Add phone number setup FAQ entries:
+  - "How do I connect my existing phone number?"
+  - "Do I need to change my phone number?"
+  - "What is conditional call forwarding?"
+  - "How do I port my number to SignalWire?"
 
 ---
 
-## Technical Summary of Files to Modify
+## Technical Details
 
-| File | Changes |
+### New Files
+- `src/components/company/PhoneNumberSetupWizard.tsx` -- The main wizard component
+
+### Modified Files
+| File | Change |
 |---|---|
-| `supabase/functions/ai-orchestrator/index.ts` | Add 7 missing agents to AGENT_TYPES, fix EVENT_ROUTING |
-| `src/lib/documentationConfig.ts` | Add Tavily to THIRD_PARTY_INTEGRATIONS, add social_media IntegrationId |
-| `src/components/help/AIHelpCenter.tsx` | Update system prompt (tier names, console count, new agents, OAuth troubleshooting) |
-| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | Update social media + integration sections for Option A |
-| `src/components/documentation/CompanyGuidesPDF.tsx` | Update integration references |
-| `src/pages/PlatformGuides.tsx` | Update social media guide content |
+| `src/components/company/MissedCallSettings.tsx` | Add setup type selector, smart routing defaults, wizard link |
+| `src/components/integrations/SignalWireSetupGuide.tsx` | Add accordion step for existing number connection |
+| `src/pages/PlatformGuides.tsx` | Add phone number setup guide section |
+| `src/components/help/AIHelpCenter.tsx` | Add phone setup FAQ to system prompt |
 
-No new files needed. No database changes needed.
+### Database Migration
+```sql
+ALTER TABLE public.companies
+  ADD COLUMN IF NOT EXISTS phone_number_setup_type text;
+```
+
+### Carrier Dial Codes (embedded in wizard)
+
+**Conditional Forwarding (No Answer):**
+- AT&T: `*61*[number]*11*[seconds]#`
+- Verizon: `*71[number]`
+- T-Mobile: `**61*[number]*11*20#`
+- Comcast/Xfinity: `*92[number]`
+- Spectrum: via account portal
+- RingCentral: Admin Portal > Call Handling > Forwarding Rules
+- Grasshopper: Settings > Call Forwarding > Add Rule
+
+**Unconditional Forwarding (All Calls):**
+- AT&T: `*21*[number]#`
+- Verizon: `*72[number]`
+- T-Mobile: `**21*[number]#`
+
+**Deactivation codes** included for each carrier so companies can reverse the setup.
