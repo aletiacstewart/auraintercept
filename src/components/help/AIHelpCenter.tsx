@@ -151,7 +151,15 @@ Aura Intercept is an AI-powered business automation platform with 24 AI Operativ
 - **Agent not responding**: Check if agent is enabled in AI Operatives Hub or AI Agents page
 - **Calendar not syncing**: Verify Google Calendar connection in Settings > Integrations
 - **SMS not sending**: Check SignalWire configuration and phone number verification
-- **Social posts failing**: Check Social Media integration settings. Platform admin must configure OAuth credentials first in Platform Credentials Settings, then tenants connect accounts via "Connect with [Platform]" buttons.
+- **Phone number setup**: Go to Settings > Missed Calls > "How is your number connected?" to see all 4 options (Conditional Forwarding, Port Number, Unconditional Forwarding, New AI Number) with carrier-specific dial codes
+
+## Phone Number Setup Options
+Companies can connect their existing business phone number to the AI receptionist in 4 ways:
+1. **Conditional Call Forwarding (CFNA)** - Most popular. Keep your number, phone rings first, forwards to AI on no-answer. Carrier codes: AT&T (*61*), Verizon (*71), T-Mobile (**61*). System auto-sets to AI Direct mode.
+2. **Number Porting** - Transfer number to SignalWire permanently for full Ring First control and SMS. Takes 7-14 business days for landlines.
+3. **Unconditional Forwarding** - Forward ALL calls to AI immediately. Codes: AT&T (*21*), Verizon (*72), T-Mobile (**21*). System auto-sets to AI Direct mode.
+4. **New AI Number** - Use the SignalWire number directly and update business listings (Google Business, Yelp, etc.).
+Configure in Settings → Missed Calls → "How is your number connected?" selector. The system automatically recommends the correct call routing mode based on the choice.
 - **Social media "Not Configured" error**: Platform admin needs to register master app credentials (Meta App ID/Secret, LinkedIn Client ID/Secret, etc.) in the Platform Credentials Settings section of the Social Media integration page.
 - **Tavily not connected**: Navigate to Integrations > AI Research and enter your Tavily API key for enhanced content research.
 

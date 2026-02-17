@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2, Save, PhoneForwarded, Bot } from 'lucide-react';
+import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2, Save, PhoneForwarded, Bot, Settings2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,8 @@ import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
+import { PhoneNumberSetupWizard } from './PhoneNumberSetupWizard';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type MissedCallAction = 'disabled' | 'sms_only' | 'callback_only' | 'callback_then_sms';
 type CallRoutingMode = 'ai_direct' | 'ring_first';
@@ -41,7 +43,9 @@ export function MissedCallSettings() {
     call_routing_mode: 'ai_direct' as CallRoutingMode,
     business_phone: '',
     ring_timeout_seconds: 15,
+    phone_number_setup_type: null as string | null,
   });
+  const [showWizard, setShowWizard] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
@@ -51,7 +55,7 @@ export function MissedCallSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds')
+        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds, phone_number_setup_type')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -100,6 +104,7 @@ export function MissedCallSettings() {
         call_routing_mode: (company.call_routing_mode as CallRoutingMode) || 'ai_direct',
         business_phone: company.business_phone || '',
         ring_timeout_seconds: company.ring_timeout_seconds || 15,
+        phone_number_setup_type: (company as any).phone_number_setup_type || null,
       });
       setHasChanges(false);
     }
@@ -243,6 +248,89 @@ export function MissedCallSettings() {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Phone Number Setup Type */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label className="flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  How is your number connected?
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  This determines the recommended call routing mode
+                </p>
+              </div>
+              <Dialog open={showWizard} onOpenChange={setShowWizard}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1">
+                    <Settings2 className="h-3 w-3" />
+                    Setup Guide
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Phone Number Setup Wizard</DialogTitle>
+                  </DialogHeader>
+                  <PhoneNumberSetupWizard 
+                    signalWireNumber={integrations?.signalwire_phone_number || undefined}
+                    selectedOption={localSettings.phone_number_setup_type as any}
+                    onSelect={(option) => {
+                      const autoRouting = option === 'conditional_forwarding' || option === 'unconditional_forwarding' ? 'ai_direct' : 'ring_first';
+                      setLocalSettings(prev => ({ 
+                        ...prev, 
+                        phone_number_setup_type: option,
+                        call_routing_mode: autoRouting as CallRoutingMode,
+                      }));
+                      setHasChanges(true);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Select
+              value={localSettings.phone_number_setup_type || 'not_configured'}
+              onValueChange={(value) => {
+                const setupType = value === 'not_configured' ? null : value;
+                const autoRouting = (value === 'conditional_forwarding' || value === 'unconditional_forwarding') ? 'ai_direct' : 'ring_first';
+                setLocalSettings(prev => ({ 
+                  ...prev, 
+                  phone_number_setup_type: setupType,
+                  call_routing_mode: autoRouting as CallRoutingMode,
+                }));
+                setHasChanges(true);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select setup type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="not_configured">Not configured yet</SelectItem>
+                <SelectItem value="conditional_forwarding">Conditional Call Forwarding (CFNA)</SelectItem>
+                <SelectItem value="ported">Number Ported to SignalWire</SelectItem>
+                <SelectItem value="unconditional_forwarding">Unconditional Forwarding</SelectItem>
+                <SelectItem value="new_number">Using New AI Number</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {localSettings.phone_number_setup_type === 'conditional_forwarding' && (
+              <Alert className="border-blue-500/50 bg-blue-500/10">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-xs">
+                  <strong>Auto-configured to AI Direct.</strong> Your carrier already rings your phone before forwarding — the AI picks up immediately when the call arrives here.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {localSettings.phone_number_setup_type === 'unconditional_forwarding' && (
+              <Alert className="border-blue-500/50 bg-blue-500/10">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-xs">
+                  <strong>Auto-configured to AI Direct.</strong> All calls forward to the AI immediately since your carrier sends everything here.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
 
           <div className="space-y-4">
             <div className="space-y-2">

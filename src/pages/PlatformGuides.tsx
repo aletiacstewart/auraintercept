@@ -568,6 +568,21 @@ const guideCategories = [
         tips: ['Use a local number for better answer rates', 'Keep SMS under 160 characters for single message']
       },
       {
+        title: 'Phone Number Setup (4 Options)',
+        duration: '10 min',
+        steps: [
+          'Option 1 — Conditional Call Forwarding (CFNA): Your phone rings first, unanswered calls forward to AI',
+          'Dial carrier-specific codes: AT&T (*61*), Verizon (*71), T-Mobile (**61*)',
+          'Option 2 — Port Number to SignalWire: Transfer your number for full control (7-14 business days)',
+          'Option 3 — Unconditional Forwarding: All calls go to AI immediately (*21* for AT&T, *72 for Verizon)',
+          'Option 4 — Use New AI Number: Update Google Business, Yelp, website with your SignalWire number',
+          'Configure in Settings → Missed Calls → "How is your number connected?"',
+          'System auto-sets routing mode based on your choice (AI Direct for forwarding, Ring First for ported)',
+          'Deactivation codes included for each carrier to reverse forwarding'
+        ],
+        tips: ['Conditional Forwarding is the most popular — no number change required', 'Test forwarding by calling your number and letting it ring', 'Update Google Business Profile first for maximum impact']
+      },
+      {
         title: 'ElevenLabs Voice Setup',
         duration: '12 min',
         steps: [
