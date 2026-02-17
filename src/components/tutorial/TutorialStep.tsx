@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -29,22 +29,64 @@ export function TutorialStepOverlay({
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const findTarget = () => {
-      const el = document.querySelector(step.targetSelector);
-      if (el) {
-        const rect = el.getBoundingClientRect();
+  const measureTarget = useCallback(() => {
+    const el = document.querySelector(step.targetSelector);
+    if (!el) {
+      setTargetRect(null);
+      return;
+    }
+
+    // First scroll the element into view within the sidebar ScrollArea
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Wait for scroll to settle, then measure
+    let attempts = 0;
+    const maxAttempts = 8;
+    let lastTop = -1;
+
+    const poll = () => {
+      attempts++;
+      const rect = el.getBoundingClientRect();
+
+      // Check if the element is actually visible in the viewport (not clipped by scroll container)
+      const isVisible = rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+      if (isVisible && Math.abs(rect.top - lastTop) < 2) {
+        // Scroll settled and element is visible
         setTargetRect(rect);
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+
+      lastTop = rect.top;
+
+      if (attempts < maxAttempts) {
+        requestAnimationFrame(() => setTimeout(poll, 80));
       } else {
-        setTargetRect(null);
+        // Use whatever we have after max attempts
+        if (rect.width > 0 && rect.height > 0) {
+          setTargetRect(rect);
+        } else {
+          setTargetRect(null);
+        }
       }
     };
 
-    // Delay to allow navigation render
-    const timer = setTimeout(findTarget, isNavigating ? 600 : 100);
+    // Start polling after initial scroll kick
+    setTimeout(poll, 150);
+  }, [step.targetSelector]);
+
+  useEffect(() => {
+    const delay = isNavigating ? 600 : 100;
+    const timer = setTimeout(measureTarget, delay);
     return () => clearTimeout(timer);
-  }, [step.targetSelector, isNavigating, stepIndex]);
+  }, [step.targetSelector, isNavigating, stepIndex, measureTarget]);
+
+  // Recalculate on window resize
+  useEffect(() => {
+    const onResize = () => measureTarget();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [measureTarget]);
 
   // Calculate card position
   const getCardStyle = (): React.CSSProperties => {
@@ -53,8 +95,8 @@ export function TutorialStepOverlay({
     }
 
     const padding = 16;
-    const cardWidth = 380;
-    const cardHeight = 280;
+    const cardWidth = 420;
+    const cardHeight = 300;
     const pos = step.position || 'right';
 
     let top = targetRect.top;
@@ -130,62 +172,62 @@ export function TutorialStepOverlay({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ delay: 0.15 }}
-          className="absolute w-[380px] bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
+          className="absolute w-[420px] bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
           style={getCardStyle()}
         >
           {/* Progress bar */}
-          <div className="px-4 pt-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-medium text-muted-foreground">
+          <div className="px-5 pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-card-foreground/70 tracking-wide">
                 Step {stepIndex + 1} of {totalSteps}
               </span>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onSkip}>
-                <X className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onSkip}>
+                <X className="w-4 h-4" />
               </Button>
             </div>
-            <Progress value={progress} className="h-1" />
+            <Progress value={progress} className="h-1.5" />
           </div>
 
           {/* Content */}
-          <div className="p-4 space-y-3">
-            <h3 className="text-base font-bold text-card-foreground">{step.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+          <div className="px-5 py-4 space-y-3">
+            <h3 className="text-lg font-bold text-card-foreground">{step.title}</h3>
+            <p className="text-sm text-card-foreground/80 leading-relaxed">{step.description}</p>
 
             {step.tip && (
-              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-amber-200/90">{step.tip}</p>
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <Lightbulb className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-amber-200">{step.tip}</p>
               </div>
             )}
 
             {step.tryIt && (
-              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-primary/10 border border-primary/20">
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-primary/10 border border-primary/20">
                 <MousePointerClick className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-primary/90">{step.tryIt}</p>
+                <p className="text-sm text-primary">{step.tryIt}</p>
               </div>
             )}
           </div>
 
           {/* Navigation */}
-          <div className="px-4 pb-3 flex items-center justify-between">
+          <div className="px-5 pb-4 flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={onPrev}
               disabled={stepIndex === 0}
-              className="text-xs"
+              className="text-sm"
             >
-              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+              <ChevronLeft className="w-4 h-4 mr-1" />
               Back
             </Button>
 
             <Button
               size="sm"
               onClick={onNext}
-              className="text-xs gradient-primary"
+              className="text-sm gradient-primary"
             >
               {isLastStep ? 'Finish' : 'Next'}
-              {!isLastStep && <ChevronRight className="w-3.5 h-3.5 ml-1" />}
+              {!isLastStep && <ChevronRight className="w-4 h-4 ml-1" />}
             </Button>
           </div>
         </motion.div>
