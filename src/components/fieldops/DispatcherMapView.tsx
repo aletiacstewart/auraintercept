@@ -86,7 +86,21 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
 
     mapRef.current = map;
 
+    // Invalidate size after a short delay to handle tab/panel rendering
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
+    // ResizeObserver to handle tab switches and panel resizes
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };
