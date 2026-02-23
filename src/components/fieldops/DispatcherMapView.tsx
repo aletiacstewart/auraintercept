@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, MapPin, Navigation, Play, Clock, CheckCircle, User, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -254,23 +253,30 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
       <div ref={containerRef} className="absolute inset-0" />
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 z-[1000]">
-        <Card className="bg-card/90 border-border backdrop-blur-sm">
-          <CardContent className="p-3">
-            <div className="text-xs font-medium mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>Status Legend</div>
-            <div className="flex flex-wrap gap-3">
-              {Object.entries(STATUS_CONFIG).map(([status, config]) => (
-                <div key={status} className="flex items-center gap-1.5">
-                  <div 
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: STATUS_COLORS[status] }}
-                  />
-                  <span className="text-xs" style={{ color: 'hsl(var(--foreground))' }}>{config.label}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="absolute bottom-4 left-4 z-[1000]" style={{ fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.92)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: '8px',
+          padding: '10px 14px',
+          backdropFilter: 'blur(8px)',
+        }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '8px' }}>Status Legend</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {Object.entries(STATUS_CONFIG).map(([status, config]) => (
+              <div key={status} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: STATUS_COLORS[status],
+                  flexShrink: 0,
+                }} />
+                <span style={{ fontSize: '12px', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{config.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Job Count */}
