@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-type ContentChannel = "website" | "social" | "campaign" | "blog" | "lead" | "sms";
+type ContentChannel = "website" | "social" | "campaign" | "blog" | "lead" | "sms" | "suggestions";
 
 interface ContentEngineRequest {
   channel: ContentChannel;
@@ -85,6 +85,47 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Missing required fields: channel, topic, companyId" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ============ SUGGESTIONS FAST PATH ============
+    if (channel === "suggestions") {
+      const suggestionRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")!}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-lite",
+          messages: [
+            {
+              role: "system",
+              content: "You are a marketing expert. Generate 5 specific, actionable campaign topic ideas for a business. Return ONLY a valid JSON array of exactly 5 strings, no explanation, no markdown, no extra text.",
+            },
+            {
+              role: "user",
+              content: `Generate 5 campaign topic ideas based on this theme: "${topic}"`,
+            },
+          ],
+        }),
+      });
+      const suggData = await suggestionRes.json();
+      const raw = suggData.choices?.[0]?.message?.content || "[]";
+      let suggestions: string[] = [];
+      try {
+        const parsed = JSON.parse(raw);
+        suggestions = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // extract array from string if needed
+        const match = raw.match(/\[[\s\S]*\]/);
+        if (match) {
+          try { suggestions = JSON.parse(match[0]); } catch { suggestions = []; }
+        }
+      }
+      return new Response(
+        JSON.stringify({ success: true, channel: "suggestions", content: suggestions }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
