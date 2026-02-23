@@ -368,7 +368,7 @@ const AGENT_DEFINITIONS: Record<string, {
   // Social Media Agents
   social_content: {
     name: 'Social Content Agent',
-    description: 'Creates engaging social media content optimized for each platform.',
+    description: 'Creates platform-optimized content for Facebook, Instagram, LinkedIn, TikTok, Google Business, and SMS. Content is ready to copy and post via the Manual Bridge or auto-publish via your own API credentials.',
     category: 'social_media',
     phase: 1,
     icon: Megaphone,
@@ -377,8 +377,8 @@ const AGENT_DEFINITIONS: Record<string, {
       'Multi-platform content creation',
       'Hashtag optimization',
       'Caption generation',
-      'Image suggestions',
-      'Content repurposing'
+      'Manual Bridge one-click posting',
+      'Own API auto-publish support'
     ],
     configFields: [
       { key: 'default_platforms', label: 'Default Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin', description: 'Default platforms for new posts (one per line)' },
@@ -389,17 +389,17 @@ const AGENT_DEFINITIONS: Record<string, {
   },
   social_scheduler: {
     name: 'Social Scheduler Agent',
-    description: 'Optimizes posting times and manages the content queue across platforms.',
+    description: "Manages the content calendar and queue across 6 platforms. Sets posts to 'Ready to Post' status so your team can use the Manual Bridge or auto-publish via configured API credentials.",
     category: 'social_media',
     phase: 2,
     icon: Megaphone,
     color: 'text-pink-400',
     capabilities: [
       'Optimal time scheduling',
-      'Queue management',
+      'Ready to Post queue management',
       'Cross-platform coordination',
       'Calendar overview',
-      'Rescheduling'
+      'Manual Bridge guided posting'
     ],
     configFields: [
       { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
@@ -415,7 +415,7 @@ const AGENT_DEFINITIONS: Record<string, {
   },
   social_analytics: {
     name: 'Social Analytics Agent',
-    description: 'Tracks social media performance and provides actionable insights.',
+    description: 'Tracks engagement, reach, and content performance across all 6 platforms. Provides actionable insights and content optimization recommendations.',
     category: 'social_media',
     phase: 3,
     icon: BarChart3,

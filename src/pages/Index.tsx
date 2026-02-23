@@ -125,15 +125,15 @@ const agentCategories = [{
   color: 'from-pink-500 to-rose-500',
   agents: [{
     name: 'Social Media Agent',
-    description: 'AI-powered content creation for all social platforms',
+    description: 'AI-powered content creation for Facebook, Instagram, LinkedIn, TikTok, Google Business & SMS',
     icon: Send
   }, {
     name: 'Social Media Scheduler',
-    description: 'Automated post scheduling across 6 platforms',
+    description: 'Content queue and calendar management across 6 platforms. One-click Manual Bridge posting — copy & open platform composer',
     icon: Calendar
   }, {
     name: 'Social Media Analytics',
-    description: 'Engagement metrics and performance tracking',
+    description: 'Engagement metrics, reach analysis, and content performance tracking across all connected platforms',
     icon: BarChart3
   }]
 }, {
@@ -193,12 +193,12 @@ const agentConsoles = [{
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media Console',
-  description: 'AI content creation and scheduling across all platforms.',
+  description: 'AI content creation, scheduling, and guided manual posting across 6 platforms.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
-  features: ['AI content generation', 'Multi-platform scheduling', 'Analytics dashboard', 'Brand voice consistency']
+  features: ['AI content generation', 'Manual Bridge posting', 'Multi-platform scheduling', 'Analytics dashboard']
 }, {
   name: 'Creative & Web Presence Console',
   description: 'AI-powered content creation and website management.',
@@ -239,7 +239,7 @@ const platformFeatures = [{
 }, {
   icon: Send,
   title: 'Social Media',
-  description: 'AI-powered content creation and scheduling across all major social platforms.'
+  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge. Own API auto-posting also available.'
 }, {
   icon: FileText,
   title: 'Quotes & Invoicing',
