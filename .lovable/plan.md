@@ -1,72 +1,84 @@
 
+# Fix AI Agent Flow Connections — Complete Audit & Repair
 
-# Update AI Agent Demo to Showcase All 24 AI Operatives
+## Issues Found
 
-## Overview
-The current demo only shows 4 scenes with a handful of agents (Triage, Booking, Follow-up, Dispatch). This update will expand it into a comprehensive, multi-scene walkthrough covering all 24 AI operatives organized by their 7 consoles, showing their flows, dependencies, and features.
+After a thorough review of all 10 scenes, here are all the broken or missing connections:
 
-## Current State
-- 4 scenes covering only ~6 agents (Customer, Triage, Booking, Follow-up, Dispatch)
-- Scenes focus on a simplified customer journey
-- Missing 18+ agents across Marketing, Social Media, Business Ops, Analytics, and Creative consoles
+### Scene 2 — Customer Portal
+- Missing: `triage → review` — Receptionist should also be able to directly trigger a review request (not just via Follow-up)
+- Missing: `booking → followup` — After a job is booked and completed, Scheduling should trigger Follow-up (currently triage → followup directly, but booking is the event that initiates follow-up)
 
-## Proposed Scene Structure (10 Scenes)
+### Scene 3 — Outreach & Sales
+- Missing: `campaign → marketing_ag` — Campaign results feed back into Marketing for segmentation updates
+- Missing: `lead → marketing_ag` — Lead qualification data feeds into Marketing segments
 
-**Scene 1 -- Customer Reaches Out** (keep existing, minor polish)
-- Customer connects to AI Receptionist (Triage) via Call/Chat/SMS
+### Scene 4 — Social Media
+- Missing: `social_analytics → social_content` — Analytics results feed back to Content creation (the feedback loop that makes content smarter over time)
+- Missing: `social_analytics → social_scheduler` — Analytics informs scheduling timing (best times to post)
 
-**Scene 2 -- Customer Portal Console** (expanded)
-- Shows all 4 Customer Portal agents: Triage, Booking, Follow-up, Review
-- Flow: Triage routes to Booking and Follow-up; Follow-up triggers Review
-- Features highlighted: 24/7 coverage, calendar sync, SMS reminders, Google/Yelp reviews
+### Scene 5 — Creative & Web Presence
+- Missing: `web_presence → f3` (Blog Posts) — Web Presence also publishes blog posts, not just Creative
+- Currently `creative → f3` exists but Web Presence is the one that actually publishes to the site
 
-**Scene 3 -- Outreach and Sales Console**
-- Campaign, Lead, Marketing agents
-- Flow: Campaign creates outreach, Lead qualifies responses, Marketing manages segments and promos
-- Features: Email/SMS campaigns, lead scoring, promo codes, referral tracking, win-back
+### Scene 6 — Field Operations
+- Missing: `dispatch → f1` — Dispatch → Skills-Based Assignment feature node has NO connection (f1 is orphaned)
+- Missing: `route → checkin` — Route plan informs Check-in agent (so technician follows the optimized route to arrive at the right time)
+- Missing: `eta → checkin` — ETA feeds into Check-in to trigger arrival notifications
 
-**Scene 4 -- Social Media Console**
-- Social Content, Social Scheduler, Social Analytics agents
-- Flow: Content creates posts for 6 platforms, Scheduler queues them, Analytics tracks performance
-- Features: Multi-platform posting, content calendar, engagement metrics
+### Scene 7 — Business Operations
+- Missing: `inventory → quoting` — Inventory levels directly inform Quoting (parts availability affects estimates)
+- Missing: `invoice → admin` — Invoice status/reports feed back to Admin for oversight
 
-**Scene 5 -- Creative and Web Presence Console**
-- Creative and Web Presence agents
-- Flow: Creative generates content for all channels, Web Presence manages SEO and blog publishing
-- Features: On-brand content generation, SEO optimization, auto-publishing
+### Scene 8 — Analytics & Reports
+- Missing: `insights → revenue` — Natural language queries directly pull from Revenue data
+- Missing: `insights → forecast` — Insights also queries Forecast data
+- Missing: `performance → revenue` — Performance KPIs include revenue metrics
+- Missing: `performance → forecast` — Performance data feeds Forecast model
 
-**Scene 6 -- Field Operations Console**
-- Dispatch, Route, ETA, Check-in agents
-- Flow: Dispatch assigns technician, Route optimizes path, ETA updates customer, Check-in logs arrival
-- Features: Skills-based assignment, traffic-aware routing, real-time ETA updates
+### Scene 9 — Full Network (most critical — the overview must show all cross-console flows)
+- Missing: `booking → dispatch` — After booking, job is handed to Dispatch for technician assignment (KEY cross-console flow)
+- Missing: `checkin → invoice_ag` — Check-in completion triggers Invoice generation (KEY cross-console flow)
+- Missing: `lead → campaign` — Lead scoring feeds Campaign targeting (currently only `review → campaign` exists)
+- Missing: `lead → marketing_ag` — Leads feed Marketing segments
+- Missing: `marketing_ag → campaign` — Marketing triggers Campaigns
+- Missing: `web_presence → social_content` — Web Presence publishes content that Social picks up
+- Missing: `social_analytics → insights` — Social analytics data feeds the Analytics console Insights agent
+- Missing: `inventory → quoting` — Cross-console: Inventory informs Quoting
+- Missing: `insights → performance` — Analytics agents are fully disconnected from each other in Scene 9
+- Missing: `revenue → forecast` — Same issue
+- `admin` node exists in Scene 9 but has zero connections — needs `admin → quoting`, `admin → inventory`
 
-**Scene 7 -- Business Operations Console**
-- Admin, Quoting, Invoice, Inventory agents
-- Flow: Quoting creates estimates, Invoice generates bills, Inventory tracks stock, Admin manages settings
-- Features: Multi-line quotes, payment tracking, low-stock alerts
+## Technical Changes
 
-**Scene 8 -- Analytics and Reports Console**
-- Insights, Performance, Revenue, Forecast agents
-- Flow: Insights answers questions, Performance tracks KPIs, Revenue analyzes financials, Forecast predicts demand
-- Features: Natural language queries, KPI dashboards, revenue trends, demand prediction
+**One file to modify:** `src/pages/AIAgentFlowDemo.tsx`
 
-**Scene 9 -- The Full Network** (new overview scene)
-- Shows all 24 agents in a connected network view with consoles as clusters
-- Lines show cross-console dependencies (e.g., Follow-up triggers Review triggers Campaign)
-- Demonstrates how the entire system works together
+Changes per scene:
 
-**Scene 10 -- Everyone Benefits** (keep existing scene 4, enhanced)
-- Company, Customer, Employee benefit summary with updated stats reflecting all 24 agents
+**Scene 2**: Add `booking → followup` connection (triage books → booking → followup is the correct linear flow)
 
-## Technical Approach
+**Scene 3**: Add `lead → marketing_ag` and `campaign → marketing_ag` connections
 
-1. **Pull agent data from `documentationConfig.ts`** -- Import `AI_OPERATIVES` and `CONSOLES` as the source of truth for agent names, descriptions, and dependencies, rather than hardcoding
-2. **Refactor scene data** -- Replace the 4-scene hardcoded array with 10 scenes, each with properly positioned nodes using the existing coordinate system
-3. **Add console color coding** -- Each console's agents share a color (matching the existing `agentStyles.ts` color scheme)
-4. **Enhance narration** -- Each scene narration describes the console's purpose and the agents' features
-5. **Update script download** -- The exported script text will include all 10 scenes
-6. **Keep all existing UI** -- Top bar, controls, auto-play (adjust timer per scene), progress dots all stay the same
+**Scene 4**: Add `social_analytics → social_content` (feedback loop) and `social_analytics → social_scheduler` connections
 
-## Files to Modify
-- `src/pages/AIAgentFlowDemo.tsx` -- Main and only file; replace scene data, import from documentationConfig for agent metadata in narrations
+**Scene 5**: Add `web_presence → f3` connection so blog posts connect to Web Presence (alongside Creative)
 
+**Scene 6**: Add `dispatch → f1`, `route → checkin`, and `eta → checkin` connections
+
+**Scene 7**: Add `inventory → quoting` and `invoice → admin` connections
+
+**Scene 8**: Add full cross-connections: `insights → revenue`, `insights → forecast`, `performance → revenue`, `performance → forecast`
+
+**Scene 9 (Full Network)**: Add the critical cross-console handoff connections:
+- `booking → dispatch` (Customer Portal → Field Ops)
+- `checkin → invoice_ag` (Field Ops → Business Ops)
+- `lead → marketing_ag`, `marketing_ag → campaign` (within Outreach)
+- `web_presence → social_content` (Creative → Social)
+- `social_analytics → insights` (Social → Analytics)
+- `inventory → quoting` (within Business Ops)
+- `admin → quoting`, `admin → inventory` (Admin oversight)
+- `insights → performance`, `revenue → forecast` (within Analytics)
+
+All `highlightConnections` arrays will be updated to include the new connection indices.
+
+The narration text for Scene 9 will be updated to mention the additional cross-console handoffs: `Booking feeds Dispatch`, `Check-in triggers Invoice`, and `Social Analytics informs Insights`.
