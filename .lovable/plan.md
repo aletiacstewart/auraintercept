@@ -1,107 +1,104 @@
 
-# Consolidate Into One Unified Content Engine
+# Add Templates & AI Topic Suggestions to Content Engine
 
-## What Exists Today (The Problem)
+## What Is Currently There
 
-The Social Media console currently has **two completely separate content generation systems** that overlap heavily:
+The `MultiChannelGenerator` input panel has:
+- A `Textarea` for "Topic or Campaign Theme"
+- Channel checkboxes
+- AI Image toggle
+- Generate button
 
-**Social Posts flow (SocialContentWizard):**
-- Social-only (Instagram, Facebook, LinkedIn, TikTok, Google Business, SMS)
-- Generates per-platform variations with character limits
-- Has a 3-step wizard: Topic → Generate → Review & Post
-- Saves to `social_content_drafts`
+The `IndustryTemplateSelector` component already exists and has pre-written templates for 18+ industries broken out by platform (Instagram, Facebook, LinkedIn, TikTok, SMS). It is currently only shown in the Social Media console's **Home/Welcome screen** chat area — never in the actual generator.
 
-**Content Engine flow (MultiChannelGenerator):**
-- Multi-channel: Social, Blog, Email/Campaign, SMS, Website
-- Generates all channels from one topic
-- Has a simple 2-panel layout: Input → Results
-- Has "Copy & Open [Platform]" for social, plus "Schedule Post", "Create Campaign", "Save as Draft", "Push to Web Presence" save actions
-- Saves to `scheduled_social_posts`, `marketing_campaigns`, `scheduled_blog_posts`, `sms_templates`, `smart_websites`
-- Also has Brand Voice, Dashboard, and Calendar sub-tabs
+The `PostTemplates` component has 5 general post templates (Seasonal Special, Job Completion, Maintenance Reminder, Happy Customer, Quick Tip).
 
-The wizard is essentially a **subset** of what the Content Engine already does — and it adds extra steps for no reason.
+## The Two Things To Add
 
----
+### 1. Templates Button — Put Existing Templates Into the Topic Field
+Add the `IndustryTemplateSelector` directly inside the `MultiChannelGenerator` input panel, right below the topic textarea. When a user picks a template, it loads the template text into the `topic` field so they can use it or edit it as their generation prompt.
 
-## The Solution: Replace the Social Posts Flow with the Content Engine
+The `IndustryTemplateSelector` already accepts an `onSelectTemplate` prop that fires with the template text — we just wire it to `setTopic(template)`.
 
-Remove the "Social Posts" quick action entirely. Replace it with one entry point: **"Create Content"** which opens the **Content Engine** (MultiChannelGenerator) directly. This gives users the ability to generate social + blog + email + SMS + website content from one place.
+We also add the general `PostTemplates` component (the 5 quick ones) as a second "Quick Templates" button for common use cases, similarly wiring selection to `setTopic`.
 
-**Then add the one missing feature** the Social Posts wizard had that the Content Engine lacks:
+### 2. AI Suggest Topics — Generate 5 Topic Ideas from a Keyword
+Add an "AI Suggest" button next to the topic label. When clicked, it calls the existing `content-engine` edge function (or a lightweight call) with a prompt like "suggest 5 campaign topic ideas" and populates a small dropdown of clickable suggestions below the textarea.
 
-> The Content Engine's social tab currently just shows post copy and a "Schedule Post" button. It does NOT have the "Copy & Open [Platform]" inline action buttons for each platform (Facebook, Instagram, LinkedIn, etc.).
+**Implementation approach**: Use `supabase.functions.invoke('content-engine')` with `channel: 'suggestions'` and `topic: currentTopic || 'general business'`. The edge function returns suggestions as a JSON array. We render them as clickable chips below the textarea — clicking one sets the topic.
 
-We add those **"Copy & Open [Platform]"** buttons to the social results section of `MultiChannelGenerator` so users can immediately post to any platform from the results panel.
+If the `content-engine` edge function doesn't support a `suggestions` channel, we add that branch to the edge function.
 
 ---
 
-## Detailed Changes
+## Detailed File Changes
 
-### 1. `SocialMediaAgentConsole.tsx` — Simplify to 2 Quick Actions
+### 1. `src/components/content-engine/MultiChannelGenerator.tsx`
 
-**Remove**: `social-posts` quick action and all related state (`showSocialPosts`, `socialPostsTab`, all the nested Social Posts tabs/components)
+**Add to imports**:
+- `IndustryTemplateSelector` from `@/components/social/IndustryTemplateSelector`
+- `PostTemplates` from `@/components/social/PostTemplates`  
+- `Lightbulb`, `ChevronDown` from `lucide-react`
 
-**Replace with a single**: `create-content` quick action that opens the Content Engine directly on the Generator tab.
-
-New QUICK_ACTIONS:
+**Add state**:
+```typescript
+const [suggestingTopics, setSuggestingTopics] = useState(false);
+const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
+const [showSuggestions, setShowSuggestions] = useState(false);
 ```
-Create Content  →  Opens MultiChannelGenerator (Content Engine Generator tab)
-My Posts        →  Opens SocialFeedQueue (view saved drafts/published)
+
+**Add `handleSuggestTopics` function**:
+Calls `supabase.functions.invoke('content-engine', { body: { channel: 'suggestions', topic: topic || 'general home services business', companyId: effectiveCompanyId } })` and sets the returned array to `topicSuggestions`.
+
+**Update the Topic textarea section** (lines 586–596) to include:
+
+```
+[Label: "Topic or Campaign Theme"]  [AI Suggest button]  [Templates button]
+
+[Textarea for topic]
+
+[If showSuggestions: chip row of 5 AI-suggested topics]
+[Industry Templates picker (IndustryTemplateSelector wired to setTopic)]
 ```
 
-This removes:
-- `SocialContentWizard` import and usage
-- `SocialBatchWizard` import and usage
-- `SocialScheduleQueue` import and usage
-- `SocialFeedQueue` (or keep for "My Posts")
-- `SocialContentCalendar` import and usage
-- All the nested `showSocialPosts` state + tab management
+The **"AI Suggest"** button shows a `Lightbulb` icon, calls `handleSuggestTopics`, and shows a spinner while loading. Suggestions appear as clickable `Badge` chips below the textarea — clicking a chip sets the topic and hides the chips.
 
-The Content Engine tabs (Brand Voice, Generate, Dashboard, Calendar) stay as-is. The Calendar tab of the Content Engine already provides scheduling visibility.
+The **"Templates"** section shows the `IndustryTemplateSelector` component inline with `onSelectTemplate={(template) => setTopic(template)}`.
 
-### 2. `MultiChannelGenerator.tsx` — Add "Copy & Open [Platform]" to Social Results
+### 2. `supabase/functions/content-engine/index.ts`
 
-When the `social` channel is selected and results are generated, the per-platform cards currently show just the post text, hashtags, and a copy icon. 
+Add a `suggestions` channel handler that:
+- Takes the `topic` (or a general keyword) 
+- Returns a JSON array of 5 campaign topic/theme ideas
+- Example system prompt: "You are a marketing expert. Generate 5 specific, actionable campaign topic ideas for a business based on this theme. Return ONLY a JSON array of 5 strings, no explanation."
+- The response is parsed and returned as `{ content: ["topic 1", "topic 2", ...] }`
 
-**Add**: A "Copy & Open [Platform]" button per platform that:
-1. Copies the post text + hashtags to clipboard (with `document.execCommand` fallback for iframe contexts)
-2. Opens the platform deep link via programmatic `<a>` element click (not `window.open`) to bypass popup blockers
-
-Platform deep links (same as the wizard had):
-- Facebook → `https://www.facebook.com`
-- Instagram → `https://www.instagram.com/create/story/`
-- LinkedIn → `https://www.linkedin.com/sharing/share-offsite/?summary=...`
-- TikTok → `https://www.tiktok.com/upload`
-- Google Business → `https://business.google.com/create-post`
-
-**Also fix**: The existing `copyToClipboard` function uses `navigator.clipboard.writeText` with no fallback — add the `document.execCommand('copy')` fallback here too.
-
-### 3. Keep `SocialFeedQueue` for "My Posts"
-
-The existing `SocialFeedQueue` with `initialFilter="pending"` shows saved drafts. Keep this as the "My Posts" tab in the console. The Content Engine saves social posts to `scheduled_social_posts` which can be filtered here.
+This is a small addition to the existing switch/if-else in the edge function.
 
 ---
 
-## New Console Structure
+## New Input Panel Layout (After Changes)
 
 ```
-Social Media Console
-├── Home tab  (AI chat — unchanged)
-├── Create Content → Content Engine
-│   ├── Brand Voice  (set tone & style)
-│   ├── Generate     (MultiChannelGenerator — ALL channels in one place)
-│   │                 Social: Instagram, Facebook, LinkedIn, TikTok, Google Business
-│   │                 Blog: SEO article → save as draft
-│   │                 Email: subject + body → create campaign  
-│   │                 SMS: 160-char → save template
-│   │                 Website: headlines + CTAs → push to web presence
-│   ├── Dashboard    (content history)
-│   └── Calendar     (scheduled content)
-└── My Posts → SocialFeedQueue (view/manage saved drafts)
+┌─────────────────────────────────────────────────┐
+│  Topic or Campaign Theme        [💡 AI Suggest] │
+│  ┌─────────────────────────────────────────────┐│
+│  │ e.g., Spring AC Maintenance Special...      ││
+│  └─────────────────────────────────────────────┘│
+│                                                  │
+│  [AI suggestions row - chips, shown after click] │
+│  • Spring Tune-Up Deal  • Filter Replacement ... │
+│                                                  │
+│  [✨ Industry Templates ▼] ← existing component  │
+│                                                  │
+│  Select Channels                                 │
+│  ☑ Social Media    ☑ Blog   ...                 │
+│                                                  │
+│  [Generate AI Image toggle]                      │
+│                                                  │
+│  [Generate Content]                              │
+└─────────────────────────────────────────────────┘
 ```
-
-**Before: 2 confusing overlapping tools with 10+ clicks to post**
-**After: 1 unified tool with 3 clicks — enter topic → generate → Copy & Open Platform**
 
 ---
 
@@ -109,14 +106,12 @@ Social Media Console
 
 | File | Change |
 |---|---|
-| `src/components/social/SocialMediaAgentConsole.tsx` | Remove Social Posts flow, simplify to "Create Content" (Content Engine) + "My Posts" |
-| `src/components/content-engine/MultiChannelGenerator.tsx` | Add "Copy & Open [Platform]" buttons + clipboard fallback + anchor-click deep links to social results |
+| `src/components/content-engine/MultiChannelGenerator.tsx` | Add AI Suggest button + suggestions chips + wire IndustryTemplateSelector into topic field |
+| `supabase/functions/content-engine/index.ts` | Add `suggestions` channel handler that returns 5 topic ideas as a JSON array |
 
-## What is Removed / Cleaned Up
-
-- `SocialContentWizard` — no longer needed as a separate entry point (its functionality is fully covered by Content Engine + the new Copy & Open buttons)
-- `SocialBatchWizard` — removed from console (rarely used, adds complexity)
-- `SocialScheduleQueue` — removed from console (Calendar tab covers this)
-- `SocialContentCalendar` — removed from console (Content Engine Calendar tab replaces it)
-
-The component files themselves are not deleted in case they're used elsewhere — they are just removed from the Social Media console's navigation.
+## What Stays the Same
+- All channel generation logic — unchanged
+- Copy & Open platform buttons — unchanged
+- Save actions (Schedule Post, Create Campaign, etc.) — unchanged
+- Brand Voice, Dashboard, Calendar tabs — unchanged
+- IndustryTemplateSelector and PostTemplates components themselves — unchanged, just reused
