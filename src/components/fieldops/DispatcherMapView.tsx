@@ -243,7 +243,7 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
       <div className="absolute bottom-4 left-4 z-[1000]">
         <Card className="bg-card/90 border-border backdrop-blur-sm">
           <CardContent className="p-3">
-            <div className="text-xs font-medium text-muted-foreground mb-2">Status Legend</div>
+            <div className="text-xs font-medium mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>Status Legend</div>
             <div className="flex flex-wrap gap-3">
               {Object.entries(STATUS_CONFIG).map(([status, config]) => (
                 <div key={status} className="flex items-center gap-1.5">
@@ -251,7 +251,7 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: STATUS_COLORS[status] }}
                   />
-                  <span className="text-xs text-foreground">{config.label}</span>
+                  <span className="text-xs" style={{ color: 'hsl(var(--foreground))' }}>{config.label}</span>
                 </div>
               ))}
             </div>
