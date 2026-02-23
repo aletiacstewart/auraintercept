@@ -29,6 +29,7 @@ interface Scene {
   highlightConnections: number[];
 }
 
+// Y coordinates use 10-90 range to stay within visible area
 const scenes: Scene[] = [
   {
     id: 'scene-1',
@@ -49,9 +50,9 @@ const scenes: Scene[] = [
     agents: [
       { id: 'customer', label: 'Customer', emoji: '👤', color: 'hsl(200, 80%, 50%)', x: 10, y: 50 },
       { id: 'triage', label: 'AI Receptionist', emoji: '🤖', color: 'hsl(260, 80%, 60%)', x: 35, y: 50 },
-      { id: 'booking', label: 'Booking Agent', emoji: '📅', color: 'hsl(150, 70%, 45%)', x: 65, y: 20 },
+      { id: 'booking', label: 'Booking Agent', emoji: '📅', color: 'hsl(150, 70%, 45%)', x: 65, y: 15 },
       { id: 'followup', label: 'Follow-up Agent', emoji: '📋', color: 'hsl(30, 80%, 55%)', x: 65, y: 50 },
-      { id: 'dispatch', label: 'Dispatch Agent', emoji: '🚛', color: 'hsl(0, 70%, 55%)', x: 65, y: 80 },
+      { id: 'dispatch', label: 'Dispatch Agent', emoji: '🚛', color: 'hsl(0, 70%, 55%)', x: 65, y: 85 },
     ],
     connections: [
       { from: 'customer', to: 'triage', label: 'Request' },
@@ -67,15 +68,15 @@ const scenes: Scene[] = [
     title: 'Agents Take Action',
     narration: 'Each specialized agent performs real actions: booking appointments, assigning technicians with optimal routes, sending review requests, and processing follow-ups — all automatically.',
     agents: [
-      { id: 'booking', label: 'Booking Agent', emoji: '📅', color: 'hsl(150, 70%, 45%)', x: 15, y: 25 },
-      { id: 'dispatch', label: 'Dispatch Agent', emoji: '🚛', color: 'hsl(0, 70%, 55%)', x: 15, y: 50 },
-      { id: 'followup', label: 'Follow-up Agent', emoji: '📋', color: 'hsl(30, 80%, 55%)', x: 15, y: 75 },
-      { id: 'action1', label: 'Books Appointment\n& Notifies Employee', emoji: '✅', color: 'hsl(150, 50%, 35%)', x: 55, y: 15 },
-      { id: 'action2', label: 'Confirms with Customer\n& Sends Reminder', emoji: '📱', color: 'hsl(150, 50%, 35%)', x: 85, y: 25 },
-      { id: 'action3', label: 'Assigns Technician\n& Sends ETA', emoji: '📍', color: 'hsl(0, 50%, 40%)', x: 55, y: 50 },
+      { id: 'booking', label: 'Booking Agent', emoji: '📅', color: 'hsl(150, 70%, 45%)', x: 10, y: 18 },
+      { id: 'dispatch', label: 'Dispatch Agent', emoji: '🚛', color: 'hsl(0, 70%, 55%)', x: 10, y: 50 },
+      { id: 'followup', label: 'Follow-up Agent', emoji: '📋', color: 'hsl(30, 80%, 55%)', x: 10, y: 82 },
+      { id: 'action1', label: 'Books Appointment\n& Notifies Employee', emoji: '✅', color: 'hsl(150, 50%, 35%)', x: 50, y: 12 },
+      { id: 'action2', label: 'Confirms with Customer\n& Sends Reminder', emoji: '📱', color: 'hsl(150, 50%, 35%)', x: 85, y: 18 },
+      { id: 'action3', label: 'Assigns Technician\n& Sends ETA', emoji: '📍', color: 'hsl(0, 50%, 40%)', x: 50, y: 50 },
       { id: 'action4', label: 'Optimizes Route\n& Updates Customer', emoji: '🗺️', color: 'hsl(0, 50%, 40%)', x: 85, y: 50 },
-      { id: 'action5', label: 'Sends Review\nRequest', emoji: '⭐', color: 'hsl(30, 60%, 40%)', x: 55, y: 75 },
-      { id: 'action6', label: 'Triggers Campaign\nif 5-Star', emoji: '🎯', color: 'hsl(30, 60%, 40%)', x: 85, y: 85 },
+      { id: 'action5', label: 'Sends Review\nRequest', emoji: '⭐', color: 'hsl(30, 60%, 40%)', x: 50, y: 82 },
+      { id: 'action6', label: 'Triggers Campaign\nif 5-Star', emoji: '🎯', color: 'hsl(30, 60%, 40%)', x: 85, y: 88 },
     ],
     connections: [
       { from: 'booking', to: 'action1', label: '' },
@@ -94,14 +95,14 @@ const scenes: Scene[] = [
     narration: 'The company gets 24/7 coverage with zero missed leads. Customers get instant, professional service. Employees receive pre-qualified jobs with clear instructions — no wasted time.',
     agents: [
       { id: 'company', label: 'Company', emoji: '🏢', color: 'hsl(260, 80%, 60%)', x: 50, y: 15 },
-      { id: 'benefit1', label: '24/7 Coverage\nNo Missed Leads', emoji: '🌙', color: 'hsl(260, 60%, 45%)', x: 20, y: 15 },
-      { id: 'benefit2', label: 'Automated\nOperations', emoji: '⚡', color: 'hsl(260, 60%, 45%)', x: 80, y: 15 },
+      { id: 'benefit1', label: '24/7 Coverage\nNo Missed Leads', emoji: '🌙', color: 'hsl(260, 60%, 45%)', x: 15, y: 15 },
+      { id: 'benefit2', label: 'Automated\nOperations', emoji: '⚡', color: 'hsl(260, 60%, 45%)', x: 85, y: 15 },
       { id: 'customer', label: 'Customer', emoji: '👤', color: 'hsl(200, 80%, 50%)', x: 50, y: 50 },
-      { id: 'benefit3', label: 'Instant Service\nNo Hold Times', emoji: '🚀', color: 'hsl(200, 60%, 40%)', x: 20, y: 50 },
-      { id: 'benefit4', label: 'Real-Time\nTracking', emoji: '📊', color: 'hsl(200, 60%, 40%)', x: 80, y: 50 },
+      { id: 'benefit3', label: 'Instant Service\nNo Hold Times', emoji: '🚀', color: 'hsl(200, 60%, 40%)', x: 15, y: 50 },
+      { id: 'benefit4', label: 'Real-Time\nTracking', emoji: '📊', color: 'hsl(200, 60%, 40%)', x: 85, y: 50 },
       { id: 'employee', label: 'Employee', emoji: '👷', color: 'hsl(150, 70%, 45%)', x: 50, y: 85 },
-      { id: 'benefit5', label: 'Pre-Qualified\nJobs', emoji: '✅', color: 'hsl(150, 50%, 35%)', x: 20, y: 85 },
-      { id: 'benefit6', label: 'Clear Instructions\n& Route', emoji: '🗺️', color: 'hsl(150, 50%, 35%)', x: 80, y: 85 },
+      { id: 'benefit5', label: 'Pre-Qualified\nJobs', emoji: '✅', color: 'hsl(150, 50%, 35%)', x: 15, y: 85 },
+      { id: 'benefit6', label: 'Clear Instructions\n& Route', emoji: '🗺️', color: 'hsl(150, 50%, 35%)', x: 85, y: 85 },
     ],
     connections: [
       { from: 'benefit1', to: 'company', label: '' },
@@ -142,28 +143,6 @@ function AgentCard({ agent, isHighlighted, delay }: { agent: AgentNode; isHighli
   );
 }
 
-function ConnectionLine({ from, to, agents, isHighlighted, delay }: {
-  from: string; to: string; agents: AgentNode[]; isHighlighted: boolean; delay: number;
-}) {
-  const fromAgent = agents.find(a => a.id === from);
-  const toAgent = agents.find(a => a.id === to);
-  if (!fromAgent || !toAgent) return null;
-
-  return (
-    <motion.line
-      initial={{ pathLength: 0, opacity: 0 }}
-      animate={{ pathLength: isHighlighted ? 1 : 0, opacity: isHighlighted ? 0.6 : 0.1 }}
-      transition={{ duration: 0.8, delay }}
-      x1={`${fromAgent.x}%`}
-      y1={`${fromAgent.y}%`}
-      x2={`${toAgent.x}%`}
-      y2={`${toAgent.y}%`}
-      stroke="hsl(var(--primary))"
-      strokeWidth="2"
-      strokeDasharray="6 4"
-    />
-  );
-}
 
 export default function AIAgentFlowDemo() {
   const [currentScene, setCurrentScene] = useState(0);
@@ -232,7 +211,7 @@ export default function AIAgentFlowDemo() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-6 left-0 right-0 text-center z-10"
+              className="absolute top-4 left-0 right-0 text-center z-10"
             >
               <span className="text-xs uppercase tracking-widest text-primary/70 font-medium">
                 Scene {currentScene + 1} of {scenes.length}
@@ -241,22 +220,36 @@ export default function AIAgentFlowDemo() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Agent flow area */}
-          <div className="absolute inset-0 pt-20 pb-28">
-            <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
+          {/* Agent flow area — shared coordinate space for SVG lines and agent cards */}
+          <div className="absolute left-[4%] right-[4%] top-[18%] bottom-[22%]" style={{ position: 'absolute' }}>
+            {/* SVG lines use same coordinate space as agent cards */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
               <AnimatePresence>
-                {scene.connections.map((conn, i) => (
-                  <ConnectionLine
-                    key={`${scene.id}-conn-${i}`}
-                    from={conn.from}
-                    to={conn.to}
-                    agents={scene.agents}
-                    isHighlighted={scene.highlightConnections.includes(i)}
-                    delay={i * 0.15}
-                  />
-                ))}
+                {scene.connections.map((conn, i) => {
+                  const fromAgent = scene.agents.find(a => a.id === conn.from);
+                  const toAgent = scene.agents.find(a => a.id === conn.to);
+                  if (!fromAgent || !toAgent) return null;
+                  const isHighlighted = scene.highlightConnections.includes(i);
+                  return (
+                    <motion.line
+                      key={`${scene.id}-conn-${i}`}
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={{ pathLength: isHighlighted ? 1 : 0, opacity: isHighlighted ? 0.6 : 0.1 }}
+                      transition={{ duration: 0.8, delay: i * 0.15 }}
+                      x1={fromAgent.x}
+                      y1={fromAgent.y}
+                      x2={toAgent.x}
+                      y2={toAgent.y}
+                      stroke="hsl(var(--primary))"
+                      strokeWidth="0.5"
+                      strokeDasharray="1.5 1"
+                    />
+                  );
+                })}
               </AnimatePresence>
             </svg>
+
+            {/* Agent cards positioned in same space */}
             <AnimatePresence>
               {scene.agents.map((agent, i) => (
                 <AgentCard
@@ -276,7 +269,7 @@ export default function AIAgentFlowDemo() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-0 left-0 right-0 px-8 py-5 bg-gradient-to-t from-[#0d1220] via-[#0d1220]/95 to-transparent"
+              className="absolute bottom-4 left-0 right-0 px-8 z-10"
             >
               <p className="text-sm text-white/80 text-center max-w-2xl mx-auto leading-relaxed">
                 {scene.narration}
@@ -285,7 +278,7 @@ export default function AIAgentFlowDemo() {
           </AnimatePresence>
 
           {/* Scene progress dots */}
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+          <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-2 z-10">
             {scenes.map((_, i) => (
               <button
                 key={i}
