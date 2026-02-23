@@ -1,92 +1,107 @@
 
+# Consolidate Into One Unified Content Engine
 
-# Streamline Social Media Posting — Fewer Steps, Same Power
+## What Exists Today (The Problem)
 
-## The Problem
+The Social Media console currently has **two completely separate content generation systems** that overlap heavily:
 
-The current flow requires navigating through **3 separate screens** to post content:
-1. Wizard Step 3 (Review) -- click "Approve & Ready to Post"
-2. Navigate to Scheduled tab -- find the post -- click "Post This"
-3. SocialPublishBridge dialog -- Copy, Open, Mark Posted per platform
+**Social Posts flow (SocialContentWizard):**
+- Social-only (Instagram, Facebook, LinkedIn, TikTok, Google Business, SMS)
+- Generates per-platform variations with character limits
+- Has a 3-step wizard: Topic → Generate → Review & Post
+- Saves to `social_content_drafts`
 
-Users just want: **generate content, copy it, open the platform, done.**
+**Content Engine flow (MultiChannelGenerator):**
+- Multi-channel: Social, Blog, Email/Campaign, SMS, Website
+- Generates all channels from one topic
+- Has a simple 2-panel layout: Input → Results
+- Has "Copy & Open [Platform]" for social, plus "Schedule Post", "Create Campaign", "Save as Draft", "Push to Web Presence" save actions
+- Saves to `scheduled_social_posts`, `marketing_campaigns`, `scheduled_blog_posts`, `sms_templates`, `smart_websites`
+- Also has Brand Voice, Dashboard, and Calendar sub-tabs
+
+The wizard is essentially a **subset** of what the Content Engine already does — and it adds extra steps for no reason.
 
 ---
 
-## The Solution: Merge the Bridge into Wizard Step 3
+## The Solution: Replace the Social Posts Flow with the Content Engine
 
-Embed the Copy + Open Platform actions **directly into Step 3** of the Content Wizard so users never need to leave the wizard to post. The flow becomes:
+Remove the "Social Posts" quick action entirely. Replace it with one entry point: **"Create Content"** which opens the **Content Engine** (MultiChannelGenerator) directly. This gives users the ability to generate social + blog + email + SMS + website content from one place.
 
-```text
-Step 1: Topic & Platforms  -->  Step 2: AI Generating...  -->  Step 3: Review & Post
-```
+**Then add the one missing feature** the Social Posts wizard had that the Content Engine lacks:
 
-**Step 3 now includes per-platform:**
-- Content preview (editable, same as now)
-- "Copy & Open [Platform]" single button (copies content to clipboard AND opens the deep link in one click)
-- "Mark Posted" checkbox per platform
-- A "Save as Draft" secondary option for users who want to post later
+> The Content Engine's social tab currently just shows post copy and a "Schedule Post" button. It does NOT have the "Copy & Open [Platform]" inline action buttons for each platform (Facebook, Instagram, LinkedIn, etc.).
+
+We add those **"Copy & Open [Platform]"** buttons to the social results section of `MultiChannelGenerator` so users can immediately post to any platform from the results panel.
 
 ---
 
 ## Detailed Changes
 
-### 1. `SocialContentWizard.tsx` — Step 3 Redesign
+### 1. `SocialMediaAgentConsole.tsx` — Simplify to 2 Quick Actions
 
-**Remove** the separate "Quick Actions" row (Copy to All / Regenerate / Preview) and the 3-button action bar (Back / Schedule / Approve & Ready to Post).
+**Remove**: `social-posts` quick action and all related state (`showSocialPosts`, `socialPostsTab`, all the nested Social Posts tabs/components)
 
-**Replace with** a streamlined per-platform card that includes:
+**Replace with a single**: `create-content` quick action that opens the Content Engine directly on the Generator tab.
 
-For each platform tab content:
-- Editable textarea (same as now)
-- Hashtags input (same as now, for platforms that support them)
-- Reword button (same as now)
-- **NEW: "Copy & Open [Platform]" primary button** -- single click does both: copies content+hashtags to clipboard, then opens the platform deep link
-- **NEW: Small "Mark as Posted" toggle** per platform
+New QUICK_ACTIONS:
+```
+Create Content  →  Opens MultiChannelGenerator (Content Engine Generator tab)
+My Posts        →  Opens SocialFeedQueue (view saved drafts/published)
+```
 
-Bottom action bar becomes:
-- "Back" (go to step 1)
-- "Save Draft" (secondary -- saves to social_content_drafts with status pending, for posting later)
-- "Done -- All Posted" (primary -- only enabled when at least 1 platform is marked posted; saves record as published)
+This removes:
+- `SocialContentWizard` import and usage
+- `SocialBatchWizard` import and usage
+- `SocialScheduleQueue` import and usage
+- `SocialFeedQueue` (or keep for "My Posts")
+- `SocialContentCalendar` import and usage
+- All the nested `showSocialPosts` state + tab management
 
-**Clipboard fallback**: Add `document.execCommand('copy')` textarea fallback for when `navigator.clipboard` is unavailable (iframe contexts).
+The Content Engine tabs (Brand Voice, Generate, Dashboard, Calendar) stay as-is. The Calendar tab of the Content Engine already provides scheduling visibility.
 
-**Deep link method**: Use programmatic `<a>` element click instead of `window.open()` to bypass popup blockers in iframe.
+### 2. `MultiChannelGenerator.tsx` — Add "Copy & Open [Platform]" to Social Results
 
-### 2. `SocialPublishBridge.tsx` — Fix Clipboard and Deep Links
+When the `social` channel is selected and results are generated, the per-platform cards currently show just the post text, hashtags, and a copy icon. 
 
-Even though the wizard now handles the primary flow, the Bridge is still used from the Schedule Queue for posts saved as drafts. Apply the same fixes:
+**Add**: A "Copy & Open [Platform]" button per platform that:
+1. Copies the post text + hashtags to clipboard (with `document.execCommand` fallback for iframe contexts)
+2. Opens the platform deep link via programmatic `<a>` element click (not `window.open`) to bypass popup blockers
 
-- `handleCopy`: Add clipboard API existence check + `document.execCommand('copy')` fallback
-- `handleOpenPlatform`: Replace `window.open()` with anchor element `.click()` approach
-- **NEW: Add a "Copy & Open" combo button** that does both in one click (same as wizard)
+Platform deep links (same as the wizard had):
+- Facebook → `https://www.facebook.com`
+- Instagram → `https://www.instagram.com/create/story/`
+- LinkedIn → `https://www.linkedin.com/sharing/share-offsite/?summary=...`
+- TikTok → `https://www.tiktok.com/upload`
+- Google Business → `https://business.google.com/create-post`
 
-### 3. `SocialContentWizard.tsx` — Fix Invisible Text
+**Also fix**: The existing `copyToClipboard` function uses `navigator.clipboard.writeText` with no fallback — add the `document.execCommand('copy')` fallback here too.
 
-All `text-card-foreground/70` label classes changed to `text-muted-foreground` for guaranteed visibility. Button variants changed from `outline` to `secondary` where needed for contrast.
+### 3. Keep `SocialFeedQueue` for "My Posts"
 
-### 4. `SocialScheduleQueue.tsx` — Minor Update
-
-The "Post This" button on the schedule queue stays as-is -- it opens the (now-fixed) SocialPublishBridge for posts that were saved as drafts earlier.
+The existing `SocialFeedQueue` with `initialFilter="pending"` shows saved drafts. Keep this as the "My Posts" tab in the console. The Content Engine saves social posts to `scheduled_social_posts` which can be filtered here.
 
 ---
 
-## New User Flow (After Changes)
+## New Console Structure
 
-```text
-1. Click "Social Posts"
-2. Enter topic, pick platforms, click "Generate Content"
-3. AI generates... 
-4. Review content per platform tab:
-   - Edit if needed
-   - Click "Copy & Open Facebook"  -->  content copied + Facebook opens
-   - Paste on Facebook, come back, check "Posted"
-   - Click "Copy & Open LinkedIn"  -->  content copied + LinkedIn opens
-   - Paste on LinkedIn, come back, check "Posted"
-5. Click "Done - All Posted"
+```
+Social Media Console
+├── Home tab  (AI chat — unchanged)
+├── Create Content → Content Engine
+│   ├── Brand Voice  (set tone & style)
+│   ├── Generate     (MultiChannelGenerator — ALL channels in one place)
+│   │                 Social: Instagram, Facebook, LinkedIn, TikTok, Google Business
+│   │                 Blog: SEO article → save as draft
+│   │                 Email: subject + body → create campaign  
+│   │                 SMS: 160-char → save template
+│   │                 Website: headlines + CTAs → push to web presence
+│   ├── Dashboard    (content history)
+│   └── Calendar     (scheduled content)
+└── My Posts → SocialFeedQueue (view/manage saved drafts)
 ```
 
-**Before: 8+ clicks across 3 screens. After: 3-4 clicks on 1 screen.**
+**Before: 2 confusing overlapping tools with 10+ clicks to post**
+**After: 1 unified tool with 3 clicks — enter topic → generate → Copy & Open Platform**
 
 ---
 
@@ -94,17 +109,14 @@ The "Post This" button on the schedule queue stays as-is -- it opens the (now-fi
 
 | File | Change |
 |---|---|
-| `src/components/social/SocialContentWizard.tsx` | Redesign Step 3 with inline Copy & Open buttons, mark-posted toggles, clipboard fallback, anchor-click deep links, text visibility fixes |
-| `src/components/social/SocialPublishBridge.tsx` | Fix clipboard fallback, anchor-click deep links, add combo "Copy & Open" button |
+| `src/components/social/SocialMediaAgentConsole.tsx` | Remove Social Posts flow, simplify to "Create Content" (Content Engine) + "My Posts" |
+| `src/components/content-engine/MultiChannelGenerator.tsx` | Add "Copy & Open [Platform]" buttons + clipboard fallback + anchor-click deep links to social results |
 
----
+## What is Removed / Cleaned Up
 
-## What Stays the Same
+- `SocialContentWizard` — no longer needed as a separate entry point (its functionality is fully covered by Content Engine + the new Copy & Open buttons)
+- `SocialBatchWizard` — removed from console (rarely used, adds complexity)
+- `SocialScheduleQueue` — removed from console (Calendar tab covers this)
+- `SocialContentCalendar` — removed from console (Content Engine Calendar tab replaces it)
 
-- Step 1 (topic + platforms) -- unchanged
-- Step 2 (AI generation loading) -- unchanged
-- Schedule Queue -- still available for drafts saved for later
-- Batch Wizard -- unchanged
-- Content Engine -- unchanged
-- All backend/edge functions -- unchanged
-
+The component files themselves are not deleted in case they're used elsewhere — they are just removed from the Social Media console's navigation.
