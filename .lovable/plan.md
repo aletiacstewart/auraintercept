@@ -1,108 +1,193 @@
 
-# Phone Number Setup Wizard & Carrier Forwarding Guide
+# Dual-Mode Social Media: Manual Bridge + Per-Tenant Own API Option
 
-## What We're Building
+## Overview
 
-A comprehensive **Phone Number Setup Wizard** that walks companies through all 4 options for connecting their existing phone number to the AI receptionist system, plus updates to the Missed Call Settings page so the system auto-configures the correct routing mode based on how the number is set up.
+The goal is to offer companies **two distinct paths** for social media posting on their integration settings page:
 
----
+1. **Manual Bridge (Default — Available Now)**: AI generates content, company logs into each platform, copies content with one click, and opens the platform composer via deep link. No API setup needed.
+2. **Own API Credentials (Advanced — For companies that can get approved)**: Company registers their own developer app on each platform, enters their own Client ID/Secret, and connects via OAuth for fully automatic posting. Step-by-step approval guides already exist for this.
 
-## The 4 Options
-
-| Option | How It Works | Best For |
-|---|---|---|
-| **1. Conditional Call Forwarding (CFNA)** | Carrier rings business phone first; forwards to AI only on no-answer/busy | Companies who want to keep their number AND answer calls themselves first |
-| **2. Number Porting** | Transfer existing number to SignalWire permanently | Cleanest setup -- full control over Ring First logic and SMS |
-| **3. Unconditional Forwarding** | All calls forward from carrier to SignalWire immediately | Companies okay with AI handling 100% of calls but want to keep carrier |
-| **4. New AI Number** | Use the SignalWire number as-is, update listings | New businesses or those okay with a new number |
+The existing Platform Admin section (master "Tech Provider" credentials in `platform_settings`) is left completely untouched — it stays in the admin dashboard for when global approval is obtained.
 
 ---
 
-## Changes
+## Architecture Summary
 
-### 1. New Component: PhoneNumberSetupWizard
+The `tenant_integrations` table **already has all the per-tenant credential columns**:
+- `meta_app_id`, `meta_app_secret`
+- `linkedin_client_id`, `linkedin_client_secret`
+- `tiktok_client_key`, `tiktok_client_secret`
+- `google_business_client_id`, `google_business_client_secret`
 
-A step-by-step wizard component with:
-- **Option selector** (4 cards with icons explaining each approach)
-- **Carrier-specific instructions** for Conditional Forwarding (AT&T, Verizon, T-Mobile, Comcast/Xfinity, Spectrum, RingCentral, Grasshopper, generic VoIP)
-  - Includes exact dial codes (e.g., `*61*[SignalWire#]*11*20#` for AT&T CFNA with 20-second delay)
-- **Number porting guide** with timeline expectations and what to tell SignalWire support
-- **Unconditional forwarding codes** per carrier
-- **"New number" flow** with tips on updating Google Business Profile, Yelp, social media, etc.
-- Auto-recommendation of the correct `call_routing_mode`:
-  - Conditional Forwarding --> `ai_direct` (carrier already rang the phone)
-  - Number Porting --> `ring_first` (SignalWire controls the ring)
-  - Unconditional Forwarding --> `ai_direct` (all calls go straight to AI)
-  - New AI Number --> either mode (user's choice)
-
-### 2. Update MissedCallSettings.tsx
-
-- Add a **"How is your number connected?"** selector above the routing mode:
-  - Conditional Forwarding / Ported to SignalWire / Unconditional Forwarding / New AI Number
-- When "Conditional Forwarding" is selected, auto-set `call_routing_mode` to `ai_direct` and show an info box explaining why (the carrier already performed the ring delay)
-- When "Ported" is selected, default to `ring_first` and show the business phone / timeout controls
-- Add a link to the Phone Number Setup Wizard for companies that haven't configured yet
-
-### 3. Database: Add `phone_number_setup_type` Column
-
-Add a new column to the `companies` table:
-- `phone_number_setup_type` (text, nullable): `'conditional_forwarding'` | `'ported'` | `'unconditional_forwarding'` | `'new_number'`
-- This persists the company's choice and drives smart defaults in MissedCallSettings
-
-### 4. Update SignalWireSetupGuide.tsx
-
-- Add a new accordion step (after "Purchase a Phone Number") titled **"Connect Your Existing Business Number"**
-- Links to the Phone Number Setup Wizard component
-- Brief summary of all 4 options with a recommendation
-
-### 5. Update PlatformGuides.tsx
-
-- Add a "Phone Number Setup" guide section under the Voice/SMS category
-- Include carrier-specific instructions and the option comparison table
-
-### 6. Update AIHelpCenter System Prompt
-
-- Add phone number setup FAQ entries:
-  - "How do I connect my existing phone number?"
-  - "Do I need to change my phone number?"
-  - "What is conditional call forwarding?"
-  - "How do I port my number to SignalWire?"
+The `social-oauth` edge function currently reads credentials **only** from `platform_settings` (global). It needs to be updated to check for **tenant-level credentials first**, falling back to platform-level if not set.
 
 ---
 
-## Technical Details
+## What Changes
 
-### New Files
-- `src/components/company/PhoneNumberSetupWizard.tsx` -- The main wizard component
+### 1. `SocialMediaIntegration.tsx` — Redesigned Integration Page
 
-### Modified Files
-| File | Change |
-|---|---|
-| `src/components/company/MissedCallSettings.tsx` | Add setup type selector, smart routing defaults, wizard link |
-| `src/components/integrations/SignalWireSetupGuide.tsx` | Add accordion step for existing number connection |
-| `src/pages/PlatformGuides.tsx` | Add phone number setup guide section |
-| `src/components/help/AIHelpCenter.tsx` | Add phone setup FAQ to system prompt |
+The page currently shows one view per platform with a single "Connect" button. It needs to be restructured to show **two posting method options** per platform, plus a "Coming Soon" notice for when the platform-level auto-posting becomes available.
 
-### Database Migration
-```sql
-ALTER TABLE public.companies
-  ADD COLUMN IF NOT EXISTS phone_number_setup_type text;
+**New page structure per platform tab:**
+
+```text
+[ Tab: Facebook ] [ Tab: Instagram ] [ Tab: LinkedIn ] [ Tab: TikTok ] [ Tab: Google Business ]
+
+┌─────────────────────────────────────────────────────────┐
+│  Choose Your Posting Method                              │
+│                                                          │
+│  ┌───────────────────────┐  ┌───────────────────────┐   │
+│  │ ✅ Manual Bridge       │  │ ⚙️  Own API Setup      │   │
+│  │ (Available Now)        │  │ (Advanced)            │   │
+│  │                        │  │                       │   │
+│  │ AI generates content   │  │ Register your own     │   │
+│  │ → Copy with 1 click    │  │ developer app on this │   │
+│  │ → Open platform        │  │ platform, enter your  │   │
+│  │   composer             │  │ credentials, and      │   │
+│  │ → Paste & publish      │  │ connect for automatic │   │
+│  │                        │  │ posting.              │   │
+│  │ [Use Manual Bridge]    │  │ [Set Up Own API →]    │   │
+│  └───────────────────────┘  └───────────────────────┘   │
+│                                                          │
+│  ⚡ Platform Auto-Post (Coming Soon)                     │
+│  Once our platform-level API approval is complete,       │
+│  all companies will be able to connect with one click.   │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Carrier Dial Codes (embedded in wizard)
+**"Manual Bridge" card** (left):
+- Description of the copy + deep link workflow
+- A "How it works" link or inline 3-step summary
+- No credentials needed, works immediately
 
-**Conditional Forwarding (No Answer):**
-- AT&T: `*61*[number]*11*[seconds]#`
-- Verizon: `*71[number]`
-- T-Mobile: `**61*[number]*11*20#`
-- Comcast/Xfinity: `*92[number]`
-- Spectrum: via account portal
-- RingCentral: Admin Portal > Call Handling > Forwarding Rules
-- Grasshopper: Settings > Call Forwarding > Add Rule
+**"Own API Setup" card** (right):
+- Expands to show: credential input fields (Client ID, Client Secret, + any platform-specific fields like Page ID or Org ID)
+- Save button to write credentials to `tenant_integrations`
+- Once saved, shows the existing "Connect [Platform]" OAuth button (same OAuth flow, but now uses tenant credentials)
+- Shows connected account status (same as current)
+- The existing `SocialMediaSetupGuide` accordion (with the full step-by-step approval guide) is shown below this card only when "Own API Setup" is selected/expanded
 
-**Unconditional Forwarding (All Calls):**
-- AT&T: `*21*[number]#`
-- Verizon: `*72[number]`
-- T-Mobile: `**21*[number]#`
+**"Coming Soon" notice** (bottom):
+- Amber info banner explaining platform-level auto-posting is in development
+- No UI controls needed
 
-**Deactivation codes** included for each carrier so companies can reverse the setup.
+---
+
+### 2. New Component: `TenantSocialCredentialsForm.tsx`
+
+A new form component (placed at `src/components/integrations/TenantSocialCredentialsForm.tsx`) that allows a company to enter their own developer app credentials per platform.
+
+**Fields per platform:**
+
+| Platform | Fields |
+|---|---|
+| Facebook / Instagram | Meta App ID, Meta App Secret |
+| LinkedIn | LinkedIn Client ID, LinkedIn Client Secret, LinkedIn Organization ID (optional) |
+| TikTok | TikTok Client Key, TikTok Client Secret |
+| Google Business | Google Client ID, Google Client Secret |
+
+- Reads existing values from `tenant_integrations` via a query (masked, showing only last 4 chars like `****abcd`)
+- On Save: upserts the relevant columns in `tenant_integrations`
+- Requires `company_admin` or `platform_admin` role
+- After saving, the "Connect [Platform]" button becomes active — same OAuth popup flow as current, but the edge function will now use the tenant's own credentials
+
+---
+
+### 3. `social-oauth/index.ts` — Credential Resolution Fallback Logic
+
+Update `getPlatformCredentials()` to check tenant-level credentials first before falling back to platform-level.
+
+**New resolution order:**
+1. Query `tenant_integrations` for the company's own `meta_app_id` / `meta_app_secret` (or other platform fields)
+2. If found and non-empty → use them
+3. If not found → fall back to `platform_settings` (global platform admin credentials)
+4. If neither found → return error "No credentials configured"
+
+This change requires passing `company_id` into `getPlatformCredentials()`. The `company_id` is already available in the OAuth init handler from the query param.
+
+---
+
+### 4. `SocialPublishBridge.tsx` — New Component (Manual Bridge)
+
+As described in previous planning, a reusable dialog/panel for the Schedule Queue and Content Wizard. Per platform:
+- Read-only content preview
+- Copy to Clipboard button
+- "Open [Platform]" deep link button
+- "Mark as Posted" button → sets `status: 'published'`
+
+---
+
+### 5. `SocialContentWizard.tsx` + `SocialScheduleQueue.tsx` — Manual Bridge Integration
+
+- **Wizard Step 3**: Replace "Save Drafts" with "Approve & Ready to Post" (sets `status: 'ready_to_post'`)
+- **Schedule Queue**: Replace "Publish Now" with "Post This →" button that opens `SocialPublishBridge`; add `ready_to_post` as a filter/status badge
+
+---
+
+### 6. Database Migration
+
+Add `ready_to_post` to the `scheduled_social_posts` status check constraint:
+
+```sql
+ALTER TABLE public.scheduled_social_posts
+  DROP CONSTRAINT IF EXISTS scheduled_social_posts_status_check;
+
+ALTER TABLE public.scheduled_social_posts
+  ADD CONSTRAINT scheduled_social_posts_status_check
+  CHECK (status IN ('pending', 'approved', 'ready_to_post', 'published', 'rejected', 'failed'));
+```
+
+No new columns needed — `tenant_integrations` already has all per-tenant social credential columns.
+
+---
+
+### 7. Help, Guides, and Landing Page Updates
+
+**`AIHelpCenter.tsx`** — System prompt:
+- Update "Social media 'Not Configured' error" troubleshooting to explain the two paths: Manual Bridge (no setup) vs Own API (requires company app registration)
+- Update page suggestions for `/dashboard/integrations/social` to include "How does manual posting work?" and "Can I use my own API credentials?"
+
+**`documentationConfig.ts`**:
+- Update social media agent descriptions to reflect the manual bridge workflow and "own API" option
+
+**`SocialMediaIntegration.tsx`** page header description:
+- Change from "Connect your social accounts for automated posting" to "Post content with the Manual Bridge or connect your own developer app for automatic posting"
+
+**`ComprehensiveGuidesPDF.tsx`** + **`CompanyGuidesPDF.tsx`**:
+- Update social media section to explain both posting methods side by side
+- Add "Manual Bridge" section: AI generates → copy → open composer → paste → mark as posted
+- Add "Own API" section: register developer app → enter credentials → OAuth connect → automatic posting
+
+**`PricingComparisonTable.tsx`**:
+- Update social media tooltips to mention "Manual Bridge (available now) + Automatic posting via own API credentials or coming platform-level connection"
+
+---
+
+## Files Changed Summary
+
+| File | Change Type |
+|---|---|
+| `src/pages/integrations/SocialMediaIntegration.tsx` | Restructure per-platform tab to show two method cards + coming soon banner |
+| `src/components/integrations/TenantSocialCredentialsForm.tsx` | **New** — per-tenant credential input form |
+| `src/components/social/SocialPublishBridge.tsx` | **New** — copy + deep link dialog |
+| `src/components/social/SocialContentWizard.tsx` | Replace "Save Drafts"; add bridge in Step 3 |
+| `src/components/social/SocialScheduleQueue.tsx` | Replace "Publish Now"; add `ready_to_post` status |
+| `supabase/functions/social-oauth/index.ts` | Add tenant-credential fallback in `getPlatformCredentials()` |
+| `src/components/help/AIHelpCenter.tsx` | Update social media troubleshooting + page suggestions |
+| `src/lib/documentationConfig.ts` | Update agent/console descriptions |
+| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | Update social media guide sections |
+| `src/components/documentation/CompanyGuidesPDF.tsx` | Update social media guide sections |
+| `src/components/landing/PricingComparisonTable.tsx` | Update social media tooltips |
+| `supabase/migrations/` | Add `ready_to_post` to status constraint |
+
+---
+
+## What Stays Exactly the Same
+
+- `PlatformCredentialsSettings` (admin dashboard) — untouched
+- `SocialMediaSetupGuide` accordion component — reused as-is, just surfaced under "Own API Setup" option
+- All AI content generation logic
+- `publish-social-content` edge function — untouched
+- All scheduling, calendar, approval workflow, and analytics components
