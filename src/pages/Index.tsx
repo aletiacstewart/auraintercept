@@ -1215,16 +1215,6 @@ export default function Index() {
                 <p className="text-[10px] text-white/60">Required for: Presence, Performance, Command • Optional for: Growth, Logistics</p>
               </div>
 
-              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-1">
-                  <Brain className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="font-semibold text-xs text-white">Google Gemini</span>
-                </div>
-                <p className="text-[10px] text-white/70 mb-1">AI Content Generation</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 15 requests/min</p>
-                <p className="text-[10px] text-white/70">Powers blog posts, social media, emails & marketing</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers (Starter, Connect, Growth, Presence, Logistics, Performance, Command)</p>
-              </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
