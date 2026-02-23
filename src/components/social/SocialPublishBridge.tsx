@@ -156,7 +156,19 @@ export function SocialPublishBridge({
       : platformContent.content;
 
     try {
-      await navigator.clipboard.writeText(text);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const el = document.createElement('textarea');
+        el.value = text;
+        el.style.position = 'fixed';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
       setCopiedPlatform(platform);
       toast.success('Copied to clipboard!');
       setTimeout(() => setCopiedPlatform(null), 2000);
@@ -168,7 +180,19 @@ export function SocialPublishBridge({
   const handleOpenPlatform = (platform: Platform) => {
     const content = contentJson[platform]?.content || '';
     const url = PLATFORM_CONFIG[platform]?.deepLink(content);
-    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleCopyAndOpen = async (platform: Platform) => {
+    await handleCopy(platform);
+    setTimeout(() => handleOpenPlatform(platform), 300);
   };
 
   const allPosted = platforms.every(p => postedPlatforms.has(p));
@@ -211,7 +235,7 @@ export function SocialPublishBridge({
                   <Icon className="h-3.5 w-3.5" />
                   <span className="text-xs">{config.label}</span>
                   {isPosted && (
-                    <CheckCircle2 className="h-3 w-3 text-green-500 absolute -top-1 -right-1" />
+                    <CheckCircle2 className="h-3 w-3 text-success absolute -top-1 -right-1" />
                   )}
                 </TabsTrigger>
               );
@@ -238,7 +262,7 @@ export function SocialPublishBridge({
                     <p className="text-xs text-muted-foreground">{config.instructions}</p>
                   </div>
                   {isPosted && (
-                    <Badge className="ml-auto bg-green-500/10 text-green-600 border-green-500/30">
+                    <Badge variant="secondary" className="ml-auto text-success border-success/30">
                       <Check className="h-3 w-3 mr-1" />
                       Posted
                     </Badge>
@@ -259,48 +283,44 @@ export function SocialPublishBridge({
 
                 {/* Image notice */}
                 {imageUrl && (
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-warning/10 border border-warning/20 text-xs text-warning-foreground">
                     <span>📷</span>
                     <span>This post has an image — you'll need to attach it manually when posting.</span>
                   </div>
                 )}
 
-                {/* Actions */}
-                <div className="grid grid-cols-3 gap-2">
-                  <Button
-                    variant={isCopied ? 'default' : 'outline'}
-                    onClick={() => handleCopy(platform)}
-                    className={cn('gap-2', isCopied && 'bg-green-600 hover:bg-green-700 border-green-600')}
-                  >
-                    {isCopied ? (
-                      <><Check className="h-4 w-4" /> Copied!</>
-                    ) : (
-                      <><Copy className="h-4 w-4" /> Copy</>
-                    )}
-                  </Button>
+                {/* PRIMARY: Copy & Open combined */}
+                <Button
+                  onClick={() => handleCopyAndOpen(platform)}
+                  className={cn('w-full gap-2 font-semibold', isCopied && 'bg-success hover:bg-success/90 text-success-foreground')}
+                  size="default"
+                >
+                  {isCopied ? (
+                    <><Check className="h-4 w-4" /> Copied! Opening {config.label}...</>
+                  ) : (
+                    <><Copy className="h-4 w-4" /> Copy & Open {config.label} <ExternalLink className="h-3.5 w-3.5 ml-1" /></>
+                  )}
+                </Button>
+
+                {/* Secondary actions */}
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => handleOpenPlatform(platform)}
-                    className="gap-2"
+                    onClick={() => handleCopy(platform)}
+                    className="gap-2 text-sm"
                   >
-                    <ExternalLink className="h-4 w-4" />
-                    Open {config.label}
+                    <Copy className="h-3.5 w-3.5" /> Copy Only
                   </Button>
                   <Button
                     onClick={() => markPostedMutation.mutate(platform)}
                     disabled={markPostedMutation.isPending || isPosted}
-                    className={cn(
-                      'gap-2',
-                      isPosted
-                        ? 'bg-green-600/20 text-green-600 border-green-600/30 cursor-default'
-                        : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white border-0'
-                    )}
-                    variant={isPosted ? 'outline' : 'default'}
+                    variant={isPosted ? 'secondary' : 'outline'}
+                    className="gap-2 text-sm"
                   >
                     {isPosted ? (
-                      <><CheckCircle2 className="h-4 w-4" /> Posted</>
+                      <><CheckCircle2 className="h-3.5 w-3.5 text-success" /> Posted</>
                     ) : (
-                      <><Check className="h-4 w-4" /> Mark Posted</>
+                      <><Check className="h-3.5 w-3.5" /> Mark Posted</>
                     )}
                   </Button>
                 </div>
@@ -315,7 +335,7 @@ export function SocialPublishBridge({
             {postedPlatforms.size} of {platforms.length} platform{platforms.length > 1 ? 's' : ''} posted
           </span>
           {allPosted ? (
-            <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
+            <Badge variant="secondary" className="text-success border-success/30">
               <CheckCircle2 className="h-3 w-3 mr-1" />
               All Done!
             </Badge>

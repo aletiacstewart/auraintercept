@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { 
   X, 
@@ -28,19 +30,28 @@ import {
   Upload,
   Trash2,
   Copy,
-  RefreshCw,
   Check,
-  Calendar,
   FileText,
-  Eye,
   Wand2,
+  ExternalLink,
+  CheckCircle2,
+  Save,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { SchedulePostDialog } from '@/components/marketing/SchedulePostDialog';
 import { PostTemplates } from './PostTemplates';
-import { PlatformPreviewMockup } from './PlatformPreviewMockup';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
 
-const STEP_LABELS = ['Topic & Platforms', 'AI Generation', 'Review & Publish'];
+const STEP_LABELS = ['Topic & Platforms', 'AI Generation', 'Review & Post'];
+
+const PLATFORM_DEEP_LINKS: Record<Platform, (content: string) => string> = {
+  facebook: () => 'https://www.facebook.com',
+  instagram: () => 'https://www.instagram.com/create/story/',
+  linkedin: (content) => `https://www.linkedin.com/sharing/share-offsite/?mini=true&summary=${encodeURIComponent(content)}`,
+  tiktok: () => 'https://www.tiktok.com/upload',
+  google_business: () => 'https://business.google.com/create-post',
+  sms: (content) => `sms:?body=${encodeURIComponent(content)}`,
+};
 
 const MAX_FILE_SIZE_MB = 2;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -97,8 +108,9 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
   const [generationProgress, setGenerationProgress] = useState<string>('');
   
   const [showTemplates, setShowTemplates] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
   const [isRewordingPlatform, setIsRewordingPlatform] = useState<Platform | null>(null);
+  const [postedPlatforms, setPostedPlatforms] = useState<Set<Platform>>(new Set());
+  const [copiedPlatform, setCopiedPlatform] = useState<Platform | null>(null);
   
   const [state, setState] = useState<WizardState>({
     step: 1,
@@ -115,18 +127,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
     },
   });
 
-  // Fetch company name for preview
-  const { data: company } = useQuery({
-    queryKey: ['company-name', companyId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('companies')
-        .select('name')
-        .eq('id', companyId)
-        .single();
-      return data;
-    },
-  });
+
 
   // Image handling functions
   const validateAndResizeImage = (file: File): Promise<Blob> => {
@@ -320,58 +321,6 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
     }));
   };
 
-  // Copy current content to all platforms
-  const copyToAll = () => {
-    const currentContent = state.variations[activeTab].content;
-    const currentHashtags = state.variations[activeTab].hashtags;
-    
-    setState(prev => {
-      const newVariations = { ...prev.variations };
-      for (const platform of prev.selectedPlatforms) {
-        newVariations[platform] = {
-          content: currentContent,
-          hashtags: PLATFORMS.find(p => p.id === platform)?.hasHashtags ? currentHashtags : [],
-        };
-      }
-      return { ...prev, variations: newVariations };
-    });
-    
-    toast.success('Content copied to all platforms');
-  };
-
-  // Regenerate content for current platform
-  const regeneratePlatform = async () => {
-    toast.info(`Regenerating ${activeTab}...`);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-social-variations', {
-        body: {
-          topic: state.topic,
-          platforms: [activeTab],
-          companyId,
-          includeImage: !!state.imageUrl,
-        },
-      });
-
-      if (error) throw error;
-      
-      if (data.variations[activeTab]) {
-        setState(prev => ({
-          ...prev,
-          variations: {
-            ...prev.variations,
-            [activeTab]: {
-              content: data.variations[activeTab].content || '',
-              hashtags: data.variations[activeTab].hashtags || [],
-            },
-          },
-        }));
-        toast.success(`${activeTab} content regenerated`);
-      }
-    } catch {
-      toast.error('Failed to regenerate content');
-    }
-  };
 
   // Reword content for a specific platform using AI
   const rewordPlatformContent = async (platform: Platform) => {
@@ -514,7 +463,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
       {/* Topic Input with Templates */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="text-card-foreground/70">What would you like to post about?</Label>
+          <Label className="text-muted-foreground">What would you like to post about?</Label>
           <Dialog open={showTemplates} onOpenChange={setShowTemplates}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="sm" className="h-7 text-xs">
@@ -540,11 +489,11 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
 
       {/* Image Upload */}
       <div className="space-y-2">
-        <Label className="text-card-foreground/70 flex items-center gap-1.5">
+        <Label className="text-muted-foreground flex items-center gap-1.5">
           <ImageIcon className="h-3.5 w-3.5" />
           Post Image (optional)
         </Label>
-        <p className="text-xs text-card-foreground/50">
+        <p className="text-xs text-muted-foreground">
           Max 2MB • JPG, PNG, or WEBP • Auto-resized to 1200px width
         </p>
         
@@ -601,7 +550,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
 
       {/* Platform Selection */}
       <div className="space-y-2">
-        <Label className="text-card-foreground/70">Select Platforms *</Label>
+        <Label className="text-muted-foreground">Select Platforms *</Label>
         <div className="grid grid-cols-2 gap-2">
           {PLATFORMS.map(platform => {
             const Icon = platform.icon;
@@ -675,12 +624,77 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
     </div>
   );
 
-  // Render Step 3: Review & Edit
+  // Clipboard copy with fallback for iframe contexts
+  const copyToClipboard = async (text: string): Promise<void> => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+  };
+
+  // Open platform using anchor click (bypasses popup blockers in iframes)
+  const openPlatform = (platform: Platform) => {
+    const content = state.variations[platform].content;
+    const hashtags = state.variations[platform].hashtags;
+    const fullText = hashtags.length ? `${content}\n\n${hashtags.map(h => `#${h}`).join(' ')}` : content;
+    const url = PLATFORM_DEEP_LINKS[platform]?.(fullText);
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Copy content for a platform and open the platform in one action
+  const handleCopyAndOpen = async (platform: Platform) => {
+    const content = state.variations[platform].content;
+    const hashtags = state.variations[platform].hashtags;
+    const text = hashtags.length ? `${content}\n\n${hashtags.map(h => `#${h}`).join(' ')}` : content;
+    try {
+      await copyToClipboard(text);
+      setCopiedPlatform(platform);
+      toast.success('Content copied! Opening platform...');
+      setTimeout(() => setCopiedPlatform(null), 3000);
+    } catch {
+      toast.error('Copy failed — please copy manually before opening.');
+    }
+    openPlatform(platform);
+  };
+
+  // Toggle a platform as posted
+  const togglePosted = (platform: Platform) => {
+    setPostedPlatforms(prev => {
+      const next = new Set(prev);
+      if (next.has(platform)) next.delete(platform);
+      else next.add(platform);
+      return next;
+    });
+  };
+
+  // Render Step 3: Review & Post
   const renderStep3 = () => {
-    const activePlatformConfig = PLATFORMS.find(p => p.id === activeTab);
+    const anyPosted = postedPlatforms.size > 0;
 
     return (
       <div className="space-y-4">
+        {/* Instruction banner */}
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-foreground">
+          <Sparkles className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+          <span>For each platform: <strong>Copy & Open</strong> → paste on the platform → check <strong>Posted ✓</strong>. Then click <strong>Done</strong>.</span>
+        </div>
+
         {/* Platform Tabs */}
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Platform)}>
           <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-muted/30 p-1">
@@ -688,14 +702,18 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
               const config = PLATFORMS.find(p => p.id === platform);
               if (!config) return null;
               const Icon = config.icon;
+              const isPosted = postedPlatforms.has(platform);
               return (
                 <TabsTrigger
                   key={platform}
                   value={platform}
-                  className={`flex-1 min-w-[80px] gap-1.5 data-[state=active]:${config.bgColor}`}
+                  className="flex-1 min-w-[80px] gap-1.5 relative"
                 >
-                  <Icon className={`h-3.5 w-3.5 ${activeTab === platform ? config.color : ''}`} />
+                  <Icon className={cn('h-3.5 w-3.5', isPosted && 'text-success')} />
                   <span className="text-xs">{config.label}</span>
+                  {isPosted && (
+                    <CheckCircle2 className="h-3 w-3 text-success absolute -top-1 -right-1" />
+                  )}
                 </TabsTrigger>
               );
             })}
@@ -704,145 +722,141 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
           {state.selectedPlatforms.map(platform => {
             const config = PLATFORMS.find(p => p.id === platform);
             if (!config) return null;
+            const Icon = config.icon;
+            const isPosted = postedPlatforms.has(platform);
+            const isCopied = copiedPlatform === platform;
             
             return (
-              <TabsContent key={platform} value={platform} className="mt-4 space-y-4">
-                {/* Content Editor with Reword Button */}
-                <div className="space-y-2">
+              <TabsContent key={platform} value={platform} className="mt-4 space-y-3">
+                {/* Platform header */}
+                <div className="flex items-center gap-3">
+                  <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center', config.bgColor)}>
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-foreground">{config.label}</p>
+                    <p className="text-xs text-muted-foreground">{config.charLimit} char limit</p>
+                  </div>
+                  {/* Mark as Posted toggle */}
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`posted-${platform}`} className="text-sm text-muted-foreground cursor-pointer">
+                      {isPosted ? (
+                        <span className="text-success font-medium flex items-center gap-1">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Posted
+                        </span>
+                      ) : 'Mark Posted'}
+                    </Label>
+                    <Switch
+                      id={`posted-${platform}`}
+                      checked={isPosted}
+                      onCheckedChange={() => togglePosted(platform)}
+                    />
+                  </div>
+                </div>
+
+                {/* Content Editor */}
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-card-foreground/70">Content</Label>
+                    <Label className="text-muted-foreground text-xs">Content</Label>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 text-xs"
+                        className="h-6 text-xs px-2"
                         onClick={() => rewordPlatformContent(platform)}
                         disabled={isRewordingPlatform === platform}
                       >
                         {isRewordingPlatform === platform ? (
-                          <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                         ) : (
-                          <Wand2 className="h-3.5 w-3.5 mr-1" />
+                          <Wand2 className="h-3 w-3 mr-1" />
                         )}
                         Reword
                       </Button>
                       <span className={`text-xs ${getCharCountColor(state.variations[platform].content.length, config.charLimit)}`}>
-                        {state.variations[platform].content.length} / {config.charLimit}
+                        {state.variations[platform].content.length}/{config.charLimit}
                       </span>
                     </div>
                   </div>
                   <Textarea
                     value={state.variations[platform].content}
                     onChange={(e) => updatePlatformContent(platform, e.target.value)}
-                    className="min-h-[120px] bg-muted/30 border-card-foreground/20 text-card-foreground resize-none"
+                    className="min-h-[100px] bg-muted/30 resize-none text-foreground"
                     placeholder={`Enter ${config.label} content...`}
                   />
                 </div>
 
-                {/* Hashtags (for platforms that support them) */}
+                {/* Hashtags */}
                 {config.hasHashtags && (
-                  <div className="space-y-2">
-                    <Label className="text-card-foreground/70 flex items-center gap-1.5">
-                      <Hash className="h-3.5 w-3.5" />
+                  <div className="space-y-1.5">
+                    <Label className="text-muted-foreground text-xs flex items-center gap-1.5">
+                      <Hash className="h-3 w-3" />
                       Hashtags
                     </Label>
                     <Input
                       value={state.variations[platform].hashtags.join(', ')}
                       onChange={(e) => updatePlatformHashtags(platform, e.target.value)}
                       placeholder="summer, hvac, service (comma-separated)"
-                      className="bg-muted/30 border-card-foreground/20 text-card-foreground"
+                      className="bg-muted/30 text-foreground"
                     />
                   </div>
                 )}
 
-                {/* Image Preview */}
+                {/* Image */}
                 {state.imageUrl && (
-                  <div className="space-y-2">
-                    <Label className="text-card-foreground/70">Image</Label>
-                    <div className="relative w-full h-24 rounded-lg overflow-hidden bg-muted/30 border border-card-foreground/20">
-                      <img 
-                        src={state.imageUrl} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-warning/10 border border-warning/20 text-xs text-warning-foreground">
+                    <span>📷</span>
+                    <span>Attach this image manually when posting on {config.label}.</span>
                   </div>
                 )}
+
+                {/* PRIMARY ACTION: Copy & Open */}
+                <Button
+                  onClick={() => handleCopyAndOpen(platform)}
+                  className={cn(
+                    'w-full gap-2 font-semibold',
+                    isCopied
+                      ? 'bg-success hover:bg-success/90 text-success-foreground'
+                      : ''
+                  )}
+                  variant={isCopied ? 'default' : 'default'}
+                  size="lg"
+                >
+                  {isCopied ? (
+                    <><Check className="h-4 w-4" /> Copied! Opening {config.label}...</>
+                  ) : (
+                    <><Copy className="h-4 w-4" /> Copy & Open {config.label}<ExternalLink className="h-3.5 w-3.5 ml-1" /></>
+                  )}
+                </Button>
               </TabsContent>
             );
           })}
         </Tabs>
 
-        {/* Quick Actions */}
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyToAll}
-            className="flex-1"
-          >
-            <Copy className="h-3.5 w-3.5 mr-1.5" />
-            Copy to All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={regeneratePlatform}
-            className="flex-1"
-          >
-            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-            Regenerate
-          </Button>
-          <Dialog open={showPreview} onOpenChange={setShowPreview}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="flex-1">
-                <Eye className="h-3.5 w-3.5 mr-1.5" />
-                Preview
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  {activePlatformConfig && (
-                    <>
-                      <activePlatformConfig.icon className={`h-5 w-5 ${activePlatformConfig.color}`} />
-                      {activePlatformConfig.label} Preview
-                    </>
-                  )}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="py-4">
-                <PlatformPreviewMockup
-                  platform={activeTab}
-                  content={state.variations[activeTab].content}
-                  hashtags={state.variations[activeTab].hashtags}
-                  imageUrl={state.imageUrl || undefined}
-                  companyName={company?.name}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+        {/* Progress bar */}
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border text-sm">
+          <span className="text-muted-foreground">
+            {postedPlatforms.size} of {state.selectedPlatforms.length} platform{state.selectedPlatforms.length > 1 ? 's' : ''} posted
+          </span>
+          {anyPosted && (
+            <Badge variant="secondary" className="gap-1 text-success border-success/30">
+              <CheckCircle2 className="h-3 w-3" />
+              {postedPlatforms.size === state.selectedPlatforms.length ? 'All Done!' : 'In Progress'}
+            </Badge>
+          )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
+        {/* Bottom action bar */}
+        <div className="flex gap-2 pt-1">
           <Button
             variant="outline"
             onClick={() => setState(prev => ({ ...prev, step: 1 }))}
-            className="flex-1"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-1" />
             Back
           </Button>
           <Button
-            variant="outline"
-            onClick={() => setShowScheduleDialog(true)}
-            className="flex-1"
-          >
-            <Calendar className="h-4 w-4 mr-2" />
-            Schedule
-          </Button>
-          <Button
+            variant="secondary"
             onClick={() => saveDraftsMutation.mutate()}
             disabled={saveDraftsMutation.isPending}
             className="flex-1"
@@ -850,9 +864,21 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
             {saveDraftsMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
-              <Check className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2" />
             )}
-            Approve & Ready to Post
+            Save Draft
+          </Button>
+          <Button
+            onClick={() => saveDraftsMutation.mutate()}
+            disabled={!anyPosted || saveDraftsMutation.isPending}
+            className="flex-1"
+          >
+            {saveDraftsMutation.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 mr-2" />
+            )}
+            Done — All Posted
           </Button>
         </div>
       </div>
@@ -870,7 +896,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
               </div>
               {state.step === 1 && 'Create Social Content'}
               {state.step === 2 && 'Generating...'}
-              {state.step === 3 && 'Review & Edit'}
+              {state.step === 3 && 'Review & Post'}
             </CardTitle>
             <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/60 hover:text-card-foreground">
               <X className="h-4 w-4" />
