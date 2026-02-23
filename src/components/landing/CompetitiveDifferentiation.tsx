@@ -50,7 +50,7 @@ const categories: ComparisonCategory[] = [
     comparisons: [
       { feature: 'AI Voice Answering', traditional: 'Voicemail', aura: 'True AI' },
       { feature: 'Specialized Agents', traditional: 'Basic automation', aura: '24 operatives' },
-      { feature: 'Social Media Included', traditional: 'Extra cost', aura: true },
+      { feature: 'Social Media Included', traditional: 'Extra cost', aura: 'Manual Bridge + Own API' },
       { feature: 'Smart Agent Handoffs', traditional: 'Siloed features', aura: true },
       { feature: 'Purpose-Built for Service', traditional: 'Generic', aura: true },
     ],

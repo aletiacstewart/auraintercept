@@ -20,9 +20,9 @@ const featureDescriptions: Record<string, string> = {
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
   'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
-  'Social Media Agent': 'AI-powered content creation for all social platforms.',
-  'Social Media Scheduler': 'Content scheduling and calendar management across 6 platforms. Post with one click using the Manual Bridge. Automatic publishing coming soon.',
-  'Social Media Analytics': 'Engagement metrics and performance tracking.',
+  'Social Media Agent': 'AI-powered content creation for Facebook, Instagram, LinkedIn, TikTok, Google Business, and SMS. Generates platform-optimized captions, hashtags, and image prompts.',
+  'Social Media Scheduler': 'Content calendar management across 6 platforms. AI generates ready-to-post content. Use the Manual Bridge to copy content and open the platform composer with one click. Own API credentials can be configured for automatic posting.',
+  'Social Media Analytics': 'Engagement tracking, reach analysis, and content performance insights across all 6 platforms. Tracks manual and API-posted content.',
   'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
   
   // AI Agents - Office Stack
@@ -50,7 +50,7 @@ const featureDescriptions: Record<string, string> = {
   // Control Centers
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
-  'Social Media Console': 'Unified dashboard to create, schedule, and manage social content across 6 platforms. Uses guided manual posting via Manual Bridge. Own API or automatic posting coming soon.',
+  'Social Media Console': 'Unified control center to create, schedule, approve, and post social content across 6 platforms. Includes the Manual Bridge (copy + open platform composer) and Own API setup for companies who want automatic posting. Platform-level auto-posting coming soon.',
   'Creative & Web Presence Console': 'AI-powered Web Presence builder with chat, voice, and booking integration.',
   'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
   'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',
