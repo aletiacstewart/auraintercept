@@ -529,15 +529,16 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Core - $500/mo</Text>
+        <Text style={styles.copyLabel}>Aura Presence - $797/mo</Text>
         <Text style={styles.copyHeadline}>Digital Foundation</Text>
         <Text style={styles.copyBody}>
           AI-assisted operations for growing businesses. Build your digital presence with intelligent automation.{'\n\n'}
-          - Up to 3 AI Operatives{'\n'}
-          - 3 Control Centers{'\n'}
+          - 12 AI Operatives{'\n'}
+          - 4 Control Centers{'\n'}
           - Message Aura (Chat){'\n'}
+          - Talk to Aura (Voice){'\n'}
           - Social Media Console{'\n'}
-          - Up to 4 employees
+          - Up to 8 employees
         </Text>
       </View>
 
@@ -549,35 +550,35 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Single-Point - $1,497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Logistics - $1,497/mo</Text>
         <Text style={styles.copyHeadline}>Lead Capture Excellence</Text>
         <Text style={styles.copyBody}>
           Stop missing calls and start building your reputation. 24/7 AI reception with automated follow-up and review collection.{'\n\n'}
-          - Up to 6 AI Operatives{'\n'}
+          - 18 AI Operatives{'\n'}
           - 6 Control Centers{'\n'}
           - AI Receptionist (24/7){'\n'}
           - Talk to Aura (Voice){'\n'}
           - Customer Portal Console{'\n'}
-          - Up to 8 employees
+          - Up to 15 employees
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Multi-Track - $2,497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Performance - $2,497/mo</Text>
         <Text style={styles.copyHeadline}>Field Operations Command</Text>
         <Text style={styles.copyBody}>
           Scale your operations without the chaos. Intelligent scheduling, dispatch optimization, and complete financial automation.{'\n\n'}
-          - Up to 12 AI Operatives{'\n'}
+          - 22 AI Operatives{'\n'}
           - 7 Control Centers{'\n'}
           - Full Field Operations suite{'\n'}
           - Scheduling and Dispatch{'\n'}
           - Quoting and Invoicing{'\n'}
-          - Up to 16 employees
+          - Up to 25 employees
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro Command - $3,497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Command - $3,497/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 24-agent suite handles every operational task from marketing to analytics.{'\n\n'}
@@ -586,7 +587,7 @@ export const WebsiteCopyPDF: React.FC = () => (
           - Creative and Web Presence{'\n'}
           - Advanced Analytics{'\n'}
           - Priority Support{'\n'}
-          - Up to 32 employees
+          - Up to 50 employees
         </Text>
       </View>
 
@@ -622,7 +623,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($499-$999 depending on complexity) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($299–$499 depending on tier, Custom for Command) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>

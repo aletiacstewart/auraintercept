@@ -1312,7 +1312,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-blue-400 text-sm mb-2">Concierge Onboarding</h4>
                 <p className="text-xs text-foreground">
-                  We'll configure all 3rd party integrations for a one-time fee of <span className="font-bold text-blue-300">$500</span>.
+                  We'll configure all 3rd party integrations for a one-time fee <span className="font-bold text-blue-300">starting at $299</span>.
                 </p>
               </div>
 

@@ -352,7 +352,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How long does implementation take?"
-          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Express and Flow tiers can be live within 3-5 business days. Multi-Track and Command tiers with field operations may take 2-3 weeks for full configuration and technician training."
+          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Connect tiers can be live within 3-5 business days. Performance and Command tiers with field operations may take 2-3 weeks for full configuration and technician training."
         />
         
         <FAQItem 
@@ -486,16 +486,16 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Which tier includes Talk to Aura (Voice)?"
-          answer="Talk to Aura (Voice) is included in Aura Express, Aura Flow, Aura Halo, Single-Point, Multi-Track, and Aura Pro Command tiers. Aura Core includes only Message Aura (Text) for chat-based communication."
+          answer="Talk to Aura (Voice) is included on ALL paid tiers. Every tier from Aura Starter through Aura Command includes full voice, SMS, and email capabilities."
         />
         
         <FAQItem 
           question="Do I need to pay for integrations separately?"
-          answer="Yes, third-party integrations have their own costs: Twilio ($1.15/number + usage), ElevenLabs ($0-99+/month), Resend ($0-20+/month), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
+          answer="Yes, third-party integrations have their own costs: SignalWire ($1.15/number + usage), ElevenLabs ($0-99+/month), Resend ($0-20+/month), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
         />
 
         <FAQItem 
-          question="What's included in the Aura Halo tier specifically?"
+          question="What's included in the Aura Growth tier specifically?"
           answer={`Aura Halo ($${SUBSCRIPTION_TIERS.halo.price}/mo) is designed for salons and wellness businesses. It includes: ${SUBSCRIPTION_TIERS.halo.highlights.slice(0, 5).join(', ')}. Perfect for nail salons, hair salons, barbers, massage centers, and spas.`}
         />
 
@@ -526,7 +526,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Message Aura vs Talk to Aura?"
-          answer="Message Aura (Text) is AI-powered chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and Twilio. Voice is available on Aura Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers."
+          answer="Message Aura (Text) is AI-powered chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and SignalWire. Voice is available on ALL paid tiers (Starter through Command)."
         />
         
         <FAQItem 
@@ -627,7 +627,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What consoles are included in my plan?"
-          answer={`Console access varies by tier. Express/Flow/Core include 2 consoles, Halo/Single-Point include 3 consoles, Multi-Track includes 4 consoles, and Command includes all ${PLATFORM_STATS.totalConsoles} consoles. Check your tier details for specific console access.`}
+          answer={`Console access varies by tier: Starter (0), Connect (1), Growth (3), Presence (4), Logistics (6), Performance (7), Command (all ${PLATFORM_STATS.totalConsoles} + AI Operatives Hub). Check your tier details for specific console access.`}
         />
         
         <FAQItem 

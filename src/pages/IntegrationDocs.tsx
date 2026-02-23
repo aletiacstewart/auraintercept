@@ -27,7 +27,7 @@ const IntegrationDocs = () => {
                 <h4 className="font-semibold text-blue-300">AI Chat Widget (Text-Based) - All Tiers</h4>
                 <p className="text-sm text-muted-foreground">
                   This guide covers the <strong>AI Chat Widget</strong> which provides <strong>text-based conversations</strong> using keyboard input.
-                  The Chat Widget works on <strong>ALL tiers including Aura Core</strong> with <strong>no external dependencies</strong> - no ElevenLabs or Twilio required.
+                  The Chat Widget works on <strong>ALL tiers including Aura Presence</strong> with <strong>no external dependencies</strong> - no ElevenLabs or SignalWire required.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <Badge variant="secondary" className="text-xs">✓ Keyboard Input</Badge>
@@ -36,7 +36,7 @@ const IntegrationDocs = () => {
                   <Badge variant="secondary" className="text-xs">✓ All Tiers</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  <strong>Looking for AI Voice?</strong> Speech-based conversations via microphone/speakers are available on Single-Point+ tiers and require ElevenLabs + Twilio setup.
+                  <strong>Looking for AI Voice?</strong> Speech-based conversations via microphone/speakers are available on all paid tiers and require ElevenLabs + SignalWire setup.
                 </p>
               </div>
             </div>

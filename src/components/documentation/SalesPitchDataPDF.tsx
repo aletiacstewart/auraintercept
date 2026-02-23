@@ -708,7 +708,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionText}>"It's too expensive for my small business."</Text>
         <Text style={styles.responseLabel}>Response</Text>
         <Text style={styles.responseText}>
-          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Halo tier is $397/month for salons or Single-Point at $1,500/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
+          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Growth tier is $597/month for salons or Aura Logistics at $1,497/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
         </Text>
       </View>
 
@@ -762,7 +762,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
         </View>
         <Text style={{ fontSize: 10, color: colors.dark, lineHeight: 1.5 }}>
-          "Mike was a solo HVAC tech missing calls while on jobs. After implementing Aura's Multi-Track tier, he recovered 23 leads in month one. The AI scheduled appointments, sent confirmations, and even optimized his routes. He's since hired two technicians and credits Aura with enabling his growth."
+          "Mike was a solo HVAC tech missing calls while on jobs. After implementing Aura's Performance tier, he recovered 23 leads in month one. The AI scheduled appointments, sent confirmations, and even optimized his routes. He's since hired two technicians and credits Aura with enabling his growth."
         </Text>
       </View>
 
@@ -804,20 +804,20 @@ export const SalesPitchDataPDF: React.FC = () => (
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Aura Halo (Salons/Wellness)</Text>
-          <Text style={styles.tierPrice}>$397/mo</Text>
+          <Text style={styles.tierName}>Aura Growth (Salons/Wellness)</Text>
+          <Text style={styles.tierPrice}>$597/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Nail salons, hair salons, barbers, massage centers</Text>
-        <Text style={styles.tierBullet}>- 1-3 person operations</Text>
+        <Text style={styles.tierBullet}>- Up to 5 employee operations</Text>
         <Text style={styles.tierBullet}>- Primary pain: Booking automation</Text>
-        <Text style={styles.tierBullet}>- Need scheduling + follow-up</Text>
+        <Text style={styles.tierBullet}>- Need scheduling + follow-up + marketing</Text>
         <Text style={styles.tierBullet}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.tierBullet}>- 3 AI Operatives: Receptionist, Scheduling, Follow-up</Text>
+        <Text style={styles.tierBullet}>- 11 AI Operatives: Receptionist, Scheduling, Follow-up + Marketing Stack</Text>
       </View>
 
       <View style={styles.tierCard}>
          <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Single-Point</Text>
+          <Text style={styles.tierName}>Aura Logistics</Text>
           <Text style={styles.tierPrice}>$1,497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Service businesses focused on lead capture and reputation</Text>
@@ -830,20 +830,20 @@ export const SalesPitchDataPDF: React.FC = () => (
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Multi-Track</Text>
+          <Text style={styles.tierName}>Aura Performance</Text>
           <Text style={styles.tierPrice}>$2,497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Growing teams needing scheduling and field ops</Text>
-        <Text style={styles.tierBullet}>- 5-10 employees</Text>
+        <Text style={styles.tierBullet}>- Up to 25 employees</Text>
         <Text style={styles.tierBullet}>- Multiple technicians to dispatch</Text>
         <Text style={styles.tierBullet}>- Need route optimization</Text>
         <Text style={styles.tierBullet}>- Want automated quoting/invoicing</Text>
-        <Text style={styles.tierBullet}>- 10 AI Operatives + 2 Consoles</Text>
+        <Text style={styles.tierBullet}>- 22 AI Operatives + All 7 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Aura Pro Command (Enterprise)</Text>
+          <Text style={styles.tierName}>Aura Command (Enterprise)</Text>
           <Text style={styles.tierPrice}>$3,497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: 15+ technicians or multi-location operations</Text>

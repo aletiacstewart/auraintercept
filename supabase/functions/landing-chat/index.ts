@@ -14,23 +14,23 @@ About Aura Intercept:
 - The platform offers 24/7 AI automation for handling customer inquiries, booking appointments, and managing operations
 
 Pricing Tiers (7 Total):
-- Aura Express ($197/mo): AI Voice & Chat for restaurants, smart link sharing to menu/ordering/website, 2 employees. Requires ElevenLabs + Twilio.
-- Aura Flow ($297/mo): AI voice, chat, and scheduling with direct calendar sync. Includes AI Receptionist, Scheduling Agent, Follow-up Agent. No customer portal - books directly to calendar. 2 employees. Great for service businesses needing automated booking.
-- Aura Halo ($397/mo): 4 AI operatives (Receptionist, Scheduling, Follow-up) for salons/wellness, Customer Portal Console, 3 employees. Ideal for nail salons, hair salons, spas.
-- Aura Core ($500/mo): AI-assisted tools only (no automation), Message Aura (Text), Social Media, Web Presence, 2 employees. No external dependencies required.
-- Single-Point ($1,500/mo): 3 AI operatives (Receptionist, Follow-up, Review), 1 console (Customer Portal), Talk to Aura Voice + Calling, 5 employees. Saves 10+ hours/week in lead intake.
-- Multi-Track ($3,997/mo): 10 AI operatives including Field Operations, 2 consoles, online booking & scheduling, 10 employees. Manages field techs automatically.
-- Aura Pro Command ($5,997/mo): All 24 AI operatives, all 7 Control Centers, total business automation, 25 employees. For enterprises with 15+ technicians or multi-location.
-- Annual billing saves 16% (implementation fee waived for annual plans)
-- Additional employees: $10/mo per employee beyond included amount
+- Aura Starter ($197/mo): AI Voice & Chat for restaurants, smart link sharing, 2 employees, 1 AI Operative (AI Receptionist). Requires ElevenLabs + SignalWire.
+- Aura Connect ($397/mo): AI voice, chat, and scheduling with calendar sync. 3 AI Operatives (Receptionist, Scheduling, Follow-up). 1 Console (Customer Portal). 3 employees.
+- Aura Growth ($597/mo): 11 AI Operatives, 3 Consoles. AI scheduling + marketing + social media suite. 5 employees. For salons and wellness businesses.
+- Aura Presence ($797/mo): 12 AI Operatives, 4 Consoles. Full marketing + web presence + social media. 8 employees. All communication channels included.
+- Aura Logistics ($1,497/mo): 18 AI Operatives, 6 Consoles. Field operations, dispatch, quoting, invoicing. 15 employees.
+- Aura Performance ($2,497/mo): 22 AI Operatives, all 7 Consoles. Advanced analytics and full automation. 25 employees.
+- Aura Command ($3,497/mo): All 24 AI Operatives, all 7 Consoles + AI Operatives Hub. Enterprise, 50 employees.
+- Annual billing saves ~16%
+- Additional employees: $25/mo per 10 employees beyond included amount
 
 Communication Channels:
-- Message Aura (Text): Keyboard-based chat available on ALL tiers including Core. No external dependencies required.
-- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on Express, Aura Flow, Halo, Single-Point, Multi-Track, and Command. Requires ElevenLabs.
-- AI Receptionist answers inbound Proxy Voice Chat calls, SMS, and Talk to Aura conversations
+- Message Aura (Text): Keyboard-based chat available on ALL tiers. No external dependencies required.
+- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on ALL paid tiers (Starter through Command). Requires ElevenLabs + SignalWire.
+- AI Receptionist answers inbound calls, SMS, and Talk to Aura conversations
 - Follow-up Agent sends reminders via email, SMS, and voice calls
 - ETA Agent and Campaign Agent send SMS and email notifications
-- Required integrations vary by tier: ElevenLabs (Voice), Twilio (SMS/Voice), Resend (Email)
+- Required integrations: SignalWire (not Twilio), ElevenLabs, Resend, A2P 10DLC compliance for all tiers
 
 New AI Features:
 - Knowledge Base AI Generator: Batch-generate FAQs, services, and business hours from industry context

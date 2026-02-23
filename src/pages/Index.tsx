@@ -1053,7 +1053,6 @@ export default function Index() {
               <CardContent className="p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge className="bg-emerald-500 text-white border-0 text-[10px]">Web Presence</Badge>
-                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">No Voice</Badge>
                 </div>
                 <h3 className="text-lg font-bold mb-1">Aura Presence</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Web Presence Focus)</p>
@@ -1124,8 +1123,8 @@ export default function Index() {
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
             <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
-            <p className="text-sm text-foreground mb-2">Additional employees: <span className="font-medium">$10/employee</span></p>
-            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">starting at $499</span></p>
+            <p className="text-sm text-foreground mb-2">Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
+            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">starting at $299</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
