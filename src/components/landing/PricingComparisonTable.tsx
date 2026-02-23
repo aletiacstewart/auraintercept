@@ -21,7 +21,7 @@ const featureDescriptions: Record<string, string> = {
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
   'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
   'Social Media Agent': 'AI-powered content creation for all social platforms.',
-  'Social Media Scheduler': 'Automated post scheduling across 6 platforms.',
+  'Social Media Scheduler': 'Content scheduling and calendar management across 6 platforms. Post with one click using the Manual Bridge. Automatic publishing coming soon.',
   'Social Media Analytics': 'Engagement metrics and performance tracking.',
   'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
   
@@ -50,7 +50,7 @@ const featureDescriptions: Record<string, string> = {
   // Control Centers
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
-  'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
+  'Social Media Console': 'Unified dashboard to create, schedule, and manage social content across 6 platforms. Uses guided manual posting via Manual Bridge. Own API or automatic posting coming soon.',
   'Creative & Web Presence Console': 'AI-powered Web Presence builder with chat, voice, and booking integration.',
   'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
   'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',

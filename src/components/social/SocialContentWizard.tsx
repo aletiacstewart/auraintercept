@@ -852,7 +852,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
             ) : (
               <Check className="h-4 w-4 mr-2" />
             )}
-            Save Drafts
+            Approve & Ready to Post
           </Button>
         </div>
       </div>

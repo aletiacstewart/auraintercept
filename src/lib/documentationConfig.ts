@@ -398,7 +398,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   {
     id: 'social_scheduler',
     name: 'Social Media Scheduler',
-    description: 'Queues and publishes social media content at optimal times. Manages content calendar and scheduling.',
+    description: 'Queues content for posting and manages the content calendar. Guides users through manual posting via copy-and-paste with platform deep links. Automatic direct publishing coming soon.',
     console: 'social_media',
     tier: 'aura_flow',  // Changed from express to aura_flow
     dependencies: ['social_content'],
@@ -534,7 +534,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'social_media',
     name: 'Social Media Ops',
-    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
+    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar. Uses Manual Bridge for guided posting. Own API credentials or automatic platform-level publishing coming soon.',
     tier: 'halo',
     agentCount: 3,
     tabs: ['Home', 'Social Posts', 'Analytics'],
@@ -630,8 +630,8 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
   },
   {
     name: 'Social Media (Platform OAuth)',
-    purpose: 'Content Publishing via Meta, LinkedIn, TikTok, Google',
-    cost: 'Free (platform-level OAuth configured by platform admin)',
+    purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting. Platform-level OAuth coming soon.',
+    cost: 'Free (Manual Bridge) or Free (Own API setup)',
     requiredFor: 'Growth+ (Social Media Ops)',
     optional: true,
   },

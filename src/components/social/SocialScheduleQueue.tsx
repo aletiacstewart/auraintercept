@@ -46,8 +46,10 @@ import {
   Video,
   MapPin,
   MessageSquare,
+  ExternalLink,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { SocialPublishBridge } from './SocialPublishBridge';
 
 interface PlatformContent {
   content: string;
@@ -65,7 +67,7 @@ interface ScheduledSocialPost {
   image_url: string | null;
   scheduled_for: string;
   timezone: string;
-  status: 'pending' | 'approved' | 'published' | 'rejected' | 'failed';
+  status: 'pending' | 'approved' | 'ready_to_post' | 'published' | 'rejected' | 'failed';
   batch_id: string | null;
   ai_research_used: boolean | null;
   publish_error: string | null;
@@ -76,6 +78,7 @@ interface ScheduledSocialPost {
 const STATUS_CONFIG = {
   pending: { label: 'Pending', color: 'bg-warning text-warning-foreground', icon: Clock },
   approved: { label: 'Approved', color: 'bg-primary text-primary-foreground', icon: CheckCircle },
+  ready_to_post: { label: 'Ready to Post', color: 'bg-amber-500 text-white', icon: Share2 },
   published: { label: 'Published', color: 'bg-success text-success-foreground', icon: Check },
   rejected: { label: 'Rejected', color: 'bg-destructive text-destructive-foreground', icon: XCircle },
   failed: { label: 'Failed', color: 'bg-destructive text-destructive-foreground', icon: AlertCircle },
@@ -121,6 +124,8 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
     scheduled_for: Date;
   } | null>(null);
   const [editPlatform, setEditPlatform] = useState<string>('');
+  const [bridgePost, setBridgePost] = useState<ScheduledSocialPost | null>(null);
+  const [isBridgeOpen, setIsBridgeOpen] = useState(false);
 
   // Fetch scheduled posts
   const { data: posts, isLoading } = useQuery({
@@ -377,6 +382,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
             <SelectItem value="all">All Posts</SelectItem>
             <SelectItem value="pending">Pending Review</SelectItem>
             <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="ready_to_post">Ready to Post</SelectItem>
             <SelectItem value="published">Published</SelectItem>
             <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>
@@ -482,14 +488,18 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
                             </>
                           )}
                           
-                          {post.status === 'approved' && (
+                          {(post.status === 'approved' || post.status === 'ready_to_post') && (
                             <Button 
                               size="sm" 
                               variant="default"
-                              onClick={() => publishNowMutation.mutate(post)}
-                              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white"
+                              onClick={() => {
+                                setBridgePost(post);
+                                setIsBridgeOpen(true);
+                              }}
+                              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white gap-1"
                             >
-                              Publish Now
+                              <ExternalLink className="h-3 w-3" />
+                              Post This →
                             </Button>
                           )}
                           
@@ -669,6 +679,22 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Publish Bridge Dialog */}
+      {bridgePost && (
+        <SocialPublishBridge
+          open={isBridgeOpen}
+          onOpenChange={(open) => {
+            setIsBridgeOpen(open);
+            if (!open) setBridgePost(null);
+          }}
+          postId={bridgePost.id}
+          topic={bridgePost.topic}
+          platforms={bridgePost.platforms as any}
+          contentJson={bridgePost.content_json}
+          imageUrl={bridgePost.image_url}
+        />
+      )}
     </div>
   );
 }
