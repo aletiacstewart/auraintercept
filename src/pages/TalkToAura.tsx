@@ -42,15 +42,16 @@ export default function TalkToAura() {
   }, []);
 
   const tierLabels: Record<string, string> = {
-    express: 'Aura Express',
-    halo: 'Aura Halo',
-    core: 'Aura Core',
-    single_point: 'Aura Single-Point',
-    multi_track: 'Aura Multi-Track',
-    command: 'Aura Pro Command',
+    express: 'Aura Starter',
+    aura_flow: 'Aura Connect',
+    halo: 'Aura Growth',
+    core: 'Aura Presence',
+    single_point: 'Aura Logistics',
+    multi_track: 'Aura Performance',
+    command: 'Aura Command',
   };
 
-  const tierLabel = tierLabels[tier] || 'Aura Pro Command';
+  const tierLabel = tierLabels[tier] || 'Aura Command';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">

@@ -374,7 +374,7 @@ export function EmployeeManagement() {
               <div className="flex-1">
                 <p className="font-medium text-card-foreground">Employee Limit Reached</p>
                 <p className="text-sm text-muted-foreground">
-                  Your {effectiveTier.replace('_', '-')} plan includes {employeeLimit} employees. Add more for $10/employee.
+                  Your {effectiveTier.replace('_', '-')} plan includes {employeeLimit} employees. Add more for $25 per 10 employees.
                 </p>
               </div>
               <Button size="sm" onClick={() => navigate('/dashboard/subscription')}>

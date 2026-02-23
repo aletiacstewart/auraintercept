@@ -791,7 +791,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for Customer Portal scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Growth tier)' },
+    social_media: { required: false, reason: 'Optional for Growth tier' },
   },
   core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
@@ -799,7 +799,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: false, reason: 'Optional for appointment sync' },
+    calendar: { required: true, reason: 'Required for Scheduling Agent (inherits Connect+ agents)' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
     social_media: { required: true, reason: 'Required for Social Media Ops (Presence tier)' },
   },
@@ -811,7 +811,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Logistics tier)' },
+    social_media: { required: false, reason: 'Optional for Logistics tier' },
   },
   multi_track: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },

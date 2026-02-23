@@ -171,12 +171,12 @@ export default function Contact() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="express">Aura Express (Restaurants)</SelectItem>
-                                <SelectItem value="halo">Aura Halo (Salons & Wellness)</SelectItem>
-                                <SelectItem value="core">Aura Core (AI Tools)</SelectItem>
-                                <SelectItem value="single_point">Single-Point (Small Service)</SelectItem>
-                                <SelectItem value="multi_track">Multi-Track (Field Operations)</SelectItem>
-                                <SelectItem value="command">Aura Pro Command (Enterprise)</SelectItem>
+                                <SelectItem value="express">Aura Starter (Restaurants)</SelectItem>
+                                 <SelectItem value="halo">Aura Growth (Salons & Wellness)</SelectItem>
+                                 <SelectItem value="core">Aura Presence (Web Presence)</SelectItem>
+                                 <SelectItem value="single_point">Aura Logistics (Field Service)</SelectItem>
+                                 <SelectItem value="multi_track">Aura Performance (Full Automation)</SelectItem>
+                                 <SelectItem value="command">Aura Command (Enterprise)</SelectItem>
                                 <SelectItem value="other">Other / Not Sure</SelectItem>
                               </SelectContent>
                             </Select>

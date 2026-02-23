@@ -165,7 +165,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Appointments', starter: 'x', scheduling: 'Unlimited', growth: 'Unlimited', business: 'Unlimited', fieldOps: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', starter: '2 included', scheduling: '3 included', growth: '5 included', business: '8 included', fieldOps: '15 included', performance: '25 included', command: '50 included' },
-      { name: 'Additional Employees', starter: '$10/employee', scheduling: '$10/employee', growth: '$10/employee', business: '$10/employee', fieldOps: '$10/employee', performance: '$10/employee', command: '$10/employee' },
+      { name: 'Additional Employees', starter: '$25/10 employees', scheduling: '$25/10 employees', growth: '$25/10 employees', business: '$25/10 employees', fieldOps: '$25/10 employees', performance: '$25/10 employees', command: '$25/10 employees' },
       { name: 'White-Label Branding', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
       { name: 'Smart Link Sharing', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
