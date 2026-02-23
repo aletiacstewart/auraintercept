@@ -60,7 +60,7 @@ import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard } from 'lucide-react';
+import { Clapperboard, Video } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -187,6 +187,7 @@ const navGroups: NavGroup[] = [
       { label: 'AI Agent Demo', icon: Clapperboard, href: '/dashboard/ai-agent-demo', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];

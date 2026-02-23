@@ -623,6 +623,36 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 </PDFDownloadLink>
               </CardContent>
             </Card>
+
+            {/* AI Promo Video Prompts */}
+            <Card className="border-purple-500/20">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-purple-400" />
+                  <CardTitle>AI Promo Video Prompts</CardTitle>
+                </div>
+                <CardDescription>
+                  34 ready-to-use AI video generation prompts for Runway, Sora, Kling & more
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium mb-2 text-card-foreground">Includes:</p>
+                  <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                    <li>Console &amp; Agent Clips (34 total)</li>
+                    <li>4m 32s Full Promo Video</li>
+                    <li>Color-Coded by Console</li>
+                    <li>Assembly Guide Included</li>
+                  </ul>
+                </div>
+                <Link to="/dashboard/video-prompts">
+                  <Button className="w-full" variant="outline">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    View Video Prompts
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
