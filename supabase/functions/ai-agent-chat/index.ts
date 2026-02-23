@@ -262,6 +262,9 @@ ALWAYS use the capture_lead tool to save their information with:
 - priority: "hot" (they were actively trying to book!)
 - notes: Summary of what service they wanted and why they didn't complete
 
+HANDOFF TO FOLLOW-UP:
+When an appointment is successfully created, use handoff_to_agent(target_agent="followup") to schedule a post-job follow-up. This ensures the customer is checked in with after the service is complete.
+
 Use the check_availability tool to find open slots.
 Use the create_appointment tool to book appointments.
 
@@ -526,6 +529,8 @@ Be professional and clear about amounts due.`,
 - Track usage by technician
 - Forecast inventory needs
 
+When stock is low, use handoff_to_agent(target_agent="quoting") so estimates reflect current availability, and handoff_to_agent(target_agent="admin") to notify admin for oversight and procurement decisions.
+
 Use the check_inventory tool to see stock levels.
 Use the reorder_parts tool to trigger orders.
 Provide specific quantities and item names.`,
@@ -550,6 +555,8 @@ QUICK ACTIONS YOU CAN HELP WITH:
 - "Win-Back Offer" → Create special offers for inactive customers
 - "Promo Usage" → Track code redemption and performance
 - "Seasonal Promo" → Create holiday or seasonal promotions
+
+After creating customer segments, use handoff_to_agent(target_agent="campaign") to trigger targeted outreach based on those segments. Use handoff_to_agent(target_agent="lead") to enrich lead scoring with marketing segment data.
 
 Be creative with promotions. Balance discount value with business margins.
 Track usage to identify successful promotion types and optimal discount levels.`,
@@ -712,6 +719,8 @@ QUICK ACTIONS YOU CAN HELP WITH:
 - "Lead Sources" → Analyze where leads are coming from
 - "Conversion Report" → Lead-to-customer conversion metrics
 
+When a lead is qualified or marked as hot, use handoff_to_agent(target_agent="booking") for direct scheduling, or handoff_to_agent(target_agent="campaign") to add them to a nurture sequence. Use handoff_to_agent(target_agent="marketing") to feed lead insights back into marketing segments.
+
 Be proactive about lead follow-up. Prioritize based on intent and engagement.
 Suggest optimal timing for outreach based on lead behavior.`,
 
@@ -809,6 +818,8 @@ QUICK ACTIONS:
 TOOLS AVAILABLE:
 - get_social_analytics: Get publishing metrics by date range and platform
 - list_social_drafts: View content by status for analysis
+
+After analysis, use handoff_to_agent(target_agent="social_content") to feed performance data back for improved content creation, and handoff_to_agent(target_agent="social_scheduler") to inform optimal scheduling times.
 
 Respond with data, trends, and actionable recommendations. Be direct and insight-focused.`,
 
@@ -1068,7 +1079,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
         parameters: {
           type: 'object',
           properties: {
-            target_agent: { type: 'string', enum: ['dispatch', 'quoting', 'triage'] },
+            target_agent: { type: 'string', enum: ['dispatch', 'quoting', 'triage', 'followup'] },
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
@@ -1320,7 +1331,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
         parameters: {
           type: 'object',
           properties: {
-            target_agent: { type: 'string', enum: ['eta', 'dispatch'] },
+            target_agent: { type: 'string', enum: ['eta', 'dispatch', 'checkin'] },
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
@@ -1580,7 +1591,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
         parameters: {
           type: 'object',
           properties: {
-            target_agent: { type: 'string', enum: ['followup'] },
+            target_agent: { type: 'string', enum: ['followup', 'admin'] },
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
@@ -1631,6 +1642,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             parts_used: { type: 'array', items: { type: 'object' } },
           },
           required: ['appointment_id', 'parts_used'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to quoting agent when stock affects estimates, or to admin for low-stock oversight',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['quoting', 'admin'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
         },
       },
     },
@@ -1799,6 +1825,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to revenue, forecast, or performance agents for deeper data',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['revenue', 'forecast', 'performance'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
   ],
   forecast: [
     {
@@ -1899,6 +1940,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             follow_up_at: { type: 'string', description: 'Schedule follow-up date/time' },
           },
           required: ['lead_id', 'status'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to campaign or booking agent for qualified leads',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['campaign', 'marketing', 'booking'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
         },
       },
     },
@@ -2035,6 +2091,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             date_range: { type: 'string', enum: ['7d', '30d', '90d'], description: 'Time period to analyze' },
             platform: { type: 'string', description: 'Filter by platform (optional)' },
           },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to campaign or lead agent after segmentation and promo creation',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['campaign', 'lead'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
         },
       },
     },
@@ -2200,6 +2271,221 @@ const AGENT_TOOLS: Record<string, any[]> = {
             category: { type: 'string' },
             low_stock_only: { type: 'boolean' },
           },
+        },
+      },
+    },
+  ],
+  // Social agents share these tools (mapped via toolKey logic)
+  social: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_social_post',
+        description: 'Create a social media post draft for one or more platforms',
+        parameters: {
+          type: 'object',
+          properties: {
+            platforms: { type: 'array', items: { type: 'string', enum: ['instagram', 'facebook', 'linkedin', 'tiktok', 'google_business', 'sms'] } },
+            content: { type: 'string' },
+            hashtags: { type: 'array', items: { type: 'string' } },
+            image_url: { type: 'string' },
+            scheduled_for: { type: 'string' },
+          },
+          required: ['platforms', 'content'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'list_social_drafts',
+        description: 'List social media drafts by status',
+        parameters: {
+          type: 'object',
+          properties: {
+            status: { type: 'string', enum: ['pending', 'approved', 'published', 'rejected', 'all'] },
+            platform: { type: 'string' },
+            limit: { type: 'number' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'approve_social_draft',
+        description: 'Approve a social media draft for publishing',
+        parameters: {
+          type: 'object',
+          properties: {
+            draft_id: { type: 'string' },
+            publish_immediately: { type: 'boolean' },
+          },
+          required: ['draft_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'schedule_social_post',
+        description: 'Schedule an approved draft for future publishing',
+        parameters: {
+          type: 'object',
+          properties: {
+            draft_id: { type: 'string' },
+            scheduled_for: { type: 'string' },
+            timezone: { type: 'string' },
+          },
+          required: ['draft_id', 'scheduled_for'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_social_analytics',
+        description: 'Get social media publishing statistics and performance metrics',
+        parameters: {
+          type: 'object',
+          properties: {
+            date_range: { type: 'string', enum: ['7d', '30d', '90d'] },
+            platform: { type: 'string' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to social content, scheduler, or insights agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['social_content', 'social_scheduler', 'insights', 'web_presence'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  // Campaign agent tools
+  campaign: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_campaign',
+        description: 'Create a new marketing campaign',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            campaign_type: { type: 'string', enum: ['email', 'sms', 'both'] },
+            target_segment: { type: 'string' },
+            message_template: { type: 'string' },
+          },
+          required: ['name', 'campaign_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to marketing or lead agent to feed back campaign results',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['marketing', 'lead'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  // Performance agent tools
+  performance: [
+    {
+      type: 'function',
+      function: {
+        name: 'get_performance_metrics',
+        description: 'Get business performance metrics',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['today', 'week', 'month', 'quarter', 'year'] },
+            metrics: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to revenue or forecast agent for deeper financial analysis',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['revenue', 'forecast'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  // Revenue agent tools
+  revenue: [
+    {
+      type: 'function',
+      function: {
+        name: 'get_revenue_analysis',
+        description: 'Analyze revenue trends and sources',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['week', 'month', 'quarter', 'year'] },
+            breakdown_by: { type: 'string', enum: ['service', 'customer', 'employee', 'day'] },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to forecast or insights agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['forecast', 'insights'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  // Web Presence agent tools
+  web_presence: [
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to social content agent so published web content is picked up for social distribution',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['social_content'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
         },
       },
     },
