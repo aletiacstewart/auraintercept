@@ -1,40 +1,48 @@
 import { type TutorialStep } from '@/hooks/useTutorial';
 
-export const dashboardTutorialSteps: TutorialStep[] = [
-  // Overview
+// ─── SHARED STEPS (all roles/plans) ───────────────────────────────────────────
+
+const sharedWelcome: TutorialStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to Aura Intercept',
-    description: 'This tutorial walks you through every section of the platform. You\'ll learn how your AI agents, consoles, and integrations work together to automate your business.',
-    tip: 'You can pause and resume this tutorial anytime — your progress is saved.',
+    description: 'This tutorial walks you through every section of the platform. Your AI agents, consoles, and integrations work together to automate your business 24/7.',
+    tip: 'Your progress is saved — pause and resume anytime.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'dashboard-overview',
-    title: 'Your Dashboard',
-    description: 'This is your command center. It shows key metrics, upcoming appointments, and agent activity at a glance.',
-    tip: 'The dashboard adapts based on your subscription tier and role.',
+    title: 'Dashboard — Your Command Center',
+    description: 'The dashboard shows key metrics, upcoming appointments, agent activity, and a real-time feed of everything happening in your business at a glance.',
+    tip: 'The dashboard adapts based on your subscription tier and role. Higher tiers unlock more panels and AI analytics.',
     targetSelector: '[data-tour-id="main-content"]',
     route: '/dashboard',
     position: 'bottom',
   },
+];
+
+// ─── COMPANY ADMIN & PLATFORM ADMIN STEPS ──────────────────────────────────
+
+const adminSteps: TutorialStep[] = [
+  // Overview
   {
     id: 'quick-setup',
     title: 'Quick Setup',
-    description: 'Configure your company profile, business hours, service types, and branding. This information powers your AI agents\' responses.',
-    tryIt: 'Click Quick Setup in the sidebar to explore company settings.',
+    description: 'Your first stop after signing up. Configure your company profile, business hours, service types, employee info, and branding. Everything here powers how your AI agents respond to customers.',
+    tryIt: 'Click Quick Setup to configure your company before going live.',
     targetSelector: '[data-tour-id="nav-quick-setup"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Customer Console
   {
     id: 'customer-portal',
     title: 'Customer Portal Console',
-    description: 'Manage how customers interact with your business. This console handles appointment booking, AI chat, and customer communications.',
-    tip: 'Your customers get a free mobile-friendly portal with real-time tracking.',
+    description: 'The live AI-powered console your team uses to monitor customer interactions. See AI chat conversations, appointment bookings, and customer messages in real-time.',
+    tip: 'Customers get a free mobile-friendly portal with AI chat, appointment tracking, and direct contact links.',
     targetSelector: '[data-tour-id="nav-customer-portal"]',
     route: '/dashboard',
     position: 'right',
@@ -42,81 +50,124 @@ export const dashboardTutorialSteps: TutorialStep[] = [
   {
     id: 'customer-website-app',
     title: 'Customer Website App',
-    description: 'Embed an AI chat widget on your website. Customers can book appointments, get quotes, and chat with your AI receptionist 24/7.',
+    description: 'Embed a branded AI chat widget on your website. Customers can book appointments, request quotes, and chat with your AI receptionist 24/7 — directly from your site.',
+    tip: 'Copy the embed code from this page and paste it into your website\'s HTML.',
     targetSelector: '[data-tour-id="nav-customer-website-app"]',
     route: '/dashboard',
     position: 'right',
   },
+  {
+    id: 'customer-portal-install',
+    title: 'Customer Portal App Install',
+    description: 'Guide your customers through installing the Aura customer portal as a Progressive Web App (PWA) on their phone — giving them a native-app-like experience for tracking and booking.',
+    targetSelector: '[data-tour-id="nav-customer-portal-install"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+
   // Business Management
   {
     id: 'business-mgt',
-    title: 'Business Management Console',
-    description: 'Your central hub for operations: appointments, leads, quotes, invoices, inventory, and employee management all in one place.',
-    tryIt: 'Open the Business Mgt Ops Console to see the Aura Live activity feed.',
+    title: 'Business Mgt Ops Console',
+    description: 'Your central hub for daily operations. Manage appointments, leads, quotes, invoices, and inventory all in one place. Includes the Aura Live activity feed for real-time AI events.',
+    tryIt: 'Open Business Mgt Ops to see the live activity feed and all operational modules.',
     targetSelector: '[data-tour-id="nav-business-mgt-ops"]',
     route: '/dashboard',
     position: 'right',
   },
   {
+    id: 'business-mgt-install',
+    title: 'Business Mgt App Install',
+    description: 'Install the Business Management console as a PWA on your device for fast mobile access to operations, quotes, and customer records — no app store required.',
+    targetSelector: '[data-tour-id="nav-business-mgt-install"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
     id: 'analytics-reports',
-    title: 'Analytics & Reports',
-    description: 'Deep-dive analytics powered by AI. Revenue trends, customer insights, performance metrics, and forecasting — all generated automatically.',
-    tip: 'Available on Performance and Command tiers.',
+    title: 'Analytics & Reports Ops',
+    description: 'AI-powered deep-dive analytics. Revenue trends, customer lifetime value, agent performance, conversion rates, and business forecasting — all generated automatically.',
+    tip: 'Available on Performance and Command tiers. Upgrade to unlock predictive revenue and customer insights.',
     targetSelector: '[data-tour-id="nav-analytics-reports"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Marketing
   {
     id: 'marketing-sales',
     title: 'Outreach & Sales Ops',
-    description: 'Run email campaigns, SMS blasts, and lead nurturing sequences. The marketing agent creates content, and the campaign agent handles delivery.',
+    description: 'Run SMS and email campaigns, win-back sequences, referral programs, and seasonal promos. The AI Campaign agent creates content and the Marketing agent handles delivery and tracking.',
+    tip: 'Available on Growth tier and above. Build your customer list by syncing with your appointment history.',
     targetSelector: '[data-tour-id="nav-marketing-sales"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Social Media
   {
     id: 'social-media',
     title: 'Social Media Ops',
-    description: 'Schedule posts, analyze engagement, and manage your social presence across platforms. AI generates content tailored to your brand voice.',
+    description: 'Schedule posts, generate AI content, and track engagement across Facebook, Instagram, and more. The Social Content agent creates posts tailored to your brand voice automatically.',
+    tip: 'Available on Growth tier and above. Connect your social accounts under 3rd Party Integrations first.',
     targetSelector: '[data-tour-id="nav-social-media"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Web Presence
   {
     id: 'web-presence',
     title: 'Web Presence Manager',
-    description: 'Build and manage your company website with AI-powered content generation, SEO optimization, and blog management.',
+    description: 'Build and manage your company website with AI-generated pages, SEO optimization, blog management, and an embeddable customer chat widget — all without a developer.',
+    tip: 'Available on Business tier and above. AI generates content using your company profile and knowledge base.',
     targetSelector: '[data-tour-id="nav-web-presence"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Field Ops
   {
     id: 'field-ops',
-    title: 'Technician-Field Ops',
-    description: 'Manage field technicians with job assignments, route optimization, check-ins, and real-time tracking. Technicians get their own mobile app.',
+    title: 'Technician-Field Ops Console',
+    description: 'Manage your field technicians from a live dashboard. View job assignments, track technician locations on a map, monitor check-ins, and see job progress in real time.',
+    tip: 'Available on Field Ops tier and above. Technicians get their own mobile app with GPS check-ins.',
     targetSelector: '[data-tour-id="nav-field-ops"]',
     route: '/dashboard',
     position: 'right',
   },
   {
+    id: 'field-ops-install',
+    title: 'Technician Field Ops App Install',
+    description: 'Guide technicians through installing the Field Ops mobile app as a PWA. They\'ll get job assignments, GPS navigation, check-in tools, and customer info on their phone.',
+    targetSelector: '[data-tour-id="nav-field-ops-install"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
     id: 'dispatch-ops',
-    title: 'Dispatch-Field Ops',
-    description: 'Smart dispatching with AI-powered technician assignment based on location, skills, and workload. Includes live map tracking.',
-    tip: 'The dispatch agent automatically assigns the best technician for each job.',
+    title: 'Dispatch-Field Ops Console',
+    description: 'Smart AI dispatching with automatic technician assignment based on proximity, availability, skills, and workload. Includes a live map view and real-time job status updates.',
+    tip: 'The Dispatch AI agent automatically assigns the best-matched technician for each incoming job request.',
     targetSelector: '[data-tour-id="nav-dispatch-ops"]',
     route: '/dashboard',
     position: 'right',
   },
+  {
+    id: 'dispatch-ops-install',
+    title: 'Dispatch Field Ops App Install',
+    description: 'Install the Dispatch console as a PWA on your dispatcher\'s device for mobile dispatching, live map tracking, and job management from anywhere.',
+    targetSelector: '[data-tour-id="nav-dispatch-ops-install"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+
   // Configuration
   {
     id: 'ai-operatives-hub',
     title: 'AI Operatives Hub',
-    description: 'The nerve center of your AI workforce. Enable/disable agents, monitor performance, view real-time events, and configure agent behavior.',
-    tryIt: 'Open the Hub to see all 24 AI agents and their health status.',
+    description: 'The nerve center of your AI workforce. Enable or disable any of the 24 AI agents, monitor their performance metrics, view real-time event logs, and fine-tune agent behavior.',
+    tryIt: 'Open the Hub to see all 24 AI Operatives, their health status, and enable the ones you need.',
     targetSelector: '[data-tour-id="nav-ai-operatives"]',
     route: '/dashboard',
     position: 'right',
@@ -124,8 +175,8 @@ export const dashboardTutorialSteps: TutorialStep[] = [
   {
     id: 'knowledge-base',
     title: 'Knowledge Base',
-    description: 'Train your AI agents with company-specific information. Upload FAQs, service details, pricing, and policies that agents reference during conversations.',
-    tip: 'The more you add, the smarter your agents become.',
+    description: 'Train your AI agents with company-specific information. Upload FAQs, service details, pricing, policies, and common answers that agents reference during every conversation.',
+    tip: 'The more detailed your Knowledge Base, the more accurate and helpful your AI agents become. Start with your top 10 FAQs.',
     targetSelector: '[data-tour-id="nav-knowledge-base"]',
     route: '/dashboard',
     position: 'right',
@@ -133,50 +184,55 @@ export const dashboardTutorialSteps: TutorialStep[] = [
   {
     id: 'calculators',
     title: 'Cost Calculators',
-    description: 'Estimate your monthly costs for SMS, email, voice, and other services based on your appointment volume.',
+    description: 'Estimate your monthly platform costs based on appointment volume, communication channels (SMS, email, voice), and average transaction values before you commit.',
+    tip: 'Use the calculator to compare costs across tiers and find the right plan for your business size.',
     targetSelector: '[data-tour-id="nav-calculators"]',
     route: '/dashboard',
     position: 'right',
   },
+
   // Integrations
   {
     id: 'integrations-overview',
-    title: '3rd Party Integrations',
-    description: 'Connect external services that power your AI agents: voice (ElevenLabs), SMS (SignalWire), email (Resend), calendar (Google), and more.',
-    tryIt: 'Click 3rd Party Overview to see all available integrations and their setup status.',
+    title: '3rd Party Integrations Overview',
+    description: 'Connect the external services that power your AI agents: voice (ElevenLabs), SMS & phone (SignalWire), email (Resend), calendar (Google), social media, and AI research (Tavily).',
+    tryIt: 'Click 3rd Party Overview to see all available integrations and their current setup status.',
     targetSelector: '[data-tour-id="nav-integrations-overview"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'voice-integration',
-    title: 'Voice Agent (ElevenLabs)',
-    description: 'Connect ElevenLabs for natural-sounding AI voice conversations. Your AI receptionist answers calls with a human-like voice 24/7.',
+    title: 'Voice Agent — ElevenLabs',
+    description: 'Connect ElevenLabs for natural, human-sounding AI voice conversations. Your AI Receptionist answers every incoming call with a chosen voice, 24/7 — no hold times.',
+    tip: 'Choose from dozens of voice options or clone your own. The voice agent handles calls even when your office is closed.',
     targetSelector: '[data-tour-id="nav-voice-agent"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'sms-integration',
-    title: 'Voice & SMS (SignalWire)',
-    description: 'Set up phone numbers for inbound/outbound calling and SMS. Handles appointment reminders, confirmations, and two-way messaging.',
+    title: 'Voice & SMS — SignalWire',
+    description: 'Set up phone numbers for inbound and outbound calling plus two-way SMS. Handles appointment confirmations, reminders, win-back messages, and emergency alerts.',
+    tip: 'SignalWire provides the phone infrastructure. Get a local or toll-free number and configure call routing rules here.',
     targetSelector: '[data-tour-id="nav-voice-sms"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'email-integration',
-    title: 'Email (Resend)',
-    description: 'Configure email for appointment confirmations, reminders, marketing campaigns, and review requests.',
+    title: 'Email — Resend',
+    description: 'Configure transactional email for appointment confirmations, reminders, marketing campaigns, review requests, and follow-up sequences using Resend\'s reliable delivery.',
+    tip: 'Use your own domain for best deliverability. Add your domain in Resend and paste the API key here.',
     targetSelector: '[data-tour-id="nav-email"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'calendar-integration',
-    title: 'Calendar (Google)',
-    description: 'Sync appointments bidirectionally with Google Calendar. New bookings appear on your calendar, and calendar events sync back.',
-    tip: 'Use the same email for signup and Google Calendar for automatic connection.',
+    title: 'Calendar — Google',
+    description: 'Sync appointments bidirectionally with Google Calendar. New bookings automatically appear on your calendar, and events created in Google Calendar sync back to the platform.',
+    tip: 'Use the same email address for your Aura account and Google Calendar for automatic sync detection.',
     targetSelector: '[data-tour-id="nav-calendar"]',
     route: '/dashboard',
     position: 'right',
@@ -184,45 +240,204 @@ export const dashboardTutorialSteps: TutorialStep[] = [
   {
     id: 'social-integration',
     title: 'Social Media Integration',
-    description: 'Connect your Facebook and Instagram pages for automated content publishing and engagement tracking.',
+    description: 'Connect your Facebook and Instagram business pages to enable automated content publishing, scheduled posts, and engagement analytics from the Social Media Ops console.',
     targetSelector: '[data-tour-id="nav-social-integration"]',
     route: '/dashboard',
     position: 'right',
   },
   {
     id: 'tavily-integration',
-    title: 'AI Research (Tavily)',
-    description: 'Enhance AI content quality with real-time web research. Agents use Tavily to find current information for blog posts, social content, and customer answers.',
+    title: 'AI Research — Tavily',
+    description: 'Supercharge your AI agents with real-time web research. Tavily lets agents find current information when generating blog posts, social content, and answering complex customer questions.',
+    tip: 'Get a free Tavily API key at tavily.com. It significantly improves the quality of AI-generated content.',
     targetSelector: '[data-tour-id="nav-ai-research"]',
     route: '/dashboard',
     position: 'right',
   },
-  // Subscription
-  {
-    id: 'subscription',
-    title: 'Subscription & Billing',
-    description: 'Manage your plan, view usage, and upgrade or downgrade your subscription tier. Your 30-day trial includes all Command-tier features.',
-    targetSelector: '[data-tour-id="nav-subscription"]',
-    route: '/dashboard',
-    position: 'right',
-  },
+
   // Help
   {
     id: 'help',
     title: 'Help & Support',
-    description: 'Access documentation, platform guides, and the AI help center. Report issues directly from the sidebar.',
+    description: 'Access platform documentation, step-by-step guides, and the AI Help Center. Use the Aura Assistant (floating button) for instant answers, or submit a bug report directly from the sidebar.',
+    tip: 'The AI Help Center knows your current page and surfaces relevant tips automatically.',
     targetSelector: '[data-tour-id="nav-help"]',
     route: '/dashboard',
     position: 'right',
   },
-  // Completion
+];
+
+// ─── PLATFORM ADMIN-ONLY STEPS ─────────────────────────────────────────────
+
+const platformAdminSteps: TutorialStep[] = [
+  {
+    id: 'subscription-analytics',
+    title: 'Subscription Analytics',
+    description: 'Platform-wide revenue and subscription metrics. Track MRR, churn rate, tier distribution, trial conversions, and growth trends across all companies on the platform.',
+    targetSelector: '[data-tour-id="nav-subscription-analytics"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'platform-issues',
+    title: 'Platform Issues',
+    description: 'Monitor and manage bug reports submitted by company admins and employees across the platform. Triage, track status, and resolve issues from a centralized dashboard.',
+    targetSelector: '[data-tour-id="nav-platform-issues"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'platform-guides',
+    title: 'Platform Guides',
+    description: 'Comprehensive documentation for all 7 subscription tiers and 24 AI Operatives. Manage and publish guide content that all users see in their Help section.',
+    targetSelector: '[data-tour-id="nav-platform-guides"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'demo-accounts',
+    title: 'Demo Accounts',
+    description: 'Create and manage demo company accounts for sales presentations and testing. Demo accounts have full platform access without production data.',
+    targetSelector: '[data-tour-id="nav-demo-accounts"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'ai-agent-demo',
+    title: 'AI Agent Flow Demo',
+    description: 'An animated 4-scene visualization of the Aura AI agent network — perfect for client presentations and sales demos. Shows how the AI Receptionist routes to specialized agents.',
+    tryIt: 'Click AI Agent Demo to launch the full-screen animated demo. Use Auto-Play for a hands-free walkthrough.',
+    targetSelector: '[data-tour-id="nav-ai-agent-demo"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'architecture',
+    title: 'Platform Architecture',
+    description: 'A technical diagram of the platform\'s AI agent network, data flows, and integration points. Useful for technical discussions and understanding how agents communicate.',
+    targetSelector: '[data-tour-id="nav-architecture"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'export-docs',
+    title: 'Export Documentation',
+    description: 'Generate and download all 11 platform documentation PDFs — including tier comparisons, agent guides, integration instructions, and pricing sheets — for offline sharing.',
+    tip: 'All exported PDFs are generated from the centralized documentation config to ensure they\'re always up to date.',
+    targetSelector: '[data-tour-id="nav-export-docs"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+];
+
+// ─── EMPLOYEE-SPECIFIC STEPS ───────────────────────────────────────────────
+
+const employeeSteps: TutorialStep[] = [
+  {
+    id: 'my-schedule',
+    title: 'My Schedule',
+    description: 'Your personal appointment calendar. View all upcoming jobs assigned to you, see customer details, and check service notes before each appointment.',
+    tryIt: 'Check your schedule each morning to see your day\'s jobs and customer addresses.',
+    targetSelector: '[data-tour-id="nav-my-schedule"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'tech-ai-console',
+    title: 'AI Console',
+    description: 'Your AI-powered assistant for customer interactions. Use this to handle chats, answer customer questions, and get AI-suggested responses for complex inquiries.',
+    tip: 'The AI console is pre-trained with your company\'s knowledge base so responses are accurate and on-brand.',
+    targetSelector: '[data-tour-id="nav-tech-ai-console"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'my-jobs',
+    title: 'My Jobs',
+    description: 'A full list of all jobs assigned to you — past, present, and upcoming. See job status, customer info, notes, and complete jobs directly from this page.',
+    tryIt: 'Open My Jobs to see your current workload and mark completed jobs.',
+    targetSelector: '[data-tour-id="nav-my-jobs"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'tech-calendar',
+    title: 'Calendar',
+    description: 'A calendar view of all your assigned appointments. Get a weekly or monthly overview of your schedule and quickly navigate to specific job details.',
+    targetSelector: '[data-tour-id="nav-tech-calendar"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'job-history',
+    title: 'Job History',
+    description: 'A complete log of all jobs you\'ve completed. Review past customer interactions, service notes, and outcomes for reference or re-scheduling.',
+    targetSelector: '[data-tour-id="nav-job-history"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'availability',
+    title: 'Availability',
+    description: 'Set your weekly availability so the AI Dispatch agent only assigns jobs when you\'re actually working. Keep this updated to prevent scheduling conflicts.',
+    tip: 'Updating your availability helps the AI assign jobs more accurately and improves your team\'s overall scheduling efficiency.',
+    targetSelector: '[data-tour-id="nav-availability"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'tech-profile',
+    title: 'My Profile',
+    description: 'Update your personal information, contact details, service skills, and notification preferences. Your profile helps the dispatch AI match you to the right jobs.',
+    targetSelector: '[data-tour-id="nav-tech-profile"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+  {
+    id: 'tech-install',
+    title: 'Install the App',
+    description: 'Install Aura as a Progressive Web App on your phone for fast access to your jobs, schedule, and AI console. Works like a native app — no app store needed.',
+    tryIt: 'Follow the install instructions on this page to add Aura to your home screen.',
+    targetSelector: '[data-tour-id="nav-tech-install"]',
+    route: '/dashboard',
+    position: 'right',
+  },
+];
+
+// ─── COMPLETION ────────────────────────────────────────────────────────────
+
+const completionStep: TutorialStep[] = [
   {
     id: 'tutorial-complete',
     title: 'Tutorial Complete! 🎉',
-    description: 'You\'ve explored all sections of Aura Intercept. Your AI agents are ready to start automating your business. Start by configuring Quick Setup, then connect your integrations.',
-    tip: 'Need help? Use the floating Aura button in the bottom-right corner to chat with your AI assistant anytime.',
+    description: 'You\'ve explored all sections of Aura Intercept. Your AI agents are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
+    tip: 'Use the floating Aura button (bottom-right) anytime to get AI-powered help on the page you\'re viewing.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',
     position: 'right',
   },
+];
+
+// ─── EXPORTS ───────────────────────────────────────────────────────────────
+
+/** Steps for Company Admin and Platform Admin */
+export const dashboardTutorialSteps: TutorialStep[] = [
+  ...sharedWelcome,
+  ...adminSteps,
+  ...completionStep,
+];
+
+/** Steps for Platform Admin (adds platform-only items after admin steps) */
+export const platformAdminTutorialSteps: TutorialStep[] = [
+  ...sharedWelcome,
+  ...adminSteps,
+  ...platformAdminSteps,
+  ...completionStep,
+];
+
+/** Steps for Employee role */
+export const employeeTutorialSteps: TutorialStep[] = [
+  ...sharedWelcome,
+  ...employeeSteps,
+  ...completionStep,
 ];

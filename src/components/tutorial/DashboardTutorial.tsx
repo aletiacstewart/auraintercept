@@ -1,7 +1,8 @@
 import { useTutorial } from '@/hooks/useTutorial';
-import { dashboardTutorialSteps } from './tutorialSteps';
+import { dashboardTutorialSteps, platformAdminTutorialSteps, employeeTutorialSteps } from './tutorialSteps';
 import { TutorialStepOverlay } from './TutorialStep';
 import { createContext, useContext } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TutorialContextType {
   start: () => void;
@@ -13,9 +14,18 @@ const TutorialContext = createContext<TutorialContextType>({ start: () => {}, is
 export const useTutorialContext = () => useContext(TutorialContext);
 
 export function DashboardTutorialProvider({ children }: { children: React.ReactNode }) {
+  const { userRole } = useAuth();
+
+  const steps =
+    userRole === 'platform_admin'
+      ? platformAdminTutorialSteps
+      : userRole === 'employee'
+      ? employeeTutorialSteps
+      : dashboardTutorialSteps;
+
   const tutorial = useTutorial({
-    persistenceKey: 'dashboard-tutorial-v1',
-    steps: dashboardTutorialSteps,
+    persistenceKey: `dashboard-tutorial-v2-${userRole ?? 'guest'}`,
+    steps,
   });
 
   return (
