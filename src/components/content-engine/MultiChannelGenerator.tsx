@@ -24,12 +24,15 @@ import {
   Save,
   ImageIcon,
   Download,
+  Lightbulb,
+  LayoutTemplate,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSelector';
 
 type Channel = 'website' | 'social' | 'campaign' | 'blog' | 'sms';
 
@@ -57,6 +60,8 @@ export function MultiChannelGenerator() {
   const [topic, setTopic] = useState('');
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(['social']);
   const [generating, setGenerating] = useState(false);
+  const [suggestingTopics, setSuggestingTopics] = useState(false);
+  const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
   const [results, setResults] = useState<Record<string, unknown>>({});
   const [activeResultTab, setActiveResultTab] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -97,6 +102,31 @@ export function MultiChannelGenerator() {
       if (error) console.error('Error tracking generation:', error);
     },
   });
+
+  const handleSuggestTopics = async () => {
+    setSuggestingTopics(true);
+    setTopicSuggestions([]);
+    try {
+      const { data, error } = await supabase.functions.invoke('content-engine', {
+        body: {
+          channel: 'suggestions',
+          contentType: 'suggestions',
+          topic: topic.trim() || 'general business',
+          companyId: effectiveCompanyId,
+        },
+      });
+      if (error) throw error;
+      const suggestions = data?.content;
+      if (Array.isArray(suggestions)) {
+        setTopicSuggestions(suggestions);
+      }
+    } catch (e) {
+      console.error('Topic suggestion failed:', e);
+      toast({ title: 'Could not generate suggestions', variant: 'destructive' });
+    } finally {
+      setSuggestingTopics(false);
+    }
+  };
 
   const toggleChannel = (channel: Channel) => {
     setSelectedChannels(prev => 
@@ -585,7 +615,24 @@ export function MultiChannelGenerator() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="topic">Topic or Campaign Theme</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="topic">Topic or Campaign Theme</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 h-7 text-xs"
+                disabled={suggestingTopics || !effectiveCompanyId}
+                onClick={handleSuggestTopics}
+              >
+                {suggestingTopics ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Lightbulb className="h-3 w-3" />
+                )}
+                AI Suggest
+              </Button>
+            </div>
             <Textarea
               id="topic"
               placeholder="e.g., Spring AC Maintenance Special - 20% off tune-ups"
@@ -593,6 +640,35 @@ export function MultiChannelGenerator() {
               onChange={(e) => setTopic(e.target.value)}
               className="min-h-[100px]"
             />
+            {topicSuggestions.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">Click a suggestion to use it:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {topicSuggestions.map((s, i) => (
+                    <Badge
+                      key={i}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-primary/10 hover:border-primary transition-colors text-xs py-1 px-2"
+                      onClick={() => { setTopic(s); setTopicSuggestions([]); }}
+                    >
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="pt-1">
+              <div className="flex items-center gap-2 mb-2">
+                <LayoutTemplate className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground font-medium">Industry Templates</span>
+              </div>
+              <IndustryTemplateSelector
+                onSelectTemplate={(template) => {
+                  setTopic(template);
+                  setTopicSuggestions([]);
+                }}
+              />
+            </div>
           </div>
 
           <div className="space-y-3">
