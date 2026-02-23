@@ -1063,22 +1063,13 @@ export default function Auth() {
                       <p className="text-[8px] text-white/60">Required for: Growth+ • Optional: Others</p>
                     </div>
 
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
+                    <div className="rounded-lg p-2 col-span-2" style={{ backgroundColor: '#2a3d4e' }}>
                       <div className="flex items-center gap-1.5 mb-0.5">
                         <Brain className="w-3 h-3 text-blue-400" />
                         <span className="font-semibold text-[9px] text-white">Google Gemini</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free: 15 req/min</p>
                       <p className="text-[8px] text-white/60">Required for: All tiers (AI content)</p>
-                    </div>
-
-                    <div className="rounded-lg p-2 col-span-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Search className="w-3 h-3 text-orange-400" />
-                        <span className="font-semibold text-[9px] text-white">Tavily</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
-                      <p className="text-[8px] text-white/60">Optional for: All tiers • Enhances content quality</p>
                     </div>
                   </div>
                 </div>
