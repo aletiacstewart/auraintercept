@@ -57,6 +57,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
+        // Silently ignore auth errors (stale tokens during login/logout transitions)
+        const errMsg = typeof error === 'object' && error !== null ? JSON.stringify(error) : String(error);
+        if (errMsg.includes('Auth session missing') || errMsg.includes('401') || errMsg.includes('Unauthorized')) {
+          console.warn('Subscription check skipped: session not ready');
+          return;
+        }
         console.error('Error checking subscription:', error);
         return;
       }
