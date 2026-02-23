@@ -1083,16 +1083,6 @@ export default function Auth() {
                   </div>
                 </div>
 
-                {/* Concierge Onboarding */}
-                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-1.5">
-                    <Headphones className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <h4 className="text-xs font-semibold text-blue-300 mb-1">Concierge Onboarding</h4>
-                  <p className="text-[10px] text-blue-200/80">
-                    We'll configure all 3rd party integrations for a one-time fee of <span className="font-bold text-blue-100">$500</span>.
-                  </p>
-                </div>
               </div>
             )}
 
@@ -1324,7 +1314,17 @@ export default function Auth() {
 
           {/* Billing/Onboarding Notices - Only show for company mode */}
           {mode === 'company' && (
-            <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <div className="mt-8 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 flex flex-col items-center text-center">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
+                  <Headphones className="w-5 h-5 text-blue-400" />
+                </div>
+                <h4 className="font-semibold text-blue-400 text-sm mb-2">Concierge Onboarding</h4>
+                <p className="text-xs text-foreground">
+                  We'll configure all 3rd party integrations for a one-time fee of <span className="font-bold text-blue-300">$500</span>.
+                </p>
+              </div>
+
               <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col items-center text-center">
                 <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center mb-3">
                   <DollarSign className="w-5 h-5 text-amber-500" />
