@@ -1,84 +1,60 @@
 
-# Fix AI Agent Flow Connections — Complete Audit & Repair
+# Implement Real Agent Handoffs & Event Routing Connections
 
-## Issues Found
+## What This Does
+The AI Agent Demo shows the correct logical flow — but the actual backend (the two edge functions that power every real agent interaction) is missing many of those connections. This update synchronizes the backend with the demonstrated architecture.
 
-After a thorough review of all 10 scenes, here are all the broken or missing connections:
+## Two Files to Update
 
-### Scene 2 — Customer Portal
-- Missing: `triage → review` — Receptionist should also be able to directly trigger a review request (not just via Follow-up)
-- Missing: `booking → followup` — After a job is booked and completed, Scheduling should trigger Follow-up (currently triage → followup directly, but booking is the event that initiates follow-up)
+### 1. `supabase/functions/ai-orchestrator/index.ts`
+This file contains `EVENT_ROUTING` — the table that automatically fans out events to downstream agents. When one agent fires an event (e.g., `job_complete`), the orchestrator reads this table to know which agents to notify.
 
-### Scene 3 — Outreach & Sales
-- Missing: `campaign → marketing_ag` — Campaign results feed back into Marketing for segmentation updates
-- Missing: `lead → marketing_ag` — Lead qualification data feeds into Marketing segments
+**Missing routes to add:**
 
-### Scene 4 — Social Media
-- Missing: `social_analytics → social_content` — Analytics results feed back to Content creation (the feedback loop that makes content smarter over time)
-- Missing: `social_analytics → social_scheduler` — Analytics informs scheduling timing (best times to post)
+| Event | Currently Routes To | Add These Targets |
+|---|---|---|
+| `appointment_booked` | dispatch, route, followup | + `inventory` |
+| `job_complete` | quoting, invoice, followup, inventory | + `campaign` |
+| `payment_received` | followup, revenue | + `campaign` |
+| `post_published` | social_analytics, performance | + `insights` |
+| `lead_qualified` | campaign, booking | + `marketing` |
+| `lead_scored` | campaign, marketing | + `booking` |
+| `review_received` | performance, insights | + `campaign` |
+| `inventory_low` | dispatch, quoting | + `admin` |
+| **New event** `quote_approved` | (missing entirely) | `invoice`, `inventory` |
+| **New event** `content_published` | (missing entirely) | `social_analytics`, `web_presence` |
+| **New event** `invoice_paid` | (missing entirely) | `followup`, `revenue`, `campaign` |
 
-### Scene 5 — Creative & Web Presence
-- Missing: `web_presence → f3` (Blog Posts) — Web Presence also publishes blog posts, not just Creative
-- Currently `creative → f3` exists but Web Presence is the one that actually publishes to the site
+---
 
-### Scene 6 — Field Operations
-- Missing: `dispatch → f1` — Dispatch → Skills-Based Assignment feature node has NO connection (f1 is orphaned)
-- Missing: `route → checkin` — Route plan informs Check-in agent (so technician follows the optimized route to arrive at the right time)
-- Missing: `eta → checkin` — ETA feeds into Check-in to trigger arrival notifications
+### 2. `supabase/functions/ai-agent-chat/index.ts`
+This file defines which agents each agent can hand off to (the `handoff_to_agent` tool enum), and which agents have that tool at all. Several agents are missing this tool entirely, making the demo connections impossible to execute.
 
-### Scene 7 — Business Operations
-- Missing: `inventory → quoting` — Inventory levels directly inform Quoting (parts availability affects estimates)
-- Missing: `invoice → admin` — Invoice status/reports feed back to Admin for oversight
+**`handoff_to_agent` tool fixes:**
 
-### Scene 8 — Analytics & Reports
-- Missing: `insights → revenue` — Natural language queries directly pull from Revenue data
-- Missing: `insights → forecast` — Insights also queries Forecast data
-- Missing: `performance → revenue` — Performance KPIs include revenue metrics
-- Missing: `performance → forecast` — Performance data feeds Forecast model
+| Agent | Current Allowed Targets | Fix |
+|---|---|---|
+| `booking` | dispatch, quoting, triage | Add `followup` (booking → followup is the core post-job flow) |
+| `invoice` | followup | Add `admin` (invoice reports feed admin oversight) |
+| `route` | eta, dispatch | Add `checkin` (route plan informs check-in) |
+| `social_analytics` | (no handoff tool) | Add tool with targets: `social_content`, `social_scheduler`, `insights` |
+| `social_content` | (no handoff tool) | Add tool with targets: `social_scheduler`, `web_presence` |
+| `inventory` | (no handoff tool) | Add tool with targets: `quoting`, `admin` (stock levels inform quoting; admin gets low-stock alerts) |
+| `marketing` | (no handoff tool) | Add tool with targets: `campaign`, `lead` (marketing triggers campaigns and enriches lead segments) |
+| `lead` | (no handoff tool) | Add tool with targets: `campaign`, `marketing`, `booking` (qualified leads route to campaign or directly to booking) |
+| `campaign` | (no handoff tool) | Add tool with targets: `marketing`, `lead` (campaign results feed back to marketing and lead scoring) |
+| `insights` | (no handoff tool) | Add tool with targets: `revenue`, `forecast`, `performance` (insights queries these for data) |
+| `performance` | (no handoff tool) | Add tool with targets: `revenue`, `forecast` (performance feeds into revenue and forecast) |
+| `revenue` | (no handoff tool) | Add tool with targets: `forecast`, `insights` |
+| `forecast` | (no handoff tool) | Add tool with targets: `insights`, `performance` |
+| `web_presence` | (no handoff tool) | Add tool with targets: `social_content` (published web content gets picked up by social) |
 
-### Scene 9 — Full Network (most critical — the overview must show all cross-console flows)
-- Missing: `booking → dispatch` — After booking, job is handed to Dispatch for technician assignment (KEY cross-console flow)
-- Missing: `checkin → invoice_ag` — Check-in completion triggers Invoice generation (KEY cross-console flow)
-- Missing: `lead → campaign` — Lead scoring feeds Campaign targeting (currently only `review → campaign` exists)
-- Missing: `lead → marketing_ag` — Leads feed Marketing segments
-- Missing: `marketing_ag → campaign` — Marketing triggers Campaigns
-- Missing: `web_presence → social_content` — Web Presence publishes content that Social picks up
-- Missing: `social_analytics → insights` — Social analytics data feeds the Analytics console Insights agent
-- Missing: `inventory → quoting` — Cross-console: Inventory informs Quoting
-- Missing: `insights → performance` — Analytics agents are fully disconnected from each other in Scene 9
-- Missing: `revenue → forecast` — Same issue
-- `admin` node exists in Scene 9 but has zero connections — needs `admin → quoting`, `admin → inventory`
+**System prompt updates (for agents gaining new handoff capabilities):**
+- `booking` prompt: Add instruction — when appointment is created, use `handoff_to_agent(target_agent="followup")` to schedule follow-up after job completion
+- `social_analytics` prompt: Add instruction — after analysis, use handoff to `social_content` to feed performance data back for improved content creation
+- `inventory` prompt: Add instruction — when stock is low, use handoff to `quoting` so estimates reflect availability, and to `admin` for oversight
+- `lead` prompt: Add instruction — when a lead is qualified/hot, use handoff to `booking` for direct scheduling, or to `campaign` for nurture sequences
+- `marketing` prompt: Add instruction — after creating segments, use handoff to `campaign` to trigger targeted outreach
 
-## Technical Changes
-
-**One file to modify:** `src/pages/AIAgentFlowDemo.tsx`
-
-Changes per scene:
-
-**Scene 2**: Add `booking → followup` connection (triage books → booking → followup is the correct linear flow)
-
-**Scene 3**: Add `lead → marketing_ag` and `campaign → marketing_ag` connections
-
-**Scene 4**: Add `social_analytics → social_content` (feedback loop) and `social_analytics → social_scheduler` connections
-
-**Scene 5**: Add `web_presence → f3` connection so blog posts connect to Web Presence (alongside Creative)
-
-**Scene 6**: Add `dispatch → f1`, `route → checkin`, and `eta → checkin` connections
-
-**Scene 7**: Add `inventory → quoting` and `invoice → admin` connections
-
-**Scene 8**: Add full cross-connections: `insights → revenue`, `insights → forecast`, `performance → revenue`, `performance → forecast`
-
-**Scene 9 (Full Network)**: Add the critical cross-console handoff connections:
-- `booking → dispatch` (Customer Portal → Field Ops)
-- `checkin → invoice_ag` (Field Ops → Business Ops)
-- `lead → marketing_ag`, `marketing_ag → campaign` (within Outreach)
-- `web_presence → social_content` (Creative → Social)
-- `social_analytics → insights` (Social → Analytics)
-- `inventory → quoting` (within Business Ops)
-- `admin → quoting`, `admin → inventory` (Admin oversight)
-- `insights → performance`, `revenue → forecast` (within Analytics)
-
-All `highlightConnections` arrays will be updated to include the new connection indices.
-
-The narration text for Scene 9 will be updated to mention the additional cross-console handoffs: `Booking feeds Dispatch`, `Check-in triggers Invoice`, and `Social Analytics informs Insights`.
+## Deployment
+Both edge functions will be redeployed automatically after the changes are saved. No database migrations are needed — this is purely logic within the two edge function files.
