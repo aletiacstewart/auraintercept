@@ -32,7 +32,7 @@ import { PageHeader } from '@/components/ui/page-header';
 // Route mapping for interactive navigation
 const NAVIGATION_ROUTES: Record<string, string> = {
   'Dashboard': '/dashboard',
-  'AI Agents Hub': '/dashboard/ai-agents-hub',
+  'AI Agents Hub': '/dashboard/ai-operatives-hub',
   'Knowledge Base': '/dashboard/knowledge',
   'Appointments': '/dashboard/appointments',
   'Calendar': '/dashboard/calendar',
@@ -49,16 +49,16 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Integrations → Email': '/dashboard/settings/integrations',
   'Integrations → Payment Connections': '/dashboard/settings/integrations',
   'Integrations → Website Embed': '/dashboard/settings/integrations',
-  'Field Operations': '/dashboard/ai-consoles/field-ops',
-  'Field Operations Console': '/dashboard/ai-consoles/field-ops',
-  'Business Ops Hub': '/dashboard/ai-consoles/business-ops',
-  'Business Ops Console': '/dashboard/ai-consoles/business-ops',
-  'Outreach & Sales Ops': '/dashboard/ai-consoles/marketing',
-  'Marketing Console': '/dashboard/ai-consoles/marketing',
+  'Field Operations': '/dashboard/ai-consoles/field-operations',
+  'Field Operations Console': '/dashboard/ai-consoles/field-operations',
+  'Business Ops Hub': '/dashboard/ai-consoles/business-mgt-ops',
+  'Business Ops Console': '/dashboard/ai-consoles/business-mgt-ops',
+  'Outreach & Sales Ops': '/dashboard/ai-consoles/outreach-sales',
+  'Marketing Console': '/dashboard/ai-consoles/outreach-sales',
   'Social Media Ops': '/dashboard/ai-consoles/social-media',
   'Social Media Console': '/dashboard/ai-consoles/social-media',
-  'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics',
-  'Analytics Console': '/dashboard/ai-consoles/analytics',
+  'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics-reports',
+  'Analytics Console': '/dashboard/ai-consoles/analytics-reports',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
   'Knowledge Base → Services': '/dashboard/knowledge',
   'Knowledge Base → FAQs': '/dashboard/knowledge',
@@ -148,8 +148,8 @@ const guideCategories = [
         duration: '8 min',
         steps: [
           'Customers access portal at /customer-portal or via embedded widget',
-          'Single-Point: Call to Book, Emergency, Services, Hours, Feedback tabs',
-          'Multi-Track+: Full suite with Book Appointment, Get Quote, Track, Billing tabs',
+          'Single-Point: AI Assistant, Services, Contact, Hours tabs',
+          'Multi-Track+: Full suite with Appointments, Voice AI, Contact, Hours tabs',
           'Portal supports multi-company access for customers',
           'Talk to Aura (Voice) included for Single-Point+ tiers',
           'Configure widget embed code in Integrations → Website Embed'
@@ -157,17 +157,17 @@ const guideCategories = [
         tips: ['Widget works on WordPress, Wix, and any HTML site', 'Customers can manage preferences per company']
       },
       {
-        title: '8 Control Centers Overview',
+        title: '7 Control Centers + AI Operatives Hub',
         duration: '12 min',
         steps: [
-          '1. Customer Portal: AI-powered customer engagement (Scheduling+)',
-          '2. Field Operations: GPS dispatch, routing, job management (Field Ops+)',
-          '3. Business Operations: Quoting, invoicing, inventory (Field Ops+)',
+          '1. Customer Portal: AI-powered customer engagement (Connect+)',
+          '2. Field Operations: GPS dispatch, routing, job management (Logistics+)',
+          '3. Business Operations: Quoting, invoicing, inventory (Logistics+)',
           '4. Outreach & Sales Ops: Campaigns, leads, marketing (Growth+)',
           '5. Social Media Ops: 6-platform content creation and scheduling (Growth+)',
-          '6. Creative & Web Presence: Content Engine, website, blog, SEO (Business+)',
+          '6. Creative & Web Presence: Content Engine, website, blog, SEO (Presence+)',
           '7. Analytics & Reports: KPIs, forecasting, exports (Performance+)',
-          '8. AI Operatives Hub: Central agent management (Command only)',
+          'AI Operatives Hub: Central agent management interface (Command only, not a console)',
           'Each console manages specific AI operatives',
           'Access consoles via sidebar navigation'
         ],
@@ -435,12 +435,13 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Customer Portal Console from sidebar',
-          'Tabs: Chat, Voice, Services, Hours, Feedback, Track, Billing',
-          'Chat tab: View and respond to customer conversations',
-          'Voice tab: Monitor Talk to Aura calls',
-          'Services tab: Display service catalog to customers',
-          'Feedback tab: View customer ratings and reviews',
-          'Track tab: Customer appointment status updates',
+          'Tabs: AI Assistant, Services, Appointments (tier-aware), Voice AI (if enabled), Contact, Hours',
+          'AI Assistant tab: Chat with Aura AI for help, booking, tracking',
+          'Services tab: Browse available service catalog',
+          'Appointments tab: View and manage upcoming appointments',
+          'Voice AI tab: Talk to Aura via voice (requires ElevenLabs)',
+          'Contact tab: Phone, email, and address with clickable links',
+          'Hours tab: Business operating hours display',
           'Agents: AI Receptionist, Scheduling, Follow-up, Review'
         ],
         tips: ['Configure widget in Integrations for website embedding', 'Monitor feedback for service improvements']
@@ -491,14 +492,14 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Social Media Ops from sidebar (Growth+ tier)',
-          'Tabs: Home, Social Posts, Analytics',
-          'Home: Overview and quick actions',
-          'Social Posts: Create and manage content for 6 platforms',
-          'Analytics: Engagement metrics across platforms',
+          'Tabs: Home, Create Content, My Posts',
+          'Home: AI Chat with Social Content agent for guidance',
+          'Create Content: MultiChannelGenerator with AI Suggest topics, Industry Templates, and Manual Bridge posting',
+          'My Posts: SocialFeedQueue showing all drafts and published content',
           'Agents: Social Content, Social Scheduler, Social Analytics',
           'Supports: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS'
         ],
-        tips: ['Use Content Wizard for guided creation', 'Schedule posts for optimal engagement times']
+        tips: ['Use AI Suggest for topic inspiration', 'Manual Bridge lets you post without API setup']
       },
       {
         title: 'Creative & Web Presence Console',
@@ -926,7 +927,7 @@ const guideCategories = [
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
           'Monitor payment status and outstanding invoices',
-          'Inventory tab requires Command tier'
+          'Inventory tab requires Performance+ tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard', 'Quote Forge saves time on complex quotes']
       },
@@ -1118,40 +1119,41 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Social Media Ops from sidebar (Growth+ tier)',
-          'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
+          'Tabs: Home, Create Content, My Posts',
           'Supports 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
-          'AI-powered content generation and scheduling',
-          'Cross-platform analytics and engagement tracking',
-          'Content Wizard for guided post creation'
+          'AI-powered content generation via MultiChannelGenerator',
+          'Manual Bridge posting: copy content + open platform composer',
+          'AI Suggest for topic ideas, Industry Templates for quick starts'
         ],
-        tips: ['Start with content templates', 'Schedule posts for optimal engagement times']
+        tips: ['Use AI Suggest for content ideas', 'Manual Bridge requires no API setup']
       },
       {
-        title: '3-Step Content Wizard',
+        title: 'Content Creation with MultiChannelGenerator',
         duration: '12 min',
         steps: [
-          'Step 1 - Template: Choose from pre-built templates or start blank',
-          'Step 2 - Customize: Edit content, add images, apply brand voice',
-          'Step 3 - Schedule: Select platforms and set publish times',
-          'AI auto-adjusts content for platform-specific limits',
-          'Instagram: 2200 chars, Twitter/X: 280 chars, SMS: 160 chars',
-          'Preview posts before scheduling'
+          'Go to Create Content tab in Social Media Ops console',
+          'Click AI Suggest for AI-powered topic recommendations based on your industry',
+          'Or select an Industry Template for pre-built content structures',
+          'Enter your topic and select target platforms',
+          'AI generates platform-optimized content with hashtags',
+          'Use Manual Bridge: click "Copy & Open [Platform]" to post',
+          'Content saved as draft in My Posts tab for tracking'
         ],
-        tips: ['Templates maintain brand consistency', 'Let AI adapt content per platform']
+        tips: ['AI Suggest uses your company profile for relevant topics', 'Update status to published after posting manually']
       },
       {
-        title: 'Platform Configuration',
+        title: 'Posting Strategy (Dual-Mode)',
         duration: '10 min',
         steps: [
           'Navigate to Integrations → Social Media',
-          'Platform admin configures global OAuth credentials in Platform Credentials Settings',
-          'Tenants click "Connect with [Platform]" buttons to authorize accounts',
-          'Supports Meta (Facebook/Instagram), LinkedIn, TikTok, Google Business',
-          'Configure default hashtags and mentions per platform',
-          'Set brand voice guidelines for AI content',
-          'Enable/disable specific platforms per tenant'
+          'Default: Manual Bridge — AI generates content, you copy and paste via deep links',
+          'Advanced: Own API Credentials — register your developer app per platform',
+          'Enter Client ID/Secret in tenant_integrations for automatic publishing via OAuth',
+          'Platform-level automatic posting (one-click connect for all tenants) is Coming Soon',
+          'Configure default hashtags and brand voice for AI content',
+          'Supports Meta (Facebook/Instagram), LinkedIn, TikTok, Google Business'
         ],
-        tips: ['Platform admin does one-time setup; tenants just click Connect', 'Contact admin if "Not Configured" error appears']
+        tips: ['Manual Bridge requires zero API setup', 'Own API Credentials enable scheduled auto-publishing']
       },
       {
         title: 'Social Analytics',
