@@ -221,9 +221,14 @@ export default function AIAgentFlowDemo() {
           </AnimatePresence>
 
           {/* Agent flow area — shared coordinate space for SVG lines and agent cards */}
-          <div className="absolute left-[4%] right-[4%] top-[18%] bottom-[22%]" style={{ position: 'absolute' }}>
-            {/* SVG lines use same coordinate space as agent cards */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
+          {/* Covers from below title to above narration */}
+          <div className="absolute left-0 right-0 top-[16%] bottom-[20%]">
+            {/* SVG lines — rendered behind cards, same percentage coordinate space */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
               <AnimatePresence>
                 {scene.connections.map((conn, i) => {
                   const fromAgent = scene.agents.find(a => a.id === conn.from);
@@ -233,23 +238,23 @@ export default function AIAgentFlowDemo() {
                   return (
                     <motion.line
                       key={`${scene.id}-conn-${i}`}
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: isHighlighted ? 1 : 0, opacity: isHighlighted ? 0.6 : 0.1 }}
-                      transition={{ duration: 0.8, delay: i * 0.15 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: isHighlighted ? 0.7 : 0.15 }}
+                      transition={{ duration: 0.6, delay: i * 0.15 }}
                       x1={fromAgent.x}
                       y1={fromAgent.y}
                       x2={toAgent.x}
                       y2={toAgent.y}
                       stroke="hsl(var(--primary))"
-                      strokeWidth="0.5"
-                      strokeDasharray="1.5 1"
+                      strokeWidth="0.6"
+                      strokeDasharray="2 1.5"
                     />
                   );
                 })}
               </AnimatePresence>
             </svg>
 
-            {/* Agent cards positioned in same space */}
+            {/* Agent cards — positioned using the same x/y percentage coords */}
             <AnimatePresence>
               {scene.agents.map((agent, i) => (
                 <AgentCard
