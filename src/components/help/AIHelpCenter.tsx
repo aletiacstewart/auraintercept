@@ -40,9 +40,10 @@ const PAGE_SUGGESTIONS: Record<string, QuickQuestion[]> = {
     { question: 'Can I sync with Google Calendar?', category: 'Integrations' },
   ],
   '/dashboard/ai-consoles/social-media': [
-    { question: 'How do I schedule a social post?', category: 'Social' },
+    { question: 'How does the Manual Bridge posting work?', category: 'Social' },
     { question: 'Can I generate AI content for social media?', category: 'Social' },
-    { question: 'How do I connect my social accounts?', category: 'Integrations' },
+    { question: 'Can I use my own API credentials for automatic posting?', category: 'Integrations' },
+    { question: 'When will automatic platform-level posting be available?', category: 'Social' },
   ],
   '/dashboard/analytics': [
     { question: 'How do I export analytics data?', category: 'Analytics' },
@@ -160,7 +161,7 @@ Companies can connect their existing business phone number to the AI receptionis
 3. **Unconditional Forwarding** - Forward ALL calls to AI immediately. Codes: AT&T (*21*), Verizon (*72), T-Mobile (**21*). System auto-sets to AI Direct mode.
 4. **New AI Number** - Use the SignalWire number directly and update business listings (Google Business, Yelp, etc.).
 Configure in Settings → Missed Calls → "How is your number connected?" selector. The system automatically recommends the correct call routing mode based on the choice.
-- **Social media "Not Configured" error**: Platform admin needs to register master app credentials (Meta App ID/Secret, LinkedIn Client ID/Secret, etc.) in the Platform Credentials Settings section of the Social Media integration page.
+- **Social media "Not Configured" error**: Social media posting offers two paths: (1) Manual Bridge (default) — AI generates content, you copy with one click and paste into the platform's composer via deep link, no API setup needed; (2) Own API Credentials (advanced) — register your own developer app on each platform, enter credentials in Social Media integration settings, then connect via OAuth for automatic posting. Platform-level auto-posting (one-click connect for all companies) is Coming Soon.
 - **Tavily not connected**: Navigate to Integrations > AI Research and enter your Tavily API key for enhanced content research.
 
 Always be helpful, concise, and provide specific navigation paths when applicable. Use markdown formatting for clarity.`;

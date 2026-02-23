@@ -7,12 +7,34 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { SocialMediaSetupGuide } from '@/components/integrations/SocialMediaSetupGuide';
 import { PlatformCredentialsSettings } from '@/components/integrations/PlatformCredentialsSettings';
+import { TenantSocialCredentialsForm } from '@/components/integrations/TenantSocialCredentialsForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Share2, Instagram, Facebook, Linkedin, Video, Building2, Check, ExternalLink, Loader2, ArrowLeft, AlertCircle, Unlink } from 'lucide-react';
+import {
+  Share2,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Video,
+  Building2,
+  Check,
+  ExternalLink,
+  Loader2,
+  ArrowLeft,
+  AlertCircle,
+  Unlink,
+  Copy,
+  Settings2,
+  Zap,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Clock,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -92,6 +114,7 @@ export default function SocialMediaIntegration() {
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState<SocialPlatform>('facebook');
   const [connectingPlatform, setConnectingPlatform] = useState<SocialPlatform | null>(null);
+  const [expandedOwnApi, setExpandedOwnApi] = useState<SocialPlatform | null>(null);
 
   const isPlatformAdmin = userRole === 'platform_admin';
 
@@ -111,18 +134,37 @@ export default function SocialMediaIntegration() {
     enabled: !!companyId,
   });
 
-  // Check if platform credentials are configured (for platform admins)
-  const { data: platformSettings } = useQuery({
-    queryKey: ['platform-settings-status'],
+  // Fetch tenant credentials to determine if own API is configured
+  const { data: tenantCreds } = useQuery({
+    queryKey: ['tenant-integrations-status', companyId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('platform_settings')
-        .select('setting_key');
-      if (error) return [];
-      return data || [];
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('tenant_integrations')
+        .select('meta_app_id, linkedin_client_id, tiktok_client_key, google_business_client_id')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      return data as Record<string, string | null> | null;
     },
-    enabled: isPlatformAdmin,
+    enabled: !!companyId,
   });
+
+  const hasOwnApiCredentials = (platform: SocialPlatform): boolean => {
+    if (!tenantCreds) return false;
+    switch (platform) {
+      case 'facebook':
+      case 'instagram':
+        return !!(tenantCreds.meta_app_id);
+      case 'linkedin':
+        return !!(tenantCreds.linkedin_client_id);
+      case 'tiktok':
+        return !!(tenantCreds.tiktok_client_key);
+      case 'google_business':
+        return !!(tenantCreds.google_business_client_id);
+      default:
+        return false;
+    }
+  };
 
   const disconnectMutation = useMutation({
     mutationFn: async (accountId: string) => {
@@ -185,7 +227,6 @@ export default function SocialMediaIntegration() {
         return;
       }
 
-      // Open OAuth popup
       const width = 600;
       const height = 700;
       const left = window.screenX + (window.outerWidth - width) / 2;
@@ -209,7 +250,7 @@ export default function SocialMediaIntegration() {
           <PageHeader
             icon={Share2}
             title="Social Media"
-            description="Connect your social accounts for automated posting"
+            description="Post content with the Manual Bridge or connect your own developer app for automatic posting"
             featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
@@ -243,109 +284,249 @@ export default function SocialMediaIntegration() {
               const connectedAccount = getConnectedAccount(integration.id);
               const Icon = integration.icon;
               const isConnecting = connectingPlatform === integration.id;
+              const hasOwnCreds = hasOwnApiCredentials(integration.id);
+              const isOwnApiExpanded = expandedOwnApi === integration.id;
 
               return (
                 <TabsContent key={integration.id} value={integration.id} className="space-y-6">
-                  {/* Setup Guide */}
-                  <SocialMediaSetupGuide platform={integration.id} />
 
-                  {/* Connection Card */}
-                  <Card className="border-border/50">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
-                            <Icon className="w-5 h-5 text-white" />
+                  {/* Posting Method Choice */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-base">Choose Your Posting Method</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                      {/* Manual Bridge Card */}
+                      <Card className="border-green-500/30 bg-green-500/5">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-green-500/15">
+                              <Copy className="w-4 h-4 text-green-600" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-sm">Manual Bridge</CardTitle>
+                              <Badge variant="outline" className="text-[10px] text-green-600 border-green-500/30 bg-green-500/10 mt-0.5">
+                                ✅ Available Now
+                              </Badge>
+                            </div>
                           </div>
-                          <div>
-                            <CardTitle className="text-base">{integration.name} Connection</CardTitle>
-                            <CardDescription>{integration.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <CardDescription className="text-xs">
+                            AI generates your platform-specific content. You copy it with one click and post it directly in the platform's composer — no API approval needed.
+                          </CardDescription>
+                          <div className="space-y-1.5 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Sparkles className="w-3 h-3 text-primary" />
+                              AI generates platform-specific content
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Copy className="w-3 h-3 text-primary" />
+                              Copy with one click from the Schedule Queue
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <ExternalLink className="w-3 h-3 text-primary" />
+                              Opens {integration.name} composer directly
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-3 h-3 text-primary" />
+                              Mark as posted to track in dashboard
+                            </div>
                           </div>
-                        </div>
-                        {connectedAccount && (
-                          <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
-                            <Check className="w-3 h-3 mr-1" />
-                            Connected
-                          </Badge>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {/* Connected Account or Connect Button */}
-                      {connectedAccount ? (
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-3">
-                              <div className={cn('w-8 h-8 rounded-full flex items-center justify-center', integration.color)}>
-                                <Icon className="w-4 h-4 text-white" />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full border-green-500/30 text-green-700 hover:bg-green-500/10"
+                            asChild
+                          >
+                            <Link to="/dashboard/ai-consoles/social-media">
+                              Go to Social Media Console →
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+
+                      {/* Own API Setup Card */}
+                      <Card className={cn(
+                        'border-border/50',
+                        hasOwnCreds && 'border-primary/30 bg-primary/5'
+                      )}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="p-2 rounded-lg bg-muted">
+                                <Settings2 className="w-4 h-4 text-muted-foreground" />
                               </div>
                               <div>
-                                <p className="text-sm font-medium">
-                                  {connectedAccount.platform_account_name || connectedAccount.platform_account_id}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  Connected {format(new Date(connectedAccount.connected_at), 'MMM d, yyyy')}
-                                </p>
+                                <CardTitle className="text-sm">Own API Credentials</CardTitle>
+                                <Badge variant="outline" className="text-[10px] mt-0.5">
+                                  ⚙️ Advanced
+                                </Badge>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => disconnectMutation.mutate(connectedAccount.id)}
-                              disabled={disconnectMutation.isPending}
-                            >
-                              <Unlink className="w-4 h-4 mr-1" />
-                              Disconnect
-                            </Button>
+                            {hasOwnCreds && (
+                              <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
+                                <Check className="h-3 w-3 mr-1" />
+                                Configured
+                              </Badge>
+                            )}
                           </div>
-                          {connectedAccount.last_error && (
-                            <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                              <AlertCircle className="w-4 h-4 mt-0.5" />
-                              <p>{connectedAccount.last_error}</p>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <CardDescription className="text-xs">
+                            Register your own developer app on {integration.name}, enter your credentials below, then connect via OAuth for fully automatic posting.
+                          </CardDescription>
+                          <div className="space-y-1.5 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Settings2 className="w-3 h-3" />
+                              Register app at {integration.name} Developer Portal
                             </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          {integration.note && (
-                            <p className="text-xs text-foreground/80 p-2 rounded bg-muted border border-border">
-                              {integration.note}
-                            </p>
-                          )}
+                            <div className="flex items-center gap-2">
+                              <Check className="w-3 h-3" />
+                              Enter Client ID & Secret below
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Zap className="w-3 h-3" />
+                              Connect via OAuth for automatic posting
+                            </div>
+                          </div>
                           <Button
-                            onClick={() => handleConnect(integration.id)}
-                            className={cn('gap-2', integration.color, 'hover:opacity-90')}
-                            disabled={isConnecting}
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => setExpandedOwnApi(isOwnApiExpanded ? null : integration.id)}
                           >
-                            {isConnecting ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Connecting...
-                              </>
+                            {isOwnApiExpanded ? (
+                              <><ChevronUp className="w-3 h-3 mr-1" /> Hide Setup</>
                             ) : (
-                              <>
-                                <Icon className="w-4 h-4" />
-                                Connect {integration.name}
-                              </>
+                              <><Settings2 className="w-3 h-3 mr-1" /> {hasOwnCreds ? 'Update Credentials' : 'Set Up Own API'}</>
                             )}
                           </Button>
-                          <p className="text-xs text-muted-foreground">
-                            Click to authorize access via OAuth. A popup will open for you to sign in and grant permissions.
-                          </p>
-                        </div>
-                      )}
+                        </CardContent>
+                      </Card>
+                    </div>
 
-                      {/* Docs Link */}
-                      <div className="border-t pt-4">
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
-                            View API Documentation <ExternalLink className="w-3 h-3" />
-                          </a>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    {/* Coming Soon Banner */}
+                    <Alert className="border-amber-500/30 bg-amber-500/5">
+                      <Clock className="h-4 w-4 text-amber-500" />
+                      <AlertDescription className="text-xs text-amber-700 dark:text-amber-400">
+                        <strong>⚡ Platform Auto-Post — Coming Soon:</strong> Once our platform-level API approval is complete, all companies will be able to connect with a single click — no developer app registration required. The configuration below will be used once approved.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+
+                  {/* Own API Expanded Section */}
+                  {isOwnApiExpanded && (
+                    <div className="space-y-6 border rounded-xl p-4 bg-muted/20">
+                      {/* Developer Setup Guide */}
+                      <SocialMediaSetupGuide platform={integration.id} />
+
+                      {/* Credentials Form */}
+                      <TenantSocialCredentialsForm
+                        companyId={companyId!}
+                        platform={integration.id}
+                        onSaved={() => {
+                          queryClient.invalidateQueries({ queryKey: ['tenant-integrations-status'] });
+                        }}
+                      />
+
+                      {/* OAuth Connect Section */}
+                      {hasOwnCreds && (
+                        <Card className="border-border/50">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
+                                  <Icon className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                  <CardTitle className="text-base">{integration.name} OAuth Connection</CardTitle>
+                                  <CardDescription>Connect your account using your own app credentials</CardDescription>
+                                </div>
+                              </div>
+                              {connectedAccount && (
+                                <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
+                                  <Check className="w-3 h-3 mr-1" />
+                                  Connected
+                                </Badge>
+                              )}
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {connectedAccount ? (
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                  <div className="flex items-center gap-3">
+                                    <div className={cn('w-8 h-8 rounded-full flex items-center justify-center', integration.color)}>
+                                      <Icon className="w-4 h-4 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">
+                                        {connectedAccount.platform_account_name || connectedAccount.platform_account_id}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Connected {format(new Date(connectedAccount.connected_at), 'MMM d, yyyy')}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-destructive hover:text-destructive"
+                                    onClick={() => disconnectMutation.mutate(connectedAccount.id)}
+                                    disabled={disconnectMutation.isPending}
+                                  >
+                                    <Unlink className="w-4 h-4 mr-1" />
+                                    Disconnect
+                                  </Button>
+                                </div>
+                                {connectedAccount.last_error && (
+                                  <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                                    <AlertCircle className="w-4 h-4 mt-0.5" />
+                                    <p>{connectedAccount.last_error}</p>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="space-y-3">
+                                {integration.note && (
+                                  <p className="text-xs text-foreground/80 p-2 rounded bg-muted border border-border">
+                                    {integration.note}
+                                  </p>
+                                )}
+                                <Button
+                                  onClick={() => handleConnect(integration.id)}
+                                  className={cn('gap-2', integration.color, 'hover:opacity-90')}
+                                  disabled={isConnecting}
+                                >
+                                  {isConnecting ? (
+                                    <>
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                      Connecting...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Icon className="w-4 h-4" />
+                                      Connect {integration.name}
+                                    </>
+                                  )}
+                                </Button>
+                                <p className="text-xs text-muted-foreground">
+                                  Click to authorize access via OAuth using your own app credentials.
+                                </p>
+                              </div>
+                            )}
+                            <div className="border-t pt-4">
+                              <Button variant="ghost" size="sm" asChild>
+                                <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
+                                  View API Documentation <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  )}
                 </TabsContent>
               );
             })}

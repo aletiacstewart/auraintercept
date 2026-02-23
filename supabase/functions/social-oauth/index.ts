@@ -13,19 +13,39 @@ interface PlatformCredentials {
 
 async function getPlatformCredentials(
   supabase: ReturnType<typeof createClient>,
-  platform: string
+  platform: string,
+  companyId?: string
 ): Promise<PlatformCredentials | null> {
-  const keyMap: Record<string, { id: string; secret: string }> = {
-    facebook: { id: "META_APP_ID", secret: "META_APP_SECRET" },
-    instagram: { id: "META_APP_ID", secret: "META_APP_SECRET" },
-    linkedin: { id: "LINKEDIN_CLIENT_ID", secret: "LINKEDIN_CLIENT_SECRET" },
-    tiktok: { id: "TIKTOK_CLIENT_KEY", secret: "TIKTOK_CLIENT_SECRET" },
-    google_business: { id: "GOOGLE_CLIENT_ID", secret: "GOOGLE_CLIENT_SECRET" },
+  const keyMap: Record<string, { id: string; secret: string; tenantId: string; tenantSecret: string }> = {
+    facebook: { id: "META_APP_ID", secret: "META_APP_SECRET", tenantId: "meta_app_id", tenantSecret: "meta_app_secret" },
+    instagram: { id: "META_APP_ID", secret: "META_APP_SECRET", tenantId: "meta_app_id", tenantSecret: "meta_app_secret" },
+    linkedin: { id: "LINKEDIN_CLIENT_ID", secret: "LINKEDIN_CLIENT_SECRET", tenantId: "linkedin_client_id", tenantSecret: "linkedin_client_secret" },
+    tiktok: { id: "TIKTOK_CLIENT_KEY", secret: "TIKTOK_CLIENT_SECRET", tenantId: "tiktok_client_key", tenantSecret: "tiktok_client_secret" },
+    google_business: { id: "GOOGLE_CLIENT_ID", secret: "GOOGLE_CLIENT_SECRET", tenantId: "google_business_client_id", tenantSecret: "google_business_client_secret" },
   };
 
   const keys = keyMap[platform];
   if (!keys) return null;
 
+  // 1. Check tenant-level credentials first
+  if (companyId) {
+    const { data: tenantData } = await supabase
+      .from("tenant_integrations")
+      .select(`${keys.tenantId}, ${keys.tenantSecret}`)
+      .eq("company_id", companyId)
+      .maybeSingle();
+
+    if (tenantData) {
+      const tenantId = (tenantData as any)[keys.tenantId];
+      const tenantSecret = (tenantData as any)[keys.tenantSecret];
+      if (tenantId && tenantSecret) {
+        console.log(`[social-oauth] Using tenant-level credentials for ${platform}`);
+        return { clientId: tenantId, clientSecret: tenantSecret };
+      }
+    }
+  }
+
+  // 2. Fall back to platform-level (global) credentials
   const { data, error } = await supabase
     .from("platform_settings")
     .select("setting_key, setting_value")
@@ -346,7 +366,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const creds = await getPlatformCredentials(supabase, platform);
+      const creds = await getPlatformCredentials(supabase, platform, companyId);
       if (!creds) {
         return new Response(
           JSON.stringify({ error: `Platform credentials not configured for ${platform}. A platform admin must configure them in Platform Settings.` }),
@@ -395,7 +415,7 @@ Deno.serve(async (req) => {
       const { platform, companyId } = stateData;
       const redirectUri = url.searchParams.get("redirect_uri") || `${supabaseUrl}/functions/v1/social-oauth?action=callback`;
 
-      const creds = await getPlatformCredentials(supabase, platform);
+      const creds = await getPlatformCredentials(supabase, platform, companyId);
       if (!creds) {
         return new Response(
           JSON.stringify({ error: `Platform credentials not configured for ${platform}` }),
