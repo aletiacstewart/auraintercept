@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Brain, Send } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -1006,7 +1006,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Google Calendar</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free - Unlimited</p>
-                      <p className="text-[8px] text-white/60">Optional for: All tiers</p>
+                      <p className="text-[8px] text-white/60">Required for: Connect, Growth, Presence, Logistics, Performance, Command</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1024,7 +1024,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">ElevenLabs</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free: 10k • $5 (30k) • $99 (500k)</p>
-                      <p className="text-[8px] text-white/60">Required for: Scheduling+ (not Starter)</p>
+                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1033,7 +1033,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">SignalWire</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">$2/number • $0.004/SMS (40% cheaper)</p>
-                      <p className="text-[8px] text-white/60">Required for: Scheduling+ (not Starter)</p>
+                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1042,7 +1042,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">A2P 10DLC</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time • $10/mo</p>
-                      <p className="text-[8px] text-white/60">Required for: All SMS (SignalWire) • Prevents filtering</p>
+                      <p className="text-[8px] text-white/60">Required for: All SMS features • Prevents filtering</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1051,7 +1051,7 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Stripe</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">2.9% + $0.30/transaction</p>
-                      <p className="text-[8px] text-white/60">Required for: Growth+ (Invoicing)</p>
+                      <p className="text-[8px] text-white/60">Required for: Logistics, Performance, Command (Invoicing)</p>
                     </div>
 
                     <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1060,16 +1060,16 @@ export default function Auth() {
                         <span className="font-semibold text-[9px] text-white">Social Media</span>
                       </div>
                       <p className="text-[8px] text-white/90 font-medium">Free - Your Pages (OAuth)</p>
-                      <p className="text-[8px] text-white/60">Required for: Growth+ • Optional: Others</p>
+                      <p className="text-[8px] text-white/60">Required for: Presence, Performance, Command • Optional: Growth, Logistics</p>
                     </div>
 
-                    <div className="rounded-lg p-2 col-span-2" style={{ backgroundColor: '#2a3d4e' }}>
+                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <Brain className="w-3 h-3 text-blue-400" />
-                        <span className="font-semibold text-[9px] text-white">Google Gemini</span>
+                        <Search className="w-3 h-3 text-orange-400" />
+                        <span className="font-semibold text-[9px] text-white">Tavily</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 15 req/min</p>
-                      <p className="text-[8px] text-white/60">Required for: All tiers (AI content)</p>
+                      <p className="text-[8px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                      <p className="text-[8px] text-white/60">Optional for: All tiers • Enhances AI content quality</p>
                     </div>
                   </div>
                 </div>
