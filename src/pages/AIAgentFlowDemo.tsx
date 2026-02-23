@@ -91,13 +91,15 @@ const scenes: Scene[] = [
     connections: [
       { from: 'triage', to: 'booking', label: 'Schedule' },
       { from: 'triage', to: 'followup', label: 'Check-in' },
+      { from: 'booking', to: 'followup', label: 'Post-Job' },
       { from: 'followup', to: 'review', label: 'After Service' },
+      { from: 'triage', to: 'review', label: 'Direct' },
       { from: 'booking', to: 'f1', label: '' },
       { from: 'followup', to: 'f2', label: '' },
       { from: 'review', to: 'f3', label: '' },
     ],
     highlightAgents: ['triage', 'booking', 'followup', 'review', 'f1', 'f2', 'f3'],
-    highlightConnections: [0, 1, 2, 3, 4, 5],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7],
   },
 
   // Scene 3 — Outreach & Sales Console
@@ -120,9 +122,11 @@ const scenes: Scene[] = [
       { from: 'marketing_ag', to: 'f3', label: '' },
       { from: 'marketing_ag', to: 'f4', label: '' },
       { from: 'lead', to: 'campaign', label: 'Qualified' },
+      { from: 'lead', to: 'marketing_ag', label: 'Segments' },
+      { from: 'campaign', to: 'marketing_ag', label: 'Results' },
     ],
     highlightAgents: ['campaign', 'lead', 'marketing_ag', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6],
   },
 
   // Scene 4 — Social Media Console
@@ -143,6 +147,8 @@ const scenes: Scene[] = [
     connections: [
       { from: 'social_content', to: 'social_scheduler', label: 'Content' },
       { from: 'social_content', to: 'social_analytics', label: 'Metrics' },
+      { from: 'social_analytics', to: 'social_content', label: 'Feedback' },
+      { from: 'social_analytics', to: 'social_scheduler', label: 'Best Times' },
       { from: 'social_scheduler', to: 'ig', label: '' },
       { from: 'social_scheduler', to: 'fb', label: '' },
       { from: 'social_scheduler', to: 'li', label: '' },
@@ -150,7 +156,7 @@ const scenes: Scene[] = [
       { from: 'social_scheduler', to: 'gmb', label: '' },
     ],
     highlightAgents: ['social_content', 'social_scheduler', 'social_analytics', 'ig', 'fb', 'li', 'tt', 'gmb'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
   },
 
   // Scene 5 — Creative & Web Presence Console
@@ -171,12 +177,13 @@ const scenes: Scene[] = [
       { from: 'creative', to: 'f1', label: '' },
       { from: 'creative', to: 'f2', label: '' },
       { from: 'creative', to: 'f3', label: '' },
+      { from: 'web_presence', to: 'f3', label: 'Publish' },
       { from: 'web_presence', to: 'f4', label: '' },
       { from: 'web_presence', to: 'f5', label: '' },
       { from: 'creative', to: 'web_presence', label: 'Content' },
     ],
     highlightAgents: ['creative', 'web_presence', 'f1', 'f2', 'f3', 'f4', 'f5'],
-    highlightConnections: [0, 1, 2, 3, 4, 5],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6],
   },
 
   // Scene 6 — Field Operations Console
@@ -195,15 +202,18 @@ const scenes: Scene[] = [
       { id: 'f4', label: 'Job Progress\nLogging', emoji: '✅', color: C.fieldDim, x: 92, y: 50 },
     ],
     connections: [
+      { from: 'dispatch', to: 'f1', label: '' },
       { from: 'dispatch', to: 'route', label: 'Optimize' },
       { from: 'dispatch', to: 'eta', label: 'Calculate' },
       { from: 'dispatch', to: 'checkin', label: 'Track' },
+      { from: 'route', to: 'checkin', label: 'Path' },
       { from: 'route', to: 'f2', label: '' },
+      { from: 'eta', to: 'checkin', label: 'Arrival' },
       { from: 'eta', to: 'f3', label: '' },
       { from: 'checkin', to: 'f4', label: '' },
     ],
     highlightAgents: ['dispatch', 'route', 'eta', 'checkin', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4, 5],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
   },
 
   // Scene 7 — Business Operations Console
@@ -221,16 +231,18 @@ const scenes: Scene[] = [
       { id: 'f3', label: 'Low-Stock\nAlerts', emoji: '🔔', color: C.businessDim, x: 50, y: 85 },
     ],
     connections: [
+      { from: 'inventory', to: 'quoting', label: 'Stock' },
       { from: 'quoting', to: 'f1', label: '' },
       { from: 'quoting', to: 'invoice', label: 'Approved' },
       { from: 'invoice', to: 'f2', label: '' },
+      { from: 'invoice', to: 'admin', label: 'Report' },
       { from: 'inventory', to: 'f3', label: '' },
       { from: 'admin', to: 'quoting', label: '' },
       { from: 'admin', to: 'invoice', label: '' },
       { from: 'admin', to: 'inventory', label: '' },
     ],
     highlightAgents: ['admin', 'quoting', 'invoice', 'inventory', 'f1', 'f2', 'f3'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
   },
 
   // Scene 8 — Analytics & Reports Console
@@ -250,14 +262,18 @@ const scenes: Scene[] = [
     ],
     connections: [
       { from: 'insights', to: 'f1', label: '' },
+      { from: 'insights', to: 'revenue', label: 'Query' },
+      { from: 'insights', to: 'forecast', label: 'Query' },
       { from: 'performance', to: 'f2', label: '' },
+      { from: 'performance', to: 'revenue', label: 'KPIs' },
+      { from: 'performance', to: 'forecast', label: 'Data' },
       { from: 'revenue', to: 'f3', label: '' },
       { from: 'forecast', to: 'f4', label: '' },
       { from: 'insights', to: 'performance', label: '' },
       { from: 'revenue', to: 'forecast', label: '' },
     ],
     highlightAgents: ['insights', 'performance', 'revenue', 'forecast', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4, 5],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   },
 
   // Scene 9 — The Full Network
@@ -299,20 +315,42 @@ const scenes: Scene[] = [
       { id: 'forecast', label: 'Forecast', emoji: '🔮', color: C.analytics, x: 75, y: 92 },
     ],
     connections: [
-      // Cross-console flows
+      // Customer Portal internal
       { from: 'triage', to: 'booking', label: '' },
       { from: 'triage', to: 'followup', label: '' },
+      { from: 'booking', to: 'followup', label: '' },
       { from: 'followup', to: 'review', label: '' },
+      // Customer Portal → Field Ops (KEY cross-console)
+      { from: 'booking', to: 'dispatch', label: '' },
+      // Outreach internal
       { from: 'review', to: 'campaign', label: '' },
+      { from: 'lead', to: 'campaign', label: '' },
+      { from: 'lead', to: 'marketing_ag', label: '' },
+      { from: 'marketing_ag', to: 'campaign', label: '' },
+      // Creative → Social & Outreach
       { from: 'creative', to: 'social_content', label: '' },
       { from: 'creative', to: 'campaign', label: '' },
+      { from: 'creative', to: 'web_presence', label: '' },
+      { from: 'web_presence', to: 'social_content', label: '' },
+      // Social internal
+      { from: 'social_content', to: 'social_scheduler', label: '' },
+      { from: 'social_content', to: 'social_analytics', label: '' },
+      // Social → Analytics
+      { from: 'social_analytics', to: 'insights', label: '' },
+      // Field Ops internal
       { from: 'dispatch', to: 'route_ag', label: '' },
       { from: 'dispatch', to: 'eta', label: '' },
       { from: 'dispatch', to: 'checkin', label: '' },
+      // Field Ops → Business Ops (KEY cross-console)
+      { from: 'checkin', to: 'invoice_ag', label: '' },
+      // Business Ops internal
+      { from: 'inventory', to: 'quoting', label: '' },
       { from: 'quoting', to: 'invoice_ag', label: '' },
-      { from: 'creative', to: 'web_presence', label: '' },
-      { from: 'social_content', to: 'social_scheduler', label: '' },
-      { from: 'social_content', to: 'social_analytics', label: '' },
+      { from: 'admin', to: 'quoting', label: '' },
+      { from: 'admin', to: 'inventory', label: '' },
+      // Analytics internal
+      { from: 'insights', to: 'performance', label: '' },
+      { from: 'revenue', to: 'forecast', label: '' },
     ],
     highlightAgents: [
       'triage', 'booking', 'followup', 'review',
@@ -323,7 +361,7 @@ const scenes: Scene[] = [
       'admin', 'quoting', 'invoice_ag', 'inventory',
       'insights', 'performance', 'revenue', 'forecast',
     ],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    highlightConnections: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26],
   },
 
   // Scene 10 — Everyone Benefits
