@@ -301,7 +301,7 @@ export default function AIAgentFlowDemo() {
 
       {/* Controls */}
       <div className="flex items-center justify-center gap-3 pb-6">
-        <Button variant="outline" size="sm" onClick={handleRestart} className="border-white/20 text-white/70">
+        <Button variant="outline" size="sm" onClick={handleRestart} className="border-white/20 bg-white/10 text-white hover:bg-white/20">
           <RotateCcw className="w-4 h-4 mr-1" /> Restart
         </Button>
         <Button
@@ -316,7 +316,7 @@ export default function AIAgentFlowDemo() {
           size="sm"
           onClick={handleNext}
           disabled={currentScene >= scenes.length - 1}
-          className="border-white/20 text-white/70"
+          className="border-white/20 bg-white/10 text-white hover:bg-white/20 disabled:text-white/30"
         >
           Next <SkipForward className="w-4 h-4 ml-1" />
         </Button>
