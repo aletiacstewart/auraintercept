@@ -304,9 +304,16 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-subscription", { message: errorMessage });
+    
+    // Return 401 for auth errors instead of 500
+    const isAuthError = errorMessage.includes('Authentication error') || 
+                        errorMessage.includes('session') || 
+                        errorMessage.includes('token') ||
+                        errorMessage.includes('No authorization header');
+    
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isAuthError ? 401 : 500,
     });
   }
 });
