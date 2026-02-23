@@ -501,7 +501,7 @@ export const CONSOLES: ConsoleConfig[] = [
     description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
     tier: 'aura_flow',
     agentCount: 4,
-    tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
+    tabs: ['AI Assistant', 'Services', 'Appointments', 'Voice AI', 'Contact', 'Hours'],
     color: 'blue',
   },
   {
@@ -537,7 +537,7 @@ export const CONSOLES: ConsoleConfig[] = [
     description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar. Uses Manual Bridge for guided posting. Own API credentials or automatic platform-level publishing coming soon.',
     tier: 'halo',
     agentCount: 3,
-    tabs: ['Home', 'Social Posts', 'Analytics'],
+    tabs: ['Home', 'Create Content', 'My Posts'],
     color: 'pink',
   },
   {
