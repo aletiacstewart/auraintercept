@@ -51,33 +51,36 @@ const AGENT_TYPES = {
 const EVENT_ROUTING: Record<string, string[]> = {
   // Customer Portal events
   'triage_complete': ['booking', 'dispatch', 'lead'],
-  'appointment_booked': ['dispatch', 'route', 'followup'],
+  'appointment_booked': ['dispatch', 'route', 'followup', 'inventory'],
   'appointment_cancelled': ['dispatch', 'followup'],
   'tech_assigned': ['route', 'eta'],
   'route_optimized': ['eta', 'dispatch'],
   'eta_updated': ['checkin'],
   'tech_arrived': ['quoting', 'checkin'],
-  'job_complete': ['quoting', 'invoice', 'followup', 'inventory'],
+  'job_complete': ['quoting', 'invoice', 'followup', 'inventory', 'campaign'],
   'quote_sent': ['invoice'],
   'quote_approved': ['invoice', 'inventory'],
-  'payment_received': ['followup', 'revenue'],
+  'payment_received': ['followup', 'revenue', 'campaign'],
   'followup_sent': ['review'],
-  'review_received': ['performance', 'insights'],
+  'review_received': ['performance', 'insights', 'campaign'],
   'churn_risk_detected': ['marketing', 'campaign'],
-  'inventory_low': ['dispatch', 'quoting'],
+  'inventory_low': ['dispatch', 'quoting', 'admin'],
   'seasonal_trigger': ['marketing', 'campaign'],
   // Marketing & Sales events
   'campaign_created': ['lead', 'marketing'],
-  'lead_qualified': ['campaign', 'booking'],
-  'lead_scored': ['campaign', 'marketing'],
+  'lead_qualified': ['campaign', 'booking', 'marketing'],
+  'lead_scored': ['campaign', 'marketing', 'booking'],
   // Social Media events
   'content_generated': ['social_scheduler', 'social_analytics'],
   'post_scheduled': ['social_analytics'],
-  'post_published': ['social_analytics', 'performance'],
+  'post_published': ['social_analytics', 'performance', 'insights'],
+  'content_published': ['social_analytics', 'web_presence'],
   // Creative & Web Presence events
   'blog_published': ['web_presence', 'social_content'],
   'seo_scan_complete': ['web_presence', 'performance'],
   'content_engine_output': ['social_content', 'campaign', 'web_presence'],
+  // New business lifecycle events
+  'invoice_paid': ['followup', 'revenue', 'campaign'],
 };
 
 serve(async (req) => {
