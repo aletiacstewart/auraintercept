@@ -198,10 +198,51 @@ export function MultiChannelGenerator() {
   };
 
   const copyToClipboard = async (text: string, field: string) => {
-    await navigator.clipboard.writeText(text);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for iframe/non-secure contexts
+        const el = document.createElement('textarea');
+        el.value = text;
+        el.style.position = 'fixed';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+    } catch {
+      console.warn('Clipboard copy failed');
+    }
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
     toast({ title: 'Copied!', description: 'Content copied to clipboard' });
+  };
+
+  const PLATFORM_LINKS: Record<string, string> = {
+    facebook: 'https://www.facebook.com',
+    instagram: 'https://www.instagram.com/create/story/',
+    linkedin: 'https://www.linkedin.com/feed/',
+    tiktok: 'https://www.tiktok.com/upload',
+    google_business: 'https://business.google.com/create-post',
+    twitter: 'https://twitter.com/compose/tweet',
+    x: 'https://twitter.com/compose/tweet',
+  };
+
+  const copyAndOpenPlatform = async (platform: string, post: string, hashtags: string[] = []) => {
+    const fullText = hashtags.length > 0 ? `${post}\n\n${hashtags.map(t => `#${t}`).join(' ')}` : post;
+    await copyToClipboard(fullText, `${platform}-open`);
+    const url = PLATFORM_LINKS[platform.toLowerCase()] || 'https://www.facebook.com';
+    // Use anchor element to bypass popup blockers
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   // Save actions for each channel
@@ -450,21 +491,38 @@ export function MultiChannelGenerator() {
           {Object.entries(socialContent).map(([platform, data]) => (
             <Card key={platform} className="bg-background/50">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm capitalize">{platform}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {data.post && (
-                  <div className="relative">
-                    <p className="text-sm whitespace-pre-wrap pr-8">{data.post}</p>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm capitalize">{platform.replace(/_/g, ' ')}</CardTitle>
+                  <div className="flex items-center gap-1">
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="absolute top-0 right-0 h-6 w-6"
-                      onClick={() => copyToClipboard(data.post!, `${platform}-post`)}
+                      className="h-6 w-6"
+                      title="Copy post"
+                      onClick={() => copyToClipboard(
+                        data.hashtags && data.hashtags.length > 0
+                          ? `${data.post}\n\n${data.hashtags.map(t => `#${t}`).join(' ')}`
+                          : (data.post || ''),
+                        `${platform}-post`
+                      )}
                     >
                       {copiedField === `${platform}-post` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 text-xs px-2 gap-1"
+                      onClick={() => copyAndOpenPlatform(platform, data.post || '', data.hashtags)}
+                    >
+                      {copiedField === `${platform}-open` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      Copy &amp; Open
+                    </Button>
                   </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.post && (
+                  <p className="text-sm whitespace-pre-wrap">{data.post}</p>
                 )}
                 {data.hashtags && data.hashtags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
