@@ -189,7 +189,7 @@ export default function AIAgentFlowDemo() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-white/70 hover:text-white">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-white/70 hover:text-white">
             <ChevronLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
