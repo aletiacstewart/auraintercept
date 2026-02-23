@@ -134,7 +134,7 @@ export const PostTemplates: React.FC<PostTemplatesProps> = ({ onSelect, onClose 
             return (
               <Card
                 key={template.id}
-                className="p-3 cursor-pointer hover:bg-primary/10 transition-colors border-card-foreground/10 group"
+                className="p-3 cursor-pointer hover:bg-primary/10 transition-colors border border-border bg-muted/40 group"
                 onClick={() => {
                   if (template.id === 'ai-generated') {
                     onSelect('');

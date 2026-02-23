@@ -471,7 +471,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
                 Templates
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md bg-background text-foreground">
               <DialogHeader>
                 <DialogTitle>Post Templates</DialogTitle>
               </DialogHeader>
