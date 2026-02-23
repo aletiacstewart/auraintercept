@@ -196,8 +196,8 @@ export default function AIAgentFlowDemo() {
             Aura Intelligence Network — Agent Flow Demo
           </h1>
         </div>
-        <Button variant="outline" size="sm" onClick={downloadScript} className="border-white/20 text-white/70 hover:text-white">
-          <Download className="w-4 h-4 mr-1" /> Script
+        <Button variant="outline" size="sm" onClick={downloadScript} className="border-white/20 text-white hover:text-white bg-white/10 hover:bg-white/20">
+          <Download className="w-4 h-4 mr-1" /> <span className="text-white">Script</span>
         </Button>
       </div>
 
