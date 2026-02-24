@@ -83,7 +83,7 @@ export default function DesignPreview() {
             backgroundImage: `url(${heroAgents})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "brightness(0.75) saturate(1.2)",
+            filter: "brightness(1.0) saturate(1.2)",
           }} />
           {/* Gradient overlay */}
           <div style={{
