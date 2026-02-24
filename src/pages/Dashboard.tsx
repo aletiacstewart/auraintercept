@@ -135,7 +135,7 @@ function TutorialStartBanner() {
     <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <GraduationCap className="w-5 h-5 text-primary" />
-        <span className="text-sm font-medium text-foreground">New here? Take a guided tutorial of the platform.</span>
+        <span className="text-sm font-medium" style={{ color: 'hsl(var(--primary) / 1)', filter: 'brightness(1.6)' }}>New here? Take a guided tutorial of the platform.</span>
       </div>
       <Button size="sm" onClick={start} className="gradient-primary text-xs">
         Start Tutorial
