@@ -3,15 +3,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import heroAgents from '@/assets/hero-agents.jpeg';
+import heroLogo from '@/assets/hero-logo.jpeg';
 import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import logo from '@/assets/aura-intercept-logo.png';
-// Hero video served from public folder for better browser compatibility
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
-import { CompetitiveDifferentiation } from '@/components/landing/CompetitiveDifferentiation';
+
 const agentCategories = [{
   id: 'customer',
   name: 'Customer Portal',
@@ -422,100 +422,196 @@ const heroStats = [{
 const subtitles = ['Booking & Scheduling', 'Field Operations', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
 export default function Index() {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('business');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
+  const [hoveredConsole, setHoveredConsole] = useState<number | null>(null);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSubtitle(prev => (prev + 1) % subtitles.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-  return <div className="min-h-screen bg-background">
+
+  const consoleNeons = [
+    { color: "#00E5FF", shadow: "0 0 30px rgba(0,229,255,0.5), 0 0 60px rgba(0,229,255,0.2)", border: "rgba(0,229,255,0.55)" },
+    { color: "#00E676", shadow: "0 0 30px rgba(0,230,118,0.5), 0 0 60px rgba(0,230,118,0.2)", border: "rgba(0,230,118,0.55)" },
+    { color: "#FFB300", shadow: "0 0 30px rgba(255,179,0,0.5), 0 0 60px rgba(255,179,0,0.2)", border: "rgba(255,179,0,0.55)" },
+    { color: "#B388FF", shadow: "0 0 30px rgba(179,136,255,0.5), 0 0 60px rgba(179,136,255,0.2)", border: "rgba(179,136,255,0.55)" },
+    { color: "#536DFE", shadow: "0 0 30px rgba(83,109,254,0.5), 0 0 60px rgba(83,109,254,0.2)", border: "rgba(83,109,254,0.55)" },
+    { color: "#FF4081", shadow: "0 0 30px rgba(255,64,129,0.5), 0 0 60px rgba(255,64,129,0.2)", border: "rgba(255,64,129,0.55)" },
+    { color: "#1DE9B6", shadow: "0 0 30px rgba(29,233,182,0.5), 0 0 60px rgba(29,233,182,0.2)", border: "rgba(29,233,182,0.55)" },
+  ];
+
+  return (
+    <div style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)", minHeight: "100vh", color: "white" }}>
+      <style>{`
+        @keyframes border-shine {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes subtitle-fade {
+          0%, 100% { opacity: 1; }
+          45%, 55% { opacity: 0; }
+        }
+      `}</style>
       <PublicHeader showHomeLink={false} />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 tech-grid opacity-30" />
-        <div className="container max-w-7xl mx-auto px-6 py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Video */}
-            <div className="animate-fade-in order-2 lg:order-1">
-              <video src="/videos/aura-intercept-hero.mp4" autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
-            </div>
+      {/* ── CINEMATIC HERO ── */}
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "92vh", display: "flex", alignItems: "center" }}>
+        {/* Background image */}
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${heroAgents})`, backgroundSize: "cover", backgroundPosition: "center", filter: "brightness(1.0) saturate(1.2)" }} />
+        {/* Gradient overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(4,10,20,0.05) 0%, rgba(4,10,20,0.3) 45%, rgba(4,10,20,0.82) 100%)" }} />
+        {/* Scan lines */}
+        <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)", pointerEvents: "none" }} />
 
-            {/* Right Column - Content */}
-            <div className="text-center lg:text-left order-1 lg:order-2">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-wide mb-4 animate-fade-in">
-                <span className="font-brand text-[#214ebb]">Aura Intercept</span>
-                <span className="block text-lg sm:text-xl md:text-2xl mt-2 font-normal font-sans text-foreground">
-                  The Pulse of Your Business
-                </span>
-              </h1>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "80px 24px 72px", textAlign: "center" }}>
+          {/* Logo badge */}
+          <div style={{ display: "inline-block", marginBottom: 28 }}>
+            <img src={heroLogo} alt="Aura Intercept" style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.3)", boxShadow: "0 0 40px rgba(0,229,255,0.3), 0 0 80px rgba(0,229,255,0.1)" }} />
+          </div>
 
-              <div className="h-8 mb-6 animate-fade-in">
-                <p className="text-xl text-primary font-medium transition-all duration-500">
-                  {subtitles[currentSubtitle]}
-                </p>
+          {/* Eyebrow pill */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 18px", borderRadius: 24, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 20 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00E5FF", boxShadow: "0 0 10px #00E5FF" }} />
+            <span style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>AI-Powered Command Center</span>
+          </div>
+
+          {/* Title */}
+          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 16px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+            AURA INTERCEPT
+          </h1>
+
+          {/* Animated subtitle */}
+          <div style={{ height: 32, marginBottom: 24, overflow: "hidden" }}>
+            <p style={{ fontSize: 20, color: "#00E5FF", fontWeight: 600, letterSpacing: 1, transition: "all 0.5s ease" }}>
+              {subtitles[currentSubtitle]}
+            </p>
+          </div>
+
+          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.7)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.7 }}>
+            The AI command center that runs your entire business — from first contact to final invoice.
+          </p>
+
+          {/* CTAs */}
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" as const, marginBottom: 48 }}>
+            <button
+              onClick={() => navigate('/auth?mode=company')}
+              style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
+            >
+              START FREE TRIAL →
+            </button>
+            <button
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)", color: "rgba(200,230,255,0.9)", backdropFilter: "blur(16px)", letterSpacing: 0.5 }}
+            >
+              Deploy Your AI Workforce
+            </button>
+          </div>
+
+          {/* Stats trust bar */}
+          <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" as const }}>
+            {heroStats.map(s => (
+              <div key={s.label} style={{ textAlign: "center" as const }}>
+                <div style={{ fontSize: 28, fontWeight: 900, background: "linear-gradient(135deg, #00E5FF, rgba(255,255,255,0.9))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{s.value}</div>
+                <div style={{ fontSize: 10, color: "rgba(0,229,255,0.45)", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 500 }}>{s.label}</div>
               </div>
-              
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-in">
-                "Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client, giving you the freedom to focus on the work in the field while we master the work in the office."
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 animate-fade-in">
-                <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto" onClick={() => navigate('/auth?mode=company')}>
-                  <Building2 className="w-5 h-5 mr-2" />
-                  Start Free Trial
-                </Button>
-                <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-lg px-8 py-6 w-full sm:w-auto" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Deploy Your AI Workforce
-                </Button>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* === COMPANY/BUSINESS SECTION === */}
-      
-
       {/* Agent Consoles Preview */}
-      <section className="bg-muted/30 py-12">
+      <section style={{ padding: "64px 0", background: "rgba(0,229,255,0.02)" }}>
         <div className="container max-w-6xl mx-auto px-6">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-3">Aura Agent Consoles</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">7 Powerful Control Centers (Consoles)</h2>
-            <p className="text-foreground/80 text-sm max-w-xl mx-auto">
+          <div className="text-center mb-10">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 16 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Agent Consoles</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              7 Powerful Control Centers (Consoles)
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>
               Purpose-built consoles give your team full control over AI operative operations.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {agentConsoles.map((console, index) => (
-              <div 
-                key={console.name}
-                className="rounded-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group"
-                style={{ backgroundColor: '#2a3d4e' }}
-              >
-                <div className={`h-1 bg-gradient-to-r ${console.gradient}`} />
-                <div className="p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`w-7 h-7 rounded-md ${console.iconBg} flex items-center justify-center flex-shrink-0`}>
-                      <console.icon className={`w-3.5 h-3.5 ${console.iconColor}`} />
-                    </div>
-                    <h3 className="text-xs font-semibold text-white leading-tight">{console.name.replace(' Console', '')}</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {agentConsoles.map((c, i) => {
+              const neon = consoleNeons[i] || consoleNeons[0];
+              const isHov = hoveredConsole === i;
+              const Icon = c.icon;
+              return (
+                <div
+                  key={c.name}
+                  onMouseEnter={() => setHoveredConsole(i)}
+                  onMouseLeave={() => setHoveredConsole(null)}
+                  style={{
+                    borderRadius: 14, padding: "20px", cursor: "pointer",
+                    transition: "all 0.35s cubic-bezier(.4,0,.2,1)",
+                    background: isHov ? `rgba(${neon.color.replace('#','').match(/.{2}/g)?.map(h=>parseInt(h,16)).join(',')},0.05)` : "rgba(255,255,255,0.02)",
+                    backdropFilter: "blur(24px)",
+                    border: isHov ? `1px solid ${neon.border}` : "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: isHov ? neon.shadow : "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)",
+                    transform: isHov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
+                  }}
+                >
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: `${neon.color}18`, border: `1px solid ${neon.color}33`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
+                    <Icon size={18} style={{ color: neon.color }} />
                   </div>
-                  <p className="text-white/60 text-[10px] mb-2 leading-snug line-clamp-2">
-                    {console.description}
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {console.features.map((feature, idx) => (
-                      <span key={idx} className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/70">
-                        {feature}
-                      </span>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
+                  <div style={{ fontSize: 11, color: "rgba(200,220,240,0.5)", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
+                  <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                    {c.features.map((f) => (
+                      <span key={f} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>{f}</span>
                     ))}
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* AI Agents Showcase */}
+      <section style={{ padding: "56px 0" }}>
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Intelligence Network</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              24 Specialized AI Operatives
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
+          </div>
+
+          <div className="space-y-5">
+            {agentCategories.map(category => (
+              <div key={category.id}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                  <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                    <category.icon className="w-3 h-3 text-white" />
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{category.name}</span>
+                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                  {category.agents.map((agent) => (
+                    <div key={agent.name} style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 20px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                        <div className={`w-5 h-5 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                          <agent.icon className="w-2.5 h-2.5 text-white" />
+                        </div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{agent.name}</span>
+                      </div>
+                      <p style={{ fontSize: 9, color: "rgba(200,220,240,0.5)", lineHeight: 1.4 }}>{agent.description}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -523,73 +619,31 @@ export default function Index() {
         </div>
       </section>
 
-      {/* AI Agents Showcase */}
-      <section className="py-10">
-        <div className="container max-w-6xl mx-auto px-6">
-          <div className="text-center mb-6">
-            <Badge variant="secondary" className="mb-2">Aura Intelligence Network</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">24 Specialized AI Operatives</h2>
-            <p className="text-muted-foreground text-sm max-w-xl mx-auto">
-              Intercept Every Lead. Automate Every Move.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {agentCategories.map(category => <div key={category.id}>
-                {/* Category Subtitle */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center`}>
-                    <category.icon className="w-3 h-3 text-white" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground">{category.name}</h3>
-                  <div className="flex-1 h-px bg-border" />
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                  {category.agents.map((agent, index) => (
-                    <div 
-                      key={agent.name}
-                      className="rounded-md p-2 transition-all duration-300 hover:scale-[1.02] animate-fade-in"
-                      style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 30}ms` }}
-                    >
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <div className={`w-6 h-6 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
-                          <agent.icon className="w-3 h-3 text-white" />
-                        </div>
-                        <h4 className="font-semibold text-[10px] text-white leading-tight">{agent.name}</h4>
-                      </div>
-                      <p className="text-[9px] text-white/60 leading-snug line-clamp-2">{agent.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>)}
-          </div>
-        </div>
-      </section>
-
       {/* Communication Channels */}
-      <section className="py-20">
+      <section style={{ padding: "64px 0", background: "rgba(0,229,255,0.02)" }}>
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
-            <p className="text-foreground/80 max-w-2xl mx-auto">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Multi-Channel</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              Connect Everywhere Your Customers Are
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
               Aura Intercept AI synchronizes your voice, chat, email, and SMS into a 24/7 proactive workforce that captures every lead and booking while your team is in the field.
             </p>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {communicationChannels.map((channel, index) => (
-              <div 
-                key={channel.title}
-                className="rounded-lg p-4 transition-all duration-300 hover:opacity-90 text-center"
-                style={{ backgroundColor: '#2a3d4e' }}
+            {communicationChannels.map((channel) => (
+              <div key={channel.title} style={{ borderRadius: 14, padding: "24px", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", textAlign: "center", transition: "all 0.3s ease" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
                   <channel.icon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="font-semibold text-sm mb-1 text-white">{channel.title}</h3>
-                <p className="text-xs text-white/70 leading-relaxed">{channel.description}</p>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{channel.title}</div>
+                <p style={{ fontSize: 12, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{channel.description}</p>
               </div>
             ))}
           </div>
@@ -597,28 +651,30 @@ export default function Index() {
       </section>
 
       {/* Platform Features */}
-      <section className="bg-muted/30 py-10">
+      <section style={{ padding: "56px 0" }}>
         <div className="container max-w-6xl mx-auto px-6">
-          <div className="text-center mb-6">
-            <Badge variant="secondary" className="mb-2">Platform Features</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">The All-in-One AI Center for Service Pros</h2>
-            <p className="text-muted-foreground text-sm max-w-xl mx-auto">Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
+          <div className="text-center mb-8">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Platform Features</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              The All-in-One AI Center for Service Pros
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
-            {platformFeatures.map((feature, index) => (
-              <div 
-                key={feature.title}
-                className="rounded-md p-2 transition-all duration-300 hover:scale-[1.02] animate-fade-in"
-                style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 30}ms` }}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            {platformFeatures.map((feature) => (
+              <div key={feature.title} style={{ borderRadius: 12, padding: "14px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", transition: "all 0.3s ease" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 24px rgba(0,229,255,0.3), 0 0 0 1px rgba(0,229,255,0.4)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div className="w-6 h-6 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-3 h-3 text-primary-foreground" />
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <div style={{ width: 26, height: 26, borderRadius: 7, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <feature.icon size={12} style={{ color: "#00E5FF" }} />
                   </div>
-                  <h3 className="font-semibold text-[10px] text-white leading-tight">{feature.title}</h3>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{feature.title}</span>
                 </div>
-                <p className="text-[9px] text-white/60 leading-snug line-clamp-2">{feature.description}</p>
+                <p style={{ fontSize: 9, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{feature.description}</p>
               </div>
             ))}
           </div>
@@ -626,76 +682,90 @@ export default function Index() {
       </section>
 
       {/* Industries */}
-      <section className="py-10">
+      <section style={{ padding: "56px 0", background: "rgba(0,229,255,0.02)" }}>
         <div className="container max-w-5xl mx-auto px-6">
-          <div className="text-center mb-6">
-            <Badge variant="secondary" className="mb-2">Industries</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">AI Automation for Field Service Industries</h2>
-            <p className="text-foreground/80 text-sm max-w-xl mx-auto">White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
+          <div className="text-center mb-8">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Industries</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              AI Automation for Field Service Industries
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
           </div>
-
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2 justify-items-center">
-            {industryCategories.flatMap(cat => cat.industries).map(industry => <div key={industry.name} className="rounded-md p-2 text-center transition-all duration-300 hover:scale-[1.02] w-full" style={{
-            backgroundColor: '#2a3d4e'
-          }}>
-                <div className="w-7 h-7 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-1">
-                  <industry.icon className="w-3.5 h-3.5 text-primary-foreground" />
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
+            {industryCategories.flatMap(cat => cat.industries).map(industry => (
+              <div key={industry.name} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(255,255,255,0.04)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+              >
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px" }}>
+                  <industry.icon size={13} style={{ color: "#00E5FF" }} />
                 </div>
-                <h4 className="font-medium text-[10px] text-white leading-tight">{industry.name}</h4>
-                <p className="text-[8px] text-white/60 leading-tight hidden sm:block">{industry.description}</p>
-              </div>)}
+                <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{industry.name}</div>
+                <p style={{ fontSize: 8, color: "rgba(200,220,240,0.4)", lineHeight: 1.3 }} className="hidden sm:block">{industry.description}</p>
+              </div>
+            ))}
           </div>
-
-          <div className="text-center mt-8">
-            <Button size="lg" className="gradient-primary shadow-glow text-base px-6 py-4" onClick={() => navigate('/auth?mode=company')}>
-              <Building2 className="w-4 h-4 mr-2" />
-              Start Your Free Trial
-            </Button>
+          <div className="text-center mt-10">
+            <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
+              <Building2 className="inline w-4 h-4 mr-2" />START YOUR FREE TRIAL →
+            </button>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="bg-muted/30 py-20">
+      <section style={{ padding: "64px 0" }}>
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">For Service Businesses</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 4 Simple Steps</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From signup to full automation in minutes, not months.
-            </p>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              Get Started in 4 Simple Steps
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.5)", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
           </div>
-
           <div className="grid md:grid-cols-4 gap-6">
-            {howItWorks.map((item, index) => <div key={item.step} className="relative">
-                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
-                      <item.icon className="w-7 h-7 text-primary-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-white mb-2">Step {item.step}</div>
-                    <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
-                    <p className="text-sm text-card-muted">{item.description}</p>
-                  </CardContent>
-                </Card>
-                {index < howItWorks.length - 1 && <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                    <ChevronRight className="w-6 h-6 text-muted-foreground/50" />
-                  </div>}
-              </div>)}
+            {howItWorks.map((item, index) => (
+              <div key={item.step} className="relative">
+                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", transition: "all 0.3s ease", height: "100%" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.35)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; }}
+                >
+                  <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #214ebb)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
+                    <item.icon size={24} style={{ color: "white" }} />
+                  </div>
+                  <div style={{ fontSize: 11, color: "#00E5FF", letterSpacing: 2, marginBottom: 6, fontWeight: 600 }}>STEP {item.step}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 8 }}>{item.title}</div>
+                  <p style={{ fontSize: 13, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{item.description}</p>
+                </div>
+                {index < howItWorks.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                    <ChevronRight size={20} style={{ color: "rgba(0,229,255,0.3)" }} />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20">
+      <section id="pricing" style={{ padding: "64px 0", background: "rgba(0,229,255,0.02)" }}>
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Subscription Plans</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Command Level</h2>
-            <p className="text-foreground max-w-3xl mx-auto">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Subscription Plans</span>
+            </div>
+            <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              Choose Your Command Level
+            </h2>
+            <p style={{ color: "rgba(200,220,240,0.6)", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
               Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
             </p>
-            <Link to="/audit" className="text-sm text-primary font-medium mt-3 inline-block hover:underline">
+            <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a free audit to help determine which plans best fit your business needs →
             </Link>
           </div>
@@ -1235,5 +1305,6 @@ export default function Index() {
       
       {/* Floating Chat Widget */}
       <FloatingChatWidget />
-    </div>;
+    </div>
+  );
 }
