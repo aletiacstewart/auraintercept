@@ -447,7 +447,7 @@ export default function VideoPromptsPage() {
 
   return (
     <DashboardLayout>
-      <PageContainer variant="transparent">
+      <PageContainer>
         <PageHeader
           icon={Clapperboard}
           title="Promo Video Prompts"
