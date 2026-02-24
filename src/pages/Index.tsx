@@ -560,8 +560,8 @@ export default function Index() {
                     transition: "all 0.35s cubic-bezier(.4,0,.2,1)",
                     background: isHov ? `rgba(${neon.color.replace('#','').match(/.{2}/g)?.map(h=>parseInt(h,16)).join(',')},0.05)` : "rgba(255,255,255,0.02)",
                     backdropFilter: "blur(24px)",
-                    border: isHov ? `1px solid ${neon.border}` : "1px solid rgba(255,255,255,0.08)",
-                    boxShadow: isHov ? neon.shadow : "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)",
+                    border: isHov ? `1px solid ${neon.border}` : `1px solid ${neon.color}44`,
+                    boxShadow: isHov ? neon.shadow : `0 0 0 1px ${neon.color}22, 0 0 12px ${neon.color}11`,
                     transform: isHov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
                   }}
                 >
@@ -607,9 +607,9 @@ export default function Index() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                   {category.agents.map((agent) => (
-                    <div key={agent.name} style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
+                    <div key={agent.name} style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.02)", border: `1px solid rgba(${category.neonRgb},0.25)`, boxShadow: `0 0 0 1px rgba(${category.neonRgb},0.15), 0 0 12px rgba(${category.neonRgb},0.06)`, transition: "all 0.3s ease" }}
                       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px rgba(${category.neonRgb},0.25), 0 0 0 1px rgba(${category.neonRgb},0.35)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${category.neonRgb},0.15), 0 0 12px rgba(${category.neonRgb},0.06)`; (e.currentTarget as HTMLDivElement).style.border = `1px solid rgba(${category.neonRgb},0.25)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                         <div className={`w-5 h-5 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
@@ -643,9 +643,9 @@ export default function Index() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {communicationChannels.map((channel) => (
-              <div key={channel.title} style={{ borderRadius: 14, padding: "24px", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", textAlign: "center", transition: "all 0.3s ease" }}
+              <div key={channel.title} style={{ borderRadius: 14, padding: "24px", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: `1px solid rgba(${channel.neonRgb},0.25)`, boxShadow: `0 0 0 1px rgba(${channel.neonRgb},0.18), 0 0 18px rgba(${channel.neonRgb},0.08)`, textAlign: "center", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px rgba(${channel.neonRgb},0.25), 0 0 0 1px rgba(${channel.neonRgb},0.4)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${channel.neonRgb},0.18), 0 0 18px rgba(${channel.neonRgb},0.08)`; (e.currentTarget as HTMLDivElement).style.border = `1px solid rgba(${channel.neonRgb},0.25)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
                   <channel.icon className="w-5 h-5 text-white" />
@@ -672,9 +672,9 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {platformFeatures.map((feature) => (
-              <div key={feature.title} style={{ borderRadius: 12, padding: "14px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", transition: "all 0.3s ease" }}
+              <div key={feature.title} style={{ borderRadius: 12, padding: "14px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 24px rgba(0,229,255,0.3), 0 0 0 1px rgba(0,229,255,0.4)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                   <div style={{ width: 26, height: 26, borderRadius: 7, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -703,9 +703,9 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
             {industryCategories.flatMap(cat => cat.industries).map(industry => (
-              <div key={industry.name} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
+              <div key={industry.name} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.1), 0 0 12px rgba(255,255,255,0.04)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px" }}>
                   <industry.icon size={13} style={{ color: "#00E5FF" }} />
@@ -738,9 +738,9 @@ export default function Index() {
           <div className="grid md:grid-cols-4 gap-6">
             {howItWorks.map((item, index) => (
               <div key={item.step} className="relative">
-                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", transition: "all 0.3s ease", height: "100%" }}
+                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)", transition: "all 0.3s ease", height: "100%" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.35)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; }}
                 >
                   <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #214ebb)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
                     <item.icon size={24} style={{ color: "white" }} />
