@@ -1478,56 +1478,56 @@ const PlatformGuides: React.FC = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <Card className="glass-card border-primary/30 bg-primary/5">
             <CardContent className="pt-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
+                <div className="p-2 rounded-lg bg-primary/15 border border-primary/20">
                   <BookOpen className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{filteredCategories.length}</p>
-                  <p className="text-xs text-card-foreground/70">Categories</p>
+                  <p className="text-2xl font-bold text-foreground">{filteredCategories.length}</p>
+                  <p className="text-xs text-muted-foreground">Categories</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20">
+          <Card className="glass-card border-feature-analytics/30 bg-feature-analytics/5">
             <CardContent className="pt-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-secondary/10">
-                  <FileText className="h-5 w-5 text-secondary" />
+                <div className="p-2 rounded-lg bg-feature-analytics/15 border border-feature-analytics/20">
+                  <FileText className="h-5 w-5 text-feature-analytics" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold text-foreground">
                     {filteredCategories.reduce((acc, c) => acc + c.guides.length, 0)}
                   </p>
-                  <p className="text-xs text-card-foreground/70">Guides</p>
+                  <p className="text-xs text-muted-foreground">Guides</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
+          <Card className="glass-card border-feature-config/30 bg-feature-config/5">
             <CardContent className="pt-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-accent/10">
-                  <Bot className="h-5 w-5 text-accent" />
+                <div className="p-2 rounded-lg bg-feature-config/15 border border-feature-config/20">
+                  <Bot className="h-5 w-5 text-feature-config" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">24</p>
-                  <p className="text-xs text-card-foreground/70">AI Operatives</p>
+                  <p className="text-2xl font-bold text-foreground">24</p>
+                  <p className="text-xs text-muted-foreground">AI Operatives</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
+          <Card className="glass-card border-feature-fieldops/30 bg-feature-fieldops/5">
             <CardContent className="pt-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-success/10">
-                  <Puzzle className="h-5 w-5 text-success" />
+                <div className="p-2 rounded-lg bg-feature-fieldops/15 border border-feature-fieldops/20">
+                  <Puzzle className="h-5 w-5 text-feature-fieldops" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">9</p>
-                  <p className="text-xs text-card-foreground/70">Integrations</p>
+                  <p className="text-2xl font-bold text-foreground">9</p>
+                  <p className="text-xs text-muted-foreground">Integrations</p>
                 </div>
               </div>
             </CardContent>
@@ -1537,9 +1537,9 @@ const PlatformGuides: React.FC = () => {
         {/* Main Content */}
         <div className="grid lg:grid-cols-12 gap-6">
           {/* Category Sidebar */}
-          <Card className="lg:col-span-4 xl:col-span-3">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Guide Categories</CardTitle>
+          <Card className="lg:col-span-4 xl:col-span-3 glass-card border-border/40">
+            <CardHeader className="pb-3 border-b border-border/30">
+              <CardTitle className="text-base text-foreground">Guide Categories</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <ScrollArea className="h-auto max-h-[600px]">
@@ -1551,20 +1551,20 @@ const PlatformGuides: React.FC = () => {
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
+                         className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
                           isSelected 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'hover:bg-accent/50'
+                            ? 'bg-primary/20 text-primary border border-primary/40' 
+                            : 'hover:bg-white/5 border border-transparent hover:border-border/30'
                         }`}
                       >
-                        <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary-foreground/20' : `bg-${category.featureColor}`}`}>
-                          <Icon className={`h-4 w-4 ${isSelected ? 'text-primary-foreground' : 'text-white'}`} />
+                        <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary/20' : `bg-${category.featureColor}/20 border border-${category.featureColor}/30`}`}>
+                          <Icon className={`h-4 w-4 ${isSelected ? 'text-primary' : `text-${category.featureColor}`}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-medium text-sm ${isSelected ? 'text-primary-foreground' : 'text-card-foreground'}`}>
+                          <p className={`font-medium text-sm ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                             {category.title}
                           </p>
-                          <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                          <p className={`text-xs ${isSelected ? 'text-primary/70' : 'text-muted-foreground'}`}>
                             {category.guides.length} guides
                           </p>
                         </div>
@@ -1577,17 +1577,17 @@ const PlatformGuides: React.FC = () => {
           </Card>
 
           {/* Guides Content */}
-          <Card className="lg:col-span-8 xl:col-span-9">
+          <Card className="lg:col-span-8 xl:col-span-9 glass-card border-border/40">
             <CardHeader>
               <div className="flex items-center gap-3">
                 {currentCategory && (
-                  <div className={`p-3 rounded-xl bg-${currentCategory.featureColor}`}>
+                  <div className={`p-3 rounded-xl bg-${currentCategory.featureColor}/20 border border-${currentCategory.featureColor}/30`}>
                     <currentCategory.icon className="h-6 w-6 text-white" />
                   </div>
                 )}
                 <div>
                   <CardTitle>{currentCategory?.title} Guides</CardTitle>
-                  <CardDescription className="text-card-foreground/70">
+                  <CardDescription className="text-muted-foreground">
                     {currentCategory?.guides.length} step-by-step guides
                   </CardDescription>
                 </div>
@@ -1599,7 +1599,7 @@ const PlatformGuides: React.FC = () => {
                   <AccordionItem 
                     key={index} 
                     value={`guide-${index}`}
-                    className="border rounded-lg px-4"
+                    className="border border-border/30 rounded-lg px-4 bg-white/3 hover:bg-white/5 transition-colors"
                   >
                     <AccordionTrigger className="hover:no-underline py-4">
                       <div className="flex items-center gap-4 text-left">
