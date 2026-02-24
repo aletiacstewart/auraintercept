@@ -89,7 +89,7 @@ export default function DesignPreview() {
           <div style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(180deg, rgba(4,10,20,0.1) 0%, rgba(4,10,20,0.05) 40%, rgba(4,10,20,0.65) 100%)",
+            background: "linear-gradient(180deg, rgba(4,10,20,0.05) 0%, rgba(4,10,20,0.3) 45%, rgba(4,10,20,0.82) 100%)",
           }} />
           {/* Cyan scan line effect */}
           <div style={{
