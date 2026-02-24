@@ -3,6 +3,21 @@ import { Button } from '@/components/ui/button';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const featureGlowMap: Record<string, string> = {
+  'text-feature-overview':     '189,100%,65%',
+  'text-feature-config':       '221,100%,65%',
+  'text-feature-platform':     '189,100%,55%',
+  'text-feature-fieldops':     '84,100%,55%',
+  'text-feature-customers':    '38,100%,65%',
+  'text-feature-employees':    '173,100%,55%',
+  'text-feature-analytics':    '223,100%,65%',
+  'text-feature-marketing':    '292,100%,70%',
+  'text-feature-integrations': '282,80%,70%',
+  'text-feature-quotes':       '48,100%,65%',
+  'text-primary':              '189,100%,55%',
+  'text-destructive':          '0,84%,60%',
+};
+
 interface QuickAction {
   id: string;
   label: string;
@@ -41,10 +56,30 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           size="sm"
           className={cn(
             'h-auto flex-col gap-1 py-2 px-1.5 text-[10px]',
-            'border-border/50 text-white hover:opacity-90 hover:border-primary/50 transition-colors rounded-lg',
+            'border-border/50 text-white transition-all duration-200 rounded-lg',
             action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
           style={{ background: 'hsl(208 30% 18%)' }}
+          onMouseEnter={e => {
+            const hsl = action.featureColor ? featureGlowMap[action.featureColor] : null;
+            const el = e.currentTarget as HTMLElement;
+            if (hsl) {
+              el.style.color = `hsl(${hsl})`;
+              el.style.background = `hsl(${hsl}/0.1)`;
+              el.style.boxShadow = `0 0 14px hsl(${hsl}/0.4), inset 0 0 0 1px hsl(${hsl}/0.3)`;
+              el.style.borderColor = `hsl(${hsl}/0.5)`;
+            } else {
+              el.style.background = 'hsl(208 30% 24%)';
+              el.style.boxShadow = '0 0 10px rgba(0,229,255,0.2)';
+            }
+          }}
+          onMouseLeave={e => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.color = '';
+            el.style.background = 'hsl(208 30% 18%)';
+            el.style.boxShadow = '';
+            el.style.borderColor = '';
+          }}
           onClick={() => onAction(action.message, action.id)}
         >
           <action.icon className={cn("h-4 w-4", action.featureColor)} />
