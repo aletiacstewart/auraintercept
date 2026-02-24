@@ -115,6 +115,7 @@ import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import DemoAccounts from "./pages/DemoAccounts";
 import AIAgentFlowDemo from "./pages/AIAgentFlowDemo";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import DesignPreview from "./pages/DesignPreview";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -160,6 +161,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<TalkToAura />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/design-preview" element={<DesignPreview />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
