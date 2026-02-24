@@ -367,7 +367,7 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
   };
 
   return (
-    <Card className={`border ${sectionBorderColor} bg-white/[0.06] backdrop-blur-sm`}>
+    <Card className={`border ${sectionBorderColor} glass-card`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -456,7 +456,7 @@ export default function VideoPromptsPage() {
 
         <div className="space-y-6 pb-8">
           {/* Assembly Guide */}
-          <Card className="border-border/50 bg-white/[0.06] backdrop-blur-sm">
+          <Card className="border-border/50 glass-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
