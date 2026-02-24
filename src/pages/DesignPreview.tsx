@@ -33,6 +33,7 @@ const agents = [
 export default function DesignPreview() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [hoveredAgent, setHoveredAgent] = useState<number | null>(null);
+  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
   const [formFocused, setFormFocused] = useState<string | null>(null);
 
   return (
@@ -223,7 +224,7 @@ export default function DesignPreview() {
                   background: isHovered ? "rgba(0,229,255,0.05)" : "rgba(255,255,255,0.02)",
                   backdropFilter: "blur(24px)",
                   border: isHovered ? `1px solid ${c.borderHover}` : "1px solid rgba(255,255,255,0.06)",
-                  boxShadow: isHovered ? c.neonShadow : "none",
+                  boxShadow: isHovered ? c.neonShadow : "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)",
                   transform: isHovered ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
                 }}
               >
@@ -268,7 +269,7 @@ export default function DesignPreview() {
                   background: isHovered ? "rgba(0,229,255,0.04)" : "rgba(255,255,255,0.02)",
                   backdropFilter: "blur(24px)",
                   border: isHovered ? "1px solid rgba(0,229,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
-                  boxShadow: isHovered ? "0 0 30px rgba(0,229,255,0.2)" : "none",
+                  boxShadow: isHovered ? "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)" : "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)",
                   transform: isHovered ? "translateY(-4px)" : "translateY(0)",
                 }}
               >
@@ -317,6 +318,7 @@ export default function DesignPreview() {
               background: "rgba(255,255,255,0.02)",
               backdropFilter: "blur(24px)",
               border: "1px solid rgba(255,255,255,0.06)",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)",
               position: "relative",
               overflow: "hidden",
             }}>
@@ -469,16 +471,29 @@ export default function DesignPreview() {
               { icon: TrendingUp, title: "Revenue Intel", desc: "Real-time business insights" },
               { icon: Bot, title: "Voice AI", desc: "Natural phone conversations" },
               { icon: Headphones, title: "24/7 Support", desc: "Never miss a customer call" },
-            ].map((f) => {
+            ].map((f, fi) => {
               const Icon = f.icon;
+              const isHov = hoveredFeature === fi;
               return (
-                <div key={f.title} style={{ textAlign: "center", padding: "20px 12px" }}>
+                <div
+                  key={f.title}
+                  onMouseEnter={() => setHoveredFeature(fi)}
+                  onMouseLeave={() => setHoveredFeature(null)}
+                  style={{
+                    textAlign: "center", padding: "20px 12px", borderRadius: 14, cursor: "pointer",
+                    transition: "all 0.3s cubic-bezier(.4,0,.2,1)",
+                    background: isHov ? "rgba(0,229,255,0.04)" : "transparent",
+                    boxShadow: isHov ? "0 0 24px rgba(0,229,255,0.25), 0 0 0 1px rgba(0,229,255,0.2)" : "0 0 0 1px rgba(255,255,255,0.1), 0 0 14px rgba(255,255,255,0.04)",
+                    transform: isHov ? "translateY(-4px)" : "translateY(0)",
+                  }}
+                >
                   <div style={{
                     width: 52, height: 52, borderRadius: 14,
-                    background: "rgba(0,229,255,0.06)",
-                    border: "1px solid rgba(0,229,255,0.15)",
+                    background: isHov ? "rgba(0,229,255,0.12)" : "rgba(0,229,255,0.06)",
+                    border: isHov ? "1px solid rgba(0,229,255,0.4)" : "1px solid rgba(0,229,255,0.15)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     margin: "0 auto 14px",
+                    transition: "all 0.3s",
                   }}>
                     <Icon size={24} style={{ color: "#00E5FF" }} />
                   </div>
