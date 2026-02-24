@@ -357,30 +357,36 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
       {/* Sidebar */}
       <aside
         className={cn(
-          'h-screen sticky top-0 flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 border-r border-sidebar-border',
+          'h-screen sticky top-0 flex flex-col transition-all duration-300 border-r',
           collapsed ? 'w-16' : 'w-64'
         )}
+        style={{
+          background: "rgba(4,10,20,0.92)",
+          backdropFilter: "blur(24px)",
+          borderColor: "rgba(0,229,255,0.1)",
+          boxShadow: "4px 0 24px rgba(0,229,255,0.05)",
+        }}
       >
         {/* Logo */}
         <div data-tour-id="sidebar-logo" className="flex items-center gap-3 px-4 py-5">
-          <div className="w-10 h-10 rounded-xl gradient-primary p-0.5 flex-shrink-0">
-            <div className="w-full h-full rounded-xl bg-sidebar flex items-center justify-center overflow-hidden">
+          <div className="w-10 h-10 rounded-xl p-0.5 flex-shrink-0" style={{ background: "linear-gradient(135deg, #00E5FF, #214ebb)" }}>
+            <div className="w-full h-full rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "rgba(4,10,20,0.95)" }}>
               <img src={logo} alt="Aura Intercept" className="w-8 h-8 object-contain" />
             </div>
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-sm truncate">Aura Intercept</h1>
-              <p className="text-xs text-sidebar-foreground/60 truncate">Smart Agents, Automated Service</p>
+              <h1 className="font-bold text-sm truncate" style={{ color: "rgba(255,255,255,0.95)" }}>Aura Intercept</h1>
+              <p className="text-xs truncate" style={{ color: "rgba(0,229,255,0.55)" }}>Smart Agents, Automated Service</p>
             </div>
           )}
         </div>
 
-        <Separator className="bg-sidebar-border" />
+        <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
 
         {/* Navigation */}
         <div ref={sidebarScrollRootRef} className="flex-1 min-h-0 px-2 py-4">
@@ -389,7 +395,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               {filteredNavGroups.map((group) => (
                 <div key={group.label} className="space-y-1">
                   {!collapsed && (
-                    <p className="px-3 py-1 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
+                    <p className="px-3 py-1 text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(0,229,255,0.35)" }}>
                       {group.label}
                     </p>
                   )}
@@ -452,10 +458,29 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         variant="ghost"
                         data-tour-id={tourId}
                         className={cn(
-                          'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
-                          isActive && 'bg-sidebar-accent text-sidebar-foreground',
+                          'w-full justify-start gap-3 transition-all duration-200',
                           collapsed && 'justify-center px-2'
                         )}
+                        style={isActive ? {
+                          background: "rgba(0,229,255,0.1)",
+                          color: "#00E5FF",
+                          boxShadow: "0 0 12px rgba(0,229,255,0.2), inset 0 0 0 1px rgba(0,229,255,0.2)",
+                          borderRadius: 8,
+                        } : {
+                          color: "rgba(255,255,255,0.65)",
+                        }}
+                        onMouseEnter={e => {
+                          if (!isActive) {
+                            (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.95)";
+                            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                          }
+                        }}
+                        onMouseLeave={e => {
+                          if (!isActive) {
+                            (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.65)";
+                            (e.currentTarget as HTMLElement).style.background = "transparent";
+                          }
+                        }}
                         onClick={() => {
                           if (item.external) {
                             window.open(item.href, '_blank');
@@ -464,7 +489,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           }
                         }}
                       >
-                        <Icon className={cn("w-5 h-5 flex-shrink-0", item.featureColor && !isActive && item.featureColor)} />
+                        <Icon className={cn("w-5 h-5 flex-shrink-0", item.featureColor && !isActive && item.featureColor)} style={isActive ? { color: "#00E5FF" } : undefined} />
                         {!collapsed && <span className="truncate">{displayLabel}</span>}
                       </Button>
                     );
@@ -475,7 +500,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </ScrollArea>
         </div>
 
-        <Separator className="bg-sidebar-border" />
+        <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
 
         {/* User section */}
         <div className="p-3 space-y-2">
@@ -511,9 +536,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           )}
           
           {!collapsed && roleBadge && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent/50 border border-white/20">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.15)" }}>
               <roleBadge.icon className={cn('w-4 h-4', roleBadge.color)} />
-              <span className="text-xs font-medium text-white">{roleBadge.label}</span>
+              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.9)" }}>{roleBadge.label}</span>
             </div>
           )}
           
@@ -526,9 +551,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                  'w-full justify-start gap-3',
                   collapsed && 'justify-center px-2'
                 )}
+                style={{ color: "rgba(255,255,255,0.65)" }}
               >
                 <Bug className="w-5 h-5 flex-shrink-0 text-feature-integrations" />
                 {!collapsed && <span>Report Issue</span>}
@@ -539,12 +565,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Button
             variant="ghost"
             className={cn(
-              'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-destructive hover:bg-destructive/10',
+              'w-full justify-start gap-3',
               collapsed && 'justify-center px-2'
             )}
+            style={{ color: "rgba(255,255,255,0.65)" }}
             onClick={handleSignOut}
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
+            <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: "#ff6b6b" }} />
             {!collapsed && <span>Sign Out</span>}
           </Button>
         </div>
@@ -553,7 +580,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3 top-8 h-6 w-6 rounded-full border border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent"
+          className="absolute -right-3 top-8 h-6 w-6 rounded-full"
+          style={{ border: "1px solid rgba(0,229,255,0.2)", background: "rgba(4,10,20,0.95)", color: "#00E5FF" }}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
@@ -563,7 +591,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <main ref={mainRef} className="flex-1 overflow-auto" data-tour-id="main-content">
         {/* Header with notification bell */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="sticky top-0 z-10 border-b" style={{ background: "rgba(4,10,20,0.85)", backdropFilter: "blur(20px)", borderColor: "rgba(0,229,255,0.1)" }}>
           <div className="container max-w-7xl flex items-center justify-end py-2 px-4">
             <NotificationBell />
           </div>

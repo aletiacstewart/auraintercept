@@ -89,49 +89,62 @@
   }
 
   .dark {
-    /* Dark Navy background: #2a3d4e */
-    --background: 208 30% 12%;
+    /* Cinematic deep-space black */
+    --background: 210 40% 4%;
     --foreground: 189 45% 95%;
 
-    /* Slate cards */
-    --card: 208 30% 18%;
+    /* Glassmorphism dark cards */
+    --card: 210 35% 8%;
     --card-foreground: 189 45% 95%;
     --card-muted: 210 25% 65%;
 
-    --popover: 208 30% 15%;
+    --popover: 210 35% 7%;
     --popover-foreground: 189 45% 95%;
 
-    /* Primary: Royal Blue #214ebb */
-    --primary: 223 73% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Neon Cyan #00E5FF */
+    --primary: 189 100% 50%;
+    --primary-foreground: 210 40% 4%;
 
-    /* Secondary: Sky Blue #46a2d3 */
-    --secondary: 199 60% 55%;
+    /* Secondary: Royal Blue #214ebb */
+    --secondary: 223 73% 43%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 208 30% 28%;
+    --muted: 210 35% 14%;
     --muted-foreground: 210 25% 65%;
 
-    /* Accent: Sky Blue */
-    --accent: 199 60% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: Neon Cyan */
+    --accent: 189 100% 50%;
+    --accent-foreground: 210 40% 4%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 208 30% 25%;
-    --input: 208 30% 25%;
-    --ring: 223 73% 50%;
+    --border: 210 30% 16%;
+    --input: 210 30% 16%;
+    --ring: 189 100% 50%;
 
-    /* Sidebar - Deep Navy */
-    --sidebar-background: 208 30% 10%;
+    /* Sidebar - Deepest space black */
+    --sidebar-background: 210 40% 3%;
     --sidebar-foreground: 189 45% 95%;
-    --sidebar-primary: 199 60% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 208 30% 16%;
+    --sidebar-primary: 189 100% 50%;
+    --sidebar-primary-foreground: 210 40% 4%;
+    --sidebar-accent: 210 35% 9%;
     --sidebar-accent-foreground: 189 45% 95%;
-    --sidebar-border: 208 30% 20%;
-    --sidebar-ring: 199 60% 55%;
+    --sidebar-border: 210 30% 12%;
+    --sidebar-ring: 189 100% 50%;
+
+    /* Neon cyan glow tokens */
+    --neon-cyan: 189 100% 50%;
+    --neon-green: 145 100% 44%;
+    --neon-purple: 270 100% 75%;
+
+    /* Cinematic shadow & glow tokens */
+    --shadow-glow: 0 0 20px hsl(189 100% 50% / 0.25);
+    --shadow-glow-accent: 0 0 20px hsl(189 100% 50% / 0.35);
+    --card-halo: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px rgba(255,255,255,0.05);
+    --card-halo-hover-cyan: 0 0 24px hsl(189 100% 50% / 0.35), 0 0 0 1px hsl(189 100% 50% / 0.3);
+    --card-halo-hover-green: 0 0 24px hsl(145 100% 44% / 0.35), 0 0 0 1px hsl(145 100% 44% / 0.3);
+    --card-halo-hover-purple: 0 0 24px hsl(270 100% 75% / 0.35), 0 0 0 1px hsl(270 100% 75% / 0.3);
 
     /* Channel Colors - Dark Mode (slightly brighter) */
     --channel-voice: 348 83% 75%;
@@ -139,23 +152,23 @@
     --channel-email: 199 89% 70%;
     --channel-chat: 270 67% 80%;
 
-    /* Feature Colors - Dark Mode (slightly brighter) */
-    --feature-companies: 238 66% 70%;
-    --feature-employees: 173 58% 55%;
-    --feature-customers: 38 92% 60%;
-    --feature-leads: 280 67% 65%;
-    --feature-appointments: 188 94% 50%;
-    --feature-quotes: 167 72% 52%;
-    --feature-invoices: 160 84% 45%;
-    --feature-inventory: 215 50% 60%;
-    --feature-warranties: 330 81% 70%;
-    --feature-analytics: 223 73% 55%;
-    --feature-marketing: 292 84% 65%;
-    --feature-fieldops: 84 81% 50%;
-    --feature-platform: 205 70% 60%;
-    --feature-config: 221 91% 57%;
-    --feature-overview: 193 89% 69%;
-    --feature-integrations: 282 44% 58%;
+    /* Feature Colors - Neon-boosted for cinematic dark */
+    --feature-companies: 238 80% 75%;
+    --feature-employees: 173 100% 55%;
+    --feature-customers: 38 100% 65%;
+    --feature-leads: 280 100% 75%;
+    --feature-appointments: 189 100% 55%;
+    --feature-quotes: 167 100% 55%;
+    --feature-invoices: 160 100% 50%;
+    --feature-inventory: 215 80% 65%;
+    --feature-warranties: 330 100% 72%;
+    --feature-analytics: 223 100% 65%;
+    --feature-marketing: 292 100% 70%;
+    --feature-fieldops: 84 100% 55%;
+    --feature-platform: 189 100% 55%;
+    --feature-config: 221 100% 65%;
+    --feature-overview: 189 100% 65%;
+    --feature-integrations: 282 80% 70%;
   }
 }
 
@@ -167,6 +180,7 @@
   body {
     @apply bg-background text-foreground antialiased font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Cinematic mesh gradient background in dark mode */
   }
 
   /* Brand headings - only h1/h2 use Bebas Neue for major section titles */
@@ -411,7 +425,58 @@
   }
 
   .shadow-glow-gradient {
-    box-shadow: 0 0 20px hsl(223 73% 43% / 0.3), 0 0 40px hsl(199 60% 55% / 0.2);
+    box-shadow: 0 0 20px hsl(189 100% 50% / 0.3), 0 0 40px hsl(189 100% 50% / 0.15);
+  }
+
+  /* ============================================================
+     CINEMATIC CARD GLOW UTILITIES
+     White halo by default → colored neon on hover
+     Use .card-glow-cyan / .card-glow-green / .card-glow-purple
+     ============================================================ */
+  .card-glow {
+    transition: box-shadow 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1), border-color 0.35s;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-glow:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .card-glow-cyan {
+    transition: box-shadow 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1), border-color 0.35s;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-glow-cyan:hover {
+    box-shadow: 0 0 28px hsl(189 100% 50% / 0.35), 0 0 0 1px hsl(189 100% 50% / 0.35);
+    border-color: hsl(189 100% 50% / 0.4);
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .card-glow-green {
+    transition: box-shadow 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1), border-color 0.35s;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-glow-green:hover {
+    box-shadow: 0 0 28px hsl(145 100% 44% / 0.35), 0 0 0 1px hsl(145 100% 44% / 0.35);
+    border-color: hsl(145 100% 44% / 0.4);
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .card-glow-purple {
+    transition: box-shadow 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1), border-color 0.35s;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-glow-purple:hover {
+    box-shadow: 0 0 28px hsl(270 100% 75% / 0.35), 0 0 0 1px hsl(270 100% 75% / 0.35);
+    border-color: hsl(270 100% 75% / 0.4);
+    transform: translateY(-4px) scale(1.01);
   }
 
   /* Glassmorphism effects */
@@ -423,17 +488,17 @@
   }
 
   .glass-dark {
-    background: hsl(208 30% 12% / 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.2);
+    background: rgba(4, 10, 20, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.07);
   }
 
   .glass-card {
-    background: hsl(208 30% 18% / 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid hsl(208 30% 28% / 0.5);
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.07);
   }
 
   .glass-primary {
