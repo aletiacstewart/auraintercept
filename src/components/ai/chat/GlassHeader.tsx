@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Phone, Mic, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import aiCircleLogo from '@/assets/aura-intercept-logo.png';
 
 export interface GlassHeaderProps {
