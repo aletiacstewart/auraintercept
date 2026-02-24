@@ -782,7 +782,7 @@ export default function Index() {
           <div className="flex flex-col">
             {/* Scale Your Operations - Order 2 */}
             <div className="order-2">
-              <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">Scale Your Operations</h3>
+              <h3 className="text-xl font-semibold text-center mt-10 mb-4" style={{ color: "rgba(255,255,255,0.85)" }}>Scale Your Operations</h3>
               <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
 
             {/* Aura Logistics Plan */}
@@ -944,7 +944,7 @@ export default function Index() {
 
           {/* Start Your AI Journey - Order 1 (appears first) */}
           <div className="order-1">
-            <h3 className="text-xl font-semibold text-center mb-4 text-foreground/80">Start Your AI Journey</h3>
+            <h3 className="text-xl font-semibold text-center mb-4" style={{ color: "rgba(255,255,255,0.85)" }}>Start Your AI Journey</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {/* Aura Starter */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
@@ -1199,10 +1199,10 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
-            <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
-            <p className="text-sm text-foreground mb-2">Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">starting at $299</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>30-day free trial • No credit card required</p>
+            <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">starting at $299</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
