@@ -367,7 +367,7 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
   };
 
   return (
-    <Card className={`border ${sectionBorderColor} glass-card`}>
+    <Card className={`border ${sectionBorderColor} bg-white/[0.06] backdrop-blur-sm`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -386,16 +386,16 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
       </CardHeader>
       <CardContent className="pt-0">
         <Tabs defaultValue="video">
-          <TabsList className="w-full mb-2 bg-white/8 border border-white/15">
-            <TabsTrigger value="video" className="flex-1 gap-1 text-xs text-foreground/65 data-[state=active]:text-foreground data-[state=active]:bg-white/15">
+          <TabsList className="w-full mb-2 bg-white/[0.1] border border-white/20">
+            <TabsTrigger value="video" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
               <Film className="h-3 w-3" />
               Video
             </TabsTrigger>
-            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs text-foreground/65 data-[state=active]:text-foreground data-[state=active]:bg-white/15">
+            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
               <Mic className="h-3 w-3" />
               Audio
             </TabsTrigger>
-            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs text-foreground/65 data-[state=active]:text-foreground data-[state=active]:bg-white/15">
+            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
               <ImageIcon className="h-3 w-3" />
               Graphic
             </TabsTrigger>
@@ -456,7 +456,7 @@ export default function VideoPromptsPage() {
 
         <div className="space-y-6 pb-8">
           {/* Assembly Guide */}
-          <Card className="border-border/50 glass-card">
+          <Card className="border-border/50 bg-white/[0.06] backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -471,19 +471,19 @@ export default function VideoPromptsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                <div className="text-center p-3 rounded-lg bg-white/8 border border-white/15">
+                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
                   <p className="text-2xl font-bold text-foreground">34</p>
                   <p className="text-xs text-foreground/70">Total Clips</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/8 border border-white/15">
+                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
                   <p className="text-2xl font-bold text-foreground">4:32</p>
                   <p className="text-xs text-foreground/70">Total Runtime</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/8 border border-white/15">
+                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
                   <p className="text-2xl font-bold text-foreground">0.5s</p>
                   <p className="text-xs text-foreground/70">Dissolve (within console)</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/8 border border-white/15">
+                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
                   <p className="text-2xl font-bold text-foreground">1s</p>
                   <p className="text-xs text-foreground/70">Glitch (between consoles)</p>
                 </div>
