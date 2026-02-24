@@ -83,19 +83,19 @@ export default function DesignPreview() {
             backgroundImage: `url(${heroAgents})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "brightness(0.35) saturate(1.4)",
+            filter: "brightness(0.55) saturate(1.3)",
           }} />
           {/* Gradient overlay */}
           <div style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(180deg, rgba(4,10,20,0.5) 0%, rgba(4,10,20,0.3) 40%, rgba(4,10,20,0.85) 100%)",
+            background: "linear-gradient(180deg, rgba(4,10,20,0.25) 0%, rgba(4,10,20,0.1) 40%, rgba(4,10,20,0.75) 100%)",
           }} />
           {/* Cyan scan line effect */}
           <div style={{
             position: "absolute",
             inset: 0,
-            background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.015) 3px, rgba(0,229,255,0.015) 4px)",
+            background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)",
             pointerEvents: "none",
           }} />
 
