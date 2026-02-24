@@ -99,8 +99,20 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
             <Button 
               size="sm" 
               variant="ghost" 
-              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+              className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
               onClick={onPhoneClick}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = 'hsl(84,100%,60%)';
+                el.style.background = 'hsl(84,100%,55%/0.12)';
+                el.style.boxShadow = '0 0 14px hsl(84,100%,55%/0.45)';
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = '';
+                el.style.background = '';
+                el.style.boxShadow = '';
+              }}
             >
               <Phone className="h-4 w-4" />
             </Button>
@@ -109,8 +121,20 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
             <Button 
               size="sm" 
               variant="ghost" 
-              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+              className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
               onClick={onVoiceClick}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = 'hsl(292,100%,75%)';
+                el.style.background = 'hsl(292,100%,70%/0.12)';
+                el.style.boxShadow = '0 0 14px hsl(292,100%,70%/0.45)';
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = '';
+                el.style.background = '';
+                el.style.boxShadow = '';
+              }}
             >
               <Mic className="h-4 w-4" />
             </Button>

@@ -471,14 +471,35 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         }}
                         onMouseEnter={e => {
                           if (!isActive) {
-                            (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.95)";
-                            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                            const glowMap: Record<string, string> = {
+                              'text-feature-overview':     '189,100%,65%',
+                              'text-feature-config':       '221,100%,65%',
+                              'text-feature-platform':     '189,100%,55%',
+                              'text-feature-fieldops':     '84,100%,55%',
+                              'text-feature-customers':    '38,100%,65%',
+                              'text-feature-employees':    '173,100%,55%',
+                              'text-feature-analytics':    '223,100%,65%',
+                              'text-feature-marketing':    '292,100%,70%',
+                              'text-feature-integrations': '282,80%,70%',
+                            };
+                            const hsl = item.featureColor ? glowMap[item.featureColor] : null;
+                            const el = e.currentTarget as HTMLElement;
+                            if (hsl) {
+                              el.style.color = `hsl(${hsl})`;
+                              el.style.background = `hsl(${hsl}/0.07)`;
+                              el.style.boxShadow = `0 0 14px hsl(${hsl}/0.35), inset 0 0 0 1px hsl(${hsl}/0.18)`;
+                            } else {
+                              el.style.color = "rgba(255,255,255,0.95)";
+                              el.style.background = "rgba(255,255,255,0.04)";
+                            }
                           }
                         }}
                         onMouseLeave={e => {
                           if (!isActive) {
-                            (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.65)";
-                            (e.currentTarget as HTMLElement).style.background = "transparent";
+                            const el = e.currentTarget as HTMLElement;
+                            el.style.color = "rgba(255,255,255,0.65)";
+                            el.style.background = "transparent";
+                            el.style.boxShadow = "none";
                           }
                         }}
                         onClick={() => {
