@@ -367,35 +367,35 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
   };
 
   return (
-    <Card className={`border ${sectionBorderColor} glass-card`}>
+    <Card className={`border ${sectionBorderColor}`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Badge variant="outline" className={`shrink-0 font-mono text-xs ${sectionColor} border-current/40`}>
               #{clip.num}
             </Badge>
-            <CardTitle className="text-sm font-semibold truncate text-foreground">{clip.name}</CardTitle>
+            <CardTitle className="text-sm font-semibold truncate">{clip.name}</CardTitle>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Badge className="text-xs bg-white/10 text-foreground border border-white/20">8s</Badge>
-            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1 text-muted-foreground hover:text-foreground" onClick={handleCopyAll} title="Copy all assets">
-              {copiedAll ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
+            <Badge variant="secondary" className="text-xs">8s</Badge>
+            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1" onClick={handleCopyAll} title="Copy all assets">
+              {copiedAll ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
         <Tabs defaultValue="video">
-          <TabsList className="w-full mb-2 bg-white/[0.1] border border-white/20">
-            <TabsTrigger value="video" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
+          <TabsList className="w-full mb-2">
+            <TabsTrigger value="video" className="flex-1 gap-1 text-xs">
               <Film className="h-3 w-3" />
               Video
             </TabsTrigger>
-            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
+            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs">
               <Mic className="h-3 w-3" />
               Audio
             </TabsTrigger>
-            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:bg-white/20">
+            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs">
               <ImageIcon className="h-3 w-3" />
               Graphic
             </TabsTrigger>
@@ -456,7 +456,7 @@ export default function VideoPromptsPage() {
 
         <div className="space-y-6 pb-8">
           {/* Assembly Guide */}
-          <Card className="border-border/50 glass-card">
+          <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -471,21 +471,21 @@ export default function VideoPromptsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
-                  <p className="text-2xl font-bold text-foreground">34</p>
-                  <p className="text-xs text-foreground/70">Total Clips</p>
+                <div className="text-center p-3 rounded-lg bg-muted border border-border">
+                  <p className="text-2xl font-bold">34</p>
+                  <p className="text-xs text-muted-foreground">Total Clips</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
-                  <p className="text-2xl font-bold text-foreground">4:32</p>
-                  <p className="text-xs text-foreground/70">Total Runtime</p>
+                <div className="text-center p-3 rounded-lg bg-muted border border-border">
+                  <p className="text-2xl font-bold">4:32</p>
+                  <p className="text-xs text-muted-foreground">Total Runtime</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
-                  <p className="text-2xl font-bold text-foreground">0.5s</p>
-                  <p className="text-xs text-foreground/70">Dissolve (within console)</p>
+                <div className="text-center p-3 rounded-lg bg-muted border border-border">
+                  <p className="text-2xl font-bold">0.5s</p>
+                  <p className="text-xs text-muted-foreground">Dissolve (within console)</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/10 border border-white/20">
-                  <p className="text-2xl font-bold text-foreground">1s</p>
-                  <p className="text-xs text-foreground/70">Glitch (between consoles)</p>
+                <div className="text-center p-3 rounded-lg bg-muted border border-border">
+                  <p className="text-2xl font-bold">1s</p>
+                  <p className="text-xs text-muted-foreground">Glitch (between consoles)</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 text-xs mb-3">
