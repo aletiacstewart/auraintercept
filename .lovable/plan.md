@@ -1,74 +1,32 @@
 
-# Design Preview Page — See the New Aesthetic Before Committing
 
-## What This Does
+# Make the Robots More Visible in the Hero
 
-Creates a single new route `/design-preview` that renders a **standalone visual demo** of the new dark-tech aesthetic. Nothing on the live site is changed. You visit the preview page, approve or request tweaks, then we roll the approved style out platform-wide.
+## The Problem
 
-## Current State (from screenshot)
+The hero background image (`hero-agents.jpeg`) is too dark because of two layers stacking on top of it:
+1. **Brightness filter** on the image itself: `brightness(0.35)` -- this alone dims it to 35% brightness
+2. **Gradient overlay** on top: a dark gradient going from 50% opacity at the top to 85% at the bottom
 
-The landing page currently has:
-- Light/white background with flat layout
-- Royal blue flat title text
-- Standard navy button styles
-- No atmospheric depth or ambient effects
+Combined, the robots are barely visible.
 
-## What the Preview Page Will Show
+## The Fix
 
-The preview page renders 5 demo sections, each showing the new style applied to real components from the platform:
+Three small changes to `src/pages/DesignPreview.tsx`:
 
-### Section 1: Hero Demo
-- Deep dark animated mesh gradient background
-- "AURA INTERCEPT" title in cyan-to-blue gradient sweep
-- Glowing subtitle text
-- Two CTA buttons — one with animated gradient border sweep, one glass style
-- Subtle tech grid overlay on background
+### 1. Raise the image brightness
+- **Line 86**: Change `filter: "brightness(0.35) saturate(1.4)"` to `filter: "brightness(0.55) saturate(1.3)"`
+- This lets significantly more of the robot detail through
 
-### Section 2: Console Cards Demo
-- 4 console cards (Customer Portal, Field Ops, Business Ops, Analytics)
-- Each card: dark glass panel with translucent background + blur effect
-- Console-specific neon border color on hover (blue, green, purple, cyan)
-- Neon glow shadow on hover
-- Icons and text visible and readable
+### 2. Lighten the gradient overlay
+- **Line 92**: Change the overlay gradient from `rgba(4,10,20,0.5)...0.3...0.85` to `rgba(4,10,20,0.25)...0.1...0.75`
+- The top and middle become much more transparent so the robots show clearly
+- The bottom stays slightly dark so the text below the hero still has contrast
 
-### Section 3: Dashboard Stat Cards Demo
-- 4 metric cards matching what the dashboard shows
-- Dark glass surface with subtle gradient border
-- Numbers in gradient text (feature color)
-- Labels in properly contrasted muted text
+### 3. Reduce the scan line opacity slightly
+- **Line 98**: Change scan line color from `rgba(0,229,255,0.015)` to `rgba(0,229,255,0.01)` -- just a hair less interference on the image
 
-### Section 4: Form Input Demo
-- A sample form (name, email, phone, dropdown)
-- Dark glass input fields with proper light text
-- Visible placeholder text at correct opacity
-- Focused state shows a neon-blue ring
-- Submit button with border-shine animation
+**Result:** Robots will be clearly visible with good detail while still maintaining the cinematic dark mood and ensuring all text remains readable against the image.
 
-### Section 5: Side-by-Side Comparison
-- Left column: current design (recreated using existing classes)
-- Right column: new design (using new dark-tech classes)
-- Labeled clearly so you can compare both at once
+**Only 1 file modified: `src/pages/DesignPreview.tsx` (3 line changes)**
 
-## Files Created
-
-| File | Purpose |
-|---|---|
-| `src/pages/DesignPreview.tsx` | The entire preview page — self-contained, no impact on live site |
-
-## Files Modified
-
-| File | Change |
-|---|---|
-| `src/App.tsx` | Add one route: `<Route path="/design-preview" element={<DesignPreview />} />` |
-
-**Total: 1 new file, 1 small route addition. Zero changes to any existing pages.**
-
-## How to Access It
-
-After implementation, navigate to `/design-preview` in the preview window. The page will be fully self-contained with all new CSS written inline/as Tailwind classes — so it doesn't affect anything else.
-
-## After You Approve the Preview
-
-Once you like what you see on the preview page, I proceed with the full 4-file platform refresh (`index.html`, `index.css`, `tailwind.config.ts`, `Index.tsx`) that applies the approved aesthetic everywhere.
-
-If you want tweaks (different colors, less glow, different gradient direction), I update the preview page first until it's exactly right — then propagate.
