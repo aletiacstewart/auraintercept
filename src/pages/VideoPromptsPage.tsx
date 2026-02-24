@@ -367,18 +367,18 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
   };
 
   return (
-    <Card className={`border ${sectionBorderColor} bg-card/50`}>
+    <Card className={`border ${sectionBorderColor} bg-card/60 backdrop-blur-sm`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <Badge variant="outline" className={`shrink-0 font-mono text-xs ${sectionColor}`}>
+            <Badge variant="outline" className={`shrink-0 font-mono text-xs ${sectionColor} border-current/40`}>
               #{clip.num}
             </Badge>
-            <CardTitle className="text-sm font-semibold truncate">{clip.name}</CardTitle>
+            <CardTitle className="text-sm font-semibold truncate text-foreground">{clip.name}</CardTitle>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Badge variant="secondary" className="text-xs">8s</Badge>
-            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1" onClick={handleCopyAll} title="Copy all assets">
+            <Badge className="text-xs bg-muted/50 text-muted-foreground border border-border/50">8s</Badge>
+            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1 text-muted-foreground hover:text-foreground" onClick={handleCopyAll} title="Copy all assets">
               {copiedAll ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
@@ -386,40 +386,40 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
       </CardHeader>
       <CardContent className="pt-0">
         <Tabs defaultValue="video">
-          <TabsList className="w-full mb-2">
-            <TabsTrigger value="video" className="flex-1 gap-1 text-xs">
+          <TabsList className="w-full mb-2 bg-muted/30 border border-border/40">
+            <TabsTrigger value="video" className="flex-1 gap-1 text-xs text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-card">
               <Film className="h-3 w-3" />
               Video
             </TabsTrigger>
-            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs">
+            <TabsTrigger value="audio" className="flex-1 gap-1 text-xs text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-card">
               <Mic className="h-3 w-3" />
               Audio
             </TabsTrigger>
-            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs">
+            <TabsTrigger value="graphic" className="flex-1 gap-1 text-xs text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-card">
               <ImageIcon className="h-3 w-3" />
               Graphic
             </TabsTrigger>
           </TabsList>
           <TabsContent value="video" className="mt-0">
             <div className="relative">
-              <p className="text-xs text-muted-foreground leading-relaxed pr-8">{clip.prompt}</p>
-              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0" onClick={() => handleCopyTab('video')}>
+              <p className="text-xs text-foreground/80 leading-relaxed pr-8">{clip.prompt}</p>
+              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0 text-muted-foreground hover:text-foreground" onClick={() => handleCopyTab('video')}>
                 {copiedTab === 'video' ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
           </TabsContent>
           <TabsContent value="audio" className="mt-0">
             <div className="relative">
-              <p className="text-xs text-muted-foreground leading-relaxed pr-8 italic">{clip.audioScript}</p>
-              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0" onClick={() => handleCopyTab('audio')}>
+              <p className="text-xs text-foreground/80 leading-relaxed pr-8 italic">{clip.audioScript}</p>
+              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0 text-muted-foreground hover:text-foreground" onClick={() => handleCopyTab('audio')}>
                 {copiedTab === 'audio' ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
           </TabsContent>
           <TabsContent value="graphic" className="mt-0">
             <div className="relative">
-              <p className="text-xs text-muted-foreground leading-relaxed pr-8">{clip.imagePrompt}</p>
-              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0" onClick={() => handleCopyTab('graphic')}>
+              <p className="text-xs text-foreground/80 leading-relaxed pr-8">{clip.imagePrompt}</p>
+              <Button size="sm" variant="ghost" className="absolute top-0 right-0 h-6 w-6 p-0 text-muted-foreground hover:text-foreground" onClick={() => handleCopyTab('graphic')}>
                 {copiedTab === 'graphic' ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
@@ -456,14 +456,14 @@ export default function VideoPromptsPage() {
 
         <div className="space-y-6 pb-8">
           {/* Assembly Guide */}
-          <Card className="border-border/50 bg-card/50">
+          <Card className="border-border/50 bg-card/60 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Info className="h-4 w-4 text-muted-foreground" />
-                  <CardTitle className="text-sm">Assembly Guide</CardTitle>
+                  <Info className="h-4 w-4 text-primary" />
+                  <CardTitle className="text-sm text-foreground">Assembly Guide</CardTitle>
                 </div>
-                <Button size="sm" variant="outline" onClick={handleCopyAll} className="h-7 text-xs">
+                <Button size="sm" variant="outline" onClick={handleCopyAll} className="h-7 text-xs border-border/50 text-foreground hover:text-foreground hover:bg-muted/30">
                   {copiedAll ? <Check className="mr-1 h-3 w-3 text-green-400" /> : <Copy className="mr-1 h-3 w-3" />}
                   Copy All 34 Prompts
                 </Button>
@@ -471,41 +471,41 @@ export default function VideoPromptsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                <div className="text-center p-3 rounded-lg bg-muted/30">
+                <div className="text-center p-3 rounded-lg bg-muted/20 border border-border/30">
                   <p className="text-2xl font-bold text-foreground">34</p>
                   <p className="text-xs text-muted-foreground">Total Clips</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-muted/30">
+                <div className="text-center p-3 rounded-lg bg-muted/20 border border-border/30">
                   <p className="text-2xl font-bold text-foreground">4:32</p>
                   <p className="text-xs text-muted-foreground">Total Runtime</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-muted/30">
+                <div className="text-center p-3 rounded-lg bg-muted/20 border border-border/30">
                   <p className="text-2xl font-bold text-foreground">0.5s</p>
                   <p className="text-xs text-muted-foreground">Dissolve (within console)</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-muted/30">
+                <div className="text-center p-3 rounded-lg bg-muted/20 border border-border/30">
                   <p className="text-2xl font-bold text-foreground">1s</p>
                   <p className="text-xs text-muted-foreground">Glitch (between consoles)</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 text-xs mb-3">
                 {[
-                  { label: 'Customer Portal', color: 'bg-blue-500/20 text-blue-400' },
-                  { label: 'Field Operations', color: 'bg-green-500/20 text-green-400' },
-                  { label: 'Business Ops', color: 'bg-purple-500/20 text-purple-400' },
-                  { label: 'Outreach & Sales', color: 'bg-orange-500/20 text-orange-400' },
-                  { label: 'Social Media', color: 'bg-pink-500/20 text-pink-400' },
-                  { label: 'Creative & Web', color: 'bg-violet-500/20 text-violet-400' },
-                  { label: 'Analytics & Reports', color: 'bg-cyan-500/20 text-cyan-400' },
-                  { label: 'AI Operatives Hub', color: 'bg-indigo-500/20 text-indigo-400' },
+                  { label: 'Customer Portal', color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30' },
+                  { label: 'Field Operations', color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
+                  { label: 'Business Ops', color: 'bg-purple-500/20 text-purple-300 border border-purple-500/30' },
+                  { label: 'Outreach & Sales', color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' },
+                  { label: 'Social Media', color: 'bg-pink-500/20 text-pink-300 border border-pink-500/30' },
+                  { label: 'Creative & Web', color: 'bg-violet-500/20 text-violet-300 border border-violet-500/30' },
+                  { label: 'Analytics & Reports', color: 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' },
+                  { label: 'AI Operatives Hub', color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' },
                 ].map(item => (
                   <span key={item.label} className={`px-2 py-1 rounded-full font-medium ${item.color}`}>{item.label}</span>
                 ))}
               </div>
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground border-t border-border/50 pt-3">
-                <span className="flex items-center gap-1"><Film className="h-3 w-3" /> Video — AI video generation prompt</span>
-                <span className="flex items-center gap-1"><Mic className="h-3 w-3" /> Audio — 8-second voiceover script</span>
-                <span className="flex items-center gap-1"><ImageIcon className="h-3 w-3" /> Graphic — Still image generation prompt</span>
+                <span className="flex items-center gap-1 text-foreground/70"><Film className="h-3 w-3" /> Video — AI video generation prompt</span>
+                <span className="flex items-center gap-1 text-foreground/70"><Mic className="h-3 w-3" /> Audio — 8-second voiceover script</span>
+                <span className="flex items-center gap-1 text-foreground/70"><ImageIcon className="h-3 w-3" /> Graphic — Still image generation prompt</span>
               </div>
             </CardContent>
           </Card>
