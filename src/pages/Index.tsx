@@ -269,25 +269,29 @@ const communicationChannels = [{
   title: 'Talk to Aura (Voice)',
   description: 'Natural voice conversations with AI agents for phone-based customer service. Requires ElevenLabs + SignalWire.',
   color: 'bg-channel-voice',
-  gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'
+  gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]',
+  neonRgb: '236,72,153'
 }, {
   icon: MessageSquare,
   title: 'SMS Reminders',
   description: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires SignalWire.',
   color: 'bg-channel-sms',
-  gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
+  gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]',
+  neonRgb: '34,197,94'
 }, {
   icon: Mail,
   title: 'Email Reminders',
   description: 'Automated email notifications for appointments, confirmations, and marketing campaigns.',
   color: 'bg-channel-email',
-  gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]'
+  gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]',
+  neonRgb: '14,165,233'
 }, {
   icon: Headphones,
   title: 'Message Aura (Text)',
   description: 'Text-based chat where customers type questions and receive AI responses. Works on ALL tiers.',
   color: 'bg-channel-chat',
-  gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
+  gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
+  neonRgb: '168,85,247'
 }];
 const industryCategories = [{
   category: 'Essential Trades',
@@ -640,7 +644,7 @@ export default function Index() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {communicationChannels.map((channel) => (
               <div key={channel.title} style={{ borderRadius: 14, padding: "24px", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)", textAlign: "center", transition: "all 0.3s ease" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px rgba(${channel.neonRgb},0.25), 0 0 0 1px rgba(${channel.neonRgb},0.4)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(255,255,255,0.06)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
