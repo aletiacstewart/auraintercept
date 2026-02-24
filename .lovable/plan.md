@@ -1,46 +1,55 @@
 
-## Problem
-The Video Prompts page has invisible text on dark backgrounds because:
-1. **Assembly Guide stat boxes** use `bg-muted/20 border border-border/30` — on the deep-space dark bg this renders nearly black-on-black
-2. **ClipCard background** uses `bg-card/60` — too dark, content disappears
-3. **TabsList** uses `bg-muted/30 border border-border/40` — the tab bar is almost invisible
-4. **Inactive TabsTrigger** uses `text-muted-foreground` — near-invisible mid-grey on dark card
-5. **Prompt text** uses `text-foreground/80` — unnecessarily dimmed
-6. **Section badge** uses `bg-muted/50 text-muted-foreground` for the "8s" badge
-7. **Legend icons** at the bottom use `text-foreground/70` — barely visible
+## Root Cause — Why Nothing Has Worked
 
-PlatformGuides uses `glass-card`, `bg-white/5`, `text-foreground`, `border-border/30` — the correct pattern for this dark theme.
+Every fix attempt failed for the same reason: **`glass-card` = `rgba(255,255,255,0.03)`** — that is 3% white opacity on a near-black background. It is invisible. Same issue with `bg-muted/30` in dark mode where `--muted` resolves to `hsl(210 35% 14%)` which is a very dark navy.
 
-## Fix — single file: `src/pages/VideoPromptsPage.tsx`
+The page uses `PageContainer variant="transparent"` so cards sit directly on the deep-space `hsl(210 40% 4%)` background. Every "fix" just kept applying near-invisible colours.
 
-### 1. Assembly Guide card (line 459)
-- Change `bg-card/60 backdrop-blur-sm` → `glass-card` (matches PlatformGuides card style)
+## The Real Fix — 3 files
 
-### 2. Stat boxes (lines 474–489, all 4 boxes)
-- Change `bg-muted/20 border border-border/30` → `bg-white/8 border border-white/15`
-- `text-muted-foreground` labels → `text-foreground/70`
+### 1. `src/index.css` — Fix `glass-card` utility
+`glass-card` currently = `rgba(255,255,255,0.03)` = 3% white = invisible.
+Change to `rgba(255,255,255,0.08)` with a visible border.
 
-### 3. "8s" duration badge (line 380)
-- Change `bg-muted/50 text-muted-foreground border border-border/50` → `bg-white/10 text-foreground border border-white/20`
+```css
+.glass-card {
+  background: rgba(255,255,255,0.08);   /* was 0.03 */
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+```
 
-### 4. ClipCard card background (line 370)
-- Change `bg-card/60 backdrop-blur-sm` → `glass-card` to match PlatformGuides
+### 2. `src/components/ui/tabs.tsx` — Fix default `TabsList` base style
+`TabsList` base = `bg-muted/30` which in dark mode is ~`hsl(210 35% 14% / 0.3)` ≈ near-black.
+Change base default to use `bg-white/[0.08]` with a visible border so tabs are always readable on dark surfaces.
 
-### 5. TabsList (line 389)
-- Change `bg-muted/30 border border-border/40` → `bg-white/8 border border-white/15`
+```tsx
+// Change base TabsList from:
+"inline-flex items-center justify-center gap-0.5 rounded-lg bg-muted/30 p-1 flex-wrap"
+// To:
+"inline-flex items-center justify-center gap-0.5 rounded-lg bg-white/[0.08] border border-white/[0.12] p-1 flex-wrap"
 
-### 6. Inactive TabsTrigger (lines 390, 394, 398) 
-- Change `text-muted-foreground` → `text-foreground/65` — clearly readable
-- Active state: change `data-[state=active]:bg-card` → `data-[state=active]:bg-white/15`
+// Change base TabsTrigger active state from:
+"data-[state=active]:bg-background data-[state=active]:text-foreground"
+// To:
+"data-[state=active]:bg-white/[0.15] data-[state=active]:text-foreground"
+```
 
-### 7. Prompt text (lines 405, 413, 421)
-- Change `text-foreground/80` → `text-foreground` — full brightness
+### 3. `src/pages/VideoPromptsPage.tsx` — Use `glass-card` class (now properly visible)
+After fixing `glass-card` to 8% white opacity, use it consistently.
 
-### 8. Legend row (lines 506-508)
-- Change `text-foreground/70` → `text-foreground/85`
+- `ClipCard` at line 370: `glass-card` (now visible with 8% white bg)
+- Assembly Guide card at line 459: `glass-card`
+- Stat boxes at lines 474-489: keep `bg-white/10 border border-white/20` (already correct, valid Tailwind)
+- TabsList overrides in ClipCard at line 389: can be removed since base tabs.tsx is now fixed
+- TabsTrigger overrides: can be simplified
 
-### 9. Copy All button (line 466)
-- Change `text-foreground hover:text-foreground hover:bg-muted/30` → `text-foreground hover:bg-white/10`
+## Why This Actually Fixes It
+- `glass-card` goes from 3% → 8% white overlay = clearly visible card surface on deep-space black
+- `TabsList` global default fixed so ALL tabs across the app are visible on dark backgrounds  
+- Card backgrounds show a clear distinction from the pure-black page background
 
-### Files to edit
-- `src/pages/VideoPromptsPage.tsx` only — targeted color/opacity fixes to match PlatformGuides pattern
+## Files to Edit
+1. `src/index.css` — line ~498: fix `.glass-card` background from `0.03` to `0.08`
+2. `src/components/ui/tabs.tsx` — lines 15 and 32: fix `bg-muted/30` → `bg-white/[0.08]` with border; fix active state
+3. `src/pages/VideoPromptsPage.tsx` — lines 370 and 459: use `glass-card` class cleanly
