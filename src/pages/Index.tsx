@@ -17,6 +17,7 @@ const agentCategories = [{
   name: 'Customer Portal',
   icon: Users,
   color: 'from-cyan-500 to-blue-500',
+  neonRgb: '0,229,255',
   agents: [{
     name: 'AI Receptionist',
     description: 'First point of contact that classifies intent and routes to specialized agents',
@@ -39,6 +40,7 @@ const agentCategories = [{
   name: 'Field Operations',
   icon: MapPin,
   color: 'from-green-500 to-emerald-500',
+  neonRgb: '0,230,118',
   agents: [{
     name: 'Dispatch Agent',
     description: 'Smart job assignment based on skills and location',
@@ -61,6 +63,7 @@ const agentCategories = [{
   name: 'Business Operations',
   icon: Building2,
   color: 'from-purple-500 to-violet-500',
+  neonRgb: '168,85,247',
   agents: [{
     name: 'Admin Agent',
     description: 'User management, company settings, and access control',
@@ -83,6 +86,7 @@ const agentCategories = [{
   name: 'Analytics & Reports',
   icon: BarChart3,
   color: 'from-cyan-500 to-indigo-500',
+  neonRgb: '99,102,241',
   agents: [{
     name: 'Insights Agent',
     description: 'Business intelligence with trends and anomaly detection',
@@ -105,6 +109,7 @@ const agentCategories = [{
   name: 'Outreach & Sales Ops',
   icon: Megaphone,
   color: 'from-orange-500 to-amber-500',
+  neonRgb: '249,115,22',
   agents: [{
     name: 'Campaign Agent',
     description: 'Creates and schedules email and SMS marketing campaigns with performance analytics',
@@ -123,6 +128,7 @@ const agentCategories = [{
   name: 'Social Media Ops',
   icon: Send,
   color: 'from-pink-500 to-rose-500',
+  neonRgb: '236,72,153',
   agents: [{
     name: 'Social Media Agent',
     description: 'AI-powered content creation for Facebook, Instagram, LinkedIn, TikTok, Google Business & SMS',
@@ -141,6 +147,7 @@ const agentCategories = [{
   name: 'Creative & Web Presence',
   icon: Palette,
   color: 'from-teal-500 to-cyan-500',
+  neonRgb: '20,184,166',
   agents: [{
     name: 'Creative Agent',
     description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
@@ -597,7 +604,7 @@ export default function Index() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                   {category.agents.map((agent) => (
                     <div key={agent.name} style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 20px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px rgba(${category.neonRgb},0.25), 0 0 0 1px rgba(${category.neonRgb},0.35)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(255,255,255,0.08), 0 0 12px rgba(255,255,255,0.04)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
