@@ -5,8 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { GlassHeader } from '@/components/ai/chat/GlassHeader';
-import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
+import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
@@ -248,39 +248,37 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     );
   }
 
+  const ANALYTICS_AGENTS: CyberAgent[] = [
+    { id: 'analytics', name: 'Performance Analyst', description: 'Reports & KPI tracking', icon: BarChart3, hsl: '223,100%,65%', status: 'active', sessions: 112, avgResp: '0.8s' },
+    { id: 'revenue', name: 'Revenue Analyst', description: 'Revenue & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', sessions: 78, avgResp: '1.1s' },
+    { id: 'insights', name: 'Insight Engine', description: 'Trends & customer insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', sessions: 55, avgResp: '1.4s' },
+  ];
+
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
-      {/* Glass Header */}
-      <GlassHeader
-        logoUrl={company?.logo_url}
-        companyName={company?.name || 'Analytics & Reports'}
-        agentLabel={activeLabel}
-        agentColor={agentStyle.color}
-        agentBgColor={agentStyle.bgColor}
-        useDefaultLogo={true}
-        subtitle="Analytics & Reports — Cyber-Sentry Edition"
-      />
-
-      {/* Tab Navigation */}
-      <MobileTabNav
-        tabs={TABS}
-        activeTab={activeTab}
-        onTabChange={(tabId) => {
-          setActiveTab(tabId);
-          if (tabId !== 'chat') {
-            const action = QUICK_ACTIONS.find(a => a.id === tabId);
-            if (action) {
-              handleQuickAction(action.message, action.id);
-            }
-          }
-        }}
-        onHomeClick={handleHome}
-      />
-
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+    <CyberConsoleLayout
+      companyName={company?.name || 'Analytics & Reports'}
+      agentLabel={activeLabel}
+      agentColor={agentStyle.color}
+      agentBgColor={agentStyle.bgColor}
+      subtitle="Analytics & Reports — Cyber-Sentry Edition"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={(tabId) => {
+        setActiveTab(tabId);
+        if (tabId !== 'chat') {
+          const action = QUICK_ACTIONS.find(a => a.id === tabId);
+          if (action) handleQuickAction(action.message, action.id);
+        }
+      }}
+      onHomeClick={handleHome}
+      agents={ANALYTICS_AGENTS}
+      currentAgentId={currentAgent || lastAgent}
+      quickActions={QUICK_ACTIONS}
+      onQuickAction={handleQuickAction}
+      useDefaultLogo={true}
+    >
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
             <WelcomeScreen
               companyName={company?.name || 'Analytics & Optimization'}
@@ -407,7 +405,6 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
           isLoading={isLoading}
           placeholder="Ask about metrics, trends, forecasts..."
         />
-      </div>
-    </div>
+    </CyberConsoleLayout>
   );
 };

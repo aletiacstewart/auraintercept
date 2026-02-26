@@ -1,0 +1,319 @@
+import React from 'react';
+import { LucideIcon } from 'lucide-react';
+import { GlassHeader } from './GlassHeader';
+import { MobileTabNav } from './MobileTabNav';
+
+export interface CyberAgent {
+  id: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  /** hex or rgba color for the glow */
+  hsl: string; // e.g. '189,100%,65%'
+  status: 'active' | 'standby' | 'off';
+  sessions: number;
+  avgResp: string;
+}
+
+export interface CyberQuickAction {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  message: string;
+  featureColor?: string;
+  /** hsl string e.g. '189,100%,55%' — derived from featureColor if not set */
+  hsl?: string;
+}
+
+interface Tab {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  featureColor?: string;
+}
+
+interface CyberConsoleLayoutProps {
+  // Header props
+  logoUrl?: string | null;
+  companyName: string;
+  agentLabel: string;
+  agentColor: string;
+  agentBgColor: string;
+  subtitle: string;
+  // Tabs
+  tabs: Tab[];
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  onHomeClick: () => void;
+  // Left panel
+  agents: CyberAgent[];
+  currentAgentId?: string | null;
+  sessionMetrics?: {
+    status?: string;
+    avgResponse?: string;
+    satisfaction?: string;
+  };
+  // Right panel
+  quickActions: CyberQuickAction[];
+  onQuickAction: (message: string, id: string) => void;
+  /** Optional extra slot below actions (e.g. "Talk to Aura") */
+  rightPanelFooter?: React.ReactNode;
+  // Center content
+  children: React.ReactNode;
+  // GlassHeader extras
+  showPhone?: boolean;
+  onPhoneClick?: () => void;
+  isOnline?: boolean;
+  useDefaultLogo?: boolean;
+}
+
+const FEATURE_HSL_MAP: Record<string, string> = {
+  'text-feature-overview': '189,100%,65%',
+  'text-feature-fieldops': '84,100%,55%',
+  'text-feature-customers': '38,100%,65%',
+  'text-feature-analytics': '223,100%,65%',
+  'text-feature-marketing': '292,100%,70%',
+  'text-feature-quotes': '48,100%,65%',
+  'text-feature-invoices': '142,72%,55%',
+  'text-feature-leads': '262,83%,68%',
+  'text-feature-appointments': '221,83%,68%',
+  'text-feature-inventory': '172,72%,55%',
+  'text-feature-platform': '189,100%,55%',
+  'text-feature-employees': '48,100%,60%',
+  'text-feature-ai': '265,89%,70%',
+  'text-pink-400': '330,80%,70%',
+  'text-destructive': '0,84%,60%',
+};
+
+function getHsl(action: CyberQuickAction): string {
+  if (action.hsl) return action.hsl;
+  if (action.featureColor && FEATURE_HSL_MAP[action.featureColor]) {
+    return FEATURE_HSL_MAP[action.featureColor];
+  }
+  return '189,100%,55%';
+}
+
+export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
+  logoUrl,
+  companyName,
+  agentLabel,
+  agentColor,
+  agentBgColor,
+  subtitle,
+  tabs,
+  activeTab,
+  onTabChange,
+  onHomeClick,
+  agents,
+  currentAgentId,
+  sessionMetrics,
+  quickActions,
+  onQuickAction,
+  rightPanelFooter,
+  children,
+  showPhone,
+  onPhoneClick,
+  isOnline,
+  useDefaultLogo,
+}) => {
+  const metrics = sessionMetrics ?? {
+    status: 'Live',
+    avgResponse: '<1s',
+    satisfaction: '98.4%',
+  };
+
+  const agentColors = [
+    { hsl: '189,100%,65%', border: 'rgba(0,229,255,0.3)', glow: 'rgba(0,229,255,0.12)', text: 'text-cyan-400' },
+    { hsl: '152,69%,60%', border: 'rgba(52,211,153,0.3)', glow: 'rgba(52,211,153,0.12)', text: 'text-emerald-400' },
+    { hsl: '270,72%,68%', border: 'rgba(168,85,247,0.3)', glow: 'rgba(168,85,247,0.12)', text: 'text-purple-400' },
+    { hsl: '48,96%,55%', border: 'rgba(250,204,21,0.3)', glow: 'rgba(250,204,21,0.12)', text: 'text-yellow-400' },
+  ];
+
+  return (
+    <div
+      className="h-[600px] flex flex-col overflow-hidden rounded-xl"
+      style={{
+        background: 'rgba(2,8,18,0.97)',
+        border: '1px solid rgba(0,229,255,0.15)',
+        borderTop: '3px solid rgba(0,229,255,0.6)',
+        boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)',
+      }}
+    >
+      {/* Glass Header */}
+      <GlassHeader
+        logoUrl={logoUrl}
+        companyName={companyName}
+        agentLabel={agentLabel}
+        agentColor={agentColor}
+        agentBgColor={agentBgColor}
+        subtitle={subtitle}
+        showPhone={showPhone}
+        onPhoneClick={onPhoneClick}
+        isOnline={isOnline}
+        useDefaultLogo={useDefaultLogo ?? !logoUrl}
+      />
+
+      {/* Tab Navigation */}
+      <MobileTabNav
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        onHomeClick={onHomeClick}
+      />
+
+      {/* 3-Column Cyber Layout (desktop) / Single column (mobile) */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+
+        {/* ── LEFT PANEL: Active Agents ── */}
+        <div
+          className="hidden lg:flex flex-col w-56 shrink-0 border-r overflow-y-auto"
+          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+        >
+          {/* Panel Header */}
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Active Agents</span>
+          </div>
+
+          {/* Agent Cards */}
+          <div className="flex-1 p-2 space-y-2">
+            {agents.map((agent, idx) => {
+              const colors = agentColors[idx % agentColors.length];
+              const AgentIcon = agent.icon;
+              const isActive = agent.status === 'active' && (currentAgentId === agent.id || (!currentAgentId && idx === 0));
+
+              return (
+                <div
+                  key={agent.id}
+                  className="rounded-lg p-2.5 border transition-all duration-200"
+                  style={{
+                    background: isActive ? colors.glow : 'rgba(255,255,255,0.02)',
+                    borderColor: isActive ? colors.border : 'rgba(255,255,255,0.06)',
+                    boxShadow: isActive ? `0 0 12px ${colors.glow}` : 'none',
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: colors.glow, border: `1px solid ${colors.border}` }}
+                      >
+                        <AgentIcon className={`h-3.5 w-3.5 ${colors.text}`} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold text-white/90 truncate">{agent.name}</p>
+                        <p className="text-[9px] text-white/40 truncate max-w-[90px]">{agent.description}</p>
+                      </div>
+                    </div>
+                    <div
+                      className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ml-1"
+                      style={
+                        agent.status === 'off'
+                          ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
+                          : isActive
+                          ? { color: 'rgb(0,229,255)', background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.3)' }
+                          : { color: 'rgb(250,204,21)', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)' }
+                      }
+                    >
+                      {agent.status === 'off' ? 'Off' : isActive ? 'Active' : 'Standby'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.sessions}</p>
+                      <p className="text-[8px] text-white/30 uppercase">Sessions</p>
+                    </div>
+                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.avgResp}</p>
+                      <p className="text-[8px] text-white/30 uppercase">Avg Resp</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Session Metrics Footer */}
+          <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session Metrics</p>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Session Status</span>
+                <span className="text-[10px] font-bold text-cyan-400">{metrics.status}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Avg Response</span>
+                <span className="text-[10px] font-bold text-orange-400">{metrics.avgResponse}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Satisfaction</span>
+                <span className="text-[10px] font-bold text-emerald-400">{metrics.satisfaction}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CENTER: Content ── */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
+          {children}
+        </div>
+
+        {/* ── RIGHT PANEL: Quick Actions ── */}
+        <div
+          className="hidden lg:flex flex-col w-48 shrink-0 border-l overflow-y-auto"
+          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+        >
+          {/* Panel Header */}
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Quick Actions</span>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex-1 p-2 space-y-1.5">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              const hsl = getHsl(action);
+              return (
+                <button
+                  key={action.id}
+                  onClick={() => onQuickAction(action.message, action.id)}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-all duration-200 group"
+                  style={{ background: `hsl(${hsl}/0.06)`, border: `1px solid hsl(${hsl}/0.2)` }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = `hsl(${hsl}/0.14)`;
+                    el.style.borderColor = `hsl(${hsl}/0.45)`;
+                    el.style.boxShadow = `0 0 10px hsl(${hsl}/0.25)`;
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = `hsl(${hsl}/0.06)`;
+                    el.style.borderColor = `hsl(${hsl}/0.2)`;
+                    el.style.boxShadow = '';
+                  }}
+                >
+                  <div
+                    className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: `hsl(${hsl}/0.15)`, border: `1px solid hsl(${hsl}/0.3)` }}
+                  >
+                    <Icon className="h-3.5 w-3.5" style={{ color: `hsl(${hsl})` }} />
+                  </div>
+                  <span className="text-xs font-medium text-white/80 group-hover:text-white transition-colors leading-tight">{action.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Optional footer (e.g. Talk to Aura) */}
+          {rightPanelFooter && (
+            <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+              {rightPanelFooter}
+            </div>
+          )}
+        </div>
+
+      </div>{/* end 3-col flex */}
+    </div>
+  );
+};

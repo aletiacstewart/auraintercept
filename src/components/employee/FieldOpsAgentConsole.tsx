@@ -47,8 +47,8 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { GlassHeader } from '@/components/ai/chat/GlassHeader';
-import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
+import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
@@ -956,50 +956,55 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const selectorConfig = getSelectorConfig();
 
+  const FIELDOPS_AGENTS: CyberAgent[] = [
+    { id: 'dispatch', name: 'Dispatch Agent', description: 'Assigns technicians to jobs', icon: Truck, hsl: '189,100%,65%', status: 'active', sessions: 103, avgResp: '0.7s' },
+    { id: 'route', name: 'Route Optimizer', description: 'Optimizes field routes', icon: Navigation, hsl: '142,72%,55%', status: 'standby', sessions: 78, avgResp: '1.0s' },
+    { id: 'eta', name: 'ETA Agent', description: 'Calculates arrival times', icon: Clock, hsl: '48,96%,55%', status: 'standby', sessions: 61, avgResp: '0.8s' },
+    { id: 'checkin', name: 'Check-in Agent', description: 'Manages job check-ins', icon: CheckSquare, hsl: '270,72%,68%', status: 'standby', sessions: 44, avgResp: '1.2s' },
+  ];
+
   return (
-    <div className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden rounded-xl', className)} style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
-      {/* Header - matching AIAgentConsole glass style */}
-      <GlassHeader
-        companyName={companyData?.name || "Field Ops Assistant"}
-        logoUrl={companyData?.logo_url}
-        agentLabel={activeLabel}
-        agentColor={agentInfo.color}
-        agentBgColor={agentInfo.bgColor}
-        showPhone={!!companyData?.dispatch_phone}
-        onPhoneClick={() => {
-          if (companyData?.dispatch_phone) {
-            const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
-            window.location.href = `tel:${cleanPhone}`;
-          }
-        }}
-        isOnline={true}
-        useDefaultLogo={!companyData?.logo_url}
-        subtitle="Field Operations — Cyber-Sentry Edition"
-      />
-
-      {/* Tab Navigation - matching AIAgentConsole */}
-      <MobileTabNav
-        tabs={TABS}
-        activeTab={activeTab}
-        onTabChange={(tabId) => {
-          setActiveTab(tabId);
-          if (tabId !== 'chat' && tabId !== 'directions') {
-            const action = QUICK_ACTIONS.find(a => a.id === tabId);
-            if (action) {
-              handleQuickAction(action);
-            }
-          }
-        }}
-        onHomeClick={() => {
-          clearMessages();
-          setInputValue('');
-          setSelectorMode(null);
-          setSelectedJobForEta(null);
-          setEtaMinutes('');
-          setActiveTab('chat');
-        }}
-      />
-
+    <CyberConsoleLayout
+      companyName={companyData?.name || "Field Ops Assistant"}
+      logoUrl={companyData?.logo_url}
+      agentLabel={activeLabel}
+      agentColor={agentInfo.color}
+      agentBgColor={agentInfo.bgColor}
+      subtitle="Field Operations — Cyber-Sentry Edition"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={(tabId) => {
+        setActiveTab(tabId);
+        if (tabId !== 'chat' && tabId !== 'directions') {
+          const action = QUICK_ACTIONS.find(a => a.id === tabId);
+          if (action) handleQuickAction(action);
+        }
+      }}
+      onHomeClick={() => {
+        clearMessages();
+        setInputValue('');
+        setSelectorMode(null);
+        setSelectedJobForEta(null);
+        setEtaMinutes('');
+        setActiveTab('chat');
+      }}
+      agents={FIELDOPS_AGENTS}
+      currentAgentId={activeTab === 'chat' ? 'dispatch' : null}
+      quickActions={FIELD_OPS_AGENTS.map(a => ({ id: a.id, label: a.name, icon: Truck, message: a.name, hsl: '189,100%,65%' }))}
+      onQuickAction={(_, id) => {
+        const action = QUICK_ACTIONS.find(a => a.id === id);
+        if (action) handleQuickAction(action);
+      }}
+      showPhone={!!companyData?.dispatch_phone}
+      onPhoneClick={() => {
+        if (companyData?.dispatch_phone) {
+          const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
+          window.location.href = `tel:${cleanPhone}`;
+        }
+      }}
+      isOnline={true}
+      useDefaultLogo={!companyData?.logo_url}
+    >
       {/* Quick Actions moved inside chat content area */}
 
       {/* Quote Form Panel */}
@@ -1453,6 +1458,6 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           />
         </div>
       )}
-    </div>
+    </CyberConsoleLayout>
   );
 }
