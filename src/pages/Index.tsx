@@ -466,22 +466,30 @@ export default function Index() {
       <PublicHeader showHomeLink={false} />
 
       {/* ── CINEMATIC HERO ── */}
-      <section style={{ position: "relative", overflow: "hidden", minHeight: "92vh", display: "flex", alignItems: "center" }}>
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "92vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
         {/* Background image */}
         <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${heroAgents})`, backgroundSize: "cover", backgroundPosition: "center", filter: "brightness(1.0) saturate(1.2)" }} />
         {/* Gradient overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(4,10,20,0.05) 0%, rgba(4,10,20,0.3) 45%, rgba(4,10,20,0.82) 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(4,10,20,0.55) 0%, rgba(4,10,20,0.05) 35%, rgba(4,10,20,0.05) 65%, rgba(4,10,20,0.75) 100%)" }} />
         {/* Scan lines */}
         <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)", pointerEvents: "none" }} />
 
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "80px 24px 72px", textAlign: "center" }}>
-          {/* Title — top */}
-          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 28px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+        {/* TOP — Title + Tagline above the hero logo */}
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "56px 24px 0", textAlign: "center" }}>
+          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 16px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
+          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.85)", maxWidth: 540, margin: "0 auto", lineHeight: 1.7, textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
+            The AI command center that runs your entire business — from first contact to final invoice.
+          </p>
+        </div>
 
-          {/* Deploy CTA — centered below title */}
-          <div style={{ marginBottom: 20 }}>
+        {/* SPACER — transparent gap so the hero image logo shows through */}
+        <div style={{ flex: 1, minHeight: 260 }} />
+
+        {/* BOTTOM — Button, Stats, Rotating text below the hero logo */}
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "0 24px 56px", textAlign: "center" }}>
+          <div style={{ marginBottom: 28 }}>
             <button
               onClick={() => navigate('/auth?mode=company')}
               style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
@@ -490,26 +498,21 @@ export default function Index() {
             </button>
           </div>
 
-          {/* Animated rotating subtitle — below button */}
-          <div style={{ height: 32, marginBottom: 20, overflow: "hidden" }}>
-            <p style={{ fontSize: 18, color: "#00E5FF", fontWeight: 600, letterSpacing: 1, transition: "all 0.5s ease" }}>
-              {subtitles[currentSubtitle]}
-            </p>
-          </div>
-
-          {/* Tagline — just above stats */}
-          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.7)", maxWidth: 540, margin: "0 auto 28px", lineHeight: 1.7 }}>
-            The AI command center that runs your entire business — from first contact to final invoice.
-          </p>
-
           {/* Stats trust bar */}
-          <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" as const }}>
+          <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" as const, marginBottom: 20 }}>
             {heroStats.map(s => (
               <div key={s.label} style={{ textAlign: "center" as const }}>
                 <div style={{ fontSize: 28, fontWeight: 900, background: "linear-gradient(135deg, #00E5FF, rgba(255,255,255,0.9))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{s.value}</div>
                 <div style={{ fontSize: 10, color: "rgba(0,229,255,0.45)", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 500 }}>{s.label}</div>
               </div>
             ))}
+          </div>
+
+          {/* Animated rotating subtitle */}
+          <div style={{ height: 32, overflow: "hidden" }}>
+            <p style={{ fontSize: 18, color: "#00E5FF", fontWeight: 600, letterSpacing: 1, transition: "all 0.5s ease" }}>
+              {subtitles[currentSubtitle]}
+            </p>
           </div>
         </div>
       </section>
