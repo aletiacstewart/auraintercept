@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
-import heroLogo from '@/assets/hero-logo.jpeg';
+
 import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
@@ -480,12 +480,7 @@ export default function Index() {
             AURA INTERCEPT
           </h1>
 
-          {/* Logo badge — directly below title, nothing overlapping */}
-          <div style={{ display: "inline-block", marginBottom: 24 }}>
-            <img src={heroLogo} alt="Aura Intercept" style={{ width: 130, height: 130, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.3)", boxShadow: "0 0 40px rgba(0,229,255,0.3), 0 0 80px rgba(0,229,255,0.1)" }} />
-          </div>
-
-          {/* Deploy CTA — centered below logo */}
+          {/* Deploy CTA — centered below title */}
           <div style={{ marginBottom: 20 }}>
             <button
               onClick={() => navigate('/auth?mode=company')}
