@@ -1119,29 +1119,29 @@ export default function Auth() {
                             {/* DBA + EIN upload row */}
                             <div className="grid grid-cols-2 gap-2">
                               <div className="space-y-1">
-                                <Label className="text-xs">DBA Document <span className="text-muted-foreground font-normal">(optional)</span></Label>
-                                <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
-                                  <FileText className="w-3 h-3 shrink-0" />
-                                  <span className="truncate">{dbaFile ? dbaFile.name : 'Upload PDF/JPG…'}</span>
-                                  <input
-                                    type="file"
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                    className="hidden"
-                                    onChange={(e) => setDbaFile(e.target.files?.[0] ?? null)}
-                                  />
-                                </label>
-                              </div>
-                              <div className="space-y-1">
-                                <Label className="text-xs">EIN / Tax ID Doc <span className="text-muted-foreground font-normal">(optional)</span></Label>
-                                <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
-                                  <FileText className="w-3 h-3 shrink-0" />
-                                  <span className="truncate">{einFile ? einFile.name : 'Upload PDF/JPG…'}</span>
-                                  <input
-                                    type="file"
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                    className="hidden"
-                                    onChange={(e) => setEinFile(e.target.files?.[0] ?? null)}
-                                  />
+                                <Label className="text-xs">DBA Document <span className="text-destructive font-normal">(required for SMS/Text & API Approval)</span></Label>
+                                 <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
+                                   <FileText className="w-3 h-3 shrink-0" />
+                                   <span className="truncate">{dbaFile ? dbaFile.name : 'Upload PDF/DOC/PNG…'}</span>
+                                   <input
+                                     type="file"
+                                     accept=".pdf,.doc,.docx,.png"
+                                     className="hidden"
+                                     onChange={(e) => setDbaFile(e.target.files?.[0] ?? null)}
+                                   />
+                                 </label>
+                               </div>
+                               <div className="space-y-1">
+                                 <Label className="text-xs">EIN / Tax ID Doc <span className="text-destructive font-normal">(required for SMS/Text & API Approval)</span></Label>
+                                 <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
+                                   <FileText className="w-3 h-3 shrink-0" />
+                                   <span className="truncate">{einFile ? einFile.name : 'Upload PDF/DOC/PNG…'}</span>
+                                   <input
+                                     type="file"
+                                     accept=".pdf,.doc,.docx,.png"
+                                     className="hidden"
+                                     onChange={(e) => setEinFile(e.target.files?.[0] ?? null)}
+                                   />
                                 </label>
                               </div>
                             </div>
