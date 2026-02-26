@@ -586,8 +586,9 @@ export default function Index() {
             {agentCategories.map(category => (
               <div key={category.id}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
-                    <category.icon className="w-3 h-3 text-white" />
+                  <div className={`relative w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                    <span className="absolute inset-0 rounded-md animate-ping opacity-40" style={{ background: `rgba(${category.neonRgb},0.5)` }} />
+                    <category.icon className="w-3 h-3 text-white relative z-10" />
                   </div>
                   <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{category.name}</span>
                   <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
@@ -599,8 +600,9 @@ export default function Index() {
                       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${category.neonRgb},0.15), 0 0 12px rgba(${category.neonRgb},0.06)`; (e.currentTarget as HTMLDivElement).style.border = `1px solid rgba(${category.neonRgb},0.25)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                        <div className={`w-5 h-5 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
-                          <agent.icon className="w-2.5 h-2.5 text-white" />
+                      <div className={`relative w-5 h-5 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                          <span className="absolute inset-0 rounded animate-ping opacity-30" style={{ background: `rgba(${category.neonRgb},0.6)` }} />
+                          <agent.icon className="w-2.5 h-2.5 text-white relative z-10" />
                         </div>
                         <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{agent.name}</span>
                       </div>
@@ -634,8 +636,11 @@ export default function Index() {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 30px rgba(${channel.neonRgb},0.25), 0 0 0 1px rgba(${channel.neonRgb},0.4)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${channel.neonRgb},0.18), 0 0 18px rgba(${channel.neonRgb},0.08)`; (e.currentTarget as HTMLDivElement).style.border = `1px solid rgba(${channel.neonRgb},0.25)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
-                  <channel.icon className="w-5 h-5 text-white" />
+                <div className="relative w-10 h-10 mx-auto mb-3">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center`}>
+                    <channel.icon className="w-5 h-5 text-white relative z-10" />
+                  </div>
+                  <span className="absolute inset-0 rounded-lg animate-ping opacity-30" style={{ background: `rgba(${channel.neonRgb},0.6)` }} />
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{channel.title}</div>
                 <p style={{ fontSize: 12, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{channel.description}</p>
@@ -664,8 +669,11 @@ export default function Index() {
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  <div style={{ width: 26, height: 26, borderRadius: 7, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <feature.icon size={12} style={{ color: "#00E5FF" }} />
+                  <div style={{ position: "relative", width: 26, height: 26, flexShrink: 0 }}>
+                    <div style={{ width: 26, height: 26, borderRadius: 7, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <feature.icon size={12} style={{ color: "#00E5FF", position: "relative", zIndex: 1 }} />
+                    </div>
+                    <span className="absolute inset-0 rounded-md animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                   </div>
                   <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{feature.title}</span>
                 </div>
@@ -694,8 +702,11 @@ export default function Index() {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px" }}>
-                  <industry.icon size={13} style={{ color: "#00E5FF" }} />
+                <div style={{ position: "relative", width: 28, height: 28, margin: "0 auto 6px" }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <industry.icon size={13} style={{ color: "#00E5FF", position: "relative", zIndex: 1 }} />
+                  </div>
+                  <span className="absolute inset-0 rounded-lg animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                 </div>
                 <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{industry.name}</div>
                 <p style={{ fontSize: 8, color: "rgba(200,220,240,0.4)", lineHeight: 1.3 }} className="hidden sm:block">{industry.description}</p>
