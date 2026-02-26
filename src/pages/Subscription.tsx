@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -326,6 +327,8 @@ export default function Subscription() {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [disclosureOpen, setDisclosureOpen] = useState(false);
+  const [pendingTierId, setPendingTierId] = useState<string | null>(null);
 
   // Determine if user can manage subscriptions
   const canManageSubscription = userRole === 'company_admin' || userRole === 'platform_admin';
@@ -369,27 +372,29 @@ export default function Subscription() {
     refetchInterval: 30000,
   });
 
-  const handleSubscribe = async (tierId: string) => {
+  const handleSubscribe = (tierId: string) => {
+    setPendingTierId(tierId);
+    setDisclosureOpen(true);
+  };
+
+  const handleCheckoutConfirmed = async () => {
+    if (!pendingTierId) return;
+    setDisclosureOpen(false);
+    const tierId = pendingTierId;
+    setPendingTierId(null);
     try {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (!session?.access_token) {
         toast.error('Please log in to subscribe');
         return;
       }
-
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
         body: { tier: tierId },
       });
-
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
+      if (data?.url) window.open(data.url, '_blank');
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast.error('Failed to start checkout');
@@ -502,6 +507,7 @@ export default function Subscription() {
   let globalRowIndex = 0;
 
   return (
+    <>
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
@@ -885,5 +891,12 @@ export default function Subscription() {
         </div>
       </PageContainer>
     </DashboardLayout>
+    <ThirdPartyCostDisclosureDialog
+      open={disclosureOpen}
+      tierName={pendingTierId ?? ''}
+      onConfirm={handleCheckoutConfirmed}
+      onCancel={() => { setDisclosureOpen(false); setPendingTierId(null); }}
+    />
+    </>
   );
 }
