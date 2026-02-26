@@ -152,7 +152,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const activeLabel = getActiveLabel();
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface">
+    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl console-surface" style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       <GlassHeader
         logoUrl={company?.logo_url}
         companyName={company?.name || 'Social Media'}
@@ -276,6 +276,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
           </>
         )}
       </div>
-    </Card>
+    </div>
   );
 };

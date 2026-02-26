@@ -18,14 +18,18 @@ export function PageContainer({ children, className, variant = 'default' }: Page
   }
 
   return (
-    <Card className="min-h-[600px] flex flex-col overflow-hidden shadow-xl surface-elevated-dark border-border/50">
-      <div className={cn(
-        "flex-1 overflow-y-auto p-4 rounded-lg",
-        variant === 'console' ? 'console-surface' : 'console-surface',
-        className
-      )}>
+    <div 
+      className={cn("min-h-[600px] flex flex-col overflow-hidden rounded-xl relative", className)}
+      style={{
+        background: 'rgba(2,8,18,0.97)',
+        border: '1px solid rgba(0,229,255,0.12)',
+        boxShadow: '0 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(0,229,255,0.04)',
+        borderTop: '3px solid rgba(0,229,255,0.5)',
+      }}
+    >
+      <div className="flex-1 overflow-y-auto p-4">
         {children}
       </div>
-    </Card>
+    </div>
   );
 }

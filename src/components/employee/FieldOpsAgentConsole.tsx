@@ -957,7 +957,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const selectorConfig = getSelectorConfig();
 
   return (
-    <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface', className)}>
+    <div className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden rounded-xl console-surface', className)} style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       {/* Header - matching AIAgentConsole glass style */}
       <GlassHeader
         companyName={companyData?.name || "Field Ops Assistant"}
@@ -1452,6 +1452,6 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           />
         </div>
       )}
-    </Card>
+    </div>
   );
 }
