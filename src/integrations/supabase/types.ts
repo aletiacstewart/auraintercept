@@ -6695,19 +6695,29 @@ export type Database = {
       get_company_public_info_by_id: {
         Args: { p_id: string }
         Returns: {
+          address: string
           business_phone: string
+          contact_address: string
+          contact_email: string
           contact_phone: string
+          dispatch_phone: string
+          email: string
           id: string
           logo_url: string
           name: string
           phone: string
           primary_color: string
           public_app_url: string
+          review_facebook_url: string
+          review_google_url: string
+          review_yelp_url: string
           secondary_color: string
           service_area_cities: string[]
           service_area_zip_codes: string[]
           service_categories: string[]
           slug: string
+          subscription_tier: string
+          trial_ends_at: string
         }[]
       }
       get_company_warranty_policies: {
