@@ -171,17 +171,19 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   const enabledAgentsCount = customerEngagementAgents.filter(a => a.isEnabled).length;
 
-  // Fetch company details including review links and subscription tier
+  // Fetch company details using secure RPC (works for customers without direct table RLS access)
   const { data: company } = useQuery({
     queryKey: ['company-details', companyId],
     queryFn: async () => {
       if (!companyId) return null;
-      const { data } = await supabase
-        .from('companies')
-        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url, dispatch_phone, subscription_tier, trial_ends_at, phone, business_phone, email, contact_email, contact_phone, contact_address, address')
-        .eq('id', companyId)
-        .single();
-      return data as (Company & { review_google_url?: string; review_facebook_url?: string; review_yelp_url?: string }) | null;
+      const { data, error } = await supabase
+        .rpc('get_company_public_info_by_id', { p_id: companyId })
+        .maybeSingle();
+      if (error) {
+        console.error('[AIAgentConsole] Company details error:', error);
+        return null;
+      }
+      return data as unknown as (Company & { review_google_url?: string; review_facebook_url?: string; review_yelp_url?: string }) | null;
     },
     enabled: !!companyId,
   });
