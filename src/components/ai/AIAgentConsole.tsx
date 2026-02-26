@@ -554,6 +554,13 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     clearMessages();
   };
 
+  // Live session stats for the left panel (must be before any conditional return)
+  const sessionStats = React.useMemo(() => ({
+    totalSessions: customerEngagementAgents.reduce((acc) => acc + Math.floor(Math.random() * 50 + 10), 0),
+    avgResponse: '< 1s',
+    satisfaction: '98.4%',
+  }), []);
+
   if (showCompanySelector) {
     return (
       <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
@@ -565,13 +572,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       </Card>
     );
   }
-
-  // Live session stats for the left panel
-  const sessionStats = React.useMemo(() => ({
-    totalSessions: customerEngagementAgents.reduce((acc) => acc + Math.floor(Math.random() * 50 + 10), 0),
-    avgResponse: '< 1s',
-    satisfaction: '98.4%',
-  }), []);
 
   return (
     <div
