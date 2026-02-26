@@ -53,10 +53,9 @@ interface CyberConsoleLayoutProps {
     avgResponse?: string;
     satisfaction?: string;
   };
-  // Right panel
-  quickActions: CyberQuickAction[];
-  onQuickAction: (message: string, id: string) => void;
-  /** Optional extra slot below actions (e.g. "Talk to Aura") */
+  // Right panel (kept for backward compat but no longer rendered)
+  quickActions?: CyberQuickAction[];
+  onQuickAction?: (message: string, id: string) => void;
   rightPanelFooter?: React.ReactNode;
   // Center content
   children: React.ReactNode;
@@ -107,9 +106,6 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
   agents,
   currentAgentId,
   sessionMetrics,
-  quickActions,
-  onQuickAction,
-  rightPanelFooter,
   children,
   showPhone,
   onPhoneClick,
@@ -258,60 +254,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
           {children}
         </div>
 
-        {/* ── RIGHT PANEL: Quick Actions ── */}
-        <div
-          className="hidden lg:flex flex-col w-48 shrink-0 border-l overflow-y-auto"
-          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
-        >
-          {/* Panel Header */}
-          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Quick Actions</span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex-1 p-2 space-y-1.5">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              const hsl = getHsl(action);
-              return (
-                <button
-                  key={action.id}
-                  onClick={() => onQuickAction(action.message, action.id)}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-all duration-200 group"
-                  style={{ background: `hsl(${hsl}/0.06)`, border: `1px solid hsl(${hsl}/0.2)` }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.background = `hsl(${hsl}/0.14)`;
-                    el.style.borderColor = `hsl(${hsl}/0.45)`;
-                    el.style.boxShadow = `0 0 10px hsl(${hsl}/0.25)`;
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.background = `hsl(${hsl}/0.06)`;
-                    el.style.borderColor = `hsl(${hsl}/0.2)`;
-                    el.style.boxShadow = '';
-                  }}
-                >
-                  <div
-                    className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `hsl(${hsl}/0.15)`, border: `1px solid hsl(${hsl}/0.3)` }}
-                  >
-                    <Icon className="h-3.5 w-3.5" style={{ color: `hsl(${hsl})` }} />
-                  </div>
-                  <span className="text-xs font-medium text-white/80 group-hover:text-white transition-colors leading-tight">{action.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Optional footer (e.g. Talk to Aura) */}
-          {rightPanelFooter && (
-            <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-              {rightPanelFooter}
-            </div>
-          )}
-        </div>
+        {/* Right panel removed — actions are in the top tab row */}
 
       </div>{/* end 3-col flex */}
     </div>

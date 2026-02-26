@@ -44,7 +44,7 @@ const BASE_QUICK_ACTIONS = [
   { id: 'customers', label: 'Customers', icon: UsersRound, message: 'Manage customers', featureColor: 'text-feature-customers' },
 ];
 
-// Tab configuration - includes quick actions as tabs
+// Tab configuration - includes quick actions as tabs (top row only, no center grid)
 const TABS = [
   { id: 'chat', label: 'Home', icon: Briefcase, featureColor: 'text-feature-platform' },
   { id: 'aura-live', label: 'Aura Live', icon: Activity, featureColor: 'text-feature-ai' },
@@ -269,6 +269,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
               consoleType={isPlatformAdmin ? 'businessops_admin' : 'businessops'}
+              showHowToGuide={true}
             />
           ) : (
             <div className="space-y-4">
