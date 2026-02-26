@@ -1009,7 +1009,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Quote Form Panel */}
       {selectorMode === 'quote' && effectiveCompanyId && (
-        <div className="shrink-0 border-b console-surface max-h-[60%] overflow-auto">
+        <div className="shrink-0 border-b max-h-[60%] overflow-auto" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <BusinessQuoteForm
             companyId={effectiveCompanyId}
             onSubmit={handleQuoteSubmit}
@@ -1022,7 +1022,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Invoice Form Panel */}
       {selectorMode === 'invoice' && effectiveCompanyId && (
-        <div className="shrink-0 border-b console-surface max-h-[60%] overflow-auto">
+        <div className="shrink-0 border-b max-h-[60%] overflow-auto" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <InvoiceForm
             companyId={effectiveCompanyId}
             onSubmit={handleInvoiceSubmit}
@@ -1035,7 +1035,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && selectorMode !== 'quote' && selectorMode !== 'invoice' && (
-        <div className="shrink-0 border-b console-surface p-4">
+        <div className="shrink-0 border-b p-4" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <div className="flex items-center justify-between mb-3">
             <div className="text-sm font-medium flex items-center gap-2 text-foreground">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
@@ -1057,7 +1057,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
           {/* ETA Input Form - shown after job selection */}
           {selectorMode === 'eta' && selectedJobForEta && (
-            <div className="mb-3 p-2.5 rounded-lg border bg-background">
+            <div className="mb-3 p-2.5 rounded-lg" style={{ background: 'rgba(0,229,255,0.05)', border: '1px solid rgba(0,229,255,0.15)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForEta.status))} />
                 <span className="font-medium text-sm text-foreground">{selectedJobForEta.appointments?.customer_name}</span>
@@ -1100,11 +1100,11 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
           {/* Reschedule Input Form - shown after job selection */}
           {selectorMode === 'reschedule' && selectedJobForReschedule && (
-            <div className="mb-3 p-2.5 rounded-lg border bg-background">
+            <div className="mb-3 p-2.5 rounded-lg" style={{ background: 'rgba(0,229,255,0.05)', border: '1px solid rgba(0,229,255,0.15)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForReschedule.status))} />
-                <span className="font-medium text-sm text-foreground">{selectedJobForReschedule.appointments?.customer_name}</span>
-                <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                <span className="font-medium text-sm text-white/90">{selectedJobForReschedule.appointments?.customer_name}</span>
+                <Badge className="text-[9px] px-1.5 py-0" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: 'none' }}>
                   {selectedJobForReschedule.status.replace('_', ' ')}
                 </Badge>
               </div>
@@ -1113,14 +1113,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                   type="date"
                   value={rescheduleDate}
                   onChange={(e) => setRescheduleDate(e.target.value)}
-                  className="h-8 text-sm"
+                  className="h-8 text-sm bg-white/5 border-white/10 text-white/80"
                 />
                 <div className="flex gap-2">
                   <Input
                     type="time"
                     value={rescheduleTime}
                     onChange={(e) => setRescheduleTime(e.target.value)}
-                    className="h-8 text-sm flex-1"
+                    className="h-8 text-sm flex-1 bg-white/5 border-white/10 text-white/80"
                   />
                   <Button 
                     size="sm" 
@@ -1139,7 +1139,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                   </Button>
                 </div>
               </div>
-              <p className="text-[10px] text-foreground/60 mt-1">
+              <p className="text-[10px] text-white/40 mt-1">
                 Customer will be notified via SMS & email
               </p>
             </div>
@@ -1147,10 +1147,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           
           {jobsLoading ? (
             <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-foreground/60" />
+              <Loader2 className="h-5 w-5 animate-spin text-white/40" />
             </div>
           ) : filteredJobs.length === 0 ? (
-            <div className="text-center py-4 text-sm text-foreground/60">
+            <div className="text-center py-4 text-sm text-white/40">
               {selectorConfig.emptyMessage}
             </div>
           ) : (
@@ -1166,11 +1166,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                     key={job.id}
                     onClick={() => !isProcessing && (selectorMode !== 'eta' || !selectedJobForEta) && selectorConfig.onSelect(job)}
                     className={cn(
-                      'p-3 rounded-lg border cursor-pointer transition-all bg-background',
-                      'hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-950/30',
-                      isSelected && 'border-blue-500 bg-blue-50 dark:bg-blue-950/30',
+                      'p-3 rounded-lg cursor-pointer transition-all',
                       (isProcessing || (selectorMode === 'eta' && selectedJobForEta && !isSelected)) && 'opacity-50 cursor-not-allowed'
                     )}
+                    style={{
+                      background: isSelected ? 'rgba(0,229,255,0.1)' : 'rgba(255,255,255,0.03)',
+                      border: isSelected ? '1px solid rgba(0,229,255,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                    }}
                   >
                     <div className="flex items-start gap-2">
                       <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', getStatusColor(job.status))} />
@@ -1232,7 +1234,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Directions Tab - TechnicianMap */}
       {activeTab === 'directions' && (
-        <div className="flex-1 relative min-h-[300px] overflow-hidden bg-white">
+        <div className="flex-1 relative min-h-[300px] overflow-hidden" style={{ background: 'rgba(2,8,18,0.97)' }}>
           <TechnicianMap
             initialAddress={navigationAddress}
             onAddressSearched={() => setNavigationAddress(null)}

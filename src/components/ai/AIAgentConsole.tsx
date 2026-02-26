@@ -957,15 +957,15 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             <div className="space-y-3">
               {/* Phone */}
               {(callablePhone || company?.phone || company?.business_phone) && (
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Phone className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-3 p-4 rounded-xl animate-fade-in" style={{ background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.15)' }}>
+                  <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.25)' }}>
+                    <Phone className="h-5 w-5 text-cyan-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p className="text-xs text-white/40 uppercase tracking-wide">Phone</p>
                     <a 
                       href={`tel:${callablePhone || company?.phone || company?.business_phone}`} 
-                      className="font-medium text-foreground hover:text-primary transition-colors"
+                      className="font-medium text-white/90 hover:text-cyan-400 transition-colors"
                     >
                       {callablePhone || company?.phone || company?.business_phone}
                     </a>
@@ -975,15 +975,15 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
               {/* Email */}
               {(company?.contact_email || company?.email) && (
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '50ms' }}>
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Mail className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-3 p-4 rounded-xl animate-fade-in" style={{ animationDelay: '50ms', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.15)' }}>
+                  <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.25)' }}>
+                    <Mail className="h-5 w-5 text-cyan-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="text-xs text-white/40 uppercase tracking-wide">Email</p>
                     <a 
                       href={`mailto:${company?.contact_email || company?.email}`} 
-                      className="font-medium text-foreground hover:text-primary transition-colors break-all"
+                      className="font-medium text-white/90 hover:text-cyan-400 transition-colors break-all"
                     >
                       {company?.contact_email || company?.email}
                     </a>
@@ -993,25 +993,25 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
               {/* Address */}
               {(company?.contact_address || company?.address) && (
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '100ms' }}>
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <MapPin className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-3 p-4 rounded-xl animate-fade-in" style={{ animationDelay: '100ms', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.15)' }}>
+                  <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.25)' }}>
+                    <MapPin className="h-5 w-5 text-cyan-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-muted-foreground">Address</p>
-                    <p className="font-medium text-foreground">{company?.contact_address || company?.address}</p>
+                    <p className="text-xs text-white/40 uppercase tracking-wide">Address</p>
+                    <p className="font-medium text-white/90">{company?.contact_address || company?.address}</p>
                   </div>
                 </div>
               )}
 
               {/* Company Name */}
-              <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-white animate-fade-in" style={{ animationDelay: '150ms' }}>
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Building2 className="h-5 w-5 text-primary" />
+              <div className="flex items-center gap-3 p-4 rounded-xl animate-fade-in" style={{ animationDelay: '150ms', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.15)' }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.25)' }}>
+                  <Building2 className="h-5 w-5 text-cyan-400" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-muted-foreground">Company</p>
-                  <p className="font-medium text-foreground">{company?.name}</p>
+                  <p className="text-xs text-white/40 uppercase tracking-wide">Company</p>
+                  <p className="font-medium text-white/90">{company?.name}</p>
                 </div>
               </div>
             </div>
@@ -1039,17 +1039,18 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 return (
                   <div
                     key={day}
-                    className={cn(
-                      "flex justify-between p-3 rounded-xl transition-all animate-fade-in border bg-white",
-                      isToday ? "border-primary/50 shadow-sm" : "border-border"
-                    )}
-                    style={{ animationDelay: `${index * 50}ms` }}
+                    className="flex justify-between p-3 rounded-xl transition-all animate-fade-in"
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                      background: isToday ? 'rgba(0,229,255,0.08)' : 'rgba(255,255,255,0.02)',
+                      border: isToday ? '1px solid rgba(0,229,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                    }}
                   >
-                    <span className={cn("font-medium text-foreground", isToday && "text-primary")}>
+                    <span className={cn("font-medium", isToday ? "text-cyan-400" : "text-white/70")}>
                       {day}
-                      {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
+                      {isToday && <Badge className="ml-2 text-[9px] px-1.5" style={{ background: 'rgba(0,229,255,0.15)', color: 'rgb(0,229,255)', border: '1px solid rgba(0,229,255,0.3)' }}>Today</Badge>}
                     </span>
-                    <span className="text-primary">
+                    <span className={isToday ? "text-cyan-400 font-semibold" : "text-white/50"}>
                       {!hours || hours.is_closed
                         ? 'Closed'
                         : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`}
