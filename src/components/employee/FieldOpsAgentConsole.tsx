@@ -91,6 +91,7 @@ const TABS = [
   { id: 'reschedule', label: 'Reschedule', icon: CalendarClock, featureColor: 'text-feature-appointments' },
   { id: 'quote', label: 'Quote', icon: FileText, featureColor: 'text-feature-quotes' },
   { id: 'invoice', label: 'Invoice', icon: Receipt, featureColor: 'text-feature-invoices' },
+  { id: 'dispatch', label: 'Dispatch', icon: Phone, featureColor: 'text-feature-fieldops' },
 ];
 
 interface FieldOpsQuickAction {
@@ -975,7 +976,11 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       activeTab={activeTab}
       onTabChange={(tabId) => {
         setActiveTab(tabId);
-        if (tabId !== 'chat' && tabId !== 'directions') {
+        if (tabId === 'dispatch') {
+          // Contact Dispatch tab — call dispatch phone
+          const action = QUICK_ACTIONS.find(a => a.id === 'dispatch');
+          if (action) handleQuickAction(action);
+        } else if (tabId !== 'chat' && tabId !== 'directions') {
           const action = QUICK_ACTIONS.find(a => a.id === tabId);
           if (action) handleQuickAction(action);
         }

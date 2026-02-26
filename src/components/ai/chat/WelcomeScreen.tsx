@@ -51,15 +51,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} />
           </div>
         )}
-        
-        {/* Quick Actions - Full width grid */}
-        <div className="w-full max-w-4xl mx-auto">
-          <QuickActionGrid 
-            actions={actions} 
-            onAction={onAction} 
-            columns={4}
-          />
-        </div>
       </div>
     </div>
   );

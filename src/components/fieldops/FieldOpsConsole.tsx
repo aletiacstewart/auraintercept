@@ -1,9 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -23,8 +21,7 @@ import {
   Bell,
   Truck,
   Users,
-  ClipboardList,
-  Activity
+  ClipboardList
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
@@ -135,16 +132,16 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-background text-foreground">
+    <div className="h-full flex flex-col text-white" style={{ background: 'rgba(2,8,18,0.97)' }}>
       {/* Header */}
-      <div className="p-4 border-b border-border bg-card">
+      <div className="p-4 border-b" style={{ borderColor: 'rgba(0,229,255,0.12)', background: 'rgba(2,6,14,0.98)', borderTop: '3px solid rgba(0,229,255,0.6)' }}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-3">
-              <Truck className="h-6 w-6 text-accent" />
+            <h1 className="text-2xl font-bold flex items-center gap-3 text-white">
+              <Truck className="h-6 w-6 text-cyan-400" />
               Field Operations Console
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-white/50 text-sm mt-1">
               Real-time dispatcher view • Aura Intercept
             </p>
           </div>
@@ -160,7 +157,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
               variant="outline" 
               size="sm" 
               onClick={() => refetch()}
-              className="border-accent/50 text-accent hover:bg-accent/20"
+              className="border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/10"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
@@ -171,16 +168,16 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4">
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda' | 'jobs')}>
-            <TabsList>
-              <TabsTrigger value="map" className="flex items-center gap-1.5">
+            <TabsList style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <TabsTrigger value="map" className="flex items-center gap-1.5 data-[state=active]:text-cyan-400">
                 <Map className="h-3.5 w-3.5" />
                 Map View
               </TabsTrigger>
-              <TabsTrigger value="agenda" className="flex items-center gap-1.5">
+              <TabsTrigger value="agenda" className="flex items-center gap-1.5 data-[state=active]:text-cyan-400">
                 <List className="h-3.5 w-3.5" />
                 Agenda View
               </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex items-center gap-1.5">
+              <TabsTrigger value="jobs" className="flex items-center gap-1.5 data-[state=active]:text-cyan-400">
                 <ClipboardList className="h-3.5 w-3.5" />
                 Job Status
               </TabsTrigger>
@@ -192,7 +189,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
               variant="ghost"
               size="sm"
               onClick={() => setShowETASidebar(!showETASidebar)}
-              className="text-accent hover:bg-accent/20"
+              className="text-cyan-400 hover:bg-cyan-400/10"
             >
               <Clock className="h-4 w-4 mr-2" />
               {showETASidebar ? 'Hide' : 'Show'} ETA Panel
@@ -260,8 +257,8 @@ interface AgendaViewProps {
 function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-background">
-        <RefreshCw className="h-8 w-8 animate-spin text-accent" />
+      <div className="h-full flex items-center justify-center" style={{ background: 'rgba(2,8,18,0.97)' }}>
+        <RefreshCw className="h-8 w-8 animate-spin text-cyan-400" />
       </div>
     );
   }
@@ -269,7 +266,7 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
   const statusOrder = ['in_progress', 'arrived', 'en_route', 'accepted', 'pending_acceptance'];
 
   return (
-    <ScrollArea className="h-full p-4 bg-background">
+    <ScrollArea className="h-full p-4" style={{ background: 'rgba(3,9,20,0.95)' }}>
       <div className="space-y-6">
         {statusOrder.map((status) => {
           const statusJobs = jobsByStatus[status];
@@ -280,12 +277,12 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
 
           return (
             <div key={status} className="space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-border/30">
+              <div className="flex items-center gap-2 pb-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.1)' }}>
                 <div className={cn("p-1.5 rounded-lg", config.bgColor)}>
                   <Icon className={cn("h-4 w-4", config.iconColor)} />
                 </div>
-                <h3 className="font-semibold text-lg">{config.label}</h3>
-                <Badge variant="outline" className="border-accent/50 text-accent">
+                <h3 className="font-semibold text-lg text-white/90">{config.label}</h3>
+                <Badge variant="outline" className="border-cyan-400/50 text-cyan-400">
                   {statusJobs.length}
                 </Badge>
               </div>
@@ -301,8 +298,8 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
 
         {jobs.length === 0 && (
           <div className="text-center py-12">
-            <Wrench className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground">No active jobs</p>
+            <Wrench className="h-12 w-12 mx-auto text-white/20 mb-4" />
+            <p className="text-white/40">No active jobs</p>
           </div>
         )}
       </div>
@@ -315,8 +312,8 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
   const Icon = config.icon;
 
   return (
-    <Card className="bg-card border-border hover:bg-muted/50 transition-colors">
-      <CardContent className="p-4">
+    <div className="rounded-xl border transition-colors hover:border-cyan-400/20" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.07)' }}>
+      <div className="p-4">
         <div className="flex items-start gap-4">
           {/* Status Icon */}
           <div className={cn("p-3 rounded-xl shrink-0", config.bgColor)}>
@@ -326,7 +323,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
           {/* Job Details */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold truncate">
+              <span className="font-semibold truncate text-white/90">
                 {job.appointments?.service_type || 'Service'}
               </span>
               <Badge 
@@ -337,7 +334,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
               </Badge>
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-white/50">
               <span className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5" />
                 {job.appointments?.customer_name || 'Customer'}
@@ -354,7 +351,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
             </div>
 
             {job.customer_address && (
-              <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5 mt-2 text-sm text-white/40">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{job.customer_address}</span>
               </div>
@@ -363,7 +360,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
             {/* ETA & Notification Status */}
             <div className="flex items-center gap-4 mt-3">
               {job.estimated_arrival_minutes && job.status === 'en_route' && (
-                <div className="flex items-center gap-1.5 text-accent text-sm">
+                <div className="flex items-center gap-1.5 text-cyan-400 text-sm">
                   <Clock className="h-3.5 w-3.5" />
                   ETA: {job.estimated_arrival_minutes} min
                 </div>
@@ -379,12 +376,12 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
 
           {/* Time & Actions */}
           <div className="text-right shrink-0">
-            <div className="font-semibold text-accent">
+            <div className="font-semibold text-cyan-400">
               {job.appointments?.datetime 
                 ? format(parseUTCDateTime(job.appointments.datetime), 'h:mm a') 
                 : '-'}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-white/40 mt-1">
               {formatDistanceToNow(new Date(job.assigned_at), { addSuffix: true })}
             </div>
 
@@ -393,7 +390,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-accent hover:bg-accent/20"
+                  className="h-8 w-8 p-0 text-cyan-400 hover:bg-cyan-400/10"
                   onClick={() => window.open(`tel:${job.appointments?.customer_phone}`)}
                 >
                   <Phone className="h-4 w-4" />
@@ -403,7 +400,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-foreground hover:bg-muted hover:text-foreground"
+                  className="h-8 w-8 p-0 text-white/60 hover:text-white hover:bg-white/10"
                   onClick={() => window.open(`tel:${job.employee?.phone_number}`)}
                 >
                   <Users className="h-4 w-4" />
@@ -412,7 +409,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
