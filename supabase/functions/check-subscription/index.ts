@@ -70,17 +70,33 @@ serve(async (req) => {
 
     // Validate JWT using getClaims (works even when session is expired/missing)
     const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      logStep("getClaims failed, falling back to getUser", { error: claimsError?.message });
-      // Fallback to getUser
-      const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser(token);
-      if (authError || !authUser) {
-        logStep("getUser also failed", { error: authError?.message });
-        throw new Error(`Authentication error: ${authError?.message || 'Invalid token'}`);
-      }
-      var user = { id: authUser.id, email: authUser.email! };
+    let user: { id: string; email: string } | null = null;
+
+    if (claimsData?.claims) {
+      user = { id: claimsData.claims.sub as string, email: claimsData.claims.email as string };
     } else {
-      var user = { id: claimsData.claims.sub as string, email: claimsData.claims.email as string };
+      logStep("getClaims failed, falling back to getUser", { error: claimsError?.message });
+      const { data: { user: authUser }, error: authError } = await supabaseAuth.auth.getUser(token);
+      if (authUser) {
+        user = { id: authUser.id, email: authUser.email! };
+      } else {
+        logStep("getUser also failed — session likely expired", { error: authError?.message });
+        // Return gracefully instead of crashing — the client will handle re-auth
+        return new Response(JSON.stringify({ 
+          subscribed: false, tier: "free", in_trial: false,
+          trial_ends_at: null, subscription_end: null,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+    }
+
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Authentication error: Auth session missing!" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
     }
     logStep("User authenticated", { userId: user.id, email: user.email });
 
