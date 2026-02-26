@@ -475,17 +475,17 @@ export default function Index() {
         <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)", pointerEvents: "none" }} />
 
         {/* TOP — Title + Tagline above the hero logo */}
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "72px 24px 0", textAlign: "center" }}>
-          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 16px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "52px 24px 0", textAlign: "center" }}>
+          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
-          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.85)", maxWidth: 540, margin: "0 auto", lineHeight: 1.7, textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
+          <p style={{ fontSize: 16, color: "rgba(200,230,255,0.85)", maxWidth: 500, margin: "0 auto", lineHeight: 1.6, textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>
             The AI command center that runs your entire business — from first contact to final invoice.
           </p>
         </div>
 
         {/* SPACER — transparent gap so the hero image logo shows through */}
-        <div style={{ flex: 1, minHeight: 320 }} />
+        <div style={{ flex: 1, minHeight: 420 }} />
 
         {/* BOTTOM — Button, Stats, Rotating text below the hero logo */}
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "0 24px 56px", textAlign: "center" }}>
