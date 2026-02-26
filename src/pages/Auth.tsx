@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, BookOpen, AlertTriangle } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, AlertTriangle } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -997,179 +997,88 @@ export default function Auth() {
                   </p>
                 </div>
 
-                {/* 3rd Party Integrations - Detailed Cards */}
-                <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-foreground text-center">3rd Party Integration Costs + Usage Fees</h4>
-                  <p className="text-[9px] text-muted-foreground text-center mb-2">You'll need your own accounts with these services.</p>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Calendar className="w-3 h-3 text-cyan-400" />
-                        <span className="font-semibold text-[9px] text-white">Google Calendar</span>
+                {/* 3rd Party Costs + Setup — Compact Accordion */}
+                <Accordion type="single" collapsible className="border border-border/40 rounded-lg overflow-hidden">
+                  <AccordionItem value="costs" className="border-0">
+                    <AccordionTrigger className="px-3 py-2 hover:no-underline hover:bg-muted/30 text-xs font-semibold">
+                      <div className="flex items-center gap-1.5">
+                        <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+                        <span>3rd-Party Costs & Required Setup</span>
+                        <span className="ml-1 text-[9px] font-normal text-muted-foreground">(est. $29–$211/mo separate)</span>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free - Unlimited</p>
-                      <p className="text-[8px] text-white/60">Required for: Connect, Growth, Presence, Logistics, Performance, Command</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Mail className="w-3 h-3 text-blue-400" />
-                        <span className="font-semibold text-[9px] text-white">Resend</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-3 pb-3">
+                      {/* Cost table */}
+                      <div className="space-y-1 mb-3">
+                        {[
+                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
+                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: '$2/num · $0.004/SMS · $0.006/min', note: 'All tiers', color: 'text-green-400' },
+                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Free–$99/mo (voice chars)', note: 'All tiers', color: 'text-purple-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-blue-400" />, name: 'Resend', cost: 'Free–$20/mo (email)', note: 'All tiers', color: 'text-blue-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'Connect+', color: 'text-cyan-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Logistics+', color: 'text-amber-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Presence+', color: 'text-pink-400' },
+                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Free–1k searches/mo', note: 'Optional', color: 'text-orange-400' },
+                        ].map(({ icon, name, cost, note, color }) => (
+                          <div key={name} className="flex items-center justify-between text-[9px] py-0.5 border-b border-border/20 last:border-0">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              {icon}
+                              <span className={`font-medium ${color}`}>{name}</span>
+                            </div>
+                            <div className="text-right shrink-0 ml-2">
+                              <span className="text-foreground/80">{cost}</span>
+                              <span className="text-muted-foreground ml-1">· {note}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 3,000/mo • $20/mo (50k)</p>
-                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
-                    </div>
 
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Mic className="w-3 h-3 text-purple-400" />
-                        <span className="font-semibold text-[9px] text-white">ElevenLabs</span>
+                      {/* Setup docs — nested accordion */}
+                      <div className="border border-primary/20 rounded-md overflow-hidden">
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="setup-docs" className="border-0">
+                            <AccordionTrigger className="px-2.5 py-1.5 hover:no-underline hover:bg-primary/5 text-[10px] font-semibold text-primary">
+                              <div className="flex items-center gap-1.5">
+                                <FileText className="w-3 h-3" />
+                                Required Documents for Setup (click to expand)
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-2.5 pb-2">
+                              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[9px] text-muted-foreground">
+                                <div>
+                                  <p className="font-semibold text-amber-400 mb-0.5">A2P 10DLC Docs</p>
+                                  <p>• Business legal name + EIN</p>
+                                  <p>• Business type (LLC/Corp/etc.)</p>
+                                  <p>• SMS use-case + sample message</p>
+                                  <p>• Est. monthly SMS volume</p>
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-green-400 mb-0.5">SignalWire</p>
+                                  <p>• Account at signalwire.com</p>
+                                  <p>• Phone number (~$2/mo)</p>
+                                  <p className="font-semibold text-purple-400 mb-0.5 mt-1">ElevenLabs</p>
+                                  <p>• API key + voice selection</p>
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-blue-400 mb-0.5">Resend</p>
+                                  <p>• Verified sending domain</p>
+                                  <p>• API key</p>
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-primary mb-0.5">AI Knowledge Base</p>
+                                  <p>• About Us / business desc.</p>
+                                  <p>• Services + pricing list</p>
+                                  <p>• FAQ + business hours</p>
+                                  <p>• Service area / zip codes</p>
+                                </div>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 10k • $5 (30k) • $99 (500k)</p>
-                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Phone className="w-3 h-3 text-green-400" />
-                        <span className="font-semibold text-[9px] text-white">SignalWire</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">$2/number • $0.004/SMS (40% cheaper)</p>
-                      <p className="text-[8px] text-white/60">Required for: All tiers</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Shield className="w-3 h-3 text-cyan-400" />
-                        <span className="font-semibold text-[9px] text-white">A2P 10DLC</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">$4 + $15 one-time • $10/mo</p>
-                      <p className="text-[8px] text-white/60">Required for: All SMS features • Prevents filtering</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <DollarSign className="w-3 h-3 text-amber-400" />
-                        <span className="font-semibold text-[9px] text-white">Stripe</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">2.9% + $0.30/transaction</p>
-                      <p className="text-[8px] text-white/60">Required for: Logistics, Performance, Command (Invoicing)</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Send className="w-3 h-3 text-pink-400" />
-                        <span className="font-semibold text-[9px] text-white">Social Media</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free - Your Pages (OAuth)</p>
-                      <p className="text-[8px] text-white/60">Required for: Presence, Performance, Command • Optional: Growth, Logistics</p>
-                    </div>
-
-                    <div className="rounded-lg p-2" style={{ backgroundColor: '#2a3d4e' }}>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Search className="w-3 h-3 text-orange-400" />
-                        <span className="font-semibold text-[9px] text-white">Tavily</span>
-                      </div>
-                      <p className="text-[8px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
-                      <p className="text-[8px] text-white/60">Optional for: All tiers • Enhances AI content quality</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Required Documents & Setup Checklist */}
-                <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-foreground text-center flex items-center justify-center gap-1">
-                    <FileText className="w-3.5 h-3.5 text-primary" />
-                    Required Documents & Setup Checklist
-                  </h4>
-                  <Accordion type="multiple" className="space-y-1">
-                    <AccordionItem value="a2p" className="border border-amber-500/30 rounded-lg px-3 bg-amber-500/5">
-                      <AccordionTrigger className="text-xs font-semibold text-amber-400 py-2 hover:no-underline">
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3 h-3" />
-                          A2P 10DLC Registration (SMS Compliance) — Required
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2">
-                        <ul className="space-y-1 text-[10px] text-muted-foreground">
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Business legal name, EIN/Tax ID, and business address</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Business type (LLC, Corp, Sole Proprietor)</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Use-case description for SMS messages + sample message content</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Estimated monthly SMS volume</li>
-                          <li className="flex items-start gap-1 text-amber-400 font-medium"><AlertTriangle className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" />Approval takes 2–4 weeks. Plan accordingly.</li>
-                          <li className="flex items-start gap-1 text-amber-300"><DollarSign className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" />Cost: $4 brand + $15 campaign (one-time) + $10/mo</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="signalwire" className="border border-border/50 rounded-lg px-3 bg-muted/20">
-                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
-                        <div className="flex items-center gap-1.5">
-                          <Phone className="w-3 h-3 text-green-400" />
-                          SignalWire Setup — Required
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2">
-                        <ul className="space-y-1 text-[10px] text-muted-foreground">
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Create account at signalwire.com</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Purchase a phone number (~$2/mo)</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Submit A2P 10DLC campaign through SignalWire portal</li>
-                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Usage: $0.004/SMS · $0.006/min voice</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="elevenlabs" className="border border-border/50 rounded-lg px-3 bg-muted/20">
-                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
-                        <div className="flex items-center gap-1.5">
-                          <Mic className="w-3 h-3 text-purple-400" />
-                          ElevenLabs Setup — Required
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2">
-                        <ul className="space-y-1 text-[10px] text-muted-foreground">
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Create account at elevenlabs.io</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Generate API key for voice synthesis</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Select or clone a voice for your AI agent</li>
-                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Free (10k chars) · $5/mo (30k) · $99/mo (500k)</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="resend" className="border border-border/50 rounded-lg px-3 bg-muted/20">
-                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
-                        <div className="flex items-center gap-1.5">
-                          <Mail className="w-3 h-3 text-blue-400" />
-                          Resend Setup — Required
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2">
-                        <ul className="space-y-1 text-[10px] text-muted-foreground">
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Create account at resend.com</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Verify your sending domain (DNS records required)</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Generate API key for transactional emails</li>
-                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Free (3k/mo) · $20/mo (50k)</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="knowledgebase" className="border border-primary/30 rounded-lg px-3 bg-primary/5">
-                      <AccordionTrigger className="text-xs font-semibold text-primary py-2 hover:no-underline">
-                        <div className="flex items-center gap-1.5">
-                          <BookOpen className="w-3 h-3" />
-                          Knowledge Base Documents — Required for AI
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2">
-                        <p className="text-[10px] text-muted-foreground mb-1.5">These documents teach the AI agents about your business. Upload during onboarding.</p>
-                        <ul className="space-y-1 text-[10px] text-muted-foreground">
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Business description / About Us content</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Service list with descriptions and pricing</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />FAQ document (common customer questions)</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Business hours and holiday schedule</li>
-                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Service area / zip codes</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
 
               </div>
             )}
