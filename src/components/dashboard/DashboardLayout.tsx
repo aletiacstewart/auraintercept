@@ -458,7 +458,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         variant="ghost"
                         data-tour-id={tourId}
                         className={cn(
-                          'w-full justify-start gap-3 transition-all duration-200',
+                          'w-full justify-start gap-3 transition-all duration-200 hover:bg-transparent hover:text-[inherit]',
                           collapsed && 'justify-center px-2'
                         )}
                         style={isActive ? {
