@@ -1,95 +1,92 @@
 
-## Mockup: "Cyber-Sentry" Console UI Concept
+## New Mockup: Customer Portal Console — Cyber-Sentry Edition
 
-The user wants a new standalone mockup page that demonstrates the sci-fi / cyberpunk SOC (Security Operations Center) aesthetic shown in the reference image — deep obsidian backgrounds, neon cyan glows, glassmorphism panels, animated elements, and a three-column command layout. This is a **new page** (not modifying existing consoles), serving as a visual concept/prototype.
+The user wants a second mockup page that shows what the **Customer Portal Console** specifically would look like if it adopted the Cyber-Sentry design language. This is a new standalone page — no modifications to existing files except adding one route.
 
-### What to Build
+### What the Customer Portal Console actually contains (from AIAgentConsole.tsx):
+- **GlassHeader** with company name, logo, online status badge
+- **MobileTabNav** with tabs: AI Assistant, Services, Appointments, Voice AI, Contact, Hours
+- **Chat area** with AI message bubbles (user right, agent left)
+- **Quick Action Bar** — action buttons: Schedule, Quote, Emergency, Feedback, Review, Billing, Track
+- **FloatingInput** — text input at the bottom
+- **WelcomeScreen** — shown before first message
+- Right-side agent info panel showing which AI agent is active (Triage, Booking, Follow-up, Review)
 
-A new route `/dashboard/cyber-sentry-mockup` with a full self-contained demo page showing:
+### New file: `src/pages/CyberSentryPortalMockup.tsx`
 
+This translates ALL of those real portal elements into the Cyber-Sentry aesthetic:
+
+**Layout:**
 ```
-┌────────────────────────────────────────────────────────────────┐
-│  [NEON HEADER] AURA INTERCEPT  ●  CYBER-SENTRY COMMAND CENTER  │
-│  border-t-2 border-cyan-400/60  +  scanline texture overlay    │
-├──────────────────┬──────────────────┬──────────────────────────┤
-│  LEFT PANEL      │   CENTER STAGE   │    RIGHT PANEL           │
-│  "Event Stream"  │  Aura Shield     │  "System Metrics"        │
-│                  │  (hexagon glow)  │                          │
-│  Glass pane      │  98% Secure      │  4x Circular gauges:     │
-│  scrolling live  │  pulsing rings   │  · System Health         │
-│  event log items │                  │  · Agent Velocity        │
-│  with colored    │  Animated neural │  · Threat Index          │
-│  timestamps      │  network nodes   │  · Uptime                │
-│                  │  (SVG lines)     │                          │
-│  Color-coded     │  Data wave       │  Gold accent for         │
-│  by event type   │  (Recharts line) │  warnings                │
-├──────────────────┴──────────────────┴──────────────────────────┤
-│  BOTTOM CONTROL DOCK — grid of 12 glowing tactical icon buttons │
-│  [Quote] [Invoice] [Lead] [Appt] [Inventory] [Customers] ...   │
-└────────────────────────────────────────────────────────────────┘
-```
-
-### New File: `src/pages/CyberSentryMockup.tsx`
-
-This is a fully self-contained page with:
-
-**1. Obsidian background with dot-grid texture**
-```css
-background: radial-gradient(ellipse at top, #0a1628 0%, #020810 100%)
-overlay: radial-gradient dot pattern at 1.5% opacity
-```
-
-**2. Neon header bar**
-- `border-t-4 border-cyan-400` with `box-shadow: 0 -4px 20px rgba(0,229,255,0.5)` 
-- "AURA INTERCEPT" title in monospace, cyan glow text
-- Live timestamp clock (updates every second via `setInterval`)
-- Blinking "LIVE" badge
-
-**3. Left column — Event Stream panel (glassmorphism)**
-- `backdrop-blur-xl bg-white/5 border border-cyan-400/20`
-- 12 mock event log items with animated scroll-in
-- Color-coded by type: INTERCEPT (cyan), ALERT (amber), SECURE (green), SYSTEM (blue)
-- Auto-scrolling simulated feed using `useEffect` interval
-
-**4. Center column — Command Hub**
-- Large hexagon SVG with pulsing concentric ring animations (`animate-ping` style)
-- "98% SECURE" large text with emerald glow
-- Aura shield icon centered
-- Neural network dots: 8 SVG circle nodes with connecting lines, slowly rotating
-- Recharts `AreaChart` below showing "Interception Wave" — animated glowing line graph
-
-**5. Right column — System Metrics**
-- 4x circular gauge components using SVG `<circle>` stroke-dasharray trick
-- Metrics: System Health (emerald), Agent Velocity (cyan), Threat Index (amber), Uptime (blue)
-- Animated counter on mount (number counts up from 0)
-
-**6. Bottom tactical dock**
-- 12 icon buttons in a 6-col grid
-- Each has `bg-cyan-400/5 border border-cyan-400/20` base
-- Hover: full neon glow `box-shadow: 0 0 20px rgba(0,229,255,0.6)`
-- Mapped to the existing console quick actions (Quote, Invoice, Lead, etc.)
-- Glowing active state
-
-**7. Animations used**
-- CSS `@keyframes` in inline styles for the hex rings (scale + opacity pulse)
-- SVG neural network: slow rotation with `animation: spin 20s linear infinite`
-- Event feed: new items slide in from left
-- Gauges: SVG stroke-dashoffset animates from 0 to value on mount
-- Data wave: Recharts `AreaChart` with custom cyan gradient fill
-
-### Route Registration
-
-Add to `src/App.tsx` (or wherever routes are defined):
-```tsx
-<Route path="/dashboard/cyber-sentry-mockup" element={<CyberSentryMockup />} />
+┌─────────────────────────────────────────────────────────────────────┐
+│  HEADER: [Hex logo] ACME HOME SERVICES ▸ CUSTOMER PORTAL  [LIVE][clock]│
+│  border-top: 3px neon cyan  |  glassmorphism bg                     │
+├──────────────────┬─────────────────────────────┬────────────────────┤
+│  LEFT PANEL      │   CENTER: CHAT INTERFACE    │  RIGHT PANEL       │
+│  "Active Agents" │                             │  "Quick Actions"   │
+│                  │  [Tab row: AI/Services/      │                    │
+│  4 agent cards:  │   Appointments/Voice/        │  7 glowing         │
+│  · AI Receptionist│  Contact/Hours]             │  action buttons:   │
+│  · Scheduling    │                             │  · Schedule Appt   │
+│  · Follow-up     │  Chat bubbles in dark        │  · Get a Quote     │
+│  · Review Agent  │  obsidian glass pane         │  · Emergency       │
+│                  │  User messages: right-align  │  · Feedback        │
+│  Each card:      │  cyan accent border          │  · Leave Review    │
+│  name, status    │  Agent messages: left-align  │  · Track Appt      │
+│  badge (online/  │  emerald accent border       │  · Billing/Invoice │
+│  standby)        │                             │                    │
+│                  │  [WelcomeScreen style:        │  Each button:      │
+│  ALSO:           │   hex shield, welcome text,  │  icon in glow      │
+│  Session data    │   "How can I help?" prompt]  │  badge container + │
+│  mini stats:     │                             │  neon hover glow   │
+│  · Session: Live │  [Floating input bar:]       │                    │
+│  · Response: <1s │  glass input + send button   │                    │
+│  · Satisfaction  │  with neon cyan glow         │                    │
+└──────────────────┴─────────────────────────────┴────────────────────┘
 ```
 
-And add a temporary nav link or the user can navigate directly to the route.
+**Tab row** (center, above chat): AI Assistant | Services | Appointments | Voice AI | Contact | Hours — styled as glowing pill tabs with active cyan highlight.
 
-### No existing files modified
+**Left panel — "Active Agents":**
+- 4 cards for the 4 Customer Engagement agents
+- Each: icon, name, status dot (green=active, amber=standby)
+- Bottom: session stats (Response time, Messages handled, Satisfaction)
+- Glassmorphism `bg-white/3 border-cyan-400/15`
 
-This is purely additive — a new standalone demo page inside `DashboardLayout`. It does not touch any existing console, component, or routing logic beyond adding one `<Route>`.
+**Center — Chat area:**
+- Tab bar in neon pill style
+- Shows simulated chat thread:
+  - WelcomeScreen: hex shield icon, "AURA CUSTOMER PORTAL", subtitle, agent greeting message
+  - 3-4 mock chat bubbles: user (right, cyan-tinted glass) + agent (left, indigo-tinted glass)
+- Agent typing indicator (3 pulsing dots)
+- Bottom: floating input (`backdrop-blur`, `border-cyan-400/30`, cyan glow on focus)
+
+**Right panel — "Quick Actions":**
+- 7 action buttons mapped to real portal actions
+- Each: icon wrapped in `bg-[color]/10 border-[color]/20` badge container
+- Button label below icon
+- Hover: `box-shadow: 0 0 20px [color]60` neon glow
+
+**Colors used for Quick Actions:**
+- Schedule: cyan `#00e5ff`
+- Quote: indigo `#6366f1`
+- Emergency: amber `#f59e0b`
+- Feedback: emerald `#10b981`
+- Review: pink `#ec4899`
+- Track: blue `#3b82f6`
+- Billing: purple `#a855f7`
+
+**Inline CSS keyframes** (same `pulse-ring`, `blink`, `slide-left` plus new `typing-dot` for the 3-dot animation).
+
+**No live data** — all mock/static data to demonstrate the visual. No Supabase calls needed.
+
+**Route:** `/dashboard/cyber-sentry-portal-mockup`
 
 ### Files to create/edit:
-1. **`src/pages/CyberSentryMockup.tsx`** — new, full page (~300 lines)
+1. **`src/pages/CyberSentryPortalMockup.tsx`** — new, ~280 lines, fully self-contained
 2. **`src/App.tsx`** — add one route line
+
+### What does NOT change:
+- `AIAgentConsole.tsx` — untouched
+- `CustomerPortalConsole.tsx` — untouched
+- All existing routes and consoles — untouched
