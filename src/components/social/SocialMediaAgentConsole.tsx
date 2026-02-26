@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
-import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GlassHeader } from '@/components/ai/chat/GlassHeader';
-import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
+import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
@@ -151,132 +150,132 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   
   const activeLabel = getActiveLabel();
 
+  const SOCIAL_AGENTS: CyberAgent[] = [
+    { id: 'social_content', name: 'Content Creator', description: 'Generates social content', icon: Share2, hsl: '330,80%,70%', status: 'active', sessions: 94, avgResp: '0.9s' },
+    { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', sessions: 47, avgResp: '1.1s' },
+    { id: 'scheduler', name: 'Post Scheduler', description: 'Plans & queues posts', icon: Inbox, hsl: '189,100%,65%', status: 'standby', sessions: 33, avgResp: '1.3s' },
+  ];
+
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
-      <GlassHeader
-        logoUrl={company?.logo_url}
-        companyName={company?.name || 'Social Media Ops'}
-        agentLabel={activeLabel}
-        agentColor="text-pink-400"
-        agentBgColor="bg-gradient-to-br from-pink-500/20 to-purple-500/20"
-        useDefaultLogo={true}
-        subtitle="Social Media Ops — Cyber-Sentry Edition"
-      />
+    <CyberConsoleLayout
+      logoUrl={company?.logo_url}
+      companyName={company?.name || 'Social Media Ops'}
+      agentLabel={activeLabel}
+      agentColor="text-pink-400"
+      agentBgColor="bg-gradient-to-br from-pink-500/20 to-purple-500/20"
+      subtitle="Social Media Ops — Cyber-Sentry Edition"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={(tabId) => {
+        handleTabChange(tabId);
+        if (tabId !== 'chat') {
+          const action = QUICK_ACTIONS.find(a => a.id === tabId);
+          if (action) handleQuickAction(action.message, action.id);
+        }
+      }}
+      onHomeClick={handleHome}
+      agents={SOCIAL_AGENTS}
+      currentAgentId={currentAgent || lastAgent}
+      quickActions={QUICK_ACTIONS}
+      onQuickAction={handleQuickAction}
+      useDefaultLogo={true}
+    >
+      {activeTab === 'chat' && (
+        <>
+          <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+            {showWelcome ? (
+              <WelcomeScreen
+                companyName={company?.name || 'Social Media'}
+                title="Social Media Ops"
+                subtitle="Create content for all your platforms, schedule posts, or ask me anything about your social strategy."
+                actions={QUICK_ACTIONS}
+                onAction={handleQuickAction}
+                consoleType="social"
+                headerAction={
+                  <IndustryTemplateSelector
+                    onSelectTemplate={(template) => {
+                      setInputValue(template);
+                    }}
+                  />
+                }
+              />
+            ) : (
+              <div className="space-y-4">
+                {/* Content Engine */}
+                {showContentEngine && effectiveCompanyId && (
+                  <div className="space-y-4">
+                    <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
+                      <TabsList>
+                        <TabsTrigger value="settings">Brand Voice</TabsTrigger>
+                        <TabsTrigger value="generator">Generate</TabsTrigger>
+                        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                        <TabsTrigger value="calendar">Calendar</TabsTrigger>
+                      </TabsList>
 
-      <MobileTabNav
-        tabs={TABS}
-        activeTab={activeTab}
-        onTabChange={(tabId) => {
-          handleTabChange(tabId);
-          if (tabId !== 'chat') {
-            const action = QUICK_ACTIONS.find(a => a.id === tabId);
-            if (action) {
-              handleQuickAction(action.message, action.id);
-            }
-          }
-        }}
-        onHomeClick={handleHome}
-      />
+                      <TabsContent value="settings">
+                        <AIContentProfileManager />
+                      </TabsContent>
+                      <TabsContent value="generator">
+                        <MultiChannelGenerator />
+                      </TabsContent>
+                      <TabsContent value="dashboard">
+                        <ContentEngineDashboard />
+                      </TabsContent>
+                      <TabsContent value="calendar">
+                        <ContentEngineCalendar />
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                )}
 
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
-        {activeTab === 'chat' && (
-          <>
-            <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-              {showWelcome ? (
-                <WelcomeScreen
-                  companyName={company?.name || 'Social Media'}
-                  title="Social Media Ops"
-                  subtitle="Create content for all your platforms, schedule posts, or ask me anything about your social strategy."
-                  actions={QUICK_ACTIONS}
-                  onAction={handleQuickAction}
-                  consoleType="social"
-                  headerAction={
-                    <IndustryTemplateSelector
-                      onSelectTemplate={(template) => {
-                        setInputValue(template);
-                      }}
-                    />
-                  }
-                />
-              ) : (
-                <div className="space-y-4">
-                  {/* Content Engine */}
-                  {showContentEngine && effectiveCompanyId && (
-                    <div className="space-y-4">
-                      <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
-                        <TabsList>
-                          <TabsTrigger value="settings">Brand Voice</TabsTrigger>
-                          <TabsTrigger value="generator">Generate</TabsTrigger>
-                          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                          <TabsTrigger value="calendar">Calendar</TabsTrigger>
-                        </TabsList>
+                {/* My Posts */}
+                {showMyPosts && effectiveCompanyId && (
+                  <SocialFeedQueue companyId={effectiveCompanyId} initialFilter="pending" />
+                )}
 
-                        <TabsContent value="settings">
-                          <AIContentProfileManager />
-                        </TabsContent>
-                        <TabsContent value="generator">
-                          <MultiChannelGenerator />
-                        </TabsContent>
-                        <TabsContent value="dashboard">
-                          <ContentEngineDashboard />
-                        </TabsContent>
-                        <TabsContent value="calendar">
-                          <ContentEngineCalendar />
-                        </TabsContent>
-                      </Tabs>
-                    </div>
-                  )}
-
-                  {/* My Posts */}
-                  {showMyPosts && effectiveCompanyId && (
-                    <SocialFeedQueue companyId={effectiveCompanyId} initialFilter="pending" />
-                  )}
-
-                  {/* Chat Messages */}
-                  {!isShowingForm && messages.map((msg, idx) => {
-                    const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
-                    const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
-                    const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
-                    
-                    return (
-                      <ChatBubble
-                        key={idx}
-                        role={msg.role}
-                        content={msg.content}
-                        agentLabel={msgAgentStyle.label}
-                        agentColor={msgAgentStyle.color}
-                        agentBgColor={msgAgentStyle.bgColor}
-                        isHandoff={isHandoff}
-                      />
-                    );
-                  })}
-                  {isLoading && !isShowingForm && (
+                {/* Chat Messages */}
+                {!isShowingForm && messages.map((msg, idx) => {
+                  const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
+                  const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
+                  const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
+                  
+                  return (
                     <ChatBubble
-                      role="assistant"
-                      content=""
-                      isLoading={true}
-                      agentLabel={agentStyle.label}
-                      agentColor={agentStyle.color}
-                      agentBgColor={agentStyle.bgColor}
+                      key={idx}
+                      role={msg.role}
+                      content={msg.content}
+                      agentLabel={msgAgentStyle.label}
+                      agentColor={msgAgentStyle.color}
+                      agentBgColor={msgAgentStyle.bgColor}
+                      isHandoff={isHandoff}
                     />
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              )}
-            </div>
+                  );
+                })}
+                {isLoading && !isShowingForm && (
+                  <ChatBubble
+                    role="assistant"
+                    content=""
+                    isLoading={true}
+                    agentLabel={agentStyle.label}
+                    agentColor={agentStyle.color}
+                    agentBgColor={agentStyle.bgColor}
+                  />
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
 
-            <FloatingInput
-              value={inputValue}
-              onChange={setInputValue}
-              onSubmit={handleSubmit}
-              onHome={handleHome}
-              isLoading={isLoading}
-              placeholder="Ask about posts, scheduling..."
-            />
-          </>
-        )}
-      </div>
-    </div>
+          <FloatingInput
+            value={inputValue}
+            onChange={setInputValue}
+            onSubmit={handleSubmit}
+            onHome={handleHome}
+            isLoading={isLoading}
+            placeholder="Ask about posts, scheduling..."
+          />
+        </>
+      )}
+    </CyberConsoleLayout>
   );
 };

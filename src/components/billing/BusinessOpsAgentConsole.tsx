@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
-import { Card } from '@/components/ui/card';
-import { GlassHeader } from '@/components/ai/chat/GlassHeader';
-import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
+import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
@@ -225,43 +224,43 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   
   const activeLabel = getActiveLabel();
 
+  const BOPS_AGENTS: CyberAgent[] = [
+    { id: 'quoting', name: 'Quoting Agent', description: 'Generates quotes & estimates', icon: FileText, hsl: '189,100%,65%', status: 'active', sessions: 87, avgResp: '0.9s' },
+    { id: 'invoicing', name: 'Invoicing Agent', description: 'Creates & sends invoices', icon: Receipt, hsl: '142,72%,55%', status: 'standby', sessions: 64, avgResp: '1.1s' },
+    { id: 'leads', name: 'Lead Gen Agent', description: 'Qualifies & tracks leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', sessions: 41, avgResp: '1.3s' },
+    { id: 'operations', name: 'Ops Agent', description: 'Business management ops', icon: Briefcase, hsl: '38,100%,65%', status: 'standby', sessions: 29, avgResp: '1.0s' },
+  ];
+
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
-      {/* Glass Header */}
-      <GlassHeader
-        logoUrl={company?.logo_url}
-        companyName={company?.name || 'Business Mgt Ops Console'}
-        agentLabel={activeLabel}
-        agentColor={agentStyle.color}
-        agentBgColor={agentStyle.bgColor}
-        useDefaultLogo={!company?.logo_url}
-        subtitle="Business Mgt Ops — Cyber-Sentry Edition"
-      />
-
-      {/* Tab Navigation */}
-      <MobileTabNav
-        tabs={TABS}
-        activeTab={activeTab}
-        onTabChange={(tabId) => {
-          setActiveTab(tabId);
-          if (tabId !== 'chat') {
-            if (tabId === 'aura-live') {
-              handleQuickAction('', 'aura-live');
-            } else {
-              const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
-              if (action) {
-                handleQuickAction(action.message, action.id);
-              }
-            }
+    <CyberConsoleLayout
+      logoUrl={company?.logo_url}
+      companyName={company?.name || 'Business Mgt Ops Console'}
+      agentLabel={activeLabel}
+      agentColor={agentStyle.color}
+      agentBgColor={agentStyle.bgColor}
+      subtitle="Business Mgt Ops — Cyber-Sentry Edition"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={(tabId) => {
+        setActiveTab(tabId);
+        if (tabId !== 'chat') {
+          if (tabId === 'aura-live') {
+            handleQuickAction('', 'aura-live');
+          } else {
+            const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) handleQuickAction(action.message, action.id);
           }
-        }}
-        onHomeClick={handleHome}
-      />
-
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+        }
+      }}
+      onHomeClick={handleHome}
+      agents={BOPS_AGENTS}
+      currentAgentId={currentAgent || lastAgent}
+      quickActions={QUICK_ACTIONS}
+      onQuickAction={handleQuickAction}
+      useDefaultLogo={!company?.logo_url}
+    >
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
             <WelcomeScreen
               companyName={company?.name || 'Business Mgt Ops Console'}
@@ -367,7 +366,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
           isLoading={isLoading}
           placeholder="Ask about quotes or invoices..."
         />
-      </div>
-    </div>
+    </CyberConsoleLayout>
   );
 };
