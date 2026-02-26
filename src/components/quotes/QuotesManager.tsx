@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -168,40 +168,24 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Total</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold">{quotes.length}</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Pending</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold">{pendingQuotes}</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Accepted</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold text-green-600">${totalQuoteValue.toFixed(0)}</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Conversion</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold">
-              {quotes.length > 0 ? ((quotes.filter(q => q.status === 'accepted').length / quotes.length) * 100).toFixed(0) : 0}%
-            </div>
-          </CardContent>
-        </Card>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Total</div>
+          <div className="text-xl font-bold text-foreground">{quotes.length}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Pending</div>
+          <div className="text-xl font-bold text-foreground">{pendingQuotes}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Accepted</div>
+          <div className="text-xl font-bold" style={{ color: 'hsl(var(--feature-invoices))' }}>${totalQuoteValue.toFixed(0)}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Conversion</div>
+          <div className="text-xl font-bold text-foreground">
+            {quotes.length > 0 ? ((quotes.filter(q => q.status === 'accepted').length / quotes.length) * 100).toFixed(0) : 0}%
+          </div>
+        </div>
       </div>
 
       {/* Filters */}
@@ -212,11 +196,11 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
             placeholder="Search..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 bg-white"
+            className="pl-9 h-9"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 h-9 bg-white">
+          <SelectTrigger className="w-32 h-9">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -230,7 +214,7 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
       </div>
 
       {/* Quotes Table */}
-      <Card className="bg-background/50">
+      <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
         <CardContent className="p-0">
           <Table>
             <TableHeader>

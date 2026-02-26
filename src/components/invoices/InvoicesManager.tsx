@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -152,38 +152,22 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Total</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold">{invoices.length}</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Paid</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold text-green-600">${totalPaid.toFixed(0)}</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Outstanding</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold">${totalOutstanding.toFixed(0)}</div>
-          </CardContent>
-        </Card>
-        <Card className={`bg-background/50 ${overdueCount > 0 ? 'border-destructive' : ''}`}>
-          <CardHeader className="pb-2 pt-3 px-3">
-            <CardTitle className="text-xs font-medium text-foreground/70">Overdue</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3 pb-3">
-            <div className="text-xl font-bold text-destructive">{overdueCount}</div>
-          </CardContent>
-        </Card>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Total</div>
+          <div className="text-xl font-bold text-foreground">{invoices.length}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Paid</div>
+          <div className="text-xl font-bold" style={{ color: 'hsl(var(--feature-invoices))' }}>${totalPaid.toFixed(0)}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Outstanding</div>
+          <div className="text-xl font-bold text-foreground">${totalOutstanding.toFixed(0)}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: overdueCount > 0 ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="text-xs font-medium text-foreground/60 mb-1">Overdue</div>
+          <div className="text-xl font-bold text-destructive">{overdueCount}</div>
+        </div>
       </div>
 
       {/* Filters */}
@@ -194,11 +178,11 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
             placeholder="Search..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 bg-white"
+            className="pl-9 h-9"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 h-9 bg-white">
+          <SelectTrigger className="w-32 h-9">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -212,7 +196,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
       </div>
 
       {/* Invoices Table */}
-      <Card className="bg-background/50">
+      <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
