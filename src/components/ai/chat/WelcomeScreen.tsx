@@ -33,9 +33,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   headerAction,
 }) => {
   return (
-    <div className="py-4 px-4 animate-fade-in w-full">
+    <div className="py-4 px-4 animate-fade-in w-full relative">
+      {/* Cyber dot-grid watermark */}
+      <div className="absolute inset-0 cyber-dot-grid opacity-40 pointer-events-none" />
       {/* Full Width Layout */}
-      <div className="w-full space-y-4">
+      <div className="w-full space-y-4 relative z-10">
         {/* Header Action (e.g., Industry Templates) */}
         {headerAction && (
           <div className="w-full max-w-4xl mx-auto flex justify-end">

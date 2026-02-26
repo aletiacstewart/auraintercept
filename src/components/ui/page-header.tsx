@@ -70,12 +70,12 @@ export function PageHeader({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="relative">
-            {/* Round container with breathing animation */}
+            {/* Round container with breathing animation + cyber neon ring */}
             <div className={cn(
               "w-9 h-9 rounded-full flex items-center justify-center transition-all",
               colorClasses.bg,
               pulse && "aura-breathing"
-            )}>
+            )} style={{ boxShadow: `0 0 14px hsl(${colorClasses.ringColor}/0.4), 0 0 28px hsl(${colorClasses.ringColor}/0.15)` }}>
               <Icon className={cn("h-4 w-4", colorClasses.text)} />
             </div>
             

@@ -42,7 +42,15 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
   const displayLogo = logoUrl || (useDefaultLogo ? aiCircleLogo : null);
   
   return (
-    <div className="glass-primary p-3 text-white relative shrink-0">
+    <div 
+      className="p-3 text-white relative shrink-0"
+      style={{
+        background: 'rgba(2,8,18,0.97)',
+        borderTop: '3px solid rgba(0,229,255,0.75)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,229,255,0.08), 0 0 40px rgba(0,229,255,0.04)',
+        backdropFilter: 'blur(24px)',
+      }}
+    >
       <div className="relative flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           {/* Back Button */}
@@ -72,15 +80,20 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
                 )}
               </div>
             )}
-            {/* Online status indicator */}
-            <div className={cn(
-              "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white",
-              isOnline ? "bg-green-400 pulse-dot" : "bg-gray-400"
-            )} />
+            {/* Online status indicator with ping ring */}
+            <div className="absolute -bottom-0.5 -right-0.5">
+              {isOnline && (
+                <span className="absolute inline-flex h-3 w-3 rounded-full bg-emerald-400 opacity-75 animate-ping" />
+              )}
+              <div className={cn(
+                "relative h-3 w-3 rounded-full border-2 border-black/80",
+                isOnline ? "bg-emerald-400" : "bg-gray-500"
+              )} style={isOnline ? { boxShadow: '0 0 8px rgba(52,211,153,0.8)' } : {}} />
+            </div>
           </div>
           
           <div className="min-w-0 flex-1">
-            <h2 className="font-semibold text-sm truncate">{companyName}</h2>
+            <h2 className="font-semibold text-sm truncate" style={{ textShadow: '0 0 12px rgba(0,229,255,0.4)', letterSpacing: '0.02em' }}>{companyName}</h2>
             <Badge 
               className={cn(
                 'text-[10px] px-1.5 py-0 font-medium border-0 h-4',

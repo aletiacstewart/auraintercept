@@ -46,7 +46,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   };
 
   return (
-    <div className="shrink-0 border-b border-border/50" style={{ background: 'hsl(208 30% 18%)' }}>
+    <div className="shrink-0 border-b" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
       <div className="flex overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -89,12 +89,16 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               <Icon className={cn("h-4 w-4", !isActive && tab.featureColor)} />
               <span className={cn("truncate max-w-[48px]", !isActive && tab.featureColor)}>{tab.label}</span>
               
-              {/* Active indicator */}
+              {/* Active indicator - glowing pill */}
               {isActive && (
-                <div className={cn(
-                  'absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full',
-                  tab.variant === 'destructive' ? 'bg-destructive' : 'bg-primary'
-                )} />
+                <div 
+                  className="absolute inset-0 rounded-lg -z-10"
+                  style={{
+                    background: tab.variant === 'destructive' ? 'rgba(239,68,68,0.15)' : 'rgba(0,229,255,0.12)',
+                    border: tab.variant === 'destructive' ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(0,229,255,0.35)',
+                    boxShadow: tab.variant === 'destructive' ? '0 0 12px rgba(239,68,68,0.25)' : '0 0 14px rgba(0,229,255,0.25)',
+                  }}
+                />
               )}
             </button>
           );

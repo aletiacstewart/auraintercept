@@ -401,14 +401,29 @@ export function CompanyAdminDashboard() {
         {statCards.map((stat) => (
           <Card 
             key={stat.title} 
-            className="relative overflow-hidden border-border/50 cursor-pointer hover:bg-slate-700/70 transition-colors"
+            className="relative overflow-hidden cursor-pointer transition-all duration-300 group"
+            style={{
+              background: 'rgba(4,12,26,0.88)',
+              border: '1px solid rgba(0,229,255,0.1)',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.3)',
+            }}
             onClick={() => navigate(stat.href)}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 0 24px rgba(0,229,255,0.15), 0 2px 16px rgba(0,0,0,0.4)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,229,255,0.25)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 16px rgba(0,0,0,0.3)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,229,255,0.1)';
+            }}
           >
+            {/* Neon top accent line */}
+            <div className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-lg ${stat.colorClass.replace('text-', 'bg-').replace('/15', '/60')}`} />
             <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium text-white">
+              <CardTitle className="text-xs font-medium text-white/90 tracking-wide">
                 {stat.title}
               </CardTitle>
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.colorClass}`} style={{ boxShadow: '0 0 10px currentColor' }}>
                 <stat.icon className="w-4 h-4" />
               </div>
             </CardHeader>
@@ -416,11 +431,11 @@ export function CompanyAdminDashboard() {
               {isLoading ? (
                 <Skeleton className="h-6 w-16" />
               ) : (
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-white" style={{ textShadow: '0 0 16px rgba(0,229,255,0.2)' }}>
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}
-              <p className="text-[10px] text-white/70 mt-0.5">{stat.description}</p>
+              <p className="text-[10px] text-white/55 mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
         ))}
@@ -428,13 +443,13 @@ export function CompanyAdminDashboard() {
 
       {/* Quick Actions & Activity Cards */}
       <div className="grid gap-3 md:grid-cols-2">
-        <Card className="border-border/50">
+        <Card style={{ background: 'rgba(4,12,26,0.88)', border: '1px solid rgba(0,229,255,0.1)', borderTop: '2px solid rgba(0,229,255,0.4)' }}>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Activity className="w-4 h-4 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-sm text-white">
+              <Activity className="w-4 h-4 text-feature-overview" />
               Quick Actions
             </CardTitle>
-            <CardDescription className="text-white/70 text-xs">Common tasks to manage your business</CardDescription>
+            <CardDescription className="text-white/55 text-xs">Common tasks to manage your business</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
@@ -442,10 +457,22 @@ export function CompanyAdminDashboard() {
                 <Button
                   key={action.label}
                   variant="outline"
-                  className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 hover:border-primary whitespace-normal"
+                  className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal text-white/80 transition-all duration-200"
+                  style={{ background: 'rgba(2,8,18,0.85)', borderColor: 'rgba(0,229,255,0.1)' }}
                   onClick={() => navigate(action.href)}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,229,255,0.4)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 0 14px rgba(0,229,255,0.2)';
+                    (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.95)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,229,255,0.1)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '';
+                    (e.currentTarget as HTMLElement).style.color = '';
+                  }}
                 >
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}
+                    style={{ boxShadow: '0 0 8px rgba(0,229,255,0.15)', border: '1px solid rgba(0,229,255,0.15)' }}>
                     <action.icon className="w-3.5 h-3.5" />
                   </div>
                   <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
@@ -455,52 +482,35 @@ export function CompanyAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/50">
+        <Card style={{ background: 'rgba(4,12,26,0.88)', border: '1px solid rgba(0,229,255,0.1)', borderTop: '2px solid rgba(52,211,153,0.5)' }}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-secondary" />
+            <CardTitle className="flex items-center gap-2 text-white">
+              <TrendingUp className="w-5 h-5 text-feature-analytics" />
               Business Metrics
             </CardTitle>
-            <CardDescription className="text-white/70">Performance overview</CardDescription>
+            <CardDescription className="text-white/55">Performance overview</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Lead Conversion</span>
-                  <span className="font-medium">{stats?.leadConversionRate ?? 0}%</span>
+              {[
+                { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, color: '#10b981' },
+                { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, color: 'hsl(var(--primary))' },
+                { label: 'Appt. Completion', value: stats?.appointmentCompletionRate ?? 0, color: 'hsl(var(--secondary))' },
+                { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, color: 'hsl(var(--accent))' },
+              ].map(metric => (
+                <div key={metric.label} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm text-white/80">
+                    <span>{metric.label}</span>
+                    <span className="font-medium text-white">{metric.value}%</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full" style={{ background: 'rgba(0,229,255,0.06)', border: '1px solid rgba(0,229,255,0.08)' }}>
+                    <div 
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${metric.value}%`, background: metric.color, boxShadow: `0 0 8px ${metric.color}80` }} 
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: `${stats?.leadConversionRate ?? 0}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Quote Conversion</span>
-                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Appointment Completion</span>
-                  <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Customer Satisfaction</span>
-                  <span className="font-medium">{stats?.satisfactionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.satisfactionRate ?? 0}%` }} />
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
