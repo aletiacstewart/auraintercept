@@ -712,261 +712,73 @@ export default function Auth() {
                   </p>
                 </div>
 
-                {/* 7 Tier Cards - Compact Grid */}
-                <div className="space-y-2">
-                  {/* Industry-Specific Tiers Label */}
-                  <p className="text-xs font-medium text-muted-foreground">Industry-Specific Packages:</p>
-                  
-                  {/* Starter */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'express' ? null : 'express')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'express' 
-                        ? 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/20' 
-                        : 'border-border/50 bg-card hover:border-amber-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'express' ? 'border-amber-500 bg-amber-500' : 'border-muted-foreground/50'
-                        }`}>
-                          {selectedTier === 'express' && <Check className="w-2 h-2 text-white" />}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-xs text-card-foreground">Aura Starter</h3>
-                          <p className="text-[10px] text-card-foreground/70">Restaurants • Cafes • Food Service</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-amber-600">$197</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>1 Agent</span>
-                      <span>•</span>
-                      <span>Voice + Chat</span>
-                      <span>•</span>
-                      <span>Smart Links</span>
-                    </div>
-                  </div>
+{/* 7 Tier Rows - Ultra Compact Single Line */}
+                <div className="space-y-1">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Industry-Specific Packages</p>
 
-                  {/* Flow */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'flow' ? null : 'flow')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'flow' 
-                        ? 'border-teal-500 bg-teal-500/10 ring-2 ring-teal-500/20' 
-                        : 'border-border/50 bg-card hover:border-teal-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'flow' ? 'border-teal-500 bg-teal-500' : 'border-muted-foreground/50'
+                  {[
+                    { id: 'express', name: 'Aura Starter',     sub: 'Restaurants • Food Service',  price: '$197',   color: 'amber'  },
+                    { id: 'flow',    name: 'Aura Connect',     sub: 'Personal Services • Real Estate', price: '$397', color: 'teal'  },
+                    { id: 'halo',    name: 'Aura Growth',      sub: 'Salons • Spas • Wellness',     price: '$597',   color: 'rose'   },
+                  ].map(t => (
+                    <div
+                      key={t.id}
+                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "express" | "flow" | "halo")}
+                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all ${
+                        selectedTier === t.id
+                          ? `border-${t.color}-500 bg-${t.color}-500/10`
+                          : `border-border/40 bg-card/60 hover:border-${t.color}-500/40`
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className={`w-3 h-3 shrink-0 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === t.id ? `border-${t.color}-500 bg-${t.color}-500` : 'border-muted-foreground/40'
                         }`}>
-                          {selectedTier === 'flow' && <Check className="w-2 h-2 text-white" />}
+                          {selectedTier === t.id && <Check className="w-1.5 h-1.5 text-white" />}
                         </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-card-foreground">Aura Connect</h3>
-                          <p className="text-[10px] text-card-foreground/70">Personal Services • Real Estate</p>
-                        </div>
+                        <span className="text-xs font-semibold text-card-foreground truncate">{t.name}</span>
+                        <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-teal-600">$397</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
+                      <span className={`text-xs font-bold shrink-0 ml-2 text-${t.color}-500`}>{t.price}<span className="font-normal text-muted-foreground">/mo</span></span>
                     </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>3 Agents</span>
-                      <span>•</span>
-                      <span>1 Console</span>
-                      <span>•</span>
-                      <span>Calendar Sync</span>
-                    </div>
-                  </div>
+                  ))}
 
-                  {/* Halo */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'halo' ? null : 'halo')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'halo' 
-                        ? 'border-rose-500 bg-rose-500/10 ring-2 ring-rose-500/20' 
-                        : 'border-border/50 bg-card hover:border-rose-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'halo' ? 'border-rose-500 bg-rose-500' : 'border-muted-foreground/50'
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pt-1.5 mb-1">General Business Plans</p>
+
+                  {[
+                    { id: 'core',        name: 'Aura Presence',    sub: 'Web Presence Focus',     price: '$797',   color: 'slate',  popular: false },
+                    { id: 'single_point',name: 'Aura Logistics',   sub: 'Field Service Teams',    price: '$1,497', color: 'blue',   popular: false },
+                    { id: 'multi_track', name: 'Aura Performance', sub: 'Full Automation',        price: '$2,497', color: 'primary',popular: true  },
+                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise', price: '$3,497', color: 'purple', popular: false },
+                  ].map(t => (
+                    <div
+                      key={t.id}
+                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "core" | "single_point" | "multi_track" | "command")}
+                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all relative ${
+                        t.popular
+                          ? selectedTier === t.id
+                            ? 'border-primary bg-primary/10'
+                            : 'border-primary/40 bg-primary/5 hover:border-primary'
+                          : selectedTier === t.id
+                            ? `border-${t.color}-500 bg-${t.color}-500/10`
+                            : `border-border/40 bg-card/60 hover:border-${t.color}-500/40`
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className={`w-3 h-3 shrink-0 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === t.id
+                            ? t.popular ? 'border-primary bg-primary' : `border-${t.color}-500 bg-${t.color}-500`
+                            : t.popular ? 'border-primary/50' : 'border-muted-foreground/40'
                         }`}>
-                          {selectedTier === 'halo' && <Check className="w-2 h-2 text-white" />}
+                          {selectedTier === t.id && <Check className="w-1.5 h-1.5 text-white" />}
                         </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-card-foreground">Aura Growth</h3>
-                          <p className="text-[10px] text-card-foreground/70">Salons • Spas • Wellness</p>
-                        </div>
+                        <span className={`text-xs font-semibold truncate ${t.popular ? 'text-foreground' : 'text-card-foreground'}`}>{t.name}</span>
+                        {t.popular && <span className="text-[8px] px-1 py-0.5 rounded gradient-primary text-primary-foreground font-medium shrink-0">Popular</span>}
+                        <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-rose-600">$597</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
+                      <span className={`text-xs font-bold shrink-0 ml-2 ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>{t.price}<span className="font-normal text-muted-foreground">/mo</span></span>
                     </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>11 Agents</span>
-                      <span>•</span>
-                      <span>3 Consoles</span>
-                      <span>•</span>
-                      <span>Outreach & Sales</span>
-                    </div>
-                  </div>
-
-                  {/* General Business Tiers Label */}
-                  <p className="text-xs font-medium text-muted-foreground pt-2">General Business Plans:</p>
-
-                  {/* Core */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'core' ? null : 'core')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'core' 
-                        ? 'border-slate-500 bg-slate-500/10 ring-2 ring-slate-500/20' 
-                        : 'border-border/50 bg-card hover:border-slate-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'core' ? 'border-slate-500 bg-slate-500' : 'border-muted-foreground/50'
-                        }`}>
-                          {selectedTier === 'core' && <Check className="w-2 h-2 text-white" />}
-                        </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-card-foreground">Aura Presence</h3>
-                          <p className="text-[10px] text-card-foreground/70">Web Presence Focus</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-slate-600">$797</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>12 Agents</span>
-                      <span>•</span>
-                      <span>4 Consoles</span>
-                      <span>•</span>
-                      <span>Web Presence</span>
-                    </div>
-                  </div>
-
-                  {/* Single-Point */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'single_point' ? null : 'single_point')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'single_point' 
-                        ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' 
-                        : 'border-border/50 bg-card hover:border-blue-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'single_point' ? 'border-blue-500 bg-blue-500' : 'border-muted-foreground/50'
-                        }`}>
-                          {selectedTier === 'single_point' && <Check className="w-2 h-2 text-white" />}
-                        </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-card-foreground">Aura Logistics</h3>
-                          <p className="text-[10px] text-card-foreground/70">Field Service Teams</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-blue-600">$1,497</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>18 Agents</span>
-                      <span>•</span>
-                      <span>6 Consoles</span>
-                      <span>•</span>
-                      <span>15 Employees</span>
-                    </div>
-                  </div>
-
-                  {/* Multi-Track - Highlighted */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'multi_track' ? null : 'multi_track')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all relative ${
-                      selectedTier === 'multi_track' 
-                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
-                        : 'border-primary/50 bg-primary/5 hover:border-primary'
-                    }`}
-                  >
-                    <div className="absolute -top-2 left-3">
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full gradient-primary text-primary-foreground font-medium">Popular</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'multi_track' ? 'border-primary bg-primary' : 'border-primary/50'
-                        }`}>
-                          {selectedTier === 'multi_track' && <Check className="w-2 h-2 text-primary-foreground" />}
-                        </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-foreground">Aura Performance</h3>
-                          <p className="text-[10px] text-muted-foreground">Full Automation</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-primary">$2,497</span>
-                        <span className="text-[10px] text-muted-foreground">/mo</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-muted-foreground">
-                      <span>22 Agents</span>
-                      <span>•</span>
-                      <span>7 Consoles</span>
-                      <span>•</span>
-                      <span>Analytics</span>
-                    </div>
-                  </div>
-
-                  {/* Command */}
-                  <div 
-                    onClick={() => setSelectedTier(selectedTier === 'command' ? null : 'command')}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'command' 
-                        ? 'border-purple-500 bg-purple-500/10 ring-2 ring-purple-500/20' 
-                        : 'border-border/50 bg-card hover:border-purple-500/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'command' ? 'border-purple-500 bg-purple-500' : 'border-muted-foreground/50'
-                        }`}>
-                          {selectedTier === 'command' && <Check className="w-2 h-2 text-white" />}
-                        </div>
-                        <div>
-                      <h3 className="font-semibold text-xs text-card-foreground">Aura Command</h3>
-                          <p className="text-[10px] text-card-foreground/70">Multi-Location • Enterprise</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-purple-600">$3,497</span>
-                        <span className="text-[10px] text-card-foreground/70">/mo</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>24 Agents</span>
-                      <span>•</span>
-                      <span>7 Consoles</span>
-                      <span>•</span>
-                      <span>50 Employees</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
                 {/* Selection Info */}
