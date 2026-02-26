@@ -156,42 +156,34 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-background/50">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-feature-leads" />
-              <span className="text-xl font-bold">{stats.total}</span>
-            </div>
-            <p className="text-xs text-foreground/70">Total</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-feature-leads" />
-              <span className="text-xl font-bold">{stats.new}</span>
-            </div>
-            <p className="text-xs text-foreground/70">New</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-red-500" />
-              <span className="text-xl font-bold">{stats.hot}</span>
-            </div>
-            <p className="text-xs text-foreground/70">Hot</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-background/50">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-xl font-bold">{stats.converted}</span>
-            </div>
-            <p className="text-xs text-foreground/70">Converted</p>
-          </CardContent>
-        </Card>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-feature-leads" />
+            <span className="text-xl font-bold text-foreground">{stats.total}</span>
+          </div>
+          <p className="text-xs text-foreground/60">Total</p>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-feature-leads" />
+            <span className="text-xl font-bold text-foreground">{stats.new}</span>
+          </div>
+          <p className="text-xs text-foreground/60">New</p>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="flex items-center gap-2">
+            <Flame className="h-4 w-4 text-destructive" />
+            <span className="text-xl font-bold text-foreground">{stats.hot}</span>
+          </div>
+          <p className="text-xs text-foreground/60">Hot</p>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" style={{ color: 'hsl(var(--feature-invoices))' }} />
+            <span className="text-xl font-bold text-foreground">{stats.converted}</span>
+          </div>
+          <p className="text-xs text-foreground/60">Converted</p>
+        </div>
       </div>
 
       {/* Filters */}
@@ -202,11 +194,11 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
             placeholder="Search leads..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-9 bg-white"
+            className="pl-9 h-9"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 h-9 bg-white">
+          <SelectTrigger className="w-32 h-9">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -221,7 +213,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
       </div>
 
       {/* Leads List */}
-      <Card className="bg-background/50">
+      <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
         <CardHeader className="py-3 px-4">
           <CardTitle className="text-sm">All Leads ({filteredLeads.length})</CardTitle>
         </CardHeader>
