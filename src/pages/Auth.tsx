@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { INDUSTRY_LIST } from '@/lib/industryTemplates';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, AlertTriangle } from 'lucide-react';
@@ -56,6 +58,12 @@ export default function Auth() {
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
   const [wantsConcierge, setWantsConcierge] = useState(false);
+  const [companyAddress, setCompanyAddress] = useState('');
+  const [companyPhone, setCompanyPhone] = useState('');
+  const [businessType, setBusinessType] = useState('');
+  const [businessIndustry, setBusinessIndustry] = useState('');
+  const [dbaFile, setDbaFile] = useState<File | null>(null);
+  const [einFile, setEinFile] = useState<File | null>(null);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
@@ -264,7 +272,9 @@ export default function Auth() {
         .from('companies')
         .insert({
           name: companyName,
-          slug
+          slug,
+          address: companyAddress || null,
+          phone: companyPhone || null,
         })
         .select()
         .single();
@@ -1042,6 +1052,99 @@ export default function Auth() {
                               onChange={(e) => setCompanyName(e.target.value)}
                               required
                             />
+                          </div>
+                        )}
+
+                        {/* Business Info — company mode only */}
+                        {mode === 'company' && (
+                          <div className="space-y-3 border border-border/30 rounded-lg p-3 bg-card/40">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Business Information</p>
+
+                            {/* Address + Phone row */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="space-y-1">
+                                <Label htmlFor="companyAddress" className="text-xs">Business Address</Label>
+                                <Input
+                                  id="companyAddress"
+                                  type="text"
+                                  placeholder="123 Main St, City, ST 12345"
+                                  value={companyAddress}
+                                  onChange={(e) => setCompanyAddress(e.target.value)}
+                                  className="text-xs h-8"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label htmlFor="companyPhone" className="text-xs">Business Phone</Label>
+                                <Input
+                                  id="companyPhone"
+                                  type="tel"
+                                  placeholder="(555) 555-5555"
+                                  value={companyPhone}
+                                  onChange={(e) => setCompanyPhone(e.target.value)}
+                                  className="text-xs h-8"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Business Type + Industry row */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="space-y-1">
+                                <Label className="text-xs">Business Type</Label>
+                                <Select value={businessType} onValueChange={setBusinessType}>
+                                  <SelectTrigger className="text-xs h-8">
+                                    <SelectValue placeholder="Select type…" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {['LLC', 'Corporation (Corp)', 'S-Corporation (S-Corp)', 'C-Corporation (C-Corp)', 'Incorporated (Inc)', 'Partnership', 'Sole Proprietor', 'Other'].map(t => (
+                                      <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">Business Industry</Label>
+                                <Select value={businessIndustry} onValueChange={setBusinessIndustry}>
+                                  <SelectTrigger className="text-xs h-8">
+                                    <SelectValue placeholder="Select industry…" />
+                                  </SelectTrigger>
+                                  <SelectContent className="max-h-48">
+                                    {INDUSTRY_LIST.map(ind => (
+                                      <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+
+                            {/* DBA + EIN upload row */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="space-y-1">
+                                <Label className="text-xs">DBA Document <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                                <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
+                                  <FileText className="w-3 h-3 shrink-0" />
+                                  <span className="truncate">{dbaFile ? dbaFile.name : 'Upload PDF/JPG…'}</span>
+                                  <input
+                                    type="file"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    className="hidden"
+                                    onChange={(e) => setDbaFile(e.target.files?.[0] ?? null)}
+                                  />
+                                </label>
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">EIN / Tax ID Doc <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                                <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
+                                  <FileText className="w-3 h-3 shrink-0" />
+                                  <span className="truncate">{einFile ? einFile.name : 'Upload PDF/JPG…'}</span>
+                                  <input
+                                    type="file"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    className="hidden"
+                                    onChange={(e) => setEinFile(e.target.files?.[0] ?? null)}
+                                  />
+                                </label>
+                              </div>
+                            </div>
                           </div>
                         )}
 
