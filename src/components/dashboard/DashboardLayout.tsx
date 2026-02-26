@@ -467,9 +467,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           boxShadow: "0 0 12px rgba(0,229,255,0.2), inset 0 0 0 1px rgba(0,229,255,0.2)",
                           borderRadius: 8,
                         } : {
-                          color: "rgba(255,255,255,0.65)",
-                        }}
-                        onMouseEnter={e => {
+                           color: "rgba(255,255,255,0.92)",
+                         }}
+                         onMouseEnter={e => {
                           if (!isActive) {
                             const glowMap: Record<string, string> = {
                               'text-feature-overview':     '189,100%,65%',
@@ -497,7 +497,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         onMouseLeave={e => {
                           if (!isActive) {
                             const el = e.currentTarget as HTMLElement;
-                            el.style.color = "rgba(255,255,255,0.65)";
+                            el.style.color = "rgba(255,255,255,0.92)";
                             el.style.background = "transparent";
                             el.style.boxShadow = "none";
                           }
@@ -589,7 +589,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               'w-full justify-start gap-3',
               collapsed && 'justify-center px-2'
             )}
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            style={{ color: "rgba(255,255,255,0.92)" }}
             onClick={handleSignOut}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: "#ff6b6b" }} />
