@@ -6475,54 +6475,102 @@ export type Database = {
           created_at: string | null
           elevenlabs_agent_id: string | null
           elevenlabs_voice_id: string | null
+          elevenlabs_voice_similarity: number | null
+          elevenlabs_voice_speed: number | null
+          elevenlabs_voice_stability: number | null
+          elevenlabs_voice_style: number | null
+          google_calendar_enabled: boolean | null
           google_calendar_id: string | null
+          google_tts_model: string | null
+          google_tts_voice: string | null
           has_elevenlabs: boolean | null
           has_google: boolean | null
           has_openai: boolean | null
           has_resend: boolean | null
+          has_signalwire: boolean | null
           has_stripe: boolean | null
           has_tavily: boolean | null
           has_twilio: boolean | null
           id: string | null
+          openai_tts_model: string | null
+          openai_tts_voice: string | null
+          signalwire_phone_number: string | null
+          signalwire_project_id: string | null
+          signalwire_space_url: string | null
           stripe_publishable_key: string | null
+          tts_monthly_limit: number | null
+          tts_provider: string | null
           twilio_phone_number: string | null
           updated_at: string | null
+          use_platform_tts: boolean | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string | null
           elevenlabs_agent_id?: string | null
           elevenlabs_voice_id?: string | null
+          elevenlabs_voice_similarity?: number | null
+          elevenlabs_voice_speed?: number | null
+          elevenlabs_voice_stability?: number | null
+          elevenlabs_voice_style?: number | null
+          google_calendar_enabled?: boolean | null
           google_calendar_id?: string | null
+          google_tts_model?: string | null
+          google_tts_voice?: string | null
           has_elevenlabs?: never
           has_google?: never
           has_openai?: never
           has_resend?: never
+          has_signalwire?: never
           has_stripe?: never
           has_tavily?: never
           has_twilio?: never
           id?: string | null
+          openai_tts_model?: string | null
+          openai_tts_voice?: string | null
+          signalwire_phone_number?: string | null
+          signalwire_project_id?: string | null
+          signalwire_space_url?: string | null
           stripe_publishable_key?: string | null
+          tts_monthly_limit?: number | null
+          tts_provider?: string | null
           twilio_phone_number?: string | null
           updated_at?: string | null
+          use_platform_tts?: boolean | null
         }
         Update: {
           company_id?: string | null
           created_at?: string | null
           elevenlabs_agent_id?: string | null
           elevenlabs_voice_id?: string | null
+          elevenlabs_voice_similarity?: number | null
+          elevenlabs_voice_speed?: number | null
+          elevenlabs_voice_stability?: number | null
+          elevenlabs_voice_style?: number | null
+          google_calendar_enabled?: boolean | null
           google_calendar_id?: string | null
+          google_tts_model?: string | null
+          google_tts_voice?: string | null
           has_elevenlabs?: never
           has_google?: never
           has_openai?: never
           has_resend?: never
+          has_signalwire?: never
           has_stripe?: never
           has_tavily?: never
           has_twilio?: never
           id?: string | null
+          openai_tts_model?: string | null
+          openai_tts_voice?: string | null
+          signalwire_phone_number?: string | null
+          signalwire_project_id?: string | null
+          signalwire_space_url?: string | null
           stripe_publishable_key?: string | null
+          tts_monthly_limit?: number | null
+          tts_provider?: string | null
           twilio_phone_number?: string | null
           updated_at?: string | null
+          use_platform_tts?: boolean | null
         }
         Relationships: [
           {
