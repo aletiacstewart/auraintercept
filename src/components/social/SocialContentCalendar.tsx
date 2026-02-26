@@ -55,12 +55,12 @@ const PLATFORM_ICONS: Record<string, React.ElementType> = {
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
-  instagram: 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-  google_business: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  facebook: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
-  sms: 'bg-green-500/20 text-green-400 border-green-500/30',
-  tiktok: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
-  linkedin: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+  instagram: 'bg-pink-100 text-pink-700 border-pink-200',
+  google_business: 'bg-blue-100 text-blue-700 border-blue-200',
+  facebook: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  sms: 'bg-green-100 text-green-700 border-green-200',
+  tiktok: 'bg-rose-100 text-rose-700 border-rose-200',
+  linkedin: 'bg-sky-100 text-sky-700 border-sky-200',
 };
 
 export function SocialContentCalendar({ companyId, onClose }: SocialContentCalendarProps) {
@@ -139,8 +139,8 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-pink-500/15 border border-pink-500/30">
-              <CalendarDays className="h-5 w-5 text-pink-400" />
+            <div className="p-2.5 rounded-xl bg-pink-100 border border-pink-200">
+              <CalendarDays className="h-5 w-5 text-pink-600" />
             </div>
             <div>
               <CardTitle className="text-lg text-card-foreground">Content Calendar</CardTitle>
@@ -219,7 +219,7 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
               >
                 <span className={cn(
                   "block text-center",
-                  isToday(day) && "font-bold text-pink-400"
+                  isToday(day) && "font-bold text-pink-600"
                 )}>
                   {format(day, 'd')}
                 </span>
@@ -265,11 +265,11 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
                 {selectedDateContent.scheduled.map(post => (
                   <div 
                     key={post.id} 
-                    className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20"
+                    className="p-3 rounded-lg bg-blue-50 border border-blue-200"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="h-4 w-4 text-blue-400" />
-                      <span className="text-sm font-medium text-blue-400">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-600">
                         Scheduled for {format(new Date(post.scheduled_for), 'h:mm a')}
                       </span>
                     </div>
@@ -300,11 +300,11 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
                   return (
                     <div 
                       key={content.id} 
-                      className="p-3 rounded-lg bg-green-500/10 border border-green-500/20"
+                      className="p-3 rounded-lg bg-green-50 border border-green-200"
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle className="h-4 w-4 text-green-400" />
-                        <span className="text-sm font-medium text-green-400">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-600">
                           Published {content.published_at && format(new Date(content.published_at), 'h:mm a')}
                         </span>
                       </div>

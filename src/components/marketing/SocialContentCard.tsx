@@ -194,14 +194,14 @@ export function SocialContentCard({
               <span className="font-medium text-sm text-card-foreground">{config.label}</span>
               {/* AI Generated Badge for TikTok */}
               {isTikTokAIGC && (
-                <Badge variant="outline" className="text-xs bg-purple-500/15 text-purple-400 border-purple-500/30">
+                <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-200">
                   <Sparkles className="h-2.5 w-2.5 mr-1" />
                   AI Generated
                 </Badge>
               )}
               {/* LinkedIn Visibility Badge */}
               {draft.platform === 'linkedin' && draft.api_metadata?.visibility && (
-                <Badge variant="outline" className="text-xs bg-blue-500/15 text-blue-400 border-blue-500/30">
+                <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
                   {draft.api_metadata.visibility}
                 </Badge>
               )}
