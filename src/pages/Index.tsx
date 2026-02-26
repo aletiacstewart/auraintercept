@@ -475,7 +475,7 @@ export default function Index() {
         <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)", pointerEvents: "none" }} />
 
         {/* TOP — Title + Tagline above the hero logo */}
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "56px 24px 0", textAlign: "center" }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "72px 24px 0", textAlign: "center" }}>
           <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 16px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
@@ -485,7 +485,7 @@ export default function Index() {
         </div>
 
         {/* SPACER — transparent gap so the hero image logo shows through */}
-        <div style={{ flex: 1, minHeight: 260 }} />
+        <div style={{ flex: 1, minHeight: 320 }} />
 
         {/* BOTTOM — Button, Stats, Rotating text below the hero logo */}
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "0 24px 56px", textAlign: "center" }}>
