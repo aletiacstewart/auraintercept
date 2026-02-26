@@ -226,7 +226,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const activeLabel = getActiveLabel();
 
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl console-surface" style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
+    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
@@ -235,6 +235,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
         useDefaultLogo={!company?.logo_url}
+        subtitle="Business Mgt Ops — Cyber-Sentry Edition"
       />
 
       {/* Tab Navigation */}
@@ -258,7 +259,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative console-surface"> 
+      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
