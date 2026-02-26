@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -147,6 +148,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
           <Toaster />
           {!isEmbedMode && <PWAUpdatePrompt />}
           <BrowserRouter>
+            <ScrollToTop />
             <VoiceProvider>
               {!isEmbedMode && <AuraVoiceOverlay />}
               <Routes>
