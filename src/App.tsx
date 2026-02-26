@@ -71,6 +71,7 @@ import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import VideoPromptsPage from "./pages/VideoPromptsPage";
 import CyberSentryMockup from "./pages/CyberSentryMockup";
+import CyberSentryPortalMockup from "./pages/CyberSentryPortalMockup";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
 import FieldOpsInstall from "./pages/FieldOpsInstall";
@@ -228,6 +229,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
                 <Route path="/dashboard/video-prompts" element={<ProtectedRoute><VideoPromptsPage /></ProtectedRoute>} />
                 <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute><CyberSentryMockup /></ProtectedRoute>} />
+                <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
