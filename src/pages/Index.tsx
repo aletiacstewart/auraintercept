@@ -475,48 +475,37 @@ export default function Index() {
         <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,255,0.01) 3px, rgba(0,229,255,0.01) 4px)", pointerEvents: "none" }} />
 
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "80px 24px 72px", textAlign: "center" }}>
-          {/* Logo badge */}
-          <div style={{ display: "inline-block", marginBottom: 28 }}>
-            <img src={heroLogo} alt="Aura Intercept" style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.3)", boxShadow: "0 0 40px rgba(0,229,255,0.3), 0 0 80px rgba(0,229,255,0.1)" }} />
-          </div>
-
-          {/* Eyebrow pill */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 18px", borderRadius: 24, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 20 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00E5FF", boxShadow: "0 0 10px #00E5FF" }} />
-            <span style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>AI-Powered Command Center</span>
-          </div>
-
-          {/* Title */}
-          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 16px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+          {/* Title — top */}
+          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 20px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
 
-          {/* Animated subtitle */}
-          <div style={{ height: 32, marginBottom: 24, overflow: "hidden" }}>
+          {/* Animated rotating subtitle — below title */}
+          <div style={{ height: 32, marginBottom: 28, overflow: "hidden" }}>
             <p style={{ fontSize: 20, color: "#00E5FF", fontWeight: 600, letterSpacing: 1, transition: "all 0.5s ease" }}>
               {subtitles[currentSubtitle]}
             </p>
           </div>
 
-          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.7)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.7 }}>
-            The AI command center that runs your entire business — from first contact to final invoice.
-          </p>
+          {/* Logo badge — below rotating text */}
+          <div style={{ display: "inline-block", marginBottom: 20 }}>
+            <img src={heroLogo} alt="Aura Intercept" style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.3)", boxShadow: "0 0 40px rgba(0,229,255,0.3), 0 0 80px rgba(0,229,255,0.1)" }} />
+          </div>
 
-          {/* CTAs */}
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" as const, marginBottom: 48 }}>
+          {/* Deploy CTA — centered below logo */}
+          <div style={{ marginBottom: 36 }}>
             <button
               onClick={() => navigate('/auth?mode=company')}
               style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
             >
-              START FREE TRIAL →
-            </button>
-            <button
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)", color: "rgba(200,230,255,0.9)", backdropFilter: "blur(16px)", letterSpacing: 0.5 }}
-            >
               Deploy Your AI Workforce
             </button>
           </div>
+
+          {/* Tagline — just above stats */}
+          <p style={{ fontSize: 17, color: "rgba(200,230,255,0.7)", maxWidth: 540, margin: "0 auto 28px", lineHeight: 1.7 }}>
+            The AI command center that runs your entire business — from first contact to final invoice.
+          </p>
 
           {/* Stats trust bar */}
           <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" as const }}>
