@@ -1269,12 +1269,12 @@ export default function Auth() {
                                   Add Concierge Onboarding
                                   <span className="ml-auto text-primary font-bold">$297</span>
                                 </label>
-                                <p className="text-[10px] text-muted-foreground mt-0.5">
-                                  We configure SignalWire, ElevenLabs, Resend & A2P 10DLC for you. Includes onboarding call + AI knowledge base setup.
-                                </p>
-                                <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
-                                  Optional — can also be purchased later from your dashboard.
-                                </p>
+                                 <p className="text-[10px] text-muted-foreground mt-0.5">
+                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of $297. Assistance from primary owner or manager required for company details.
+                                 </p>
+                                 <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
+                                   Optional — can also be purchased later from your dashboard.
+                                 </p>
                               </div>
                             </div>
                           </div>
@@ -1312,9 +1312,9 @@ export default function Auth() {
                   <Headphones className="w-5 h-5 text-blue-400" />
                 </div>
                 <h4 className="font-semibold text-blue-400 text-sm mb-2">Concierge Onboarding</h4>
-                <p className="text-xs text-foreground">
-                  We'll configure all 3rd party integrations for a one-time fee <span className="font-bold text-blue-300">starting at $299</span>.
-                </p>
+                 <p className="text-xs text-foreground">
+                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-blue-300">one-time fee of $297</span>. Assistance from primary owner or manager required for company details.
+                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col items-center text-center">
