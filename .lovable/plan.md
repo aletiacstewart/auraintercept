@@ -1,34 +1,61 @@
 
-## Root Cause
+## What Needs to Be Added to Company Signup
 
-**React Rules of Hooks violation (Error #310)** in `AIAgentConsole.tsx`.
+The current Auth.tsx already shows 3rd-party cost cards, but is missing two critical disclosure sections that companies must acknowledge **before** creating their account:
 
-The component has an early return at line 557:
-```tsx
-if (showCompanySelector) {
-  return (<Card>...<CompanySelector /></Card>);
-}
-```
+### 1. Required Document Checklist Section (left column, company mode)
+Add a collapsible "Required Documents & Setup Checklist" section showing what companies need to have ready:
 
-This early return happens **after** some hooks but **before** the `useQuery` for `agentConfigs`, `company`, `services`, `businessHours`, and `featureFlags` — meaning React renders a different number of hooks between the "selector shown" and "company selected" states. When a user selects a company, React crashes with Error #310.
+**A2P 10DLC Registration (SMS Compliance)**
+- Business legal name, EIN/Tax ID, business address
+- Business type (LLC, Corp, Sole Proprietor)
+- Use-case description (what SMS messages will say)
+- Estimated monthly SMS volume
+- Sample message content
+- Brand registration ($4 one-time) + Campaign registration ($15 one-time) + $10/mo recurring
 
-## Fix
+**SignalWire Setup**
+- Create account at signalwire.com
+- Purchase a phone number (~$2/mo)
+- Submit A2P 10DLC campaign through their portal
+- Costs: Usage-based ($0.004/SMS, $0.006/min voice)
 
-Move the early `if (showCompanySelector) return (...)` block to **after all hooks have been called**, not before them. Specifically:
+**ElevenLabs Setup**
+- Create account at elevenlabs.io
+- API key for voice synthesis
+- Select/clone a voice for your AI agent
+- Costs: Free (10k chars) → $5/mo (30k) → $99/mo (500k)
 
-1. All `useQuery` hooks (lines 149–260) run unconditionally (with `enabled: !!companyId` guards — already correct).
-2. The `sessionStats` `useMemo` at line 570 is currently **after** the early return, meaning it's only called when a company is selected. Move it before the early return check.
-3. The `agentInfo`, `getActiveLabel`, and `activeLabel` computations at lines 524–542 are also after the early return — move them before too.
+**Resend Setup**
+- Create account at resend.com
+- Verify your sending domain (DNS records)
+- API key for transactional emails
+- Costs: Free (3k/mo) → $20/mo (50k)
 
-Essentially, **all hooks and derived state** need to be declared before any conditional `return` statement.
+**Knowledge Base Documents (for AI to work)**
+- Business description / About Us content
+- Service list with descriptions and pricing
+- FAQ document (common customer questions)
+- Business hours and holiday schedule
+- Service area / zip codes
 
-## Implementation Steps
+### 2. Pre-Signup Acknowledgment Checkboxes
+Add required checkboxes on the signup form (company mode only) that must all be checked before the "Start Free Trial" button is enabled:
 
-1. **Move the early return** for `showCompanySelector` (lines 557–567) to after ALL hooks and computed values (after line 574).
-2. Move `sessionStats` useMemo (lines 570–574) to before the `showCompanySelector` early return.
-3. Ensure `agentInfo`, `getActiveLabel`, and `activeLabel` (lines 524–542) remain before the early return (they already are — confirmed at line 524, good).
-4. The `showCompanySelector` check at line 545 and `handleCompanySelect`/`handleBackToCompanySelector` handlers at 547–555 are already before the early return — no change needed.
+1. ☐ I understand A2P 10DLC registration is required for SMS and takes 2-4 weeks for approval
+2. ☐ I acknowledge 3rd-party service costs (SignalWire, ElevenLabs, Resend) are separate from my subscription
+3. ☐ I will provide knowledge base documents during onboarding for the AI to function properly
+4. ☐ I have read and agree to the Terms of Service and Privacy Policy
 
-## Files to Change
+### Implementation Plan
 
-- `src/components/ai/AIAgentConsole.tsx` — move `sessionStats` useMemo before the early `showCompanySelector` return block, and move the early return to after line 574.
+**File: `src/pages/Auth.tsx`**
+1. Add a new `SignupRequirementsAccordion` inline section in the left column (company mode) below the 3rd-party cost grid — uses existing `Accordion` from Radix.
+2. Add 4 new acknowledgment checkboxes state: `const [setupAcknowledged, setSetupAcknowledged] = useState({a2p: false, costs: false, knowledgeBase: false})`
+3. Gate the signup button: disabled until `termsAgreed && setupAcknowledged.a2p && setupAcknowledged.costs && setupAcknowledged.knowledgeBase`
+4. The acknowledgment checkboxes render inside the signup form (TabsContent value="signup") for company mode only — above the submit button
+
+**File: `src/components/subscription/ThirdPartyCostDisclosureDialog.tsx`**
+5. Add A2P 10DLC as a `required: true` cost item (currently missing from the checkout disclosure dialog)
+
+No database changes needed.
