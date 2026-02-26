@@ -575,7 +575,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   'w-full justify-start gap-3',
                   collapsed && 'justify-center px-2'
                 )}
-                style={{ color: "rgba(255,255,255,0.65)" }}
+                style={{ color: "rgba(255,255,255,0.92)" }}
               >
                 <Bug className="w-5 h-5 flex-shrink-0 text-feature-integrations" />
                 {!collapsed && <span>Report Issue</span>}

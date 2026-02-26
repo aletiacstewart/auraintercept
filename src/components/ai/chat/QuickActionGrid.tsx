@@ -59,7 +59,7 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
             'border-border/50 text-white transition-all duration-200 rounded-lg',
             action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
-          style={{ background: 'hsl(208 30% 18%)' }}
+          style={{ background: 'rgba(2,8,18,0.95)', borderColor: 'rgba(0,229,255,0.1)' }}
           onMouseEnter={e => {
             const hsl = action.featureColor ? featureGlowMap[action.featureColor] : null;
             const el = e.currentTarget as HTMLElement;
@@ -76,13 +76,22 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           onMouseLeave={e => {
             const el = e.currentTarget as HTMLElement;
             el.style.color = '';
-            el.style.background = 'hsl(208 30% 18%)';
+            el.style.background = 'rgba(2,8,18,0.95)';
             el.style.boxShadow = '';
-            el.style.borderColor = '';
+            el.style.borderColor = 'rgba(0,229,255,0.1)';
           }}
           onClick={() => onAction(action.message, action.id)}
         >
-          <action.icon className={cn("h-4 w-4", action.featureColor)} />
+          <div 
+            className={cn("w-7 h-7 rounded-lg flex items-center justify-center mb-0.5", action.featureColor ? `bg-current/0` : '')}
+            style={action.featureColor ? {
+              background: `hsl(${featureGlowMap[action.featureColor] ?? '189,100%,55%'}/0.12)`,
+              border: `1px solid hsl(${featureGlowMap[action.featureColor] ?? '189,100%,55%'}/0.25)`,
+              boxShadow: `0 0 8px hsl(${featureGlowMap[action.featureColor] ?? '189,100%,55%'}/0.2)`,
+            } : { background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.15)' }}
+          >
+            <action.icon className={cn("h-3.5 w-3.5", action.featureColor)} />
+          </div>
           <span className="text-center leading-tight font-medium">{action.label}</span>
         </Button>
       ))}
@@ -100,7 +109,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
   onAction,
 }) => {
   return (
-    <div className="shrink-0 border-t border-border/50 p-1.5 overflow-hidden" style={{ background: 'hsl(208 30% 18%)' }}>
+    <div className="shrink-0 border-t p-1.5 overflow-hidden" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
       <div className="flex gap-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {actions.map((action) => (
           <Button
