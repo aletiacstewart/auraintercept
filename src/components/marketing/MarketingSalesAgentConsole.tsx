@@ -163,7 +163,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const activeLabel = getActiveLabel();
 
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl console-surface" style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
+    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
@@ -172,6 +172,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
         useDefaultLogo={true}
+        subtitle="Outreach & Sales Ops — Cyber-Sentry Edition"
       />
 
       {/* Tab Navigation */}
@@ -191,7 +192,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative console-surface">
+      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <>

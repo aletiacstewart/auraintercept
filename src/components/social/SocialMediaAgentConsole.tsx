@@ -152,14 +152,15 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const activeLabel = getActiveLabel();
 
   return (
-    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl console-surface" style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
+    <div className="h-[600px] flex flex-col overflow-hidden rounded-xl" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       <GlassHeader
         logoUrl={company?.logo_url}
-        companyName={company?.name || 'Social Media'}
+        companyName={company?.name || 'Social Media Ops'}
         agentLabel={activeLabel}
         agentColor="text-pink-400"
         agentBgColor="bg-gradient-to-br from-pink-500/20 to-purple-500/20"
         useDefaultLogo={true}
+        subtitle="Social Media Ops — Cyber-Sentry Edition"
       />
 
       <MobileTabNav
@@ -178,7 +179,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative console-surface">
+      <div className="flex-1 flex flex-col min-h-0 relative" style={{ background: 'rgba(3,9,20,0.95)' }}>
         {activeTab === 'chat' && (
           <>
             <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">

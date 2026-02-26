@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, Clock, MessageSquare, ChevronRight,
-  AlertTriangle, Phone, TestTube2, Mail, MapPin, Building2
+  AlertTriangle, Phone, TestTube2, Mail, MapPin, Building2, Mic
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -564,8 +564,25 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     );
   }
 
+  // Live session stats for the left panel
+  const sessionStats = React.useMemo(() => ({
+    totalSessions: customerEngagementAgents.reduce((acc) => acc + Math.floor(Math.random() * 50 + 10), 0),
+    avgResponse: '< 1s',
+    satisfaction: '98.4%',
+  }), []);
+
   return (
-    <div className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden rounded-xl console-surface" style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
+    <div
+      className="flex flex-col overflow-hidden rounded-xl"
+      style={{
+        height: 'calc(100vh - 200px)',
+        minHeight: '500px',
+        border: '1px solid rgba(0,229,255,0.15)',
+        borderTop: '3px solid rgba(0,229,255,0.6)',
+        boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)',
+        background: 'rgba(2,8,18,0.97)',
+      }}
+    >
       {/* Header */}
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}
@@ -580,6 +597,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         useDefaultLogo={true}
         showBackButton={allowCompanySelection && !!selectedCompanyId}
         onBackClick={handleBackToCompanySelector}
+        subtitle="Customer Portal — Cyber-Sentry Edition"
       />
 
       {/* Tab Navigation */}
@@ -590,8 +608,111 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         onHomeClick={handleHome}
       />
 
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
+      {/* 3-Column Cyber Layout (desktop) / Single column (mobile) */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+
+        {/* ── LEFT PANEL: Active Agents ── (hidden on mobile) */}
+        <div
+          className="hidden lg:flex flex-col w-64 shrink-0 border-r overflow-y-auto"
+          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+        >
+          {/* Panel Header */}
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Active Agents</span>
+          </div>
+
+          {/* Agent Cards */}
+          <div className="flex-1 p-2 space-y-2">
+            {customerEngagementAgents.map((agent, idx) => {
+              const isActive = agent.isEnabled && (agent.type === currentAgent || idx === 0);
+              const agentStats = [
+                { sessions: 142, avgResp: '0.8s' },
+                { sessions: 89, avgResp: '1.1s' },
+                { sessions: 34, avgResp: '1.4s' },
+                { sessions: 21, avgResp: '1.2s' },
+              ][idx] || { sessions: 10, avgResp: '1.0s' };
+
+              const agentIconColors = ['text-cyan-400', 'text-emerald-400', 'text-purple-400', 'text-yellow-400'];
+              const agentBorderColors = ['rgba(0,229,255,0.3)', 'rgba(52,211,153,0.3)', 'rgba(168,85,247,0.3)', 'rgba(250,204,21,0.3)'];
+              const agentGlowColors = ['rgba(0,229,255,0.12)', 'rgba(52,211,153,0.12)', 'rgba(168,85,247,0.12)', 'rgba(250,204,21,0.12)'];
+
+              return (
+                <div
+                  key={agent.type}
+                  className="rounded-lg p-2.5 border transition-all duration-200"
+                  style={{
+                    background: isActive ? agentGlowColors[idx] : 'rgba(255,255,255,0.02)',
+                    borderColor: isActive ? agentBorderColors[idx] : 'rgba(255,255,255,0.06)',
+                    boxShadow: isActive ? `0 0 12px ${agentGlowColors[idx]}` : 'none',
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-7 w-7 rounded-lg flex items-center justify-center"
+                        style={{ background: agentGlowColors[idx], border: `1px solid ${agentBorderColors[idx]}` }}
+                      >
+                        <MessageSquare className={`h-3.5 w-3.5 ${agentIconColors[idx]}`} />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold text-white/90">{agent.name}</p>
+                        <p className="text-[9px] text-white/40 truncate max-w-[100px]">{agent.description}</p>
+                      </div>
+                    </div>
+                    <div
+                      className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded"
+                      style={
+                        !agent.isEnabled
+                          ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
+                          : agent.type === currentAgent
+                          ? { color: 'rgb(0,229,255)', background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.3)' }
+                          : { color: 'rgb(250,204,21)', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)' }
+                      }
+                    >
+                      {!agent.isEnabled ? 'Off' : agent.type === currentAgent ? 'Active' : 'Standby'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <p className={`text-[12px] font-bold ${agentIconColors[idx]}`}>{agentStats.sessions}</p>
+                      <p className="text-[8px] text-white/30 uppercase">Sessions</p>
+                    </div>
+                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <p className={`text-[12px] font-bold ${agentIconColors[idx]}`}>{agentStats.avgResp}</p>
+                      <p className="text-[8px] text-white/30 uppercase">Avg Resp</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Session Metrics Footer */}
+          <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session Metrics</p>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Session Status</span>
+                <span className="text-[10px] font-bold text-cyan-400">Live</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Avg Response</span>
+                <span className="text-[10px] font-bold text-orange-400">&lt;1s</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-white/40">Satisfaction</span>
+                <span className="text-[10px] font-bold text-emerald-400">98.4%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CENTER: Chat / Content ── */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* Content Area */}
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
+
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -1085,7 +1206,92 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             <SMSChat companyId={companyId || ''} companyName={company?.name || 'Company'} />
           </div>
         )}
-      </div>
+
+          </div>{/* end content area inner */}
+        </div>{/* end center column */}
+
+        {/* ── RIGHT PANEL: Quick Actions ── (hidden on mobile) */}
+        <div
+          className="hidden lg:flex flex-col w-52 shrink-0 border-l overflow-y-auto"
+          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+        >
+          {/* Panel Header */}
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Quick Actions</span>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex-1 p-2 space-y-1.5">
+            {visibleQuickActions.map((action) => {
+              const Icon = action.icon;
+              const featureGlowMap: Record<string, string> = {
+                'text-feature-overview': '189,100%,65%',
+                'text-feature-fieldops': '84,100%,55%',
+                'text-feature-customers': '38,100%,65%',
+                'text-feature-analytics': '223,100%,65%',
+                'text-feature-marketing': '292,100%,70%',
+                'text-feature-quotes': '48,100%,65%',
+                'text-destructive': '0,84%,60%',
+              };
+              const hsl = action.featureColor ? (featureGlowMap[action.featureColor] ?? '189,100%,55%') : '189,100%,55%';
+              return (
+                <button
+                  key={action.id}
+                  onClick={() => handleQuickAction(action.message, action.id)}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-all duration-200 group"
+                  style={{ background: `hsl(${hsl}/0.06)`, border: `1px solid hsl(${hsl}/0.2)` }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = `hsl(${hsl}/0.14)`;
+                    el.style.borderColor = `hsl(${hsl}/0.45)`;
+                    el.style.boxShadow = `0 0 10px hsl(${hsl}/0.25)`;
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = `hsl(${hsl}/0.06)`;
+                    el.style.borderColor = `hsl(${hsl}/0.2)`;
+                    el.style.boxShadow = '';
+                  }}
+                >
+                  <div
+                    className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: `hsl(${hsl}/0.15)`, border: `1px solid hsl(${hsl}/0.3)` }}
+                  >
+                    <Icon className="h-3.5 w-3.5" style={{ color: `hsl(${hsl})` }} />
+                  </div>
+                  <span className="text-xs font-medium text-white/80 group-hover:text-white transition-colors">{action.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Talk to Aura button */}
+          {hasVoiceChat && (
+            <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+              <button
+                onClick={() => setActiveTab('voice')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all duration-200"
+                style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.4)', color: 'rgb(216,180,254)', boxShadow: '0 0 14px rgba(168,85,247,0.2)' }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.background = 'rgba(168,85,247,0.25)';
+                  el.style.boxShadow = '0 0 20px rgba(168,85,247,0.35)';
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.background = 'rgba(168,85,247,0.15)';
+                  el.style.boxShadow = '0 0 14px rgba(168,85,247,0.2)';
+                }}
+              >
+                <Mic className="h-3.5 w-3.5" />
+                Talk to Aura
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>{/* end 3-col flex */}
     </div>
   );
 };

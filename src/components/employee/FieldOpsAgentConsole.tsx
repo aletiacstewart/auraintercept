@@ -957,7 +957,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const selectorConfig = getSelectorConfig();
 
   return (
-    <div className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden rounded-xl console-surface', className)} style={{ border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
+    <div className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden rounded-xl', className)} style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)', boxShadow: '0 0 40px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.05)' }}>
       {/* Header - matching AIAgentConsole glass style */}
       <GlassHeader
         companyName={companyData?.name || "Field Ops Assistant"}
@@ -974,6 +974,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }}
         isOnline={true}
         useDefaultLogo={!companyData?.logo_url}
+        subtitle="Field Operations — Cyber-Sentry Edition"
       />
 
       {/* Tab Navigation - matching AIAgentConsole */}
@@ -1239,9 +1240,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* ETA Tab - Update ETA for jobs */}
       {activeTab === 'eta' && (
-        <div className="flex-1 overflow-auto p-4 bg-white">
+        <div className="flex-1 overflow-auto p-4" style={{ background: 'rgba(3,9,20,0.95)' }}>
           <div className="space-y-4">
-            <div className="text-center pb-3 border-b">
+            <div className="text-center pb-3 border-b" style={{ borderColor: 'rgba(0,229,255,0.1)' }}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 mx-auto mb-3 flex items-center justify-center shadow-lg">
                 <Clock className="w-6 h-6 text-white" />
               </div>
@@ -1351,7 +1352,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Dispatch Tab - Contact dispatch */}
       {activeTab === 'dispatch' && (
-        <div className="flex-1 overflow-auto p-4 bg-white">
+        <div className="flex-1 overflow-auto p-4" style={{ background: 'rgba(3,9,20,0.95)' }}>
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <Phone className="w-8 h-8 text-white" />
@@ -1381,7 +1382,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Chat Tab - matching AIAgentConsole structure */}
       {activeTab === 'chat' && (
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
             {messages.length === 0 && !selectorMode && (
               <WelcomeScreen
