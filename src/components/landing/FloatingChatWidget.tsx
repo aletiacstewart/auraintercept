@@ -83,7 +83,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       <div ref={ref}>
         {/* Chat Panel */}
         {isOpen && (
-          <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[600px] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[620px] animate-in slide-in-from-bottom-4 fade-in duration-300">
             <div className="w-full h-full bg-card/95 backdrop-blur-lg border border-primary/30 shadow-2xl rounded-xl overflow-hidden flex flex-col">
               {/* Close Button */}
               <Button
@@ -102,7 +102,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
                   isEmbedded={true}
                 />
               ) : (
-                <div className="p-4 flex-1">
+                <div className="p-4 flex-1 min-h-0 overflow-hidden flex flex-col">
                   <LandingAIChat 
                     websiteId={websiteId}
                     companyId={companyId}

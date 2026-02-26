@@ -170,18 +170,18 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 py-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 min-h-0 py-4" ref={scrollRef}>
         <div className="space-y-3">
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`rounded-lg p-3 max-w-[85%] ${
+              className={`rounded-lg p-3 max-w-[85%] break-words ${
                 message.role === 'user'
                   ? 'bg-white ml-auto text-[hsl(220,60%,25%)]'
                   : 'bg-white text-[hsl(220,60%,25%)]'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
             </div>
           ))}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
