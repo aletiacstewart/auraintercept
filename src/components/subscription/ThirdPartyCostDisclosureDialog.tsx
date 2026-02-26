@@ -91,12 +91,13 @@ const COST_ITEMS: CostItem[] = [
 interface Props {
   open: boolean;
   tierName: string;
-  onConfirm: () => void;
+  onConfirm: (wantsConcierge: boolean) => void;
   onCancel: () => void;
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCancel }: Props) {
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
+  const [wantsConcierge, setWantsConcierge] = useState(false);
 
   const requiredItems = COST_ITEMS.filter(i => i.required);
   const allRequiredAcknowledged = requiredItems.every(i => acknowledged[i.id]);
@@ -175,6 +176,37 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCa
           ))}
         </div>
 
+        {/* Concierge Onboarding Add-On */}
+        <div className={`rounded-lg border-2 p-3 transition-all cursor-pointer ${
+          wantsConcierge
+            ? 'border-primary bg-primary/10'
+            : 'border-border/50 bg-muted/20 hover:border-primary/40'
+        }`}
+          onClick={() => setWantsConcierge(v => !v)}
+        >
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="ack-concierge"
+              checked={wantsConcierge}
+              onCheckedChange={(v) => setWantsConcierge(v === true)}
+              className="mt-0.5"
+            />
+            <div className="flex-1 min-w-0">
+              <Label htmlFor="ack-concierge" className="flex items-center gap-2 cursor-pointer font-semibold text-sm">
+                <Zap className="h-4 w-4 text-primary" />
+                Concierge Onboarding — Optional Add-On
+                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">$297 flat fee</Badge>
+              </Label>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                We configure all 3rd-party integrations (SignalWire, ElevenLabs, Resend, A2P 10DLC) for you. Includes onboarding call + AI knowledge base setup.
+              </p>
+              <p className="text-[10px] text-muted-foreground/70 mt-1 italic">
+                ✦ You can also purchase Concierge Onboarding later from your dashboard if you decide you need it.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
           <strong>Estimated combined 3rd-party cost:</strong> ~${totalMin}–${totalMax}/month depending on usage.
           This is in addition to your Aura subscription fee. Factor these into your total monthly ROI calculation.
@@ -191,7 +223,7 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCa
               Cancel
             </Button>
             <Button
-              onClick={onConfirm}
+              onClick={() => onConfirm(wantsConcierge)}
               disabled={!allRequiredAcknowledged}
               className="flex-1"
             >

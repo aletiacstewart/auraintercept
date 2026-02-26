@@ -377,7 +377,7 @@ export default function Subscription() {
     setDisclosureOpen(true);
   };
 
-  const handleCheckoutConfirmed = async () => {
+  const handleCheckoutConfirmed = async (_wantsConcierge?: boolean) => {
     if (!pendingTierId) return;
     setDisclosureOpen(false);
     const tierId = pendingTierId;

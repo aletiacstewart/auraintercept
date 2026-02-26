@@ -55,6 +55,7 @@ export default function Auth() {
   // Add-on selection removed - now using 7-tier structure
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
+  const [wantsConcierge, setWantsConcierge] = useState(false);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
@@ -1326,6 +1327,40 @@ export default function Auth() {
                               <label htmlFor="ack-kb" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
                                 I will provide <span className="font-medium text-foreground">knowledge base documents</span> (service list, FAQs, business info) during onboarding so the AI agents can function properly.
                               </label>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Concierge Onboarding Optional Add-On */}
+                        {mode === 'company' && (
+                          <div
+                            className={`rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                              wantsConcierge
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border/40 bg-muted/20 hover:border-primary/40'
+                            }`}
+                            onClick={() => setWantsConcierge(v => !v)}
+                          >
+                            <div className="flex items-start gap-2.5">
+                              <Checkbox
+                                id="concierge-onboarding"
+                                checked={wantsConcierge}
+                                onCheckedChange={(v) => setWantsConcierge(v === true)}
+                                className="mt-0.5"
+                              />
+                              <div className="flex-1">
+                                <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
+                                  <Headphones className="w-3.5 h-3.5 text-primary" />
+                                  Add Concierge Onboarding
+                                  <span className="ml-auto text-primary font-bold">$297</span>
+                                </label>
+                                <p className="text-[10px] text-muted-foreground mt-0.5">
+                                  We configure SignalWire, ElevenLabs, Resend & A2P 10DLC for you. Includes onboarding call + AI knowledge base setup.
+                                </p>
+                                <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
+                                  Optional — can also be purchased later from your dashboard.
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
