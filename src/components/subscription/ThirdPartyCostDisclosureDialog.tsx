@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, ExternalLink, DollarSign, Zap, Mail, Phone, CreditCard, Search, Share2 } from 'lucide-react';
+import { AlertTriangle, ExternalLink, DollarSign, Zap, Mail, Phone, CreditCard, Search, Share2, Shield } from 'lucide-react';
 
 interface CostItem {
   id: string;
@@ -24,6 +24,15 @@ interface CostItem {
 }
 
 const COST_ITEMS: CostItem[] = [
+  {
+    id: 'a2p10dlc',
+    icon: <Shield className="h-4 w-4 text-amber-500" />,
+    name: 'A2P 10DLC Registration',
+    purpose: 'SMS Compliance — required by carriers to send business SMS',
+    estimatedCost: '$4 brand + $15 campaign (one-time) + $10/mo',
+    required: true,
+    learnMoreUrl: 'https://signalwire.com/resources/guides/a2p-10dlc-overview',
+  },
   {
     id: 'signalwire',
     icon: <Phone className="h-4 w-4 text-blue-500" />,
@@ -92,8 +101,8 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCa
   const requiredItems = COST_ITEMS.filter(i => i.required);
   const allRequiredAcknowledged = requiredItems.every(i => acknowledged[i.id]);
 
-  const totalMin = 22;  // ~$2 + $0 + $0
-  const totalMax = 201; // ~$80 + $99 + $20 + $2
+  const totalMin = 29;  // ~$2 + $0 + $0 + $10 A2P
+  const totalMax = 211; // ~$80 + $99 + $20 + $2 + $10 A2P
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onCancel()}>

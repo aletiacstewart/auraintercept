@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, BookOpen, AlertTriangle } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -52,6 +54,7 @@ export default function Auth() {
   const [selectedTier, setSelectedTier] = useState<'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command' | null>(null);
   // Add-on selection removed - now using 7-tier structure
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
+  const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
@@ -1074,6 +1077,100 @@ export default function Auth() {
                   </div>
                 </div>
 
+                {/* Required Documents & Setup Checklist */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-foreground text-center flex items-center justify-center gap-1">
+                    <FileText className="w-3.5 h-3.5 text-primary" />
+                    Required Documents & Setup Checklist
+                  </h4>
+                  <Accordion type="multiple" className="space-y-1">
+                    <AccordionItem value="a2p" className="border border-amber-500/30 rounded-lg px-3 bg-amber-500/5">
+                      <AccordionTrigger className="text-xs font-semibold text-amber-400 py-2 hover:no-underline">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="w-3 h-3" />
+                          A2P 10DLC Registration (SMS Compliance) — Required
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <ul className="space-y-1 text-[10px] text-muted-foreground">
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Business legal name, EIN/Tax ID, and business address</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Business type (LLC, Corp, Sole Proprietor)</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Use-case description for SMS messages + sample message content</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-amber-400 mt-0.5 flex-shrink-0" />Estimated monthly SMS volume</li>
+                          <li className="flex items-start gap-1 text-amber-400 font-medium"><AlertTriangle className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" />Approval takes 2–4 weeks. Plan accordingly.</li>
+                          <li className="flex items-start gap-1 text-amber-300"><DollarSign className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" />Cost: $4 brand + $15 campaign (one-time) + $10/mo</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="signalwire" className="border border-border/50 rounded-lg px-3 bg-muted/20">
+                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="w-3 h-3 text-green-400" />
+                          SignalWire Setup — Required
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <ul className="space-y-1 text-[10px] text-muted-foreground">
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Create account at signalwire.com</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Purchase a phone number (~$2/mo)</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Submit A2P 10DLC campaign through SignalWire portal</li>
+                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-green-400 mt-0.5 flex-shrink-0" />Usage: $0.004/SMS · $0.006/min voice</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="elevenlabs" className="border border-border/50 rounded-lg px-3 bg-muted/20">
+                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
+                        <div className="flex items-center gap-1.5">
+                          <Mic className="w-3 h-3 text-purple-400" />
+                          ElevenLabs Setup — Required
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <ul className="space-y-1 text-[10px] text-muted-foreground">
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Create account at elevenlabs.io</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Generate API key for voice synthesis</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Select or clone a voice for your AI agent</li>
+                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-purple-400 mt-0.5 flex-shrink-0" />Free (10k chars) · $5/mo (30k) · $99/mo (500k)</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="resend" className="border border-border/50 rounded-lg px-3 bg-muted/20">
+                      <AccordionTrigger className="text-xs font-semibold text-foreground py-2 hover:no-underline">
+                        <div className="flex items-center gap-1.5">
+                          <Mail className="w-3 h-3 text-blue-400" />
+                          Resend Setup — Required
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <ul className="space-y-1 text-[10px] text-muted-foreground">
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Create account at resend.com</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Verify your sending domain (DNS records required)</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Generate API key for transactional emails</li>
+                          <li className="flex items-start gap-1"><DollarSign className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />Free (3k/mo) · $20/mo (50k)</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="knowledgebase" className="border border-primary/30 rounded-lg px-3 bg-primary/5">
+                      <AccordionTrigger className="text-xs font-semibold text-primary py-2 hover:no-underline">
+                        <div className="flex items-center gap-1.5">
+                          <BookOpen className="w-3 h-3" />
+                          Knowledge Base Documents — Required for AI
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <p className="text-[10px] text-muted-foreground mb-1.5">These documents teach the AI agents about your business. Upload during onboarding.</p>
+                        <ul className="space-y-1 text-[10px] text-muted-foreground">
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Business description / About Us content</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Service list with descriptions and pricing</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />FAQ document (common customer questions)</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Business hours and holiday schedule</li>
+                          <li className="flex items-start gap-1"><Check className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />Service area / zip codes</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
               </div>
             )}
 
@@ -1282,7 +1379,52 @@ export default function Auth() {
                           checked={termsAgreed} 
                           onCheckedChange={setTermsAgreed} 
                         />
-                        <Button type="submit" className="w-full gradient-primary" disabled={isLoading || !termsAgreed}>
+                        {mode === 'company' && (
+                          <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                            <p className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                              <AlertTriangle className="w-3.5 h-3.5" />
+                              Required Acknowledgments
+                            </p>
+                            <div className="flex items-start space-x-2">
+                              <Checkbox
+                                id="ack-a2p"
+                                checked={setupAcknowledged.a2p}
+                                onCheckedChange={(v) => setSetupAcknowledged(prev => ({ ...prev, a2p: v === true }))}
+                                className="mt-0.5"
+                              />
+                              <label htmlFor="ack-a2p" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required and takes <span className="font-medium text-amber-400">2–4 weeks</span> for carrier approval before SMS works.
+                              </label>
+                            </div>
+                            <div className="flex items-start space-x-2">
+                              <Checkbox
+                                id="ack-costs"
+                                checked={setupAcknowledged.costs}
+                                onCheckedChange={(v) => setSetupAcknowledged(prev => ({ ...prev, costs: v === true }))}
+                                className="mt-0.5"
+                              />
+                              <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                                I acknowledge that <span className="font-medium text-foreground">SignalWire, ElevenLabs, and Resend</span> costs are <span className="font-medium text-foreground">separate from my subscription</span> and billed directly by each provider.
+                              </label>
+                            </div>
+                            <div className="flex items-start space-x-2">
+                              <Checkbox
+                                id="ack-kb"
+                                checked={setupAcknowledged.knowledgeBase}
+                                onCheckedChange={(v) => setSetupAcknowledged(prev => ({ ...prev, knowledgeBase: v === true }))}
+                                className="mt-0.5"
+                              />
+                              <label htmlFor="ack-kb" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                                I will provide <span className="font-medium text-foreground">knowledge base documents</span> (service list, FAQs, business info) during onboarding so the AI agents can function properly.
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                        <Button 
+                          type="submit" 
+                          className="w-full gradient-primary" 
+                          disabled={isLoading || !termsAgreed || (mode === 'company' && (!setupAcknowledged.a2p || !setupAcknowledged.costs || !setupAcknowledged.knowledgeBase))}
+                        >
                           {isLoading ? 'Creating account...' : mode === 'company' 
                             ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start Free Trial')
                             : 'Create Account'}
