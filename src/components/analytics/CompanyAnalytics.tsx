@@ -366,7 +366,7 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <CheckCircle className="h-4 w-4 text-green-600" />
                     <span className="text-sm text-foreground">Completed</span>
                   </div>
                   <span className="font-medium text-foreground">{stats?.completedAppointments ?? 0}</span>
@@ -501,11 +501,11 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
                   <span className="text-sm text-foreground">Total Revenue</span>
-                  <span className="font-medium text-green-400">${(stats?.totalRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-medium text-green-600">${(stats?.totalRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
                   <span className="text-sm text-foreground">Outstanding Invoices</span>
-                  <span className="font-medium text-amber-400">${(stats?.outstandingAmount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-medium text-amber-600">${(stats?.outstandingAmount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
                   <span className="text-sm text-foreground">Collection Rate</span>
@@ -532,13 +532,13 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
                   </div>
                 </div>
                 <div className="pt-4 space-y-3">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-green-500/20 border border-green-500/30">
-                    <span className="text-sm text-green-400">Collected</span>
-                    <span className="font-medium text-green-400">${(stats?.totalRevenue ?? 0).toLocaleString()}</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-green-50 border border-green-200">
+                    <span className="text-sm text-green-700">Collected</span>
+                    <span className="font-medium text-green-700">${(stats?.totalRevenue ?? 0).toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-amber-500/20 border border-amber-500/30">
-                    <span className="text-sm text-amber-400">Pending</span>
-                    <span className="font-medium text-amber-400">${(stats?.outstandingAmount ?? 0).toLocaleString()}</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50 border border-amber-200">
+                    <span className="text-sm text-amber-700">Pending</span>
+                    <span className="font-medium text-amber-700">${(stats?.outstandingAmount ?? 0).toLocaleString()}</span>
                   </div>
                 </div>
               </CardContent>
@@ -579,7 +579,7 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <CheckCircle className="h-4 w-4 text-green-600" />
                     <span className="text-sm text-foreground">Accepted</span>
                   </div>
                   <span className="font-medium text-foreground">{stats?.quoteConversionRate ?? 0}%</span>
