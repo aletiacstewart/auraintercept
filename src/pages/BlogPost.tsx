@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { format } from 'date-fns';
+import DOMPurify from 'dompurify';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -119,7 +120,7 @@ export default function BlogPost() {
           {/* Article Content */}
           <div 
             className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-a:text-primary"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
         </article>
 

@@ -210,8 +210,8 @@ export const AIAgentSettings = () => {
     queryFn: async () => {
       if (!companyId) return null;
       const { data } = await supabase
-        .from('tenant_integrations')
-        .select('id, elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed, tts_provider')
+        .from('tenant_integrations_safe')
+        .select('id, has_elevenlabs, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed, tts_provider')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -219,7 +219,7 @@ export const AIAgentSettings = () => {
     enabled: !!companyId,
   });
 
-  const hasElevenLabs = !!integrations?.elevenlabs_api_key;
+  const hasElevenLabs = !!integrations?.has_elevenlabs;
   const isLoading = isLoadingCompany || isLoadingIntegrations;
 
   // Update local state when data loads

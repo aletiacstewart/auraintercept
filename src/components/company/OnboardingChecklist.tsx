@@ -37,10 +37,9 @@ interface OnboardingData {
     primary_color: string | null;
   } | null;
   integrations: {
-    signalwire_project_id: string | null;
-    signalwire_api_token: string | null;
+    has_signalwire: boolean | null;
+    has_elevenlabs: boolean | null;
     signalwire_phone_number: string | null;
-    elevenlabs_api_key: string | null;
   } | null;
   servicesCount: number;
   faqsCount: number;
@@ -108,11 +107,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     description: 'Enable voice calls and SMS for your AI agent',
     icon: Phone,
     href: '/dashboard/3rd-party-overview',
-    checkComplete: (data) => !!(
-      data.integrations?.signalwire_project_id && 
-      data.integrations?.signalwire_api_token && 
-      data.integrations?.signalwire_phone_number
-    ),
+    checkComplete: (data) => !!(data.integrations?.has_signalwire),
     priority: 'required',
   },
   {
@@ -121,7 +116,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     description: 'Add natural AI voice synthesis to calls',
     icon: Mic,
     href: '/dashboard/3rd-party-overview',
-    checkComplete: (data) => !!data.integrations?.elevenlabs_api_key,
+    checkComplete: (data) => !!data.integrations?.has_elevenlabs,
     priority: 'required',
   },
   {
@@ -156,7 +151,7 @@ export function OnboardingChecklist() {
 
       const [companyRes, integrationsRes, servicesRes, faqsRes, hoursRes, inventoryRes, aiAgentsRes] = await Promise.all([
         supabase.from('companies').select('logo_url, primary_color').eq('id', companyId).single(),
-        supabase.from('tenant_integrations').select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, elevenlabs_api_key').eq('company_id', companyId).maybeSingle(),
+        supabase.from('tenant_integrations_safe').select('has_signalwire, has_elevenlabs, signalwire_phone_number').eq('company_id', companyId).maybeSingle(),
         supabase.from('services').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('faqs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_closed', false),
