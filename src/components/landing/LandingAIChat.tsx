@@ -36,7 +36,9 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(() => {
+    try { return localStorage.getItem('aura_chat_terms') === 'true'; } catch { return false; }
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -155,7 +157,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 pb-4 border-b border-border/50">
         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
@@ -199,7 +201,10 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
           <TermsAgreementCheckbox
             id="chat-terms-agreement"
             checked={termsAgreed}
-            onCheckedChange={setTermsAgreed}
+            onCheckedChange={(val) => {
+              setTermsAgreed(val);
+              try { localStorage.setItem('aura_chat_terms', String(val)); } catch {}
+            }}
             compact
           />
           <p className="text-xs text-muted-foreground mt-2">
@@ -208,14 +213,15 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
         </div>
       )}
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t border-border/50">
+      {/* Input — always rendered so layout doesn't shift */}
+      <form onSubmit={handleSubmit} className="flex gap-2 pt-3 border-t border-border/50 shrink-0">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={termsAgreed ? "Ask Aura anything..." : "Agree to terms to start chatting..."}
+          placeholder={termsAgreed ? "Ask Aura anything..." : "Agree to terms above to chat..."}
           className="flex-1 bg-white border-border text-[hsl(220,60%,25%)]"
           disabled={isLoading || !termsAgreed}
+          autoFocus={termsAgreed}
         />
         <Button 
           type="submit" 
