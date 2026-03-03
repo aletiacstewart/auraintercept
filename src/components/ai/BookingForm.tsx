@@ -255,8 +255,14 @@ export const BookingForm: React.FC<BookingFormProps> = ({
             compact
           />
 
+          {/* Pending Notice */}
+          <div className="flex items-start gap-2 rounded-lg border border-cyan-500/20 bg-cyan-500/5 px-3 py-2.5 text-xs text-cyan-200/70">
+            <span className="mt-0.5 shrink-0 text-cyan-400">ℹ️</span>
+            <span>All appointments are <strong className="text-cyan-300">pending until approved</strong> by the company. Once confirmed, you'll receive a notification via Email, SMS, and/or Call. Thank you!</span>
+          </div>
+
           {/* Submit Button */}
-          <Button 
+          <Button
             type="submit" 
             className="w-full h-9 text-sm" 
             disabled={!isValid || isLoading}
