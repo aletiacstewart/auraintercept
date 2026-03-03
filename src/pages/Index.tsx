@@ -552,8 +552,11 @@ export default function Index() {
                     transform: isHov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
                   }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: `${neon.color}18`, border: `1px solid ${neon.color}33`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-                    <Icon size={18} style={{ color: neon.color }} />
+                  <div style={{ position: "relative", width: 40, height: 40, marginBottom: 12 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: `${neon.color}18`, border: `1px solid ${neon.color}33`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon size={18} style={{ color: neon.color, position: "relative", zIndex: 1 }} />
+                    </div>
+                    <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 10, background: `${neon.color}44`, opacity: 0.3 }} />
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
                   <div style={{ fontSize: 11, color: "rgba(200,220,240,0.5)", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
@@ -740,8 +743,11 @@ export default function Index() {
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.35)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; }}
                 >
-                  <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #214ebb)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
-                    <item.icon size={24} style={{ color: "white" }} />
+                  <div style={{ position: "relative", width: 52, height: 52, margin: "0 auto 16px" }}>
+                    <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #214ebb)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
+                      <item.icon size={24} style={{ color: "white", position: "relative", zIndex: 1 }} />
+                    </div>
+                    <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 16, background: "rgba(0,229,255,0.4)", opacity: 0.25 }} />
                   </div>
                   <div style={{ fontSize: 11, color: "#00E5FF", letterSpacing: 2, marginBottom: 6, fontWeight: 600 }}>STEP {item.step}</div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 8 }}>{item.title}</div>
