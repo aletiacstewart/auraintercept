@@ -278,6 +278,19 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
         (showCustomersForm || showInsightsForm || showSocialForm) ? 'insights' :
         currentAgent || lastAgent
       }
+      onAgentClick={(agentId) => {
+        const AGENT_TO_ACTION: Record<string, string> = {
+          analytics: 'performance',
+          revenue: 'revenue',
+          insights: 'customers',
+        };
+        const actionId = AGENT_TO_ACTION[agentId];
+        if (actionId) {
+          setActiveTab(actionId);
+          const action = QUICK_ACTIONS.find(a => a.id === actionId);
+          if (action) handleQuickAction(action.message, action.id);
+        }
+      }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}

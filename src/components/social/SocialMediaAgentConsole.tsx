@@ -180,6 +180,21 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         showMyPosts ? 'scheduler' :
         currentAgent || lastAgent
       }
+      onAgentClick={(agentId) => {
+        const AGENT_TO_ACTION: Record<string, string> = {
+          social_content: 'create-content',
+          brand_voice: 'create-content',
+          scheduler: 'my-posts',
+        };
+        const actionId = AGENT_TO_ACTION[agentId];
+        if (actionId) {
+          const action = QUICK_ACTIONS.find(a => a.id === actionId);
+          if (action) {
+            handleQuickAction(action.message, action.id);
+            if (agentId === 'brand_voice') setContentEngineTab('settings');
+          }
+        }
+      }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}
