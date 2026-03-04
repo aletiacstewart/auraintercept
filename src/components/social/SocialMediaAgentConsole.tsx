@@ -175,7 +175,11 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       }}
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
-      currentAgentId={currentAgent || lastAgent}
+      currentAgentId={
+        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'social_content') :
+        showMyPosts ? 'scheduler' :
+        currentAgent || lastAgent
+      }
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}

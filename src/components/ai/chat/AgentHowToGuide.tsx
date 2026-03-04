@@ -1002,7 +1002,7 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
               <Card
                 key={guide.id}
                 className={cn(
-                  'p-2 cursor-pointer transition-all duration-200 bg-white text-foreground',
+                  'p-2 cursor-pointer transition-all duration-200 bg-white',
                   'hover:border-primary/50 hover:shadow-sm',
                   expandedGuide === guide.id && 'border-primary/50 bg-primary/5'
                 )}
@@ -1013,13 +1013,13 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                     <guide.icon className="h-3.5 w-3.5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-medium text-foreground truncate">{guide.label}</h4>
-                    <p className="text-[10px] text-muted-foreground truncate">{guide.description}</p>
+                    <h4 className="text-xs font-medium text-gray-900 truncate">{guide.label}</h4>
+                    <p className="text-[10px] text-gray-500 truncate">{guide.description}</p>
                   </div>
                   {expandedGuide === guide.id ? (
-                    <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <ChevronUp className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                   ) : (
-                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                   )}
                 </div>
                 
@@ -1032,8 +1032,8 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                             {step.step}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-medium text-foreground">{step.title}</p>
-                            <p className="text-[10px] text-muted-foreground">{step.description}</p>
+                            <p className="text-[11px] font-medium text-gray-900">{step.title}</p>
+                            <p className="text-[10px] text-gray-500">{step.description}</p>
                           </div>
                         </div>
                       ))}
@@ -1041,10 +1041,10 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                     
                     {guide.tips && guide.tips.length > 0 && (
                       <div className="pt-2 border-t">
-                        <p className="text-[10px] font-medium text-muted-foreground mb-1">Tips:</p>
+                        <p className="text-[10px] font-medium text-gray-600 mb-1">Tips:</p>
                         <ul className="space-y-0.5">
                           {guide.tips.map((tip, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
+                            <li key={idx} className="flex items-start gap-1.5 text-[10px] text-gray-500">
                               <CheckCircle2 className="h-3 w-3 text-green-500 shrink-0 mt-0.5" />
                               <span>{tip}</span>
                             </li>

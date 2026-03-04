@@ -127,8 +127,10 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
 
   return (
     <div
-      className="h-[600px] flex flex-col overflow-hidden rounded-xl"
+      className="flex flex-col overflow-hidden rounded-xl"
       style={{
+        height: 'calc(100vh - 140px)',
+        minHeight: '560px',
         background: 'rgba(2,8,18,0.97)',
         border: '1px solid rgba(0,229,255,0.15)',
         borderTop: '3px solid rgba(0,229,255,0.6)',
@@ -176,7 +178,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
             {agents.map((agent, idx) => {
               const colors = agentColors[idx % agentColors.length];
               const AgentIcon = agent.icon;
-              const isActive = agent.status === 'active' && (currentAgentId === agent.id || (!currentAgentId && idx === 0));
+              const isActive = currentAgentId === agent.id || (!currentAgentId && idx === 0 && agent.status === 'active');
 
               return (
                 <div
