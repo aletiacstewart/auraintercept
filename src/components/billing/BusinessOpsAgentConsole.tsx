@@ -261,6 +261,20 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         (activeFormType === 'inventory' || activeFormType === 'appointments' || activeFormType === 'companies' || activeFormType === 'employees' || activeFormType === 'customers' || activeFormType === 'aura-live') ? 'operations' :
         currentAgent || lastAgent
       }
+      onAgentClick={(agentId) => {
+        const AGENT_TO_TAB: Record<string, string> = {
+          quoting: 'quote',
+          invoicing: 'invoice',
+          leads: 'lead',
+          operations: 'appointments',
+        };
+        const tabId = AGENT_TO_TAB[agentId];
+        if (tabId) {
+          setActiveTab(tabId);
+          const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
+          if (action) handleQuickAction(action.message, action.id);
+        }
+      }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={!company?.logo_url}

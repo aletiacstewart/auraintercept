@@ -192,6 +192,18 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
         showSegmentsForm ? 'audience' :
         currentAgent || lastAgent
       }
+      onAgentClick={(agentId) => {
+        const AGENT_TO_ACTION: Record<string, string> = {
+          marketing: 'campaign',
+          leads: 'leads',
+          audience: 'customers',
+        };
+        const actionId = AGENT_TO_ACTION[agentId];
+        if (actionId) {
+          const action = QUICK_ACTIONS.find(a => a.id === actionId);
+          if (action) handleQuickAction(action.message, action.id);
+        }
+      }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}

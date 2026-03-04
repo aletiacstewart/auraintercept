@@ -994,7 +994,31 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         setActiveTab('chat');
       }}
       agents={FIELDOPS_AGENTS}
-      currentAgentId={activeTab === 'directions' ? 'route' : 'dispatch'}
+      currentAgentId={
+        activeTab === 'directions' ? 'route' :
+        activeTab === 'eta' ? 'eta' :
+        (activeTab === 'arrive_start' || activeTab === 'complete') ? 'checkin' :
+        'dispatch'
+      }
+      onAgentClick={(agentId) => {
+        const AGENT_TO_TAB: Record<string, string> = {
+          dispatch: 'chat',
+          route: 'directions',
+          eta: 'eta',
+          checkin: 'arrive_start',
+        };
+        const tabId = AGENT_TO_TAB[agentId];
+        if (tabId) {
+          if (tabId === 'chat') {
+            clearMessages();
+            setActiveTab('chat');
+          } else {
+            setActiveTab(tabId);
+            const action = QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) handleQuickAction(action);
+          }
+        }
+      }}
       quickActions={FIELD_OPS_AGENTS.map(a => ({ id: a.id, label: a.name, icon: Truck, message: a.name, hsl: '189,100%,65%' }))}
       onQuickAction={(_, id) => {
         const action = QUICK_ACTIONS.find(a => a.id === id);

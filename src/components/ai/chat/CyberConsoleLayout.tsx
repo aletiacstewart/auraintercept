@@ -48,6 +48,7 @@ interface CyberConsoleLayoutProps {
   // Left panel
   agents: CyberAgent[];
   currentAgentId?: string | null;
+  onAgentClick?: (agentId: string) => void;
   sessionMetrics?: {
     status?: string;
     avgResponse?: string;
@@ -105,6 +106,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
   onHomeClick,
   agents,
   currentAgentId,
+  onAgentClick,
   sessionMetrics,
   children,
   showPhone,
@@ -183,11 +185,26 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
               return (
                 <div
                   key={agent.id}
-                  className="rounded-lg p-2.5 border transition-all duration-200"
+                  onClick={() => onAgentClick?.(agent.id)}
+                  className="rounded-lg p-2.5 border transition-all duration-200 select-none"
                   style={{
                     background: isActive ? colors.glow : 'rgba(255,255,255,0.02)',
                     borderColor: isActive ? colors.border : 'rgba(255,255,255,0.06)',
                     boxShadow: isActive ? `0 0 12px ${colors.glow}` : 'none',
+                    cursor: onAgentClick ? 'pointer' : 'default',
+                    transform: isActive ? 'scale(1.01)' : undefined,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive && onAgentClick) {
+                      (e.currentTarget as HTMLDivElement).style.borderColor = colors.border;
+                      (e.currentTarget as HTMLDivElement).style.background = `${colors.glow}80`;
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive && onAgentClick) {
+                      (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                      (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.02)';
+                    }
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -204,7 +221,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                       </div>
                     </div>
                     <div
-                      className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ml-1"
+                      className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ml-1 transition-all duration-200"
                       style={
                         agent.status === 'off'
                           ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
