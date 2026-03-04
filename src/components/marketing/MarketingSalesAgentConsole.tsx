@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
+import { useMarketingMetrics } from '@/hooks/useConsoleAgentMetrics';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -161,10 +162,13 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   
   const activeLabel = getActiveLabel();
 
+  const { data: mktMetrics } = useMarketingMetrics(effectiveCompanyId);
+  const mm = mktMetrics;
+
   const MARKETING_AGENTS: CyberAgent[] = [
-    { id: 'marketing', name: 'Campaign Manager', description: 'Creates & manages campaigns', icon: Megaphone, hsl: '292,100%,70%', status: 'active', sessions: 73, avgResp: '1.0s' },
-    { id: 'leads', name: 'Lead Generator', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', sessions: 54, avgResp: '1.2s' },
-    { id: 'audience', name: 'Audience Analyst', description: 'Segments & targets audiences', icon: Users, hsl: '38,100%,65%', status: 'standby', sessions: 31, avgResp: '1.4s' },
+    { id: 'marketing', name: 'Campaign Manager', description: 'Creates & manages campaigns', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
+    { id: 'leads', name: 'Lead Generator', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
+    { id: 'audience', name: 'Audience Analyst', description: 'Segments & targets audiences', icon: Users, hsl: '38,100%,65%', status: 'standby', metric1Value: mm?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Segments' },
   ];
 
   return (
