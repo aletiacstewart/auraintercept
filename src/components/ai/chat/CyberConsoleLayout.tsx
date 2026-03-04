@@ -11,8 +11,10 @@ export interface CyberAgent {
   /** hex or rgba color for the glow */
   hsl: string; // e.g. '189,100%,65%'
   status: 'active' | 'standby' | 'off';
-  sessions: number;
-  avgResp: string;
+  metric1Value: number | string;
+  metric1Label: string;
+  metric2Value: number | string;
+  metric2Label: string;
 }
 
 export interface CyberQuickAction {
@@ -235,12 +237,12 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                   </div>
                   <div className="grid grid-cols-2 gap-1">
                     <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.sessions}</p>
-                      <p className="text-[8px] text-white/30 uppercase">Sessions</p>
+                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric1Value}</p>
+                      <p className="text-[8px] text-white/30 uppercase">{agent.metric1Label}</p>
                     </div>
                     <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.avgResp}</p>
-                      <p className="text-[8px] text-white/30 uppercase">Avg Resp</p>
+                      <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric2Value}</p>
+                      <p className="text-[8px] text-white/30 uppercase">{agent.metric2Label}</p>
                     </div>
                   </div>
                 </div>

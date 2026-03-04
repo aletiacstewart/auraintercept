@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
+import { useAnalyticsMetrics } from '@/hooks/useConsoleAgentMetrics';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
@@ -103,6 +104,8 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       setLastAgent(agent);
     },
   });
+
+  const { data: analyticsMetrics } = useAnalyticsMetrics(effectiveCompanyId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -230,6 +233,8 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   
   const activeLabel = getActiveLabel();
 
+  const am = analyticsMetrics;
+
   // Access denied UI
   if (!hasAccess) {
     return (
@@ -249,9 +254,9 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   }
 
   const ANALYTICS_AGENTS: CyberAgent[] = [
-    { id: 'analytics', name: 'Performance Analyst', description: 'Reports & KPI tracking', icon: BarChart3, hsl: '223,100%,65%', status: 'active', sessions: 112, avgResp: '0.8s' },
-    { id: 'revenue', name: 'Revenue Analyst', description: 'Revenue & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', sessions: 78, avgResp: '1.1s' },
-    { id: 'insights', name: 'Insight Engine', description: 'Trends & customer insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', sessions: 55, avgResp: '1.4s' },
+    { id: 'analytics', name: 'Performance Analyst', description: 'Reports & KPI tracking', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
+    { id: 'revenue', name: 'Revenue Analyst', description: 'Revenue & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
+    { id: 'insights', name: 'Insight Engine', description: 'Trends & customer insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
   ];
 
   return (

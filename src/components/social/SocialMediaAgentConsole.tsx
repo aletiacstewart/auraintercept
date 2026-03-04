@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
+import { useSocialMetrics } from '@/hooks/useConsoleAgentMetrics';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
@@ -150,10 +151,13 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   
   const activeLabel = getActiveLabel();
 
+  const { data: socialMetrics } = useSocialMetrics(effectiveCompanyId);
+  const sm = socialMetrics;
+
   const SOCIAL_AGENTS: CyberAgent[] = [
-    { id: 'social_content', name: 'Content Creator', description: 'Generates social content', icon: Share2, hsl: '330,80%,70%', status: 'active', sessions: 94, avgResp: '0.9s' },
-    { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', sessions: 47, avgResp: '1.1s' },
-    { id: 'scheduler', name: 'Post Scheduler', description: 'Plans & queues posts', icon: Inbox, hsl: '189,100%,65%', status: 'standby', sessions: 33, avgResp: '1.3s' },
+    { id: 'social_content', name: 'Content Creator', description: 'Generates social content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
+    { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', metric1Value: sm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: sm?.campaignsActive ?? 0, metric2Label: 'Active' },
+    { id: 'scheduler', name: 'Post Scheduler', description: 'Plans & queues posts', icon: Inbox, hsl: '189,100%,65%', status: 'standby', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Queued', metric2Value: sm?.customersReached ?? 0, metric2Label: 'Reached' },
   ];
 
   return (

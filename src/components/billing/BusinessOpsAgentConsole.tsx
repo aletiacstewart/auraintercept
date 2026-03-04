@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
+import { useBusinessOpsMetrics } from '@/hooks/useConsoleAgentMetrics';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -224,11 +225,18 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   
   const activeLabel = getActiveLabel();
 
+  const { data: bopsMetrics } = useBusinessOpsMetrics(effectiveCompanyId);
+  const m = bopsMetrics;
+
   const BOPS_AGENTS: CyberAgent[] = [
-    { id: 'quoting', name: 'Quoting Agent', description: 'Generates quotes & estimates', icon: FileText, hsl: '189,100%,65%', status: 'active', sessions: 87, avgResp: '0.9s' },
-    { id: 'invoicing', name: 'Invoicing Agent', description: 'Creates & sends invoices', icon: Receipt, hsl: '142,72%,55%', status: 'standby', sessions: 64, avgResp: '1.1s' },
-    { id: 'leads', name: 'Lead Gen Agent', description: 'Qualifies & tracks leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', sessions: 41, avgResp: '1.3s' },
-    { id: 'operations', name: 'Ops Agent', description: 'Business management ops', icon: Briefcase, hsl: '38,100%,65%', status: 'standby', sessions: 29, avgResp: '1.0s' },
+    { id: 'quoting', name: 'Quoting Agent', description: 'Generates quotes & estimates', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.quotesConverted ?? 0, metric2Label: 'Converted' },
+    { id: 'invoicing', name: 'Invoicing Agent', description: 'Creates & sends invoices', icon: Receipt, hsl: '142,72%,55%', status: 'standby', metric1Value: m?.invoicesTotal ?? 0, metric1Label: 'Invoices', metric2Value: m?.invoicesPaid ?? 0, metric2Label: 'Paid' },
+    { id: 'leads', name: 'Lead Gen Agent', description: 'Qualifies & tracks leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: m?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: m?.leadsConverted ?? 0, metric2Label: 'Converted' },
+    { id: 'operations', name: 'Ops Agent', description: 'Appointments & scheduling', icon: Calendar, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.apptsTotal ?? 0, metric1Label: 'Appts', metric2Value: m?.apptsConfirmed ?? 0, metric2Label: 'Confirmed' },
+    { id: 'inventory', name: 'Inventory Agent', description: 'Tracks stock & supplies', icon: Package, hsl: '172,72%,55%', status: 'standby', metric1Value: m?.inventoryTotal ?? 0, metric1Label: 'Items', metric2Value: m?.inventoryLowStock ?? 0, metric2Label: 'Low Stock' },
+    { id: 'companies', name: 'Companies Agent', description: 'Manages company accounts', icon: Building2, hsl: '189,100%,55%', status: 'standby', metric1Value: m?.companiesTotal ?? 0, metric1Label: 'Companies', metric2Value: m?.companiesActive ?? 0, metric2Label: 'Active' },
+    { id: 'employees', name: 'Employees Agent', description: 'Manages staff & roles', icon: UserCheck, hsl: '48,100%,60%', status: 'standby', metric1Value: m?.employeesTotal ?? 0, metric1Label: 'Staff', metric2Value: m?.employeesActive ?? 0, metric2Label: 'Active' },
+    { id: 'customers', name: 'Customers Agent', description: 'Customer profiles & history', icon: UsersRound, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: m?.customersNew ?? 0, metric2Label: 'New' },
   ];
 
   return (
@@ -258,7 +266,12 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         activeFormType === 'quote' ? 'quoting' :
         activeFormType === 'invoice' ? 'invoicing' :
         activeFormType === 'lead' ? 'leads' :
-        (activeFormType === 'inventory' || activeFormType === 'appointments' || activeFormType === 'companies' || activeFormType === 'employees' || activeFormType === 'customers' || activeFormType === 'aura-live') ? 'operations' :
+        activeFormType === 'inventory' ? 'inventory' :
+        activeFormType === 'appointments' ? 'operations' :
+        activeFormType === 'companies' ? 'companies' :
+        activeFormType === 'employees' ? 'employees' :
+        activeFormType === 'customers' ? 'customers' :
+        activeFormType === 'aura-live' ? 'operations' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
@@ -267,6 +280,10 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
           invoicing: 'invoice',
           leads: 'lead',
           operations: 'appointments',
+          inventory: 'inventory',
+          companies: 'companies',
+          employees: 'employees',
+          customers: 'customers',
         };
         const tabId = AGENT_TO_TAB[agentId];
         if (tabId) {
