@@ -27,6 +27,15 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
   const [sessionId] = useState(() => crypto.randomUUID());
   const { toast } = useToast();
 
+  // Build enriched page context with current date/time so all AI agents have temporal awareness
+  const buildEnrichedContext = () => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const dateTimeContext = `Current date/time: ${dateStr} at ${timeStr} (user's local time).`;
+    return pageContext ? `${dateTimeContext}\n\n${pageContext}` : dateTimeContext;
+  };
+
   const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return;
 
@@ -47,7 +56,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
           companyId,
           userId,
           sessionId,
-          pageContext, // Pass page context to backend
+          pageContext: buildEnrichedContext(), // Pass enriched context with date/time to backend
           conversationHistory: messages.map(m => ({
             role: m.role,
             content: m.content,

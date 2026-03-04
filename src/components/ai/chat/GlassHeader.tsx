@@ -3,13 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Phone, Mic, ArrowLeft, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import aiCircleLogo from '@/assets/aura-intercept-logo.png';
+import { formatUptime } from '@/hooks/useCompanyUptime';
 
 export interface GlassHeaderProps {
   companyName: string;
   logoUrl?: string | null;
   agentLabel: string;
-  agentColor: string;
-  agentBgColor: string;
+  agentColor?: string;
+  agentBgColor?: string;
   showPhone?: boolean;
   showVoice?: boolean;
   onPhoneClick?: () => void;
@@ -21,14 +22,13 @@ export interface GlassHeaderProps {
   onBackClick?: () => void;
   subtitle?: string;
   showStatusChips?: boolean;
+  companyCreatedAt?: string | null;
 }
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
   companyName,
   logoUrl,
   agentLabel,
-  agentColor,
-  agentBgColor,
   showPhone,
   showVoice,
   onPhoneClick,
@@ -40,22 +40,31 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
   onBackClick,
   subtitle,
   showStatusChips = true,
+  companyCreatedAt,
 }) => {
   const displayLogo = logoUrl || (useDefaultLogo ? aiCircleLogo : null);
-  const [liveTime, setLiveTime] = useState('');
+  const [liveDateTime, setLiveDateTime] = useState({ date: '', time: '' });
 
   useEffect(() => {
     const update = () => {
       const now = new Date();
+      const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      const day = days[now.getDay()];
+      const month = months[now.getMonth()];
+      const date = now.getDate().toString().padStart(2, '0');
+      const year = now.getFullYear();
       const h = now.getHours().toString().padStart(2, '0');
       const m = now.getMinutes().toString().padStart(2, '0');
       const s = now.getSeconds().toString().padStart(2, '0');
-      setLiveTime(`${h}:${m}:${s}`);
+      setLiveDateTime({ date: `${day} · ${month} ${date}, ${year}`, time: `${h}:${m}:${s}` });
     };
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const uptimeDisplay = companyCreatedAt ? formatUptime(companyCreatedAt) : null;
 
   return (
     <div
@@ -118,22 +127,42 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           {showStatusChips && isOnline && (
             <>
-              {/* PORTAL ONLINE chip */}
+              {/* DATE + LIVE TIME chip */}
               <div
                 className="hidden sm:flex items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
-                style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.35)', color: 'rgb(52,211,153)', boxShadow: '0 0 8px rgba(52,211,153,0.2)' }}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Portal Online
-              </div>
-              {/* LIVE clock chip */}
-              <div
-                className="flex items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
                 style={{ background: 'rgba(0,229,255,0.1)', border: '1px solid rgba(0,229,255,0.35)', color: 'rgb(0,229,255)', boxShadow: '0 0 8px rgba(0,229,255,0.2)' }}
               >
-                <Radio className="h-2.5 w-2.5 text-cyan-400" />
-                Live {liveTime}
+                <Radio className="h-2.5 w-2.5 shrink-0" />
+                <span>{liveDateTime.date} · {liveDateTime.time}</span>
               </div>
+              {/* Mobile: time only */}
+              <div
+                className="flex sm:hidden items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
+                style={{ background: 'rgba(0,229,255,0.1)', border: '1px solid rgba(0,229,255,0.35)', color: 'rgb(0,229,255)', boxShadow: '0 0 8px rgba(0,229,255,0.2)' }}
+              >
+                <Radio className="h-2.5 w-2.5 shrink-0" />
+                {liveDateTime.time}
+              </div>
+              {/* PLATFORM UPTIME chip — desktop only */}
+              {uptimeDisplay && (
+                <div
+                  className="hidden sm:flex items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
+                  style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.35)', color: 'rgb(52,211,153)', boxShadow: '0 0 8px rgba(52,211,153,0.2)' }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                  <span>Online {uptimeDisplay}</span>
+                </div>
+              )}
+              {/* Fallback: Portal Online when no uptime yet */}
+              {!uptimeDisplay && (
+                <div
+                  className="hidden sm:flex items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
+                  style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.35)', color: 'rgb(52,211,153)', boxShadow: '0 0 8px rgba(52,211,153,0.2)' }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Portal Online
+                </div>
+              )}
             </>
           )}
 
