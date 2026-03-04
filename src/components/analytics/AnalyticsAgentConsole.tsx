@@ -272,7 +272,12 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       }}
       onHomeClick={handleHome}
       agents={ANALYTICS_AGENTS}
-      currentAgentId={currentAgent || lastAgent}
+      currentAgentId={
+        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics' :
+        (showRevenueForm || showForecastForm) ? 'revenue' :
+        (showCustomersForm || showInsightsForm || showSocialForm) ? 'insights' :
+        currentAgent || lastAgent
+      }
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}

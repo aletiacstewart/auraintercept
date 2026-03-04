@@ -254,7 +254,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       }}
       onHomeClick={handleHome}
       agents={BOPS_AGENTS}
-      currentAgentId={currentAgent || lastAgent}
+      currentAgentId={
+        activeFormType === 'quote' ? 'quoting' :
+        activeFormType === 'invoice' ? 'invoicing' :
+        activeFormType === 'lead' ? 'leads' :
+        (activeFormType === 'inventory' || activeFormType === 'appointments' || activeFormType === 'companies' || activeFormType === 'employees' || activeFormType === 'customers' || activeFormType === 'aura-live') ? 'operations' :
+        currentAgent || lastAgent
+      }
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={!company?.logo_url}

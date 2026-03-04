@@ -994,7 +994,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         setActiveTab('chat');
       }}
       agents={FIELDOPS_AGENTS}
-      currentAgentId={activeTab === 'chat' ? 'dispatch' : null}
+      currentAgentId={activeTab === 'directions' ? 'route' : 'dispatch'}
       quickActions={FIELD_OPS_AGENTS.map(a => ({ id: a.id, label: a.name, icon: Truck, message: a.name, hsl: '189,100%,65%' }))}
       onQuickAction={(_, id) => {
         const action = QUICK_ACTIONS.find(a => a.id === id);

@@ -186,7 +186,12 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       }}
       onHomeClick={handleHome}
       agents={MARKETING_AGENTS}
-      currentAgentId={currentAgent || lastAgent}
+      currentAgentId={
+        showCampaignForm ? 'marketing' :
+        showLeadsForm ? 'leads' :
+        showSegmentsForm ? 'audience' :
+        currentAgent || lastAgent
+      }
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}
