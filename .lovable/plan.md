@@ -1,87 +1,126 @@
 
+## The Problem & Your Idea — Confirmed ✅
 
-## The Problem
-
-The Active Agents left panel is purely decorative. Agent cards are not clickable, cannot be interacted with, and only highlight passively based on what tab the user already clicked via the top icon row. The request is to make the agent cards themselves **fully interactive**:
-
-1. **Clicking an agent card** → activates that agent, highlights it as ACTIVE, changes STANDBY→ACTIVE badge, and navigates to/triggers the relevant console section
-2. **Clicking a top icon tab** → the correct agent card in the left panel highlights and becomes ACTIVE
-3. The status badge must flip from `STANDBY` → `ACTIVE` dynamically (not just styling — the displayed text changes too)
-
-### Root Cause
-
-In `CyberConsoleLayout.tsx`, the agent cards have no `onClick` handler. They are purely read-only display. The `isActive` flag drives styling but has no way to be changed from within the left panel itself — it only reads from the parent's `currentAgentId` prop.
-
-There is also no `onAgentClick` callback defined in the `CyberConsoleLayoutProps` interface.
+Yes, it makes complete sense. The current `sessions` and `avgResp` values on every agent card are **hardcoded fake numbers** (e.g. `sessions: 87`, `avgResp: '0.9s'`). They mean nothing. Your idea is exactly right: replace those two metrics on each agent card with **real, meaningful KPIs pulled live from the database**.
 
 ---
 
-## Solution Plan
+## Metric Proposal for Every Agent
 
-### Step 1 — Add `onAgentClick` callback to `CyberConsoleLayout`
+Here's what each metric pair should become, per agent:
 
-In `CyberConsoleLayout.tsx`:
-- Add `onAgentClick?: (agentId: string) => void` to `CyberConsoleLayoutProps`
-- Make each agent card `div` a clickable element with `cursor-pointer`, hover effect, and `onClick={() => onAgentClick?.(agent.id)}`
-- The status badge text already shows `ACTIVE` when `isActive === true` — this works already
+**Business Ops Console**
 
-### Step 2 — Map agent IDs to tab IDs in each console
+| Agent | Metric 1 | Metric 2 |
+|---|---|---|
+| Quoting Agent | **Quotes** — total quotes created | **Converted** — quotes with status `accepted` |
+| Invoicing Agent | **Invoices** — total invoices | **Paid** — invoices with status `paid` |
+| Lead Gen Agent | **Leads** — total leads | **Converted** — leads with status `converted` |
+| Ops Agent | **Appts** — total appointments | **Confirmed** — appointments with status `confirmed` or `completed` |
 
-Each console needs an `agentId → tabId` mapping so clicking an agent card triggers the correct tab/form. Each console already has a `onTabChange` handler that drives the content — we just need to call it from the agent card click.
+**New agents to add to the sidebar** (currently only 4, but 8 tabs exist):
+- Inventory Agent → **Items** (total inventory items) / **Low Stock** (items below min_quantity)
+- Companies Agent → **Companies** (total companies) / **Active** (companies with active subscription)
+- Employees Agent → **Staff** (total employees/profiles) / **Active** (active employees)
+- Customers Agent → **Customers** (total customer profiles) / **New This Month**
 
-**FieldOps mappings:**
-- `dispatch` → `chat` (home / dispatch chat)
-- `route` → `directions`
-- `eta` → `eta`
-- `checkin` → `arrive_start`
+**Field Ops Console**
 
-**BusinessOps mappings:**
-- `quoting` → `quote`
-- `invoicing` → `invoice`
-- `leads` → `lead`
-- `operations` → `appointments` (general ops tab)
+| Agent | Metric 1 | Metric 2 |
+|---|---|---|
+| Dispatch Agent | **Jobs** — total job assignments | **En Route** — jobs with status `en_route` or `in_progress` |
+| Route Agent | **Routes** — job assignments with directions used | **Completed** — completed today |
+| ETA Agent | **Pending** — jobs not yet completed | **On Time** — jobs completed within window |
+| Check-In Agent | **Arrivals** — job check-ins today | **Completed** — jobs completed today |
 
-**MarketingSales mappings:**
-- `marketing` → `campaign`
-- `leads` → `leads`
-- `audience` → `customers`
+**Marketing & Sales Console**
 
-**Analytics mappings:**
-- `analytics` → `performance`
-- `revenue` → `revenue`
-- `insights` → `customers`
+| Agent | Metric 1 | Metric 2 |
+|---|---|---|
+| Marketing Agent | **Campaigns** — total campaigns | **Active** — campaigns with status `active` |
+| Leads Agent | **Leads** — total leads | **Converted** — leads converted |
+| Audience Agent | **Customers** — total customer profiles | **Segments** — distinct segments |
 
-**SocialMedia mappings:**
-- `social_content` → `create-content`
-- `brand_voice` → `create-content` (settings sub-tab)
-- `scheduler` → `my-posts`
+**Analytics Console** — use `agent_performance_metrics` + `subscription_usage_tracking` tables:
 
-### Step 3 — Wire `onAgentClick` in each console
+| Agent | Metric 1 | Metric 2 |
+|---|---|---|
+| Analytics Agent | **Requests** — total AI requests this month | **Success** — success rate % |
+| Revenue Agent | **Revenue** — total paid invoices $ | **Growth** — vs last month |
+| Insights Agent | **Reports** — total reminders/reports sent | **Saved** — (or data points analyzed) |
 
-In each console's `<CyberConsoleLayout>` usage, add:
-```tsx
-onAgentClick={(agentId) => {
-  const tabId = AGENT_TO_TAB_MAP[agentId];
-  if (tabId) {
-    // call the same tab change handler
-    handleTabChange(tabId); // or setActiveTab + trigger action
-  }
-}}
+**Social Media Console** — currently no real social data tables, so use meaningful proxies:
+
+| Agent | Metric 1 | Metric 2 |
+|---|---|---|
+| Content Agent | **Campaigns** — marketing campaigns | **Active** — active campaigns |
+| Scheduler Agent | **Posts** — campaigns scheduled | **Published** — completed campaigns |
+| Brand Voice Agent | **Customers** — reached | **Engaged** — with response |
+
+---
+
+## Implementation Plan
+
+### Step 1 — Extend `CyberAgent` interface in `CyberConsoleLayout.tsx`
+
+Replace the hardcoded `sessions: number` and `avgResp: string` fields with semantic ones:
+
+```ts
+export interface CyberAgent {
+  id: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  hsl: string;
+  status: 'active' | 'standby' | 'off';
+  metric1Value: number | string;  // e.g. 42
+  metric1Label: string;            // e.g. 'Leads'
+  metric2Value: number | string;  // e.g. 7
+  metric2Label: string;            // e.g. 'Converted'
+}
 ```
 
-This means clicking an agent card is functionally identical to clicking the matching icon tab — same handler, same result. The highlighting already follows because `currentAgentId` is derived from the active form/tab state.
+Update the agent card rendering to use `metric1Label/Value` and `metric2Label/Value` instead of `Sessions`/`Avg Resp`.
+
+### Step 2 — Add a live data query hook `useConsoleAgentMetrics.ts`
+
+Create `src/hooks/useConsoleAgentMetrics.ts` that queries all the tables needed for BusinessOps metrics:
+- `leads` — count total + count `status = 'converted'`
+- `quotes` — count total + count `status = 'accepted'`
+- `invoices` — count total + count `status = 'paid'`
+- `appointments` — count total + count `status IN ('confirmed','completed')`
+- `inventory_items` — count total + count where `quantity < min_quantity`
+- `profiles` — count employees by company
+- `customer_profiles` — count total + new this month
+- `companies` — count total + active
+
+All queries filtered by `company_id`.
+
+### Step 3 — Update `BOPS_AGENTS` array in `BusinessOpsAgentConsole.tsx`
+
+Add all 8 agents (currently only 4) and feed live metric values from the hook:
+```ts
+{ id: 'quoting', metric1Value: metrics.quotesTotal, metric1Label: 'Quotes', metric2Value: metrics.quotesConverted, metric2Label: 'Converted' }
+{ id: 'invoicing', metric1Value: metrics.invoicesTotal, metric1Label: 'Invoices', metric2Value: metrics.invoicesPaid, metric2Label: 'Paid' }
+{ id: 'leads', metric1Value: metrics.leadsTotal, metric1Label: 'Leads', metric2Value: metrics.leadsConverted, metric2Label: 'Converted' }
+{ id: 'operations', metric1Value: metrics.apptsTotal, metric1Label: 'Appts', metric2Value: metrics.apptsConfirmed, metric2Label: 'Confirmed' }
+{ id: 'inventory', metric1Value: metrics.inventoryTotal, metric1Label: 'Items', metric2Value: metrics.inventoryLowStock, metric2Label: 'Low Stock' }
+{ id: 'companies', metric1Value: metrics.companiesTotal, metric1Label: 'Companies', metric2Value: metrics.companiesActive, metric2Label: 'Active' }
+{ id: 'employees', metric1Value: metrics.employeesTotal, metric1Label: 'Staff', metric2Value: metrics.employeesActive, metric2Label: 'Active' }
+{ id: 'customers', metric1Value: metrics.customersTotal, metric1Label: 'Customers', metric2Value: metrics.customersNew, metric2Label: 'New' }
+```
+
+Also wire `onAgentClick` for all 8 agents (inventory, companies, employees, customers are already tabs but not yet wired as agent cards).
+
+### Step 4 — Update FieldOps, Marketing, Analytics, Social consoles
+
+Same pattern: update agent arrays to use meaningful `metric1/metric2` labels+values with live data where available.
 
 ### Files to change:
-1. `src/components/ai/chat/CyberConsoleLayout.tsx` — add `onAgentClick` prop + make cards clickable with hover states
-2. `src/components/employee/FieldOpsAgentConsole.tsx` — add `onAgentClick` mapping
-3. `src/components/billing/BusinessOpsAgentConsole.tsx` — add `onAgentClick` mapping
-4. `src/components/marketing/MarketingSalesAgentConsole.tsx` — add `onAgentClick` mapping
-5. `src/components/analytics/AnalyticsAgentConsole.tsx` — add `onAgentClick` mapping
-6. `src/components/social/SocialMediaAgentConsole.tsx` — add `onAgentClick` mapping
-
-### Visual UX enhancement in `CyberConsoleLayout`:
-- Add `cursor-pointer` to agent cards
-- Add hover state: slightly brighter border glow on hover
-- Add a subtle `scale(1.01)` transform on hover for tactile feedback
-- The ACTIVE/STANDBY badge already flips based on `isActive` — no extra work needed there
-
+1. `src/components/ai/chat/CyberConsoleLayout.tsx` — update `CyberAgent` interface + card rendering
+2. `src/hooks/useConsoleAgentMetrics.ts` — **new file** with live data queries
+3. `src/components/billing/BusinessOpsAgentConsole.tsx` — 8 agents + live metrics
+4. `src/components/employee/FieldOpsAgentConsole.tsx` — FieldOps agents + job metrics
+5. `src/components/marketing/MarketingSalesAgentConsole.tsx` — Marketing agents + campaign/lead metrics
+6. `src/components/analytics/AnalyticsAgentConsole.tsx` — Analytics agents + performance metrics
+7. `src/components/social/SocialMediaAgentConsole.tsx` — Social agents + campaign metrics
