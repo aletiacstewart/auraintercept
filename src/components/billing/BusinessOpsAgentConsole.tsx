@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { useBusinessOpsMetrics } from '@/hooks/useConsoleAgentMetrics';
+import { useCompanyUptime } from '@/hooks/useCompanyUptime';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -227,6 +228,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
 
   const { data: bopsMetrics } = useBusinessOpsMetrics(effectiveCompanyId);
   const m = bopsMetrics;
+  const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const BOPS_AGENTS: CyberAgent[] = [
     { id: 'quoting', name: 'Quoting Agent', description: 'Generates quotes & estimates', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.quotesConverted ?? 0, metric2Label: 'Converted' },
@@ -247,6 +249,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
       subtitle="Business Mgt Ops — Cyber-Sentry Edition"
+      companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {

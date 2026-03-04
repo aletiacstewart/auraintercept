@@ -8,6 +8,7 @@ import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { useFieldOpsWorkflow } from '@/hooks/useFieldOpsWorkflow';
 import { useFieldOpsMetrics } from '@/hooks/useConsoleAgentMetrics';
+import { useCompanyUptime } from '@/hooks/useCompanyUptime';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -960,6 +961,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const { data: fieldOpsMetrics } = useFieldOpsMetrics(effectiveCompanyId);
   const fm = fieldOpsMetrics;
+  const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const FIELDOPS_AGENTS: CyberAgent[] = [
     { id: 'dispatch', name: 'Dispatch Agent', description: 'Assigns technicians to jobs', icon: Truck, hsl: '189,100%,65%', status: 'active', metric1Value: fm?.jobsTotal ?? 0, metric1Label: 'Jobs', metric2Value: fm?.jobsEnRoute ?? 0, metric2Label: 'En Route' },
@@ -976,6 +978,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       agentColor={agentInfo.color}
       agentBgColor={agentInfo.bgColor}
       subtitle="Field Operations — Cyber-Sentry Edition"
+      companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {

@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { useAnalyticsMetrics } from '@/hooks/useConsoleAgentMetrics';
+import { useCompanyUptime } from '@/hooks/useCompanyUptime';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
@@ -106,6 +107,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   });
 
   const { data: analyticsMetrics } = useAnalyticsMetrics(effectiveCompanyId);
+  const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -266,6 +268,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
       subtitle="Analytics & Reports — Cyber-Sentry Edition"
+      companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {

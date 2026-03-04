@@ -42,6 +42,7 @@ interface CyberConsoleLayoutProps {
   agentColor: string;
   agentBgColor: string;
   subtitle: string;
+  companyCreatedAt?: string | null;
   // Tabs
   tabs: Tab[];
   activeTab: string;
@@ -102,6 +103,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
   agentColor,
   agentBgColor,
   subtitle,
+  companyCreatedAt,
   tabs,
   activeTab,
   onTabChange,
@@ -153,6 +155,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
         onPhoneClick={onPhoneClick}
         isOnline={isOnline}
         useDefaultLogo={useDefaultLogo ?? !logoUrl}
+        companyCreatedAt={companyCreatedAt}
       />
 
       {/* Tab Navigation */}

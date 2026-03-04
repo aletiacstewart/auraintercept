@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { useSocialMetrics } from '@/hooks/useConsoleAgentMetrics';
+import { useCompanyUptime } from '@/hooks/useCompanyUptime';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
@@ -153,6 +154,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
 
   const { data: socialMetrics } = useSocialMetrics(effectiveCompanyId);
   const sm = socialMetrics;
+  const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const SOCIAL_AGENTS: CyberAgent[] = [
     { id: 'social_content', name: 'Content Creator', description: 'Generates social content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
@@ -168,6 +170,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       agentColor="text-pink-400"
       agentBgColor="bg-gradient-to-br from-pink-500/20 to-purple-500/20"
       subtitle="Social Media Ops — Cyber-Sentry Edition"
+      companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {

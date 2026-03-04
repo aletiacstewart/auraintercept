@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { useMarketingMetrics } from '@/hooks/useConsoleAgentMetrics';
+import { useCompanyUptime } from '@/hooks/useCompanyUptime';
 import { CyberConsoleLayout } from '@/components/ai/chat/CyberConsoleLayout';
 import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -164,6 +165,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const { data: mktMetrics } = useMarketingMetrics(effectiveCompanyId);
   const mm = mktMetrics;
+  const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const MARKETING_AGENTS: CyberAgent[] = [
     { id: 'marketing', name: 'Campaign Manager', description: 'Creates & manages campaigns', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
@@ -179,6 +181,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
       subtitle="Outreach & Sales Ops — Cyber-Sentry Edition"
+      companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {
