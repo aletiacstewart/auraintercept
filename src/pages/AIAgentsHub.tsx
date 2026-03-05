@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -650,213 +650,116 @@ function AgentCard({
 
   return (
     <Card className={cn(
-      "hover:shadow-lg transition-all relative",
+      "hover:shadow-md transition-all relative",
       !isAvailableInTier && "opacity-80 border-dashed border-muted-foreground/30"
     )}>
-      <CardHeader className="p-3 pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
+      <CardContent className="p-2.5">
+        {/* Row 1: Icon + Name + Toggle */}
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <div className="flex items-center gap-1.5 min-w-0">
             <div 
               className={cn(
-                "p-1.5 rounded-lg shrink-0",
+                "p-1 rounded shrink-0",
                 agent.is_enabled && isAvailableInTier && "feature-pulse-active",
                 !isAvailableInTier && "opacity-50"
               )}
-              style={{ 
-                backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)` 
-              }}
+              style={{ backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)` }}
             >
-              <Icon className={cn(
-                `h-4 w-4 ${categoryInfo?.colorClass || 'text-primary'}`,
-                !isAvailableInTier && "opacity-50"
-              )} />
+              <Icon className={cn(`h-3.5 w-3.5 ${categoryInfo?.colorClass || 'text-primary'}`, !isAvailableInTier && "opacity-50")} />
             </div>
             <div className="min-w-0">
-              <CardTitle className={cn(
-                "text-sm font-semibold leading-tight truncate",
-                !isAvailableInTier && "opacity-70"
-              )}>{agent.name}</CardTitle>
-              <CardDescription className="text-[10px] text-card-foreground/60">
-                {PHASE_LABELS[agent.phase]}
-              </CardDescription>
+              <p className={cn("text-xs font-semibold leading-tight truncate", !isAvailableInTier && "opacity-70")}>{agent.name}</p>
+              <p className="text-[10px] text-muted-foreground">{PHASE_LABELS[agent.phase]}</p>
             </div>
           </div>
           
-          {/* Toggle or Lock */}
           {isAvailableInTier && canManage ? (
-            <Switch 
-              checked={agent.is_enabled} 
-              onCheckedChange={onToggle}
-              onClick={(e) => e.stopPropagation()}
-            />
+            <Switch checked={agent.is_enabled} onCheckedChange={onToggle} onClick={(e) => e.stopPropagation()} className="scale-75 shrink-0" />
           ) : (
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={cn(
-                  "flex items-center gap-1.5 px-2 py-1 rounded",
-                  !isAvailableInTier 
-                    ? "bg-amber-500/10 border border-amber-500/30" 
-                    : "text-muted-foreground"
-                )}>
-                  <Lock className={cn(
-                    "h-4 w-4",
-                    !isAvailableInTier ? "text-amber-500" : "text-muted-foreground"
-                  )} />
-                  {!isAvailableInTier && (
-                    <span className="text-xs font-medium text-amber-500">Locked</span>
-                  )}
+                <div className={cn("flex items-center gap-1 px-1.5 py-0.5 rounded", !isAvailableInTier ? "bg-amber-500/10 border border-amber-500/30" : "text-muted-foreground")}>
+                  <Lock className={cn("h-3 w-3", !isAvailableInTier ? "text-amber-500" : "text-muted-foreground")} />
+                  {!isAvailableInTier && <span className="text-[10px] font-medium text-amber-500">Locked</span>}
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-sm">
-                  {!isAvailableInTier 
-                    ? `Upgrade to ${tierInfo?.label || 'a higher plan'} to access this agent`
-                    : 'Only admins can toggle agents'}
-                </p>
+                <p className="text-sm">{!isAvailableInTier ? `Upgrade to ${tierInfo?.label || 'a higher plan'}` : 'Only admins can toggle agents'}</p>
               </TooltipContent>
             </Tooltip>
           )}
         </div>
-      </CardHeader>
-      <CardContent className="p-3 pt-0">
-        <div className="space-y-2">
-          {/* Status badges */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {isAvailableInTier ? (
-              <Badge 
-                variant={agent.is_enabled ? 'default' : 'secondary'}
-                style={agent.is_enabled ? {
-                  backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)`,
-                  color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
-                  borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
-                } : undefined}
-                className={cn("text-[10px] px-1.5 py-0", agent.is_enabled && 'border')}
-              >
-                {agent.is_enabled ? (
-                  <>
-                    <Zap className="h-2.5 w-2.5 mr-0.5" />
-                    Active
-                  </>
-                ) : (
-                  'Off'
-                )}
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] px-1.5 py-0">
-                <Lock className="h-2.5 w-2.5 mr-0.5" />
-                {tierInfo?.label}
-              </Badge>
-            )}
-            
-            {/* Decision Mode Badge - only show for active agents with events */}
-            {agent.is_enabled && latestEvent && (
-              <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />
-            )}
-          </div>
 
-          {/* Confidence & Last Action - only show for active agents */}
-          {agent.is_enabled && latestEvent && (
-            <div className="flex items-center gap-2 text-[10px]">
-              <ConfidenceIndicator score={latestEvent.confidence_score} size="sm" showLabel />
-              {timeAgo && (
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-2.5 w-2.5" />
-                  {timeAgo}
-                </span>
-              )}
-            </div>
+        {/* Row 2: Status + Decision Mode */}
+        <div className="flex items-center gap-1 flex-wrap mb-1">
+          {isAvailableInTier ? (
+            <Badge
+              variant={agent.is_enabled ? 'default' : 'secondary'}
+              style={agent.is_enabled ? {
+                backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)`,
+                color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
+                borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
+              } : undefined}
+              className={cn("text-[10px] px-1.5 py-0 h-4", agent.is_enabled && 'border')}
+            >
+              {agent.is_enabled ? <><Zap className="h-2 w-2 mr-0.5" />Active</> : 'Off'}
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] px-1.5 py-0 h-4">
+              <Lock className="h-2 w-2 mr-0.5" />{tierInfo?.label}
+            </Badge>
           )}
+          {agent.is_enabled && latestEvent && <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />}
+          <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0 h-4 w-fit">{agent.category.replace('_', ' ')}</Badge>
+        </div>
 
-          {/* Last Action Description */}
-          {agent.is_enabled && latestEvent?.action_description && (
-            <p className="text-[10px] text-muted-foreground line-clamp-2 italic">
-              "{latestEvent.action_description}"
+        {/* Row 3: Confidence + Time (only if active) */}
+        {agent.is_enabled && latestEvent && (
+          <div className="flex items-center gap-2 text-[10px] mb-1">
+            <ConfidenceIndicator score={latestEvent.confidence_score} size="sm" showLabel />
+            {timeAgo && <span className="text-muted-foreground flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{timeAgo}</span>}
+          </div>
+        )}
+
+        {/* Dependencies (compact) */}
+        {allDependencyNames.length > 0 && (
+          <div className={cn(
+            "flex items-center gap-1 px-1.5 py-1 rounded border text-[10px] mb-1",
+            isAvailableInTier && missingDependencies.length > 0 ? "bg-amber-500/10 border-amber-500/20" : "bg-muted/30 border-border/50"
+          )}>
+            <Info className={cn("h-3 w-3 shrink-0", isAvailableInTier && missingDependencies.length > 0 ? "text-amber-500" : "text-muted-foreground")} />
+            <p className="text-card-foreground leading-tight truncate">
+              <span className={cn("font-medium", isAvailableInTier && missingDependencies.length > 0 ? "text-amber-400" : "text-primary")}>Requires:</span> {allDependencyNames.join(', ')}
             </p>
-          )}
-
-          {/* Needs Review Alert */}
-          {agent.is_enabled && latestEvent?.requires_human_review && (
-            <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded bg-amber-500/10 border border-amber-500/30">
-              <span className="text-[10px] text-amber-400 font-medium flex items-center gap-1">
-                <Eye className="h-3 w-3" />
-                Needs Review
-              </span>
-              <Button 
-                size="sm" 
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onReviewClick();
-                }}
-                className="h-5 text-[10px] px-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/20"
-              >
-                View
-              </Button>
-            </div>
-          )}
-
-          <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0 w-fit">{agent.category.replace('_', ' ')}</Badge>
-
-          {/* Always show dependencies if any exist */}
-          {allDependencyNames.length > 0 && (
-            <div className={cn(
-              "flex items-start gap-1.5 px-2 py-1.5 rounded border text-[10px]",
-              isAvailableInTier && missingDependencies.length > 0
-                ? "bg-amber-500/10 border-amber-500/20"
-                : "bg-muted/30 border-border/50"
-            )}>
-              <Info className={cn(
-                "h-3 w-3 flex-shrink-0 mt-0.5",
-                isAvailableInTier && missingDependencies.length > 0
-                  ? "text-amber-500"
-                  : "text-muted-foreground"
-              )} />
-              <p className="text-card-foreground leading-tight">
-                <span className={cn(
-                  "font-medium",
-                  isAvailableInTier && missingDependencies.length > 0
-                    ? "text-amber-400"
-                    : "text-primary"
-                )}>Requires:</span> {allDependencyNames.join(', ')}
-              </p>
-            </div>
-          )}
-          
-          {/* Action buttons */}
-          <div className="flex items-center justify-between pt-1">
-            {isAvailableInTier ? (
-              <>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={onClick}
-                  className={cn("h-7 text-xs px-2", categoryInfo?.colorClass || 'text-primary')}
-                >
-                  Configure
-                  <ChevronRight className="h-3 w-3 ml-0.5" />
-                </Button>
-                {agent.is_enabled && (
-                  <Button variant="outline" size="sm" onClick={onClick} className="h-7 text-xs px-2">
-                    <Play className="h-2.5 w-2.5 mr-1" />
-                    Test
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Button 
-                size="sm"
-                variant="outline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate('/dashboard/subscription');
-                }}
-                className="w-full h-7 text-xs"
-              >
-                <Sparkles className="h-3 w-3 mr-1" />
-                Upgrade
-              </Button>
-            )}
           </div>
+        )}
+
+        {/* Needs Review */}
+        {agent.is_enabled && latestEvent?.requires_human_review && (
+          <div className="flex items-center justify-between gap-2 px-1.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 mb-1">
+            <span className="text-[10px] text-amber-400 font-medium flex items-center gap-1"><Eye className="h-3 w-3" />Needs Review</span>
+            <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); onReviewClick(); }} className="h-4 text-[10px] px-1.5 text-amber-400 hover:text-amber-300 hover:bg-amber-500/20">View</Button>
+          </div>
+        )}
+        
+        {/* Action buttons */}
+        <div className="flex items-center justify-between pt-0.5">
+          {isAvailableInTier ? (
+            <>
+              <Button variant="ghost" size="sm" onClick={onClick} className={cn("h-6 text-[11px] px-1.5", categoryInfo?.colorClass || 'text-primary')}>
+                Configure<ChevronRight className="h-3 w-3 ml-0.5" />
+              </Button>
+              {agent.is_enabled && (
+                <Button variant="outline" size="sm" onClick={onClick} className="h-6 text-[11px] px-2">
+                  <Play className="h-2.5 w-2.5 mr-1" />Test
+                </Button>
+              )}
+            </>
+          ) : (
+            <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); navigate('/dashboard/subscription'); }} className="w-full h-6 text-[11px]">
+              <Sparkles className="h-3 w-3 mr-1" />Upgrade
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
