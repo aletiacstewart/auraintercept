@@ -613,7 +613,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       {/* 3-Column Cyber Layout (desktop) / Single column (mobile) */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
 
-        {/* ── LEFT PANEL: Active Agents ── (hidden on mobile) */}
+        {/* ── LEFT PANEL: Business Info Card ── (hidden on mobile) */}
         <div
           className="hidden lg:flex flex-col w-64 shrink-0 border-r overflow-y-auto"
           style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
@@ -621,85 +621,110 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           {/* Panel Header */}
           <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
             <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Active Agents</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Portal Info</span>
           </div>
 
-          {/* Agent Cards */}
-          <div className="flex-1 p-2 space-y-2">
-            {customerEngagementAgents.map((agent, idx) => {
-              const isActive = agent.isEnabled && (agent.type === currentAgent || idx === 0);
-              const agentStats = [
-                { sessions: 142, avgResp: '0.8s' },
-                { sessions: 89, avgResp: '1.1s' },
-                { sessions: 34, avgResp: '1.4s' },
-                { sessions: 21, avgResp: '1.2s' },
-              ][idx] || { sessions: 10, avgResp: '1.0s' };
-
-              const agentIconColors = ['text-cyan-400', 'text-emerald-400', 'text-purple-400', 'text-yellow-400'];
-              const agentBorderColors = ['rgba(0,229,255,0.3)', 'rgba(52,211,153,0.3)', 'rgba(168,85,247,0.3)', 'rgba(250,204,21,0.3)'];
-              const agentGlowColors = ['rgba(0,229,255,0.12)', 'rgba(52,211,153,0.12)', 'rgba(168,85,247,0.12)', 'rgba(250,204,21,0.12)'];
-
+          {/* Business Status */}
+          <div className="px-3 pt-3 pb-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            {(() => {
+              const today = new Date().getDay();
+              const h = businessHours?.find(bh => bh.day_of_week === today);
+              const isOpen = (() => {
+                if (!h || h.is_closed || !h.open_time || !h.close_time) return false;
+                const [oH, oM] = h.open_time.split(':').map(Number);
+                const [cH, cM] = h.close_time.split(':').map(Number);
+                const now = new Date();
+                const nowMins = now.getHours() * 60 + now.getMinutes();
+                return nowMins >= (oH * 60 + oM) && nowMins < (cH * 60 + cM);
+              })();
               return (
-                <div
-                  key={agent.type}
-                  className="rounded-lg p-2.5 border transition-all duration-200"
-                  style={{
-                    background: isActive ? agentGlowColors[idx] : 'rgba(255,255,255,0.02)',
-                    borderColor: isActive ? agentBorderColors[idx] : 'rgba(255,255,255,0.06)',
-                    boxShadow: isActive ? `0 0 12px ${agentGlowColors[idx]}` : 'none',
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-7 w-7 rounded-lg flex items-center justify-center"
-                        style={{ background: agentGlowColors[idx], border: `1px solid ${agentBorderColors[idx]}` }}
-                      >
-                        <MessageSquare className={`h-3.5 w-3.5 ${agentIconColors[idx]}`} />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-semibold text-white/90">{agent.name}</p>
-                        <p className="text-[9px] text-white/40 truncate max-w-[100px]">{agent.description}</p>
-                      </div>
-                    </div>
-                    <div
-                      className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded"
-                      style={
-                        !agent.isEnabled
-                          ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
-                          : agent.type === currentAgent
-                          ? { color: 'rgb(0,229,255)', background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.3)' }
-                          : { color: 'rgb(250,204,21)', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)' }
-                      }
-                    >
-                      {!agent.isEnabled ? 'Off' : agent.type === currentAgent ? 'Active' : 'Standby'}
-                    </div>
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={`h-2 w-2 rounded-full ${isOpen ? 'bg-emerald-400' : 'bg-red-400'} animate-pulse`} />
+                    <span className={`text-[13px] font-bold uppercase tracking-wider ${isOpen ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {isOpen ? 'Open Now' : 'Closed'}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                      <p className={`text-[12px] font-bold ${agentIconColors[idx]}`}>{agentStats.sessions}</p>
-                      <p className="text-[8px] text-white/30 uppercase">Sessions</p>
-                    </div>
-                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                      <p className={`text-[12px] font-bold ${agentIconColors[idx]}`}>{agentStats.avgResp}</p>
-                      <p className="text-[8px] text-white/30 uppercase">Avg Resp</p>
-                    </div>
-                  </div>
-                </div>
+                  <p className="text-[10px] text-white/40">{getTodayHours()}</p>
+                </>
               );
-            })}
+            })()}
+          </div>
+
+          {/* Contact Info */}
+          {(company?.contact_phone || company?.phone || company?.contact_email || company?.email || company?.contact_address || company?.address) && (
+            <div className="px-3 py-2.5 border-b space-y-1.5" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1.5">Contact</p>
+              {(company?.contact_phone || company?.phone) && (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-3 w-3 text-cyan-400/60 shrink-0" />
+                  <span className="text-[10px] text-white/60 truncate">{company.contact_phone || company.phone}</span>
+                </div>
+              )}
+              {(company?.contact_email || company?.email) && (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3 w-3 text-cyan-400/60 shrink-0" />
+                  <span className="text-[10px] text-white/60 truncate">{company.contact_email || company.email}</span>
+                </div>
+              )}
+              {(company?.contact_address || company?.address) && (
+                <div className="flex items-start gap-2">
+                  <MapPin className="h-3 w-3 text-cyan-400/60 shrink-0 mt-0.5" />
+                  <span className="text-[10px] text-white/60 leading-tight">{company.contact_address || company.address}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Services */}
+          {services && services.length > 0 && (
+            <div className="px-3 py-2.5 border-b flex-1" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1.5">
+                Services ({services.length})
+              </p>
+              <div className="space-y-1">
+                {services.slice(0, 4).map((svc) => (
+                  <div key={svc.id} className="flex items-center justify-between">
+                    <span className="text-[10px] text-white/60 truncate max-w-[130px]">• {svc.name}</span>
+                    {svc.duration_minutes && (
+                      <span className="text-[9px] text-white/30 shrink-0 ml-1">{svc.duration_minutes}m</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {services.length > 4 && (
+                <button
+                  onClick={() => setActiveTab('services')}
+                  className="mt-2 text-[9px] text-cyan-400/70 hover:text-cyan-400 transition-colors"
+                >
+                  View All Services →
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Active Assistant */}
+          <div className="px-3 py-2.5 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Active Assistant</p>
+            <div
+              className="flex items-center gap-2 px-2 py-1.5 rounded-lg"
+              style={{ background: agentInfo.bgColor, border: `1px solid ${agentInfo.color}40` }}
+            >
+              <div className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: agentInfo.color }} />
+              <span className="text-[11px] font-semibold" style={{ color: agentInfo.color }}>{agentInfo.label}</span>
+            </div>
           </div>
 
           {/* Session Metrics Footer */}
-          <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session Metrics</p>
+          <div className="p-3 border-t mt-auto" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session</p>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Session Status</span>
+                <span className="text-[10px] text-white/40">Status</span>
                 <span className="text-[10px] font-bold text-cyan-400">Live</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Avg Response</span>
+                <span className="text-[10px] text-white/40">Response</span>
                 <span className="text-[10px] font-bold text-orange-400">&lt;1s</span>
               </div>
               <div className="flex justify-between items-center">
