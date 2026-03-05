@@ -965,17 +965,20 @@ interface AgentHowToGuideProps {
   className?: string;
   defaultExpanded?: boolean;
   consoleType?: ConsoleType;
+  feedbackRating?: number;
 }
 
 export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
   className,
   defaultExpanded = false,
   consoleType = 'customer',
+  feedbackRating,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultExpanded);
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
 
-  const guides = CONSOLE_GUIDES[consoleType];
+  const allGuides = CONSOLE_GUIDES[consoleType];
+  const guides = allGuides.filter(g => g.id !== 'review' || (feedbackRating !== undefined && feedbackRating >= 4));
   const title = CONSOLE_TITLES[consoleType];
 
   return (
