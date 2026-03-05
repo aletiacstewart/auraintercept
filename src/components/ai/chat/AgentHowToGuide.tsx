@@ -1088,29 +1088,28 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                 <Card
                   key={guide.id}
                   className={cn(
-                    'p-2 cursor-pointer transition-all duration-200 bg-white',
-                    `hover:${c.activeBorder} hover:shadow-sm`,
-                    expandedGuide === guide.id && `${c.activeBorder} ${c.activeBg}`
+                    'p-2 cursor-pointer transition-all duration-200 border',
+                    expandedGuide === guide.id ? `${c.activeBorder} ${c.activeBg}` : 'border-border/50 hover:border-border'
                   )}
                   onClick={() => setExpandedGuide(expandedGuide === guide.id ? null : guide.id)}
                 >
                   <div className="flex items-center gap-2">
-                    <div className={cn('p-1.5 rounded-md', c.bg)}>
+                    <div className={cn('p-1.5 rounded-md shrink-0', c.bg)}>
                       <guide.icon className={cn('h-3.5 w-3.5', c.icon)} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-medium text-foreground truncate">{guide.label}</h4>
-                      <p className="text-[10px] text-muted-foreground truncate">{guide.description}</p>
+                      <h4 className="text-xs font-medium text-card-foreground truncate">{guide.label}</h4>
+                      <p className="text-[10px] text-card-foreground/60 truncate">{guide.description}</p>
                     </div>
                     {expandedGuide === guide.id ? (
-                      <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <ChevronUp className={cn('h-3.5 w-3.5 shrink-0', c.icon)} />
                     ) : (
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <ChevronDown className="h-3.5 w-3.5 text-card-foreground/40 shrink-0" />
                     )}
                   </div>
                   
                   {expandedGuide === guide.id && (
-                    <div className="mt-3 pt-2 border-t space-y-2 animate-fade-in">
+                    <div className="mt-3 pt-2 border-t border-border/40 space-y-2 animate-fade-in">
                       <div className="space-y-1.5">
                         {guide.steps.map((step) => (
                           <div key={step.step} className="flex gap-2">
@@ -1118,19 +1117,19 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                               {step.step}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[11px] font-medium text-foreground">{step.title}</p>
-                              <p className="text-[10px] text-muted-foreground">{step.description}</p>
+                              <p className="text-[11px] font-medium text-card-foreground">{step.title}</p>
+                              <p className="text-[10px] text-card-foreground/60">{step.description}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                       
                       {guide.tips && guide.tips.length > 0 && (
-                        <div className="pt-2 border-t">
-                          <p className="text-[10px] font-medium text-muted-foreground mb-1">Tips:</p>
+                        <div className="pt-2 border-t border-border/40">
+                          <p className="text-[10px] font-medium text-card-foreground/60 mb-1">Tips:</p>
                           <ul className="space-y-0.5">
                             {guide.tips.map((tip, idx) => (
-                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
+                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-card-foreground/60">
                                 <CheckCircle2 className="h-3 w-3 text-green-500 shrink-0 mt-0.5" />
                                 <span>{tip}</span>
                               </li>
