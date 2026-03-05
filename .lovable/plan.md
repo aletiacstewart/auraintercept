@@ -1,69 +1,28 @@
 
-## Goal
+## What's Happening
 
-Replace the fake "Active Agents" sidebar in the Customer Portal (`AIAgentConsole.tsx` lines 617–711) with a real **Business Info Card** showing:
-- Company open/closed status (live, using today's business hours)
-- Today's operating hours
-- Company contact info: phone, email, address
-- Available services count + short list
-- Which AI assistant is currently active (single chip — not a list of internal agents)
-- Session footer kept as-is (Session Status: Live, Response, Satisfaction)
+The "Write Review" and "Leave Feedback" items in the image are guide cards inside the `AgentHowToGuide` component (rendered in the `WelcomeScreen`). The `AgentHowToGuide` renders a static list from `CUSTOMER_GUIDES` — it currently has no awareness of whether the customer has submitted feedback or what rating they gave.
 
-## Data Already Available — No New Queries Needed
+The fix: when a customer submits the feedback form with 4+ stars, `AIAgentConsole.tsx` already calls `handleFeedbackSubmit(feedback)` which has `feedback.rating`. We store that rating in state and pass it down through `WelcomeScreen` → `AgentHowToGuide`, which then conditionally filters out the `'review'` guide card.
 
-All required data is already fetched in the component:
-- `company` → name, phone, email, address
-- `businessHours` → use `getTodayHours()` + add `isOpenNow()` logic
-- `services` → list with name + duration
-- `currentAgent` + `agentInfo` → currently active AI assistant name + color
+---
 
-## Files to Change
+## Changes — 3 files
 
-**1 file only: `src/components/ai/AIAgentConsole.tsx`**
+### 1. `src/components/ai/AIAgentConsole.tsx`
+- Add state: `const [lastFeedbackRating, setLastFeedbackRating] = useState<number>(0);`
+- In `handleFeedbackSubmit`, after setting form states, add: `setLastFeedbackRating(feedback.rating);`
+- Pass `feedbackRating={lastFeedbackRating}` to `WelcomeScreen`
 
-Replace lines ~617–711 (the entire left panel div) with the new Business Info Card panel.
+### 2. `src/components/ai/chat/WelcomeScreen.tsx`
+- Add optional prop `feedbackRating?: number`
+- Pass it through to `AgentHowToGuide` as `feedbackRating={feedbackRating}`
 
-### New Panel Structure:
-```text
-┌────────────────────────┐
-│ ● PORTAL INFO          │
-├────────────────────────┤
-│  🟢 OPEN               │  ← green if open, red if closed
-│  Mon–Fri 8AM – 6PM     │  ← today's hours
-├────────────────────────┤
-│ 📞 (555) 000-0000      │
-│ ✉  hello@company.com   │
-│ 📍 123 Main St          │
-├────────────────────────┤
-│ SERVICES (3)           │
-│ • Electrical 60m       │
-│ • Lighting   90m       │
-│ • Outlet     45m       │
-│ View All Services →    │
-├────────────────────────┤
-│ ACTIVE ASSISTANT       │
-│ [AI Receptionist chip] │  ← tracks currentAgent live
-├────────────────────────┤
-│ Session Status  Live   │
-│ Response        <1s    │
-│ Satisfaction    98.4%  │
-└────────────────────────┘
-```
+### 3. `src/components/ai/chat/AgentHowToGuide.tsx`
+- Add optional prop `feedbackRating?: number` to `AgentHowToGuideProps`
+- In the render, filter guides: `const visibleGuides = guides.filter(g => g.id !== 'review' || (feedbackRating !== undefined && feedbackRating >= 4));`
 
-### Open/Closed Logic to Add:
-```ts
-const isOpenNow = () => {
-  const today = new Date().getDay();
-  const h = businessHours?.find(bh => bh.day_of_week === today);
-  if (!h || h.is_closed || !h.open_time || !h.close_time) return false;
-  const [oH, oM] = h.open_time.split(':').map(Number);
-  const [cH, cM] = h.close_time.split(':').map(Number);
-  const now = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
-  return nowMins >= (oH * 60 + oM) && nowMins < (cH * 60 + cM);
-};
-```
-
-Services list is capped at 4 items to avoid overflow, with a "View All →" link that sets `activeTab` to `'services'`.
-
-The "Active Agents" title and all 4 agent cards with fake numbers are fully removed and replaced with one "ACTIVE ASSISTANT" chip that tracks `currentAgent` live.
+### Result
+- On first visit: "Leave Feedback" shows, "Write Review" is hidden
+- Customer submits 3-star feedback → "Write Review" still hidden
+- Customer submits 4 or 5-star feedback → "Write Review" appears automatically in the guide list
