@@ -120,6 +120,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     'schedule' | 'emergency' | 'quote' | 'hours' | 'services' | 'track' | 'billing' | 'feedback' | 'review' | null
   >(null);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [lastFeedbackRating, setLastFeedbackRating] = useState<number>(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showTrackForm, setShowTrackForm] = useState(false);
@@ -400,6 +401,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
     setShowFeedbackForm(false);
+    setLastFeedbackRating(feedback.rating);
     const feedbackMessage = formatFeedbackMessage({
       rating: feedback.rating,
       sentiment: feedback.sentiment,
@@ -755,6 +757,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                   actions={visibleQuickActions}
                   onAction={handleQuickAction}
                   consoleType="customer"
+                  feedbackRating={lastFeedbackRating}
                 />
               )}
 

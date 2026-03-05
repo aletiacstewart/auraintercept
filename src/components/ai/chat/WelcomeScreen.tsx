@@ -20,6 +20,7 @@ interface WelcomeScreenProps {
   showHowToGuide?: boolean;
   consoleType?: ConsoleType;
   headerAction?: React.ReactNode;
+  feedbackRating?: number;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
@@ -31,6 +32,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   showHowToGuide = true,
   consoleType = 'customer',
   headerAction,
+  feedbackRating,
 }) => {
   return (
     <div className="py-4 px-4 animate-fade-in w-full relative">
@@ -48,7 +50,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         {/* How To Guide - Collapsible at top */}
         {showHowToGuide && (
           <div className="w-full max-w-4xl mx-auto">
-            <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} />
+            <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} feedbackRating={feedbackRating} />
           </div>
         )}
       </div>
