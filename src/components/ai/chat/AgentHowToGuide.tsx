@@ -58,10 +58,28 @@ interface AgentGuide {
   id: string;
   label: string;
   icon: React.ElementType;
+  color?: string;
   description: string;
   steps: HowToStep[];
   tips?: string[];
 }
+
+const COLOR_CLASSES: Record<string, { bg: string; icon: string; activeBg: string; activeBorder: string; step: string }> = {
+  cyan:    { bg: 'bg-cyan-500/10',    icon: 'text-cyan-500',    activeBg: 'bg-cyan-500/5',    activeBorder: 'border-cyan-500/50',    step: 'bg-cyan-500/20 text-cyan-600' },
+  blue:    { bg: 'bg-blue-500/10',    icon: 'text-blue-500',    activeBg: 'bg-blue-500/5',    activeBorder: 'border-blue-500/50',    step: 'bg-blue-500/20 text-blue-600' },
+  green:   { bg: 'bg-green-500/10',   icon: 'text-green-600',   activeBg: 'bg-green-500/5',   activeBorder: 'border-green-500/50',   step: 'bg-green-500/20 text-green-700' },
+  violet:  { bg: 'bg-violet-500/10',  icon: 'text-violet-600',  activeBg: 'bg-violet-500/5',  activeBorder: 'border-violet-500/50',  step: 'bg-violet-500/20 text-violet-700' },
+  amber:   { bg: 'bg-amber-500/10',   icon: 'text-amber-600',   activeBg: 'bg-amber-500/5',   activeBorder: 'border-amber-500/50',   step: 'bg-amber-500/20 text-amber-700' },
+  orange:  { bg: 'bg-orange-500/10',  icon: 'text-orange-600',  activeBg: 'bg-orange-500/5',  activeBorder: 'border-orange-500/50',  step: 'bg-orange-500/20 text-orange-700' },
+  indigo:  { bg: 'bg-indigo-500/10',  icon: 'text-indigo-600',  activeBg: 'bg-indigo-500/5',  activeBorder: 'border-indigo-500/50',  step: 'bg-indigo-500/20 text-indigo-700' },
+  teal:    { bg: 'bg-teal-500/10',    icon: 'text-teal-600',    activeBg: 'bg-teal-500/5',    activeBorder: 'border-teal-500/50',    step: 'bg-teal-500/20 text-teal-700' },
+  rose:    { bg: 'bg-rose-500/10',    icon: 'text-rose-600',    activeBg: 'bg-rose-500/5',    activeBorder: 'border-rose-500/50',    step: 'bg-rose-500/20 text-rose-700' },
+  red:     { bg: 'bg-red-500/10',     icon: 'text-red-600',     activeBg: 'bg-red-500/5',     activeBorder: 'border-red-500/50',     step: 'bg-red-500/20 text-red-700' },
+  yellow:  { bg: 'bg-yellow-500/10',  icon: 'text-yellow-600',  activeBg: 'bg-yellow-500/5',  activeBorder: 'border-yellow-500/50',  step: 'bg-yellow-500/20 text-yellow-700' },
+  emerald: { bg: 'bg-emerald-500/10', icon: 'text-emerald-600', activeBg: 'bg-emerald-500/5', activeBorder: 'border-emerald-500/50', step: 'bg-emerald-500/20 text-emerald-700' },
+  gray:    { bg: 'bg-gray-500/10',    icon: 'text-gray-600',    activeBg: 'bg-gray-500/5',    activeBorder: 'border-gray-500/50',    step: 'bg-gray-500/20 text-gray-700' },
+  pink:    { bg: 'bg-pink-500/10',    icon: 'text-pink-600',    activeBg: 'bg-pink-500/5',    activeBorder: 'border-pink-500/50',    step: 'bg-pink-500/20 text-pink-700' },
+};
 
 // Communication Methods Guides (Aura Features)
 const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
@@ -69,6 +87,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     id: 'message-aura',
     label: 'Message Aura (Text)',
     icon: MessageSquare,
+    color: 'cyan',
     description: 'Text-based chat for customer inquiries - available on all tiers',
     steps: [
       { step: 1, title: 'Open Chat Widget', description: 'Click the chat icon in the bottom right corner of the website or portal' },
@@ -86,6 +105,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     id: 'talk-to-aura',
     label: 'Talk to Aura (Voice)',
     icon: Mic,
+    color: 'violet',
     description: 'Speech-based conversations with AI - requires ElevenLabs + Twilio',
     steps: [
       { step: 1, title: 'Click Voice Button', description: 'Tap the microphone icon to start a voice conversation' },
@@ -104,6 +124,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     id: 'ask-aura',
     label: 'Ask Aura (Staff Only)',
     icon: Mic,
+    color: 'blue',
     description: 'Internal voice navigation for dashboard control - staff only',
     steps: [
       { step: 1, title: 'Open Ask Aura', description: 'Click the floating Aura button or use the keyboard shortcut' },
@@ -122,6 +143,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     id: 'sms-reminders',
     label: 'SMS Reminders',
     icon: Smartphone,
+    color: 'green',
     description: 'Automated text message notifications for appointments',
     steps: [
       { step: 1, title: 'Automatic Setup', description: 'SMS reminders are automatically sent based on your settings' },
@@ -140,6 +162,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     id: 'email-reminders',
     label: 'Email Reminders',
     icon: Mail,
+    color: 'amber',
     description: 'Automated email notifications for appointments and campaigns',
     steps: [
       { step: 1, title: 'Automatic Delivery', description: 'Email reminders are sent automatically based on your schedule' },
@@ -162,6 +185,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'schedule',
     label: 'Book Appointment',
     icon: Calendar,
+    color: 'amber',
     description: 'Schedule a service appointment with our team',
     steps: [
       { step: 1, title: 'Select Service', description: 'Choose the type of service you need from our available options' },
@@ -175,6 +199,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'emergency',
     label: 'Emergency Service',
     icon: AlertTriangle,
+    color: 'red',
     description: 'Request urgent emergency assistance',
     steps: [
       { step: 1, title: 'Describe Emergency', description: 'Tell us about the urgent situation you are facing' },
@@ -188,6 +213,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'quote',
     label: 'Get Quote',
     icon: DollarSign,
+    color: 'green',
     description: 'Request a price estimate for services',
     steps: [
       { step: 1, title: 'Describe Project', description: 'Tell us what service or project you need a quote for' },
@@ -201,6 +227,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'hours',
     label: 'Business Hours',
     icon: Clock,
+    color: 'blue',
     description: 'View our operating hours and availability',
     steps: [
       { step: 1, title: 'Ask About Hours', description: 'Simply ask "What are your hours?" or click the Hours button' },
@@ -213,6 +240,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'services',
     label: 'Our Services',
     icon: Sparkles,
+    color: 'cyan',
     description: 'Learn about available services and pricing',
     steps: [
       { step: 1, title: 'Browse Services', description: 'View our complete list of available services' },
@@ -225,6 +253,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'track',
     label: 'Track Appointment',
     icon: MapPin,
+    color: 'teal',
     description: 'Check the status of your scheduled appointment',
     steps: [
       { step: 1, title: 'Enter Details', description: 'Provide your email or phone used during booking' },
@@ -238,6 +267,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'billing',
     label: 'Billing Inquiry',
     icon: DollarSign,
+    color: 'green',
     description: 'View invoices and payment information',
     steps: [
       { step: 1, title: 'Verify Identity', description: 'Enter your email or phone to access billing' },
@@ -251,6 +281,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'feedback',
     label: 'Leave Feedback',
     icon: Star,
+    color: 'yellow',
     description: 'Share your experience with our service',
     steps: [
       { step: 1, title: 'Select Service', description: 'Choose the service visit you want to rate' },
@@ -264,6 +295,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'review',
     label: 'Write Review',
     icon: ThumbsUp,
+    color: 'emerald',
     description: 'Leave a public review on Google, Yelp, or Facebook',
     steps: [
       { step: 1, title: 'Choose Platform', description: 'Select Google, Yelp, or Facebook for your review' },
@@ -277,6 +309,7 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
     id: 'join-video',
     label: 'Join Video Session',
     icon: Video,
+    color: 'violet',
     description: 'Connect to your virtual appointment via Google Meet',
     steps: [
       { step: 1, title: 'Check Confirmation', description: 'Look for the meeting link in your email or SMS confirmation after staff accepts' },
@@ -294,6 +327,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'install-app',
     label: 'Install Field Ops App',
     icon: Smartphone,
+    color: 'blue',
     description: 'Install the mobile app for field technicians',
     steps: [
       { step: 1, title: 'Go to Install Page', description: 'Navigate to Settings → Install Field Ops App in your technician dashboard' },
@@ -307,6 +341,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'accept',
     label: 'Accept Job',
     icon: CheckCircle,
+    color: 'green',
     description: 'Accept and confirm assigned jobs',
     steps: [
       { step: 1, title: 'View Assignment', description: 'Review the job details including customer info and service type' },
@@ -320,6 +355,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'directions',
     label: 'Get Directions',
     icon: Navigation,
+    color: 'cyan',
     description: 'Navigate to customer location',
     steps: [
       { step: 1, title: 'Select Job', description: 'Choose the job you need directions to' },
@@ -333,6 +369,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'enroute',
     label: 'Mark En Route',
     icon: Truck,
+    color: 'orange',
     description: 'Update status when heading to a job',
     steps: [
       { step: 1, title: 'Start Travel', description: 'Begin traveling to the customer location' },
@@ -346,6 +383,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'eta',
     label: 'Update ETA',
     icon: Clock,
+    color: 'blue',
     description: 'Manually override arrival time estimates',
     steps: [
       { step: 1, title: 'Check Conditions', description: 'Assess current travel or delay conditions' },
@@ -359,6 +397,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'arrive-start',
     label: 'Arrive & Start Job',
     icon: MapPin,
+    color: 'amber',
     description: 'Confirm arrival and begin work in one step',
     steps: [
       { step: 1, title: 'Arrive On-Site', description: 'Park and prepare to meet the customer' },
@@ -372,6 +411,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'complete',
     label: 'Complete Job',
     icon: CheckCircle,
+    color: 'emerald',
     description: 'Mark job as finished and document work',
     steps: [
       { step: 1, title: 'Finish Service', description: 'Complete all required service work' },
@@ -385,6 +425,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'quote',
     label: 'Generate Quote',
     icon: FileText,
+    color: 'blue',
     description: 'Create on-site quotes for additional work',
     steps: [
       { step: 1, title: 'Click Generate Quote', description: 'Open the quote form with job details pre-filled' },
@@ -398,6 +439,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'invoice',
     label: 'Generate Invoice',
     icon: Receipt,
+    color: 'green',
     description: 'Create invoices with optional payment links',
     steps: [
       { step: 1, title: 'Click Generate Invoice', description: 'Open invoice form with job details pre-filled' },
@@ -411,6 +453,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'dispatch',
     label: 'Contact Dispatch',
     icon: Phone,
+    color: 'teal',
     description: 'Reach dispatch for urgent matters',
     steps: [
       { step: 1, title: 'Click Contact', description: 'Open dispatch communication' },
@@ -423,6 +466,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'virtual-session',
     label: 'Start Virtual Session',
     icon: Video,
+    color: 'violet',
     description: 'Join a virtual appointment via Google Meet',
     steps: [
       { step: 1, title: 'Accept Virtual Job', description: 'Accept the job — a Google Meet link is auto-generated and sent to the customer' },
@@ -436,6 +480,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'phone-session',
     label: 'Phone Call Appointments',
     icon: Phone,
+    color: 'indigo',
     description: 'Handle appointments conducted over the phone',
     steps: [
       { step: 1, title: 'Accept Phone Job', description: 'Accept the phone appointment from your job queue' },
@@ -453,6 +498,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'aura-live',
     label: 'Aura Live',
     icon: Activity,
+    color: 'cyan',
     description: 'Monitor real-time AI agent activity and events',
     steps: [
       { step: 1, title: 'Click Aura Live Tab', description: 'Open the real-time activity stream' },
@@ -466,6 +512,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'quote',
     label: 'Quote',
     icon: FileText,
+    color: 'blue',
     description: 'Generate professional quotes for customers',
     steps: [
       { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote form' },
@@ -479,6 +526,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'invoice',
     label: 'Invoice',
     icon: Receipt,
+    color: 'green',
     description: 'Create and send invoices for services',
     steps: [
       { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the form' },
@@ -492,6 +540,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'lead',
     label: 'Lead',
     icon: UserPlus,
+    color: 'violet',
     description: 'Add and track new sales leads',
     steps: [
       { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open lead form' },
@@ -505,6 +554,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'appointments',
     label: 'Appts',
     icon: Calendar,
+    color: 'amber',
     description: 'Manage appointments and scheduling',
     steps: [
       { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
@@ -518,6 +568,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'inventory',
     label: 'Inventory',
     icon: Package,
+    color: 'orange',
     description: 'View and manage inventory levels',
     steps: [
       { step: 1, title: 'Click Inventory Tab', description: 'Open inventory management' },
@@ -531,6 +582,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'companies',
     label: 'Companies',
     icon: ClipboardList,
+    color: 'indigo',
     description: 'Manage company accounts and settings',
     steps: [
       { step: 1, title: 'Click Companies Tab', description: 'Open company management' },
@@ -544,6 +596,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'employees',
     label: 'Employees',
     icon: Users,
+    color: 'teal',
     description: 'Manage team members and assignments',
     steps: [
       { step: 1, title: 'Click Employees Tab', description: 'Open employee management' },
@@ -557,6 +610,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     id: 'customers',
     label: 'Customers',
     icon: UserPlus,
+    color: 'rose',
     description: 'Manage customer profiles and history',
     steps: [
       { step: 1, title: 'Click Customers Tab', description: 'Open customer management' },
@@ -575,6 +629,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'campaign',
     label: 'Promotional / Promo Code',
     icon: Tag,
+    color: 'violet',
     description: 'Create promotional campaigns with discount codes',
     steps: [
       { step: 1, title: 'Select Campaign Type', description: 'Choose Promotional / Promo Code from campaign types' },
@@ -588,6 +643,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'referral',
     label: 'Referral Program',
     icon: Gift,
+    color: 'pink',
     description: 'Set up and manage customer referral rewards',
     steps: [
       { step: 1, title: 'Configure Rewards', description: 'Set referrer and referee incentives' },
@@ -601,6 +657,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'winback',
     label: 'Win-Back Campaign',
     icon: TrendingUp,
+    color: 'orange',
     description: 'Re-engage inactive and lapsed customers',
     steps: [
       { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive for 90+ days' },
@@ -614,6 +671,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'seasonal',
     label: 'Seasonal Campaign',
     icon: Calendar,
+    color: 'amber',
     description: 'Launch time-based seasonal promotions',
     steps: [
       { step: 1, title: 'Select Season/Event', description: 'Choose holiday, season, or special event' },
@@ -627,6 +685,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'loyalty',
     label: 'Loyalty Program',
     icon: Star,
+    color: 'yellow',
     description: 'Reward repeat customers with loyalty benefits',
     steps: [
       { step: 1, title: 'Define Tiers', description: 'Create loyalty levels based on spend or visits' },
@@ -640,6 +699,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
     id: 'customers',
     label: 'Customer Segments',
     icon: Users,
+    color: 'teal',
     description: 'View and manage customer target groups',
     steps: [
       { step: 1, title: 'View Segments', description: 'See predefined customer groups and filters' },
@@ -656,6 +716,7 @@ const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
     id: 'create-post',
     label: 'Create Post',
     icon: FileText,
+    color: 'blue',
     description: 'Create new social media content for multiple platforms',
     steps: [
       { step: 1, title: 'Click New Post', description: 'Open the post creation form from the navigation' },
@@ -669,6 +730,7 @@ const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
     id: 'manage-drafts',
     label: 'Manage Drafts',
     icon: FileText,
+    color: 'indigo',
     description: 'Review and edit pending social media drafts',
     steps: [
       { step: 1, title: 'Click Drafts', description: 'Open the drafts queue to see all pending content' },
@@ -682,6 +744,7 @@ const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
     id: 'schedule-posts',
     label: 'Schedule Posts',
     icon: Calendar,
+    color: 'amber',
     description: 'Schedule content for optimal publishing times',
     steps: [
       { step: 1, title: 'Click Scheduled', description: 'View your scheduled posts queue' },
@@ -695,6 +758,7 @@ const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
     id: 'content-calendar',
     label: 'Content Calendar',
     icon: Calendar,
+    color: 'teal',
     description: 'View your content publishing calendar',
     steps: [
       { step: 1, title: 'Click Calendar', description: 'Open the content calendar view' },
@@ -712,6 +776,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'home',
     label: 'Home Dashboard',
     icon: Home,
+    color: 'cyan',
     description: 'Overview of your analytics dashboard',
     steps: [
       { step: 1, title: 'View Summary', description: 'See key metrics at a glance' },
@@ -725,6 +790,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'report',
     label: 'Performance Report',
     icon: BarChart3,
+    color: 'blue',
     description: 'Analyze business performance metrics',
     steps: [
       { step: 1, title: 'Click Report Tab', description: 'Open the performance report view' },
@@ -738,6 +804,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'revenue',
     label: 'Revenue Analysis',
     icon: DollarSign,
+    color: 'green',
     description: 'Deep dive into revenue streams',
     steps: [
       { step: 1, title: 'Click Revenue Tab', description: 'Open revenue analysis view' },
@@ -751,6 +818,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'insights',
     label: 'Customer Insights',
     icon: Users,
+    color: 'teal',
     description: 'Understand customer behavior and value',
     steps: [
       { step: 1, title: 'Click Insights Tab', description: 'Open customer insights view' },
@@ -764,6 +832,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'forecast',
     label: 'Trend Forecast',
     icon: TrendingUp,
+    color: 'orange',
     description: 'Predict future business trends',
     steps: [
       { step: 1, title: 'Click Forecast Tab', description: 'Open trend forecasting view' },
@@ -777,6 +846,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'kpi',
     label: 'KPI Dashboard',
     icon: Target,
+    color: 'red',
     description: 'Monitor key performance indicators',
     steps: [
       { step: 1, title: 'Click KPIs Tab', description: 'Open KPI dashboard view' },
@@ -790,6 +860,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'social',
     label: 'Social Analytics',
     icon: Share2,
+    color: 'violet',
     description: 'Track social media publishing activity',
     steps: [
       { step: 1, title: 'Click Social Tab', description: 'Open social media analytics view' },
@@ -803,6 +874,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'reminders',
     label: 'Reminder Insights',
     icon: Bell,
+    color: 'amber',
     description: 'Analyze reminder effectiveness',
     steps: [
       { step: 1, title: 'Click Reminders Tab', description: 'Open reminder analytics view' },
@@ -816,6 +888,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     id: 'export',
     label: 'Export Reports',
     icon: Download,
+    color: 'gray',
     description: 'Download reports in CSV or PDF format',
     steps: [
       { step: 1, title: 'Click Export Tab', description: 'Open export report view' },
@@ -833,6 +906,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'map-view',
     label: 'Map View',
     icon: MapPin,
+    color: 'cyan',
     description: 'Monitor all technicians and jobs on an interactive map',
     steps: [
       { step: 1, title: 'View Map', description: 'Click Map View tab to see all active jobs and technicians' },
@@ -846,6 +920,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'agenda-view',
     label: 'Agenda View',
     icon: ClipboardList,
+    color: 'blue',
     description: 'View all jobs in a detailed list format',
     steps: [
       { step: 1, title: 'Switch to Agenda', description: 'Click Agenda View tab to see job list' },
@@ -859,6 +934,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'assign-tech',
     label: 'Assign Staff',
     icon: UserPlus,
+    color: 'violet',
     description: 'Assign or reassign team members to jobs',
     steps: [
       { step: 1, title: 'Find Unassigned Job', description: 'Locate jobs with pending or no staff assignment' },
@@ -872,6 +948,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'real-time-eta',
     label: 'Real-Time ETAs',
     icon: Clock,
+    color: 'amber',
     description: 'Monitor and manage customer arrival notifications',
     steps: [
       { step: 1, title: 'View ETA Panel', description: 'Click Show ETA Panel to see all en-route technicians' },
@@ -885,6 +962,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'notify-customer',
     label: 'Notify Customer',
     icon: Bell,
+    color: 'teal',
     description: 'Send updates and notifications to customers',
     steps: [
       { step: 1, title: 'Select Job', description: 'Find the job you need to send a notification for' },
@@ -898,6 +976,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'cancel-job',
     label: 'Cancel Appointment',
     icon: AlertCircle,
+    color: 'red',
     description: 'Cancel jobs and notify relevant parties',
     steps: [
       { step: 1, title: 'Select Job', description: 'Find the appointment to cancel' },
@@ -911,6 +990,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'job-financials',
     label: 'View Job Financials',
     icon: Receipt,
+    color: 'green',
     description: 'Track quotes and invoices for each job',
     steps: [
       { step: 1, title: 'Open Job Details', description: 'Click on a job in Agenda View to expand details' },
@@ -924,6 +1004,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
     id: 'status-legend',
     label: 'Status Legend',
     icon: CheckCircle,
+    color: 'emerald',
     description: 'Understand job status indicators',
     steps: [
       { step: 1, title: 'Pending (Yellow)', description: 'Job assigned but not yet accepted by staff' },
@@ -1001,64 +1082,67 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
         
         <CollapsibleContent className="mt-2 space-y-2">
           <div className="grid gap-2 pr-1">
-            {guides.map((guide) => (
-              <Card
-                key={guide.id}
-                className={cn(
-                  'p-2 cursor-pointer transition-all duration-200 bg-white',
-                  'hover:border-primary/50 hover:shadow-sm',
-                  expandedGuide === guide.id && 'border-primary/50 bg-primary/5'
-                )}
-                onClick={() => setExpandedGuide(expandedGuide === guide.id ? null : guide.id)}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-primary/10">
-                    <guide.icon className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-medium text-gray-900 truncate">{guide.label}</h4>
-                    <p className="text-[10px] text-gray-500 truncate">{guide.description}</p>
-                  </div>
-                  {expandedGuide === guide.id ? (
-                    <ChevronUp className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+            {guides.map((guide) => {
+              const c = COLOR_CLASSES[guide.color ?? 'cyan'];
+              return (
+                <Card
+                  key={guide.id}
+                  className={cn(
+                    'p-2 cursor-pointer transition-all duration-200 bg-white',
+                    `hover:${c.activeBorder} hover:shadow-sm`,
+                    expandedGuide === guide.id && `${c.activeBorder} ${c.activeBg}`
                   )}
-                </div>
-                
-                {expandedGuide === guide.id && (
-                  <div className="mt-3 pt-2 border-t space-y-2 animate-fade-in">
-                    <div className="space-y-1.5">
-                      {guide.steps.map((step) => (
-                        <div key={step.step} className="flex gap-2">
-                          <div className="shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">
-                            {step.step}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-medium text-gray-900">{step.title}</p>
-                            <p className="text-[10px] text-gray-500">{step.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                  onClick={() => setExpandedGuide(expandedGuide === guide.id ? null : guide.id)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={cn('p-1.5 rounded-md', c.bg)}>
+                      <guide.icon className={cn('h-3.5 w-3.5', c.icon)} />
                     </div>
-                    
-                    {guide.tips && guide.tips.length > 0 && (
-                      <div className="pt-2 border-t">
-                        <p className="text-[10px] font-medium text-gray-600 mb-1">Tips:</p>
-                        <ul className="space-y-0.5">
-                          {guide.tips.map((tip, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5 text-[10px] text-gray-500">
-                              <CheckCircle2 className="h-3 w-3 text-green-500 shrink-0 mt-0.5" />
-                              <span>{tip}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-medium text-foreground truncate">{guide.label}</h4>
+                      <p className="text-[10px] text-muted-foreground truncate">{guide.description}</p>
+                    </div>
+                    {expandedGuide === guide.id ? (
+                      <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     )}
                   </div>
-                )}
-              </Card>
-            ))}
+                  
+                  {expandedGuide === guide.id && (
+                    <div className="mt-3 pt-2 border-t space-y-2 animate-fade-in">
+                      <div className="space-y-1.5">
+                        {guide.steps.map((step) => (
+                          <div key={step.step} className="flex gap-2">
+                            <div className={cn('shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold', c.step)}>
+                              {step.step}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[11px] font-medium text-foreground">{step.title}</p>
+                              <p className="text-[10px] text-muted-foreground">{step.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {guide.tips && guide.tips.length > 0 && (
+                        <div className="pt-2 border-t">
+                          <p className="text-[10px] font-medium text-muted-foreground mb-1">Tips:</p>
+                          <ul className="space-y-0.5">
+                            {guide.tips.map((tip, idx) => (
+                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
+                                <CheckCircle2 className="h-3 w-3 text-green-500 shrink-0 mt-0.5" />
+                                <span>{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              );
+            })}
           </div>
         </CollapsibleContent>
       </Collapsible>
