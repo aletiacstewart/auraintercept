@@ -171,7 +171,16 @@ const TIERS = [
     annualSavings: 'Save $994',
     description: 'Full automation + Analytics & Reports',
     popular: false,
-...
+    agentCount: 22,
+    consoleCount: 7,
+    highlights: [
+      '22 AI Operatives',
+      'All 7 Control Centers',
+      'Analytics & Reports Console',
+      'Customer Support',
+      '25 Employee Accounts',
+    ],
+  },
   {
     id: 'command',
     name: 'Aura Command',
