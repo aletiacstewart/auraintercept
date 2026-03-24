@@ -183,15 +183,15 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
       currentAgentId={
-        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'social_content') :
-        showMyPosts ? 'scheduler' :
+        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'creative_content') :
+        showMyPosts ? 'content_engine' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          social_content: 'create-content',
+          creative_content: 'create-content',
           brand_voice: 'create-content',
-          scheduler: 'my-posts',
+          content_engine: 'my-posts',
         };
         const actionId = AGENT_TO_ACTION[agentId];
         if (actionId) {

@@ -121,13 +121,13 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   customer_service: ['triage', 'followup', 'review', 'booking'],
   manager: ['triage', 'followup', 'review', 'booking', 'insights', 'performance', 'revenue', 'forecast'], // Includes analytics
   billing: ['quoting', 'invoice'],
-  marketing: ['campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+  marketing: ['campaign', 'lead', 'marketing', 'creative_content', 'web_presence'],
   analytics: ['insights', 'performance', 'revenue', 'forecast'], // Analytics role
   inventory: ['inventory'],
 };
 
 // Agent name mapping for display
-// 24 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
+// 21 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
 const AGENT_NAMES: Record<string, string> = {
   // Customer Portal (4)
   triage: 'AI Receptionist',
@@ -148,17 +148,13 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   marketing: 'Marketing Agent',
-  // Social Media (3)
-  social_content: 'Social Media Agent',
-  social_scheduler: 'Social Media Scheduler',
-  social_analytics: 'Social Media Analytics',
+  // Social Media & Creative (1 merged)
+  creative_content: 'Creative Content Agent',
   // Analytics & Reports (4)
   insights: 'Insights Agent',
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
   forecast: 'Forecast Agent',
-  // Content Engine (1)
-  creative: 'Creative Agent',
   // Web Presence (1)
   web_presence: 'Web Presence Agent',
 };
