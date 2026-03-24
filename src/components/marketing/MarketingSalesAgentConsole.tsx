@@ -44,7 +44,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('marketing');
+  const [lastAgent, setLastAgent] = useState<string>('outreach');
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -69,7 +69,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'marketing',
+    initialAgent: 'outreach',
     onAgentChange: (agent) => {
       console.log('[Marketing] Agent changed to:', agent);
       setLastAgent(agent);
@@ -135,7 +135,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('marketing');
+    setLastAgent('outreach');
   };
 
   const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {
@@ -168,8 +168,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const MARKETING_AGENTS: CyberAgent[] = [
-    { id: 'marketing', name: 'Campaign Manager', description: 'Creates & manages campaigns', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'leads', name: 'Lead Generator', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
+    { id: 'outreach', name: 'Outreach Agent', description: 'Campaigns, leads & marketing', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
+    { id: 'leads_manager', name: 'Lead Manager', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
     { id: 'audience', name: 'Audience Analyst', description: 'Segments & targets audiences', icon: Users, hsl: '38,100%,65%', status: 'standby', metric1Value: mm?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Segments' },
   ];
 
@@ -194,15 +194,15 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       onHomeClick={handleHome}
       agents={MARKETING_AGENTS}
       currentAgentId={
-        showCampaignForm ? 'marketing' :
-        showLeadsForm ? 'leads' :
+        showCampaignForm ? 'outreach' :
+        showLeadsForm ? 'leads_manager' :
         showSegmentsForm ? 'audience' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          marketing: 'campaign',
-          leads: 'leads',
+          outreach: 'campaign',
+          leads_manager: 'leads',
           audience: 'customers',
         };
         const actionId = AGENT_TO_ACTION[agentId];

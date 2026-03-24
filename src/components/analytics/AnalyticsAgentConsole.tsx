@@ -68,7 +68,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('analytics');
+  const [lastAgent, setLastAgent] = useState<string>('analytics_intelligence');
   
   // Form visibility states
   const [showPerformanceForm, setShowPerformanceForm] = useState(false);
@@ -99,7 +99,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'analytics',
+    initialAgent: 'analytics_intelligence',
     onAgentChange: (agent) => {
       console.log('[Analytics] Agent changed to:', agent);
       setLastAgent(agent);
@@ -193,7 +193,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('analytics');
+    setLastAgent('analytics_intelligence');
   };
 
   const handleAnalyze = async (formType: string, data: Record<string, unknown>) => {
@@ -256,9 +256,9 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   }
 
   const ANALYTICS_AGENTS: CyberAgent[] = [
-    { id: 'analytics', name: 'Performance Analyst', description: 'Reports & KPI tracking', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
-    { id: 'revenue', name: 'Revenue Analyst', description: 'Revenue & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
-    { id: 'insights', name: 'Insight Engine', description: 'Trends & customer insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
+    { id: 'analytics_intelligence', name: 'Analytics Intelligence Agent', description: 'Performance, revenue & forecasting', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
+    { id: 'analytics_revenue', name: 'Revenue Analysis', description: 'Revenue trends & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
+    { id: 'analytics_insights', name: 'Insight Engine', description: 'Customer trends & business insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
   ];
 
   return (
@@ -281,16 +281,16 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       onHomeClick={handleHome}
       agents={ANALYTICS_AGENTS}
       currentAgentId={
-        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics' :
-        (showRevenueForm || showForecastForm) ? 'revenue' :
-        (showCustomersForm || showInsightsForm || showSocialForm) ? 'insights' :
+        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics_intelligence' :
+        (showRevenueForm || showForecastForm) ? 'analytics_revenue' :
+        (showCustomersForm || showInsightsForm || showSocialForm) ? 'analytics_insights' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          analytics: 'performance',
-          revenue: 'revenue',
-          insights: 'customers',
+          analytics_intelligence: 'performance',
+          analytics_revenue: 'revenue',
+          analytics_insights: 'customers',
         };
         const actionId = AGENT_TO_ACTION[agentId];
         if (actionId) {
