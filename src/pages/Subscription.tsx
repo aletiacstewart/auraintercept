@@ -850,7 +850,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Field Ops and Performance?</h4>
               <p className="text-sm text-muted-foreground">
-                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($2,497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
+                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
               </p>
             </div>
             <div>

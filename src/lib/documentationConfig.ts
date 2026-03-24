@@ -135,9 +135,9 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   command: {
     id: 'command',
     name: 'Aura Command',
-    price: 3497,
-    annualPrice: 34970,
-    annualSavings: 6994,
+    price: 697,
+    annualPrice: 6970,
+    annualSavings: 1394,
     implementationFee: 'Custom',
     employees: 'Unlimited',
     operatives: 10,  // Full 10-operative suite

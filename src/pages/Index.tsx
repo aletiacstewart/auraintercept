@@ -848,10 +848,10 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Command</h3>
                 <p className="text-[10px] text-amber-400/80 mb-2">Multi-Location / Enterprise</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold">$3,497</span>
+                  <span className="text-3xl font-bold">$697</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$34,970/year (Save $6,994)</p>
+                <p className="text-xs text-secondary mb-3">$6,970/year (Save $1,394)</p>
                 <p className="text-xs text-card-foreground/70 mb-4">Full 10-operative suite with predictive analytics.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">

@@ -76,7 +76,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Full business automation with all 10 AI operatives and analytics intelligence',
   },
   command: {
-    // Aura Command ($3,497/mo): All 10 operatives + enterprise features
+    // Aura Command ($697/mo): All 10 operatives + enterprise features
     agents: [
       'triage', 'customer_journey',              // Customer Portal (2)
       'dispatch', 'field_navigation',            // Field Operations (2)
@@ -87,7 +87,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Command',
-    price: '$3,497/mo',
+    price: '$697/mo',
     description: 'Enterprise AI operating system with unlimited employees and white-label branding',
   },
 };

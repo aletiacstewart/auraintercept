@@ -695,7 +695,7 @@ export default function Help() {
                               <p className="mt-1">Everything in Single-Point + Scheduling Agent, Dispatch, Route, ETA, Check-in, Quoting, Invoice. Adds online booking and field operations.</p>
                             </li>
                             <li>
-                      <strong className="text-card-foreground">Aura Pro Command ($3,497/mo):</strong>
+                      <strong className="text-card-foreground">Aura Pro Command ($697/mo):</strong>
                               <p className="mt-1">Full suite of 17+ agents including Marketing, Social Media (3 agents), Analytics (4 agents), Inventory, and Admin.</p>
                             </li>
                           </ul>

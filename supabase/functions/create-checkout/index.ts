@@ -80,7 +80,7 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   multi_track: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Performance",
-    price: 249700,
+    price: 49700,
   },
 };
 
