@@ -3737,8 +3737,35 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     ];
 
     // Get tools for this agent type
-    // Map social agents to shared social tools
-    const toolKey = ['social_content', 'social_scheduler', 'social_analytics'].includes(agentType) ? 'social' : agentType;
+    // Normalize consolidated 10-operative agent IDs to their AGENT_TOOLS keys
+    const TOOL_KEY_MAP: Record<string, string> = {
+      // Legacy social agents → social tools
+      social_content: 'social',
+      social_scheduler: 'social',
+      social_analytics: 'social',
+      // creative alias → same toolset as creative_content (uses social tools)
+      creative: 'social',
+      creative_content: 'social',
+      // Legacy analytics aliases → analytics_intelligence tools
+      analytics: 'analytics_intelligence',
+      insights: 'analytics_intelligence',
+      performance: 'analytics_intelligence',
+      revenue: 'analytics_intelligence',
+      forecast: 'analytics_intelligence',
+      // Legacy campaign/lead/marketing aliases → outreach tools
+      campaign: 'outreach',
+      lead: 'outreach',
+      marketing: 'outreach',
+      // Legacy field ops aliases → field_navigation tools
+      route: 'field_navigation',
+      eta: 'field_navigation',
+      checkin: 'field_navigation',
+      // Legacy quoting/invoice/inventory aliases → business_finance tools
+      quoting: 'business_finance',
+      invoice: 'business_finance',
+      inventory: 'business_finance',
+    };
+    const toolKey = TOOL_KEY_MAP[agentType] || agentType;
     const tools = AGENT_TOOLS[toolKey] || [
       {
         type: 'function',
