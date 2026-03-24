@@ -24,8 +24,8 @@ import {
 
 // Simplified quick actions - 2 clear entry points
 const QUICK_ACTIONS = [
-  { id: 'create-content', label: 'Create Content', icon: Wand2, message: 'Open multi-channel content generator', featureColor: 'text-pink-400' },
-  { id: 'my-posts', label: 'My Posts', icon: Inbox, message: 'View saved drafts and posts', featureColor: 'text-pink-400' },
+  { id: 'create-content', label: 'Create Content', icon: Share2, message: 'Open multi-channel content generator', featureColor: 'text-pink-400' },
+  { id: 'my-posts', label: 'My Posts', icon: Share2, message: 'View saved drafts and posts', featureColor: 'text-pink-400' },
 ];
 
 // Tab configuration

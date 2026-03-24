@@ -34,9 +34,9 @@ import {
 // Quick actions for Analytics & Optimization
 const QUICK_ACTIONS = [
   { id: 'performance', label: 'Report', icon: BarChart3, message: 'I need a performance report', featureColor: 'text-feature-analytics' },
-  { id: 'revenue', label: 'Revenue', icon: DollarSign, message: 'Show me revenue analysis', featureColor: 'text-feature-invoices' },
-  { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights', featureColor: 'text-feature-customers' },
-  { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
+  { id: 'revenue', label: 'Revenue', icon: BarChart3, message: 'Show me revenue analysis', featureColor: 'text-feature-invoices' },
+  { id: 'customers', label: 'Insights', icon: BarChart3, message: 'I need customer insights', featureColor: 'text-feature-customers' },
+  { id: 'forecast', label: 'Forecast', icon: BarChart3, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
   { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard', featureColor: 'text-feature-analytics' },
   { id: 'social', label: 'Social', icon: Share2, message: 'Show social media analytics', featureColor: 'text-pink-400' },
   { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics', featureColor: 'text-feature-appointments' },
