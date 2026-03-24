@@ -1032,7 +1032,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Marketing Stack</span>
+                    <span className="text-xs">Outreach Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
@@ -1040,7 +1040,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Review Agent</span>
+                    <span className="text-xs">Creative Content</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
