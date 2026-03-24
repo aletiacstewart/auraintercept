@@ -2377,13 +2377,50 @@ const AGENT_TOOLS: Record<string, any[]> = {
     },
   ],
   
-  // Admin/Business Operations agent tools
+  // Admin/Business Operations agent tools — scheduling, staff, customer records
   admin: [
     {
       type: 'function',
       function: {
+        name: 'query_business_data',
+        description: 'Query business data for scheduling, staff, or customer record questions',
+        parameters: {
+          type: 'object',
+          properties: {
+            data_type: { type: 'string', enum: ['appointments', 'customers', 'leads', 'services', 'feedback'] },
+            filter: { type: 'string', description: 'Filter criteria (e.g., today, scheduled, pending)' },
+            count_only: { type: 'boolean', description: 'Return count only vs full records' },
+            time_period: { type: 'string', enum: ['today', 'week', 'month', 'quarter', 'year', 'all'] },
+            limit: { type: 'number', description: 'Max records to return' },
+          },
+          required: ['data_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another operative for specialized tasks',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['business_finance', 'field_navigation', 'analytics_intelligence', 'outreach'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+
+  // Business Finance Agent tools — quoting + invoicing + inventory (merged)
+  business_finance: [
+    {
+      type: 'function',
+      function: {
         name: 'list_services',
-        description: 'List all available services with prices',
+        description: 'List all available services with prices. ALWAYS call this first before generating a quote.',
         parameters: {
           type: 'object',
           properties: {
@@ -2396,7 +2433,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
       type: 'function',
       function: {
         name: 'generate_quote',
-        description: 'Generate a quote for services',
+        description: 'Generate a service quote. Call list_services first to get service names.',
         parameters: {
           type: 'object',
           properties: {
@@ -2405,6 +2442,8 @@ const AGENT_TOOLS: Record<string, any[]> = {
             customer_email: { type: 'string' },
             services: { type: 'array', items: { type: 'string' }, description: 'Service names to include' },
             notes: { type: 'string' },
+            labor_hours: { type: 'number' },
+            discount_percent: { type: 'number' },
           },
           required: ['customer_name', 'services'],
         },
@@ -2413,17 +2452,66 @@ const AGENT_TOOLS: Record<string, any[]> = {
     {
       type: 'function',
       function: {
-        name: 'generate_invoice',
-        description: 'Generate an invoice',
+        name: 'send_quote',
+        description: 'Send a quote to the customer via SMS or email. Use the exact quote_id from generate_quote.',
         parameters: {
           type: 'object',
           properties: {
+            quote_id: { type: 'string', description: 'The quote ID returned by generate_quote — do NOT invent this' },
+            customer_contact: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email'] },
+          },
+          required: ['quote_id', 'channel'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_invoice',
+        description: 'Generate an invoice from a completed job or appointment.',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            quote_id: { type: 'string' },
             customer_name: { type: 'string' },
             customer_email: { type: 'string' },
             amount: { type: 'number' },
             description: { type: 'string' },
+            additional_charges: { type: 'array', items: { type: 'object' } },
           },
-          required: ['customer_name', 'amount'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_payment_link',
+        description: 'Send a payment link to the customer. Use the exact invoice_id from generate_invoice.',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoice_id: { type: 'string', description: 'Invoice ID from generate_invoice — do NOT invent this' },
+            customer_contact: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email'] },
+          },
+          required: ['invoice_id', 'channel'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_payment_reminder',
+        description: 'Send a payment reminder for an overdue invoice.',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoice_id: { type: 'string' },
+            days_overdue: { type: 'number' },
+          },
+          required: ['invoice_id'],
         },
       },
     },
@@ -2431,18 +2519,518 @@ const AGENT_TOOLS: Record<string, any[]> = {
       type: 'function',
       function: {
         name: 'check_inventory',
-        description: 'Check inventory levels for parts',
+        description: 'Check current parts and supplies inventory levels.',
         parameters: {
           type: 'object',
           properties: {
             search_term: { type: 'string', description: 'Part name or SKU to search' },
             category: { type: 'string' },
             low_stock_only: { type: 'boolean' },
+            part_ids: { type: 'array', items: { type: 'string' } },
           },
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'reorder_parts',
+        description: 'Trigger a reorder for low-stock parts.',
+        parameters: {
+          type: 'object',
+          properties: {
+            part_id: { type: 'string' },
+            quantity: { type: 'number' },
+            priority: { type: 'string', enum: ['normal', 'urgent'] },
+          },
+          required: ['part_id', 'quantity'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Capture a lead when customer receives a quote but does not proceed.',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            phone: { type: 'string' },
+            email: { type: 'string' },
+            service_interest: { type: 'string' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'] },
+            notes: { type: 'string' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'] },
+          },
+          required: ['name'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another operative',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['field_navigation', 'admin', 'analytics_intelligence', 'customer_journey'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
   ],
+
+  // Outreach Agent tools — campaigns + leads + marketing + social (merged)
+  outreach: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_campaign',
+        description: 'Create a new multi-channel marketing campaign',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            campaign_type: { type: 'string', enum: ['email', 'sms', 'both'] },
+            target_segment: { type: 'string' },
+            message_template: { type: 'string' },
+            discount_type: { type: 'string', enum: ['percentage', 'fixed'] },
+            discount_value: { type: 'number' },
+          },
+          required: ['name', 'campaign_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Add a new sales lead to the pipeline',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            phone: { type: 'string' },
+            email: { type: 'string' },
+            address: { type: 'string' },
+            service_interest: { type: 'string' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'] },
+            notes: { type: 'string' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'] },
+          },
+          required: ['name'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_leads',
+        description: 'Get and filter the leads pipeline',
+        parameters: {
+          type: 'object',
+          properties: {
+            status: { type: 'string', enum: ['new', 'contacted', 'qualified', 'converted', 'lost'] },
+            source: { type: 'string' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'] },
+            limit: { type: 'number' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'update_lead_status',
+        description: 'Update lead status and add follow-up notes',
+        parameters: {
+          type: 'object',
+          properties: {
+            lead_id: { type: 'string' },
+            status: { type: 'string', enum: ['new', 'contacted', 'qualified', 'converted', 'lost'] },
+            notes: { type: 'string' },
+            follow_up_at: { type: 'string' },
+          },
+          required: ['lead_id', 'status'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_customer_segments',
+        description: 'Analyze customer segments for targeted marketing',
+        parameters: {
+          type: 'object',
+          properties: {
+            segment_type: { type: 'string', enum: ['all', 'active', 'inactive', 'high_value', 'new'] },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_promo_code',
+        description: 'Generate a promotional discount code',
+        parameters: {
+          type: 'object',
+          properties: {
+            code: { type: 'string' },
+            discount_type: { type: 'string', enum: ['percentage', 'fixed'] },
+            discount_value: { type: 'number' },
+            expires_at: { type: 'string' },
+          },
+          required: ['discount_type', 'discount_value'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'create_social_post',
+        description: 'Create a social media post draft for campaign promotion',
+        parameters: {
+          type: 'object',
+          properties: {
+            platforms: { type: 'array', items: { type: 'string', enum: ['instagram', 'facebook', 'linkedin', 'tiktok', 'google_business', 'sms'] } },
+            content: { type: 'string' },
+            hashtags: { type: 'array', items: { type: 'string' } },
+            image_url: { type: 'string' },
+          },
+          required: ['platforms', 'content'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another operative',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['customer_journey', 'analytics_intelligence', 'creative_content'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+
+  // Field Navigation Agent tools — dispatch + route + eta + checkin (merged)
+  field_navigation: [
+    {
+      type: 'function',
+      function: {
+        name: 'get_my_jobs',
+        description: "Get the technician's currently assigned jobs with customer and job details",
+        parameters: {
+          type: 'object',
+          properties: {
+            employee_id: { type: 'string', description: 'Technician user ID (optional, uses authenticated user)' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'update_job_status',
+        description: 'Update job status to en_route, arrived, in_progress, or completed. Automatically notifies the customer.',
+        parameters: {
+          type: 'object',
+          properties: {
+            job_assignment_id: { type: 'string' },
+            status: { type: 'string', enum: ['en_route', 'arrived', 'in_progress', 'completed'] },
+            eta_minutes: { type: 'number', description: 'Optional ETA in minutes (for en_route status)' },
+          },
+          required: ['job_assignment_id', 'status'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_eta_update',
+        description: 'Send an ETA update notification to the customer via SMS, email, or both',
+        parameters: {
+          type: 'object',
+          properties: {
+            job_assignment_id: { type: 'string' },
+            eta_minutes: { type: 'number' },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+          },
+          required: ['job_assignment_id', 'eta_minutes', 'channel'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'optimize_route',
+        description: "Optimize the technician's route for their assigned jobs",
+        parameters: {
+          type: 'object',
+          properties: {
+            technician_id: { type: 'string' },
+            date: { type: 'string' },
+            appointments: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['technician_id', 'date'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'check_tech_availability',
+        description: 'Check which technicians are available for dispatch',
+        parameters: {
+          type: 'object',
+          properties: {
+            date: { type: 'string' },
+            skills_required: { type: 'array', items: { type: 'string' } },
+            location: { type: 'string' },
+          },
+          required: ['date'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'create_appointment',
+        description: 'Create an emergency/dispatch appointment (required before assigning a technician)',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_phone: { type: 'string' },
+            customer_email: { type: 'string' },
+            service_type: { type: 'string' },
+            datetime: { type: 'string' },
+            duration_minutes: { type: 'number' },
+            notes: { type: 'string' },
+          },
+          required: ['customer_name', 'service_type', 'datetime'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'assign_technician',
+        description: 'Assign a technician to a job. Use the EXACT appointment_id from create_appointment.',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string', description: 'From create_appointment — do NOT invent this ID' },
+            technician_id: { type: 'string', description: 'From check_tech_availability — do NOT invent this ID' },
+            priority: { type: 'string', enum: ['normal', 'high', 'emergency'] },
+          },
+          required: ['appointment_id', 'technician_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'start_job',
+        description: 'Start job timer when technician arrives or virtual session begins',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            technician_id: { type: 'string' },
+            arrival_time: { type: 'string' },
+          },
+          required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'complete_job',
+        description: 'Complete job and record work details',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            work_completed: { type: 'string' },
+            parts_used: { type: 'array', items: { type: 'string' } },
+            customer_signature: { type: 'boolean' },
+          },
+          required: ['appointment_id', 'work_completed'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_photo_upload_link',
+        description: 'Get a direct link for the technician to upload job photos',
+        parameters: {
+          type: 'object',
+          properties: {
+            job_assignment_id: { type: 'string' },
+            photo_type: { type: 'string', enum: ['before', 'after', 'both'] },
+          },
+          required: ['job_assignment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another operative',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['business_finance', 'customer_journey', 'admin', 'dispatch'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+
+  // Analytics Intelligence Agent tools — analytics + insights + performance + revenue + forecast (merged)
+  analytics_intelligence: [
+    {
+      type: 'function',
+      function: {
+        name: 'query_business_data',
+        description: 'Query business data for counts, summaries, and details. Use for questions about warranties, leads, appointments, quotes, invoices, inventory, campaigns, customers, and feedback.',
+        parameters: {
+          type: 'object',
+          properties: {
+            data_type: { type: 'string', enum: ['warranties', 'leads', 'appointments', 'quotes', 'invoices', 'inventory', 'campaigns', 'customers', 'feedback', 'services'] },
+            filter: { type: 'string', description: 'Filter criteria (e.g., active, pending, expired, low_stock, scheduled, completed)' },
+            count_only: { type: 'boolean', description: 'Return only the count. Default true for simple count questions.' },
+            time_period: { type: 'string', enum: ['today', 'week', 'month', 'quarter', 'year', 'all'] },
+            limit: { type: 'number', description: 'Max records to return (default 10, max 50)' },
+          },
+          required: ['data_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_performance_metrics',
+        description: 'Get business performance metrics including team KPIs and completion rates',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['today', 'week', 'month', 'quarter', 'year'] },
+            metrics: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_revenue_analysis',
+        description: 'Analyze revenue trends by service, customer, employee, or time period',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['week', 'month', 'quarter', 'year'] },
+            breakdown_by: { type: 'string', enum: ['service', 'customer', 'employee', 'day'] },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'forecast_trends',
+        description: 'Generate demand, revenue, or appointment forecasts',
+        parameters: {
+          type: 'object',
+          properties: {
+            forecast_type: { type: 'string', enum: ['demand', 'revenue', 'appointments'] },
+            period: { type: 'string', enum: ['week', 'month', 'quarter'] },
+          },
+          required: ['forecast_type', 'period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_customer_insights',
+        description: 'Get customer behavior and segment insights',
+        parameters: {
+          type: 'object',
+          properties: {
+            insight_type: { type: 'string', enum: ['retention', 'acquisition', 'satisfaction', 'segments'] },
+          },
+          required: ['insight_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'analyze_metrics',
+        description: 'Detect anomalies and analyze business performance patterns',
+        parameters: {
+          type: 'object',
+          properties: {
+            metrics: { type: 'array', items: { type: 'string' } },
+            date_range: { type: 'string' },
+            comparison_period: { type: 'string' },
+          },
+          required: ['metrics'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_report',
+        description: 'Generate a formatted performance report',
+        parameters: {
+          type: 'object',
+          properties: {
+            report_type: { type: 'string', enum: ['daily', 'weekly', 'monthly', 'custom'] },
+            include_charts: { type: 'boolean' },
+            send_to: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['report_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another operative for action on insights',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['outreach', 'business_finance', 'admin'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+
   // Social agents share these tools (mapped via toolKey logic)
   social: [
     {
