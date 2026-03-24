@@ -2,13 +2,15 @@ import { useEffect, useState, forwardRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, Circle, Loader2 } from 'lucide-react';
+import { CheckCircle2, Circle, Loader2, Building2, MessageSquare, FileText, Megaphone, BarChart3, Mic, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SETUP_PROGRESS_REFRESH_EVENT } from '@/hooks/useSetupProgress';
+import { useSearchParams } from 'react-router-dom';
 
 interface SetupStep {
   id: string;
   label: string;
+  icon: React.ElementType;
   completed: boolean;
 }
 
@@ -17,13 +19,11 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
   const [steps, setSteps] = useState<SetupStep[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [, setSearchParams] = useSearchParams();
 
   // Listen for refresh events from settings components
   useEffect(() => {
-    const handleRefresh = () => {
-      setRefreshKey(prev => prev + 1);
-    };
-    
+    const handleRefresh = () => setRefreshKey(prev => prev + 1);
     window.addEventListener(SETUP_PROGRESS_REFRESH_EVENT, handleRefresh);
     return () => window.removeEventListener(SETUP_PROGRESS_REFRESH_EVENT, handleRefresh);
   }, []);
@@ -34,127 +34,100 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
     const checkSetupStatus = async () => {
       setLoading(true);
       try {
-        // Fetch company data with all relevant fields
         const { data: company } = await supabase
           .from('companies')
           .select('*')
           .eq('id', companyId)
           .single();
 
-        // Fetch reminder settings count
         const { count: reminderSettingsCount } = await supabase
           .from('reminder_settings')
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-
-        // Fetch email templates count
         const { count: emailTemplatesCount } = await supabase
           .from('email_templates')
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-        // Fetch SMS templates count  
         const { count: smsTemplatesCount } = await supabase
           .from('sms_templates')
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-        // Fetch marketing campaigns count
-
-        // Fetch marketing campaigns count
         const { count: campaignsCount } = await supabase
           .from('marketing_campaigns')
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-        const baseSteps: SetupStep[] = [
+        const consolidated: SetupStep[] = [
           {
-            id: 'branding',
-            label: 'Branding',
-            completed: !!(company?.logo_url || company?.primary_color),
+            id: 'company',
+            label: 'Company',
+            icon: Building2,
+            // Branding OR contact info OR app URL
+            completed: !!(company?.logo_url || company?.primary_color || company?.contact_email || company?.contact_phone || company?.public_app_url),
           },
           {
-            id: 'contact',
-            label: 'Contact Info',
-            completed: !!(company?.contact_email || company?.contact_phone || company?.contact_address),
+            id: 'communications',
+            label: 'Communications',
+            icon: MessageSquare,
+            // Default prefs exist + reminders configured + missed call action set
+            completed: !!(
+              company?.default_email_enabled !== undefined &&
+              ((reminderSettingsCount || 0) > 0 || company?.callback_delay_seconds) &&
+              company?.missed_call_action
+            ),
           },
           {
-            id: 'app-url',
-            label: 'App URL',
-            completed: !!company?.public_app_url,
+            id: 'templates',
+            label: 'Templates',
+            icon: FileText,
+            // At least one email or SMS template
+            completed: (emailTemplatesCount || 0) > 0 || (smsTemplatesCount || 0) > 0,
           },
           {
-            id: 'reminders',
-            label: 'Reminders',
-            completed: (reminderSettingsCount || 0) > 0 || !!(company?.callback_delay_seconds),
+            id: 'campaigns-reviews',
+            label: 'Campaigns & Reviews',
+            icon: Megaphone,
+            // Campaign created OR review setting configured OR customer prefs set
+            completed: !!(
+              (campaignsCount || 0) > 0 ||
+              company?.review_request_enabled ||
+              company?.review_google_url ||
+              company?.customer_prefs_enabled === true ||
+              company?.customer_prefs_enabled === false
+            ),
           },
           {
-            id: 'missed-calls',
-            label: 'Missed Calls',
-            completed: !!company?.missed_call_action,
+            id: 'reports-alerts',
+            label: 'Reports & Alerts',
+            icon: BarChart3,
+            // Any digest OR any alert enabled
+            completed: !!(
+              company?.weekly_digest_enabled ||
+              company?.monthly_digest_enabled ||
+              company?.quarterly_digest_enabled ||
+              company?.cost_alert_enabled ||
+              company?.bounce_alert_enabled ||
+              company?.unsubscribe_alert_enabled
+            ),
           },
           {
-            id: 'default-prefs',
-            label: 'Default Prefs',
-            // Default prefs are always set (NOT NULL with defaults), so mark as complete if company exists
-            completed: company?.default_email_enabled !== undefined,
-          },
-          {
-            id: 'reports',
-            label: 'Reports',
-            completed: !!(company?.weekly_digest_enabled || company?.monthly_digest_enabled || company?.quarterly_digest_enabled),
-          },
-          {
-            id: 'alerts',
-            label: 'Alerts',
-            completed: !!(company?.cost_alert_enabled || company?.bounce_alert_enabled || company?.unsubscribe_alert_enabled),
-          },
-          {
-            id: 'customer-prefs',
-            label: 'Customer Prefs',
-            completed: company?.customer_prefs_enabled === true || company?.customer_prefs_enabled === false,
-          },
-          {
-            id: 'emails',
-            label: 'Email Templates',
-            completed: (emailTemplatesCount || 0) > 0,
-          },
-          {
-            id: 'sms',
-            label: 'SMS Templates',
-            completed: (smsTemplatesCount || 0) > 0,
-          },
-          {
-            id: 'reviews',
-            label: 'Reviews',
-            completed: !!(company?.review_request_enabled || company?.review_google_url),
-          },
-        ];
-
-        // Additional admin steps
-        const adminSteps: SetupStep[] = [
-          {
-            id: 'campaigns',
-            label: 'Campaigns',
-            // Check if any marketing campaigns have been created
-            completed: (campaignsCount || 0) > 0,
-          },
-          {
-            id: 'ask-aura',
+            id: 'voice',
             label: 'Ask Aura',
-            // Check if AI voice greeting has been configured
+            icon: Mic,
             completed: !!company?.ai_voice_greeting,
           },
           {
             id: 'system',
             label: 'System',
-            // Check if service categories have been configured
+            icon: HardDrive,
             completed: (company?.service_categories?.length || 0) > 0,
           },
         ];
 
-        setSteps([...baseSteps, ...adminSteps]);
+        setSteps(consolidated);
       } catch (error) {
         console.error('Error checking setup status:', error);
       } finally {
@@ -182,7 +155,7 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
         <div>
           <h3 className="text-sm font-semibold text-card-foreground">Setup Progress</h3>
           <p className="text-xs text-card-foreground/70">
-            {completedCount} of {steps.length} steps completed
+            {completedCount} of {steps.length} sections completed
           </p>
         </div>
         <span className="text-lg font-bold text-secondary">
@@ -193,24 +166,28 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
       <Progress value={progressPercent} className="h-2 bg-primary/40 [&>div]:bg-secondary" />
 
       <div className="flex flex-wrap gap-2">
-        {steps.map((step) => (
-          <div
-            key={step.id}
-            className={cn(
-              'flex items-center gap-1.5 text-xs rounded-full px-2.5 py-1 border transition-colors',
-              step.completed
-                ? 'bg-secondary/15 border-secondary/40 text-secondary'
-                : 'bg-transparent border-card-foreground/30 text-card-foreground/60'
-            )}
-          >
-            {step.completed ? (
-              <CheckCircle2 className="h-3.5 w-3.5" />
-            ) : (
-              <Circle className="h-3.5 w-3.5" />
-            )}
-            <span>{step.label}</span>
-          </div>
-        ))}
+        {steps.map((step) => {
+          const Icon = step.icon;
+          return (
+            <button
+              key={step.id}
+              onClick={() => setSearchParams({ tab: step.id })}
+              className={cn(
+                'flex items-center gap-1.5 text-xs rounded-full px-3 py-1.5 border transition-all hover:scale-105 cursor-pointer',
+                step.completed
+                  ? 'bg-secondary/15 border-secondary/40 text-secondary'
+                  : 'bg-transparent border-card-foreground/30 text-card-foreground/60 hover:border-primary/50 hover:text-card-foreground'
+              )}
+            >
+              {step.completed ? (
+                <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+              ) : (
+                <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+              )}
+              <span>{step.label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
