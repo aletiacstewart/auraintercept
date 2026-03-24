@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -20,20 +20,12 @@ const agentCategories = [{
   neonRgb: '0,229,255',
   agents: [{
     name: 'AI Receptionist',
-    description: 'First point of contact that classifies intent and routes to specialized agents',
+    description: '24/7 first contact — classifies intent, answers FAQs, and routes to the right operative',
     icon: Target
   }, {
-    name: 'Scheduling Agent',
-    description: 'Natural language appointment scheduling with calendar sync',
+    name: 'Customer Journey',
+    description: 'Unified booking + follow-up + review: calendar sync, SMS/email reminders, and Google/Yelp review collection',
     icon: Calendar
-  }, {
-    name: 'Follow-up Agent',
-    description: 'Automated reminders via email, SMS, and voice calls',
-    icon: Bell
-  }, {
-    name: 'Review Agent',
-    description: 'Collects feedback and manages multi-platform reviews',
-    icon: Star
   }]
 }, {
   id: 'field',
@@ -42,21 +34,13 @@ const agentCategories = [{
   color: 'from-green-500 to-emerald-500',
   neonRgb: '0,230,118',
   agents: [{
-    name: 'Dispatch Agent',
-    description: 'Smart job assignment based on skills and location',
+    name: 'Dispatch',
+    description: 'Smart job assignment by skills, proximity, and workload balancing',
     icon: Users
   }, {
-    name: 'Route Agent',
-    description: 'Real-time route optimization for maximum efficiency',
+    name: 'Field Navigation',
+    description: 'Unified route + ETA + check-in: traffic-aware routing, real-time arrival updates, and job progress logging',
     icon: Navigation
-  }, {
-    name: 'ETA Agent',
-    description: 'Accurate arrival time predictions with customer notifications',
-    icon: Clock
-  }, {
-    name: 'Check-in Agent',
-    description: 'Job status tracking with photo documentation',
-    icon: CheckCircle2
   }]
 }, {
   id: 'business',
@@ -65,21 +49,13 @@ const agentCategories = [{
   color: 'from-purple-500 to-violet-500',
   neonRgb: '168,85,247',
   agents: [{
-    name: 'Admin Agent',
-    description: 'User management, company settings, and access control',
+    name: 'Admin',
+    description: 'User management, company settings, multi-location support, and access control',
     icon: Lock
   }, {
-    name: 'Quoting Agent',
-    description: 'Dynamic pricing and instant quote generation',
-    icon: FileText
-  }, {
-    name: 'Invoice Agent',
-    description: 'Automated invoicing with payment tracking',
+    name: 'Business Finance',
+    description: 'Unified quoting + invoicing + inventory: estimates, payment tracking, stock alerts, and Stripe integration',
     icon: DollarSign
-  }, {
-    name: 'Inventory Agent',
-    description: 'Stock tracking, low stock alerts, and auto-reorder',
-    icon: Package
   }]
 }, {
   id: 'analytics',
@@ -88,21 +64,9 @@ const agentCategories = [{
   color: 'from-cyan-500 to-indigo-500',
   neonRgb: '99,102,241',
   agents: [{
-    name: 'Insights Agent',
-    description: 'Business intelligence with trends and anomaly detection',
+    name: 'Analytics Intelligence',
+    description: 'Unified insights + performance + revenue + forecast: natural language queries, KPI dashboards, and demand prediction',
     icon: TrendingUp
-  }, {
-    name: 'Performance Agent',
-    description: 'Team metrics, goals tracking, and optimization',
-    icon: BarChart3
-  }, {
-    name: 'Revenue Agent',
-    description: 'Revenue analysis and financial forecasting',
-    icon: DollarSign
-  }, {
-    name: 'Forecast Agent',
-    description: 'Demand, staffing, and resource predictions',
-    icon: Clock
   }]
 }, {
   id: 'marketing',
@@ -111,36 +75,9 @@ const agentCategories = [{
   color: 'from-orange-500 to-amber-500',
   neonRgb: '249,115,22',
   agents: [{
-    name: 'Campaign Agent',
-    description: 'Creates and schedules email and SMS marketing campaigns with performance analytics',
+    name: 'Outreach',
+    description: 'Unified campaign + lead + marketing: email/SMS campaigns, lead scoring, promo codes, referral tracking, and win-back targeting',
     icon: Megaphone
-  }, {
-    name: 'Lead Agent',
-    description: 'Qualifies and scores leads with automated follow-up sequences',
-    icon: UserPlus
-  }, {
-    name: 'Marketing Agent',
-    description: 'Manages customer segments, promo codes, and referral programs',
-    icon: Target
-  }]
-}, {
-  id: 'social',
-  name: 'Social Media Ops',
-  icon: Send,
-  color: 'from-pink-500 to-rose-500',
-  neonRgb: '236,72,153',
-  agents: [{
-    name: 'Social Media Agent',
-    description: 'AI-powered content creation for Facebook, Instagram, LinkedIn, TikTok, Google Business & SMS',
-    icon: Send
-  }, {
-    name: 'Social Media Scheduler',
-    description: 'Content queue and calendar management across 6 platforms. One-click Manual Bridge posting — copy & open platform composer',
-    icon: Calendar
-  }, {
-    name: 'Social Media Analytics',
-    description: 'Engagement metrics, reach analysis, and content performance tracking across all connected platforms',
-    icon: BarChart3
   }]
 }, {
   id: 'creative_web_presence',
@@ -149,12 +86,12 @@ const agentCategories = [{
   color: 'from-teal-500 to-cyan-500',
   neonRgb: '20,184,166',
   agents: [{
-    name: 'Creative Agent',
-    description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
+    name: 'Creative Content',
+    description: 'AI-powered multi-channel content for social (IG, FB, LinkedIn, TikTok, GMB), email, SMS, blog, and website copy',
     icon: Palette
   }, {
-    name: 'Web Presence Agent',
-    description: 'AI-powered website and blog management with SEO optimization',
+    name: 'Web Presence',
+    description: 'AI website builder, blog management, SEO scans, and auto-publishing with performance monitoring',
     icon: Globe
   }]
 }];
@@ -404,7 +341,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Operatives',
-  description: 'Enable 24 specialized AI operatives and configure your knowledge base for your business.',
+  description: 'Enable up to 10 consolidated AI operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -418,7 +355,7 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '24',
+  value: '10',
   label: 'AI Operatives'
 }, {
   value: '24/7',
@@ -580,7 +517,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Intelligence Network</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              24 Specialized AI Operatives
+              10 Consolidated AI Operatives
             </h2>
             <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
           </div>
@@ -804,7 +741,7 @@ export default function Index() {
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">18 AI Agents</span>
+                    <span className="text-xs">8 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -816,11 +753,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Dispatch & Route Optimization</span>
+                    <span className="text-xs">Dispatch & Field Navigation</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Quoting & Invoicing</span>
+                    <span className="text-xs">Business Finance Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -854,12 +791,12 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$24,970/year (Save $4,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">22 agents with basic business intelligence.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">9 operatives with full business intelligence.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">22 AI Agents</span>
+                    <span className="text-xs">9 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -871,7 +808,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Basic Analytics (Insights + Performance)</span>
+                    <span className="text-xs">Analytics Intelligence Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -905,12 +842,12 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$34,970/year (Save $6,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Full 24-agent suite with predictive analytics.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full 10-operative suite with predictive analytics.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">All 24 AI Agents</span>
+                    <span className="text-xs">All 10 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -918,7 +855,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Advanced Analytics (Revenue + Forecast)</span>
+                    <span className="text-xs text-amber-400">Analytics Intelligence (Full Suite)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -969,7 +906,7 @@ export default function Index() {
                 <div className="space-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">1 AI Agent (Triage)</span>
+                    <span className="text-xs">1 AI Operative (Triage)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
@@ -1026,7 +963,7 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">3 AI Agents</span>
+                    <span className="text-xs">2 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
@@ -1034,11 +971,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Booking Agent</span>
+                    <span className="text-xs">Customer Journey</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Follow-up Agent</span>
+                    <span className="text-xs">Review Collection</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
@@ -1087,7 +1024,7 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">11 AI Agents</span>
+                    <span className="text-xs">4 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
@@ -1095,7 +1032,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Marketing Stack</span>
+                    <span className="text-xs">Outreach Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
@@ -1103,7 +1040,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Review Agent</span>
+                    <span className="text-xs">Creative Content</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
@@ -1148,7 +1085,7 @@ export default function Index() {
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">12 AI Agents</span>
+                    <span className="text-xs">5 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
@@ -1156,11 +1093,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Web Presence Agent</span>
+                    <span className="text-xs">Web Presence Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Social Media Suite</span>
+                    <span className="text-xs">Creative Content Operative</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
