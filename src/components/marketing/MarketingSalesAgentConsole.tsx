@@ -44,7 +44,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('marketing');
+  const [lastAgent, setLastAgent] = useState<string>('outreach');
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
