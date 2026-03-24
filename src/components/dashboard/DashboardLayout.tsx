@@ -357,6 +357,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    <DashboardTutorialProvider>
     <div className="min-h-screen flex" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
       {/* Sidebar */}
       <aside
