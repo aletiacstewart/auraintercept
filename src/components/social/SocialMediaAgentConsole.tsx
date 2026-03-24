@@ -180,25 +180,10 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       }}
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
-      currentAgentId={
-        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'creative_content') :
-        showMyPosts ? 'content_engine' :
-        currentAgent || lastAgent
-      }
-      onAgentClick={(agentId) => {
-        const AGENT_TO_ACTION: Record<string, string> = {
-          creative_content: 'create-content',
-          brand_voice: 'create-content',
-          content_engine: 'my-posts',
-        };
-        const actionId = AGENT_TO_ACTION[agentId];
-        if (actionId) {
-          const action = QUICK_ACTIONS.find(a => a.id === actionId);
-          if (action) {
-            handleQuickAction(action.message, action.id);
-            if (agentId === 'brand_voice') setContentEngineTab('settings');
-          }
-        }
+      currentAgentId="creative_content"
+      onAgentClick={() => {
+        const action = QUICK_ACTIONS.find(a => a.id === 'create-content');
+        if (action) handleQuickAction(action.message, action.id);
       }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}

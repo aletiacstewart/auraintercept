@@ -260,27 +260,21 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       onHomeClick={handleHome}
       agents={BOPS_AGENTS}
       currentAgentId={
-        activeFormType === 'quote' ? 'quoting' :
-        activeFormType === 'invoice' ? 'invoicing' :
-        activeFormType === 'lead' ? 'leads' :
-        activeFormType === 'inventory' ? 'inventory' :
-        activeFormType === 'appointments' ? 'operations' :
-        activeFormType === 'companies' ? 'companies' :
-        activeFormType === 'employees' ? 'employees' :
-        activeFormType === 'customers' ? 'customers' :
-        activeFormType === 'aura-live' ? 'operations' :
+        activeFormType === 'quote' ? 'business_finance' :
+        activeFormType === 'invoice' ? 'business_finance' :
+        activeFormType === 'lead' ? 'business_finance' :
+        activeFormType === 'inventory' ? 'business_finance' :
+        activeFormType === 'appointments' ? 'admin' :
+        activeFormType === 'companies' ? 'admin' :
+        activeFormType === 'employees' ? 'admin' :
+        activeFormType === 'customers' ? 'admin' :
+        activeFormType === 'aura-live' ? 'admin' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_TAB: Record<string, string> = {
-          quoting: 'quote',
-          invoicing: 'invoice',
-          leads: 'lead',
-          operations: 'appointments',
-          inventory: 'inventory',
-          companies: 'companies',
-          employees: 'employees',
-          customers: 'customers',
+          business_finance: 'quote',
+          admin: 'appointments',
         };
         const tabId = AGENT_TO_TAB[agentId];
         if (tabId) {
