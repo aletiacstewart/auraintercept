@@ -47,7 +47,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('social_content');
+  const [lastAgent, setLastAgent] = useState<string>('creative_content');
   
   // Single visibility state
   const [showContentEngine, setShowContentEngine] = useState(false);
