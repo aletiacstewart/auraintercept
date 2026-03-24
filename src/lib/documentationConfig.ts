@@ -1,7 +1,7 @@
 /**
  * Master Documentation Configuration
  * Single source of truth for all platform data used across PDFs, Help pages, and guides.
- * Last updated: February 2026
+ * Last updated: March 2026 — Consolidated to 10 AI Operatives
  */
 
 // ============================================
@@ -48,7 +48,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'API Access',
     ],
     hasVoice: true,
-    hasAutomation: false,  // No automation consoles
+    hasAutomation: false,
   },
   aura_flow: {
     id: 'aura_flow',
@@ -58,15 +58,14 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 794,
     implementationFee: 399,
     employees: 3,
-    operatives: 3,  // triage, booking, followup
+    operatives: 2,  // triage + customer_journey
     consoles: 1,  // Customer Portal
     description: 'AI voice, chat, and scheduling with calendar sync.',
     bestFor: 'Service businesses needing automated booking with a customer portal.',
     highlights: [
       'AI Receptionist for 24/7 engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
-      'Scheduling Agent with calendar sync',
-      'Follow-up Agent (SMS + Email)',
+      'Customer Journey Agent (Scheduling + Follow-up + Review)',
       'Customer Portal Console',
       'Smart Link Sharing',
       'Knowledge Base for FAQs',
@@ -84,18 +83,17 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 1194,
     implementationFee: 499,
     employees: 5,
-    operatives: 11,  // Added review agent + marketing stack
+    operatives: 4,  // triage + customer_journey + outreach + creative_content
     consoles: 3,
     description: 'AI-automated for salons and wellness businesses.',
     bestFor: 'Nail salons, hair salons, barbers, massage centers, spas, and wellness businesses.',
     highlights: [
       'AI Receptionist for 24/7 customer engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
-      'Scheduling Agent + Follow-up Agent + Review Agent',
+      'Customer Journey Agent (Scheduling, Follow-up, Review)',
       'Customer Portal Console',
-      'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
-      'Social Media Ops (Content, Scheduler, Analytics agents)',
-      'Creative Agent for content generation',
+      'Outreach Agent (Campaign, Lead, Marketing)',
+      'Creative Content Agent (Social, Images, Video, Web copy)',
       'Designed specifically for beauty & wellness',
       'API Access',
     ],
@@ -110,17 +108,16 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 1594,
     implementationFee: 499,
     employees: 8,
-    operatives: 12,
+    operatives: 5,
     consoles: 4,
     description: 'AI-assisted digital foundation with marketing and web presence tools.',
     bestFor: 'Businesses wanting AI-ready tools with marketing automation and web presence.',
     highlights: [
       'AI Receptionist for 24/7 engagement',
       'Message Aura (Text)',
-      'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
-      'Social Media Ops (Content, Scheduler, Analytics agents)',
-      'Creative Agent for content generation',
-      'Web Presence Agent (AI-powered site)',
+      'Outreach Agent (Campaign, Lead, Marketing)',
+      'Creative Content Agent (Social, Images, Video)',
+      'Web Presence Agent (AI-powered site + SEO)',
       'Creative & Web Presence Console',
       '8 Employee Accounts',
       'API Access',
@@ -136,19 +133,17 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 2994,
     implementationFee: 499,
     employees: 15,
-    operatives: 18,  // Field operations stack
+    operatives: 8,  // Field operations stack
     consoles: 6,
     description: 'Complete field operations with dispatch, routing, and quoting.',
     bestFor: 'Service companies with field technicians needing dispatch automation.',
     highlights: [
-      'AI Receptionist + Scheduling Agent + Follow-up + Review agents',
+      'AI Receptionist + Customer Journey Agent',
       'Message Aura (Text) + Talk to Aura (Voice)',
       'Customer Portal Console',
-      'Field Operations Console (Dispatch, Route, ETA, Check-in)',
-      'Business Management Console (Quoting, Invoice)',
-      'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
-      'Social Media Ops (Content, Scheduler, Analytics agents)',
-      'Creative Agent + Web Presence Agent',
+      'Field Navigation Agent (Dispatch, Route, ETA, Check-in)',
+      'Business Finance Agent (Quoting, Invoice)',
+      'Outreach Agent + Creative Content Agent + Web Presence Agent',
       'AI Outbound Calls for reminders (requires SignalWire)',
       'Up to 15 employees',
       'API Access',
@@ -164,16 +159,16 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 4994,
     implementationFee: 499,
     employees: 25,
-    operatives: 22,  // 22 agents - basic analytics (excludes revenue, forecast)
+    operatives: 10,  // All 10 agents
     consoles: 7,  // All 7 consoles
-    description: 'Full business automation with basic analytics and intelligence.',
-    bestFor: 'Growing companies needing comprehensive automation and basic analytics.',
+    description: 'Full business automation with analytics and intelligence.',
+    bestFor: 'Growing companies needing comprehensive automation and analytics.',
     highlights: [
       'Everything in Logistics',
-      '22 AI Operatives (basic analytics)',
+      'All 10 AI Operatives',
       'All 7 Consoles',
-      'Business Operations console (Admin, Inventory)',
-      'Analytics & Reports (Insights, Performance metrics)',
+      'Admin Agent + Business Finance Agent (with Inventory)',
+      'Analytics Intelligence Agent (Insights, Performance, Revenue, Forecast)',
       'Smart dispatch and job assignment',
       'Real-time GPS routing and navigation',
       'Up to 25 employees',
@@ -190,16 +185,15 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 6994,
     implementationFee: 'Custom',
     employees: 50,
-    operatives: 24,  // Full 24-agent suite including revenue + forecast
-    consoles: 7,  // All 7 Control Centers (AI Operatives Hub is management interface, not a console)
-    description: 'Enterprise automation with full 24-operative suite and predictive analytics.',
+    operatives: 10,  // Full 10-agent suite
+    consoles: 7,  // All 7 Control Centers
+    description: 'Enterprise automation with full 10-operative suite and predictive analytics.',
     bestFor: 'Large service companies with 15+ technicians or multi-location operations.',
     highlights: [
-      'All 24 AI Operatives',
+      'All 10 AI Operatives',
       'All 7 Control Centers + AI Operatives Hub (Management Interface)',
       'Everything in Performance',
-      'Advanced Analytics (Revenue + Forecast agents)',
-      'Predictive intelligence and demand forecasting',
+      'Advanced Predictive Analytics & Demand Forecasting',
       'Multi-location support',
       'White-label branding',
       '50 Employee Accounts',
@@ -215,7 +209,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 export const TIER_ORDER = ['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
-// AI OPERATIVES - 24 TOTAL
+// AI OPERATIVES - 10 TOTAL (Consolidated)
 // ============================================
 
 export interface OperativeConfig {
@@ -230,251 +224,109 @@ export interface OperativeConfig {
 }
 
 export const AI_OPERATIVES: OperativeConfig[] = [
-  // Customer Portal Console - 4 agents
+  // Customer Portal Console - 2 agents
   {
     id: 'triage',
     name: 'AI Receptionist',
     description: 'First point of contact for all customers. Greets visitors, understands their needs, and routes them to the right agent or information.',
     console: 'customer_portal',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'express',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
   {
-    id: 'booking',
-    name: 'Scheduling Agent',
-    description: 'Books appointments by checking technician availability, confirming dates and times, and sending confirmation messages.',
+    id: 'customer_journey',
+    name: 'Customer Journey Agent',
+    description: 'End-to-end customer lifecycle management. Books appointments with calendar sync, sends SMS/email reminders, checks in after service completion, and collects Google/Yelp/Facebook reviews from satisfied customers.',
     console: 'customer_portal',
     tier: 'aura_flow',
     dependencies: ['triage'],
     isCore: false,
     worksAlone: false,
   },
-  {
-    id: 'followup',
-    name: 'Follow-up Agent',
-    description: 'Sends appointment reminders before service, follows up after completion, and handles confirmation requests.',
-    console: 'customer_portal',
-    tier: 'aura_flow',
-    dependencies: ['triage'],
-    isCore: false,
-    worksAlone: false,
-  },
-  {
-    id: 'review',
-    name: 'Review Agent',
-    description: 'Collects customer reviews after service completion. Directs satisfied customers to leave reviews on Google, Yelp, or Facebook.',
-    console: 'customer_portal',
-    tier: 'halo',  // Changed from single_point to halo
-    dependencies: ['followup'],
-    isCore: false,
-    worksAlone: false,
-  },
-  // Field Operations Console - 4 agents
+  // Field Operations Console - 2 agents
   {
     id: 'dispatch',
     name: 'Dispatch Agent',
     description: 'Assigns technicians to jobs based on skills, location, availability, and workload. Optimizes assignments for efficiency.',
     console: 'field_operations',
-    tier: 'multi_track',
+    tier: 'single_point',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
   {
-    id: 'route',
-    name: 'Route Agent',
-    description: 'Plans the best driving routes for technicians. Considers traffic, distance, and appointment times to minimize travel.',
+    id: 'field_navigation',
+    name: 'Field Navigation Agent',
+    description: 'End-to-end field mobility management. Plans traffic-aware driving routes, calculates and communicates real-time arrival times to customers, and tracks technician check-ins, job progress, and completion.',
     console: 'field_operations',
-    tier: 'multi_track',
+    tier: 'single_point',
     dependencies: ['dispatch'],
     isCore: false,
     worksAlone: false,
   },
-  {
-    id: 'eta',
-    name: 'ETA Agent',
-    description: 'Calculates and communicates arrival times to customers. Automatically updates estimates based on traffic and delays.',
-    console: 'field_operations',
-    tier: 'multi_track',
-    dependencies: ['dispatch', 'route'],
-    isCore: false,
-    worksAlone: false,
-  },
-  {
-    id: 'checkin',
-    name: 'Check-in Agent',
-    description: 'Tracks when technicians arrive at jobs and start work. Logs job progress and completion for accountability.',
-    console: 'field_operations',
-    tier: 'multi_track',
-    dependencies: ['dispatch'],
-    isCore: false,
-    worksAlone: false,
-  },
-  // Business Operations Console - 4 agents
+  // Business Operations Console - 2 agents
   {
     id: 'admin',
     name: 'Admin Agent',
     description: 'Handles general business administration tasks. Manages settings, user access, and administrative operations.',
     console: 'business_management',
-    tier: 'command',
-    dependencies: [],
-    isCore: true,
-    worksAlone: true,
-  },
-  {
-    id: 'quoting',
-    name: 'Quoting Agent',
-    description: 'Creates price quotes for customers based on service type, materials, and labor. Supports multi-line item quotes.',
-    console: 'business_management',
     tier: 'multi_track',
     dependencies: [],
-    isCore: false,
+    isCore: true,
     worksAlone: true,
   },
   {
-    id: 'invoice',
-    name: 'Invoice Agent',
-    description: 'Generates invoices from completed jobs or quotes. Tracks payment status and sends payment reminders.',
+    id: 'business_finance',
+    name: 'Business Finance Agent',
+    description: 'Full financial operations management. Creates multi-line price quotes, generates invoices and tracks payments via Stripe, and monitors parts/materials inventory with low-stock alerts and reorder management.',
     console: 'business_management',
-    tier: 'multi_track',
-    dependencies: ['quoting'],
-    isCore: false,
-    worksAlone: false,
-  },
-  {
-    id: 'inventory',
-    name: 'Inventory Agent',
-    description: 'Tracks parts, materials, and supplies. Alerts when stock is low and helps plan reorders.',
-    console: 'business_management',
-    tier: 'command',
+    tier: 'single_point',
     dependencies: [],
     isCore: false,
     worksAlone: true,
   },
-  // Outreach & Sales Console - 3 agents
+  // Outreach & Sales Console - 1 agent
   {
-    id: 'campaign',
-    name: 'Campaign Agent',
-    description: 'Creates and sends email/SMS campaigns. Manages campaign scheduling and performance analytics.',
+    id: 'outreach',
+    name: 'Outreach Agent',
+    description: 'Unified marketing and sales automation. Creates and sends email/SMS campaigns, qualifies and scores incoming leads with automated nurturing sequences, manages customer segments, promo codes, referral tracking, and win-back targeting.',
     console: 'marketing_sales',
-    tier: 'halo',  // Changed from express to halo
+    tier: 'halo',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
+  // Social Media / Creative Console - 2 agents
   {
-    id: 'lead',
-    name: 'Lead Agent',
-    description: 'Qualifies and scores incoming leads based on engagement. Automates follow-up sequences to move leads through the pipeline.',
-    console: 'marketing_sales',
-    tier: 'halo',  // Changed from express to halo
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  {
-    id: 'marketing',
-    name: 'Marketing Agent',
-    description: 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
-    console: 'marketing_sales',
-    tier: 'halo',  // Changed from express to halo
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  // Social Media Console - 3 agents
-  {
-    id: 'social_content',
-    name: 'Social Media Agent',
-    description: 'Creates posts for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
+    id: 'creative_content',
+    name: 'Creative Content Agent',
+    description: 'All-in-one creative studio. Generates platform-optimized social posts for Instagram, Facebook, LinkedIn, TikTok, Google Business, and SMS. Creates AI-generated images and video scripts, blog posts, email copy, website landing pages, and multi-channel content campaigns with consistent brand voice.',
     console: 'social_media',
-    tier: 'aura_flow',  // Changed from express to aura_flow
+    tier: 'halo',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
-  {
-    id: 'social_scheduler',
-    name: 'Social Media Scheduler',
-    description: 'Queues content for posting and manages the content calendar. Guides users through manual posting via copy-and-paste with platform deep links. Automatic direct publishing coming soon.',
-    console: 'social_media',
-    tier: 'aura_flow',  // Changed from express to aura_flow
-    dependencies: ['social_content'],
-    isCore: false,
-    worksAlone: false,
-  },
-  {
-    id: 'social_analytics',
-    name: 'Social Media Analytics',
-    description: 'Tracks engagement metrics across all social platforms. Provides insights on post performance and audience growth.',
-    console: 'social_media',
-    tier: 'aura_flow',  // Changed from express to aura_flow
-    dependencies: ['social_content'],
-    isCore: false,
-    worksAlone: false,
-  },
-  // Analytics Console - 4 agents
-  {
-    id: 'insights',
-    name: 'Insights Agent',
-    description: 'Provides natural language business queries. Answer questions about your business data conversationally.',
-    console: 'analytics_reports',
-    tier: 'command',
-    dependencies: [],
-    isCore: true,
-    worksAlone: true,
-  },
-  {
-    id: 'performance',
-    name: 'Performance Agent',
-    description: 'Tracks KPIs and operational metrics. Monitors technician performance, job completion rates, and efficiency.',
-    console: 'analytics_reports',
-    tier: 'command',
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  {
-    id: 'revenue',
-    name: 'Revenue Agent',
-    description: 'Analyzes financial trends and forecasts. Tracks revenue by service type, technician, and time period.',
-    console: 'analytics_reports',
-    tier: 'command',
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  {
-    id: 'forecast',
-    name: 'Forecast Agent',
-    description: 'Predicts demand and capacity needs. Helps plan staffing and inventory based on historical patterns.',
-    console: 'analytics_reports',
-    tier: 'command',
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  // Creative & Web Presence Console - 2 agents
-  {
-    id: 'creative',
-    name: 'Creative Agent',
-    description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing with consistent voice and messaging.',
-    console: 'creative_web_presence',
-    tier: 'aura_flow',  // Changed from express to aura_flow
-    dependencies: [],
-    isCore: true,
-    worksAlone: true,
-  },
-  // Web Presence Agent - Part of Creative & Web Presence
   {
     id: 'web_presence',
     name: 'Web Presence Agent',
     description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
     console: 'creative_web_presence',
-    tier: 'single_point',  // Changed from command to single_point
-    dependencies: ['creative'],
+    tier: 'core',
+    dependencies: ['creative_content'],
+    isCore: true,
+    worksAlone: true,
+  },
+  // Analytics Console - 1 agent
+  {
+    id: 'analytics_intelligence',
+    name: 'Analytics Intelligence Agent',
+    description: 'Unified business intelligence engine. Answers natural language queries, tracks KPIs and technician performance, analyzes revenue trends by service and period, and predicts future demand with capacity planning — all in one conversation.',
+    console: 'analytics_reports',
+    tier: 'multi_track',
+    dependencies: [],
     isCore: true,
     worksAlone: true,
   },
@@ -500,7 +352,7 @@ export const CONSOLES: ConsoleConfig[] = [
     name: 'Customer Portal',
     description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
     tier: 'aura_flow',
-    agentCount: 4,
+    agentCount: 2,
     tabs: ['AI Assistant', 'Services', 'Appointments', 'Voice AI', 'Contact', 'Hours'],
     color: 'blue',
   },
@@ -509,7 +361,7 @@ export const CONSOLES: ConsoleConfig[] = [
     name: 'Field Operations',
     description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
     tier: 'single_point',
-    agentCount: 4,
+    agentCount: 2,
     tabs: ['Map View', 'Schedule', 'Dispatch', 'Check-in'],
     color: 'green',
   },
@@ -518,25 +370,25 @@ export const CONSOLES: ConsoleConfig[] = [
     name: 'Business Operations',
     description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
     tier: 'single_point',
-    agentCount: 4,
+    agentCount: 2,
     tabs: ['Aura Live', 'Quote', 'Invoice', 'Lead', 'Appts', 'Inventory', 'Companies', 'Employees', 'Customers'],
     color: 'purple',
   },
   {
     id: 'marketing_sales',
     name: 'Outreach & Sales Ops',
-    description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
+    description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing — all in one Outreach Agent.',
     tier: 'halo',
-    agentCount: 3,
+    agentCount: 1,
     tabs: ['Campaign', 'Leads', 'Marketing'],
     color: 'orange',
   },
   {
     id: 'social_media',
     name: 'Social Media Ops',
-    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar. Uses Manual Bridge for guided posting. Own API credentials or automatic platform-level publishing coming soon.',
+    description: 'AI-powered creative studio for social media content creation across 6 platforms, AI image/video generation, and brand-consistent multi-channel content.',
     tier: 'halo',
-    agentCount: 3,
+    agentCount: 1,
     tabs: ['Home', 'Create Content', 'My Posts'],
     color: 'pink',
   },
@@ -552,9 +404,9 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'analytics_reports',
     name: 'Analytics & Reports',
-    description: 'Advanced analytics console with 8 specialized tabs for comprehensive business intelligence, forecasting, and multi-format report export.',
+    description: 'Advanced analytics console powered by a single Analytics Intelligence Agent covering performance, revenue, insights, and forecasting with 8 specialized tabs.',
     tier: 'multi_track',
-    agentCount: 4,
+    agentCount: 1,
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     color: 'cyan',
   },
@@ -565,9 +417,9 @@ export const MANAGEMENT_INTERFACES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management interface for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management interface for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     tier: 'command',
-    agentCount: 24,
+    agentCount: 10,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     color: 'indigo',
   },
@@ -618,21 +470,21 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'Google Calendar',
     purpose: 'Calendar Sync (Two-way)',
     cost: 'Free',
-    requiredFor: 'Connect+ (booking/scheduling agents)',
+    requiredFor: 'Connect+ (Customer Journey Agent)',
     optional: true,
   },
   {
     name: 'Stripe',
     purpose: 'Invoice Payments',
     cost: '2.9% + $0.30/transaction',
-    requiredFor: 'Logistics+ (invoicing)',
+    requiredFor: 'Logistics+ (Business Finance Agent)',
     optional: true,
   },
   {
     name: 'Social Media (Platform OAuth)',
-    purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting. Platform-level OAuth coming soon.',
+    purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting.',
     cost: 'Free (Manual Bridge) or Free (Own API setup)',
-    requiredFor: 'Growth+ (Social Media Ops)',
+    requiredFor: 'Growth+ (Social Media Ops — Creative Content Agent)',
     optional: true,
   },
   {
@@ -649,7 +501,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 // ============================================
 
 export const PLATFORM_STATS = {
-  totalOperatives: 24,
+  totalOperatives: 10,
   totalConsoles: 7,  // 7 Control Centers (AI Operatives Hub is a management interface, not counted)
   totalTiers: 7,
   startingPrice: 197,
@@ -667,7 +519,7 @@ export const ADDON_PRICING = {
   socialMedia: {
     name: 'Social Media',
     price: 150,
-    description: 'AI-powered content creation for 6 platforms',
+    description: 'AI-powered creative content for 6 platforms',
     availableFor: ['single_point', 'multi_track'],
   },
   webPresence: {
@@ -755,13 +607,10 @@ export function formatEmployees(employees: number | 'Unlimited'): string {
 export type IntegrationId = 'stripe' | 'signalwire' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar' | 'a2p_10dlc' | 'social_media';
 
 export interface IntegrationRequirement {
-  required: boolean; // true = auto-enabled + locked, false = optional (soft lock)
-  reason?: string; // Why it's required/optional
+  required: boolean;
+  reason?: string;
 }
 
-// Maps integration ID to tier requirements
-// 'required: true' = auto-enabled and cannot be disabled
-// 'required: false' = optional, user can enable if they want
 export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
   express: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
@@ -779,7 +628,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email follow-ups' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: true, reason: 'Required for Scheduling Agent calendar sync' },
+    calendar: { required: true, reason: 'Required for Customer Journey Agent calendar sync' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
     social_media: { required: false, reason: 'Not available on Connect tier' },
   },
@@ -799,12 +648,12 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: true, reason: 'Required for Scheduling Agent (inherits Connect+ agents)' },
+    calendar: { required: true, reason: 'Required for Scheduling (inherits Connect+ agents)' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
     social_media: { required: true, reason: 'Required for Social Media Ops (Presence tier)' },
   },
   single_point: {
-    stripe: { required: true, reason: 'Required for invoice payments' },
+    stripe: { required: true, reason: 'Required for Business Finance Agent invoice payments' },
     signalwire: { required: true, reason: 'Required for voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email reminders' },
