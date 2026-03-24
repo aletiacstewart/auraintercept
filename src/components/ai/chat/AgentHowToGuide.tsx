@@ -492,7 +492,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Business Operations Guides - Updated to match console features
+// Business Operations Guides — Business Finance + Admin Operatives
 const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   {
     id: 'aura-live',
@@ -510,115 +510,115 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   },
   {
     id: 'quote',
-    label: 'Quote',
+    label: 'Create Quote',
     icon: FileText,
     color: 'blue',
-    description: 'Generate professional quotes for customers',
+    description: 'Generate professional quotes — handled by Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote form' },
+      { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote manager' },
       { step: 2, title: 'Add Customer', description: 'Enter customer name and contact details' },
       { step: 3, title: 'Add Line Items', description: 'Select services, set quantities and pricing' },
-      { step: 4, title: 'Send Quote', description: 'Email or SMS the quote directly to customer' },
+      { step: 4, title: 'Send Quote', description: 'Email or SMS the quote directly to the customer' },
     ],
-    tips: ['Convert quotes to invoices with one click', 'Set validity period for time-sensitive offers']
+    tips: ['The Business Finance Operative covers quoting, invoicing, and inventory in one place', 'Convert quotes to invoices with one click']
   },
   {
     id: 'invoice',
-    label: 'Invoice',
+    label: 'Create Invoice',
     icon: Receipt,
     color: 'green',
-    description: 'Create and send invoices for services',
+    description: 'Create and send invoices with payment links — Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the form' },
+      { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the manager' },
       { step: 2, title: 'Select Customer', description: 'Choose existing customer or add new' },
       { step: 3, title: 'Add Services', description: 'List all services and parts provided' },
-      { step: 4, title: 'Send with Payment', description: 'Include Stripe payment link for instant pay' },
+      { step: 4, title: 'Send with Payment Link', description: 'Include Stripe payment link for instant pay' },
     ],
-    tips: ['Add payment links for faster collection', 'Set up recurring invoices for regulars']
+    tips: ['Add Stripe payment links for faster collection', 'Send invoice before leaving the job site for same-day payment']
   },
   {
     id: 'lead',
-    label: 'Lead',
+    label: 'Add Lead',
     icon: UserPlus,
     color: 'violet',
-    description: 'Add and track new sales leads',
+    description: 'Track new sales leads — managed by Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open lead form' },
-      { step: 2, title: 'Enter Details', description: 'Add lead name, contact, and source' },
+      { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open the lead form' },
+      { step: 2, title: 'Enter Details', description: 'Add lead name, contact info, and source' },
       { step: 3, title: 'Set Priority', description: 'Mark lead as hot, warm, or cold' },
-      { step: 4, title: 'Schedule Follow-up', description: 'Set reminder for initial contact' },
+      { step: 4, title: 'Schedule Follow-up', description: 'Set a reminder for initial contact' },
     ],
-    tips: ['Follow up within 24 hours for best conversion', 'Log all interactions for context']
-  },
-  {
-    id: 'appointments',
-    label: 'Appts',
-    icon: Calendar,
-    color: 'amber',
-    description: 'Manage appointments and scheduling',
-    steps: [
-      { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
-      { step: 2, title: 'View Schedule', description: 'See all upcoming appointments' },
-      { step: 3, title: 'Create New', description: 'Add new appointment with customer details and delivery type (virtual, in-person, or at-business)' },
-      { step: 4, title: 'Assign Staff', description: 'Assign available team member to the job' },
-    ],
-    tips: ['Check staff availability before booking', 'Send confirmation reminders automatically', 'Virtual appointments auto-generate a Google Meet link when staff accepts', 'Delivery type controls whether travel steps appear in Field Ops']
+    tips: ['Follow up within 24 hours for best conversion', 'Log all interactions to maintain context']
   },
   {
     id: 'inventory',
-    label: 'Inventory',
+    label: 'Manage Inventory',
     icon: Package,
     color: 'orange',
-    description: 'View and manage inventory levels',
+    description: 'View and manage inventory levels — Business Finance Operative',
     steps: [
       { step: 1, title: 'Click Inventory Tab', description: 'Open inventory management' },
       { step: 2, title: 'Search Items', description: 'Find parts by name or SKU' },
-      { step: 3, title: 'Check Stock', description: 'View quantity and reorder points' },
+      { step: 3, title: 'Check Stock', description: 'View quantity levels and reorder points' },
       { step: 4, title: 'Update Stock', description: 'Adjust quantities or add new items' },
     ],
-    tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job']
+    tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job for cost reporting']
+  },
+  {
+    id: 'appointments',
+    label: 'Manage Appointments',
+    icon: Calendar,
+    color: 'amber',
+    description: 'Create and manage appointments — handled by Admin Operative',
+    steps: [
+      { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
+      { step: 2, title: 'View Schedule', description: 'See all upcoming and past appointments' },
+      { step: 3, title: 'Create New', description: 'Add appointment with customer details and delivery type (virtual, in-person, or at-business)' },
+      { step: 4, title: 'Assign Staff', description: 'Assign an available team member to the job' },
+    ],
+    tips: ['The Admin Operative handles scheduling, staff, and operational settings', 'Virtual appointments auto-generate a Google Meet link when staff accepts', 'Delivery type controls whether travel steps appear in Field Ops']
   },
   {
     id: 'companies',
-    label: 'Companies',
+    label: 'Company Settings',
     icon: ClipboardList,
     color: 'indigo',
-    description: 'Manage company accounts and settings',
+    description: 'Manage company accounts — Admin Operative (Platform Admin only)',
     steps: [
-      { step: 1, title: 'Click Companies Tab', description: 'Open company management' },
-      { step: 2, title: 'View Company', description: 'See company details and configuration' },
-      { step: 3, title: 'Edit Settings', description: 'Update company information' },
-      { step: 4, title: 'Manage Branding', description: 'Configure logo and colors' },
+      { step: 1, title: 'Click Companies Tab', description: 'Open company management (Platform Admin only)' },
+      { step: 2, title: 'View Companies', description: 'See all company accounts on the platform' },
+      { step: 3, title: 'Edit Settings', description: 'Update company information and configuration' },
+      { step: 4, title: 'Manage Branding', description: 'Configure logo, colors, and public-facing details' },
     ],
-    tips: ['Keep company details current for invoices', 'Set up branding for professional quotes']
+    tips: ['Keep company details current for accurate invoices and quotes', 'Set branding for professional customer-facing documents']
   },
   {
     id: 'employees',
-    label: 'Employees',
+    label: 'Manage Team',
     icon: Users,
     color: 'teal',
-    description: 'Manage team members and assignments',
+    description: 'Add and manage team members — Admin Operative',
     steps: [
       { step: 1, title: 'Click Employees Tab', description: 'Open employee management' },
-      { step: 2, title: 'View Team', description: 'See all employees and their roles' },
-      { step: 3, title: 'Add Employee', description: 'Invite new team members' },
-      { step: 4, title: 'Set Permissions', description: 'Configure role and access levels' },
+      { step: 2, title: 'View Team', description: 'See all employees, roles, and status' },
+      { step: 3, title: 'Invite Employee', description: 'Add new team member with email invite' },
+      { step: 4, title: 'Set Role & Permissions', description: 'Configure access levels based on job type' },
     ],
-    tips: ['Assign appropriate roles for security', 'Set up employee availability schedules']
+    tips: ['Assign appropriate roles for data security', 'Set employee availability for smart scheduling']
   },
   {
     id: 'customers',
-    label: 'Customers',
+    label: 'Customer Profiles',
     icon: UserPlus,
     color: 'rose',
-    description: 'Manage customer profiles and history',
+    description: 'View and manage customer history — Admin Operative',
     steps: [
       { step: 1, title: 'Click Customers Tab', description: 'Open customer management' },
-      { step: 2, title: 'Search Customer', description: 'Find by name, email, or phone' },
-      { step: 3, title: 'View History', description: 'See service history and notes' },
-      { step: 4, title: 'Edit Profile', description: 'Update contact and preference info' },
+      { step: 2, title: 'Search Customer', description: 'Find by name, email, or phone number' },
+      { step: 3, title: 'View History', description: 'See full service history, notes, and preferences' },
+      { step: 4, title: 'Edit Profile', description: 'Update contact info and communication preferences' },
     ],
-    tips: ['Keep customer notes updated', 'Track communication preferences']
+    tips: ['Keep customer notes updated after each job', 'Track opt-out preferences to stay compliant']
   },
 ];
 
