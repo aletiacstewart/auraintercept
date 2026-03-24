@@ -26,6 +26,7 @@ import {
   Receipt, 
   Briefcase,
   UserPlus,
+  Users,
   Package,
   Calendar,
   Activity
