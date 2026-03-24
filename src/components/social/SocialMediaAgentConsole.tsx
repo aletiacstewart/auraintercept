@@ -157,9 +157,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const SOCIAL_AGENTS: CyberAgent[] = [
-    { id: 'creative_content', name: 'Creative Content', description: 'Generates social & creative content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
-    { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', metric1Value: sm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: sm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'content_engine', name: 'Content Engine', description: 'Multi-channel content creation', icon: Inbox, hsl: '189,100%,65%', status: 'standby', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Queued', metric2Value: sm?.customersReached ?? 0, metric2Label: 'Reached' },
+    { id: 'creative_content', name: 'Creative Content Agent', description: 'Social content, brand voice & multi-channel creation', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
   ];
 
   return (

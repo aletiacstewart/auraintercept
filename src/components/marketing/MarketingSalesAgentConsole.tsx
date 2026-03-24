@@ -14,11 +14,7 @@ import { CampaignForm } from './forms/CampaignForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { LeadForm } from './forms/LeadForm';
 import { getAgentStyle } from '@/lib/agentStyles';
-import { 
-  Megaphone, 
-  Users,
-  UserPlus,
-} from 'lucide-react';
+import { Megaphone } from 'lucide-react';
 
 // Quick actions for Marketing & Sales - 3 agents: Campaign, Lead, Marketing (Segments)
 const QUICK_ACTIONS = [

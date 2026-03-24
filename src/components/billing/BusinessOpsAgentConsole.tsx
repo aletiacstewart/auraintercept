@@ -233,9 +233,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const BOPS_AGENTS: CyberAgent[] = [
     { id: 'business_finance', name: 'Business Finance Agent', description: 'Quotes, invoices & inventory', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.invoicesPaid ?? 0, metric2Label: 'Invoices Paid' },
     { id: 'admin', name: 'Admin Agent', description: 'Scheduling, staff & operations', icon: Briefcase, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.apptsTotal ?? 0, metric1Label: 'Appts', metric2Value: m?.apptsConfirmed ?? 0, metric2Label: 'Confirmed' },
-    { id: 'companies', name: 'Companies Manager', description: 'Manages company accounts', icon: Building2, hsl: '189,100%,55%', status: 'standby', metric1Value: m?.companiesTotal ?? 0, metric1Label: 'Companies', metric2Value: m?.companiesActive ?? 0, metric2Label: 'Active' },
-    { id: 'employees', name: 'Employees Manager', description: 'Manages staff & roles', icon: UserCheck, hsl: '48,100%,60%', status: 'standby', metric1Value: m?.employeesTotal ?? 0, metric1Label: 'Staff', metric2Value: m?.employeesActive ?? 0, metric2Label: 'Active' },
-    { id: 'customers', name: 'Customers Manager', description: 'Customer profiles & history', icon: UsersRound, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: m?.customersNew ?? 0, metric2Label: 'New' },
   ];
 
   return (
