@@ -492,7 +492,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Business Operations Guides - Updated to match console features
+// Business Operations Guides — Business Finance + Admin Operatives
 const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   {
     id: 'aura-live',
@@ -510,263 +510,264 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   },
   {
     id: 'quote',
-    label: 'Quote',
+    label: 'Create Quote',
     icon: FileText,
     color: 'blue',
-    description: 'Generate professional quotes for customers',
+    description: 'Generate professional quotes — handled by Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote form' },
+      { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote manager' },
       { step: 2, title: 'Add Customer', description: 'Enter customer name and contact details' },
       { step: 3, title: 'Add Line Items', description: 'Select services, set quantities and pricing' },
-      { step: 4, title: 'Send Quote', description: 'Email or SMS the quote directly to customer' },
+      { step: 4, title: 'Send Quote', description: 'Email or SMS the quote directly to the customer' },
     ],
-    tips: ['Convert quotes to invoices with one click', 'Set validity period for time-sensitive offers']
+    tips: ['The Business Finance Operative covers quoting, invoicing, and inventory in one place', 'Convert quotes to invoices with one click']
   },
   {
     id: 'invoice',
-    label: 'Invoice',
+    label: 'Create Invoice',
     icon: Receipt,
     color: 'green',
-    description: 'Create and send invoices for services',
+    description: 'Create and send invoices with payment links — Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the form' },
+      { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the manager' },
       { step: 2, title: 'Select Customer', description: 'Choose existing customer or add new' },
       { step: 3, title: 'Add Services', description: 'List all services and parts provided' },
-      { step: 4, title: 'Send with Payment', description: 'Include Stripe payment link for instant pay' },
+      { step: 4, title: 'Send with Payment Link', description: 'Include Stripe payment link for instant pay' },
     ],
-    tips: ['Add payment links for faster collection', 'Set up recurring invoices for regulars']
+    tips: ['Add Stripe payment links for faster collection', 'Send invoice before leaving the job site for same-day payment']
   },
   {
     id: 'lead',
-    label: 'Lead',
+    label: 'Add Lead',
     icon: UserPlus,
     color: 'violet',
-    description: 'Add and track new sales leads',
+    description: 'Track new sales leads — managed by Business Finance Operative',
     steps: [
-      { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open lead form' },
-      { step: 2, title: 'Enter Details', description: 'Add lead name, contact, and source' },
+      { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open the lead form' },
+      { step: 2, title: 'Enter Details', description: 'Add lead name, contact info, and source' },
       { step: 3, title: 'Set Priority', description: 'Mark lead as hot, warm, or cold' },
-      { step: 4, title: 'Schedule Follow-up', description: 'Set reminder for initial contact' },
+      { step: 4, title: 'Schedule Follow-up', description: 'Set a reminder for initial contact' },
     ],
-    tips: ['Follow up within 24 hours for best conversion', 'Log all interactions for context']
-  },
-  {
-    id: 'appointments',
-    label: 'Appts',
-    icon: Calendar,
-    color: 'amber',
-    description: 'Manage appointments and scheduling',
-    steps: [
-      { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
-      { step: 2, title: 'View Schedule', description: 'See all upcoming appointments' },
-      { step: 3, title: 'Create New', description: 'Add new appointment with customer details and delivery type (virtual, in-person, or at-business)' },
-      { step: 4, title: 'Assign Staff', description: 'Assign available team member to the job' },
-    ],
-    tips: ['Check staff availability before booking', 'Send confirmation reminders automatically', 'Virtual appointments auto-generate a Google Meet link when staff accepts', 'Delivery type controls whether travel steps appear in Field Ops']
+    tips: ['Follow up within 24 hours for best conversion', 'Log all interactions to maintain context']
   },
   {
     id: 'inventory',
-    label: 'Inventory',
+    label: 'Manage Inventory',
     icon: Package,
     color: 'orange',
-    description: 'View and manage inventory levels',
+    description: 'View and manage inventory levels — Business Finance Operative',
     steps: [
       { step: 1, title: 'Click Inventory Tab', description: 'Open inventory management' },
       { step: 2, title: 'Search Items', description: 'Find parts by name or SKU' },
-      { step: 3, title: 'Check Stock', description: 'View quantity and reorder points' },
+      { step: 3, title: 'Check Stock', description: 'View quantity levels and reorder points' },
       { step: 4, title: 'Update Stock', description: 'Adjust quantities or add new items' },
     ],
-    tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job']
+    tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job for cost reporting']
+  },
+  {
+    id: 'appointments',
+    label: 'Manage Appointments',
+    icon: Calendar,
+    color: 'amber',
+    description: 'Create and manage appointments — handled by Admin Operative',
+    steps: [
+      { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
+      { step: 2, title: 'View Schedule', description: 'See all upcoming and past appointments' },
+      { step: 3, title: 'Create New', description: 'Add appointment with customer details and delivery type (virtual, in-person, or at-business)' },
+      { step: 4, title: 'Assign Staff', description: 'Assign an available team member to the job' },
+    ],
+    tips: ['The Admin Operative handles scheduling, staff, and operational settings', 'Virtual appointments auto-generate a Google Meet link when staff accepts', 'Delivery type controls whether travel steps appear in Field Ops']
   },
   {
     id: 'companies',
-    label: 'Companies',
+    label: 'Company Settings',
     icon: ClipboardList,
     color: 'indigo',
-    description: 'Manage company accounts and settings',
+    description: 'Manage company accounts — Admin Operative (Platform Admin only)',
     steps: [
-      { step: 1, title: 'Click Companies Tab', description: 'Open company management' },
-      { step: 2, title: 'View Company', description: 'See company details and configuration' },
-      { step: 3, title: 'Edit Settings', description: 'Update company information' },
-      { step: 4, title: 'Manage Branding', description: 'Configure logo and colors' },
+      { step: 1, title: 'Click Companies Tab', description: 'Open company management (Platform Admin only)' },
+      { step: 2, title: 'View Companies', description: 'See all company accounts on the platform' },
+      { step: 3, title: 'Edit Settings', description: 'Update company information and configuration' },
+      { step: 4, title: 'Manage Branding', description: 'Configure logo, colors, and public-facing details' },
     ],
-    tips: ['Keep company details current for invoices', 'Set up branding for professional quotes']
+    tips: ['Keep company details current for accurate invoices and quotes', 'Set branding for professional customer-facing documents']
   },
   {
     id: 'employees',
-    label: 'Employees',
+    label: 'Manage Team',
     icon: Users,
     color: 'teal',
-    description: 'Manage team members and assignments',
+    description: 'Add and manage team members — Admin Operative',
     steps: [
       { step: 1, title: 'Click Employees Tab', description: 'Open employee management' },
-      { step: 2, title: 'View Team', description: 'See all employees and their roles' },
-      { step: 3, title: 'Add Employee', description: 'Invite new team members' },
-      { step: 4, title: 'Set Permissions', description: 'Configure role and access levels' },
+      { step: 2, title: 'View Team', description: 'See all employees, roles, and status' },
+      { step: 3, title: 'Invite Employee', description: 'Add new team member with email invite' },
+      { step: 4, title: 'Set Role & Permissions', description: 'Configure access levels based on job type' },
     ],
-    tips: ['Assign appropriate roles for security', 'Set up employee availability schedules']
+    tips: ['Assign appropriate roles for data security', 'Set employee availability for smart scheduling']
   },
   {
     id: 'customers',
-    label: 'Customers',
+    label: 'Customer Profiles',
     icon: UserPlus,
     color: 'rose',
-    description: 'Manage customer profiles and history',
+    description: 'View and manage customer history — Admin Operative',
     steps: [
       { step: 1, title: 'Click Customers Tab', description: 'Open customer management' },
-      { step: 2, title: 'Search Customer', description: 'Find by name, email, or phone' },
-      { step: 3, title: 'View History', description: 'See service history and notes' },
-      { step: 4, title: 'Edit Profile', description: 'Update contact and preference info' },
+      { step: 2, title: 'Search Customer', description: 'Find by name, email, or phone number' },
+      { step: 3, title: 'View History', description: 'See full service history, notes, and preferences' },
+      { step: 4, title: 'Edit Profile', description: 'Update contact info and communication preferences' },
     ],
-    tips: ['Keep customer notes updated', 'Track communication preferences']
+    tips: ['Keep customer notes updated after each job', 'Track opt-out preferences to stay compliant']
   },
 ];
 
 
-// Marketing & Sales Guides
+// Outreach & Sales Ops Guides — Consolidated Outreach Operative
 const MARKETING_SALES_GUIDES: AgentGuide[] = [
   {
     id: 'campaign',
-    label: 'Promotional / Promo Code',
+    label: 'Create Campaign',
     icon: Tag,
     color: 'violet',
-    description: 'Create promotional campaigns with discount codes',
+    description: 'Launch email or SMS marketing campaigns',
     steps: [
-      { step: 1, title: 'Select Campaign Type', description: 'Choose Promotional / Promo Code from campaign types' },
-      { step: 2, title: 'Set Discount', description: 'Configure percentage or fixed amount discount' },
-      { step: 3, title: 'Define Rules', description: 'Set usage limits, expiration, and eligibility' },
-      { step: 4, title: 'Launch Campaign', description: 'Distribute via email, SMS, or direct share' },
+      { step: 1, title: 'Click Campaign Tab', description: 'Select Campaign from the quick actions at the top' },
+      { step: 2, title: 'Choose Campaign Type', description: 'Pick from Promotional, Win-Back, Seasonal, or Loyalty' },
+      { step: 3, title: 'Configure & Audience', description: 'Set message, discount, and target customer segment' },
+      { step: 4, title: 'Launch', description: 'Send immediately or schedule for a future date' },
     ],
-    tips: ['Track code usage for ROI', 'Create seasonal promotions for better engagement']
+    tips: ['The Outreach Operative handles campaign creation, lead scoring, and segmentation in one place', 'Track code usage for ROI after launch']
+  },
+  {
+    id: 'leads',
+    label: 'Manage Leads',
+    icon: UserPlus,
+    color: 'pink',
+    description: 'Add, score, and follow up on sales leads',
+    steps: [
+      { step: 1, title: 'Click Leads Tab', description: 'Select Leads from the quick actions' },
+      { step: 2, title: 'Add New Lead', description: 'Enter lead name, contact info, and source' },
+      { step: 3, title: 'Set Priority', description: 'Mark as hot, warm, or cold based on intent' },
+      { step: 4, title: 'Schedule Follow-up', description: 'Set a reminder for outreach within 24 hours' },
+    ],
+    tips: ['The Outreach Operative auto-scores leads from AI chat interactions', 'Follow up within 24 hours for best conversion rates']
   },
   {
     id: 'referral',
     label: 'Referral Program',
     icon: Gift,
-    color: 'pink',
-    description: 'Set up and manage customer referral rewards',
-    steps: [
-      { step: 1, title: 'Configure Rewards', description: 'Set referrer and referee incentives' },
-      { step: 2, title: 'Generate Links', description: 'Create unique referral codes and links' },
-      { step: 3, title: 'Track Referrals', description: 'Monitor conversions and pending rewards' },
-      { step: 4, title: 'Issue Rewards', description: 'Fulfill referral bonuses automatically or manually' },
-    ],
-    tips: ['Promote to satisfied customers after completed jobs', 'Offer compelling rewards that drive action']
-  },
-  {
-    id: 'winback',
-    label: 'Win-Back Campaign',
-    icon: TrendingUp,
     color: 'orange',
-    description: 'Re-engage inactive and lapsed customers',
+    description: 'Set up customer referral rewards and tracking',
     steps: [
-      { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive for 90+ days' },
-      { step: 2, title: 'Create Offer', description: 'Design compelling comeback incentive' },
-      { step: 3, title: 'Send Campaign', description: 'Reach out via email and SMS' },
-      { step: 4, title: 'Track Returns', description: 'Monitor re-engagement and conversion success' },
+      { step: 1, title: 'Open Referral Settings', description: 'Ask the Outreach AI to set up a referral program' },
+      { step: 2, title: 'Configure Rewards', description: 'Set referrer and referee incentives (cash, discount, gift)' },
+      { step: 3, title: 'Share Codes', description: 'Distribute unique referral links via email or SMS' },
+      { step: 4, title: 'Track & Fulfill', description: 'Monitor conversions and issue rewards automatically' },
     ],
-    tips: ['Personalize messaging based on past services', 'Offer limited-time incentives to create urgency']
-  },
-  {
-    id: 'seasonal',
-    label: 'Seasonal Campaign',
-    icon: Calendar,
-    color: 'amber',
-    description: 'Launch time-based seasonal promotions',
-    steps: [
-      { step: 1, title: 'Select Season/Event', description: 'Choose holiday, season, or special event' },
-      { step: 2, title: 'Create Themed Offer', description: 'Design seasonal discount or bundle' },
-      { step: 3, title: 'Set Campaign Window', description: 'Define start and end dates for the promotion' },
-      { step: 4, title: 'Schedule Launch', description: 'Automate campaign to go live at the right time' },
-    ],
-    tips: ['Plan campaigns 2-3 weeks ahead of season', 'Use themed messaging and visuals for impact']
-  },
-  {
-    id: 'loyalty',
-    label: 'Loyalty Program',
-    icon: Star,
-    color: 'yellow',
-    description: 'Reward repeat customers with loyalty benefits',
-    steps: [
-      { step: 1, title: 'Define Tiers', description: 'Create loyalty levels based on spend or visits' },
-      { step: 2, title: 'Set Rewards', description: 'Configure benefits for each loyalty tier' },
-      { step: 3, title: 'Enroll Customers', description: 'Add eligible customers to the program' },
-      { step: 4, title: 'Track & Reward', description: 'Monitor points earned and rewards redeemed' },
-    ],
-    tips: ['Communicate tier progress to motivate customers', 'Offer exclusive perks for top-tier members']
+    tips: ['Promote to satisfied customers after completed jobs', 'Offer compelling rewards to drive action']
   },
   {
     id: 'customers',
     label: 'Customer Segments',
     icon: Users,
     color: 'teal',
-    description: 'View and manage customer target groups',
+    description: 'View and target customer groups for campaigns',
     steps: [
-      { step: 1, title: 'View Segments', description: 'See predefined customer groups and filters' },
-      { step: 2, title: 'Create Custom', description: 'Build segments based on behavior criteria' },
-      { step: 3, title: 'Target Campaigns', description: 'Use segments for precise campaign targeting' },
+      { step: 1, title: 'Click Marketing Tab', description: 'Select Marketing from the quick actions' },
+      { step: 2, title: 'View Segments', description: 'See predefined groups: New, Returning, Lapsed, VIP' },
+      { step: 3, title: 'Create Custom Segment', description: 'Build filters based on spend, service, or behavior' },
+      { step: 4, title: 'Target Campaign', description: 'Link segment to a campaign for precise targeting' },
     ],
-    tips: ['Update segments regularly as customer data changes', 'Combine criteria for precision targeting']
+    tips: ['Segments update automatically as customer data changes', 'Combine multiple criteria for precision targeting']
+  },
+  {
+    id: 'winback',
+    label: 'Win-Back Campaign',
+    icon: TrendingUp,
+    color: 'amber',
+    description: 'Re-engage lapsed customers automatically',
+    steps: [
+      { step: 1, title: 'Ask Outreach AI', description: 'Type "Create a win-back campaign" in the chat' },
+      { step: 2, title: 'AI Identifies Lapsed', description: 'AI finds customers inactive for 90+ days' },
+      { step: 3, title: 'Set Offer', description: 'Define your comeback incentive or discount' },
+      { step: 4, title: 'Launch & Track', description: 'Send via email/SMS and monitor re-engagement' },
+    ],
+    tips: ['Personalize messaging based on past services', 'Urgency (limited-time offers) drives higher re-engagement']
   },
 ];
 
-// Social Media Ops Guides
+// Social Media Ops Guides — Consolidated Creative Content Operative
 const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
   {
-    id: 'create-post',
-    label: 'Create Post',
+    id: 'ai-chat',
+    label: 'Ask the AI',
+    icon: MessageSquare,
+    color: 'pink',
+    description: 'Chat with the Creative Content AI for ideas and copy',
+    steps: [
+      { step: 1, title: 'Start on Home Tab', description: 'The Home tab opens a direct chat with the Creative Content operative' },
+      { step: 2, title: 'Describe Your Goal', description: 'Say what you need: "Write a Facebook post about our spring sale"' },
+      { step: 3, title: 'Review AI Output', description: 'The AI generates platform-optimized content with hashtags' },
+      { step: 4, title: 'Copy & Use', description: 'Copy the text and post manually, or send to Create Content for scheduling' },
+    ],
+    tips: ['The Creative Content operative covers all 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, and X', 'Ask for variations — "Give me 3 versions of this post"']
+  },
+  {
+    id: 'create-content',
+    label: 'Create Content',
+    icon: Share2,
+    color: 'violet',
+    description: 'Use the multi-channel content generator and dashboard',
+    steps: [
+      { step: 1, title: 'Click Create Content Tab', description: 'Open the multi-channel content engine' },
+      { step: 2, title: 'Set Brand Voice', description: 'Go to Brand Voice settings to configure your tone and industry profile' },
+      { step: 3, title: 'Generate Content', description: 'Use the Generator tab to create content for all selected platforms at once' },
+      { step: 4, title: 'Review Dashboard & Calendar', description: 'Track history in Dashboard and plan ahead in the Calendar view' },
+    ],
+    tips: ['Set up your Brand Voice profile first for better AI output', 'Use the Calendar tab to plan a full month of content in one session']
+  },
+  {
+    id: 'my-posts',
+    label: 'My Posts',
     icon: FileText,
     color: 'blue',
-    description: 'Create new social media content for multiple platforms',
+    description: 'View and manage your saved drafts and published posts',
     steps: [
-      { step: 1, title: 'Click New Post', description: 'Open the post creation form from the navigation' },
-      { step: 2, title: 'Select Platforms', description: 'Choose which platforms to create content for (Instagram, Facebook, LinkedIn, etc.)' },
-      { step: 3, title: 'Write Content', description: 'Enter your message or use AI to generate platform-optimized content' },
-      { step: 4, title: 'Add Hashtags', description: 'Include relevant hashtags for better reach' },
+      { step: 1, title: 'Click My Posts Tab', description: 'Open the unified post feed' },
+      { step: 2, title: 'Filter by Status', description: 'Toggle between Pending drafts and Published posts' },
+      { step: 3, title: 'Review Drafts', description: 'Edit or approve AI-generated drafts before posting' },
+      { step: 4, title: 'Publish or Schedule', description: 'Post immediately or set a scheduled publish time' },
     ],
-    tips: ['Each platform has character limits - AI will optimize automatically', 'Upload images for better engagement']
+    tips: ['Drafts are created automatically when the AI generates content', 'Use the Manual Bridge: copy optimized content and paste directly into each platform app']
   },
   {
-    id: 'manage-drafts',
-    label: 'Manage Drafts',
-    icon: FileText,
-    color: 'indigo',
-    description: 'Review and edit pending social media drafts',
-    steps: [
-      { step: 1, title: 'Click Drafts', description: 'Open the drafts queue to see all pending content' },
-      { step: 2, title: 'Review Content', description: 'Check AI-generated content from job completions' },
-      { step: 3, title: 'Edit if Needed', description: 'Make any adjustments to messaging or hashtags' },
-      { step: 4, title: 'Approve & Publish', description: 'Approve content to publish immediately or schedule for later' },
-    ],
-    tips: ['Job completion photos automatically generate social content', 'Filter by platform to focus on specific channels']
-  },
-  {
-    id: 'schedule-posts',
-    label: 'Schedule Posts',
-    icon: Calendar,
+    id: 'brand-voice',
+    label: 'Brand Voice Setup',
+    icon: Star,
     color: 'amber',
-    description: 'Schedule content for optimal publishing times',
+    description: 'Configure your AI content profile for consistent branding',
     steps: [
-      { step: 1, title: 'Click Scheduled', description: 'View your scheduled posts queue' },
-      { step: 2, title: 'Set Date & Time', description: 'Choose when to publish each post' },
-      { step: 3, title: 'Select Timezone', description: 'Ensure correct timezone for your audience' },
-      { step: 4, title: 'Confirm Schedule', description: 'Posts will automatically publish at scheduled time' },
+      { step: 1, title: 'Open Create Content Tab', description: 'Click Create Content then select Brand Voice' },
+      { step: 2, title: 'Set Industry & Tone', description: 'Choose your industry and preferred tone (professional, friendly, bold, etc.)' },
+      { step: 3, title: 'Add Keywords', description: 'Enter brand keywords, services, and topics to feature' },
+      { step: 4, title: 'Save Profile', description: 'All future AI content will follow your brand guidelines' },
     ],
-    tips: ['Best times: Instagram 11am-1pm, LinkedIn 7-8am, Facebook 9am-12pm', 'Schedule posts ahead for consistent presence']
+    tips: ['Complete the Brand Voice setup before generating your first batch of content', 'Add avoid-topics to keep content on-brand']
   },
   {
     id: 'content-calendar',
     label: 'Content Calendar',
     icon: Calendar,
     color: 'teal',
-    description: 'View your content publishing calendar',
+    description: 'Plan and visualize your publishing schedule',
     steps: [
-      { step: 1, title: 'Click Calendar', description: 'Open the content calendar view' },
-      { step: 2, title: 'Navigate Months', description: 'Use arrows to view different months' },
-      { step: 3, title: 'View Day Details', description: 'Click any date to see scheduled and published content' },
+      { step: 1, title: 'Open Create Content Tab', description: 'Click Create Content then select Calendar' },
+      { step: 2, title: 'Navigate Months', description: 'Use arrows to browse past and future months' },
+      { step: 3, title: 'View Day Details', description: 'Click any date to see scheduled and published content for that day' },
       { step: 4, title: 'Track Activity', description: 'Blue dots = scheduled, green dots = published' },
     ],
-    tips: ['Plan content at least a week in advance', 'Maintain consistent posting frequency']
+    tips: ['Plan content at least a week in advance for consistent posting', 'Aim for 3–5 posts per week across all platforms']
   },
 ];
 
@@ -1031,14 +1032,14 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
 };
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
-  customer: 'How to use our AI agents',
-  fieldops: 'How to use Field Ops Console and App',
+  customer: 'How to use the Customer Portal',
+  fieldops: 'How to use Field Ops Console & App',
   businessops: 'How to use Business Mgt Ops Console',
   businessops_admin: 'How to use Business Mgt Ops Console',
-  marketing: 'How to use Outreach & Sales Ops AI',
-  analytics: 'How to use Analytics & Optimization AI',
-  dispatch: 'How to use Dispatch-Field Ops Console',
-  social: 'How to use Social Media Ops AI',
+  marketing: 'How to use Outreach & Sales Ops',
+  analytics: 'How to use Analytics Intelligence',
+  dispatch: 'How to use Dispatch & Field Ops',
+  social: 'How to use Social Media Ops',
   communication: 'Aura Communication Methods',
 };
 
