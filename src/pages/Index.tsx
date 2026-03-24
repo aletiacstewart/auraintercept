@@ -80,7 +80,17 @@ const agentCategories = [{
     icon: Megaphone
   }]
 }, {
-  id: 'creative_web_presence',
+  id: 'social_media',
+  name: 'Social Media Ops',
+  icon: Share2,
+  color: 'from-pink-500 to-rose-500',
+  neonRgb: '236,72,153',
+  agents: [{
+    name: 'Creative Content',
+    description: 'AI-powered multi-channel content for social (IG, FB, LinkedIn, TikTok, GMB), email, SMS, blog, and website copy',
+    icon: Share2
+  }]
+}, {
   name: 'Creative & Web Presence',
   icon: Palette,
   color: 'from-teal-500 to-cyan-500',
