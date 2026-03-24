@@ -1,113 +1,87 @@
 
-## Deep Audit Findings
+## Price Update: Performance $497 & Command $697
 
-### What's Working Well
-- `useMultiAgentChat` → `ai-agent-chat` edge function pipeline is live and functional
-- Real tool execution (check_availability, create_appointment, capture_lead, etc.) all hitting actual DB
-- Handoff logic in `useMultiAgentChat` fires a follow-up call to the new agent after handoff detection
-- Orchestrator (`ai-orchestrator`) processes events, context, handoffs, and event routing via `ai_agent_events`
-- All 6 consoles properly use `useMultiAgentChat` with the correct `initialAgent` per the 10-operative model
-- Agent configs (`ai_agent_configs`) stored/read from DB via `toggleAgent`
+Simple price change across all files. No structural changes — only price values updated.
 
----
+| Tier | Old Price | New Price | Old Annual | New Annual |
+|---|---|---|---|---|
+| Aura Performance | $2,497 | **$497** | $24,970 | **$4,970** |
+| Aura Command | $3,497 | **$697** | $34,970 | **$6,970** |
 
-### Issues Found — Grouped by Severity
-
-#### CRITICAL: Backend Agent Mapping Gaps
-
-**1. `outreach` agent has NO entry in `AGENT_PROMPTS` or `AGENT_TOOLS`**
-The `ai-agent-chat` function has these legacy agent IDs in `AGENT_PROMPTS`: `campaign`, `lead`, `marketing` — but the consoles now send `initialAgent: 'outreach'`. When the backend receives `agentType: 'outreach'`, it falls through to a generic fallback prompt and gets the default `handoff_to_agent`-only toolset. The Outreach Agent has no real prompt, no real tools.
-
-**Fix**: Add `outreach` to `AGENT_PROMPTS` (consolidating campaign + lead + marketing prompts) and add `outreach` to `AGENT_TOOLS` (all three legacy toolsets merged).
-
-**2. `field_navigation` agent has NO entry in `AGENT_PROMPTS` or `AGENT_TOOLS`**
-`FieldOpsAgentConsole` sends `initialAgent: 'field_navigation'`. Backend has `dispatch`, `route`, `eta`, `checkin` — but NOT `field_navigation`. Same fallback problem.
-
-**Fix**: Add `field_navigation` to `AGENT_PROMPTS` (consolidating dispatch + route + eta + checkin) and `AGENT_TOOLS`.
-
-**3. `business_finance` agent has NO dedicated `AGENT_TOOLS` entry**
-It falls through to the `admin` toolset which only has basic quote/invoice/inventory tools. `business_finance` should get the full `quoting` + `invoice` + `inventory` merged toolset.
-
-**Fix**: Add `business_finance` to `AGENT_TOOLS` mapping to the merged quoting+invoice+inventory tools.
-
-**4. `analytics_intelligence` agent uses wrong tool key**
-`AnalyticsAgentConsole` sends `initialAgent: 'analytics_intelligence'`. The tool lookup does `AGENT_TOOLS[agentType]` which yields nothing for `analytics_intelligence` (the key is `analytics`).
-
-**Fix**: Add a `analytics_intelligence` key to `AGENT_TOOLS` pointing to the analytics tools, OR add it to the toolKey remapping logic.
-
-**5. `creative_content` agent prompt exists but tools use legacy `social` toolKey**
-The console sends `creative_content` which gets the `social` tools via toolKey remapping — but that remapping only catches `social_content`, `social_scheduler`, `social_analytics`. `creative_content` is NOT in that list.
-
-**Fix**: Add `creative_content` to the toolKey remapping to point to `social` tools.
+Annual savings recalculate as: Performance saves $994/yr, Command saves $1,394/yr (based on 2 months free = 10x monthly).
 
 ---
 
-#### IMPORTANT: Orchestrator Agent Type Mismatch
+### Files to Update
 
-The `ai-orchestrator` `AGENT_TYPES` defines the 10 consolidated agents correctly, but `EVENT_ROUTING` still routes to legacy agent IDs like `dispatch`, `field_navigation`, etc. that may not match `ai_agent_configs` entries. Since `handleProcessPendingEvents` filters by `enabledAgents` from the DB, any event targeting `dispatch` won't fire unless a company has explicitly enabled an `ai_agent_config` with `agent_type: 'dispatch'`.
+**1. `src/lib/documentationConfig.ts`**
+- `multi_track` (Performance): price 2497→497, annualPrice 24970→4970, annualSavings 4994→994
+- `command`: price 3497→697, annualPrice 34970→6970, annualSavings 6994→1394
 
-**Fix**: Add legacy→consolidated name normalization in the orchestrator's `handleEmitEvent` to ensure events route to the correct agent type that matches configs.
+**2. `src/lib/subscriptionAgentConfig.ts`**
+- `performance`: price string `'$2,497/mo'` → `'$497/mo'`
+- `command`: price string `'$3,497/mo'` → `'$697/mo'`
 
----
+**3. `src/components/agents/AgentRequirementCalculator.tsx`**
+- `TIER_PRICES`: performance 2497→497, command 3497→697
 
-#### CONSISTENCY: `AGENT_PROMPTS` Has Duplicate/Stale Entries
+**4. `src/pages/Subscription.tsx`**
+- `TIERS` array: `multi_track` monthlyPrice `$2,497`→`$497`, annualPrice `$24,970`→`$4,970`, annualSavings `Save $4,994`→`Save $994`
+- `command` monthlyPrice `$3,497`→`$697`, annualPrice `$34,970`→`$6,970`, annualSavings `Save $6,994`→`Save $1,394`
+- Pricing section `sections` array: performance column `$2,497`→`$497`, command `$3,497`→`$697`
+- Annual row: performance `$24,970`→`$4,970`, command `$34,970`→`$6,970`
+- Annual savings row: performance `Save $4,994`→`Save $994`, command `Save $6,994`→`Save $1,394`
+- FAQ text at line ~862: update price references
+- `TIER_EMPLOYEE_LIMITS` stays the same (not price-related)
 
-The function has both `creative_content` (correct 10-operative) AND `creative` (legacy duplicate) with nearly identical content. Similarly `analytics` and `analytics_intelligence` coexist. The `admin` prompt describes "business operations" but is mapped to admin-level tasks — which is correct for the 10-operative model but the description says "generates quotes" which is `business_finance`'s job.
+**5. `src/pages/Auth.tsx`**
+- Tier picker: `multi_track` price `'$2,497'`→`'$497'`, `command` price `'$3,497'`→`'$697'`
 
-**Fix**: Clean up duplicate prompts (`creative` → redirect to `creative_content`, `analytics` → redirect to `analytics_intelligence`). Clarify `admin` prompt to focus on scheduling/team/customers only.
+**6. `supabase/functions/create-checkout/index.ts`**
+- `performance`: price 249700→49700, comment `$2,497`→`$497`
+- `command`: price 349700→69700, comment `$3,497`→`$697`
+- `multi_track` alias: price 249700→49700
 
----
+**7. `supabase/functions/check-subscription/index.ts`**
+- Update comments: `$2,497/month`→`$497/month`, `$3,497/month`→`$697/month`
 
-#### SAVE FEATURES: Social Content Drafts Save Correctly
-The `create_social_post` tool correctly saves to `social_content_drafts` with `source: 'ai_chat'` — this is working. The `SocialFeedQueue` component in the "My Posts" tab also reads from this table. This is functional.
+**8. `supabase/functions/landing-chat/index.ts`**
+- System prompt: update `Aura Performance ($2,497/mo)`→`($497/mo)`, `Aura Command ($3,497/mo)`→`($697/mo)`
 
----
+**9. `src/pages/PlatformGuides.tsx`**
+- Update price strings for Performance and Command
 
-#### UI CONSISTENCY: `SocialMediaAgentConsole` placeholder text
+**10. `src/components/documentation/PlatformFAQPDF.tsx`**
+- Update FAQ answer mentioning old prices
 
-The `FloatingInput` has `placeholder="Ask about posts, scheduling..."` — "scheduling" should be removed per prior directive to remove scheduling references from non-admin pages. Should say `"Ask about content, captions, platforms..."`.
+**11. `src/components/landing/PricingComparisonTable.tsx`**
+- Update performance and command columns in pricing section
 
----
+**12. `src/pages/DemoAccounts.tsx`**
+- Performance price `$2,497/mo`→`$497/mo`, Command `$3,497/mo`→`$697/mo`
 
-### Implementation Plan
+**13. `src/pages/TermsOfService.tsx`**
+- Update price range mention from `$3,497` → `$697`
 
-**File: `supabase/functions/ai-agent-chat/index.ts`** — The main fix. All 5 backend mapping gaps are in this one file.
+**14. `src/components/documentation/BrandAssetGuidePDF.tsx`**
+- Update color swatch usage labels for Performance and Command
 
-1. **Add `outreach` to `AGENT_PROMPTS`**: Consolidate the `campaign` + `lead` + `marketing` prompts into a single unified Outreach Agent prompt covering all three domains with cross-domain handoff instructions.
+**15. `src/pages/AIAgentGuide.tsx`**
+- Update command cost references from `$3,497` → `$697`
 
-2. **Add `field_navigation` to `AGENT_PROMPTS`**: Consolidate `dispatch` + `route` + `eta` + `checkin` prompts into one Field Navigation Operative prompt covering all field workflow stages.
+**16. `src/components/documentation/SalesPitchDataPDF.tsx`**
+- Update any Performance/Command price references
 
-3. **Add `outreach` to `AGENT_TOOLS`**: Merge `campaign` tools + lead management tools + `marketing` tools + social tools into one `outreach` toolset.
+**17. `supabase/functions/ai-agent-chat/index.ts`**
+- Update comments referencing `$2,497/mo` and `$3,497/mo`
 
-4. **Add `field_navigation` to `AGENT_TOOLS`**: Merge `dispatch` + `route` + `eta` + `checkin` tools into one `field_navigation` toolset.
+**18. `src/pages/Help.tsx`**
+- Update price reference for Command tier
 
-5. **Add `business_finance` to `AGENT_TOOLS`**: Merge `quoting` + `invoice` + `inventory` toolsets.
+**19. `src/pages/ExportDocumentation.tsx`**
+- Update page description mentioning old prices
 
-6. **Add `analytics_intelligence` to `AGENT_TOOLS`**: Alias to the `analytics` toolset.
+**20. `src/components/smartwebsite/VisitorLimitModal.tsx`**
+- Command price `$3,497/mo`→`$697/mo`
 
-7. **Fix `toolKey` remapping**: Add `creative_content`, `outreach`, `field_navigation`, `business_finance`, `analytics_intelligence` to the toolKey resolution map.
-
-8. **Clean up duplicate prompts**: Remove `creative` and `analytics` duplicate entries (or have them delegate to the canonical 10-operative names).
-
-9. **Fix `admin` prompt**: Scope it correctly to scheduling, staff management, customer profiles only (not quoting — that belongs to `business_finance`).
-
-**File: `src/components/social/SocialMediaAgentConsole.tsx`**
-- Change `placeholder="Ask about posts, scheduling..."` → `placeholder="Ask about content, captions, platforms..."`
-
-**File: `supabase/functions/ai-orchestrator/index.ts`**
-- Add a `LEGACY_TO_OPERATIVE_MAP` that normalizes legacy agent IDs to their 10-operative equivalents when routing events, ensuring DB config lookups work correctly.
-
----
-
-### Files to Edit
-1. `supabase/functions/ai-agent-chat/index.ts` (primary — 7 changes)
-2. `supabase/functions/ai-orchestrator/index.ts` (1 change — agent normalization)
-3. `src/components/social/SocialMediaAgentConsole.tsx` (1 change — placeholder)
-
-### What Does NOT Need Changing
-- All 6 console components — already correctly sending the right `initialAgent` per the 10-operative model
-- `useMultiAgentChat` — handoff, history, and save logic all working
-- `useAIAgentOrchestrator` — toggle/save/subscribe all functional
-- `AgentHowToGuide` — already updated per previous work
-- `tutorialSteps.ts` — already updated per previous work
-- Tool execution logic (the `executeAgentTool` switch block) — tools execute correctly when called, the issue is just that the wrong toolsets are assigned to the 10-operative agent IDs
+**Note on Stripe**: The existing Stripe price IDs (`price_1T02XqJ9fo9y8fGHMDDvQxR3` for Performance, `price_1T02YAJ9fo9y8fGHJ7Q7g4Cq` for Command) are linked to old amounts in Stripe. New price IDs will need to be created in Stripe at $497 and $697 and swapped in `create-checkout` and `check-subscription`. The plan will add placeholder comments noting this, and the old price IDs will remain as legacy fallbacks.
