@@ -906,7 +906,7 @@ export default function Index() {
                 <div className="space-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">1 AI Agent (Triage)</span>
+                    <span className="text-xs">1 AI Operative (Triage)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
