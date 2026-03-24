@@ -89,7 +89,12 @@ const demoAccounts = [
     price: '$497/mo',
     companyAdmin: 'companyperformance@demo.com',
     employee: 'employeeperformance@demo.com',
-...
+    customer: 'customerperformance@demo.com',
+    businessType: 'Plumbing',
+    agents: 22,
+    consoles: 7,
+  },
+  {
     tier: 'Aura Command',
     tierColor: 'bg-emerald-500/20 text-emerald-600',
     price: '$697/mo',
