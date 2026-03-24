@@ -113,50 +113,38 @@ const PHASE_LABELS: Record<number, string> = {
   5: 'Phase 5',
 };
 
-// Map job types to agent types they can access
+// Map job types to agent types they can access (10 consolidated operatives)
 const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
-  technician: ['dispatch', 'route', 'eta', 'checkin', 'inventory'],
-  booking_agent: ['triage', 'booking', 'followup', 'review'],
-  dispatch: ['dispatch', 'route', 'eta', 'triage'],
-  customer_service: ['triage', 'followup', 'review', 'booking'],
-  manager: ['triage', 'followup', 'review', 'booking', 'insights', 'performance', 'revenue', 'forecast'], // Includes analytics
-  billing: ['quoting', 'invoice'],
-  marketing: ['campaign', 'lead', 'marketing', 'creative_content', 'web_presence'],
-  analytics: ['insights', 'performance', 'revenue', 'forecast'], // Analytics role
-  inventory: ['inventory'],
+  technician: ['dispatch', 'field_navigation', 'business_finance'],
+  booking_agent: ['triage', 'customer_journey'],
+  dispatch: ['dispatch', 'field_navigation', 'triage'],
+  customer_service: ['triage', 'customer_journey'],
+  manager: ['triage', 'customer_journey', 'analytics_intelligence'],
+  billing: ['business_finance'],
+  marketing: ['outreach', 'creative_content', 'web_presence'],
+  analytics: ['analytics_intelligence'],
+  inventory: ['business_finance'],
 };
 
-// Agent name mapping for display
-// 21 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
+// Agent name mapping for display — 10 Consolidated Operatives
 const AGENT_NAMES: Record<string, string> = {
-  // Customer Portal (4)
+  // Customer Portal (2)
   triage: 'AI Receptionist',
-  booking: 'Scheduling Agent',
-  followup: 'Follow-up Agent',
-  review: 'Review Agent',
-  // Field Operations (4)
+  customer_journey: 'Customer Journey Agent',
+  // Field Operations (2)
   dispatch: 'Dispatch Agent',
-  route: 'Route Agent',
-  eta: 'ETA Agent',
-  checkin: 'Check-in Agent',
-  // Business Operations (4)
+  field_navigation: 'Field Navigation Agent',
+  // Business Operations (2)
   admin: 'Admin Agent',
-  quoting: 'Quoting Agent',
-  invoice: 'Invoice Agent',
-  inventory: 'Inventory Agent',
-  // Marketing & Sales (3)
-  campaign: 'Campaign Agent',
-  lead: 'Lead Agent',
-  marketing: 'Marketing Agent',
-  // Social Media & Creative (1 merged)
+  business_finance: 'Business Finance Agent',
+  // Outreach & Sales (1)
+  outreach: 'Outreach Agent',
+  // Social Media & Creative (1)
   creative_content: 'Creative Content Agent',
-  // Analytics & Reports (4)
-  insights: 'Insights Agent',
-  performance: 'Performance Agent',
-  revenue: 'Revenue Agent',
-  forecast: 'Forecast Agent',
-  // Web Presence (1)
+  // Creative & Web Presence (1)
   web_presence: 'Web Presence Agent',
+  // Analytics & Reports (1)
+  analytics_intelligence: 'Analytics Intelligence Agent',
 };
 
 export default function AIAgentsHub() {
