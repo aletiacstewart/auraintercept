@@ -61,7 +61,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Complete field operations with dispatch, routing, quoting, and invoicing',
   },
   performance: {
-    // Aura Performance ($2,497/mo): All 10 operatives
+    // Aura Performance ($497/mo): All 10 operatives
     agents: [
       'triage', 'customer_journey',              // Customer Portal (2)
       'dispatch', 'field_navigation',            // Field Operations (2)
@@ -72,7 +72,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports'],
     label: 'Aura Performance',
-    price: '$2,497/mo',
+    price: '$497/mo',
     description: 'Full business automation with all 10 AI operatives and analytics intelligence',
   },
   command: {
