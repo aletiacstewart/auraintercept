@@ -168,8 +168,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const MARKETING_AGENTS: CyberAgent[] = [
-    { id: 'marketing', name: 'Campaign Manager', description: 'Creates & manages campaigns', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'leads', name: 'Lead Generator', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
+    { id: 'outreach', name: 'Outreach Agent', description: 'Campaigns, leads & marketing', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
+    { id: 'leads_manager', name: 'Lead Manager', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
     { id: 'audience', name: 'Audience Analyst', description: 'Segments & targets audiences', icon: Users, hsl: '38,100%,65%', status: 'standby', metric1Value: mm?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Segments' },
   ];
 
