@@ -623,150 +623,151 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
 ];
 
 
-// Marketing & Sales Guides
+// Outreach & Sales Ops Guides — Consolidated Outreach Operative
 const MARKETING_SALES_GUIDES: AgentGuide[] = [
   {
     id: 'campaign',
-    label: 'Promotional / Promo Code',
+    label: 'Create Campaign',
     icon: Tag,
     color: 'violet',
-    description: 'Create promotional campaigns with discount codes',
+    description: 'Launch email or SMS marketing campaigns',
     steps: [
-      { step: 1, title: 'Select Campaign Type', description: 'Choose Promotional / Promo Code from campaign types' },
-      { step: 2, title: 'Set Discount', description: 'Configure percentage or fixed amount discount' },
-      { step: 3, title: 'Define Rules', description: 'Set usage limits, expiration, and eligibility' },
-      { step: 4, title: 'Launch Campaign', description: 'Distribute via email, SMS, or direct share' },
+      { step: 1, title: 'Click Campaign Tab', description: 'Select Campaign from the quick actions at the top' },
+      { step: 2, title: 'Choose Campaign Type', description: 'Pick from Promotional, Win-Back, Seasonal, or Loyalty' },
+      { step: 3, title: 'Configure & Audience', description: 'Set message, discount, and target customer segment' },
+      { step: 4, title: 'Launch', description: 'Send immediately or schedule for a future date' },
     ],
-    tips: ['Track code usage for ROI', 'Create seasonal promotions for better engagement']
+    tips: ['The Outreach Operative handles campaign creation, lead scoring, and segmentation in one place', 'Track code usage for ROI after launch']
+  },
+  {
+    id: 'leads',
+    label: 'Manage Leads',
+    icon: UserPlus,
+    color: 'pink',
+    description: 'Add, score, and follow up on sales leads',
+    steps: [
+      { step: 1, title: 'Click Leads Tab', description: 'Select Leads from the quick actions' },
+      { step: 2, title: 'Add New Lead', description: 'Enter lead name, contact info, and source' },
+      { step: 3, title: 'Set Priority', description: 'Mark as hot, warm, or cold based on intent' },
+      { step: 4, title: 'Schedule Follow-up', description: 'Set a reminder for outreach within 24 hours' },
+    ],
+    tips: ['The Outreach Operative auto-scores leads from AI chat interactions', 'Follow up within 24 hours for best conversion rates']
   },
   {
     id: 'referral',
     label: 'Referral Program',
     icon: Gift,
-    color: 'pink',
-    description: 'Set up and manage customer referral rewards',
-    steps: [
-      { step: 1, title: 'Configure Rewards', description: 'Set referrer and referee incentives' },
-      { step: 2, title: 'Generate Links', description: 'Create unique referral codes and links' },
-      { step: 3, title: 'Track Referrals', description: 'Monitor conversions and pending rewards' },
-      { step: 4, title: 'Issue Rewards', description: 'Fulfill referral bonuses automatically or manually' },
-    ],
-    tips: ['Promote to satisfied customers after completed jobs', 'Offer compelling rewards that drive action']
-  },
-  {
-    id: 'winback',
-    label: 'Win-Back Campaign',
-    icon: TrendingUp,
     color: 'orange',
-    description: 'Re-engage inactive and lapsed customers',
+    description: 'Set up customer referral rewards and tracking',
     steps: [
-      { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive for 90+ days' },
-      { step: 2, title: 'Create Offer', description: 'Design compelling comeback incentive' },
-      { step: 3, title: 'Send Campaign', description: 'Reach out via email and SMS' },
-      { step: 4, title: 'Track Returns', description: 'Monitor re-engagement and conversion success' },
+      { step: 1, title: 'Open Referral Settings', description: 'Ask the Outreach AI to set up a referral program' },
+      { step: 2, title: 'Configure Rewards', description: 'Set referrer and referee incentives (cash, discount, gift)' },
+      { step: 3, title: 'Share Codes', description: 'Distribute unique referral links via email or SMS' },
+      { step: 4, title: 'Track & Fulfill', description: 'Monitor conversions and issue rewards automatically' },
     ],
-    tips: ['Personalize messaging based on past services', 'Offer limited-time incentives to create urgency']
-  },
-  {
-    id: 'seasonal',
-    label: 'Seasonal Campaign',
-    icon: Calendar,
-    color: 'amber',
-    description: 'Launch time-based seasonal promotions',
-    steps: [
-      { step: 1, title: 'Select Season/Event', description: 'Choose holiday, season, or special event' },
-      { step: 2, title: 'Create Themed Offer', description: 'Design seasonal discount or bundle' },
-      { step: 3, title: 'Set Campaign Window', description: 'Define start and end dates for the promotion' },
-      { step: 4, title: 'Schedule Launch', description: 'Automate campaign to go live at the right time' },
-    ],
-    tips: ['Plan campaigns 2-3 weeks ahead of season', 'Use themed messaging and visuals for impact']
-  },
-  {
-    id: 'loyalty',
-    label: 'Loyalty Program',
-    icon: Star,
-    color: 'yellow',
-    description: 'Reward repeat customers with loyalty benefits',
-    steps: [
-      { step: 1, title: 'Define Tiers', description: 'Create loyalty levels based on spend or visits' },
-      { step: 2, title: 'Set Rewards', description: 'Configure benefits for each loyalty tier' },
-      { step: 3, title: 'Enroll Customers', description: 'Add eligible customers to the program' },
-      { step: 4, title: 'Track & Reward', description: 'Monitor points earned and rewards redeemed' },
-    ],
-    tips: ['Communicate tier progress to motivate customers', 'Offer exclusive perks for top-tier members']
+    tips: ['Promote to satisfied customers after completed jobs', 'Offer compelling rewards to drive action']
   },
   {
     id: 'customers',
     label: 'Customer Segments',
     icon: Users,
     color: 'teal',
-    description: 'View and manage customer target groups',
+    description: 'View and target customer groups for campaigns',
     steps: [
-      { step: 1, title: 'View Segments', description: 'See predefined customer groups and filters' },
-      { step: 2, title: 'Create Custom', description: 'Build segments based on behavior criteria' },
-      { step: 3, title: 'Target Campaigns', description: 'Use segments for precise campaign targeting' },
+      { step: 1, title: 'Click Marketing Tab', description: 'Select Marketing from the quick actions' },
+      { step: 2, title: 'View Segments', description: 'See predefined groups: New, Returning, Lapsed, VIP' },
+      { step: 3, title: 'Create Custom Segment', description: 'Build filters based on spend, service, or behavior' },
+      { step: 4, title: 'Target Campaign', description: 'Link segment to a campaign for precise targeting' },
     ],
-    tips: ['Update segments regularly as customer data changes', 'Combine criteria for precision targeting']
+    tips: ['Segments update automatically as customer data changes', 'Combine multiple criteria for precision targeting']
+  },
+  {
+    id: 'winback',
+    label: 'Win-Back Campaign',
+    icon: TrendingUp,
+    color: 'amber',
+    description: 'Re-engage lapsed customers automatically',
+    steps: [
+      { step: 1, title: 'Ask Outreach AI', description: 'Type "Create a win-back campaign" in the chat' },
+      { step: 2, title: 'AI Identifies Lapsed', description: 'AI finds customers inactive for 90+ days' },
+      { step: 3, title: 'Set Offer', description: 'Define your comeback incentive or discount' },
+      { step: 4, title: 'Launch & Track', description: 'Send via email/SMS and monitor re-engagement' },
+    ],
+    tips: ['Personalize messaging based on past services', 'Urgency (limited-time offers) drives higher re-engagement']
   },
 ];
 
-// Social Media Ops Guides
+// Social Media Ops Guides — Consolidated Creative Content Operative
 const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
   {
-    id: 'create-post',
-    label: 'Create Post',
+    id: 'ai-chat',
+    label: 'Ask the AI',
+    icon: MessageSquare,
+    color: 'pink',
+    description: 'Chat with the Creative Content AI for ideas and copy',
+    steps: [
+      { step: 1, title: 'Start on Home Tab', description: 'The Home tab opens a direct chat with the Creative Content operative' },
+      { step: 2, title: 'Describe Your Goal', description: 'Say what you need: "Write a Facebook post about our spring sale"' },
+      { step: 3, title: 'Review AI Output', description: 'The AI generates platform-optimized content with hashtags' },
+      { step: 4, title: 'Copy & Use', description: 'Copy the text and post manually, or send to Create Content for scheduling' },
+    ],
+    tips: ['The Creative Content operative covers all 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, and X', 'Ask for variations — "Give me 3 versions of this post"']
+  },
+  {
+    id: 'create-content',
+    label: 'Create Content',
+    icon: Share2,
+    color: 'violet',
+    description: 'Use the multi-channel content generator and dashboard',
+    steps: [
+      { step: 1, title: 'Click Create Content Tab', description: 'Open the multi-channel content engine' },
+      { step: 2, title: 'Set Brand Voice', description: 'Go to Brand Voice settings to configure your tone and industry profile' },
+      { step: 3, title: 'Generate Content', description: 'Use the Generator tab to create content for all selected platforms at once' },
+      { step: 4, title: 'Review Dashboard & Calendar', description: 'Track history in Dashboard and plan ahead in the Calendar view' },
+    ],
+    tips: ['Set up your Brand Voice profile first for better AI output', 'Use the Calendar tab to plan a full month of content in one session']
+  },
+  {
+    id: 'my-posts',
+    label: 'My Posts',
     icon: FileText,
     color: 'blue',
-    description: 'Create new social media content for multiple platforms',
+    description: 'View and manage your saved drafts and published posts',
     steps: [
-      { step: 1, title: 'Click New Post', description: 'Open the post creation form from the navigation' },
-      { step: 2, title: 'Select Platforms', description: 'Choose which platforms to create content for (Instagram, Facebook, LinkedIn, etc.)' },
-      { step: 3, title: 'Write Content', description: 'Enter your message or use AI to generate platform-optimized content' },
-      { step: 4, title: 'Add Hashtags', description: 'Include relevant hashtags for better reach' },
+      { step: 1, title: 'Click My Posts Tab', description: 'Open the unified post feed' },
+      { step: 2, title: 'Filter by Status', description: 'Toggle between Pending drafts and Published posts' },
+      { step: 3, title: 'Review Drafts', description: 'Edit or approve AI-generated drafts before posting' },
+      { step: 4, title: 'Publish or Schedule', description: 'Post immediately or set a scheduled publish time' },
     ],
-    tips: ['Each platform has character limits - AI will optimize automatically', 'Upload images for better engagement']
+    tips: ['Drafts are created automatically when the AI generates content', 'Use the Manual Bridge: copy optimized content and paste directly into each platform app']
   },
   {
-    id: 'manage-drafts',
-    label: 'Manage Drafts',
-    icon: FileText,
-    color: 'indigo',
-    description: 'Review and edit pending social media drafts',
-    steps: [
-      { step: 1, title: 'Click Drafts', description: 'Open the drafts queue to see all pending content' },
-      { step: 2, title: 'Review Content', description: 'Check AI-generated content from job completions' },
-      { step: 3, title: 'Edit if Needed', description: 'Make any adjustments to messaging or hashtags' },
-      { step: 4, title: 'Approve & Publish', description: 'Approve content to publish immediately or schedule for later' },
-    ],
-    tips: ['Job completion photos automatically generate social content', 'Filter by platform to focus on specific channels']
-  },
-  {
-    id: 'schedule-posts',
-    label: 'Schedule Posts',
-    icon: Calendar,
+    id: 'brand-voice',
+    label: 'Brand Voice Setup',
+    icon: Star,
     color: 'amber',
-    description: 'Schedule content for optimal publishing times',
+    description: 'Configure your AI content profile for consistent branding',
     steps: [
-      { step: 1, title: 'Click Scheduled', description: 'View your scheduled posts queue' },
-      { step: 2, title: 'Set Date & Time', description: 'Choose when to publish each post' },
-      { step: 3, title: 'Select Timezone', description: 'Ensure correct timezone for your audience' },
-      { step: 4, title: 'Confirm Schedule', description: 'Posts will automatically publish at scheduled time' },
+      { step: 1, title: 'Open Create Content Tab', description: 'Click Create Content then select Brand Voice' },
+      { step: 2, title: 'Set Industry & Tone', description: 'Choose your industry and preferred tone (professional, friendly, bold, etc.)' },
+      { step: 3, title: 'Add Keywords', description: 'Enter brand keywords, services, and topics to feature' },
+      { step: 4, title: 'Save Profile', description: 'All future AI content will follow your brand guidelines' },
     ],
-    tips: ['Best times: Instagram 11am-1pm, LinkedIn 7-8am, Facebook 9am-12pm', 'Schedule posts ahead for consistent presence']
+    tips: ['Complete the Brand Voice setup before generating your first batch of content', 'Add avoid-topics to keep content on-brand']
   },
   {
     id: 'content-calendar',
     label: 'Content Calendar',
     icon: Calendar,
     color: 'teal',
-    description: 'View your content publishing calendar',
+    description: 'Plan and visualize your publishing schedule',
     steps: [
-      { step: 1, title: 'Click Calendar', description: 'Open the content calendar view' },
-      { step: 2, title: 'Navigate Months', description: 'Use arrows to view different months' },
-      { step: 3, title: 'View Day Details', description: 'Click any date to see scheduled and published content' },
+      { step: 1, title: 'Open Create Content Tab', description: 'Click Create Content then select Calendar' },
+      { step: 2, title: 'Navigate Months', description: 'Use arrows to browse past and future months' },
+      { step: 3, title: 'View Day Details', description: 'Click any date to see scheduled and published content for that day' },
       { step: 4, title: 'Track Activity', description: 'Blue dots = scheduled, green dots = published' },
     ],
-    tips: ['Plan content at least a week in advance', 'Maintain consistent posting frequency']
+    tips: ['Plan content at least a week in advance for consistent posting', 'Aim for 3–5 posts per week across all platforms']
   },
 ];
 
