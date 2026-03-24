@@ -256,9 +256,9 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   }
 
   const ANALYTICS_AGENTS: CyberAgent[] = [
-    { id: 'analytics', name: 'Performance Analyst', description: 'Reports & KPI tracking', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
-    { id: 'revenue', name: 'Revenue Analyst', description: 'Revenue & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
-    { id: 'insights', name: 'Insight Engine', description: 'Trends & customer insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
+    { id: 'analytics_intelligence', name: 'Analytics Intelligence Agent', description: 'Performance, revenue & forecasting', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
+    { id: 'analytics_revenue', name: 'Revenue Analysis', description: 'Revenue trends & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
+    { id: 'analytics_insights', name: 'Insight Engine', description: 'Customer trends & business insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
   ];
 
   return (
