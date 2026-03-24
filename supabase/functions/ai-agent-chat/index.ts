@@ -3310,7 +3310,7 @@ serve(async (req) => {
     }
     
     // Internal agents that serve company admins, not customers
-    const INTERNAL_AGENTS = ['admin', 'inventory', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics'];
+    const INTERNAL_AGENTS = ['admin', 'inventory', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'outreach', 'field_navigation', 'business_finance', 'analytics_intelligence', 'creative_content', 'web_presence'];
     const isInternalAgent = isInternalRequest || INTERNAL_AGENTS.includes(agentType);
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
