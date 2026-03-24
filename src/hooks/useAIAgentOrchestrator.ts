@@ -44,7 +44,7 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 24 total agents across 8 categories
+// Default agent definitions - 21 total agents across 8 categories
 // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Portal (Phases 1-4) - 4 agents
@@ -66,18 +66,15 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
   { type: 'lead', name: 'Lead Agent', category: 'marketing_sales', phase: 2, is_enabled: false, settings: {} },
   { type: 'marketing', name: 'Marketing Agent', category: 'marketing_sales', phase: 3, is_enabled: false, settings: {} },
-  // Social Media (Phases 1-3) - 3 agents
-  { type: 'social_content', name: 'Social Media Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
-  { type: 'social_scheduler', name: 'Social Media Scheduler', category: 'social_media', phase: 2, is_enabled: false, settings: {} },
-  { type: 'social_analytics', name: 'Social Media Analytics', category: 'social_media', phase: 3, is_enabled: false, settings: {} },
+  // Social Media & Creative (Phase 1) - 1 merged agent
+  { type: 'creative_content', name: 'Creative Content Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
+  // Creative & Web Presence (Phases 1-2) - 1 agent (creative_content shared above)
+  { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
   // Analytics & Reports (Phases 1-4) - 4 agents
   { type: 'insights', name: 'Insights Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
   { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
   { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
-  // Creative & Web Presence (Phases 1-2) - 2 agents
-  { type: 'creative', name: 'Creative Agent', category: 'creative_web_presence', phase: 1, is_enabled: false, settings: {} },
-  { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {

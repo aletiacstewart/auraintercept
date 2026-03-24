@@ -47,7 +47,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('social_content');
+  const [lastAgent, setLastAgent] = useState<string>('creative_content');
   
   // Single visibility state
   const [showContentEngine, setShowContentEngine] = useState(false);
@@ -72,7 +72,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'social_content',
+    initialAgent: 'creative_content',
     onAgentChange: (agent) => {
       setLastAgent(agent);
     },
@@ -128,7 +128,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('social_content');
+    setLastAgent('creative_content');
   };
 
   const isShowingForm = showContentEngine || showMyPosts;
@@ -157,9 +157,9 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const SOCIAL_AGENTS: CyberAgent[] = [
-    { id: 'social_content', name: 'Content Creator', description: 'Generates social content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
+    { id: 'creative_content', name: 'Creative Content', description: 'Generates social & creative content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
     { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', metric1Value: sm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: sm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'scheduler', name: 'Post Scheduler', description: 'Plans & queues posts', icon: Inbox, hsl: '189,100%,65%', status: 'standby', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Queued', metric2Value: sm?.customersReached ?? 0, metric2Label: 'Reached' },
+    { id: 'content_engine', name: 'Content Engine', description: 'Multi-channel content creation', icon: Inbox, hsl: '189,100%,65%', status: 'standby', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Queued', metric2Value: sm?.customersReached ?? 0, metric2Label: 'Reached' },
   ];
 
   return (
@@ -183,15 +183,15 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
       currentAgentId={
-        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'social_content') :
-        showMyPosts ? 'scheduler' :
+        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'creative_content') :
+        showMyPosts ? 'content_engine' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          social_content: 'create-content',
+          creative_content: 'create-content',
           brand_voice: 'create-content',
-          scheduler: 'my-posts',
+          content_engine: 'my-posts',
         };
         const actionId = AGENT_TO_ACTION[agentId];
         if (actionId) {

@@ -46,8 +46,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative',  // Creative Agent
+      'creative_content',  // Social Media & Creative (merged)
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media'],  // 3 consoles
     label: 'Aura Growth',
@@ -59,8 +58,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative', 'web_presence',  // Creative & Web Presence
+      'creative_content', 'web_presence',  // Creative & Web Presence (merged creative + social)
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],  // 4 consoles
     label: 'Aura Presence',
@@ -72,8 +70,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'campaign', 'lead', 'marketing',  // Outreach & Sales
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative', 'web_presence',  // Creative & Web Presence
+      'creative_content', 'web_presence',  // Creative & Web Presence
       'dispatch', 'route', 'eta', 'checkin',  // Field Operations
       'quoting', 'invoice',  // Business Operations (partial)
     ],
@@ -84,15 +81,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   },
   performance: {
     // Aura Performance ($2,497/mo): + Business Intelligence Stack (Basic Analytics)
-    // 22 agents - excludes revenue and forecast (advanced analytics for Command only)
+    // 19 agents - excludes revenue and forecast (advanced analytics for Command only)
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal (4)
       'dispatch', 'route', 'eta', 'checkin',  // Field Operations (4)
       'admin', 'quoting', 'invoice', 'inventory',  // Business Operations (4)
       'campaign', 'lead', 'marketing',  // Outreach & Sales (3)
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media (3)
+      'creative_content', 'web_presence',  // Social Media & Creative / Web Presence (2)
       'insights', 'performance',  // Analytics & Reports - Basic (2) - NO revenue, forecast
-      'creative', 'web_presence',  // Creative & Web Presence (2)
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports'],  // All 7 consoles
     label: 'Aura Performance',
@@ -102,7 +98,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   command: {
     // Aura Command ($3,497/mo): All agents + enterprise features
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-    // 24 Total Agents - Full suite including advanced analytics (revenue, forecast)
+    // 21 Total Agents - Full suite including advanced analytics (revenue, forecast)
     agents: [
       // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
@@ -112,12 +108,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'admin', 'quoting', 'invoice', 'inventory',
       // Marketing & Sales (3)
       'campaign', 'lead', 'marketing',
-      // Social Media (3)
-      'social_content', 'social_scheduler', 'social_analytics',
+      // Social Media & Creative (1 merged)
+      'creative_content',
+      // Creative & Web Presence (1)
+      'web_presence',
       // Analytics & Reports (4) - FULL including revenue + forecast
       'insights', 'performance', 'revenue', 'forecast',
-      // Creative & Web Presence (2)
-      'creative', 'web_presence',
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Command',
@@ -142,10 +138,8 @@ export const AGENT_DEPENDENCIES: Record<string, string[]> = {
   invoice: ['quoting'],
   // Marketing & Sales
   marketing: ['campaign'],
-  // Social Media & Web Presence
-  social_scheduler: ['social_content'],
-  social_analytics: ['social_content'],
-  web_presence: ['creative'],
+  // Creative & Web Presence
+  web_presence: ['creative_content'],
   // Analytics
   performance: ['insights'],
   revenue: ['insights'],
@@ -158,8 +152,8 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   field_operations: ['dispatch'],
   business_management: ['admin', 'quoting'],
   marketing_sales: ['campaign'],
-  social_media: ['social_content'],  // social_content is the core agent for this console
-  creative_web_presence: ['creative'],
+  social_media: ['creative_content'],  // creative_content is the core agent for this console
+  creative_web_presence: ['creative_content'],
   analytics_reports: ['insights'],
   ai_operatives_hub: [],
 };

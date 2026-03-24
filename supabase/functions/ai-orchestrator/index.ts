@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Agent types and their capabilities — 24 total operatives
+// Agent types and their capabilities — 21 total operatives
 const AGENT_TYPES = {
   // Customer Portal (4 agents)
   triage: { name: 'AI Receptionist', category: 'customer_portal', phase: 1 },
@@ -31,13 +31,10 @@ const AGENT_TYPES = {
   lead: { name: 'Lead Agent', category: 'marketing_sales', phase: 4 },
   marketing: { name: 'Marketing Agent', category: 'marketing_sales', phase: 4 },
   
-  // Social Media (3 agents)
-  social_content: { name: 'Social Media Agent', category: 'social_media', phase: 4 },
-  social_scheduler: { name: 'Social Media Scheduler', category: 'social_media', phase: 4 },
-  social_analytics: { name: 'Social Media Analytics', category: 'social_media', phase: 4 },
+  // Social Media & Creative (1 agent — merged)
+  creative_content: { name: 'Creative Content Agent', category: 'social_media', phase: 4 },
   
-  // Creative & Web Presence (2 agents)
-  creative: { name: 'Creative Agent', category: 'creative_web_presence', phase: 4 },
+  // Web Presence (1 agent)
   web_presence: { name: 'Web Presence Agent', category: 'creative_web_presence', phase: 4 },
   
   // Analytics & Insights (4 agents)
@@ -70,15 +67,14 @@ const EVENT_ROUTING: Record<string, string[]> = {
   'campaign_created': ['lead', 'marketing'],
   'lead_qualified': ['campaign', 'booking', 'marketing'],
   'lead_scored': ['campaign', 'marketing', 'booking'],
-  // Social Media events
-  'content_generated': ['social_scheduler', 'social_analytics'],
-  'post_scheduled': ['social_analytics'],
-  'post_published': ['social_analytics', 'performance', 'insights'],
-  'content_published': ['social_analytics', 'web_presence'],
+  // Social Media & Creative Content events
+  'content_generated': ['web_presence'],
+  'post_published': ['performance', 'insights'],
+  'content_published': ['web_presence'],
   // Creative & Web Presence events
-  'blog_published': ['web_presence', 'social_content'],
+  'blog_published': ['web_presence', 'creative_content'],
   'seo_scan_complete': ['web_presence', 'performance'],
-  'content_engine_output': ['social_content', 'campaign', 'web_presence'],
+  'content_engine_output': ['creative_content', 'campaign', 'web_presence'],
   // New business lifecycle events
   'invoice_paid': ['followup', 'revenue', 'campaign'],
 };

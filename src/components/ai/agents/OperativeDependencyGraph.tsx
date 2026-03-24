@@ -12,8 +12,6 @@ import {
   BarChart3,
   Share2,
   ChevronDown,
-  Globe,
-  Palette,
   Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -65,10 +63,7 @@ const AGENT_DISPLAY_NAMES: Record<string, string> = {
   campaign: 'Campaign',
   lead: 'Lead',
   marketing: 'Marketing',
-  social_content: 'Content',
-  social_scheduler: 'Scheduler',
-  social_analytics: 'Analytics',
-  creative: 'Creative',
+  creative_content: 'Creative Content',
   web_presence: 'Web Presence',
   insights: 'Insights',
   performance: 'Performance',
@@ -97,12 +92,9 @@ const DEPENDENCY_MAP: Record<string, string[]> = {
   campaign: [],
   lead: [],
   marketing: ['campaign'],
-  // Social Media & Web Presence
-  social_content: [],
-  social_scheduler: ['social_content'],
-  social_analytics: ['social_content'],
-  creative: [],
-  web_presence: ['creative'],
+  // Social Media & Creative (merged)
+  creative_content: [],
+  web_presence: ['creative_content'],
   // Analytics
   insights: [],
   performance: ['insights'],
@@ -145,12 +137,12 @@ const FLOW_CONFIGS: FlowConfig[] = [
     agents: ['campaign', 'lead', 'marketing'],
   },
   {
-    id: 'social_media',
-    title: 'Social Media Flow',
+    id: 'social_creative',
+    title: 'Social & Creative Flow',
     icon: Share2,
     color: 'text-pink-500',
     bgColor: 'bg-pink-500/10',
-    agents: ['social_content', 'social_scheduler', 'social_analytics'],
+    agents: ['creative_content', 'web_presence'],
   },
   {
     id: 'analytics',
@@ -159,22 +151,6 @@ const FLOW_CONFIGS: FlowConfig[] = [
     color: 'text-cyan-500',
     bgColor: 'bg-cyan-500/10',
     agents: ['insights', 'performance', 'revenue', 'forecast'],
-  },
-  {
-    id: 'content_engine',
-    title: 'Content Engine',
-    icon: Palette,
-    color: 'text-violet-500',
-    bgColor: 'bg-violet-500/10',
-    agents: ['creative'],
-  },
-  {
-    id: 'web_presence',
-    title: 'Web Presence',
-    icon: Globe,
-    color: 'text-teal-500',
-    bgColor: 'bg-teal-500/10',
-    agents: ['creative', 'web_presence'],
   },
 ];
 

@@ -55,10 +55,10 @@ const PHASE_CONFIG = [
   {
     phase: 5,
     name: 'Social Media & Web Presence',
-    description: 'Content creation, scheduling, and web management',
+    description: 'Creative content creation for social and web',
     icon: BarChart3,
     color: 'text-pink-500',
-    agents: ['social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+    agents: ['creative_content', 'web_presence'],
   },
   {
     phase: 6,
