@@ -842,7 +842,7 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$34,970/year (Save $6,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Full 24-agent suite with predictive analytics.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full 10-operative suite with predictive analytics.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
