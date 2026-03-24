@@ -965,9 +965,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const FIELDOPS_AGENTS: CyberAgent[] = [
     { id: 'dispatch', name: 'Dispatch Agent', description: 'Assigns technicians to jobs', icon: Truck, hsl: '189,100%,65%', status: 'active', metric1Value: fm?.jobsTotal ?? 0, metric1Label: 'Jobs', metric2Value: fm?.jobsEnRoute ?? 0, metric2Label: 'En Route' },
-    { id: 'route', name: 'Route Optimizer', description: 'Optimizes field routes', icon: Navigation, hsl: '142,72%,55%', status: 'standby', metric1Value: fm?.jobsPending ?? 0, metric1Label: 'Pending', metric2Value: fm?.jobsCompletedToday ?? 0, metric2Label: 'Done Today' },
-    { id: 'eta', name: 'ETA Agent', description: 'Calculates arrival times', icon: Clock, hsl: '48,96%,55%', status: 'standby', metric1Value: fm?.jobsPending ?? 0, metric1Label: 'Pending', metric2Value: fm?.jobsEnRoute ?? 0, metric2Label: 'In Progress' },
-    { id: 'checkin', name: 'Check-in Agent', description: 'Manages job check-ins', icon: CheckSquare, hsl: '270,72%,68%', status: 'standby', metric1Value: fm?.checkInsToday ?? 0, metric1Label: 'Arrivals', metric2Value: fm?.jobsCompletedToday ?? 0, metric2Label: 'Completed' },
+    { id: 'field_navigation', name: 'Field Navigation Agent', description: 'Routes, ETAs & check-ins', icon: Navigation, hsl: '142,72%,55%', status: 'standby', metric1Value: fm?.jobsPending ?? 0, metric1Label: 'Pending', metric2Value: fm?.jobsCompletedToday ?? 0, metric2Label: 'Done Today' },
   ];
 
   return (

@@ -231,14 +231,11 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const BOPS_AGENTS: CyberAgent[] = [
-    { id: 'quoting', name: 'Quoting Agent', description: 'Generates quotes & estimates', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.quotesConverted ?? 0, metric2Label: 'Converted' },
-    { id: 'invoicing', name: 'Invoicing Agent', description: 'Creates & sends invoices', icon: Receipt, hsl: '142,72%,55%', status: 'standby', metric1Value: m?.invoicesTotal ?? 0, metric1Label: 'Invoices', metric2Value: m?.invoicesPaid ?? 0, metric2Label: 'Paid' },
-    { id: 'leads', name: 'Lead Gen Agent', description: 'Qualifies & tracks leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: m?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: m?.leadsConverted ?? 0, metric2Label: 'Converted' },
-    { id: 'operations', name: 'Ops Agent', description: 'Appointments & scheduling', icon: Calendar, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.apptsTotal ?? 0, metric1Label: 'Appts', metric2Value: m?.apptsConfirmed ?? 0, metric2Label: 'Confirmed' },
-    { id: 'inventory', name: 'Inventory Agent', description: 'Tracks stock & supplies', icon: Package, hsl: '172,72%,55%', status: 'standby', metric1Value: m?.inventoryTotal ?? 0, metric1Label: 'Items', metric2Value: m?.inventoryLowStock ?? 0, metric2Label: 'Low Stock' },
-    { id: 'companies', name: 'Companies Agent', description: 'Manages company accounts', icon: Building2, hsl: '189,100%,55%', status: 'standby', metric1Value: m?.companiesTotal ?? 0, metric1Label: 'Companies', metric2Value: m?.companiesActive ?? 0, metric2Label: 'Active' },
-    { id: 'employees', name: 'Employees Agent', description: 'Manages staff & roles', icon: UserCheck, hsl: '48,100%,60%', status: 'standby', metric1Value: m?.employeesTotal ?? 0, metric1Label: 'Staff', metric2Value: m?.employeesActive ?? 0, metric2Label: 'Active' },
-    { id: 'customers', name: 'Customers Agent', description: 'Customer profiles & history', icon: UsersRound, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: m?.customersNew ?? 0, metric2Label: 'New' },
+    { id: 'business_finance', name: 'Business Finance Agent', description: 'Quotes, invoices & inventory', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.invoicesPaid ?? 0, metric2Label: 'Invoices Paid' },
+    { id: 'admin', name: 'Admin Agent', description: 'Scheduling, staff & operations', icon: Briefcase, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.apptsTotal ?? 0, metric1Label: 'Appts', metric2Value: m?.apptsConfirmed ?? 0, metric2Label: 'Confirmed' },
+    { id: 'companies', name: 'Companies Manager', description: 'Manages company accounts', icon: Building2, hsl: '189,100%,55%', status: 'standby', metric1Value: m?.companiesTotal ?? 0, metric1Label: 'Companies', metric2Value: m?.companiesActive ?? 0, metric2Label: 'Active' },
+    { id: 'employees', name: 'Employees Manager', description: 'Manages staff & roles', icon: UserCheck, hsl: '48,100%,60%', status: 'standby', metric1Value: m?.employeesTotal ?? 0, metric1Label: 'Staff', metric2Value: m?.employeesActive ?? 0, metric2Label: 'Active' },
+    { id: 'customers', name: 'Customers Manager', description: 'Customer profiles & history', icon: UsersRound, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: m?.customersNew ?? 0, metric2Label: 'New' },
   ];
 
   return (
