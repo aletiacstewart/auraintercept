@@ -327,8 +327,8 @@ export default function AIAgentsHub() {
         <PageHeader
           icon={Bot}
           title="AI Operatives Hub"
-          description={canManageAgents 
-            ? '24 specialized AI operatives powering your business automation'
+        description={canManageAgents 
+            ? '10 consolidated AI operatives powering your business automation'
             : `${totalCount} AI operatives available based on your job roles`}
           featureColor="config"
           action={

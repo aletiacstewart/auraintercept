@@ -313,11 +313,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'ai_operatives_hub',
     title: 'AI Operatives Hub',
     icon: Bot,
-    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management console for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     requiredTier: 'command',
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     agents: [
-      { name: 'All 24 AI Operatives', tier: 'command' },
+      { name: 'All 10 AI Operatives', tier: 'command' },
     ],
     features: [
       { text: 'Individual agent configuration and enable/disable' },
