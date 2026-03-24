@@ -194,15 +194,15 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       onHomeClick={handleHome}
       agents={MARKETING_AGENTS}
       currentAgentId={
-        showCampaignForm ? 'marketing' :
-        showLeadsForm ? 'leads' :
+        showCampaignForm ? 'outreach' :
+        showLeadsForm ? 'leads_manager' :
         showSegmentsForm ? 'audience' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          marketing: 'campaign',
-          leads: 'leads',
+          outreach: 'campaign',
+          leads_manager: 'leads',
           audience: 'customers',
         };
         const actionId = AGENT_TO_ACTION[agentId];
