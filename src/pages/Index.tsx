@@ -791,7 +791,7 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$24,970/year (Save $4,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">22 agents with basic business intelligence.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">9 operatives with full business intelligence.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
