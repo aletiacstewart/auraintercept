@@ -22,59 +22,58 @@ const PHASE_CONFIG = [
   {
     phase: 1,
     name: 'Customer Portal',
-    description: 'Core customer interaction agents (Booking requires Multi-Track+)',
+    description: 'AI Receptionist + Customer Journey Agent (Scheduling, Follow-up, Review)',
     icon: Users,
     color: 'text-blue-500',
-    agents: ['triage', 'booking', 'followup', 'review'],
-    tierLockedAgents: { booking: 'multi_track' }, // booking requires Multi-Track or higher
+    agents: ['triage', 'customer_journey'],
   },
   {
     phase: 2,
     name: 'Field Operations',
-    description: 'Dispatch and route management (Multi-Track+)',
+    description: 'Dispatch + Field Navigation Agent (Route, ETA, Check-in)',
     icon: Truck,
     color: 'text-green-500',
-    agents: ['dispatch', 'route', 'eta', 'checkin'],
+    agents: ['dispatch', 'field_navigation'],
   },
   {
     phase: 3,
-    name: 'Business & Accounting',
-    description: 'Quotes, invoices, and inventory',
+    name: 'Business Operations',
+    description: 'Admin + Business Finance Agent (Quoting, Invoice, Inventory)',
     icon: Briefcase,
     color: 'text-purple-500',
-    agents: ['admin', 'quoting', 'invoice', 'inventory'],
+    agents: ['admin', 'business_finance'],
   },
   {
     phase: 4,
     name: 'Outreach & Sales Ops',
-    description: 'Campaigns, leads, and customer segments',
+    description: 'Outreach Agent (Campaigns, Leads, Marketing)',
     icon: Megaphone,
     color: 'text-orange-500',
-    agents: ['campaign', 'lead', 'marketing'],
+    agents: ['outreach'],
   },
   {
     phase: 5,
     name: 'Social Media & Web Presence',
-    description: 'Creative content creation for social and web',
+    description: 'Creative Content Agent + Web Presence Agent',
     icon: BarChart3,
     color: 'text-pink-500',
     agents: ['creative_content', 'web_presence'],
   },
   {
     phase: 6,
-    name: 'Analytics & Optimization',
-    description: 'Business intelligence and forecasting',
+    name: 'Analytics & Intelligence',
+    description: 'Analytics Intelligence Agent (Insights, Performance, Revenue, Forecast)',
     icon: BarChart3,
     color: 'text-cyan-500',
-    agents: ['insights', 'performance', 'revenue', 'forecast'],
+    agents: ['analytics_intelligence'],
   },
 ];
 
 // Agents hidden from non-platform-admin roles
-const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign', 'marketing'];
+const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['business_finance', 'outreach'];
 
 // Phases hidden entirely from non-platform-admin roles
-const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Marketing & Sales, Analytics & Optimization
+const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Outreach & Sales, Analytics & Intelligence
 
 interface BatchAgentActivationProps {
   agents: AgentInfo[];

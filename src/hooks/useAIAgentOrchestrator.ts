@@ -44,37 +44,26 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 21 total agents across 8 categories
+// Default agent definitions - 10 consolidated operatives across 7 categories
 // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
 const DEFAULT_AGENTS: AgentInfo[] = [
-  // Customer Portal (Phases 1-4) - 4 agents
+  // Customer Portal (2 agents)
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'booking', name: 'Scheduling Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
-  { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 3, is_enabled: false, settings: {} },
-  { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 4, is_enabled: false, settings: {} },
-  // Field Operations (Phases 1-4) - 4 agents
+  { type: 'customer_journey', name: 'Customer Journey Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
+  // Field Operations (2 agents)
   { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 1, is_enabled: false, settings: {} },
-  { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
-  { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 3, is_enabled: false, settings: {} },
-  { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 4, is_enabled: false, settings: {} },
-  // Business Operations (Phases 1-4) - 4 agents
+  { type: 'field_navigation', name: 'Field Navigation Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  // Business Operations (2 agents)
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 1, is_enabled: false, settings: {} },
-  { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
-  { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
-  { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 4, is_enabled: false, settings: {} },
-  // Marketing & Sales (Phases 1-3) - 3 agents
-  { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
-  { type: 'lead', name: 'Lead Agent', category: 'marketing_sales', phase: 2, is_enabled: false, settings: {} },
-  { type: 'marketing', name: 'Marketing Agent', category: 'marketing_sales', phase: 3, is_enabled: false, settings: {} },
-  // Social Media & Creative (Phase 1) - 1 merged agent
+  { type: 'business_finance', name: 'Business Finance Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
+  // Outreach & Sales (1 merged agent)
+  { type: 'outreach', name: 'Outreach Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
+  // Social Media & Creative (1 merged agent)
   { type: 'creative_content', name: 'Creative Content Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
-  // Creative & Web Presence (Phases 1-2) - 1 agent (creative_content shared above)
+  // Creative & Web Presence (1 agent)
   { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
-  // Analytics & Reports (Phases 1-4) - 4 agents
-  { type: 'insights', name: 'Insights Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
-  { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
-  { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
-  { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
+  // Analytics & Reports (1 unified agent)
+  { type: 'analytics_intelligence', name: 'Analytics Intelligence Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
@@ -95,7 +84,6 @@ export function useAIAgentOrchestrator() {
   const [loading, setLoading] = useState(true);
   const [companyId, setCompanyId] = useState<string | null>(null);
 
-  // Get company ID
   useEffect(() => {
     async function fetchCompanyId() {
       if (!user) {
@@ -119,7 +107,6 @@ export function useAIAgentOrchestrator() {
     fetchCompanyId();
   }, [user]);
 
-  // Fetch all agents - now using direct DB query with defaults
   const fetchAgents = useCallback(async () => {
     if (!companyId) {
       setLoading(false);
@@ -128,7 +115,6 @@ export function useAIAgentOrchestrator() {
     
     setLoading(true);
     try {
-      // Fetch existing configs from database
       const { data: configs, error } = await supabase
         .from('ai_agent_configs')
         .select('*')
@@ -136,7 +122,6 @@ export function useAIAgentOrchestrator() {
       
       if (error) throw error;
       
-      // Merge defaults with database configs
       const mergedAgents = DEFAULT_AGENTS.map(defaultAgent => {
         const config = configs?.find(c => c.agent_type === defaultAgent.type);
         if (config) {
@@ -154,7 +139,6 @@ export function useAIAgentOrchestrator() {
       setGroupedAgents(groupAgentsByCategory(mergedAgents));
     } catch (error) {
       console.error('Error fetching agents:', error);
-      // Keep defaults on error
       setAgents(DEFAULT_AGENTS);
       setGroupedAgents(groupAgentsByCategory(DEFAULT_AGENTS));
     } finally {
@@ -168,7 +152,6 @@ export function useAIAgentOrchestrator() {
     }
   }, [companyId, fetchAgents]);
 
-  // Toggle agent enabled state
   const toggleAgent = async (agentType: string, enabled: boolean) => {
     if (!companyId) {
       console.error('No company ID available for toggling agent');
@@ -181,7 +164,6 @@ export function useAIAgentOrchestrator() {
     }
     
     try {
-      // Check if config exists
       const { data: existing, error: selectError } = await supabase
         .from('ai_agent_configs')
         .select('id')
@@ -189,10 +171,7 @@ export function useAIAgentOrchestrator() {
         .eq('agent_type', agentType)
         .maybeSingle();
       
-      if (selectError) {
-        console.error('Error checking agent config:', selectError);
-        throw selectError;
-      }
+      if (selectError) throw selectError;
       
       if (existing) {
         const { error: updateError } = await supabase
@@ -200,10 +179,7 @@ export function useAIAgentOrchestrator() {
           .update({ is_enabled: enabled })
           .eq('id', existing.id);
         
-        if (updateError) {
-          console.error('Error updating agent config:', updateError);
-          throw updateError;
-        }
+        if (updateError) throw updateError;
       } else {
         const { error: insertError } = await supabase
           .from('ai_agent_configs')
@@ -214,10 +190,7 @@ export function useAIAgentOrchestrator() {
             settings: {},
           });
         
-        if (insertError) {
-          console.error('Error inserting agent config:', insertError);
-          throw insertError;
-        }
+        if (insertError) throw insertError;
       }
       
       await fetchAgents();
@@ -236,7 +209,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Update agent settings
   const updateAgentSettings = async (agentType: string, settings: Record<string, any>) => {
     if (!companyId) return;
     
@@ -283,7 +255,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Emit an event
   const emitEvent = async (
     sourceAgent: string,
     eventType: string,
@@ -314,7 +285,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Create a new context
   const createContext = async (contextData: Partial<AgentContext>): Promise<AgentContext | undefined> => {
     if (!companyId) return undefined;
     
@@ -336,7 +306,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Get context
   const getContext = async (contextId: string): Promise<AgentContext | null> => {
     if (!companyId) return null;
     
@@ -358,7 +327,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Handoff to another agent
   const handoff = async (
     contextId: string,
     toAgent: string,
@@ -390,7 +358,6 @@ export function useAIAgentOrchestrator() {
     }
   };
 
-  // Subscribe to real-time events
   const subscribeToEvents = (callback: (event: AgentEvent) => void) => {
     if (!companyId) return () => {};
     

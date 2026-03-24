@@ -24,33 +24,36 @@ export interface ConsoleHelpConfig {
   tabs?: string[]; // Quick action tabs available in the console
 }
 
-// Agent display names mapping (ID to display name)
+// Agent display names mapping (ID to display name) — 10 Consolidated Operatives
 export const AGENT_DISPLAY_NAMES: Record<string, string> = {
+  // Core 10 operatives
   triage: 'AI Receptionist',
-  booking: 'Scheduling Agent',
-  followup: 'Follow-up Agent',
-  review: 'Review Agent',
+  customer_journey: 'Customer Journey Agent',
   dispatch: 'Dispatch Agent',
-  route: 'Route Agent',
-  eta: 'ETA Agent',
-  checkin: 'Check-in Agent',
+  field_navigation: 'Field Navigation Agent',
   admin: 'Admin Agent',
-  quoting: 'Quoting Agent',
-  invoice: 'Invoice Agent',
-  inventory: 'Inventory Agent',
-  campaign: 'Campaign Agent',
-  lead: 'Lead Agent',
-  marketing: 'Marketing Agent',
-  social_content: 'Social Media Agent',
-  social_scheduler: 'Social Media Scheduler',
-  social_analytics: 'Social Media Analytics',
-  creative: 'Creative Agent',
+  business_finance: 'Business Finance Agent',
+  outreach: 'Outreach Agent',
+  creative_content: 'Creative Content Agent',
   web_presence: 'Web Presence Agent',
-  insights: 'Insights Agent',
-  performance: 'Performance Agent',
-  revenue: 'Revenue Agent',
-  forecast: 'Forecast Agent',
-  analytics: 'Analytics Agent',
+  analytics_intelligence: 'Analytics Intelligence Agent',
+  // Legacy aliases for backward compatibility
+  booking: 'Customer Journey Agent',
+  followup: 'Customer Journey Agent',
+  review: 'Customer Journey Agent',
+  route: 'Field Navigation Agent',
+  eta: 'Field Navigation Agent',
+  checkin: 'Field Navigation Agent',
+  quoting: 'Business Finance Agent',
+  invoice: 'Business Finance Agent',
+  inventory: 'Business Finance Agent',
+  campaign: 'Outreach Agent',
+  lead: 'Outreach Agent',
+  marketing: 'Outreach Agent',
+  insights: 'Analytics Intelligence Agent',
+  performance: 'Analytics Intelligence Agent',
+  revenue: 'Analytics Intelligence Agent',
+  forecast: 'Analytics Intelligence Agent',
   assistant: 'Aura Assistant',
 };
 
@@ -60,14 +63,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'customer_portal',
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'AI-powered customer engagement hub with Message Aura (Text) on all tiers, Talk to Aura (Voice) on Scheduling+, automated follow-ups, and review collection.',
-    requiredTier: 'scheduling',  // Now available starting at Scheduling tier
+    description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated scheduling, follow-ups, and review collection — all in one Customer Journey Agent.',
+    requiredTier: 'scheduling',
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     agents: [
       { name: 'AI Receptionist', tier: 'starter' },
-      { name: 'Scheduling Agent', tier: 'scheduling' },
-      { name: 'Follow-up Agent', tier: 'scheduling' },
-      { name: 'Review Agent', tier: 'growth' },
+      { name: 'Customer Journey Agent', tier: 'scheduling' },
     ],
     features: [
       { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'starter' },
@@ -99,14 +100,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'field_operations',
     title: 'Field Operations',
     icon: Truck,
-    description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
+    description: 'Mobile-optimized console powered by Dispatch Agent + Field Navigation Agent covering GPS routing, real-time ETA updates, and one-tap job check-in.',
     requiredTier: 'field_ops',
     tabs: ['Accept Job', 'Get Directions', 'Mark En Route', 'Update ETA', 'Arrive & Start', 'Complete Job', 'Generate Quote', 'Generate Invoice', 'Contact Dispatch'],
     agents: [
       { name: 'Dispatch Agent', tier: 'field_ops' },
-      { name: 'Route Agent', tier: 'field_ops' },
-      { name: 'ETA Agent', tier: 'field_ops' },
-      { name: 'Check-in Agent', tier: 'field_ops' },
+      { name: 'Field Navigation Agent', tier: 'field_ops' },
     ],
     features: [
       { text: 'Accept assigned jobs with one tap' },
@@ -138,14 +137,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'business_management',
     title: 'Business Operations',
     icon: Briefcase,
-    description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
-    requiredTier: 'field_ops',  // Available at Field Ops tier
+    description: 'Comprehensive business management console powered by Admin Agent + Business Finance Agent (Quoting, Invoicing, Inventory).',
+    requiredTier: 'field_ops',
     tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
     agents: [
-      { name: 'Quoting Agent', tier: 'field_ops' },
-      { name: 'Invoice Agent', tier: 'field_ops' },
+      { name: 'Business Finance Agent', tier: 'field_ops' },
       { name: 'Admin Agent', tier: 'performance' },
-      { name: 'Inventory Agent', tier: 'performance' },
     ],
     features: [
       { text: 'Create and send professional quotes', tier: 'field_ops' },
@@ -173,13 +170,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'marketing_sales',
     title: 'Outreach & Sales Ops',
     icon: Megaphone,
-    description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
-    requiredTier: 'growth',  // Available at Growth tier
+    description: 'AI-powered marketing automation — all in one Outreach Agent covering campaign management, lead nurturing, customer segmentation, and promotional tools.',
+    requiredTier: 'growth',
     tabs: ['Campaign', 'Leads', 'Marketing'],
     agents: [
-      { name: 'Campaign Agent', tier: 'growth' },
-      { name: 'Lead Agent', tier: 'growth' },
-      { name: 'Marketing Agent', tier: 'growth' },
+      { name: 'Outreach Agent', tier: 'growth' },
     ],
     features: [
       { text: 'Create targeted Email and SMS campaigns' },
@@ -206,15 +201,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'social_media',
     title: 'Social Media Ops',
     icon: Share2,
-    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
-    requiredTier: 'growth',  // Available at Growth tier
-    tabs: ['Home', 'Social Posts', 'Analytics'],
+    description: 'AI-powered creative studio powered by the Creative Content Agent — generates platform-optimized posts, AI images/videos, and multi-channel content for 6 platforms.',
+    requiredTier: 'growth',
+    tabs: ['Home', 'Create Content', 'My Posts'],
     agents: [
-      { name: 'Social Media Agent', tier: 'growth' },
-      { name: 'Social Media Scheduler', tier: 'growth' },
-      { name: 'Social Media Analytics', tier: 'growth' },
-      { name: 'Creative Agent', tier: 'growth' },
-      { name: 'Web Presence Agent', tier: 'business' },
+      { name: 'Creative Content Agent', tier: 'growth' },
     ],
     features: [
       { text: 'AI content generation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, SMS' },
@@ -250,11 +241,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'creative_web_presence',
     title: 'Creative & Web Presence',
     icon: Palette,
-    description: 'AI-powered content generation and web management hub with Content Engine, AI website builder, blog management, and SEO optimization.',
+    description: 'AI-powered content generation and web management hub with Creative Content Agent + Web Presence Agent.',
     requiredTier: 'business',
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     agents: [
-      { name: 'Creative Agent', tier: 'growth' },
+      { name: 'Creative Content Agent', tier: 'growth' },
       { name: 'Web Presence Agent', tier: 'business' },
     ],
     features: [
@@ -322,11 +313,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'ai_operatives_hub',
     title: 'AI Operatives Hub',
     icon: Bot,
-    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management console for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     requiredTier: 'command',
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     agents: [
-      { name: 'All 24 AI Operatives', tier: 'command' },
+      { name: 'All 10 AI Operatives', tier: 'command' },
     ],
     features: [
       { text: 'Individual agent configuration and enable/disable' },
