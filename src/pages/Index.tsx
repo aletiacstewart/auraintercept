@@ -729,12 +729,8 @@ export default function Index() {
             </Link>
           </div>
 
-          {/* Flex wrapper to enable ordering - Industry first, General second */}
-          <div className="flex flex-col">
-            {/* Scale Your Operations - Order 2 */}
-            <div className="order-2">
-              <h3 className="text-xl font-semibold text-center mt-10 mb-4" style={{ color: "rgba(255,255,255,0.85)" }}>Scale Your Operations</h3>
-              <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {/* 3-Tier Pricing Grid */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
 
             {/* Aura Logistics Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
