@@ -924,7 +924,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Required for: Connect, Growth, Presence, Logistics, Performance, Command</p>
+                <p className="text-[10px] text-white/60">Required for: Connect, Performance, Command</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
