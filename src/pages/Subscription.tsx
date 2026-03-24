@@ -738,11 +738,11 @@ export default function Subscription() {
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Perf</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$2,497/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Command</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
                       </th>
                     </tr>
                   </thead>
