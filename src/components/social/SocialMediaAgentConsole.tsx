@@ -128,7 +128,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('social_content');
+    setLastAgent('creative_content');
   };
 
   const isShowingForm = showContentEngine || showMyPosts;
