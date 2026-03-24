@@ -16,11 +16,11 @@ import { LeadForm } from './forms/LeadForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { Megaphone } from 'lucide-react';
 
-// Quick actions for Marketing & Sales - 3 agents: Campaign, Lead, Marketing (Segments)
+// Quick actions for Outreach & Sales - single consolidated Outreach Operative
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
-  { id: 'leads', label: 'Leads', icon: UserPlus, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
-  { id: 'customers', label: 'Marketing', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
+  { id: 'leads', label: 'Leads', icon: Megaphone, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
+  { id: 'customers', label: 'Marketing', icon: Megaphone, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration
