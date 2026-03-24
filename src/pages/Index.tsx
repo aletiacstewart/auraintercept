@@ -341,7 +341,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Operatives',
-  description: 'Enable 24 specialized AI operatives and configure your knowledge base for your business.',
+  description: 'Enable up to 10 consolidated AI operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -355,7 +355,7 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '24',
+  value: '10',
   label: 'AI Operatives'
 }, {
   value: '24/7',
