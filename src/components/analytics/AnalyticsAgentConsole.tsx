@@ -275,24 +275,11 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       }}
       onHomeClick={handleHome}
       agents={ANALYTICS_AGENTS}
-      currentAgentId={
-        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics_intelligence' :
-        (showRevenueForm || showForecastForm) ? 'analytics_revenue' :
-        (showCustomersForm || showInsightsForm || showSocialForm) ? 'analytics_insights' :
-        currentAgent || lastAgent
-      }
-      onAgentClick={(agentId) => {
-        const AGENT_TO_ACTION: Record<string, string> = {
-          analytics_intelligence: 'performance',
-          analytics_revenue: 'revenue',
-          analytics_insights: 'customers',
-        };
-        const actionId = AGENT_TO_ACTION[agentId];
-        if (actionId) {
-          setActiveTab(actionId);
-          const action = QUICK_ACTIONS.find(a => a.id === actionId);
-          if (action) handleQuickAction(action.message, action.id);
-        }
+      currentAgentId="analytics_intelligence"
+      onAgentClick={() => {
+        setActiveTab('performance');
+        const action = QUICK_ACTIONS.find(a => a.id === 'performance');
+        if (action) handleQuickAction(action.message, action.id);
       }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
