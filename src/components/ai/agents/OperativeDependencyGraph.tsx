@@ -49,68 +49,46 @@ const CATEGORY_CONFIG: Record<string, { icon: React.ElementType; color: string; 
 
 const AGENT_DISPLAY_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
-  booking: 'Scheduling',
-  followup: 'Follow-up',
-  review: 'Review',
+  customer_journey: 'Customer Journey',
   dispatch: 'Dispatch',
-  route: 'Route',
-  eta: 'ETA',
-  checkin: 'Check-in',
+  field_navigation: 'Field Navigation',
   admin: 'Admin',
-  quoting: 'Quoting',
-  invoice: 'Invoice',
-  inventory: 'Inventory',
-  campaign: 'Campaign',
-  lead: 'Lead',
-  marketing: 'Marketing',
+  business_finance: 'Business Finance',
+  outreach: 'Outreach',
   creative_content: 'Creative Content',
   web_presence: 'Web Presence',
-  insights: 'Insights',
-  performance: 'Performance',
-  revenue: 'Revenue',
-  forecast: 'Forecast',
+  analytics_intelligence: 'Analytics Intelligence',
 };
 
 // Define the dependency structure - Keep in sync with subscriptionAgentConfig.ts AGENT_DEPENDENCIES
 const DEPENDENCY_MAP: Record<string, string[]> = {
   // Customer Portal
-  triage: [], // Root - no dependencies
-  booking: ['triage'],
-  followup: ['triage'],
-  review: ['triage'],
+  triage: [],
+  customer_journey: ['triage'],
   // Field Operations
-  dispatch: ['triage', 'booking'],
-  route: ['dispatch'],
-  eta: ['dispatch', 'route'],
-  checkin: ['dispatch'],
+  dispatch: ['triage', 'customer_journey'],
+  field_navigation: ['dispatch'],
   // Business Operations
   admin: [],
-  quoting: ['triage'],
-  invoice: ['quoting'],
-  inventory: [],
-  // Marketing & Sales
-  campaign: [],
-  lead: [],
-  marketing: ['campaign'],
-  // Social Media & Creative (merged)
+  business_finance: ['customer_journey'],
+  // Outreach & Sales
+  outreach: ['triage'],
+  // Creative & Web
   creative_content: [],
   web_presence: ['creative_content'],
   // Analytics
-  insights: [],
-  performance: ['insights'],
-  revenue: ['insights'],
-  forecast: ['insights', 'revenue'],
+  analytics_intelligence: [],
 };
 
 // Flow configurations for dropdown sections
 const FLOW_CONFIGS: FlowConfig[] = [
   {
     id: 'customer',
-    title: 'Customer Flow',
+    title: 'Customer Portal Flow',
     icon: Users,
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
-    agents: ['triage', 'booking', 'followup', 'review'],
+    agents: ['triage', 'customer_journey'],
   },
   {
     id: 'field_operations',
@@ -118,7 +96,7 @@ const FLOW_CONFIGS: FlowConfig[] = [
     icon: Truck,
     color: 'text-green-500',
     bgColor: 'bg-green-500/10',
-    agents: ['dispatch', 'route', 'eta', 'checkin'],
+    agents: ['dispatch', 'field_navigation'],
   },
   {
     id: 'business_operations',
@@ -126,19 +104,19 @@ const FLOW_CONFIGS: FlowConfig[] = [
     icon: Briefcase,
     color: 'text-purple-500',
     bgColor: 'bg-purple-500/10',
-    agents: ['admin', 'quoting', 'invoice', 'inventory'],
+    agents: ['admin', 'business_finance'],
   },
   {
     id: 'marketing',
-    title: 'Marketing Flow',
+    title: 'Outreach & Sales Flow',
     icon: Megaphone,
     color: 'text-orange-500',
     bgColor: 'bg-orange-500/10',
-    agents: ['campaign', 'lead', 'marketing'],
+    agents: ['outreach'],
   },
   {
     id: 'social_creative',
-    title: 'Social & Creative Flow',
+    title: 'Creative & Web Flow',
     icon: Share2,
     color: 'text-pink-500',
     bgColor: 'bg-pink-500/10',
@@ -150,7 +128,7 @@ const FLOW_CONFIGS: FlowConfig[] = [
     icon: BarChart3,
     color: 'text-cyan-500',
     bgColor: 'bg-cyan-500/10',
-    agents: ['insights', 'performance', 'revenue', 'forecast'],
+    agents: ['analytics_intelligence'],
   },
 ];
 
