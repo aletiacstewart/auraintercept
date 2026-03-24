@@ -6,77 +6,66 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Agent types and their capabilities — 21 total operatives
+// Agent types and their capabilities — 10 consolidated operatives
 const AGENT_TYPES = {
-  // Customer Portal (4 agents)
+  // Customer Portal (2 agents)
   triage: { name: 'AI Receptionist', category: 'customer_portal', phase: 1 },
-  booking: { name: 'Scheduling Agent', category: 'customer_portal', phase: 1 },
-  followup: { name: 'Follow-up Agent', category: 'customer_portal', phase: 1 },
-  review: { name: 'Review Agent', category: 'customer_portal', phase: 1 },
-  
-  // Field Operations (4 agents)
+  customer_journey: { name: 'Customer Journey Agent', category: 'customer_portal', phase: 2 },
+
+  // Field Operations (2 agents)
   dispatch: { name: 'Dispatch Agent', category: 'field_operations', phase: 2 },
-  route: { name: 'Route Agent', category: 'field_operations', phase: 2 },
-  eta: { name: 'ETA Agent', category: 'field_operations', phase: 2 },
-  checkin: { name: 'Check-in Agent', category: 'field_operations', phase: 2 },
-  
-  // Business Operations (4 agents)
-  quoting: { name: 'Quoting Agent', category: 'business_operations', phase: 3 },
-  invoice: { name: 'Invoice Agent', category: 'business_operations', phase: 3 },
-  inventory: { name: 'Inventory Agent', category: 'business_operations', phase: 3 },
+  field_navigation: { name: 'Field Navigation Agent', category: 'field_operations', phase: 2 },
+
+  // Business Operations (2 agents)
   admin: { name: 'Admin Agent', category: 'business_operations', phase: 3 },
-  
-  // Outreach & Sales (3 agents)
-  campaign: { name: 'Campaign Agent', category: 'marketing_sales', phase: 4 },
-  lead: { name: 'Lead Agent', category: 'marketing_sales', phase: 4 },
-  marketing: { name: 'Marketing Agent', category: 'marketing_sales', phase: 4 },
-  
-  // Social Media & Creative (1 agent — merged)
+  business_finance: { name: 'Business Finance Agent', category: 'business_operations', phase: 3 },
+
+  // Outreach & Sales (1 merged agent)
+  outreach: { name: 'Outreach Agent', category: 'marketing_sales', phase: 4 },
+
+  // Social Media & Creative (1 merged agent)
   creative_content: { name: 'Creative Content Agent', category: 'social_media', phase: 4 },
-  
+
   // Web Presence (1 agent)
   web_presence: { name: 'Web Presence Agent', category: 'creative_web_presence', phase: 4 },
-  
-  // Analytics & Insights (4 agents)
-  insights: { name: 'Insights Agent', category: 'analytics', phase: 5 },
-  forecast: { name: 'Forecast Agent', category: 'analytics', phase: 5 },
-  revenue: { name: 'Revenue Agent', category: 'analytics', phase: 5 },
-  performance: { name: 'Performance Agent', category: 'analytics', phase: 5 },
+
+  // Analytics & Intelligence (1 unified agent)
+  analytics_intelligence: { name: 'Analytics Intelligence Agent', category: 'analytics', phase: 5 },
 };
 
 // Event routing rules — which agents should receive which events
 const EVENT_ROUTING: Record<string, string[]> = {
   // Customer Portal events
-  'triage_complete': ['booking', 'dispatch', 'lead'],
-  'appointment_booked': ['dispatch', 'route', 'followup', 'inventory'],
-  'appointment_cancelled': ['dispatch', 'followup'],
-  'tech_assigned': ['route', 'eta'],
-  'route_optimized': ['eta', 'dispatch'],
-  'eta_updated': ['checkin'],
-  'tech_arrived': ['quoting', 'checkin'],
-  'job_complete': ['quoting', 'invoice', 'followup', 'inventory', 'campaign'],
-  'quote_sent': ['invoice'],
-  'quote_approved': ['invoice', 'inventory'],
-  'payment_received': ['followup', 'revenue', 'campaign'],
-  'followup_sent': ['review'],
-  'review_received': ['performance', 'insights', 'campaign'],
-  'churn_risk_detected': ['marketing', 'campaign'],
-  'inventory_low': ['dispatch', 'quoting', 'admin'],
-  'seasonal_trigger': ['marketing', 'campaign'],
-  // Marketing & Sales events
-  'campaign_created': ['lead', 'marketing'],
-  'lead_qualified': ['campaign', 'booking', 'marketing'],
-  'lead_scored': ['campaign', 'marketing', 'booking'],
-  // Social Media & Creative Content events
+  'triage_complete': ['customer_journey', 'dispatch', 'outreach'],
+  'appointment_booked': ['dispatch', 'field_navigation', 'customer_journey', 'business_finance'],
+  'appointment_cancelled': ['dispatch', 'customer_journey'],
+  'tech_assigned': ['field_navigation'],
+  'route_optimized': ['field_navigation', 'dispatch'],
+  'eta_updated': ['field_navigation'],
+  'tech_arrived': ['business_finance', 'field_navigation'],
+  'job_complete': ['business_finance', 'customer_journey', 'outreach'],
+  'quote_sent': ['business_finance'],
+  'quote_approved': ['business_finance'],
+  'payment_received': ['customer_journey', 'analytics_intelligence', 'outreach'],
+  'followup_sent': ['customer_journey'],
+  'review_received': ['analytics_intelligence', 'outreach'],
+  'churn_risk_detected': ['outreach'],
+  'inventory_low': ['dispatch', 'business_finance', 'admin'],
+  'seasonal_trigger': ['outreach'],
+  // Outreach & Sales events
+  'campaign_created': ['outreach'],
+  'lead_qualified': ['outreach', 'customer_journey'],
+  'lead_scored': ['outreach', 'customer_journey'],
+  // Creative Content events
   'content_generated': ['web_presence'],
-  'post_published': ['performance', 'insights'],
+  'post_published': ['analytics_intelligence'],
   'content_published': ['web_presence'],
-  // Creative & Web Presence events
+  // Web Presence events
   'blog_published': ['web_presence', 'creative_content'],
-  'seo_scan_complete': ['web_presence', 'performance'],
-  'content_engine_output': ['creative_content', 'campaign', 'web_presence'],
-  // New business lifecycle events
-  'invoice_paid': ['followup', 'revenue', 'campaign'],
+  'seo_scan_complete': ['web_presence', 'analytics_intelligence'],
+  'content_engine_output': ['creative_content', 'outreach', 'web_presence'],
+  // Business lifecycle events
+  'invoice_paid': ['customer_journey', 'analytics_intelligence', 'outreach'],
 };
 
 serve(async (req) => {

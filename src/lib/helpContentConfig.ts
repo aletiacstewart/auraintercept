@@ -24,33 +24,36 @@ export interface ConsoleHelpConfig {
   tabs?: string[]; // Quick action tabs available in the console
 }
 
-// Agent display names mapping (ID to display name)
+// Agent display names mapping (ID to display name) — 10 Consolidated Operatives
 export const AGENT_DISPLAY_NAMES: Record<string, string> = {
+  // Core 10 operatives
   triage: 'AI Receptionist',
-  booking: 'Scheduling Agent',
-  followup: 'Follow-up Agent',
-  review: 'Review Agent',
+  customer_journey: 'Customer Journey Agent',
   dispatch: 'Dispatch Agent',
-  route: 'Route Agent',
-  eta: 'ETA Agent',
-  checkin: 'Check-in Agent',
+  field_navigation: 'Field Navigation Agent',
   admin: 'Admin Agent',
-  quoting: 'Quoting Agent',
-  invoice: 'Invoice Agent',
-  inventory: 'Inventory Agent',
-  campaign: 'Campaign Agent',
-  lead: 'Lead Agent',
-  marketing: 'Marketing Agent',
-  social_content: 'Social Media Agent',
-  social_scheduler: 'Social Media Scheduler',
-  social_analytics: 'Social Media Analytics',
-  creative: 'Creative Agent',
+  business_finance: 'Business Finance Agent',
+  outreach: 'Outreach Agent',
+  creative_content: 'Creative Content Agent',
   web_presence: 'Web Presence Agent',
-  insights: 'Insights Agent',
-  performance: 'Performance Agent',
-  revenue: 'Revenue Agent',
-  forecast: 'Forecast Agent',
-  analytics: 'Analytics Agent',
+  analytics_intelligence: 'Analytics Intelligence Agent',
+  // Legacy aliases for backward compatibility
+  booking: 'Customer Journey Agent',
+  followup: 'Customer Journey Agent',
+  review: 'Customer Journey Agent',
+  route: 'Field Navigation Agent',
+  eta: 'Field Navigation Agent',
+  checkin: 'Field Navigation Agent',
+  quoting: 'Business Finance Agent',
+  invoice: 'Business Finance Agent',
+  inventory: 'Business Finance Agent',
+  campaign: 'Outreach Agent',
+  lead: 'Outreach Agent',
+  marketing: 'Outreach Agent',
+  insights: 'Analytics Intelligence Agent',
+  performance: 'Analytics Intelligence Agent',
+  revenue: 'Analytics Intelligence Agent',
+  forecast: 'Analytics Intelligence Agent',
   assistant: 'Aura Assistant',
 };
 
