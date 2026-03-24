@@ -1,93 +1,74 @@
 
-## Goal
-1. Remove `social_scheduler` and `social_analytics` agents from the platform entirely
-2. Merge `social_content` (Social Media Agent) + `creative` (Creative Agent) into a single new agent: **`creative_content`** — "Creative Content Agent" — handling social posts, image/video creation, and web/campaign content
-3. `social_content` becomes `creative_content`; the Social Media console uses it; the Creative & Web Presence console also uses it alongside `web_presence`
+## The Real Problem
 
----
+The consolidation was **half-done**. The agent IDs used for chat routing (`initialAgent`) were updated to the new names, but the **visual agent panels** (the sidebar cards inside each console) still show old/wrong separate agents that don't match the 10-operative model. Additionally, some `currentAgentId` mappings still reference completely old deprecated IDs.
 
-## New Agent Map (after changes)
+Here is what each console actually shows right now vs what it should show:
 
-**Social Media (1 agent):** `creative_content` — Creative Content Agent
-**Creative & Web Presence (2 agents):** `creative_content` + `web_presence`
+### Console-by-Console Audit
 
-Total agents: 24 → **21** (removed `social_scheduler`, `social_analytics`, merged `creative` into `creative_content`)
+**Marketing & Sales Console (`MarketingSalesAgentConsole.tsx`)**
+- Currently shows 3 agents: `outreach`, `leads_manager`, `audience`
+- `leads_manager` and `audience` are NOT in the 10-operative model
+- Should show: 1 agent — **Outreach Agent** (`outreach`)
 
----
+**Analytics Console (`AnalyticsAgentConsole.tsx`)**
+- Currently shows 3 agents: `analytics_intelligence`, `analytics_revenue`, `analytics_insights`
+- `analytics_revenue` and `analytics_insights` are NOT in the 10-operative model
+- Should show: 1 agent — **Analytics Intelligence** (`analytics_intelligence`)
 
-## Files to Change
+**Business Ops Console (`BusinessOpsAgentConsole.tsx`)**
+- Currently shows 5 agents: `business_finance`, `admin`, `companies`, `employees`, `customers`
+- `companies`, `employees`, `customers` are data managers, NOT AI operatives
+- `currentAgentId` mapping still references old IDs: `quoting`, `invoicing`, `leads`, `inventory`, `operations` (none of which exist in the panel anymore — causes broken highlighting)
+- Should show: 2 agents — **Business Finance** + **Admin**. Fix the broken `currentAgentId` mapping.
 
-### 1. `supabase/functions/ai-orchestrator/index.ts`
-- Remove `social_scheduler` and `social_analytics` from `AGENT_TYPES`
-- Rename `social_content` → `creative_content` with name `'Creative Content Agent'`
-- Remove `creative` (merged into `creative_content`)
-- Update `EVENT_ROUTING`:
-  - `content_generated`: remove `['social_scheduler', 'social_analytics']` → `[]` (no fan-out needed or point to `web_presence`)
-  - `post_scheduled`, `post_published`: remove `social_analytics` targets
-  - `content_published`: remove `social_analytics`, keep `web_presence`
-  - `blog_published`: `['web_presence', 'creative_content']`
-  - `content_engine_output`: `['creative_content', 'campaign', 'web_presence']`
+**Field Ops Console (`FieldOpsAgentConsole.tsx`)**
+- Currently shows 2 agents: `dispatch`, `field_navigation` — **this is already correct**
+- No changes needed here
 
-### 2. `supabase/functions/ai-agent-chat/index.ts`
-- Remove `social_scheduler` and `social_analytics` system prompts
-- Rename `social_content` key → `creative_content`
-- Merge creative agent system prompt into `creative_content`: combined prompt covering social posts (all 6 platforms), AI image/video generation, blog/email/SMS content, website copy, and brand voice
-- Update `handoff_to_agent` enum for any agent that referenced `social_scheduler`, `social_analytics`, or `creative` → `creative_content`
+**Social Media Console (`SocialMediaAgentConsole.tsx`)**
+- Currently shows 3 agents: `creative_content`, `brand_voice`, `content_engine`
+- `brand_voice` and `content_engine` are NOT in the 10-operative model
+- Should show: 1 agent — **Creative Content** (`creative_content`)
+- Fix `currentAgentId` and `onAgentClick` mappings
 
-### 3. `src/hooks/useAIAgentOrchestrator.ts`
-- Remove `social_scheduler` and `social_analytics` from `DEFAULT_AGENTS`
-- Rename `social_content` → `creative_content`, name `'Creative Content Agent'`, category stays `social_media` (for console routing)
-- Remove `creative` entry
-- Update `groupAgentsByCategory` result (automatic since driven by `DEFAULT_AGENTS`)
+**Customer Portal Console (`BookingAgentConsole.tsx`)**
+- Uses a completely different old-style UI (no `CyberConsoleLayout`)
+- Already uses `customer_journey` as the `initialAgent` — the chat routing is correct
+- No sidebar agent panel to update
 
-### 4. `src/lib/subscriptionAgentConfig.ts`
-- Replace all `'social_content', 'social_scheduler', 'social_analytics'` → `'creative_content'` in every tier
-- Replace `'creative'` → `'creative_content'` in every tier
-- Update `AGENT_DEPENDENCIES`: remove `social_scheduler`, `social_analytics`, `creative` keys; add `creative_content: []`
-- Update `CONSOLE_REQUIRED_AGENTS`: `social_media: ['creative_content']`, `creative_web_presence: ['creative_content']`
+### What Changes
 
-### 5. `src/pages/AIAgentsHub.tsx`
-- Update `AGENT_NAMES`: remove `social_scheduler`, `social_analytics`, `creative`; add `creative_content: 'Creative Content Agent'`
-- Update `JOB_TYPE_TO_AGENTS`: replace `social_content`, `social_scheduler`, `social_analytics`, `creative` → `creative_content`
-- `CATEGORY_INFO.social_media` label stays; `creative_web_presence` label stays
+**File 1: `src/components/marketing/MarketingSalesAgentConsole.tsx`**
+- Replace `MARKETING_AGENTS` (3 entries) with single `outreach` agent
+- Simplify `currentAgentId` prop — always `outreach`
+- Simplify `onAgentClick` to open campaign action
+- Remove `UserPlus`, `Users` icon imports that become unused
 
-### 6. `src/lib/agentStyles.ts`
-- Remove `social_scheduler`, `social_analytics`, `creative` from `AGENT_STYLES`
-- Add `creative_content: { label: 'Creative Content', color: 'text-pink-400', bgColor: 'bg-pink-500/10' }`
-- Update `AGENT_CATEGORIES.socialMedia`: `['creative_content']`
-- Update `AGENT_CATEGORIES.contentEngine`: remove (merged)
+**File 2: `src/components/analytics/AnalyticsAgentConsole.tsx`**
+- Replace `ANALYTICS_AGENTS` (3 entries) with single `analytics_intelligence` agent
+- Fix `currentAgentId` — always `analytics_intelligence`
+- Fix `onAgentClick` — single agent routes to the `performance` action
+- Remove `DollarSign`, `TrendingUp` icon imports that become unused
 
-### 7. `src/components/social/SocialMediaAgentConsole.tsx`
-- Change `initialAgent: 'social_content'` → `'creative_content'`
-- Change `lastAgent` default and all references: `'social_content'` → `'creative_content'`
-- Update `SOCIAL_AGENTS` array: rename `id: 'social_content'` → `id: 'creative_content'`, name `'Creative Content'`
-- Update `AGENT_TO_ACTION` mapping key
+**File 3: `src/components/billing/BusinessOpsAgentConsole.tsx`**
+- Remove `companies`, `employees`, `customers` from `BOPS_AGENTS` — keep only `business_finance` and `admin`
+- Fix broken `currentAgentId` mapping: replace old IDs (`quoting`, `invoicing`, `leads`, `inventory`, `operations`) with correct new IDs (`business_finance`, `admin`)
+- Fix `onAgentClick` mapping to use new IDs
+- Remove `Building2`, `UserCheck`, `UsersRound` icon imports
 
-### 8. `src/components/ai/agents/OperativeDependencyGraph.tsx`
-- Remove `social_scheduler`, `social_analytics`, `creative`, `web_presence` from `AGENT_LABELS`; add `creative_content: 'Creative Content'`
-- Update `DEPENDENCY_MAP`: remove `social_scheduler`, `social_analytics`, `creative`; add `creative_content: []`; keep `web_presence: ['creative_content']`
-- Update `FLOW_CONFIGS` Social Media section: agents `['creative_content']`
-- Update Content Engine section: agents `['creative_content', 'web_presence']` (or merge into one flow)
+**File 4: `src/components/social/SocialMediaAgentConsole.tsx`**
+- Replace `SOCIAL_AGENTS` (3 entries) with single `creative_content` agent
+- Fix `currentAgentId` — always `creative_content`
+- Fix `onAgentClick` — routes to `create-content` action
+- Remove `Wand2`, `Inbox` icon imports that become unused
 
-### 9. `src/components/ai/agents/BatchAgentActivation.tsx`
-- Phase 5 `agents` array: replace `['social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence']` → `['creative_content', 'web_presence']`
-
-### 10. `src/hooks/useRolePermissions.ts`
-- Replace all `social_content`, `social_scheduler`, `social_analytics`, `creative` references → `creative_content`
-
-### 11. `src/components/ai/chat/AgentHowToGuide.tsx`
-- In `CONSOLE_GUIDES` social section: update any guide entries that reference `social_scheduler` or `social_analytics` actions
-- Add/update guide entries for image/video creation to reflect the merged Creative Content Agent capabilities
-
-### 12. Minor cleanup across display-only files
-- `src/lib/helpContentConfig.ts`: remove `social_scheduler`, `social_analytics`, `creative`; add `creative_content`
-- `src/components/agents/TierComparisonCards.tsx`: same removals + add `creative_content`
-- `src/components/ai/agents/AgentAnalyticsDashboard.tsx`: same
-- `src/components/ai/agents/AgentTestConsole.tsx`: same
-- `src/lib/documentationConfig.ts`: update Creative & Web Presence agent descriptions
-
----
-
-## Summary of Agent Count Change
-- Before: 24 agents (3 social + 2 creative/web)
-- After: 21 agents (1 `creative_content` + 1 `web_presence` in social/creative, removing `social_scheduler`, `social_analytics`, `creative`)
+### Result After Fix
+Each console's sidebar will match the 10-operative model:
+- Customer Portal: `triage` + `customer_journey` (Booking console)
+- Field Ops: `dispatch` + `field_navigation` (already correct)
+- Business Ops: `business_finance` + `admin`
+- Outreach & Sales: `outreach`
+- Creative & Social: `creative_content`
+- Analytics: `analytics_intelligence`
