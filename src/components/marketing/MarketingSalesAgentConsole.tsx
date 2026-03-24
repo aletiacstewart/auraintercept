@@ -14,17 +14,13 @@ import { CampaignForm } from './forms/CampaignForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { LeadForm } from './forms/LeadForm';
 import { getAgentStyle } from '@/lib/agentStyles';
-import { 
-  Megaphone, 
-  Users,
-  UserPlus,
-} from 'lucide-react';
+import { Megaphone } from 'lucide-react';
 
-// Quick actions for Marketing & Sales - 3 agents: Campaign, Lead, Marketing (Segments)
+// Quick actions for Outreach & Sales - single consolidated Outreach Operative
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
-  { id: 'leads', label: 'Leads', icon: UserPlus, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
-  { id: 'customers', label: 'Marketing', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
+  { id: 'leads', label: 'Leads', icon: Megaphone, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
+  { id: 'customers', label: 'Marketing', icon: Megaphone, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration
@@ -168,9 +164,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const MARKETING_AGENTS: CyberAgent[] = [
-    { id: 'outreach', name: 'Outreach Agent', description: 'Campaigns, leads & marketing', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'leads_manager', name: 'Lead Manager', description: 'Qualifies & nurtures leads', icon: UserPlus, hsl: '262,83%,68%', status: 'standby', metric1Value: mm?.leadsTotal ?? 0, metric1Label: 'Leads', metric2Value: mm?.leadsConverted ?? 0, metric2Label: 'Converted' },
-    { id: 'audience', name: 'Audience Analyst', description: 'Segments & targets audiences', icon: Users, hsl: '38,100%,65%', status: 'standby', metric1Value: mm?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Segments' },
+    { id: 'outreach', name: 'Outreach Agent', description: 'Campaigns, leads & marketing segmentation', icon: Megaphone, hsl: '292,100%,70%', status: 'active', metric1Value: mm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: mm?.campaignsActive ?? 0, metric2Label: 'Active' },
   ];
 
   return (
@@ -193,23 +187,10 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       }}
       onHomeClick={handleHome}
       agents={MARKETING_AGENTS}
-      currentAgentId={
-        showCampaignForm ? 'outreach' :
-        showLeadsForm ? 'leads_manager' :
-        showSegmentsForm ? 'audience' :
-        currentAgent || lastAgent
-      }
-      onAgentClick={(agentId) => {
-        const AGENT_TO_ACTION: Record<string, string> = {
-          outreach: 'campaign',
-          leads_manager: 'leads',
-          audience: 'customers',
-        };
-        const actionId = AGENT_TO_ACTION[agentId];
-        if (actionId) {
-          const action = QUICK_ACTIONS.find(a => a.id === actionId);
-          if (action) handleQuickAction(action.message, action.id);
-        }
+      currentAgentId="outreach"
+      onAgentClick={() => {
+        const action = QUICK_ACTIONS.find(a => a.id === 'campaign');
+        if (action) handleQuickAction(action.message, action.id);
       }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}

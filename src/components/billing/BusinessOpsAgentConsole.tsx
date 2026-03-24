@@ -28,9 +28,6 @@ import {
   UserPlus,
   Package,
   Calendar,
-  Building2,
-  UserCheck,
-  UsersRound,
   Activity
 } from 'lucide-react';
 
@@ -41,9 +38,9 @@ const BASE_QUICK_ACTIONS = [
   { id: 'lead', label: 'Lead', icon: UserPlus, message: 'I need to add a new lead', featureColor: 'text-feature-leads' },
   { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments', featureColor: 'text-feature-appointments' },
   { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items', featureColor: 'text-feature-inventory' },
-  { id: 'companies', label: 'Companies', icon: Building2, message: 'Manage companies', featureColor: 'text-feature-platform' },
-  { id: 'employees', label: 'Employees', icon: UserCheck, message: 'Manage employees', featureColor: 'text-feature-employees' },
-  { id: 'customers', label: 'Customers', icon: UsersRound, message: 'Manage customers', featureColor: 'text-feature-customers' },
+  { id: 'companies', label: 'Companies', icon: Briefcase, message: 'Manage companies', featureColor: 'text-feature-platform' },
+  { id: 'employees', label: 'Employees', icon: Briefcase, message: 'Manage employees', featureColor: 'text-feature-employees' },
+  { id: 'customers', label: 'Customers', icon: Briefcase, message: 'Manage customers', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration - includes quick actions as tabs (top row only, no center grid)
@@ -233,9 +230,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const BOPS_AGENTS: CyberAgent[] = [
     { id: 'business_finance', name: 'Business Finance Agent', description: 'Quotes, invoices & inventory', icon: FileText, hsl: '189,100%,65%', status: 'active', metric1Value: m?.quotesTotal ?? 0, metric1Label: 'Quotes', metric2Value: m?.invoicesPaid ?? 0, metric2Label: 'Invoices Paid' },
     { id: 'admin', name: 'Admin Agent', description: 'Scheduling, staff & operations', icon: Briefcase, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.apptsTotal ?? 0, metric1Label: 'Appts', metric2Value: m?.apptsConfirmed ?? 0, metric2Label: 'Confirmed' },
-    { id: 'companies', name: 'Companies Manager', description: 'Manages company accounts', icon: Building2, hsl: '189,100%,55%', status: 'standby', metric1Value: m?.companiesTotal ?? 0, metric1Label: 'Companies', metric2Value: m?.companiesActive ?? 0, metric2Label: 'Active' },
-    { id: 'employees', name: 'Employees Manager', description: 'Manages staff & roles', icon: UserCheck, hsl: '48,100%,60%', status: 'standby', metric1Value: m?.employeesTotal ?? 0, metric1Label: 'Staff', metric2Value: m?.employeesActive ?? 0, metric2Label: 'Active' },
-    { id: 'customers', name: 'Customers Manager', description: 'Customer profiles & history', icon: UsersRound, hsl: '38,100%,65%', status: 'standby', metric1Value: m?.customersTotal ?? 0, metric1Label: 'Customers', metric2Value: m?.customersNew ?? 0, metric2Label: 'New' },
   ];
 
   return (
@@ -263,27 +257,21 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       onHomeClick={handleHome}
       agents={BOPS_AGENTS}
       currentAgentId={
-        activeFormType === 'quote' ? 'quoting' :
-        activeFormType === 'invoice' ? 'invoicing' :
-        activeFormType === 'lead' ? 'leads' :
-        activeFormType === 'inventory' ? 'inventory' :
-        activeFormType === 'appointments' ? 'operations' :
-        activeFormType === 'companies' ? 'companies' :
-        activeFormType === 'employees' ? 'employees' :
-        activeFormType === 'customers' ? 'customers' :
-        activeFormType === 'aura-live' ? 'operations' :
+        activeFormType === 'quote' ? 'business_finance' :
+        activeFormType === 'invoice' ? 'business_finance' :
+        activeFormType === 'lead' ? 'business_finance' :
+        activeFormType === 'inventory' ? 'business_finance' :
+        activeFormType === 'appointments' ? 'admin' :
+        activeFormType === 'companies' ? 'admin' :
+        activeFormType === 'employees' ? 'admin' :
+        activeFormType === 'customers' ? 'admin' :
+        activeFormType === 'aura-live' ? 'admin' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_TAB: Record<string, string> = {
-          quoting: 'quote',
-          invoicing: 'invoice',
-          leads: 'lead',
-          operations: 'appointments',
-          inventory: 'inventory',
-          companies: 'companies',
-          employees: 'employees',
-          customers: 'customers',
+          business_finance: 'quote',
+          admin: 'appointments',
         };
         const tabId = AGENT_TO_TAB[agentId];
         if (tabId) {

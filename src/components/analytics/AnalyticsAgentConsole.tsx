@@ -24,9 +24,6 @@ import { SocialAnalyticsForm } from './forms/SocialAnalyticsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   BarChart3, 
-  TrendingUp, 
-  Users, 
-  DollarSign,
   Target,
   Download,
   ShieldAlert,
@@ -37,9 +34,9 @@ import {
 // Quick actions for Analytics & Optimization
 const QUICK_ACTIONS = [
   { id: 'performance', label: 'Report', icon: BarChart3, message: 'I need a performance report', featureColor: 'text-feature-analytics' },
-  { id: 'revenue', label: 'Revenue', icon: DollarSign, message: 'Show me revenue analysis', featureColor: 'text-feature-invoices' },
-  { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights', featureColor: 'text-feature-customers' },
-  { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
+  { id: 'revenue', label: 'Revenue', icon: BarChart3, message: 'Show me revenue analysis', featureColor: 'text-feature-invoices' },
+  { id: 'customers', label: 'Insights', icon: BarChart3, message: 'I need customer insights', featureColor: 'text-feature-customers' },
+  { id: 'forecast', label: 'Forecast', icon: BarChart3, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
   { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard', featureColor: 'text-feature-analytics' },
   { id: 'social', label: 'Social', icon: Share2, message: 'Show social media analytics', featureColor: 'text-pink-400' },
   { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics', featureColor: 'text-feature-appointments' },
@@ -256,9 +253,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   }
 
   const ANALYTICS_AGENTS: CyberAgent[] = [
-    { id: 'analytics_intelligence', name: 'Analytics Intelligence Agent', description: 'Performance, revenue & forecasting', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
-    { id: 'analytics_revenue', name: 'Revenue Analysis', description: 'Revenue trends & forecast analysis', icon: DollarSign, hsl: '142,72%,55%', status: 'standby', metric1Value: am?.revenueTotal ? `$${am.revenueTotal.toLocaleString()}` : '$0', metric1Label: 'Revenue', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Appts' },
-    { id: 'analytics_insights', name: 'Insight Engine', description: 'Customer trends & business insights', icon: TrendingUp, hsl: '270,72%,68%', status: 'standby', metric1Value: am?.feedbackTotal ?? 0, metric1Label: 'Feedback', metric2Value: am?.appointmentsTotal ?? 0, metric2Label: 'Tracked' },
+    { id: 'analytics_intelligence', name: 'Analytics Intelligence', description: 'Performance, revenue, insights & forecasting', icon: BarChart3, hsl: '223,100%,65%', status: 'active', metric1Value: am?.requestsThisMonth ?? 0, metric1Label: 'Requests', metric2Value: am?.successRate ? `${am.successRate}%` : '—', metric2Label: 'Success' },
   ];
 
   return (
@@ -280,24 +275,11 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       }}
       onHomeClick={handleHome}
       agents={ANALYTICS_AGENTS}
-      currentAgentId={
-        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics_intelligence' :
-        (showRevenueForm || showForecastForm) ? 'analytics_revenue' :
-        (showCustomersForm || showInsightsForm || showSocialForm) ? 'analytics_insights' :
-        currentAgent || lastAgent
-      }
-      onAgentClick={(agentId) => {
-        const AGENT_TO_ACTION: Record<string, string> = {
-          analytics_intelligence: 'performance',
-          analytics_revenue: 'revenue',
-          analytics_insights: 'customers',
-        };
-        const actionId = AGENT_TO_ACTION[agentId];
-        if (actionId) {
-          setActiveTab(actionId);
-          const action = QUICK_ACTIONS.find(a => a.id === actionId);
-          if (action) handleQuickAction(action.message, action.id);
-        }
+      currentAgentId="analytics_intelligence"
+      onAgentClick={() => {
+        setActiveTab('performance');
+        const action = QUICK_ACTIONS.find(a => a.id === 'performance');
+        if (action) handleQuickAction(action.message, action.id);
       }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}

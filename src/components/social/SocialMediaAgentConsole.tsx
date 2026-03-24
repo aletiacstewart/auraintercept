@@ -20,14 +20,12 @@ import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSe
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
-  Wand2,
-  Inbox,
 } from 'lucide-react';
 
 // Simplified quick actions - 2 clear entry points
 const QUICK_ACTIONS = [
-  { id: 'create-content', label: 'Create Content', icon: Wand2, message: 'Open multi-channel content generator', featureColor: 'text-pink-400' },
-  { id: 'my-posts', label: 'My Posts', icon: Inbox, message: 'View saved drafts and posts', featureColor: 'text-pink-400' },
+  { id: 'create-content', label: 'Create Content', icon: Share2, message: 'Open multi-channel content generator', featureColor: 'text-pink-400' },
+  { id: 'my-posts', label: 'My Posts', icon: Share2, message: 'View saved drafts and posts', featureColor: 'text-pink-400' },
 ];
 
 // Tab configuration
@@ -157,9 +155,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
   const SOCIAL_AGENTS: CyberAgent[] = [
-    { id: 'creative_content', name: 'Creative Content', description: 'Generates social & creative content', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
-    { id: 'brand_voice', name: 'Brand Voice Mgr', description: 'Maintains brand consistency', icon: Wand2, hsl: '270,72%,68%', status: 'standby', metric1Value: sm?.campaignsTotal ?? 0, metric1Label: 'Campaigns', metric2Value: sm?.campaignsActive ?? 0, metric2Label: 'Active' },
-    { id: 'content_engine', name: 'Content Engine', description: 'Multi-channel content creation', icon: Inbox, hsl: '189,100%,65%', status: 'standby', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Queued', metric2Value: sm?.customersReached ?? 0, metric2Label: 'Reached' },
+    { id: 'creative_content', name: 'Creative Content Agent', description: 'Social content, brand voice & multi-channel creation', icon: Share2, hsl: '330,80%,70%', status: 'active', metric1Value: sm?.postsScheduled ?? 0, metric1Label: 'Drafts', metric2Value: sm?.postsPublished ?? 0, metric2Label: 'Published' },
   ];
 
   return (
@@ -182,25 +178,10 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       }}
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
-      currentAgentId={
-        showContentEngine ? (contentEngineTab === 'settings' ? 'brand_voice' : 'creative_content') :
-        showMyPosts ? 'content_engine' :
-        currentAgent || lastAgent
-      }
-      onAgentClick={(agentId) => {
-        const AGENT_TO_ACTION: Record<string, string> = {
-          creative_content: 'create-content',
-          brand_voice: 'create-content',
-          content_engine: 'my-posts',
-        };
-        const actionId = AGENT_TO_ACTION[agentId];
-        if (actionId) {
-          const action = QUICK_ACTIONS.find(a => a.id === actionId);
-          if (action) {
-            handleQuickAction(action.message, action.id);
-            if (agentId === 'brand_voice') setContentEngineTab('settings');
-          }
-        }
+      currentAgentId="creative_content"
+      onAgentClick={() => {
+        const action = QUICK_ACTIONS.find(a => a.id === 'create-content');
+        if (action) handleQuickAction(action.message, action.id);
       }}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
