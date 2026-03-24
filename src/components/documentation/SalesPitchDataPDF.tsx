@@ -452,7 +452,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Quantifiable business impact for sales conversations</Text>
 
       <View style={styles.roiCard}>
-        <Text style={styles.roiTitle}>ROI Calculator: Aura Performance Tier ($2,497/mo)</Text>
+        <Text style={styles.roiTitle}>ROI Calculator: Aura Performance Tier ($497/mo)</Text>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Missed calls recovered (23/mo x $500)</Text>
           <Text style={styles.roiValue}>+$11,500</Text>
@@ -471,7 +471,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Aura Intercept cost</Text>
-          <Text style={styles.roiValue}>-$2,497</Text>
+          <Text style={styles.roiValue}>-$497</Text>
         </View>
         <View style={[styles.roiRow, styles.roiTotal]}>
           <Text style={styles.roiTotalLabel}>Net Monthly ROI</Text>
@@ -586,7 +586,7 @@ export const SalesPitchDataPDF: React.FC = () => (
             <Text style={styles.tierBullet}>- Calls recovered: +$11,500</Text>
             <Text style={styles.tierBullet}>- Route savings: +$400</Text>
             <Text style={styles.tierBullet}>- Admin time: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$2,497</Text>
+            <Text style={styles.tierBullet}>- Cost: -$497</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$11,403/mo</Text>
           </View>
 
@@ -599,7 +599,7 @@ export const SalesPitchDataPDF: React.FC = () => (
             <Text style={styles.tierBullet}>- Full operations: +$17,000</Text>
             <Text style={styles.tierBullet}>- Marketing automation: +$3,000</Text>
             <Text style={styles.tierBullet}>- Analytics insights: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$3,497</Text>
+            <Text style={styles.tierBullet}>- Cost: -$697</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$18,503/mo</Text>
           </View>
         </View>
@@ -667,7 +667,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$197-$3,497</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$197-$697</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
