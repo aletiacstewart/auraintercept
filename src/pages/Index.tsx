@@ -1024,7 +1024,7 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">11 AI Agents</span>
+                    <span className="text-xs">4 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
