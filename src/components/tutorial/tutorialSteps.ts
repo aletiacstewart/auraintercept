@@ -6,8 +6,8 @@ const sharedWelcome: TutorialStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to Aura Intercept',
-    description: 'This tutorial walks you through every section of the platform. Your AI agents, consoles, and integrations work together to automate your business 24/7.',
-    tip: 'Your progress is saved — pause and resume anytime.',
+    description: 'This tutorial walks you through every section of the platform. Your 10 consolidated AI Operatives, consoles, and integrations work together to automate your business 24/7.',
+    tip: 'Your progress is saved — pause and resume anytime. Click Next to move forward at your own pace.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',
     position: 'right',
@@ -15,7 +15,7 @@ const sharedWelcome: TutorialStep[] = [
   {
     id: 'dashboard-overview',
     title: 'Dashboard — Your Command Center',
-    description: 'The dashboard shows key metrics, upcoming appointments, agent activity, and a real-time feed of everything happening in your business at a glance.',
+    description: 'The dashboard shows key metrics, upcoming appointments, AI Operative activity, and a real-time feed of everything happening in your business at a glance.',
     tip: 'The dashboard adapts based on your subscription tier and role. Higher tiers unlock more panels and AI analytics.',
     targetSelector: '[data-tour-id="main-content"]',
     route: '/dashboard',
@@ -30,7 +30,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'quick-setup',
     title: 'Quick Setup',
-    description: 'Your first stop after signing up. Configure your company profile, business hours, service types, employee info, and branding. Everything here powers how your AI agents respond to customers.',
+    description: 'Your first stop after signing up. Configure your company profile, business hours, service types, employee info, and branding. Everything here powers how your AI Operatives respond to customers.',
     tryIt: 'Click Quick Setup to configure your company before going live.',
     targetSelector: '[data-tour-id="nav-quick-setup"]',
     route: '/dashboard',
@@ -41,7 +41,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'customer-portal',
     title: 'Customer Portal Console',
-    description: 'The live AI-powered console your team uses to monitor customer interactions. See AI chat conversations, appointment bookings, and customer messages in real-time.',
+    description: 'The live AI-powered console your team uses to monitor customer interactions. See AI chat conversations, appointment bookings, and customer messages in real-time. The Customer Engagement Operative manages all customer-facing interactions.',
     tip: 'Customers get a free mobile-friendly portal with AI chat, appointment tracking, and direct contact links.',
     targetSelector: '[data-tour-id="nav-customer-portal"]',
     route: '/dashboard',
@@ -69,7 +69,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'business-mgt',
     title: 'Business Mgt Ops Console',
-    description: 'Your central hub for daily operations. Manage appointments, leads, quotes, invoices, and inventory all in one place. Includes the Aura Live activity feed for real-time AI events.',
+    description: 'Your central hub for daily operations. The Business Finance Operative handles quotes, invoices, and inventory. The Admin Operative manages appointments, team members, leads, and customer profiles. Includes the Aura Live real-time activity feed.',
     tryIt: 'Open Business Mgt Ops to see the live activity feed and all operational modules.',
     targetSelector: '[data-tour-id="nav-business-mgt-ops"]',
     route: '/dashboard',
@@ -86,7 +86,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'analytics-reports',
     title: 'Analytics & Reports Ops',
-    description: 'AI-powered deep-dive analytics. Revenue trends, customer lifetime value, agent performance, conversion rates, and business forecasting — all generated automatically.',
+    description: 'AI-powered deep-dive analytics powered by the Analytics Intelligence Operative. Revenue trends, customer lifetime value, operative performance, conversion rates, and business forecasting — all generated automatically.',
     tip: 'Available on Performance and Command tiers. Upgrade to unlock predictive revenue and customer insights.',
     targetSelector: '[data-tour-id="nav-analytics-reports"]',
     route: '/dashboard',
@@ -97,7 +97,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'marketing-sales',
     title: 'Outreach & Sales Ops',
-    description: 'Run SMS and email campaigns, win-back sequences, referral programs, and seasonal promos. The AI Campaign agent creates content and the Marketing agent handles delivery and tracking.',
+    description: 'Run SMS and email campaigns, win-back sequences, referral programs, and seasonal promos. The Outreach Operative manages campaigns, lead qualification, and customer segmentation in one unified console with Campaign, Leads, and Marketing tabs.',
     tip: 'Available on Growth tier and above. Build your customer list by syncing with your appointment history.',
     targetSelector: '[data-tour-id="nav-marketing-sales"]',
     route: '/dashboard',
@@ -108,8 +108,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'social-media',
     title: 'Social Media Ops',
-    description: 'Schedule posts, generate AI content, and track engagement across Facebook, Instagram, and more. The Social Content agent creates posts tailored to your brand voice automatically.',
-    tip: 'Available on Growth tier and above. Connect your social accounts under 3rd Party Integrations first.',
+    description: 'Generate AI content for Instagram, Facebook, LinkedIn, TikTok, GMB, and X. The Creative Content Operative creates platform-specific posts tailored to your brand voice. Use the Manual Bridge to copy content and post directly — no API approval needed.',
+    tip: 'Available on Growth tier and above. Use Create Content for generation and My Posts to manage your drafts.',
     targetSelector: '[data-tour-id="nav-social-media"]',
     route: '/dashboard',
     position: 'right',
@@ -119,7 +119,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'web-presence',
     title: 'Web Presence Manager',
-    description: 'Build and manage your company website with AI-generated pages, SEO optimization, blog management, and an embeddable customer chat widget — all without a developer.',
+    description: 'Build and manage your company website with AI-generated pages, SEO optimization, blog management, and an embeddable customer chat widget — all without a developer. The Web Presence Operative handles content creation and updates.',
     tip: 'Available on Business tier and above. AI generates content using your company profile and knowledge base.',
     targetSelector: '[data-tour-id="nav-web-presence"]',
     route: '/dashboard',
@@ -130,8 +130,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'field-ops',
     title: 'Technician-Field Ops Console',
-    description: 'Manage your field technicians from a live dashboard. View job assignments, track technician locations on a map, monitor check-ins, and see job progress in real time.',
-    tip: 'Available on Field Ops tier and above. Technicians get their own mobile app with GPS check-ins.',
+    description: 'The Field Navigation Operative powers this mobile-first console for your field team. Accept jobs, get directions, mark en-route, update ETAs, arrive, complete, and generate invoices — all in one workflow.',
+    tip: 'Available on Field Ops tier and above. Technicians install this as a PWA for hands-free field operations.',
     targetSelector: '[data-tour-id="nav-field-ops"]',
     route: '/dashboard',
     position: 'right',
@@ -139,7 +139,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'field-ops-install',
     title: 'Technician Field Ops App Install',
-    description: 'Guide technicians through installing the Field Ops mobile app as a PWA. They\'ll get job assignments, GPS navigation, check-in tools, and customer info on their phone.',
+    description: 'Guide technicians through installing the Field Ops mobile app as a PWA. They\'ll get job assignments, GPS navigation, check-in tools, quote/invoice generation, and customer info on their phone.',
     targetSelector: '[data-tour-id="nav-field-ops-install"]',
     route: '/dashboard',
     position: 'right',
@@ -147,8 +147,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'dispatch-ops',
     title: 'Dispatch-Field Ops Console',
-    description: 'Smart AI dispatching with automatic technician assignment based on proximity, availability, skills, and workload. Includes a live map view and real-time job status updates.',
-    tip: 'The Dispatch AI agent automatically assigns the best-matched technician for each incoming job request.',
+    description: 'The Dispatch Operative handles smart AI dispatching — automatic technician assignment based on proximity, availability, skills, and workload. Includes a live map view, real-time job status, and ETA tracking for all active jobs.',
+    tip: 'The Dispatch Operative automatically assigns the best-matched technician for each incoming job request.',
     targetSelector: '[data-tour-id="nav-dispatch-ops"]',
     route: '/dashboard',
     position: 'right',
@@ -166,8 +166,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'ai-operatives-hub',
     title: 'AI Operatives Hub',
-    description: 'The nerve center of your AI workforce. Enable or disable any of the 24 AI agents, monitor their performance metrics, view real-time event logs, and fine-tune agent behavior.',
-    tryIt: 'Open the Hub to see all 24 AI Operatives, their health status, and enable the ones you need.',
+    description: 'The nerve center of your AI workforce. Enable or disable any of the 10 consolidated AI Operatives, monitor their performance metrics, view real-time event logs, and fine-tune operative behavior from one central management interface.',
+    tryIt: 'Open the Hub to see all 10 AI Operatives, their health status, and enable the ones you need.',
     targetSelector: '[data-tour-id="nav-ai-operatives"]',
     route: '/dashboard',
     position: 'right',
@@ -175,8 +175,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'knowledge-base',
     title: 'Knowledge Base',
-    description: 'Train your AI agents with company-specific information. Upload FAQs, service details, pricing, policies, and common answers that agents reference during every conversation.',
-    tip: 'The more detailed your Knowledge Base, the more accurate and helpful your AI agents become. Start with your top 10 FAQs.',
+    description: 'Train your AI Operatives with company-specific information. Upload FAQs, service details, pricing, policies, and common answers that operatives reference during every conversation.',
+    tip: 'The more detailed your Knowledge Base, the more accurate and helpful your AI Operatives become. Start with your top 10 FAQs.',
     targetSelector: '[data-tour-id="nav-knowledge-base"]',
     route: '/dashboard',
     position: 'right',
@@ -195,7 +195,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'integrations-overview',
     title: '3rd Party Integrations Overview',
-    description: 'Connect the external services that power your AI agents: voice (ElevenLabs), SMS & phone (SignalWire), email (Resend), calendar (Google), social media, and AI research (Tavily).',
+    description: 'Connect the external services that power your AI Operatives: voice (ElevenLabs), SMS & phone (SignalWire), email (Resend), calendar (Google), and AI research (Tavily). Social media posting uses the built-in Manual Bridge — no API setup required.',
     tryIt: 'Click 3rd Party Overview to see all available integrations and their current setup status.',
     targetSelector: '[data-tour-id="nav-integrations-overview"]',
     route: '/dashboard',
@@ -205,7 +205,7 @@ const adminSteps: TutorialStep[] = [
     id: 'voice-integration',
     title: 'Voice Agent — ElevenLabs',
     description: 'Connect ElevenLabs for natural, human-sounding AI voice conversations. Your AI Receptionist answers every incoming call with a chosen voice, 24/7 — no hold times.',
-    tip: 'Choose from dozens of voice options or clone your own. The voice agent handles calls even when your office is closed.',
+    tip: 'Choose from dozens of voice options or clone your own. The voice operative handles calls even when your office is closed.',
     targetSelector: '[data-tour-id="nav-voice-agent"]',
     route: '/dashboard',
     position: 'right',
@@ -238,17 +238,9 @@ const adminSteps: TutorialStep[] = [
     position: 'right',
   },
   {
-    id: 'social-integration',
-    title: 'Social Media Integration',
-    description: 'Connect your Facebook and Instagram business pages to enable automated content publishing, scheduled posts, and engagement analytics from the Social Media Ops console.',
-    targetSelector: '[data-tour-id="nav-social-integration"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
     id: 'tavily-integration',
     title: 'AI Research — Tavily',
-    description: 'Supercharge your AI agents with real-time web research. Tavily lets agents find current information when generating blog posts, social content, and answering complex customer questions.',
+    description: 'Supercharge your AI Operatives with real-time web research. Tavily lets operatives find current information when generating blog posts, social content, and answering complex customer questions.',
     tip: 'Get a free Tavily API key at tavily.com. It significantly improves the quality of AI-generated content.',
     targetSelector: '[data-tour-id="nav-ai-research"]',
     route: '/dashboard',
@@ -289,7 +281,7 @@ const platformAdminSteps: TutorialStep[] = [
   {
     id: 'platform-guides',
     title: 'Platform Guides',
-    description: 'Comprehensive documentation for all 7 subscription tiers and 24 AI Operatives. Manage and publish guide content that all users see in their Help section.',
+    description: 'Comprehensive documentation for all subscription tiers and 10 AI Operatives. Manage and publish guide content that all users see in their Help section.',
     targetSelector: '[data-tour-id="nav-platform-guides"]',
     route: '/dashboard',
     position: 'right',
@@ -305,7 +297,7 @@ const platformAdminSteps: TutorialStep[] = [
   {
     id: 'ai-agent-demo',
     title: 'AI Agent Flow Demo',
-    description: 'An animated 4-scene visualization of the Aura AI agent network — perfect for client presentations and sales demos. Shows how the AI Receptionist routes to specialized agents.',
+    description: 'An animated 10-scene visualization of the Aura AI Operative network — perfect for client presentations and sales demos. Shows how all 10 Operatives route, hand off, and collaborate across every console.',
     tryIt: 'Click AI Agent Demo to launch the full-screen animated demo. Use Auto-Play for a hands-free walkthrough.',
     targetSelector: '[data-tour-id="nav-ai-agent-demo"]',
     route: '/dashboard',
@@ -314,7 +306,7 @@ const platformAdminSteps: TutorialStep[] = [
   {
     id: 'architecture',
     title: 'Platform Architecture',
-    description: 'A technical diagram of the platform\'s AI agent network, data flows, and integration points. Useful for technical discussions and understanding how agents communicate.',
+    description: 'A technical diagram of the platform\'s AI Operative network, data flows, and integration points. Useful for technical discussions and understanding how operatives communicate.',
     targetSelector: '[data-tour-id="nav-architecture"]',
     route: '/dashboard',
     position: 'right',
@@ -322,7 +314,7 @@ const platformAdminSteps: TutorialStep[] = [
   {
     id: 'export-docs',
     title: 'Export Documentation',
-    description: 'Generate and download all 11 platform documentation PDFs — including tier comparisons, agent guides, integration instructions, and pricing sheets — for offline sharing.',
+    description: 'Generate and download all platform documentation PDFs — including tier comparisons, operative guides, integration instructions, and pricing sheets — for offline sharing.',
     tip: 'All exported PDFs are generated from the centralized documentation config to ensure they\'re always up to date.',
     targetSelector: '[data-tour-id="nav-export-docs"]',
     route: '/dashboard',
@@ -344,9 +336,9 @@ const employeeSteps: TutorialStep[] = [
   },
   {
     id: 'tech-ai-console',
-    title: 'AI Console',
-    description: 'Your AI-powered assistant for customer interactions. Use this to handle chats, answer customer questions, and get AI-suggested responses for complex inquiries.',
-    tip: 'The AI console is pre-trained with your company\'s knowledge base so responses are accurate and on-brand.',
+    title: 'Technician-Field Ops Console',
+    description: 'Your AI-powered field operations assistant. Accept jobs, get turn-by-turn directions, mark en-route, update your ETA, arrive and start jobs, then complete them and generate invoices — all in one streamlined workflow.',
+    tip: 'The Field Navigation Operative is pre-trained with your company\'s service protocols so responses are accurate and on-brand.',
     targetSelector: '[data-tour-id="nav-tech-ai-console"]',
     route: '/dashboard',
     position: 'right',
@@ -379,7 +371,7 @@ const employeeSteps: TutorialStep[] = [
   {
     id: 'availability',
     title: 'Availability',
-    description: 'Set your weekly availability so the AI Dispatch agent only assigns jobs when you\'re actually working. Keep this updated to prevent scheduling conflicts.',
+    description: 'Set your weekly availability so the AI Dispatch Operative only assigns jobs when you\'re actually working. Keep this updated to prevent scheduling conflicts.',
     tip: 'Updating your availability helps the AI assign jobs more accurately and improves your team\'s overall scheduling efficiency.',
     targetSelector: '[data-tour-id="nav-availability"]',
     route: '/dashboard',
@@ -388,7 +380,7 @@ const employeeSteps: TutorialStep[] = [
   {
     id: 'tech-profile',
     title: 'My Profile',
-    description: 'Update your personal information, contact details, service skills, and notification preferences. Your profile helps the dispatch AI match you to the right jobs.',
+    description: 'Update your personal information, contact details, service skills, and notification preferences. Your profile helps the Dispatch Operative match you to the right jobs.',
     targetSelector: '[data-tour-id="nav-tech-profile"]',
     route: '/dashboard',
     position: 'right',
@@ -396,7 +388,7 @@ const employeeSteps: TutorialStep[] = [
   {
     id: 'tech-install',
     title: 'Install the App',
-    description: 'Install Aura as a Progressive Web App on your phone for fast access to your jobs, schedule, and AI console. Works like a native app — no app store needed.',
+    description: 'Install Aura as a Progressive Web App on your phone for fast access to your jobs, schedule, and Field Ops console. Works like a native app — no app store needed.',
     tryIt: 'Follow the install instructions on this page to add Aura to your home screen.',
     targetSelector: '[data-tour-id="nav-tech-install"]',
     route: '/dashboard',
@@ -410,7 +402,7 @@ const completionStep: TutorialStep[] = [
   {
     id: 'tutorial-complete',
     title: 'Tutorial Complete! 🎉',
-    description: 'You\'ve explored all sections of Aura Intercept. Your AI agents are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
+    description: 'You\'ve explored all sections of Aura Intercept. Your 10 AI Operatives are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
     tip: 'Use the floating Aura button (bottom-right) anytime to get AI-powered help on the page you\'re viewing.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',

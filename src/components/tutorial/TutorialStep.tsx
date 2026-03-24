@@ -139,14 +139,13 @@ export function TutorialStepOverlay({
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[9999]" style={{ pointerEvents: 'auto' }}>
-        {/* Overlay with cutout */}
+        {/* Overlay with cutout — click does nothing so users don't accidentally dismiss */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="absolute inset-0 bg-black/60"
           style={{ clipPath }}
-          onClick={onSkip}
         />
 
         {/* Highlight ring */}
