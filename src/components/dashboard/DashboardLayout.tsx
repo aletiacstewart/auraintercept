@@ -357,6 +357,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    <DashboardTutorialProvider>
     <div className="min-h-screen flex" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
       {/* Sidebar */}
       <aside
@@ -625,13 +626,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Unified Aura Floating Button */}
       <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
     </div>
+    </DashboardTutorialProvider>
   );
 }
 
+/** Alias kept for backward compatibility — DashboardLayout now includes the tutorial provider */
 export function DashboardLayoutWithTutorial({ children }: { children: React.ReactNode }) {
-  return (
-    <DashboardTutorialProvider>
-      <DashboardLayout>{children}</DashboardLayout>
-    </DashboardTutorialProvider>
-  );
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
