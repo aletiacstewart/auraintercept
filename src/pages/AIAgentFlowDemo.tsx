@@ -39,8 +39,6 @@ const C = {
   businessDim: 'hsl(270, 50%, 45%)',
   marketing: 'hsl(30, 80%, 55%)',
   marketingDim: 'hsl(30, 60%, 42%)',
-  social: 'hsl(330, 70%, 55%)',
-  socialDim: 'hsl(330, 50%, 42%)',
   creative: 'hsl(280, 70%, 60%)',
   creativeDim: 'hsl(280, 50%, 45%)',
   analytics: 'hsl(190, 80%, 50%)',
@@ -54,7 +52,7 @@ const scenes: Scene[] = [
   {
     id: 'scene-1',
     title: 'Customer Reaches Out',
-    narration: 'A customer calls, chats, or texts your business. The AI Receptionist answers instantly — 24/7, no hold times, no missed calls. It greets visitors, understands their needs, and routes them to the right agent.',
+    narration: 'A customer calls, chats, or texts your business. The AI Receptionist answers instantly — 24/7, no hold times, no missed calls. It greets visitors, understands their needs, and routes them to the right operative.',
     agents: [
       { id: 'customer', label: 'Customer', emoji: '👤', color: C.person, x: 15, y: 50 },
       { id: 'call', label: 'Phone Call', emoji: '📞', color: C.customerDim, x: 38, y: 20 },
@@ -78,300 +76,227 @@ const scenes: Scene[] = [
   {
     id: 'scene-2',
     title: 'Customer Portal Console',
-    narration: '4 agents power your customer portal: AI Receptionist qualifies requests, Scheduling books appointments with calendar sync, Follow-up sends reminders and checks in after service, and Review collects Google/Yelp ratings.',
+    narration: 'The Customer Journey operative handles the full lifecycle: AI Receptionist qualifies requests, Scheduling books appointments with calendar sync, then Follow-up sends reminders and checks in after service, and Review collects Google/Yelp ratings — all in one unified operative.',
     agents: [
-      { id: 'triage', label: 'AI Receptionist', emoji: '🤖', color: C.customer, x: 20, y: 50 },
-      { id: 'booking', label: 'Scheduling', emoji: '📅', color: C.customer, x: 55, y: 18 },
-      { id: 'followup', label: 'Follow-up', emoji: '📋', color: C.customer, x: 55, y: 50 },
-      { id: 'review', label: 'Review', emoji: '⭐', color: C.customer, x: 55, y: 82 },
-      { id: 'f1', label: 'Calendar Sync\n& Confirmations', emoji: '✅', color: C.customerDim, x: 85, y: 18 },
-      { id: 'f2', label: 'SMS Reminders\n& Check-ins', emoji: '📱', color: C.customerDim, x: 85, y: 50 },
-      { id: 'f3', label: 'Google / Yelp\nReview Links', emoji: '🌟', color: C.customerDim, x: 85, y: 82 },
+      { id: 'triage', label: 'AI Receptionist', emoji: '🤖', color: C.customer, x: 18, y: 50 },
+      { id: 'customer_journey', label: 'Customer\nJourney', emoji: '🔄', color: C.customer, x: 52, y: 50 },
+      { id: 'f1', label: 'Calendar Sync\n& Confirmations', emoji: '✅', color: C.customerDim, x: 82, y: 18 },
+      { id: 'f2', label: 'SMS Reminders\n& Check-ins', emoji: '📱', color: C.customerDim, x: 82, y: 50 },
+      { id: 'f3', label: 'Google / Yelp\nReview Links', emoji: '🌟', color: C.customerDim, x: 82, y: 82 },
     ],
     connections: [
-      { from: 'triage', to: 'booking', label: 'Schedule' },
-      { from: 'triage', to: 'followup', label: 'Check-in' },
-      { from: 'booking', to: 'followup', label: 'Post-Job' },
-      { from: 'followup', to: 'review', label: 'After Service' },
-      { from: 'triage', to: 'review', label: 'Direct' },
-      { from: 'booking', to: 'f1', label: '' },
-      { from: 'followup', to: 'f2', label: '' },
-      { from: 'review', to: 'f3', label: '' },
+      { from: 'triage', to: 'customer_journey', label: 'Route' },
+      { from: 'customer_journey', to: 'f1', label: 'Book' },
+      { from: 'customer_journey', to: 'f2', label: 'Remind' },
+      { from: 'customer_journey', to: 'f3', label: 'Review' },
     ],
-    highlightAgents: ['triage', 'booking', 'followup', 'review', 'f1', 'f2', 'f3'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7],
+    highlightAgents: ['triage', 'customer_journey', 'f1', 'f2', 'f3'],
+    highlightConnections: [0, 1, 2, 3],
   },
 
   // Scene 3 — Outreach & Sales Console
   {
     id: 'scene-3',
     title: 'Outreach & Sales Console',
-    narration: '3 agents drive growth: Campaign creates and sends email/SMS outreach, Lead qualifies and scores prospects with automated nurturing, and Marketing manages segments, promo codes, referral tracking, and win-back targeting.',
+    narration: 'The Outreach operative drives growth across the full funnel: lead scoring and qualification, email/SMS campaign creation, audience segmentation, promo codes, referral tracking, and win-back targeting — all unified in a single powerhouse operative.',
     agents: [
-      { id: 'campaign', label: 'Campaign', emoji: '📣', color: C.marketing, x: 25, y: 20 },
-      { id: 'lead', label: 'Lead', emoji: '🎯', color: C.marketing, x: 25, y: 50 },
-      { id: 'marketing_ag', label: 'Marketing', emoji: '📊', color: C.marketing, x: 25, y: 80 },
-      { id: 'f1', label: 'Email / SMS\nCampaigns', emoji: '📧', color: C.marketingDim, x: 58, y: 15 },
-      { id: 'f2', label: 'Lead Scoring\n& Nurturing', emoji: '🔥', color: C.marketingDim, x: 58, y: 42 },
-      { id: 'f3', label: 'Promo Codes\n& Referrals', emoji: '🏷️', color: C.marketingDim, x: 58, y: 70 },
-      { id: 'f4', label: 'Win-Back\nTargeting', emoji: '🔄', color: C.marketingDim, x: 85, y: 50 },
+      { id: 'outreach', label: 'Outreach\nOperative', emoji: '📣', color: C.marketing, x: 25, y: 50 },
+      { id: 'f1', label: 'Lead Scoring\n& Nurturing', emoji: '🎯', color: C.marketingDim, x: 58, y: 15 },
+      { id: 'f2', label: 'Email / SMS\nCampaigns', emoji: '📧', color: C.marketingDim, x: 58, y: 40 },
+      { id: 'f3', label: 'Promo Codes\n& Referrals', emoji: '🏷️', color: C.marketingDim, x: 58, y: 65 },
+      { id: 'f4', label: 'Win-Back\nTargeting', emoji: '🔄', color: C.marketingDim, x: 58, y: 88 },
     ],
     connections: [
-      { from: 'campaign', to: 'f1', label: '' },
-      { from: 'lead', to: 'f2', label: '' },
-      { from: 'marketing_ag', to: 'f3', label: '' },
-      { from: 'marketing_ag', to: 'f4', label: '' },
-      { from: 'lead', to: 'campaign', label: 'Qualified' },
-      { from: 'lead', to: 'marketing_ag', label: 'Segments' },
-      { from: 'campaign', to: 'marketing_ag', label: 'Results' },
+      { from: 'outreach', to: 'f1', label: '' },
+      { from: 'outreach', to: 'f2', label: '' },
+      { from: 'outreach', to: 'f3', label: '' },
+      { from: 'outreach', to: 'f4', label: '' },
     ],
-    highlightAgents: ['campaign', 'lead', 'marketing_ag', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6],
+    highlightAgents: ['outreach', 'f1', 'f2', 'f3', 'f4'],
+    highlightConnections: [0, 1, 2, 3],
   },
 
-  // Scene 4 — Social Media Console
+  // Scene 4 — Creative & Web Presence Console
   {
     id: 'scene-4',
-    title: 'Social Media Console',
-    narration: '3 agents manage your social presence: Social Media Agent creates posts for Instagram, Facebook, LinkedIn, TikTok, Google Business & SMS. Scheduler queues the content calendar. Analytics tracks engagement and audience growth.',
-    agents: [
-      { id: 'social_content', label: 'Social Media\nAgent', emoji: '✍️', color: C.social, x: 20, y: 50 },
-      { id: 'social_scheduler', label: 'Scheduler', emoji: '🗓️', color: C.social, x: 50, y: 22 },
-      { id: 'social_analytics', label: 'Analytics', emoji: '📈', color: C.social, x: 50, y: 78 },
-      { id: 'ig', label: 'Instagram', emoji: '📸', color: C.socialDim, x: 80, y: 12 },
-      { id: 'fb', label: 'Facebook', emoji: '👍', color: C.socialDim, x: 80, y: 32 },
-      { id: 'li', label: 'LinkedIn', emoji: '💼', color: C.socialDim, x: 80, y: 52 },
-      { id: 'tt', label: 'TikTok', emoji: '🎵', color: C.socialDim, x: 80, y: 72 },
-      { id: 'gmb', label: 'Google Biz', emoji: '📍', color: C.socialDim, x: 80, y: 90 },
-    ],
-    connections: [
-      { from: 'social_content', to: 'social_scheduler', label: 'Content' },
-      { from: 'social_content', to: 'social_analytics', label: 'Metrics' },
-      { from: 'social_analytics', to: 'social_content', label: 'Feedback' },
-      { from: 'social_analytics', to: 'social_scheduler', label: 'Best Times' },
-      { from: 'social_scheduler', to: 'ig', label: '' },
-      { from: 'social_scheduler', to: 'fb', label: '' },
-      { from: 'social_scheduler', to: 'li', label: '' },
-      { from: 'social_scheduler', to: 'tt', label: '' },
-      { from: 'social_scheduler', to: 'gmb', label: '' },
-    ],
-    highlightAgents: ['social_content', 'social_scheduler', 'social_analytics', 'ig', 'fb', 'li', 'tt', 'gmb'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-  },
-
-  // Scene 5 — Creative & Web Presence Console
-  {
-    id: 'scene-5',
     title: 'Creative & Web Presence',
-    narration: '2 agents handle content and web: Creative generates on-brand content for all channels — social, email, blog, and lead nurturing with consistent voice. Web Presence manages SEO optimization, blog publishing, and site performance.',
+    narration: 'Two operatives cover all content and web: Creative Content generates on-brand copy for social, email, blog, and SMS — for Instagram, Facebook, LinkedIn, TikTok, Google Business, and more. Web Presence manages SEO optimization, blog publishing, and site performance.',
     agents: [
-      { id: 'creative', label: 'Creative Agent', emoji: '🎨', color: C.creative, x: 25, y: 35 },
+      { id: 'creative_content', label: 'Creative\nContent', emoji: '🎨', color: C.creative, x: 25, y: 35 },
       { id: 'web_presence', label: 'Web Presence', emoji: '🌐', color: C.creative, x: 25, y: 70 },
       { id: 'f1', label: 'Social Media\nContent', emoji: '📱', color: C.creativeDim, x: 60, y: 12 },
       { id: 'f2', label: 'Email / SMS\nCopy', emoji: '📧', color: C.creativeDim, x: 60, y: 35 },
       { id: 'f3', label: 'Blog Posts', emoji: '📝', color: C.creativeDim, x: 60, y: 58 },
-      { id: 'f4', label: 'SEO\nOptimization', emoji: '🔍', color: C.creativeDim, x: 60, y: 82 },
+      { id: 'f4', label: 'SEO\nOptimization', emoji: '🔍', color: C.creativeDim, x: 60, y: 80 },
       { id: 'f5', label: 'Auto-Publish\n& Monitor', emoji: '🚀', color: C.creativeDim, x: 85, y: 70 },
     ],
     connections: [
-      { from: 'creative', to: 'f1', label: '' },
-      { from: 'creative', to: 'f2', label: '' },
-      { from: 'creative', to: 'f3', label: '' },
+      { from: 'creative_content', to: 'f1', label: '' },
+      { from: 'creative_content', to: 'f2', label: '' },
+      { from: 'creative_content', to: 'f3', label: '' },
       { from: 'web_presence', to: 'f3', label: 'Publish' },
       { from: 'web_presence', to: 'f4', label: '' },
       { from: 'web_presence', to: 'f5', label: '' },
-      { from: 'creative', to: 'web_presence', label: 'Content' },
+      { from: 'creative_content', to: 'web_presence', label: 'Content' },
     ],
-    highlightAgents: ['creative', 'web_presence', 'f1', 'f2', 'f3', 'f4', 'f5'],
+    highlightAgents: ['creative_content', 'web_presence', 'f1', 'f2', 'f3', 'f4', 'f5'],
     highlightConnections: [0, 1, 2, 3, 4, 5, 6],
   },
 
-  // Scene 6 — Field Operations Console
+  // Scene 5 — Field Operations Console
   {
-    id: 'scene-6',
+    id: 'scene-5',
     title: 'Field Operations Console',
-    narration: '4 agents optimize field work: Dispatch assigns technicians by skills, proximity & workload. Route plans traffic-aware driving paths. ETA calculates and updates arrival times for customers. Check-in logs arrivals and job progress.',
+    narration: 'Two operatives optimize all field work: Dispatch assigns technicians by skills, proximity, and workload. Field Navigation combines route planning, traffic-aware driving paths, real-time ETA updates, arrival check-ins, and job progress logging — all unified for maximum efficiency.',
     agents: [
-      { id: 'dispatch', label: 'Dispatch', emoji: '🚛', color: C.field, x: 18, y: 50 },
-      { id: 'route', label: 'Route', emoji: '🗺️', color: C.field, x: 45, y: 20 },
-      { id: 'eta', label: 'ETA', emoji: '⏱️', color: C.field, x: 45, y: 80 },
-      { id: 'checkin', label: 'Check-in', emoji: '📍', color: C.field, x: 72, y: 50 },
-      { id: 'f1', label: 'Skills-Based\nAssignment', emoji: '🎯', color: C.fieldDim, x: 18, y: 15 },
-      { id: 'f2', label: 'Traffic-Aware\nRouting', emoji: '🛣️', color: C.fieldDim, x: 72, y: 20 },
-      { id: 'f3', label: 'Real-Time\nETA Updates', emoji: '📱', color: C.fieldDim, x: 72, y: 80 },
-      { id: 'f4', label: 'Job Progress\nLogging', emoji: '✅', color: C.fieldDim, x: 92, y: 50 },
+      { id: 'dispatch', label: 'Dispatch', emoji: '🚛', color: C.field, x: 20, y: 50 },
+      { id: 'field_navigation', label: 'Field\nNavigation', emoji: '🗺️', color: C.field, x: 55, y: 50 },
+      { id: 'f1', label: 'Skills-Based\nAssignment', emoji: '🎯', color: C.fieldDim, x: 20, y: 15 },
+      { id: 'f2', label: 'Traffic-Aware\nRouting', emoji: '🛣️', color: C.fieldDim, x: 82, y: 20 },
+      { id: 'f3', label: 'Real-Time\nETA Updates', emoji: '📱', color: C.fieldDim, x: 82, y: 50 },
+      { id: 'f4', label: 'Job Progress\nLogging', emoji: '✅', color: C.fieldDim, x: 82, y: 80 },
     ],
     connections: [
       { from: 'dispatch', to: 'f1', label: '' },
-      { from: 'dispatch', to: 'route', label: 'Optimize' },
-      { from: 'dispatch', to: 'eta', label: 'Calculate' },
-      { from: 'dispatch', to: 'checkin', label: 'Track' },
-      { from: 'route', to: 'checkin', label: 'Path' },
-      { from: 'route', to: 'f2', label: '' },
-      { from: 'eta', to: 'checkin', label: 'Arrival' },
-      { from: 'eta', to: 'f3', label: '' },
-      { from: 'checkin', to: 'f4', label: '' },
+      { from: 'dispatch', to: 'field_navigation', label: 'Route' },
+      { from: 'field_navigation', to: 'f2', label: '' },
+      { from: 'field_navigation', to: 'f3', label: '' },
+      { from: 'field_navigation', to: 'f4', label: '' },
     ],
-    highlightAgents: ['dispatch', 'route', 'eta', 'checkin', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    highlightAgents: ['dispatch', 'field_navigation', 'f1', 'f2', 'f3', 'f4'],
+    highlightConnections: [0, 1, 2, 3, 4],
   },
 
-  // Scene 7 — Business Operations Console
+  // Scene 6 — Business Operations Console
   {
-    id: 'scene-7',
+    id: 'scene-6',
     title: 'Business Operations Console',
-    narration: '4 agents run the back office: Quoting creates multi-line estimates. Invoice generates bills and tracks payments. Inventory monitors stock and alerts on low supplies. Admin manages settings, users, and operations.',
+    narration: 'Two operatives run the back office: Business Finance unifies quoting, invoicing, and inventory — creating multi-line estimates, generating bills, tracking payments, and monitoring stock with low-supply alerts. Admin manages settings, users, and all operations.',
     agents: [
       { id: 'admin', label: 'Admin', emoji: '⚙️', color: C.business, x: 50, y: 50 },
-      { id: 'quoting', label: 'Quoting', emoji: '💰', color: C.business, x: 18, y: 20 },
-      { id: 'invoice', label: 'Invoice', emoji: '🧾', color: C.business, x: 82, y: 20 },
-      { id: 'inventory', label: 'Inventory', emoji: '📦', color: C.business, x: 18, y: 82 },
+      { id: 'business_finance', label: 'Business\nFinance', emoji: '💰', color: C.business, x: 20, y: 50 },
       { id: 'f1', label: 'Multi-Line\nEstimates', emoji: '📋', color: C.businessDim, x: 50, y: 15 },
-      { id: 'f2', label: 'Payment\nTracking', emoji: '💳', color: C.businessDim, x: 82, y: 50 },
+      { id: 'f2', label: 'Payment\nTracking', emoji: '💳', color: C.businessDim, x: 82, y: 30 },
       { id: 'f3', label: 'Low-Stock\nAlerts', emoji: '🔔', color: C.businessDim, x: 50, y: 85 },
     ],
     connections: [
-      { from: 'inventory', to: 'quoting', label: 'Stock' },
-      { from: 'quoting', to: 'f1', label: '' },
-      { from: 'quoting', to: 'invoice', label: 'Approved' },
-      { from: 'invoice', to: 'f2', label: '' },
-      { from: 'invoice', to: 'admin', label: 'Report' },
-      { from: 'inventory', to: 'f3', label: '' },
-      { from: 'admin', to: 'quoting', label: '' },
-      { from: 'admin', to: 'invoice', label: '' },
-      { from: 'admin', to: 'inventory', label: '' },
+      { from: 'business_finance', to: 'f1', label: 'Quote' },
+      { from: 'business_finance', to: 'f2', label: 'Invoice' },
+      { from: 'business_finance', to: 'f3', label: 'Stock' },
+      { from: 'admin', to: 'business_finance', label: 'Config' },
     ],
-    highlightAgents: ['admin', 'quoting', 'invoice', 'inventory', 'f1', 'f2', 'f3'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    highlightAgents: ['admin', 'business_finance', 'f1', 'f2', 'f3'],
+    highlightConnections: [0, 1, 2, 3],
   },
 
-  // Scene 8 — Analytics & Reports Console
+  // Scene 7 — Analytics & Reports Console
   {
-    id: 'scene-8',
+    id: 'scene-7',
     title: 'Analytics & Reports Console',
-    narration: '4 agents deliver business intelligence: Insights answers questions in natural language. Performance tracks KPIs and efficiency. Revenue analyzes financial trends by service, technician, and period. Forecast predicts demand and staffing needs.',
+    narration: 'The Analytics Intelligence operative delivers full business intelligence: natural language queries, KPI dashboards, revenue analysis by service and technician, financial trend tracking, demand forecasting, and seasonal resource planning — all in one command.',
     agents: [
-      { id: 'insights', label: 'Insights', emoji: '💡', color: C.analytics, x: 20, y: 25 },
-      { id: 'performance', label: 'Performance', emoji: '📊', color: C.analytics, x: 80, y: 25 },
-      { id: 'revenue', label: 'Revenue', emoji: '💵', color: C.analytics, x: 20, y: 75 },
-      { id: 'forecast', label: 'Forecast', emoji: '🔮', color: C.analytics, x: 80, y: 75 },
-      { id: 'f1', label: 'Natural Language\nQueries', emoji: '🗣️', color: C.analyticsDim, x: 50, y: 12 },
-      { id: 'f2', label: 'KPI\nDashboards', emoji: '📈', color: C.analyticsDim, x: 50, y: 42 },
-      { id: 'f3', label: 'Revenue\nTrends', emoji: '📉', color: C.analyticsDim, x: 50, y: 60 },
-      { id: 'f4', label: 'Demand\nPrediction', emoji: '🎯', color: C.analyticsDim, x: 50, y: 88 },
+      { id: 'analytics_intelligence', label: 'Analytics\nIntelligence', emoji: '💡', color: C.analytics, x: 30, y: 50 },
+      { id: 'f1', label: 'Natural Language\nQueries', emoji: '🗣️', color: C.analyticsDim, x: 70, y: 15 },
+      { id: 'f2', label: 'KPI\nDashboards', emoji: '📊', color: C.analyticsDim, x: 70, y: 38 },
+      { id: 'f3', label: 'Revenue\nTrends', emoji: '📈', color: C.analyticsDim, x: 70, y: 62 },
+      { id: 'f4', label: 'Demand\nPrediction', emoji: '🔮', color: C.analyticsDim, x: 70, y: 85 },
     ],
     connections: [
-      { from: 'insights', to: 'f1', label: '' },
-      { from: 'insights', to: 'revenue', label: 'Query' },
-      { from: 'insights', to: 'forecast', label: 'Query' },
-      { from: 'performance', to: 'f2', label: '' },
-      { from: 'performance', to: 'revenue', label: 'KPIs' },
-      { from: 'performance', to: 'forecast', label: 'Data' },
-      { from: 'revenue', to: 'f3', label: '' },
-      { from: 'forecast', to: 'f4', label: '' },
-      { from: 'insights', to: 'performance', label: '' },
-      { from: 'revenue', to: 'forecast', label: '' },
+      { from: 'analytics_intelligence', to: 'f1', label: '' },
+      { from: 'analytics_intelligence', to: 'f2', label: '' },
+      { from: 'analytics_intelligence', to: 'f3', label: '' },
+      { from: 'analytics_intelligence', to: 'f4', label: '' },
     ],
-    highlightAgents: ['insights', 'performance', 'revenue', 'forecast', 'f1', 'f2', 'f3', 'f4'],
-    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    highlightAgents: ['analytics_intelligence', 'f1', 'f2', 'f3', 'f4'],
+    highlightConnections: [0, 1, 2, 3],
+  },
+
+  // Scene 8 — Cross-Console Handoffs
+  {
+    id: 'scene-8',
+    title: 'Intelligent Cross-Console Handoffs',
+    narration: 'Operatives communicate automatically across consoles. Customer Journey triggers Dispatch on booking. Field Navigation feeds Business Finance on job completion. Outreach activates Analytics Intelligence for performance insights. Every action triggers the next.',
+    agents: [
+      { id: 'triage', label: 'AI\nReceptionist', emoji: '🤖', color: C.customer, x: 12, y: 25 },
+      { id: 'customer_journey', label: 'Customer\nJourney', emoji: '🔄', color: C.customer, x: 30, y: 25 },
+      { id: 'dispatch', label: 'Dispatch', emoji: '🚛', color: C.field, x: 55, y: 25 },
+      { id: 'field_navigation', label: 'Field\nNavigation', emoji: '🗺️', color: C.field, x: 78, y: 25 },
+      { id: 'business_finance', label: 'Business\nFinance', emoji: '💰', color: C.business, x: 78, y: 65 },
+      { id: 'outreach', label: 'Outreach', emoji: '📣', color: C.marketing, x: 30, y: 65 },
+      { id: 'analytics_intelligence', label: 'Analytics\nIntelligence', emoji: '💡', color: C.analytics, x: 55, y: 65 },
+      { id: 'admin', label: 'Admin', emoji: '⚙️', color: C.business, x: 12, y: 65 },
+    ],
+    connections: [
+      { from: 'triage', to: 'customer_journey', label: 'Route' },
+      { from: 'customer_journey', to: 'dispatch', label: 'Book → Assign' },
+      { from: 'dispatch', to: 'field_navigation', label: 'Deploy' },
+      { from: 'field_navigation', to: 'business_finance', label: 'Complete → Invoice' },
+      { from: 'business_finance', to: 'analytics_intelligence', label: 'Revenue Data' },
+      { from: 'outreach', to: 'analytics_intelligence', label: 'Campaign Data' },
+      { from: 'customer_journey', to: 'outreach', label: 'Post-Service' },
+      { from: 'admin', to: 'business_finance', label: 'Config' },
+    ],
+    highlightAgents: ['triage', 'customer_journey', 'dispatch', 'field_navigation', 'business_finance', 'outreach', 'analytics_intelligence', 'admin'],
+    highlightConnections: [0, 1, 2, 3, 4, 5, 6, 7],
   },
 
   // Scene 9 — The Full Network
   {
     id: 'scene-9',
     title: 'The Full Aura Network',
-    narration: 'All 24 AI operatives work as one intelligent network across 7 consoles. Cross-console handoffs happen automatically — Follow-up triggers Review, Review triggers Campaign, Dispatch feeds Check-in, Quoting flows to Invoice.',
+    narration: 'All 10 AI operatives work as one intelligent network across 7 consoles. AI Receptionist and Triage form the entry point. Customer Journey, Field Navigation, Business Finance, and Analytics Intelligence handle the core. Outreach, Creative Content, Web Presence, and Admin complete the ecosystem.',
     agents: [
-      // Customer Portal (top-left cluster)
-      { id: 'triage', label: 'Receptionist', emoji: '🤖', color: C.customer, x: 12, y: 15 },
-      { id: 'booking', label: 'Scheduling', emoji: '📅', color: C.customer, x: 25, y: 10 },
-      { id: 'followup', label: 'Follow-up', emoji: '📋', color: C.customer, x: 25, y: 25 },
-      { id: 'review', label: 'Review', emoji: '⭐', color: C.customer, x: 12, y: 30 },
+      // Customer Portal (top-left)
+      { id: 'triage', label: 'AI\nReceptionist', emoji: '🤖', color: C.customer, x: 12, y: 20 },
+      { id: 'customer_journey', label: 'Customer\nJourney', emoji: '🔄', color: C.customer, x: 28, y: 20 },
       // Outreach (top-center)
-      { id: 'campaign', label: 'Campaign', emoji: '📣', color: C.marketing, x: 42, y: 10 },
-      { id: 'lead', label: 'Lead', emoji: '🎯', color: C.marketing, x: 55, y: 10 },
-      { id: 'marketing_ag', label: 'Marketing', emoji: '📊', color: C.marketing, x: 48, y: 25 },
-      // Social (top-right)
-      { id: 'social_content', label: 'Social', emoji: '✍️', color: C.social, x: 72, y: 10 },
-      { id: 'social_scheduler', label: 'Scheduler', emoji: '🗓️', color: C.social, x: 85, y: 10 },
-      { id: 'social_analytics', label: 'Social Analytics', emoji: '📈', color: C.social, x: 78, y: 25 },
-      // Creative (middle-left)
-      { id: 'creative', label: 'Creative', emoji: '🎨', color: C.creative, x: 10, y: 52 },
-      { id: 'web_presence', label: 'Web Presence', emoji: '🌐', color: C.creative, x: 25, y: 52 },
+      { id: 'outreach', label: 'Outreach', emoji: '📣', color: C.marketing, x: 50, y: 12 },
+      // Creative (top-right)
+      { id: 'creative_content', label: 'Creative\nContent', emoji: '🎨', color: C.creative, x: 72, y: 12 },
+      { id: 'web_presence', label: 'Web\nPresence', emoji: '🌐', color: C.creative, x: 88, y: 20 },
       // Field Ops (middle-right)
-      { id: 'dispatch', label: 'Dispatch', emoji: '🚛', color: C.field, x: 72, y: 48 },
-      { id: 'route_ag', label: 'Route', emoji: '🗺️', color: C.field, x: 85, y: 42 },
-      { id: 'eta', label: 'ETA', emoji: '⏱️', color: C.field, x: 85, y: 58 },
-      { id: 'checkin', label: 'Check-in', emoji: '📍', color: C.field, x: 72, y: 62 },
-      // Business Ops (bottom-left)
+      { id: 'dispatch', label: 'Dispatch', emoji: '🚛', color: C.field, x: 78, y: 48 },
+      { id: 'field_navigation', label: 'Field\nNavigation', emoji: '🗺️', color: C.field, x: 90, y: 62 },
+      // Business Ops (bottom)
       { id: 'admin', label: 'Admin', emoji: '⚙️', color: C.business, x: 12, y: 78 },
-      { id: 'quoting', label: 'Quoting', emoji: '💰', color: C.business, x: 25, y: 72 },
-      { id: 'invoice_ag', label: 'Invoice', emoji: '🧾', color: C.business, x: 25, y: 88 },
-      { id: 'inventory', label: 'Inventory', emoji: '📦', color: C.business, x: 12, y: 92 },
+      { id: 'business_finance', label: 'Business\nFinance', emoji: '💰', color: C.business, x: 30, y: 78 },
       // Analytics (bottom-right)
-      { id: 'insights', label: 'Insights', emoji: '💡', color: C.analytics, x: 62, y: 78 },
-      { id: 'performance', label: 'Performance', emoji: '📊', color: C.analytics, x: 75, y: 78 },
-      { id: 'revenue', label: 'Revenue', emoji: '💵', color: C.analytics, x: 62, y: 92 },
-      { id: 'forecast', label: 'Forecast', emoji: '🔮', color: C.analytics, x: 75, y: 92 },
+      { id: 'analytics_intelligence', label: 'Analytics\nIntelligence', emoji: '💡', color: C.analytics, x: 65, y: 80 },
     ],
     connections: [
-      // Customer Portal internal
-      { from: 'triage', to: 'booking', label: '' },
-      { from: 'triage', to: 'followup', label: '' },
-      { from: 'booking', to: 'followup', label: '' },
-      { from: 'followup', to: 'review', label: '' },
-      // Customer Portal → Field Ops (KEY cross-console)
-      { from: 'booking', to: 'dispatch', label: '' },
-      // Outreach internal
-      { from: 'review', to: 'campaign', label: '' },
-      { from: 'lead', to: 'campaign', label: '' },
-      { from: 'lead', to: 'marketing_ag', label: '' },
-      { from: 'marketing_ag', to: 'campaign', label: '' },
-      // Creative → Social & Outreach
-      { from: 'creative', to: 'social_content', label: '' },
-      { from: 'creative', to: 'campaign', label: '' },
-      { from: 'creative', to: 'web_presence', label: '' },
-      { from: 'web_presence', to: 'social_content', label: '' },
-      // Social internal
-      { from: 'social_content', to: 'social_scheduler', label: '' },
-      { from: 'social_content', to: 'social_analytics', label: '' },
-      // Social → Analytics
-      { from: 'social_analytics', to: 'insights', label: '' },
-      // Field Ops internal
-      { from: 'dispatch', to: 'route_ag', label: '' },
-      { from: 'dispatch', to: 'eta', label: '' },
-      { from: 'dispatch', to: 'checkin', label: '' },
-      // Field Ops → Business Ops (KEY cross-console)
-      { from: 'checkin', to: 'invoice_ag', label: '' },
-      // Business Ops internal
-      { from: 'inventory', to: 'quoting', label: '' },
-      { from: 'quoting', to: 'invoice_ag', label: '' },
-      { from: 'admin', to: 'quoting', label: '' },
-      { from: 'admin', to: 'inventory', label: '' },
-      // Analytics internal
-      { from: 'insights', to: 'performance', label: '' },
-      { from: 'revenue', to: 'forecast', label: '' },
+      // Customer Portal
+      { from: 'triage', to: 'customer_journey', label: '' },
+      // Customer → Field
+      { from: 'customer_journey', to: 'dispatch', label: '' },
+      // Customer → Outreach
+      { from: 'customer_journey', to: 'outreach', label: '' },
+      // Outreach → Creative
+      { from: 'outreach', to: 'creative_content', label: '' },
+      // Creative → Web
+      { from: 'creative_content', to: 'web_presence', label: '' },
+      // Field internal
+      { from: 'dispatch', to: 'field_navigation', label: '' },
+      // Field → Business Finance
+      { from: 'field_navigation', to: 'business_finance', label: '' },
+      // Business → Analytics
+      { from: 'business_finance', to: 'analytics_intelligence', label: '' },
+      // Admin ties it together
+      { from: 'admin', to: 'business_finance', label: '' },
+      // Outreach → Analytics
+      { from: 'outreach', to: 'analytics_intelligence', label: '' },
     ],
-    highlightAgents: [
-      'triage', 'booking', 'followup', 'review',
-      'campaign', 'lead', 'marketing_ag',
-      'social_content', 'social_scheduler', 'social_analytics',
-      'creative', 'web_presence',
-      'dispatch', 'route_ag', 'eta', 'checkin',
-      'admin', 'quoting', 'invoice_ag', 'inventory',
-      'insights', 'performance', 'revenue', 'forecast',
-    ],
-    highlightConnections: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26],
+    highlightAgents: ['triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence', 'dispatch', 'field_navigation', 'admin', 'business_finance', 'analytics_intelligence'],
+    highlightConnections: [0,1,2,3,4,5,6,7,8,9],
   },
 
   // Scene 10 — Everyone Benefits
   {
     id: 'scene-10',
     title: 'Everyone Benefits',
-    narration: 'With 24 AI operatives across 7 consoles, the company gets 24/7 coverage with zero missed leads. Customers get instant, professional service across every channel. Employees receive pre-qualified jobs with clear instructions.',
+    narration: 'With 10 AI operatives across 7 consoles, the company gets 24/7 coverage with zero missed leads. Customers get instant, professional service across every channel. Employees receive pre-qualified jobs with clear instructions.',
     agents: [
       { id: 'company', label: 'Company', emoji: '🏢', color: C.benefit, x: 50, y: 15 },
-      { id: 'b1', label: '24/7 Coverage\n24 AI Operatives', emoji: '🌙', color: 'hsl(260, 50%, 42%)', x: 15, y: 12 },
+      { id: 'b1', label: '24/7 Coverage\n10 AI Operatives', emoji: '🌙', color: 'hsl(260, 50%, 42%)', x: 15, y: 12 },
       { id: 'b2', label: 'Automated\n7 Consoles', emoji: '⚡', color: 'hsl(260, 50%, 42%)', x: 85, y: 12 },
       { id: 'customer', label: 'Customer', emoji: '👤', color: C.person, x: 50, y: 50 },
       { id: 'b3', label: 'Instant Service\nEvery Channel', emoji: '🚀', color: 'hsl(220, 50%, 42%)', x: 15, y: 50 },
@@ -450,7 +375,7 @@ export default function AIAgentFlowDemo() {
   }, []);
 
   const downloadScript = useCallback(() => {
-    const header = '=== AURA INTELLIGENCE NETWORK — AGENT FLOW DEMO SCRIPT ===\n24 AI Operatives across 7 Consoles\n\n';
+    const header = '=== AURA INTELLIGENCE NETWORK — AGENT FLOW DEMO SCRIPT ===\n10 AI Operatives across 7 Consoles\n\n';
     const script = scenes.map((s, i) =>
       `Scene ${i + 1}: ${s.title}\n${'─'.repeat(40)}\n${s.narration}\nAgents: ${s.agents.map(a => a.label.replace(/\n/g, ' ')).join(', ')}\n`
     ).join('\n---\n\n');
