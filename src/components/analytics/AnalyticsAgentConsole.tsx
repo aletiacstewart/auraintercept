@@ -24,9 +24,6 @@ import { SocialAnalyticsForm } from './forms/SocialAnalyticsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   BarChart3, 
-  TrendingUp, 
-  Users, 
-  DollarSign,
   Target,
   Download,
   ShieldAlert,

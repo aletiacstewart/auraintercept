@@ -20,8 +20,6 @@ import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSe
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
-  Wand2,
-  Inbox,
 } from 'lucide-react';
 
 // Simplified quick actions - 2 clear entry points

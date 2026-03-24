@@ -28,9 +28,6 @@ import {
   UserPlus,
   Package,
   Calendar,
-  Building2,
-  UserCheck,
-  UsersRound,
   Activity
 } from 'lucide-react';
 
