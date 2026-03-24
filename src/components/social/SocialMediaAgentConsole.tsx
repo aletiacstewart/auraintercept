@@ -72,7 +72,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'social_content',
+    initialAgent: 'creative_content',
     onAgentChange: (agent) => {
       setLastAgent(agent);
     },
