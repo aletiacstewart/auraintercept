@@ -174,8 +174,11 @@ async function handleEmitEvent(
   
   const enabledAgents = new Set(configs?.map((c: any) => c.agent_type) || []);
   
-  // Filter to only enabled target agents
-  const activeTargets = targetAgents.filter(agent => enabledAgents.has(agent));
+  // Filter to only enabled target agents — normalize legacy IDs to 10-operative names for DB lookup
+  const activeTargets = targetAgents.filter(agent => {
+    const normalized = normalizeAgentName(agent);
+    return enabledAgents.has(agent) || enabledAgents.has(normalized);
+  });
   
   // Create events for each target
   const events: any[] = activeTargets.map(targetAgent => ({
