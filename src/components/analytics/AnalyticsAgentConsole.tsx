@@ -193,7 +193,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('analytics');
+    setLastAgent('analytics_intelligence');
   };
 
   const handleAnalyze = async (formType: string, data: Record<string, unknown>) => {
