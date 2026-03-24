@@ -3408,8 +3408,11 @@ serve(async (req) => {
     // Determine allowed agents based on tier (trial gets full access)
     const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
 
-    // Validate agent access
-    if (!allowedAgents.includes(agentType)) {
+    // The 10-operative consolidated agent IDs are always allowed for internal users
+    const CONSOLIDATED_OPERATIVE_IDS = ['outreach', 'field_navigation', 'business_finance', 'analytics_intelligence', 'creative_content', 'web_presence', 'customer_journey'];
+
+    // Validate agent access (consolidated operatives bypass legacy tier list)
+    if (!allowedAgents.includes(agentType) && !CONSOLIDATED_OPERATIVE_IDS.includes(agentType)) {
       const requiredTier = getRequiredTierForAgent(agentType);
       console.log(`[AI Agent Chat] Agent locked: ${agentType} requires ${requiredTier}, company has ${subscriptionTier}`);
       return new Response(JSON.stringify({ 
