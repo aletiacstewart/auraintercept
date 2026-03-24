@@ -580,7 +580,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Performance</Text>
-            <Text style={styles.tierPrice}>$2,497/mo</Text>
+            <Text style={styles.tierPrice}>$497/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Full Automation</Text>
             <Text style={styles.tierBullet}>- Calls recovered: +$11,500</Text>
@@ -593,7 +593,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Command</Text>
-            <Text style={styles.tierPrice}>$3,497/mo</Text>
+            <Text style={styles.tierPrice}>$697/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Enterprise Suite</Text>
             <Text style={styles.tierBullet}>- Full operations: +$17,000</Text>
@@ -831,7 +831,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Performance</Text>
-          <Text style={styles.tierPrice}>$2,497/mo</Text>
+          <Text style={styles.tierPrice}>$497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Growing teams needing scheduling and field ops</Text>
         <Text style={styles.tierBullet}>- Up to 25 employees</Text>
@@ -844,7 +844,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Command (Enterprise)</Text>
-          <Text style={styles.tierPrice}>$3,497/mo</Text>
+          <Text style={styles.tierPrice}>$697/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: 15+ technicians or multi-location operations</Text>
         <Text style={styles.tierBullet}>- 15+ employees or multi-location</Text>
