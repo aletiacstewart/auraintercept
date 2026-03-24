@@ -44,12 +44,12 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   performance: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Performance",
-    price: 249700, // $2,497 in cents
+    price: 49700, // $497 in cents
   },
   command: {
     price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
     name: "Aura Command",
-    price: 349700, // $3,497 in cents
+    price: 69700, // $697 in cents
   },
   // Legacy tier name aliases for backward compatibility
   express: {
