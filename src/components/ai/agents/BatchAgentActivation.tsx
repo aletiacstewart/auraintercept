@@ -70,10 +70,10 @@ const PHASE_CONFIG = [
 ];
 
 // Agents hidden from non-platform-admin roles
-const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign', 'marketing'];
+const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['business_finance', 'outreach'];
 
 // Phases hidden entirely from non-platform-admin roles
-const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Marketing & Sales, Analytics & Optimization
+const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Outreach & Sales, Analytics & Intelligence
 
 interface BatchAgentActivationProps {
   agents: AgentInfo[];
