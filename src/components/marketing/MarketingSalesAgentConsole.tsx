@@ -69,7 +69,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'marketing',
+    initialAgent: 'outreach',
     onAgentChange: (agent) => {
       console.log('[Marketing] Agent changed to:', agent);
       setLastAgent(agent);

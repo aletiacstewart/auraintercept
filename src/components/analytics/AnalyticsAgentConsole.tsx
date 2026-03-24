@@ -99,7 +99,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'analytics',
+    initialAgent: 'analytics_intelligence',
     onAgentChange: (agent) => {
       console.log('[Analytics] Agent changed to:', agent);
       setLastAgent(agent);

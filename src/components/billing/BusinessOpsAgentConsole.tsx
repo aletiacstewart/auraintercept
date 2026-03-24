@@ -101,7 +101,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'quoting',
+    initialAgent: 'business_finance',
     onAgentChange: (agent) => {
       console.log('[BusinessOps] Agent changed to:', agent);
       setLastAgent(agent);
