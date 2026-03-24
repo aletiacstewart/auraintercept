@@ -170,13 +170,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'marketing_sales',
     title: 'Outreach & Sales Ops',
     icon: Megaphone,
-    description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
-    requiredTier: 'growth',  // Available at Growth tier
+    description: 'AI-powered marketing automation — all in one Outreach Agent covering campaign management, lead nurturing, customer segmentation, and promotional tools.',
+    requiredTier: 'growth',
     tabs: ['Campaign', 'Leads', 'Marketing'],
     agents: [
-      { name: 'Campaign Agent', tier: 'growth' },
-      { name: 'Lead Agent', tier: 'growth' },
-      { name: 'Marketing Agent', tier: 'growth' },
+      { name: 'Outreach Agent', tier: 'growth' },
     ],
     features: [
       { text: 'Create targeted Email and SMS campaigns' },
