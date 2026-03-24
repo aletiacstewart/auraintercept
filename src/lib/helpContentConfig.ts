@@ -201,15 +201,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'social_media',
     title: 'Social Media Ops',
     icon: Share2,
-    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
-    requiredTier: 'growth',  // Available at Growth tier
-    tabs: ['Home', 'Social Posts', 'Analytics'],
+    description: 'AI-powered creative studio powered by the Creative Content Agent — generates platform-optimized posts, AI images/videos, and multi-channel content for 6 platforms.',
+    requiredTier: 'growth',
+    tabs: ['Home', 'Create Content', 'My Posts'],
     agents: [
-      { name: 'Social Media Agent', tier: 'growth' },
-      { name: 'Social Media Scheduler', tier: 'growth' },
-      { name: 'Social Media Analytics', tier: 'growth' },
-      { name: 'Creative Agent', tier: 'growth' },
-      { name: 'Web Presence Agent', tier: 'business' },
+      { name: 'Creative Content Agent', tier: 'growth' },
     ],
     features: [
       { text: 'AI content generation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, SMS' },
