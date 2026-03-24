@@ -68,7 +68,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('analytics');
+  const [lastAgent, setLastAgent] = useState<string>('analytics_intelligence');
   
   // Form visibility states
   const [showPerformanceForm, setShowPerformanceForm] = useState(false);
