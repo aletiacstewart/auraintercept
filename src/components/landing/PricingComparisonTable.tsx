@@ -337,12 +337,12 @@ export const PricingComparisonTable = () => {
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
               <div className="text-sky-300">Aura Performance</div>
-              <div className="text-xs font-normal text-white/70">$2,497/mo</div>
+              <div className="text-xs font-normal text-white/70">$497/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-sm">
               <div className="text-amber-300">Aura Command</div>
               <div className="text-[10px] font-normal text-amber-400/80">Enterprise</div>
-              <div className="text-xs font-normal text-white/70">$3,497/mo</div>
+              <div className="text-xs font-normal text-white/70">$697/mo</div>
             </th>
           </tr>
         </thead>
