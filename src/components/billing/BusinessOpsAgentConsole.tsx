@@ -67,7 +67,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('quoting');
+  const [lastAgent, setLastAgent] = useState<string>('business_finance');
   const [activeFormType, setActiveFormType] = useState<
     'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'companies' | 'employees' | 'customers' | 'aura-live' | null
   >(null);
