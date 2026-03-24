@@ -747,7 +747,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 4, title: 'Tier Comparison', desc: 'Full feature matrix by tier' },
                   { page: 5, title: 'Single-Point Details', desc: '$497/mo tier breakdown' },
                   { page: 6, title: 'Multi-Track Details', desc: '$897/mo tier breakdown' },
-                  { page: 7, title: 'Command Details', desc: '$3,497/mo tier breakdown' },
+                  { page: 7, title: 'Command Details', desc: '$697/mo tier breakdown' },
                   { page: 8, title: 'Annual Savings', desc: 'Discount calculations' },
                   { page: 9, title: '3rd Party Costs', desc: 'Integration pricing details' },
                   { page: 10, title: 'Billing Clarifications', desc: 'Company Stripe requirements' },

@@ -1217,7 +1217,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>
       <Text style={styles.paragraph}>
         Average service business with 10 missed calls/week × $300 avg job = $12,000/month in lost revenue.
-        Aura Intercept captures 100% of these calls. Platform cost: $2,497. Net ROI: $9,503/month.
+        Aura Intercept captures 100% of these calls. Platform cost: $497. Net ROI: $11,503/month.
       </Text>
     </Page>
 
@@ -1233,7 +1233,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
 
       <Text style={styles.subsectionTitle}>vs. Answering Services (Ruby, AnswerConnect)</Text>
-      <BulletPoint>$197-$3,497/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
+      <BulletPoint>$197-$697/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
       <BulletPoint>Unlimited calls vs. per-minute pricing</BulletPoint>
       <BulletPoint>Books appointments directly vs. just takes messages</BulletPoint>
       <BulletPoint>Full business automation vs. phone only</BulletPoint>

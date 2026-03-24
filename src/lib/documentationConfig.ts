@@ -109,9 +109,9 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   multi_track: {
     id: 'multi_track',
     name: 'Aura Performance',
-    price: 2497,
-    annualPrice: 24970,
-    annualSavings: 4994,
+    price: 497,
+    annualPrice: 4970,
+    annualSavings: 994,
     implementationFee: 499,
     employees: 30,
     operatives: 10,  // All 10 operatives
@@ -135,9 +135,9 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   command: {
     id: 'command',
     name: 'Aura Command',
-    price: 3497,
-    annualPrice: 34970,
-    annualSavings: 6994,
+    price: 697,
+    annualPrice: 6970,
+    annualSavings: 1394,
     implementationFee: 'Custom',
     employees: 'Unlimited',
     operatives: 10,  // Full 10-operative suite

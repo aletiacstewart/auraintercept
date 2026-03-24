@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Starter ($197/mo) for basic AI reception, Aura Connect ($397/mo) for appointment automation, Aura Growth ($597/mo) for marketing and outreach, Aura Presence ($797/mo) for creative and web presence, Aura Logistics ($1,497/mo) for field service operations, Aura Performance ($2,497/mo) for advanced analytics, and Aura Command ($3,497/mo) for full enterprise suite. All tiers include voice, SMS, and email communication channels."
+          answer="Choose based on your business needs: Aura Starter ($197/mo) for basic AI reception, Aura Connect ($397/mo) for appointment automation, Aura Growth ($597/mo) for marketing and outreach, Aura Presence ($797/mo) for creative and web presence, Aura Logistics ($1,497/mo) for field service operations, Aura Performance ($497/mo) for advanced analytics, and Aura Command ($697/mo) for full enterprise suite. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 

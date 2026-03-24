@@ -64,7 +64,7 @@ flowchart TB
         Invoice["💳 Invoice Agent"]
     end
     
-    subgraph CMD["🟣 COMMAND — $3,497/mo"]
+    subgraph CMD["🟣 COMMAND — $697/mo"]
         direction TB
         Admin["👔 Admin Agent"]
         Inventory["📦 Inventory Agent"]
@@ -150,7 +150,7 @@ flowchart TB
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-card-foreground">Command ($3,497/mo)</span>
+            <span className="text-sm text-card-foreground">Command ($697/mo)</span>
           </div>
         </div>
       </CardContent>

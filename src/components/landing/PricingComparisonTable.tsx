@@ -195,9 +195,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$2,497', command: '$3,497' },
-      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$24,970/year', command: '$34,970/year' },
-      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $4,994', command: 'Save $6,994' },
+      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$497', command: '$697' },
+      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$4,970/year', command: '$6,970/year' },
+      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $994', command: 'Save $1,394' },
     ],
   },
 ];
@@ -337,12 +337,12 @@ export const PricingComparisonTable = () => {
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
               <div className="text-sky-300">Aura Performance</div>
-              <div className="text-xs font-normal text-white/70">$2,497/mo</div>
+              <div className="text-xs font-normal text-white/70">$497/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-sm">
               <div className="text-amber-300">Aura Command</div>
               <div className="text-[10px] font-normal text-amber-400/80">Enterprise</div>
-              <div className="text-xs font-normal text-white/70">$3,497/mo</div>
+              <div className="text-xs font-normal text-white/70">$697/mo</div>
             </th>
           </tr>
         </thead>

@@ -221,8 +221,8 @@ const guideCategories = [
           'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation + Outreach & Sales',
           'Aura Presence ($797/mo): 12 AI Operatives + Creative & Web Presence console',
           'Aura Logistics ($1,497/mo): 18 AI Operatives + Field Operations + Business Management',
-          'Aura Performance ($2,497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
-          'Aura Command ($3,497/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
+          'Aura Performance ($497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
+          'Aura Command ($697/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
           'Performance tier includes insights + performance agents; Command adds revenue + forecast agents',
           'Employee limits: 2 (Starter), 3 (Connect), 5 (Growth), 8 (Presence), 15 (Logistics), 25 (Performance), 50 (Command)',
           'All tiers include API Access, White-Label Branding, and Chat Widget'
@@ -1036,11 +1036,11 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Performance ($2,497/mo): 22 agents, 7 consoles</Text>
+          <Text style={styles.bulletText}>Aura Performance ($497/mo): 22 agents, 7 consoles</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Command ($3,497/mo): All 24 agents, 7 consoles + AI Operatives Hub</Text>
+          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 agents, 7 consoles + AI Operatives Hub</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

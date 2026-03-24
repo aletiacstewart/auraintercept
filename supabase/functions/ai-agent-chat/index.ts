@@ -3332,7 +3332,7 @@ serve(async (req) => {
       business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
       // Aura Logistics ($1,497/mo): + Field Operations Stack - 18 agents
       field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Performance ($2,497/mo): + Business Intelligence Stack (Basic) - 22 agents
+      // Aura Performance ($497/mo): + Business Intelligence Stack (Basic) - 22 agents
       // Excludes revenue and forecast (advanced analytics reserved for Command)
       // Note: 'analytics' is a utility agent not in the official 24-operative roster
       performance: [
@@ -3344,7 +3344,7 @@ serve(async (req) => {
         'insights', 'performance', 'analytics',              // Analytics & Reports - Basic (3, analytics is utility)
         'creative', 'web_presence'                           // Creative & Web Presence (2)
       ],                                                      // Total: 22 marketed agents (+analytics utility)
-      // Aura Command ($3,497/mo): Full suite + Enterprise features - 24 agents
+      // Aura Command ($697/mo): Full suite + Enterprise features - 24 agents
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)

@@ -36,8 +36,8 @@ Pricing Tiers (7 Total):
 - Aura Growth ($597/mo): 11 AI Operatives, 3 Consoles. AI scheduling + marketing + social media suite. 5 employees. For salons and wellness businesses.
 - Aura Presence ($797/mo): 12 AI Operatives, 4 Consoles. Full marketing + web presence + social media. 8 employees. All communication channels included.
 - Aura Logistics ($1,497/mo): 18 AI Operatives, 6 Consoles. Field operations, dispatch, quoting, invoicing. 15 employees.
-- Aura Performance ($2,497/mo): 22 AI Operatives, all 7 Consoles. Advanced analytics and full automation. 25 employees.
-- Aura Command ($3,497/mo): All 24 AI Operatives, all 7 Consoles + AI Operatives Hub. Enterprise, 50 employees.
+- Aura Performance ($497/mo): 22 AI Operatives, all 7 Consoles. Advanced analytics and full automation. 25 employees.
+- Aura Command ($697/mo): All 24 AI Operatives, all 7 Consoles + AI Operatives Hub. Enterprise, 50 employees.
 - Annual billing saves ~16%
 - Additional employees: $25/mo per 10 employees beyond included amount
 

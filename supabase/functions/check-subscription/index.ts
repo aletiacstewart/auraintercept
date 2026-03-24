@@ -25,10 +25,10 @@ const PRICE_TO_TIER: Record<string, string> = {
   "price_1T028oJ9fo9y8fGHIiNuzVSC": "field_ops",    // Aura Logistics - $1,497/month
   "price_1StwXbJ9fo9y8fGHMaCGdnDV": "growth",       // Aura Growth (legacy price - $397)
   "price_1T02LLJ9fo9y8fGHMVJDpK7p": "growth",       // Aura Growth - $597/month
-  "price_1StwYEJ9fo9y8fGHdwAoYr5E": "performance",  // Aura Performance (legacy price - $3,997)
-  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "performance",  // Aura Performance - $2,497/month
-  "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",      // Aura Command (legacy price - $5,997)
-  "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",      // Aura Command - $3,497/month
+  "price_1StwYEJ9fo9y8fGHdwAoYr5E": "performance",  // Aura Performance (legacy price)
+  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "performance",  // Aura Performance - $497/month
+  "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",      // Aura Command (legacy price)
+  "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",      // Aura Command - $697/month
   // Legacy Enterprise -> Command (backward compatibility)
   "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command",
 };

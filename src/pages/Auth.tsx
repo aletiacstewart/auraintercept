@@ -758,8 +758,8 @@ export default function Auth() {
                   {[
                     { id: 'core',        name: 'Aura Presence',    sub: 'Web Presence Focus',     price: '$797',   color: 'slate',  popular: false },
                     { id: 'single_point',name: 'Aura Logistics',   sub: 'Field Service Teams',    price: '$1,497', color: 'blue',   popular: false },
-                    { id: 'multi_track', name: 'Aura Performance', sub: 'Full Automation',        price: '$2,497', color: 'primary',popular: true  },
-                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise', price: '$3,497', color: 'purple', popular: false },
+                    { id: 'multi_track', name: 'Aura Performance', sub: 'Full Automation',        price: '$497', color: 'primary',popular: true  },
+                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise', price: '$697', color: 'purple', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}

@@ -36,7 +36,7 @@ const tierUpgrades = {
   },
   command: {
     name: 'Command',
-    price: '$3,497/mo',
+    price: '$697/mo',
     limit: '25,000',
     icon: Crown,
     features: ['25x more visitors', 'All 5 Control Centers', 'White-glove onboarding'],
