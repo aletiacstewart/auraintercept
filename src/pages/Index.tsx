@@ -522,31 +522,31 @@ export default function Index() {
             <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
           </div>
 
-          <div className="space-y-5">
+          <div className="grid md:grid-cols-2 gap-6">
             {agentCategories.map(category => (
-              <div key={category.id}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <div className={`relative w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+              <div key={category.id} style={{ borderRadius: 14, padding: "18px", background: "rgba(255,255,255,0.015)", border: `1px solid rgba(${category.neonRgb},0.18)`, boxShadow: `0 0 20px rgba(${category.neonRgb},0.05)` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <div className={`relative w-7 h-7 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
                     <span className="absolute inset-0 rounded-md animate-ping opacity-40" style={{ background: `rgba(${category.neonRgb},0.5)` }} />
-                    <category.icon className="w-3 h-3 text-white relative z-10" />
+                    <category.icon className="w-3.5 h-3.5 text-white relative z-10" />
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{category.name}</span>
-                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{category.name}</span>
+                  <div style={{ flex: 1, height: 1, background: `rgba(${category.neonRgb},0.15)` }} />
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {category.agents.map((agent) => (
-                    <div key={agent.name} style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.02)", border: `1px solid rgba(${category.neonRgb},0.25)`, boxShadow: `0 0 0 1px rgba(${category.neonRgb},0.15), 0 0 12px rgba(${category.neonRgb},0.06)`, transition: "all 0.3s ease" }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px rgba(${category.neonRgb},0.25), 0 0 0 1px rgba(${category.neonRgb},0.35)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${category.neonRgb},0.15), 0 0 12px rgba(${category.neonRgb},0.06)`; (e.currentTarget as HTMLDivElement).style.border = `1px solid rgba(${category.neonRgb},0.25)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+                    <div key={agent.name} style={{ borderRadius: 10, padding: "12px 14px", background: "rgba(255,255,255,0.025)", border: `1px solid rgba(${category.neonRgb},0.2)`, boxShadow: `0 0 0 1px rgba(${category.neonRgb},0.1), 0 0 12px rgba(${category.neonRgb},0.05)`, transition: "all 0.3s ease" }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px rgba(${category.neonRgb},0.22), 0 0 0 1px rgba(${category.neonRgb},0.35)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px rgba(${category.neonRgb},0.1), 0 0 12px rgba(${category.neonRgb},0.05)`; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                      <div className={`relative w-5 h-5 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
+                        <div className={`relative w-6 h-6 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
                           <span className="absolute inset-0 rounded animate-ping opacity-30" style={{ background: `rgba(${category.neonRgb},0.6)` }} />
-                          <agent.icon className="w-2.5 h-2.5 text-white relative z-10" />
+                          <agent.icon className="w-3 h-3 text-white relative z-10" />
                         </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{agent.name}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{agent.name}</span>
                       </div>
-                      <p style={{ fontSize: 9, color: "rgba(200,220,240,0.5)", lineHeight: 1.4 }}>{agent.description}</p>
+                      <p style={{ fontSize: 10, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{agent.description}</p>
                     </div>
                   ))}
                 </div>
