@@ -12,8 +12,6 @@ import {
   BarChart3,
   Share2,
   ChevronDown,
-  Globe,
-  Palette,
   Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
