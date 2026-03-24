@@ -195,9 +195,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$2,497', command: '$3,497' },
-      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$24,970/year', command: '$34,970/year' },
-      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $4,994', command: 'Save $6,994' },
+      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$497', command: '$697' },
+      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$4,970/year', command: '$6,970/year' },
+      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $994', command: 'Save $1,394' },
     ],
   },
 ];
