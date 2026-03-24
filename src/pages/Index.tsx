@@ -855,7 +855,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Advanced Analytics (Revenue + Forecast)</span>
+                    <span className="text-xs text-amber-400">Analytics Intelligence (Full Suite)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
