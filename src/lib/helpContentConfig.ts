@@ -100,14 +100,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'field_operations',
     title: 'Field Operations',
     icon: Truck,
-    description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
+    description: 'Mobile-optimized console powered by Dispatch Agent + Field Navigation Agent covering GPS routing, real-time ETA updates, and one-tap job check-in.',
     requiredTier: 'field_ops',
     tabs: ['Accept Job', 'Get Directions', 'Mark En Route', 'Update ETA', 'Arrive & Start', 'Complete Job', 'Generate Quote', 'Generate Invoice', 'Contact Dispatch'],
     agents: [
       { name: 'Dispatch Agent', tier: 'field_ops' },
-      { name: 'Route Agent', tier: 'field_ops' },
-      { name: 'ETA Agent', tier: 'field_ops' },
-      { name: 'Check-in Agent', tier: 'field_ops' },
+      { name: 'Field Navigation Agent', tier: 'field_ops' },
     ],
     features: [
       { text: 'Accept assigned jobs with one tap' },
