@@ -241,11 +241,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'creative_web_presence',
     title: 'Creative & Web Presence',
     icon: Palette,
-    description: 'AI-powered content generation and web management hub with Content Engine, AI website builder, blog management, and SEO optimization.',
+    description: 'AI-powered content generation and web management hub with Creative Content Agent + Web Presence Agent.',
     requiredTier: 'business',
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     agents: [
-      { name: 'Creative Agent', tier: 'growth' },
+      { name: 'Creative Content Agent', tier: 'growth' },
       { name: 'Web Presence Agent', tier: 'business' },
     ],
     features: [
