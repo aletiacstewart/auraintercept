@@ -91,6 +91,7 @@ const agentCategories = [{
     icon: Share2
   }]
 }, {
+  id: 'creative_web',
   name: 'Creative & Web Presence',
   icon: Palette,
   color: 'from-teal-500 to-cyan-500',
