@@ -137,14 +137,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'business_management',
     title: 'Business Operations',
     icon: Briefcase,
-    description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
-    requiredTier: 'field_ops',  // Available at Field Ops tier
+    description: 'Comprehensive business management console powered by Admin Agent + Business Finance Agent (Quoting, Invoicing, Inventory).',
+    requiredTier: 'field_ops',
     tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
     agents: [
-      { name: 'Quoting Agent', tier: 'field_ops' },
-      { name: 'Invoice Agent', tier: 'field_ops' },
+      { name: 'Business Finance Agent', tier: 'field_ops' },
       { name: 'Admin Agent', tier: 'performance' },
-      { name: 'Inventory Agent', tier: 'performance' },
     ],
     features: [
       { text: 'Create and send professional quotes', tier: 'field_ops' },
