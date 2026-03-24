@@ -63,14 +63,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'customer_portal',
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'AI-powered customer engagement hub with Message Aura (Text) on all tiers, Talk to Aura (Voice) on Scheduling+, automated follow-ups, and review collection.',
-    requiredTier: 'scheduling',  // Now available starting at Scheduling tier
+    description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated scheduling, follow-ups, and review collection — all in one Customer Journey Agent.',
+    requiredTier: 'scheduling',
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     agents: [
       { name: 'AI Receptionist', tier: 'starter' },
-      { name: 'Scheduling Agent', tier: 'scheduling' },
-      { name: 'Follow-up Agent', tier: 'scheduling' },
-      { name: 'Review Agent', tier: 'growth' },
+      { name: 'Customer Journey Agent', tier: 'scheduling' },
     ],
     features: [
       { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'starter' },
