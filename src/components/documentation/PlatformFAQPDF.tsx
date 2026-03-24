@@ -465,7 +465,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What add-ons are available?"
-          answer={`Available add-ons include: Social Media Agent ($${ADDON_PRICING.socialMedia.price}/mo) for content creation across 6 platforms, Web Presence ($${ADDON_PRICING.webPresence.price}/mo) for a professional 1-page website, and Additional Employees ($${ADDON_PRICING.additionalEmployees.price} per 10 employees). Add-ons are available for Single-Point and Multi-Track tiers.`}
+          answer={`Available add-ons include: Additional Employees ($${ADDON_PRICING.additionalEmployees.price} per 10 employees/month) for Logistics and Performance tiers. Social media, web presence, and creative tools are included starting at the Aura Growth tier.`}
         />
 
         <FAQItem 

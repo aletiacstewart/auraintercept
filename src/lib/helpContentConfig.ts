@@ -57,31 +57,31 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   assistant: 'Aura Assistant',
 };
 
-// Console configurations with tier-based content - NEW 7-TIER STRUCTURE
+// Console configurations with tier-based content - 5-TIER STRUCTURE
 export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   {
     id: 'customer_portal',
     title: 'Customer Portal',
     icon: HeadphonesIcon,
     description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated scheduling, follow-ups, and review collection — all in one Customer Journey Agent.',
-    requiredTier: 'scheduling',
+    requiredTier: 'connect',
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     agents: [
-      { name: 'AI Receptionist', tier: 'starter' },
-      { name: 'Customer Journey Agent', tier: 'scheduling' },
+      { name: 'AI Receptionist', tier: 'connect' },
+      { name: 'Customer Journey Agent', tier: 'connect' },
     ],
     features: [
-      { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'starter' },
-      { text: 'Intelligent customer triage and routing', tier: 'starter' },
-      { text: 'Talk to Aura (Voice) - microphone/speaker, requires ElevenLabs + SignalWire', tier: 'scheduling' },
-      { text: 'Voice Reminders for appointments - requires ElevenLabs + SignalWire', tier: 'scheduling' },
-      { text: 'Answer questions using your Knowledge Base', tier: 'starter' },
-      { text: 'Automated follow-up sequences via Email/SMS', tier: 'scheduling' },
+      { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'connect' },
+      { text: 'Intelligent customer triage and routing', tier: 'connect' },
+      { text: 'Talk to Aura (Voice) - microphone/speaker, requires ElevenLabs + SignalWire', tier: 'connect' },
+      { text: 'Voice Reminders for appointments - requires ElevenLabs + SignalWire', tier: 'connect' },
+      { text: 'Answer questions using your Knowledge Base', tier: 'connect' },
+      { text: 'Automated follow-up sequences via Email/SMS', tier: 'connect' },
       { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'growth' },
-      { text: 'Service catalog display with pricing', tier: 'scheduling' },
-      { text: 'Business hours display', tier: 'starter' },
-      { text: 'Online appointment booking via AI chat', tier: 'scheduling' },
-      { text: 'Appointment tracking and status updates', tier: 'scheduling' },
+      { text: 'Service catalog display with pricing', tier: 'connect' },
+      { text: 'Business hours display', tier: 'connect' },
+      { text: 'Online appointment booking via AI chat', tier: 'connect' },
+      { text: 'Appointment tracking and status updates', tier: 'connect' },
       { text: 'Instant quote requests', tier: 'field_ops' },
       { text: 'Invoice viewing and billing status', tier: 'field_ops' },
     ],
@@ -149,12 +149,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { text: 'Generate and track invoices with payment status', tier: 'field_ops' },
       { text: 'Service catalog with pricing management', tier: 'field_ops' },
       { text: 'Lead capture and pipeline management', tier: 'growth' },
-      { text: 'Appointment scheduling and calendar management', tier: 'scheduling' },
+      { text: 'Appointment scheduling and calendar management', tier: 'connect' },
       { text: 'Inventory tracking with stock levels', tier: 'performance' },
       { text: 'Reorder alerts and supplier management', tier: 'performance' },
       { text: 'Multi-company management (Platform Admin)', tier: 'command' },
       { text: 'Employee management and job assignments', tier: 'field_ops' },
-      { text: 'Customer database with service history', tier: 'scheduling' },
+      { text: 'Customer database with service history', tier: 'connect' },
     ],
     useCases: [
       '"Create a quote for HVAC installation"',
@@ -209,7 +209,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     ],
     features: [
       { text: 'AI content generation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, SMS' },
-      { text: '3-step Content Wizard: Topic → AI Generation → Review & Schedule' },
+      { text: '3-step Content Wizard: Topic → AI Generation → Review & Post' },
       { text: 'Platform-specific character limits and optimization' },
       { text: 'Visual post mockups for each platform' },
       { text: 'AI-powered content rewording and variations' },
@@ -219,15 +219,14 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { text: 'Draft management for pending posts' },
       { text: 'Automatic is_aigc disclosure for TikTok compliance' },
       { text: 'Brand voice integration from Knowledge Base' },
-      { text: 'Content Engine for multi-channel generation (Social, Blog, Email, SMS, Website)', tier: 'business' },
-      { text: 'Web Presence Manager with AI-powered website and blog', tier: 'business' },
-      { text: 'Auto-publish blog posts from Content Engine', tier: 'business' },
-      { text: 'SEO optimization for all pages and posts', tier: 'business' },
+      { text: 'Content Engine for multi-channel generation (Social, Blog, Email, SMS, Website)', tier: 'growth' },
+      { text: 'Web Presence Manager with AI-powered website and blog', tier: 'growth' },
+      { text: 'Auto-publish blog posts from Content Engine', tier: 'growth' },
+      { text: 'SEO optimization for all pages and posts', tier: 'growth' },
     ],
     useCases: [
       '"Create an Instagram post about our summer special"',
       '"Generate a LinkedIn post for our new service"',
-      '"Schedule a Facebook post for tomorrow at 9am"',
       '"Create content variations for all platforms"',
       '"Show me my scheduled posts for this week"',
       '"Open the content calendar"',
@@ -242,11 +241,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Creative & Web Presence',
     icon: Palette,
     description: 'AI-powered content generation and web management hub with Creative Content Agent + Web Presence Agent.',
-    requiredTier: 'business',
+    requiredTier: 'growth',
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     agents: [
       { name: 'Creative Content Agent', tier: 'growth' },
-      { name: 'Web Presence Agent', tier: 'business' },
+      { name: 'Web Presence Agent', tier: 'growth' },
     ],
     features: [
       { text: 'Multi-channel content generation (Social, Blog, Email, SMS, Website)' },
@@ -279,10 +278,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     requiredTier: 'performance',
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     agents: [
-      { name: 'Insights Agent', tier: 'performance' },
-      { name: 'Performance Agent', tier: 'performance' },
-      { name: 'Revenue Agent', tier: 'performance' },
-      { name: 'Forecast Agent', tier: 'performance' },
+      { name: 'Analytics Intelligence Agent', tier: 'performance' },
     ],
     features: [
       { text: 'Performance reports with AI analysis' },
@@ -344,185 +340,133 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
 ];
 
-// Get consoles available for a specific tier - NEW 7-TIER STRUCTURE
+// 5-tier hierarchy for console/feature filtering
+const TIER_HIERARCHY_HELP: Record<SubscriptionTier, number> = {
+  free: 0,
+  connect: 1,
+  growth: 2,
+  field_ops: 3,
+  performance: 4,
+  command: 5,
+};
+
+// Get consoles available for a specific tier - 5-TIER STRUCTURE
 export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] {
-  const tierHierarchy: Record<SubscriptionTier, number> = {
-    free: 0,
-    starter: 1,
-    scheduling: 2,
-    growth: 3,
-    business: 4,
-    field_ops: 5,
-    performance: 6,
-    command: 7,
-  };
-  
-  const currentTierLevel = tierHierarchy[tier];
-  
+  const currentTierLevel = TIER_HIERARCHY_HELP[tier] ?? 0;
   return CONSOLE_HELP_CONFIG.filter(console => {
-    const requiredLevel = tierHierarchy[console.requiredTier];
+    const requiredLevel = TIER_HIERARCHY_HELP[console.requiredTier] ?? 0;
     return requiredLevel <= currentTierLevel;
   });
 }
 
 // Get filtered features for a console based on tier
 export function getFilteredFeatures(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
-  const tierHierarchy: Record<SubscriptionTier, number> = {
-    free: 0,
-    starter: 1,
-    scheduling: 2,
-    growth: 3,
-    business: 4,
-    field_ops: 5,
-    performance: 6,
-    command: 7,
-  };
-  
-  const currentTierLevel = tierHierarchy[tier];
-  
+  const currentTierLevel = TIER_HIERARCHY_HELP[tier] ?? 0;
   return console.features
     .filter(feature => {
       if (!feature.tier) return true;
-      return tierHierarchy[feature.tier] <= currentTierLevel;
+      return (TIER_HIERARCHY_HELP[feature.tier] ?? 0) <= currentTierLevel;
     })
     .map(f => f.text);
 }
 
 // Get filtered agents for a console based on tier
 export function getFilteredAgents(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
-  const tierHierarchy: Record<SubscriptionTier, number> = {
-    free: 0,
-    starter: 1,
-    scheduling: 2,
-    growth: 3,
-    business: 4,
-    field_ops: 5,
-    performance: 6,
-    command: 7,
-  };
-  
-  const currentTierLevel = tierHierarchy[tier];
-  
+  const currentTierLevel = TIER_HIERARCHY_HELP[tier] ?? 0;
   return console.agents
-    .filter(agent => tierHierarchy[agent.tier] <= currentTierLevel)
+    .filter(agent => (TIER_HIERARCHY_HELP[agent.tier] ?? 0) <= currentTierLevel)
     .map(a => a.name);
 }
 
-// Tier descriptions for Help page - NEW 7-TIER STRUCTURE
+// Tier descriptions for Help page - 5-TIER STRUCTURE
 export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; description: string; highlights: string[] }> = {
   free: {
     title: 'Free Plan',
     description: 'Limited access to platform features.',
     highlights: [],
   },
-  starter: {
-    title: 'Aura Starter',
-    description: 'Never miss a lead again - 24/7 AI answering and lead capture.',
+  connect: {
+    title: 'Aura Connect',
+    description: '24/7 AI answering, automated booking, customer follow-up, and review collection.',
     highlights: [
       'AI Receptionist for 24/7 customer engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
-      'Smart Link Sharing',
-      'Knowledge Base for FAQs',
-      'Embeddable Chat Widget',
-      '2 Employee Accounts',
-      'Requires ElevenLabs + SignalWire integrations',
-    ],
-  },
-  scheduling: {
-    title: 'Aura Connect',
-    description: 'Turn conversations into booked appointments with automated booking and reminders.',
-    highlights: [
-      'Everything in Starter',
-      'Scheduling Agent with calendar sync',
-      'Follow-up Agent (SMS + Email reminders)',
+      'Customer Journey Agent (Scheduling, Follow-up, Review)',
       'Customer Portal Console',
-      'Unlimited appointments',
+      'Smart Link Sharing & Embeddable Chat Widget',
       '3 Employee Accounts',
+      'Requires ElevenLabs + SignalWire integrations',
     ],
   },
   growth: {
     title: 'Aura Growth',
-    description: 'Start growing automatically with marketing automation and social media.',
+    description: 'Full marketing automation with social content, outreach campaigns, and web presence.',
     highlights: [
-      'Everything in Scheduling',
-      'Review Agent for reputation management',
-      'Campaign, Lead, and Marketing Agents',
-      'Social Media Suite (Content, Scheduler, Analytics)',
-      'Creative Agent for content generation',
+      'Everything in Connect',
+      'Outreach Agent (Campaign, Lead Capture & Scoring, Marketing)',
+      'Creative Content Agent (Social, Images, Video, Web Copy)',
+      'Web Presence Agent (AI-powered site + SEO)',
       'Outreach & Sales Ops Console',
-      'Social Media Console',
-      '5 Employee Accounts',
-    ],
-  },
-  business: {
-    title: 'Aura Presence',
-    description: 'Run your office automatically with web presence and management dashboards.',
-    highlights: [
-      'Everything in Growth',
-      'Web Presence Agent for website management',
+      'Social Media Ops Console',
       'Creative & Web Presence Console',
-      'AI-powered website and blog',
-      'SEO optimization',
       '8 Employee Accounts',
-      'Voice, SMS & Email included',
     ],
   },
   field_ops: {
     title: 'Aura Logistics',
-    description: 'Run your field team automatically with dispatch, routing, and job management.',
+    description: 'Complete field operations with dispatch, routing, quoting, and invoicing.',
     highlights: [
-      'Everything in Business',
-      'Dispatch, Route, ETA, and Check-in Agents',
-      'Quoting and Invoice Agents',
+      'Everything in Growth',
+      'Dispatch Agent (Smart job assignment)',
+      'Field Navigation Agent (Route, ETA, Check-in)',
+      'Business Finance Agent (Quoting, Invoice, Inventory)',
       'Field Operations Console',
-      'Business Management Console',
+      'Business Operations Console',
       'GPS routing and navigation',
-      'Customer ETA notifications',
       '15 Employee Accounts',
     ],
   },
   performance: {
     title: 'Aura Performance',
-    description: 'Run your entire company with AI and business intelligence.',
+    description: 'Full business automation with all 10 AI operatives, analytics intelligence, and admin control.',
     highlights: [
       'Everything in Logistics',
-      'Admin and Inventory Agents',
-      'Insights, Performance, Revenue, and Forecast Agents',
-      'Analytics & Reports Console',
-      'AI-powered demand forecasting',
+      'All 10 AI Operatives',
+      'All 7 Consoles',
+      'Admin Agent (Scheduling, Staff, Customers)',
+      'Analytics Intelligence Agent (Insights, Performance, Revenue, Forecast)',
       'Multi-format report export',
       'Priority Support',
-      '25 Employee Accounts',
+      '30 Employee Accounts',
     ],
   },
   command: {
     title: 'Aura Command',
-    description: 'AI Operating System for multi-location companies with dedicated support.',
+    description: 'Enterprise AI operating system with unlimited employees, white-label branding, and predictive analytics.',
     highlights: [
       'Everything in Performance',
-      'All 24 AI Agents',
-      'All 7 Control Centers (Consoles)',
-      'AI Operatives Hub for central management',
+      'Unlimited Employee Accounts',
       'Multi-location support',
       'White-label branding',
-      'Dedicated Account Manager',
-      'Priority Support',
-      '50 Employee Accounts',
+      'AI Operatives Hub (Management Interface)',
+      'Advanced Predictive Analytics & Demand Forecasting',
+      'Priority Support & Custom Implementation',
     ],
   },
 };
 
-// Get tier by agent type - NEW MAPPING
+// Get tier by agent type - 5-TIER MAPPING
 export function getTierForAgent(agentType: string): SubscriptionTier | null {
   const agentTierMap: Record<string, SubscriptionTier> = {
-    // Starter tier (Lead Capture Stack)
-    triage: 'starter',
-    
-    // Scheduling tier (Booking Stack)
-    booking: 'scheduling',
-    followup: 'scheduling',
-    
-    // Growth tier (Marketing Stack)
+    // Connect tier
+    triage: 'connect',
+    customer_journey: 'connect',
+    booking: 'connect',
+    followup: 'connect',
+    // Growth tier
+    outreach: 'growth',
+    creative_content: 'growth',
+    web_presence: 'growth',
     review: 'growth',
     campaign: 'growth',
     lead: 'growth',
@@ -531,23 +475,20 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
     social_scheduler: 'growth',
     social_analytics: 'growth',
     creative: 'growth',
-    
-    // Business tier (Office Stack)
-    web_presence: 'business',
-    
-    // Field Ops tier (Field Operations Stack)
+    // Field Ops tier
     dispatch: 'field_ops',
+    field_navigation: 'field_ops',
+    business_finance: 'field_ops',
     route: 'field_ops',
     eta: 'field_ops',
     checkin: 'field_ops',
     quoting: 'field_ops',
     invoice: 'field_ops',
-    
-    // Performance tier (Business Intelligence Stack)
+    // Performance tier
     admin: 'performance',
+    analytics_intelligence: 'performance',
     inventory: 'performance',
     insights: 'performance',
-    performance: 'performance',
     revenue: 'performance',
     forecast: 'performance',
   };
@@ -555,38 +496,32 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
   return agentTierMap[agentType] || null;
 }
 
-// Agent count per tier - NEW STRUCTURE
+// Operative count per tier - 5-TIER STRUCTURE
 export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 1,
-  scheduling: 3,
-  growth: 11,
-  business: 12,
-  field_ops: 18,
-  performance: 24,
-  command: 24,
+  connect: 2,
+  growth: 5,
+  field_ops: 8,
+  performance: 10,
+  command: 10,
 };
 
-// Console count per tier - 7 Control Centers (AI Operatives Hub is management interface, not counted)
+// Console count per tier
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 0,
-  scheduling: 1,
-  growth: 3,
-  business: 4,
+  connect: 1,
+  growth: 4,
   field_ops: 6,
   performance: 7,
-  command: 7,  // All 7 Control Centers + AI Operatives Hub (management interface)
+  command: 7,
 };
 
-// Employee limits per tier - NEW STRUCTURE
+// Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 2,
-  scheduling: 3,
-  growth: 5,
-  business: 8,
+  connect: 3,
+  growth: 8,
   field_ops: 15,
-  performance: 25,
-  command: 50,
+  performance: 30,
+  command: 999,  // Unlimited
 };

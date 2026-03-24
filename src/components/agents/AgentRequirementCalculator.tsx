@@ -40,13 +40,11 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   analytics: { name: 'Analytics Agent', description: 'Data analysis', icon: '📊' },
 };
 
-// NEW 7-TIER STRUCTURE
+// 5-TIER STRUCTURE
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
-  starter: 'bg-amber-500',
-  scheduling: 'bg-cyan-500',
+  connect: 'bg-cyan-500',
   growth: 'bg-rose-500',
-  business: 'bg-emerald-600',
   field_ops: 'bg-amber-600',
   performance: 'bg-sky-600',
   command: 'bg-violet-600',
@@ -54,11 +52,9 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 197,
-  scheduling: 297,
-  growth: 397,
-  business: 500,
-  field_ops: 1500,
+  connect: 297,
+  growth: 597,
+  field_ops: 1497,
   performance: 2497,
   command: 3497,
 };
@@ -95,7 +91,7 @@ const AgentRequirementCalculator: React.FC = () => {
     calculateRequirements.forEach(agent => {
       const tierNeeded = getRequiredTierForAgent(agent);
       if (tierNeeded) {
-        const tierOrder: SubscriptionTier[] = ['free', 'starter', 'scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'];
+        const tierOrder: SubscriptionTier[] = ['free', 'connect', 'growth', 'field_ops', 'performance', 'command'];
         if (tierOrder.indexOf(tierNeeded) > tierOrder.indexOf(maxTier)) {
           maxTier = tierNeeded;
         }
@@ -120,10 +116,8 @@ const AgentRequirementCalculator: React.FC = () => {
   const agentsByTier = useMemo(() => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
-      starter: [],
-      scheduling: [],
+      connect: [],
       growth: [],
-      business: [],
       field_ops: [],
       performance: [],
       command: [],
