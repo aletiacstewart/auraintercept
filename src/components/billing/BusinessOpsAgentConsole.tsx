@@ -40,8 +40,8 @@ const BASE_QUICK_ACTIONS = [
   { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments', featureColor: 'text-feature-appointments' },
   { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items', featureColor: 'text-feature-inventory' },
   { id: 'companies', label: 'Companies', icon: Briefcase, message: 'Manage companies', featureColor: 'text-feature-platform' },
-  { id: 'employees', label: 'Employees', icon: Briefcase, message: 'Manage employees', featureColor: 'text-feature-employees' },
-  { id: 'customers', label: 'Customers', icon: Briefcase, message: 'Manage customers', featureColor: 'text-feature-customers' },
+  { id: 'employees', label: 'Employees', icon: Users, message: 'Manage employees', featureColor: 'text-feature-employees' },
+  { id: 'customers', label: 'Customers', icon: UserPlus, message: 'Manage customers', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration - includes quick actions as tabs (top row only, no center grid)
