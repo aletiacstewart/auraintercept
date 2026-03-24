@@ -971,11 +971,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Booking Agent</span>
+                    <span className="text-xs">Customer Journey</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Follow-up Agent</span>
+                    <span className="text-xs">Review Collection</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
