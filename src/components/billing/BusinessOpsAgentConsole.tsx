@@ -202,7 +202,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('quoting');
+    setLastAgent('business_finance');
   };
 
   const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showCompaniesManager || showEmployeesManager || showCustomersManager || showAuraLive;

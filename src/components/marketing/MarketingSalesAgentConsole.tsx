@@ -135,7 +135,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('marketing');
+    setLastAgent('outreach');
   };
 
   const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {

@@ -281,16 +281,16 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       onHomeClick={handleHome}
       agents={ANALYTICS_AGENTS}
       currentAgentId={
-        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics' :
-        (showRevenueForm || showForecastForm) ? 'revenue' :
-        (showCustomersForm || showInsightsForm || showSocialForm) ? 'insights' :
+        (showPerformanceForm || showKpiForm || showExportForm || showRemindersForm) ? 'analytics_intelligence' :
+        (showRevenueForm || showForecastForm) ? 'analytics_revenue' :
+        (showCustomersForm || showInsightsForm || showSocialForm) ? 'analytics_insights' :
         currentAgent || lastAgent
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_ACTION: Record<string, string> = {
-          analytics: 'performance',
-          revenue: 'revenue',
-          insights: 'customers',
+          analytics_intelligence: 'performance',
+          analytics_revenue: 'revenue',
+          analytics_insights: 'customers',
         };
         const actionId = AGENT_TO_ACTION[agentId];
         if (actionId) {
