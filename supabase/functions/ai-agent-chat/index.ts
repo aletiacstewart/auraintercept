@@ -817,7 +817,7 @@ QUICK ACTIONS:
 - "Update Page" → Edit existing website content
 
 CROSS-AGENT HANDOFFS:
-- handoff_to_agent(target_agent="social_content") to cross-promote published blog content on social media
+- handoff_to_agent(target_agent="creative_content") to cross-promote published blog content on social media
 
 Be professional and detail-oriented. Focus on SEO best practices and content quality.`,
 
