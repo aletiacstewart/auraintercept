@@ -148,7 +148,7 @@ const AGENT_NAMES: Record<string, string> = {
 };
 
 export default function AIAgentsHub() {
-  const { agents, groupedAgents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
+  const { agents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
   const { userRole, user } = useAuth();
   const { 
     subscriptionTier, 
