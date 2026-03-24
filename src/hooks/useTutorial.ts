@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export interface TutorialStep {
@@ -24,36 +24,48 @@ export function useTutorial({ persistenceKey, steps }: UseTutorialOptions) {
   const [isActive, setIsActive] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
 
-  // Restore state from localStorage
+  // Use a ref to track if we've already restored from localStorage
+  // to prevent re-triggering on every render
+  const hasRestoredRef = useRef(false);
+
+  // Restore state from localStorage — runs ONCE on mount only
   useEffect(() => {
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+
     const saved = localStorage.getItem(persistenceKey);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.isActive && parsed.currentStepIndex < steps.length) {
+        // Only restore if explicitly active AND we have a valid step
+        if (parsed.isActive === true && typeof parsed.currentStepIndex === 'number' && parsed.currentStepIndex < steps.length) {
           setCurrentStepIndex(parsed.currentStepIndex);
           setIsActive(true);
         }
-      } catch {}
+      } catch {
+        // Corrupt data — clear it
+        localStorage.removeItem(persistenceKey);
+      }
     }
-  }, [persistenceKey, steps.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally empty — runs once on mount
 
-  // Persist state
+  // Persist state — only when active, and only when step/active changes
   useEffect(() => {
     if (isActive) {
-      localStorage.setItem(persistenceKey, JSON.stringify({ isActive, currentStepIndex }));
+      localStorage.setItem(persistenceKey, JSON.stringify({ isActive: true, currentStepIndex }));
     }
   }, [isActive, currentStepIndex, persistenceKey]);
 
-  // After navigation, clear navigating flag
+  // After route navigation completes, clear navigating flag
   useEffect(() => {
     if (isNavigating) {
-      const timer = setTimeout(() => setIsNavigating(false), 600);
+      const timer = setTimeout(() => setIsNavigating(false), 700);
       return () => clearTimeout(timer);
     }
   }, [location.pathname, isNavigating]);
 
-  const currentStep = steps[currentStepIndex] || null;
+  const currentStep = steps[currentStepIndex] ?? null;
   const totalSteps = steps.length;
   const progress = totalSteps > 0 ? ((currentStepIndex + 1) / totalSteps) * 100 : 0;
 
@@ -66,13 +78,22 @@ export function useTutorial({ persistenceKey, steps }: UseTutorialOptions) {
     return false;
   }, [navigate, location.pathname]);
 
+  const stop = useCallback(() => {
+    setIsActive(false);
+    setCurrentStepIndex(0);
+    setIsNavigating(false);
+    localStorage.removeItem(persistenceKey);
+  }, [persistenceKey]);
+
   const start = useCallback(() => {
     setCurrentStepIndex(0);
     setIsActive(true);
+    setIsNavigating(false);
     const firstStep = steps[0];
     if (firstStep) navigateToStepRoute(firstStep);
   }, [steps, navigateToStepRoute]);
 
+  // nextStep is ONLY called by explicit user button click — no auto-advance
   const nextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
       const nextIdx = currentStepIndex + 1;
@@ -81,7 +102,7 @@ export function useTutorial({ persistenceKey, steps }: UseTutorialOptions) {
     } else {
       stop();
     }
-  }, [currentStepIndex, steps, navigateToStepRoute]);
+  }, [currentStepIndex, steps, navigateToStepRoute, stop]);
 
   const prevStep = useCallback(() => {
     if (currentStepIndex > 0) {
@@ -90,12 +111,6 @@ export function useTutorial({ persistenceKey, steps }: UseTutorialOptions) {
       navigateToStepRoute(steps[prevIdx]);
     }
   }, [currentStepIndex, steps, navigateToStepRoute]);
-
-  const stop = useCallback(() => {
-    setIsActive(false);
-    setCurrentStepIndex(0);
-    localStorage.removeItem(persistenceKey);
-  }, [persistenceKey]);
 
   const skipTo = useCallback((index: number) => {
     if (index >= 0 && index < steps.length) {
