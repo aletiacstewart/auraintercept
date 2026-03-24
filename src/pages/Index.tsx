@@ -797,10 +797,10 @@ export default function Index() {
                 <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Full Automation)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold gradient-text">$2,497</span>
+                  <span className="text-3xl font-bold gradient-text">$497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$24,970/year (Save $4,994)</p>
+                <p className="text-xs text-secondary mb-3">$4,970/year (Save $994)</p>
                 <p className="text-xs text-card-foreground/70 mb-4">9 operatives with full business intelligence.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
