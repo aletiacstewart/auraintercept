@@ -626,13 +626,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Unified Aura Floating Button */}
       <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
     </div>
+    </DashboardTutorialProvider>
   );
 }
 
+/** Alias kept for backward compatibility — DashboardLayout now includes the tutorial provider */
 export function DashboardLayoutWithTutorial({ children }: { children: React.ReactNode }) {
-  return (
-    <DashboardTutorialProvider>
-      <DashboardLayout>{children}</DashboardLayout>
-    </DashboardTutorialProvider>
-  );
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
