@@ -354,7 +354,7 @@ export default function AIAgentsHub() {
                 {inTrial ? (
                   <>You're in trial mode with full access to all agents.</>
                 ) : subscriptionTier === 'command' ? (
-                  <>Your <strong>Command</strong> plan includes all 24 AI agents.</>
+                  <>Your <strong>Command</strong> plan includes all 10 AI operatives.</>
                 ) : (
                   <>
                     Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.
