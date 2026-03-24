@@ -519,7 +519,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   MULTI_TRACK: {
     tier: 'MULTI_TRACK',
     label: 'Aura Performance',
-    price: '$2,497/mo',
+    price: '$497/mo',
     description: 'Full field operations automation for growing service businesses',
     keyFeatures: [
       'All Aura Logistics features',
