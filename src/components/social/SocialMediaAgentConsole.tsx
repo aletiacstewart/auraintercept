@@ -279,7 +279,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
             onSubmit={handleSubmit}
             onHome={handleHome}
             isLoading={isLoading}
-            placeholder="Ask about posts, scheduling..."
+            placeholder="Ask about content, captions, platforms..."
           />
         </>
       )}

@@ -6,7 +6,33 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Agent types and their capabilities — 10 consolidated operatives
+// Legacy agent name → 10-operative consolidated name map
+const LEGACY_TO_OPERATIVE_MAP: Record<string, string> = {
+  campaign: 'outreach',
+  lead: 'outreach',
+  marketing: 'outreach',
+  route: 'field_navigation',
+  eta: 'field_navigation',
+  checkin: 'field_navigation',
+  quoting: 'business_finance',
+  invoice: 'business_finance',
+  inventory: 'business_finance',
+  insights: 'analytics_intelligence',
+  performance: 'analytics_intelligence',
+  revenue: 'analytics_intelligence',
+  forecast: 'analytics_intelligence',
+  analytics: 'analytics_intelligence',
+  creative: 'creative_content',
+  social_content: 'creative_content',
+  social_scheduler: 'creative_content',
+  social_analytics: 'creative_content',
+};
+
+function normalizeAgentName(agent: string): string {
+  return LEGACY_TO_OPERATIVE_MAP[agent] || agent;
+}
+
+
 const AGENT_TYPES = {
   // Customer Portal (2 agents)
   triage: { name: 'AI Receptionist', category: 'customer_portal', phase: 1 },
