@@ -949,8 +949,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           </div>
         )}
 
-        {/* Book Tab - Only accessible for Multi-Track+ tiers */}
-        {activeTab === 'book' && effectiveTier !== 'single_point' && (
+        {/* Book Tab - Only accessible for Performance+ tiers */}
+        {activeTab === 'book' && effectiveTier !== 'connect' && (
           <div className="flex-1 overflow-y-auto p-4">
             <BookingForm
               services={services || []}
