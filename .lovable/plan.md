@@ -1,26 +1,50 @@
 
-## Root Cause
+## Root Cause Analysis
 
-`TierComparisonCards.tsx` uses these tier keys when calling `TIER_AGENT_CONFIG[tier]`:
-- `'express'`, `'aura_flow'`, `'halo'`, `'core'`, `'single_point'`, `'multi_track'`, `'command'`
+The site is completely blank. After deep inspection, there are **three stale files** that still define the old 8-tier `SubscriptionTier` type and reference legacy keys that no longer exist in `TIER_AGENT_CONFIG`. When the build evaluates these type exports and runtime values, TypeScript/Vite throws a compile-time or module-resolution error that prevents the entire app from loading.
 
-But `TIER_AGENT_CONFIG` only has: `free`, `connect`, `growth`, `field_ops`, `performance`, `command`.
+### The three broken files:
 
-The legacy keys (`express`, `aura_flow`, `halo`, `core`, `single_point`, `multi_track`) do **not exist** in the config — they are only listed in `LEGACY_TIER_MAP`. So `TIER_AGENT_CONFIG['express']` returns `undefined`, and `config.label` throws a crash that the `ErrorBoundary` catches, showing a blank screen for **every page**.
+**1. `src/contexts/AuthContext.tsx` (line 7)**
+```ts
+// BROKEN — still exports the old 8-tier type
+export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+```
+This creates a **named export conflict** — anything importing `SubscriptionTier` from `AuthContext` gets the wrong type.
 
-## Fix
+**2. `src/lib/customerPortalConfig.ts` (line 15)**
+```ts
+// BROKEN — still defines and uses the old 8-tier type
+export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['halo', 'single_point', 'multi_track', 'command'];
+const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['halo', 'multi_track', 'command'];
+```
+The `CustomerChatInterface.tsx` imports `SubscriptionTier` from here and uses `subscriptionTier = 'single_point'` as a default prop — a value that now causes type errors.
 
-`src/components/agents/TierComparisonCards.tsx` — rework the component to use only the 3 real current tiers: `connect`, `performance`, `command`. Remove the "Industry-Specific" and old "General Business" tier grid. Show the 3-tier model with the correct keys that actually exist in `TIER_AGENT_CONFIG`.
+**3. `src/components/chat/CustomerChatInterface.tsx` (line 75)**
+```ts
+subscriptionTier = 'single_point',  // 'single_point' is not a valid tier anymore
+```
 
-The `TierCard` component's `tier` prop type must also be updated from the stale union (that includes `express`, `aura_flow`, etc.) to the canonical `SubscriptionTier` type from `subscriptionAgentConfig.ts`.
+## Fixes
 
-## Changes
+### Fix 1: `src/contexts/AuthContext.tsx`
+- Line 7: Replace the local `SubscriptionTier` type definition with a re-export from `subscriptionAgentConfig.ts`
+```ts
+// Remove old type
+// Add import:
+import { SubscriptionTier, normalizeTierName } from '@/lib/subscriptionAgentConfig';
+export type { SubscriptionTier };
+```
 
-**`src/components/agents/TierComparisonCards.tsx`** (single file, full rewrite of tiers rendered):
-- Change `tier` prop type on `TierCard` from `'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'` → `SubscriptionTier` (imported from `@/lib/subscriptionAgentConfig`)
-- Remove the "Industry-Specific Tiers" section (express, aura_flow, halo — all invalid keys)
-- Remove the old "General Business Tiers" section (core, single_point, multi_track — all invalid keys)
-- Replace with a clean 3-column grid using only `connect`, `performance`, `command` — which are valid keys in `TIER_AGENT_CONFIG`
-- Update the "Upgrade Summary" strip at the bottom to match the 3-tier model ($297 → $497 → $697)
+### Fix 2: `src/lib/customerPortalConfig.ts`
+- Line 15: Remove the local `SubscriptionTier` type definition and import from `subscriptionAgentConfig.ts`
+- Lines 120-123: Update `PORTAL_ACCESS_TIERS` and `ONLINE_BOOKING_TIERS` to use the canonical tier names (`connect`, `performance`, `command`, etc.)
 
-This is a single-file fix that immediately unblocks the crash and restores the entire platform.
+### Fix 3: `src/components/chat/CustomerChatInterface.tsx`
+- Line 75: Change the default prop from `'single_point'` to `'connect'` (the entry-level canonical tier)
+
+## Files to Change
+- `src/contexts/AuthContext.tsx` — remove old SubscriptionTier type, re-export from subscriptionAgentConfig
+- `src/lib/customerPortalConfig.ts` — remove old SubscriptionTier type, fix tier arrays to use canonical names
+- `src/components/chat/CustomerChatInterface.tsx` — fix default prop from `'single_point'` to `'connect'`
