@@ -960,8 +960,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           </div>
         )}
 
-        {/* Book Tab fallback for Single-Point tier */}
-        {activeTab === 'book' && effectiveTier === 'single_point' && (
+        {/* Book Tab fallback for Connect tier */}
+        {activeTab === 'book' && effectiveTier === 'connect' && (
           <div className="flex-1 overflow-y-auto p-4 text-center">
             <div className="py-8">
               <Phone className="h-12 w-12 mx-auto text-primary mb-4" />
