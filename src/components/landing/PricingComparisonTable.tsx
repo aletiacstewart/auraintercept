@@ -362,7 +362,7 @@ export const PricingComparisonTable = () => {
             }
             
             return (
-            <>
+            <React.Fragment key={section.title}>
               {/* Section Header */}
               <tr key={`section-${section.title}`} className="bg-slate-700/60">
                 {hasNumbers && numbers.length === 7 ? (
