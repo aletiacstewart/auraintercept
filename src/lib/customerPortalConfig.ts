@@ -2,16 +2,13 @@
  * Customer Portal Tier Configuration
  * 
  * Maps quick actions and features to subscription tiers.
- * Express/Core: No customer portal access (redirects to chat only)
- * Aura Flow: No customer portal (scheduling via calendar sync)
- * Halo: Customer portal with scheduling for salons/wellness
- * Single-Point: Basic chat, emergency, hours, services, feedback, call-to-book
- * Multi-Track: All Single-Point + schedule, quote, track, billing
- * Command: Same as Multi-Track for customer-facing features
+ * Connect: Basic chat, emergency, hours, services, feedback, call-to-book
+ * Performance: All Connect + schedule, quote, track, billing
+ * Command: Same as Performance for customer-facing features
  */
 
 import { Calendar, Clock, DollarSign, AlertTriangle, Star, MapPin, Sparkles, Phone, FileText } from 'lucide-react';
-import { SubscriptionTier, normalizeTierName } from '@/lib/subscriptionAgentConfig';
+import { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
 
 export type { SubscriptionTier };
 
@@ -34,7 +31,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: Calendar, 
     message: "I'd like to request an appointment", 
     featureColor: 'text-feature-appointments',
-    requiresTier: 'multi_track'
+    requiresTier: 'performance'
   },
   { 
     id: 'quote', 
@@ -42,7 +39,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: DollarSign, 
     message: "I need a quote for your services", 
     featureColor: 'text-feature-quotes',
-    requiresTier: 'multi_track'
+    requiresTier: 'performance'
   },
   { 
     id: 'track', 
@@ -50,7 +47,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: MapPin, 
     message: "I want to track my appointment status", 
     featureColor: 'text-feature-fieldops',
-    requiresTier: 'multi_track'
+    requiresTier: 'performance'
   },
   { 
     id: 'billing', 
@@ -58,7 +55,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: FileText, 
     message: "I have a question about my invoice", 
     featureColor: 'text-feature-invoices',
-    requiresTier: 'multi_track'
+    requiresTier: 'performance'
   },
   { 
     id: 'services', 
@@ -66,7 +63,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: Sparkles, 
     message: "What services do you offer?", 
     featureColor: 'text-feature-customers',
-    requiresTier: 'single_point'
+    requiresTier: 'connect'
   },
   { 
     id: 'hours', 
@@ -74,7 +71,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: Clock, 
     message: "What are your business hours?", 
     featureColor: 'text-feature-overview',
-    requiresTier: 'single_point'
+    requiresTier: 'connect'
   },
   { 
     id: 'emergency', 
@@ -82,7 +79,7 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: AlertTriangle, 
     message: "I have an urgent emergency situation", 
     variant: 'destructive',
-    requiresTier: 'single_point'
+    requiresTier: 'connect'
   },
   { 
     id: 'feedback', 
@@ -90,38 +87,36 @@ export const ALL_QUICK_ACTIONS: QuickActionConfig[] = [
     icon: Star, 
     message: "I'd like to leave feedback about my service", 
     featureColor: 'text-feature-customers',
-    requiresTier: 'single_point'
+    requiresTier: 'connect'
   },
 ];
 
-// Call-to-book action for Single-Point tier (replaces online booking)
+// Call-to-book action for Connect tier (replaces online booking)
 export const CALL_TO_BOOK_ACTION: QuickActionConfig = {
   id: 'call_to_book',
   label: 'Call to Book',
   icon: Phone,
   message: '', // No message - opens phone dialer
   featureColor: 'text-feature-appointments',
-  requiresTier: 'single_point',
+  requiresTier: 'connect',
   isCallAction: true,
 };
 
-// Tier hierarchy for comparison - lower tiers with portal access mapped appropriately
+// Tier hierarchy for comparison
 const TIER_LEVELS: Record<SubscriptionTier, number> = {
   free: 0,
-  express: 0, // No customer portal
-  aura_flow: 0, // No customer portal (direct calendar)
-  core: 1, // Basic chat only
-  halo: 2, // Has customer portal with scheduling
-  single_point: 2,
-  multi_track: 3,
+  connect: 1,
+  growth: 1,
+  field_ops: 2,
+  performance: 3,
   command: 4,
 };
 
-// Tiers that have customer portal access
-const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['halo', 'single_point', 'multi_track', 'command'];
+// Tiers that have customer portal access (connect and above)
+const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['connect', 'growth', 'field_ops', 'performance', 'command'];
 
-// Tiers that have online booking (not call-to-book)
-const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['halo', 'multi_track', 'command'];
+// Tiers that have online booking (performance and above)
+const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['performance', 'command'];
 
 /**
  * Check if a company's tier includes customer portal access
@@ -141,8 +136,8 @@ export function hasOnlineBooking(tier: string | null | undefined): boolean {
  * Check if a company's tier includes access to a specific feature tier
  */
 export function hasTierAccess(companyTier: string | null | undefined, requiredTier: SubscriptionTier): boolean {
-  const effectiveTier = (companyTier || 'core') as SubscriptionTier;
-  const companyLevel = TIER_LEVELS[effectiveTier] || TIER_LEVELS.core;
+  const effectiveTier = (companyTier || 'connect') as SubscriptionTier;
+  const companyLevel = TIER_LEVELS[effectiveTier] ?? TIER_LEVELS.connect;
   const requiredLevel = TIER_LEVELS[requiredTier];
   return companyLevel >= requiredLevel;
 }
@@ -155,7 +150,7 @@ export function getEffectiveTier(
   inTrial: boolean
 ): SubscriptionTier {
   if (inTrial) return 'command'; // Trial gets full access
-  return (subscriptionTier || 'core') as SubscriptionTier;
+  return (subscriptionTier || 'connect') as SubscriptionTier;
 }
 
 /**
@@ -167,15 +162,15 @@ export function getQuickActionsForTier(
 ): QuickActionConfig[] {
   const actions: QuickActionConfig[] = [];
   
-  // For Core and Single-Point: Add call-to-book if company has a phone
-  if ((tier === 'core' || tier === 'single_point') && hasDispatchPhone) {
+  // For Connect: Add call-to-book if company has a phone
+  if (tier === 'connect' && hasDispatchPhone) {
     actions.push(CALL_TO_BOOK_ACTION);
   }
   
   // Add all actions that the tier has access to
   for (const action of ALL_QUICK_ACTIONS) {
-    // Skip schedule for core and single_point - they get call_to_book instead
-    if ((tier === 'core' || tier === 'single_point') && action.id === 'schedule') {
+    // Skip schedule for connect tier - they get call_to_book instead
+    if (tier === 'connect' && action.id === 'schedule') {
       continue;
     }
     
@@ -201,11 +196,11 @@ export interface TabConfig {
 }
 
 export const ALL_TABS: TabConfig[] = [
-  { value: 'chat', label: 'Chat', icon: Calendar, requiresTier: 'single_point' },
-  { value: 'schedule', label: 'Appt', icon: Calendar, featureColor: 'text-feature-appointments', requiresTier: 'multi_track', triggersChat: true, chatMessage: "I'd like to request an appointment" },
-  { value: 'quote', label: 'Quote', icon: DollarSign, featureColor: 'text-feature-quotes', requiresTier: 'multi_track', triggersChat: true, chatMessage: "I need a quote for your services" },
-  { value: 'services', label: 'Services', icon: Sparkles, featureColor: 'text-feature-customers', requiresTier: 'single_point' },
-  { value: 'hours', label: 'Hours', icon: Clock, featureColor: 'text-feature-overview', requiresTier: 'single_point' },
+  { value: 'chat', label: 'Chat', icon: Calendar, requiresTier: 'connect' },
+  { value: 'schedule', label: 'Appt', icon: Calendar, featureColor: 'text-feature-appointments', requiresTier: 'performance', triggersChat: true, chatMessage: "I'd like to request an appointment" },
+  { value: 'quote', label: 'Quote', icon: DollarSign, featureColor: 'text-feature-quotes', requiresTier: 'performance', triggersChat: true, chatMessage: "I need a quote for your services" },
+  { value: 'services', label: 'Services', icon: Sparkles, featureColor: 'text-feature-customers', requiresTier: 'connect' },
+  { value: 'hours', label: 'Hours', icon: Clock, featureColor: 'text-feature-overview', requiresTier: 'connect' },
 ];
 
 /**
@@ -215,8 +210,12 @@ export function getTabsForTier(tier: SubscriptionTier): TabConfig[] {
   return ALL_TABS.filter(tab => hasTierAccess(tier, tab.requiresTier));
 }
 
-// Quick action IDs that require multi_track or higher
-export const MULTI_TRACK_ONLY_ACTIONS = ['schedule', 'quote', 'track', 'billing'];
+// Quick action IDs that require performance or higher
+export const PERFORMANCE_ONLY_ACTIONS = ['schedule', 'quote', 'track', 'billing'];
 
-// Tab values that require multi_track or higher  
-export const MULTI_TRACK_ONLY_TABS = ['schedule', 'quote'];
+// Tab values that require performance or higher  
+export const PERFORMANCE_ONLY_TABS = ['schedule', 'quote'];
+
+// Keep legacy exports for backwards compatibility
+export const MULTI_TRACK_ONLY_ACTIONS = PERFORMANCE_ONLY_ACTIONS;
+export const MULTI_TRACK_ONLY_TABS = PERFORMANCE_ONLY_TABS;

@@ -72,7 +72,7 @@ export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({
   placeholder = 'Type your message...',
   welcomeMessage,
   className,
-  subscriptionTier = 'single_point',
+  subscriptionTier = 'connect',
   dispatchPhone,
 }) => {
   const [input, setInput] = useState('');
