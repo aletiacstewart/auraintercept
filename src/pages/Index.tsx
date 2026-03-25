@@ -108,60 +108,67 @@ const agentCategories = [{
 }];
 const agentConsoles = [{
   name: 'Customer Portal Console',
-  description: 'AI-powered customer interactions with booking, quotes, and support.',
+  description: 'AI-powered customer interactions with booking, appointments, quotes, and 24/7 support.',
   icon: HeadphonesIcon,
   gradient: 'from-cyan-500 to-blue-500',
   iconBg: 'bg-cyan-500/10',
   iconColor: 'text-cyan-500',
-  features: ['Online booking', 'Quote requests', 'Appointment tracking', 'AI chat support']
+  tier: 'connect',
+  features: ['Online booking', 'Appointment tracking', 'Quote requests', 'AI chat & voice support']
 }, {
   name: 'Field Operations Console',
-  description: 'Dispatch, routing, and real-time technician management.',
+  description: 'Smart dispatch, real-time technician routing, and live job tracking in the field.',
   icon: Truck,
   gradient: 'from-green-500 to-emerald-500',
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
+  tier: 'performance',
   features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
 }, {
-  name: 'Business Management Console',
-  description: 'Invoicing, inventory, and business operations.',
+  name: 'Business Mgt Ops Console',
+  description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
   icon: Briefcase,
   gradient: 'from-orange-500 to-amber-500',
   iconBg: 'bg-orange-500/10',
   iconColor: 'text-orange-500',
-  features: ['Invoice generation', 'Inventory tracking', 'Quote builder', 'Lead management']
+  tier: 'command',
+  features: ['Invoice generation', 'Inventory tracking', 'Quote builder', 'Employee management']
 }, {
   name: 'Outreach & Sales Ops Console',
-  description: 'Lead management and campaign automation.',
+  description: 'Lead capture, pipeline scoring, email/SMS campaigns, and customer segmentation.',
   icon: Megaphone,
   gradient: 'from-purple-500 to-pink-500',
   iconBg: 'bg-purple-500/10',
   iconColor: 'text-purple-500',
-  features: ['Lead capture', 'Campaign automation', 'Customer segments', 'Follow-up sequences']
+  tier: 'connect',
+  features: ['Lead capture & scoring', 'Campaign automation', 'Customer segments', 'Follow-up sequences']
 }, {
   name: 'Analytics & Reports Console',
-  description: 'KPIs, insights, and performance dashboards.',
+  description: 'Deep KPI dashboards, revenue trends, AI-driven insights, and performance reports.',
   icon: BarChart3,
   gradient: 'from-indigo-500 to-violet-500',
   iconBg: 'bg-indigo-500/10',
   iconColor: 'text-indigo-500',
+  tier: 'command',
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media Console',
-  description: 'AI content creation, scheduling, and guided manual posting across 6 platforms.',
+  description: 'AI-generated multi-channel content with Manual Bridge posting across 6 platforms.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
-  features: ['AI content generation', 'Manual Bridge posting', 'Multi-platform scheduling', 'Analytics dashboard']
+  tier: 'connect',
+  features: ['AI content generation', 'Manual Bridge posting', '6-platform support', 'Content scheduling']
 }, {
   name: 'Creative & Web Presence Console',
-  description: 'AI-powered content creation and website management.',
+  description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
   icon: Palette,
   gradient: 'from-teal-500 to-cyan-500',
   iconBg: 'bg-teal-500/10',
   iconColor: 'text-teal-500',
-  features: ['Multi-channel content', 'Website builder', 'Blog management', 'SEO optimization']
+  tier: 'connect',
+  features: ['Website builder', 'Blog management', 'SEO optimization', 'Multi-channel content']
 }];
 const platformFeatures = [{
   icon: Globe,
