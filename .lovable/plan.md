@@ -1,16 +1,50 @@
 
-## Fix: Homepage Not Loading
+## Fix: Homepage Crash — Invalid Tooltip Wrapping Table Row
 
 ### Root Cause
 
-`PricingComparisonTable.tsx` (line 364) uses bare `<>...</>` shorthand fragments inside a `.map()`. Shorthand fragments cannot accept a `key` prop — React requires the outermost element in any list render to have a unique `key`. The `key` is currently placed on the inner `<tr>` (two levels deep), not on the fragment wrapper. This causes a React crash that bubbles up and prevents the entire homepage from rendering.
+In `PricingComparisonTable.tsx` lines 408–421, each `<tr>` is wrapped in `<Tooltip>`:
+
+```text
+<tbody>
+  <React.Fragment>
+    <tr>...</tr>     ← section header
+    <Tooltip>        ← THIS IS THE BUG — Tooltip renders a <div>, invalid inside <tbody>
+      <tr>...</tr>   ← feature row
+    </Tooltip>
+  </React.Fragment>
+</tbody>
+```
+
+The Radix UI `<Tooltip>` component renders wrapper DOM elements that cannot appear between `<tbody>` and `<tr>`. This is invalid HTML and causes a React crash that prevents the entire homepage from rendering.
+
+The tooltip functionality for individual feature names is already correctly implemented inside `FeatureNameCell` using `TooltipTrigger` and `TooltipContent` — the outer `<Tooltip>` wrapper on the row is redundant AND breaking.
 
 ### Fix
 
-In `src/components/landing/PricingComparisonTable.tsx`, replace the bare `<>` shorthand fragment with `<React.Fragment key={section.title}>` so the key is on the outermost element of the map.
+**`src/components/landing/PricingComparisonTable.tsx`** (lines 408–421)
 
-### Files to change
+Remove the `<Tooltip key={feature.name}>` wrapper and move the `key` directly onto the `<tr>`:
 
-**`src/components/landing/PricingComparisonTable.tsx`** (line ~364)
-- Add `import React from 'react'` at the top
-- Change `<>` → `<React.Fragment key={section.title}>` and `</>` → `</React.Fragment>` in the `sections.map()` callback
+Before:
+```tsx
+return (
+  <Tooltip key={feature.name}>
+    <tr className={...}>
+      ...
+    </tr>
+  </Tooltip>
+);
+```
+
+After:
+```tsx
+return (
+  <tr key={feature.name} className={...}>
+    ...
+  </tr>
+);
+```
+
+### Files
+- `src/components/landing/PricingComparisonTable.tsx` — remove `<Tooltip>` wrapper around `<tr>` (lines 408–421)
