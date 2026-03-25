@@ -1,42 +1,26 @@
 
 ## Root Cause
 
-`FeatureNameCell` renders `<TooltipTrigger>` and `<TooltipContent>` directly inside a `<td>`, but there is no parent `<Tooltip>` wrapper per row. The `<Tooltip>` wrapper that *was* around each `<tr>` was removed in the previous fix (because it broke table DOM structure). Now `TooltipTrigger` has no `<Tooltip>` context, which throws a React error that crashes the entire page.
+`TierComparisonCards.tsx` uses these tier keys when calling `TIER_AGENT_CONFIG[tier]`:
+- `'express'`, `'aura_flow'`, `'halo'`, `'core'`, `'single_point'`, `'multi_track'`, `'command'`
 
-The fix is to wrap `<TooltipTrigger>` + `<TooltipContent>` inside a `<Tooltip>` **within** `FeatureNameCell` itself — keeping it inside the `<td>` where it's DOM-valid.
+But `TIER_AGENT_CONFIG` only has: `free`, `connect`, `growth`, `field_ops`, `performance`, `command`.
 
-At the same time, the comparison table header still shows 7 legacy columns. These should be trimmed to 3 (Connect, Performance, Command) to match the pricing cards above it.
+The legacy keys (`express`, `aura_flow`, `halo`, `core`, `single_point`, `multi_track`) do **not exist** in the config — they are only listed in `LEGACY_TIER_MAP`. So `TIER_AGENT_CONFIG['express']` returns `undefined`, and `config.label` throws a crash that the `ErrorBoundary` catches, showing a blank screen for **every page**.
+
+## Fix
+
+`src/components/agents/TierComparisonCards.tsx` — rework the component to use only the 3 real current tiers: `connect`, `performance`, `command`. Remove the "Industry-Specific" and old "General Business" tier grid. Show the 3-tier model with the correct keys that actually exist in `TIER_AGENT_CONFIG`.
+
+The `TierCard` component's `tier` prop type must also be updated from the stale union (that includes `express`, `aura_flow`, etc.) to the canonical `SubscriptionTier` type from `subscriptionAgentConfig.ts`.
 
 ## Changes
 
-### `src/components/landing/PricingComparisonTable.tsx`
+**`src/components/agents/TierComparisonCards.tsx`** (single file, full rewrite of tiers rendered):
+- Change `tier` prop type on `TierCard` from `'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'` → `SubscriptionTier` (imported from `@/lib/subscriptionAgentConfig`)
+- Remove the "Industry-Specific Tiers" section (express, aura_flow, halo — all invalid keys)
+- Remove the old "General Business Tiers" section (core, single_point, multi_track — all invalid keys)
+- Replace with a clean 3-column grid using only `connect`, `performance`, `command` — which are valid keys in `TIER_AGENT_CONFIG`
+- Update the "Upgrade Summary" strip at the bottom to match the 3-tier model ($297 → $497 → $697)
 
-**1. Fix `FeatureNameCell` (lines 272–296):** Add `<Tooltip>` wrapper inside the cell around `<TooltipTrigger>` + `<TooltipContent>`:
-
-```tsx
-// Before (broken — no <Tooltip> context):
-<td>
-  <TooltipTrigger>...</TooltipTrigger>
-  <TooltipContent>...</TooltipContent>
-</td>
-
-// After (correct — <Tooltip> wraps the trigger+content inside the <td>):
-<td>
-  <Tooltip>
-    <TooltipTrigger>...</TooltipTrigger>
-    <TooltipContent>...</TooltipContent>
-  </Tooltip>
-</td>
-```
-
-**2. Add `Tooltip` to imports (line 3–7):** Import `Tooltip` from `@/components/ui/tooltip`.
-
-**3. Trim to 3 columns (lines 78–203, 298–427):** 
-- Update `FeatureRow` interface to remove `starter`, `scheduling`, `growth`, `business`, `fieldOps` fields — keep only `connect`, `performance`, `command`
-- Update all `sections` data rows accordingly
-- Update table header (`<thead>`) to show only 3 columns: Aura Connect, Aura Performance, Aura Command
-- Update `colgroup` to 4 columns (feature name + 3 plan columns)
-- Update `renderValue` calls in the row render to only pass `connect`, `performance`, `command`
-- Update section title numbers (e.g. "AI Agents (1 / 3 / 11 / 12 / 18 / 22 / 24)" → "(5 / 7 / 10)")
-
-This is a single-file fix that resolves the crash and modernizes the table to match the 3-tier model.
+This is a single-file fix that immediately unblocks the crash and restores the entire platform.
