@@ -924,7 +924,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             )}
 
             {/* Tier-aware scheduling button */}
-            {effectiveTier !== 'single_point' ? (
+            {effectiveTier !== 'connect' ? (
               <Button 
                 className="w-full mt-4 glass-primary text-white glow-primary" 
                 onClick={() => setActiveTab('book')}
