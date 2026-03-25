@@ -2,9 +2,11 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
+
+export type { SubscriptionTier };
 
 type AppRole = Database['public']['Enums']['app_role'];
-export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 
 interface AuthContextType {
   user: User | null;

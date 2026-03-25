@@ -11,8 +11,9 @@
  */
 
 import { Calendar, Clock, DollarSign, AlertTriangle, Star, MapPin, Sparkles, Phone, FileText } from 'lucide-react';
+import { SubscriptionTier, normalizeTierName } from '@/lib/subscriptionAgentConfig';
 
-export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+export type { SubscriptionTier };
 
 export interface QuickActionConfig {
   id: string;
