@@ -420,7 +420,7 @@ export const PricingComparisonTable = () => {
                   </Tooltip>
                 );
               })}
-            </>
+            </React.Fragment>
           );
           })}
         </tbody>
