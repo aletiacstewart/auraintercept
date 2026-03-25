@@ -1,7 +1,6 @@
 import React from 'react';
 import { Check, X } from 'lucide-react';
 import {
-  Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
