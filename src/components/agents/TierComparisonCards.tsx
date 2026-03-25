@@ -2,36 +2,21 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Users, Zap, Crown, Check, MessageSquare } from 'lucide-react';
+import { ArrowRight, Users, Zap, Crown, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
+import { TIER_AGENT_CONFIG, type SubscriptionTier } from '@/lib/subscriptionAgentConfig';
 
 const AGENT_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
-  followup: 'Follow-up Agent',
-  review: 'Review Agent',
-  booking: 'Scheduling Agent',
+  customer_journey: 'Customer Journey',
+  outreach: 'Outreach Agent',
+  creative_content: 'Creative Content',
+  web_presence: 'Web Presence',
   dispatch: 'Dispatch Agent',
-  route: 'Route Agent',
-  eta: 'ETA Agent',
-  checkin: 'Check-in Agent',
-  quoting: 'Quoting Agent',
-  invoice: 'Invoice Agent',
+  field_navigation: 'Field Navigation',
+  business_finance: 'Business Finance',
   admin: 'Admin Agent',
-  inventory: 'Inventory Agent',
-  campaign: 'Campaign Agent',
-  lead: 'Lead Agent',
-  marketing: 'Marketing Agent',
-  social_content: 'Social Media Agent',
-  social_scheduler: 'Social Media Scheduler',
-  social_analytics: 'Social Media Analytics',
-  creative: 'Creative Agent',
-  web_presence: 'Web Presence Agent',
-  insights: 'Insights Agent',
-  performance: 'Performance Agent',
-  revenue: 'Revenue Agent',
-  forecast: 'Forecast Agent',
-  analytics: 'Analytics Agent',
+  analytics_intelligence: 'Analytics Intelligence',
 };
 
 const CONSOLE_NAMES: Record<string, string> = {
@@ -46,7 +31,7 @@ const CONSOLE_NAMES: Record<string, string> = {
 };
 
 interface TierCardProps {
-  tier: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+  tier: SubscriptionTier;
   icon: React.ReactNode;
   color: string;
   bgColor: string;
@@ -55,23 +40,28 @@ interface TierCardProps {
     tier: string;
     priceDiff: number;
   };
-  additionalFeatures?: string[];
+  highlighted?: boolean;
 }
 
-const TierCard: React.FC<TierCardProps> = ({ 
-  tier, 
-  icon, 
-  color, 
-  bgColor, 
+const TierCard: React.FC<TierCardProps> = ({
+  tier,
+  icon,
+  color,
+  bgColor,
   borderColor,
   upgradeFrom,
-  additionalFeatures = []
+  highlighted = false,
 }) => {
   const config = TIER_AGENT_CONFIG[tier];
   const navigate = useNavigate();
-  
+
   return (
-    <Card className={`${bgColor} ${borderColor} border-2`}>
+    <Card className={`${bgColor} ${borderColor} border-2 relative ${highlighted ? 'ring-2 ring-primary' : ''}`}>
+      {highlighted && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <Badge className="bg-primary text-primary-foreground text-xs px-3">Most Popular</Badge>
+        </div>
+      )}
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -90,24 +80,6 @@ const TierCard: React.FC<TierCardProps> = ({
         <p className="text-sm text-muted-foreground">{config.description}</p>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Additional Features (for Core tier or included add-ons) */}
-        {additionalFeatures.length > 0 && (
-          <div>
-            <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
-              <Zap className="h-4 w-4" />
-              Included Features
-            </h4>
-            <div className="space-y-1">
-              {additionalFeatures.map(feature => (
-                <div key={feature} className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Check className="h-3 w-3 text-emerald-500" />
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Agents */}
         {config.agents.length > 0 && (
           <div>
@@ -116,17 +88,12 @@ const TierCard: React.FC<TierCardProps> = ({
               AI Operatives ({config.agents.length})
             </h4>
             <div className="grid grid-cols-2 gap-1">
-              {config.agents.slice(0, 8).map(agent => (
+              {config.agents.map(agent => (
                 <div key={agent} className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Check className="h-3 w-3 text-emerald-500" />
                   <span className="truncate">{AGENT_NAMES[agent] || agent}</span>
                 </div>
               ))}
-              {config.agents.length > 8 && (
-                <div className="text-xs text-primary">
-                  +{config.agents.length - 8} more operatives
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -136,7 +103,7 @@ const TierCard: React.FC<TierCardProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
               <Users className="h-4 w-4" />
-              Control Centers (Consoles) ({config.consoles.length})
+              Control Centers ({config.consoles.length})
             </h4>
             <div className="space-y-1">
               {config.consoles.map(console => (
@@ -149,8 +116,8 @@ const TierCard: React.FC<TierCardProps> = ({
           </div>
         )}
 
-        <Button 
-          className="w-full mt-4" 
+        <Button
+          className="w-full mt-4"
           variant="outline"
           onClick={() => navigate('/dashboard/subscription')}
         >
@@ -169,121 +136,33 @@ const TierComparisonCards: React.FC = () => {
       <p className="text-sm text-muted-foreground">
         See what each tier unlocks and the incremental cost to upgrade.
       </p>
-      
-      {/* Industry-Specific Tiers */}
-      <h4 className="text-md font-semibold text-card-foreground mt-6">Industry-Specific Tiers</h4>
-      <div className="grid gap-4 md:grid-cols-3">
+
+      <div className="grid gap-6 md:grid-cols-3 mt-6">
         <TierCard
-          tier="express"
-          icon={<Zap className="h-5 w-5 text-orange-400" />}
-          color="text-orange-400"
-          bgColor="bg-orange-950/30"
-          borderColor="border-orange-600/50"
-          additionalFeatures={[
-            'Talk to Aura (Voice)',
-            'Smart Link Sharing',
-            'Knowledge Base',
-            'API Access',
-          ]}
-        />
-        
-        <TierCard
-          tier="aura_flow"
-          icon={<MessageSquare className="h-5 w-5 text-cyan-400" />}
-          color="text-cyan-400"
-          bgColor="bg-cyan-950/30"
-          borderColor="border-cyan-600/50"
-          additionalFeatures={[
-            'Calendar Sync',
-            'Social Media Ops',
-            'Creative Agent',
-            '1 Employee Account',
-            'API Access',
-          ]}
-        />
-        
-        <TierCard
-          tier="halo"
-          icon={<Crown className="h-5 w-5 text-rose-400" />}
-          color="text-rose-400"
-          bgColor="bg-rose-950/30"
-          borderColor="border-rose-600/50"
-          additionalFeatures={[
-            'Customer Portal',
-            'Review Agent',
-            'Outreach & Sales Ops',
-            '3 Employee Accounts',
-            'API Access',
-          ]}
-        />
-      </div>
-      
-      {/* General Business Tiers */}
-      <h4 className="text-md font-semibold text-card-foreground mt-6">General Business Tiers</h4>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <TierCard
-          tier="core"
-          icon={<MessageSquare className="h-5 w-5 text-emerald-400" />}
+          tier="connect"
+          icon={<Zap className="h-5 w-5 text-emerald-400" />}
           color="text-emerald-400"
           bgColor="bg-emerald-950/30"
           borderColor="border-emerald-600/50"
-          additionalFeatures={[
-            'Message Aura (Text)',
-            'Marketing Automation',
-            'Social Media Ops',
-            'Web Presence (1pg)',
-            '2 Employee Accounts',
-            'API Access',
-          ]}
         />
-        
+
         <TierCard
-          tier="single_point"
-          icon={<Zap className="h-5 w-5 text-amber-400" />}
+          tier="performance"
+          icon={<Crown className="h-5 w-5 text-amber-400" />}
           color="text-amber-400"
           bgColor="bg-amber-950/30"
           borderColor="border-amber-600/50"
-          upgradeFrom={{ tier: 'Business', priceDiff: 700 }}
-          additionalFeatures={[
-            'Field Operations',
-            'Business Management',
-            '18 AI Operatives',
-            '15 Employee Accounts',
-            'API Access',
-          ]}
+          upgradeFrom={{ tier: 'Aura Connect', priceDiff: 200 }}
+          highlighted
         />
-        
-        <TierCard
-          tier="multi_track"
-          icon={<Users className="h-5 w-5 text-sky-400" />}
-          color="text-sky-400"
-          bgColor="bg-sky-950/30"
-          borderColor="border-sky-600/50"
-          upgradeFrom={{ tier: 'Field Ops', priceDiff: 2000 }}
-          additionalFeatures={[
-            'Analytics & Reports',
-            '22 AI Operatives',
-            'Insights + Performance',
-            '25 Employee Accounts',
-            'API Access',
-          ]}
-        />
-        
+
         <TierCard
           tier="command"
           icon={<Crown className="h-5 w-5 text-violet-400" />}
           color="text-violet-400"
           bgColor="bg-violet-950/30"
           borderColor="border-violet-600/50"
-          upgradeFrom={{ tier: 'Performance', priceDiff: 2000 }}
-          additionalFeatures={[
-            'All 24 AI Operatives',
-            'All 8 Consoles',
-            'AI Operatives Hub',
-            'Revenue + Forecast Agents',
-            '50 Employee Accounts',
-            'API Access',
-          ]}
+          upgradeFrom={{ tier: 'Aura Performance', priceDiff: 200 }}
         />
       </div>
 
@@ -292,38 +171,18 @@ const TierComparisonCards: React.FC = () => {
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <Badge className="bg-orange-600">Starter</Badge>
-              <span className="text-muted-foreground">$197/mo</span>
+              <Badge className="bg-emerald-600">Aura Connect</Badge>
+              <span className="text-muted-foreground">$297/mo · 5 agents</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-cyan-600">Scheduling</Badge>
-              <span className="text-muted-foreground">$397/mo</span>
+              <Badge className="bg-amber-600">Aura Performance</Badge>
+              <span className="text-muted-foreground">$497/mo · 7 agents</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-rose-600">Growth</Badge>
-              <span className="text-muted-foreground">$597/mo</span>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-2">
-              <Badge className="bg-emerald-600">Business</Badge>
-              <span className="text-muted-foreground">$797/mo</span>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-2">
-              <Badge className="bg-amber-600">Field Ops</Badge>
-              <span className="text-muted-foreground">$1,497/mo</span>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-2">
-              <Badge className="bg-sky-600">Performance</Badge>
-              <span className="text-muted-foreground">$497/mo</span>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-2">
-              <Badge className="bg-violet-600">Command</Badge>
-              <span className="text-muted-foreground">$697/mo</span>
+              <Badge className="bg-violet-600">Aura Command</Badge>
+              <span className="text-muted-foreground">$697/mo · 10 agents</span>
             </div>
           </div>
         </CardContent>
