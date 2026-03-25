@@ -191,10 +191,10 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   // Determine effective subscription tier (trial = command tier access)
   const effectiveTier = React.useMemo((): SubscriptionTier => {
-    if (!company) return 'single_point';
+    if (!company) return 'connect';
     const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
     if (inTrial) return 'command';
-    return (company.subscription_tier || 'single_point') as SubscriptionTier;
+    return (company.subscription_tier || 'connect') as SubscriptionTier;
   }, [company]);
 
   // Filter quick actions based on subscription tier
@@ -282,8 +282,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     // Services tab - available for all tiers with portal access
     tabs.push({ id: 'services', label: 'Services', icon: Calendar, featureColor: 'text-feature-customers' });
     
-    // Appointments tab - for multi_track+ tiers
-    if (effectiveTier !== 'single_point' && effectiveTier !== 'core' && effectiveTier !== 'free') {
+    // Appointments tab - for performance+ tiers
+    if (effectiveTier !== 'connect' && effectiveTier !== 'free') {
       tabs.push({ id: 'book', label: 'Appointments', icon: Calendar, featureColor: 'text-feature-appointments' });
     }
     
@@ -924,7 +924,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             )}
 
             {/* Tier-aware scheduling button */}
-            {effectiveTier !== 'single_point' ? (
+            {effectiveTier !== 'connect' ? (
               <Button 
                 className="w-full mt-4 glass-primary text-white glow-primary" 
                 onClick={() => setActiveTab('book')}
@@ -949,8 +949,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           </div>
         )}
 
-        {/* Book Tab - Only accessible for Multi-Track+ tiers */}
-        {activeTab === 'book' && effectiveTier !== 'single_point' && (
+        {/* Book Tab - Only accessible for Performance+ tiers */}
+        {activeTab === 'book' && effectiveTier !== 'connect' && (
           <div className="flex-1 overflow-y-auto p-4">
             <BookingForm
               services={services || []}
@@ -960,8 +960,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           </div>
         )}
 
-        {/* Book Tab fallback for Single-Point tier */}
-        {activeTab === 'book' && effectiveTier === 'single_point' && (
+        {/* Book Tab fallback for Connect tier */}
+        {activeTab === 'book' && effectiveTier === 'connect' && (
           <div className="flex-1 overflow-y-auto p-4 text-center">
             <div className="py-8">
               <Phone className="h-12 w-12 mx-auto text-primary mb-4" />
