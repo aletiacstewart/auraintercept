@@ -1,7 +1,6 @@
 import React from 'react';
 import { Check, X } from 'lucide-react';
 import {
-  Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
@@ -406,18 +405,16 @@ export const PricingComparisonTable = () => {
                 const rowBg = isEven ? 'bg-slate-700/20' : '';
                 
                 return (
-                  <Tooltip key={feature.name}>
-                    <tr className={`border-b border-white/10 hover:bg-slate-600/30 ${rowBg}`}>
-                      <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                      {renderValue(feature.starter, false, feature.name)}
-                      {renderValue(feature.scheduling, false, feature.name, false, true)}
-                      {renderValue(feature.growth, false, feature.name, true)}
-                      {renderValue(feature.business, false, feature.name)}
-                      {renderValue(feature.fieldOps, false, feature.name)}
-                      {renderValue(feature.performance, true, feature.name)}
-                      {renderValue(feature.command, false, feature.name)}
-                    </tr>
-                  </Tooltip>
+                  <tr key={feature.name} className={`border-b border-white/10 hover:bg-slate-600/30 ${rowBg}`}>
+                    <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
+                    {renderValue(feature.starter, false, feature.name)}
+                    {renderValue(feature.scheduling, false, feature.name, false, true)}
+                    {renderValue(feature.growth, false, feature.name, true)}
+                    {renderValue(feature.business, false, feature.name)}
+                    {renderValue(feature.fieldOps, false, feature.name)}
+                    {renderValue(feature.performance, true, feature.name)}
+                    {renderValue(feature.command, false, feature.name)}
+                  </tr>
                 );
               })}
             </React.Fragment>
