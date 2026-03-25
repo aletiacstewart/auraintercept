@@ -282,8 +282,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     // Services tab - available for all tiers with portal access
     tabs.push({ id: 'services', label: 'Services', icon: Calendar, featureColor: 'text-feature-customers' });
     
-    // Appointments tab - for multi_track+ tiers
-    if (effectiveTier !== 'single_point' && effectiveTier !== 'core' && effectiveTier !== 'free') {
+    // Appointments tab - for performance+ tiers
+    if (effectiveTier !== 'connect' && effectiveTier !== 'free') {
       tabs.push({ id: 'book', label: 'Appointments', icon: Calendar, featureColor: 'text-feature-appointments' });
     }
     
