@@ -1,30 +1,31 @@
 
-## Plan: Screenshot Each Console UI at 16:9 for Video
 
-The user wants actual screenshots of their live console pages — not AI-generated art. I'll use the browser tool to navigate to each of the 7 console URLs in the preview, take a screenshot at 16:9 resolution (1920×1080), and save them as downloadable PNG files.
+## Plan: Dispatch Console Screenshot + Regenerated Video Scripts
 
-### The 7 Console URLs (from App.tsx):
-1. `/dashboard/ai-consoles/customer-portal`
-2. `/dashboard/ai-consoles/field-ops`
-3. `/dashboard/ai-consoles/business-mgt-ops`
-4. `/dashboard/ai-consoles/marketing-sales`
-5. `/dashboard/ai-consoles/social-media`
-6. `/dashboard/ai-consoles/analytics`
-7. `/dashboard/content-engine` (Creative & Web Presence)
+### Part 1 — Capture Dispatch Console Screenshot
+The Dispatch Console lives at `/dashboard/dispatch-field-ops` (the FieldOperations page with the Cyber-Sentry aesthetic). I'll use the browser tool to navigate there and capture a 16:9 (1920x1080) screenshot, saved as `/mnt/documents/console-screenshots/08-dispatch-console.png`.
 
-### Steps:
-1. Set browser viewport to 1920×1080 (16:9)
-2. Navigate to the preview URL for each console
-3. Take a full-page screenshot of each
-4. Save all 7 PNGs to `/mnt/documents/console-screenshots/`
+### Part 2 — Regenerate All Video Scripts
+Create a new PDF at `/mnt/documents/aura-video-scripts-v2.pdf` with improved scripts that:
+- Describe **what each console actually does** on the platform (not generic marketing fluff)
+- Walk through the user experience and key workflows
+- Cover all **8 consoles** (adding Dispatch) and **10 AI agents**
+- Each script stays ~25-30 words (10 seconds at speaking pace)
+- Include visual direction notes referencing the actual console screenshots
 
-### Output files:
-- `console-screenshots/01-customer-portal.png`
-- `console-screenshots/02-field-ops.png`
-- `console-screenshots/03-business-mgt-ops.png`
-- `console-screenshots/04-outreach-sales.png`
-- `console-screenshots/05-social-media.png`
-- `console-screenshots/06-analytics.png`
-- `console-screenshots/07-content-engine.png`
+**Console scripts will cover:**
+1. Customer Portal — booking, quotes, AI chat/voice support
+2. Dispatch Console — real-time technician dispatch, job assignment, fleet tracking
+3. Field Operations — route optimization, ETA, technician check-in
+4. Business Mgt Ops — invoices, quotes, inventory, employee management
+5. Outreach & Sales — lead capture, campaigns, pipeline scoring
+6. Analytics & Reports — KPI dashboards, revenue trends, AI insights
+7. Social Media — AI content generation, Manual Bridge posting, 6 platforms
+8. Creative & Web Presence — website builder, blog, SEO, brand content
 
-No code changes to the app — purely browser capture and file export.
+**Agent scripts will cover each of the 10 AI operatives** with their specific role in the platform workflow.
+
+### Deliverables
+- `/mnt/documents/console-screenshots/08-dispatch-console.png` (16:9)
+- `/mnt/documents/aura-video-scripts-v2.pdf` (18 scripts total)
+
