@@ -1,50 +1,66 @@
 
-## Root Cause Analysis
+## Content: 10-Second Scripts + 9:16 Console Images for Grok Video Production
 
-The site is completely blank. After deep inspection, there are **three stale files** that still define the old 8-tier `SubscriptionTier` type and reference legacy keys that no longer exist in `TIER_AGENT_CONFIG`. When the build evaluates these type exports and runtime values, TypeScript/Vite throws a compile-time or module-resolution error that prevents the entire app from loading.
+### What we know from the codebase:
 
-### The three broken files:
+**7 Consoles:**
+1. Customer Portal Console
+2. Field Operations Console
+3. Business Mgt Ops Console
+4. Outreach & Sales Ops Console
+5. Analytics & Reports Console
+6. Social Media Console
+7. Creative & Web Presence Console
 
-**1. `src/contexts/AuthContext.tsx` (line 7)**
-```ts
-// BROKEN — still exports the old 8-tier type
-export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+**10 AI Agents:**
+1. AI Receptionist (triage)
+2. Customer Journey
+3. Dispatch
+4. Field Navigation
+5. Admin
+6. Business Finance
+7. Outreach
+8. Creative Content
+9. Web Presence
+10. Analytics Intelligence
+
+### Plan
+
+**Step 1 — Generate 7 console images (9:16 / 1080×1920)**
+Use the `generate-content-image` edge function or the AI gateway script to generate one image per console. Each image will be a cinematic, dark-theme AI-tech visual matching the console's color identity (cyan, green, orange, purple, indigo, pink, teal). No text in the images — just visuals to underlay the script on video.
+
+**Step 2 — Write all scripts to a downloadable document**
+Generate a clean PDF with:
+- 7 Console scripts (10-second each, ~25-30 words spoken at ~130 wpm)
+- 10 Agent scripts (10-second each, same format)
+- Each script labeled with: Console/Agent name, color theme, suggested B-roll cue, spoken lines (bold), and visual direction note for Grok
+
+**Script structure for each clip (10 seconds = ~25-30 spoken words):**
 ```
-This creates a **named export conflict** — anything importing `SubscriptionTier` from `AuthContext` gets the wrong type.
-
-**2. `src/lib/customerPortalConfig.ts` (line 15)**
-```ts
-// BROKEN — still defines and uses the old 8-tier type
-export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
-const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['halo', 'single_point', 'multi_track', 'command'];
-const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['halo', 'multi_track', 'command'];
-```
-The `CustomerChatInterface.tsx` imports `SubscriptionTier` from here and uses `subscriptionTier = 'single_point'` as a default prop — a value that now causes type errors.
-
-**3. `src/components/chat/CustomerChatInterface.tsx` (line 75)**
-```ts
-subscriptionTier = 'single_point',  // 'single_point' is not a valid tier anymore
+[0-2s] Hook / Power statement
+[2-7s] Core value prop (what it does)
+[7-10s] CTA / brand close ("Powered by Aura Intercept")
 ```
 
-## Fixes
+### Files to produce:
+- `/mnt/documents/aura-video-scripts.pdf` — all 17 scripts in clean branded layout
+- 7 console images saved to `/mnt/documents/console-images/` as PNG files
 
-### Fix 1: `src/contexts/AuthContext.tsx`
-- Line 7: Replace the local `SubscriptionTier` type definition with a re-export from `subscriptionAgentConfig.ts`
-```ts
-// Remove old type
-// Add import:
-import { SubscriptionTier, normalizeTierName } from '@/lib/subscriptionAgentConfig';
-export type { SubscriptionTier };
-```
+### Image style per console:
+| Console | Color | Visual Theme |
+|---|---|---|
+| Customer Portal | Cyan/Blue | Futuristic AI receptionist, holographic chat interface |
+| Field Operations | Green/Emerald | Aerial route map, GPS pins, fleet vehicles |
+| Business Mgt Ops | Orange/Amber | Clean dashboard with invoices, charts, golden tones |
+| Outreach & Sales | Purple/Pink | Email campaign waves, lead funnel visualization |
+| Analytics & Reports | Indigo/Violet | Dark data dashboard, glowing KPI charts |
+| Social Media | Pink/Rose | Multi-platform social grid, content creator scene |
+| Creative & Web | Teal/Cyan | AI website builder, brand design workspace |
 
-### Fix 2: `src/lib/customerPortalConfig.ts`
-- Line 15: Remove the local `SubscriptionTier` type definition and import from `subscriptionAgentConfig.ts`
-- Lines 120-123: Update `PORTAL_ACCESS_TIERS` and `ONLINE_BOOKING_TIERS` to use the canonical tier names (`connect`, `performance`, `command`, etc.)
+### Implementation approach:
+- Use the Lovable AI gateway (edge function model `google/gemini-3-pro-image-preview`) for highest quality 9:16 images
+- Generate the PDF using Python with fpdf2, styled with dark brand colors and clean typography
+- All outputs go to `/mnt/documents/` for download
 
-### Fix 3: `src/components/chat/CustomerChatInterface.tsx`
-- Line 75: Change the default prop from `'single_point'` to `'connect'` (the entry-level canonical tier)
-
-## Files to Change
-- `src/contexts/AuthContext.tsx` — remove old SubscriptionTier type, re-export from subscriptionAgentConfig
-- `src/lib/customerPortalConfig.ts` — remove old SubscriptionTier type, fix tier arrays to use canonical names
-- `src/components/chat/CustomerChatInterface.tsx` — fix default prop from `'single_point'` to `'connect'`
+### Technical note:
+This is a pure artifact generation task — no UI changes needed. Everything runs via `code--exec` scripts. The PDF and 7 PNG images are the deliverables.
