@@ -605,6 +605,7 @@ export default function Index() {
                     <category.icon className="w-3.5 h-3.5 text-white relative z-10" />
                   </div>
                   <span style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{category.name}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: `rgba(${category.neonRgb},0.15)`, color: `rgb(${category.neonRgb})`, border: `1px solid rgba(${category.neonRgb},0.3)`, letterSpacing: 0.5 }}>{category.agents.length} Agents</span>
                   <div style={{ flex: 1, height: 1, background: `rgba(${category.neonRgb},0.15)` }} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
