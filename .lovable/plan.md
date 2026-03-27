@@ -1,31 +1,36 @@
 
 
-## Plan: Dispatch Console Screenshot + Regenerated Video Scripts
+## Plan: Change 10 Consolidated AI Operatives → 24 Smart AI Agents
 
-### Part 1 — Capture Dispatch Console Screenshot
-The Dispatch Console lives at `/dashboard/dispatch-field-ops` (the FieldOperations page with the Cyber-Sentry aesthetic). I'll use the browser tool to navigate there and capture a 16:9 (1920x1080) screenshot, saved as `/mnt/documents/console-screenshots/08-dispatch-console.png`.
+### Changes in `src/pages/Index.tsx`
 
-### Part 2 — Regenerate All Video Scripts
-Create a new PDF at `/mnt/documents/aura-video-scripts-v2.pdf` with improved scripts that:
-- Describe **what each console actually does** on the platform (not generic marketing fluff)
-- Walk through the user experience and key workflows
-- Cover all **8 consoles** (adding Dispatch) and **10 AI agents**
-- Each script stays ~25-30 words (10 seconds at speaking pace)
-- Include visual direction notes referencing the actual console screenshots
+**1. Update the section heading (lines 537-540)**
+- Change "10 Consolidated AI Operatives" → "24 Smart AI Agents"
+- Update subtitle accordingly
 
-**Console scripts will cover:**
-1. Customer Portal — booking, quotes, AI chat/voice support
-2. Dispatch Console — real-time technician dispatch, job assignment, fleet tracking
-3. Field Operations — route optimization, ETA, technician check-in
-4. Business Mgt Ops — invoices, quotes, inventory, employee management
-5. Outreach & Sales — lead capture, campaigns, pipeline scoring
-6. Analytics & Reports — KPI dashboards, revenue trends, AI insights
-7. Social Media — AI content generation, Manual Bridge posting, 6 platforms
-8. Creative & Web Presence — website builder, blog, SEO, brand content
+**2. Expand `agentCategories` (lines 15-108) to show all 24 individual agents instead of the 10 consolidated operatives**
 
-**Agent scripts will cover each of the 10 AI operatives** with their specific role in the platform workflow.
+Based on the legacy agent map, the 24 agents break down per console as:
+- **Customer Portal (3):** AI Receptionist (triage), Booking, Follow-Up, Review → show individually
+- **Field Operations (5):** Dispatch, Route, ETA, Check-In, Field Navigation
+- **Business Operations (5):** Admin, Quoting, Invoice, Inventory, Business Finance
+- **Analytics & Reports (4):** Insights, Performance, Revenue, Forecast
+- **Outreach & Sales (4):** Campaign, Lead, Marketing, Outreach
+- **Social Media (4):** Creative Content, Social Content, Social Scheduler, Social Analytics
+- **Creative & Web Presence (2):** Creative Content, Web Presence
 
-### Deliverables
-- `/mnt/documents/console-screenshots/08-dispatch-console.png` (16:9)
-- `/mnt/documents/aura-video-scripts-v2.pdf` (18 scripts total)
+Adjusted to total 24 unique agents across 7 consoles.
+
+**3. Add agent count badge to each console grid box (line 546-552)**
+- Add a pill/badge next to each category name showing `{category.agents.length} AI Agents`
+- Styled as a small neon-accented chip matching the category color
+
+**4. Update "How It Works" step 2 (line 362)**
+- Change "10 consolidated AI operatives" → "24 Smart AI Agents"
+
+### Technical Details
+- Only `src/pages/Index.tsx` is modified
+- The `agentCategories` array is expanded with the individual agent entries
+- Each category card gets a count badge via `category.agents.length`
+- No backend or config changes needed — this is purely a landing page content update
 
