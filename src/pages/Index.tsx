@@ -804,6 +804,7 @@ export default function Index() {
                 <Badge className="mb-2 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-[10px]">Entry Level</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & outreach</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, salons, consultants, and small service businesses that need AI-powered booking, outreach, and web presence.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-cyan-400">$297</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
