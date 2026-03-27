@@ -858,6 +858,7 @@ export default function Index() {
                 <Badge className="mb-2 gradient-primary border-0 text-[10px]">Most Popular</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Full automation suite</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for HVAC, plumbing, electrical, and field service companies that dispatch technicians and manage jobs on the go.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold gradient-text">$497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
