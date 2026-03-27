@@ -3316,70 +3316,65 @@ serve(async (req) => {
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
     // === SUBSCRIPTION TIER GATING ===
-    // Define which agents are available in each subscription tier
+    // 10-OPERATIVE CONSOLIDATED MODEL — 3 TIERS (Connect / Performance / Command)
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    // NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
-    // 24 Total Agents
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Starter ($197/mo): Lead Capture Stack only - 1 agent
-      starter: ['triage'],
-      // Aura Connect ($397/mo): Lead Capture + Booking Automation - 3 agents
-      scheduling: ['triage', 'booking', 'followup'],
-      // Aura Growth ($597/mo): + Marketing Automation Stack - 11 agents
-      growth: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
-      // Aura Presence ($797/mo): + Office Automation Stack - 12 agents
-      business: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Logistics ($1,497/mo): + Field Operations Stack - 18 agents
-      field_ops: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
-      // Aura Performance ($497/mo): + Business Intelligence Stack (Basic) - 22 agents
-      // Excludes revenue and forecast (advanced analytics reserved for Command)
-      // Note: 'analytics' is a utility agent not in the official 24-operative roster
+      // Aura Connect ($297/mo): 5 operatives — AI receptionist, customer journey, outreach, creative, web
+      connect: [
+        'triage', 'customer_journey',   // Customer Portal
+        'outreach',                     // Marketing & Sales
+        'creative_content',             // Social Media & Creative
+        'web_presence',                 // Web Presence
+      ],
+      // Aura Performance ($497/mo): 8 operatives — adds field ops + business finance
       performance: [
-        'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
-        'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
-        'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
-        'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
-        'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'analytics',              // Analytics & Reports - Basic (3, analytics is utility)
-        'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ],                                                      // Total: 22 marketed agents (+analytics utility)
-      // Aura Command ($697/mo): Full suite + Enterprise features - 24 agents
+        'triage', 'customer_journey',              // Customer Portal
+        'dispatch', 'field_navigation',            // Field Operations
+        'business_finance',                        // Business Finance
+        'outreach',                                // Marketing & Sales
+        'creative_content', 'web_presence',        // Creative & Web Presence
+      ],
+      // Aura Command ($697/mo): All 10 operatives + enterprise features
       command: [
-        'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
-        'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
-        'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
-        'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
-        'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'analytics', 'revenue', 'forecast', // Analytics & Reports - Full (5)
-        'creative', 'web_presence'                           // Creative & Web Presence (2)
-      ],                                                      // Total: 24 marketed agents (+analytics utility)
-      // Legacy tier name aliases for backward compatibility
-      express: ['triage'],  // maps to starter
-      aura_flow: ['triage', 'booking', 'followup'],  // maps to scheduling
-      halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],  // maps to growth
-      core: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to business
-      single_point: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],  // maps to field_ops
-      multi_track: [  // maps to performance (23 agents)
-        'triage', 'booking', 'followup', 'review',
-        'dispatch', 'route', 'eta', 'checkin',
-        'admin', 'quoting', 'invoice', 'inventory',
-        'campaign', 'lead', 'marketing',
-        'social_content', 'social_scheduler', 'social_analytics',
-        'insights', 'performance', 'analytics',
-        'creative', 'web_presence'
+        'triage', 'customer_journey',              // Customer Portal
+        'dispatch', 'field_navigation',            // Field Operations
+        'admin', 'business_finance',               // Business Operations
+        'outreach',                                // Marketing & Sales
+        'creative_content', 'web_presence',        // Creative & Web Presence
+        'analytics_intelligence',                  // Analytics & Reports
       ],
     };
 
+    // Legacy tier name → canonical tier mapping
+    const LEGACY_TIER_MAP: Record<string, string> = {
+      starter: 'connect', scheduling: 'connect', express: 'connect', aura_flow: 'connect', aura_connect: 'connect',
+      growth: 'connect', business: 'connect', halo: 'connect', core: 'connect', aura_growth: 'connect',
+      single_point: 'performance', field_ops: 'performance', multi_track: 'performance',
+      // Self-maps
+      connect: 'connect', performance: 'performance', command: 'command',
+    };
+
+    // Legacy agent name → consolidated operative mapping
+    const LEGACY_AGENT_MAP: Record<string, string> = {
+      booking: 'customer_journey', followup: 'customer_journey', review: 'customer_journey',
+      route: 'field_navigation', eta: 'field_navigation', checkin: 'field_navigation',
+      quoting: 'business_finance', invoice: 'business_finance', inventory: 'business_finance',
+      campaign: 'outreach', lead: 'outreach', marketing: 'outreach',
+      insights: 'analytics_intelligence', revenue: 'analytics_intelligence', forecast: 'analytics_intelligence',
+      performance: 'analytics_intelligence', analytics: 'analytics_intelligence',
+      creative: 'creative_content', social_content: 'creative_content', social_scheduler: 'creative_content', social_analytics: 'creative_content',
+    };
+
+    // Normalize the agent type from legacy to consolidated
+    const normalizedAgentType = LEGACY_AGENT_MAP[agentType] || agentType;
+
     // Helper to determine required tier for an agent
     const getRequiredTierForAgent = (agent: string): string | null => {
-      if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.performance.includes(agent)) return 'command';
-      if (TIER_AGENTS.performance.includes(agent) && !TIER_AGENTS.field_ops.includes(agent)) return 'performance';
-      if (TIER_AGENTS.field_ops.includes(agent) && !TIER_AGENTS.business.includes(agent)) return 'field_ops';
-      if (TIER_AGENTS.business.includes(agent) && !TIER_AGENTS.growth.includes(agent)) return 'business';
-      if (TIER_AGENTS.growth.includes(agent) && !TIER_AGENTS.scheduling.includes(agent)) return 'growth';
-      if (TIER_AGENTS.scheduling.includes(agent) && !TIER_AGENTS.starter.includes(agent)) return 'scheduling';
-      if (TIER_AGENTS.starter.includes(agent)) return 'starter';
+      const normalized = LEGACY_AGENT_MAP[agent] || agent;
+      if (TIER_AGENTS.connect.includes(normalized)) return 'connect';
+      if (TIER_AGENTS.performance.includes(normalized)) return 'performance';
+      if (TIER_AGENTS.command.includes(normalized)) return 'command';
       return null;
     };
 
@@ -3401,20 +3396,18 @@ serve(async (req) => {
       });
     }
 
-    const subscriptionTier = companyTierData?.subscription_tier || 'free';
+    const rawTier = companyTierData?.subscription_tier || 'free';
+    const subscriptionTier = LEGACY_TIER_MAP[rawTier] || rawTier;
     const trialEndsAt = companyTierData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
     // Determine allowed agents based on tier (trial gets full access)
     const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
 
-    // The 10-operative consolidated agent IDs are always allowed for internal users
-    const CONSOLIDATED_OPERATIVE_IDS = ['outreach', 'field_navigation', 'business_finance', 'analytics_intelligence', 'creative_content', 'web_presence', 'customer_journey'];
-
-    // Validate agent access (consolidated operatives bypass legacy tier list)
-    if (!allowedAgents.includes(agentType) && !CONSOLIDATED_OPERATIVE_IDS.includes(agentType)) {
+    // Validate agent access using normalized agent type
+    if (!allowedAgents.includes(normalizedAgentType)) {
       const requiredTier = getRequiredTierForAgent(agentType);
-      console.log(`[AI Agent Chat] Agent locked: ${agentType} requires ${requiredTier}, company has ${subscriptionTier}`);
+      console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) requires ${requiredTier}, company has ${subscriptionTier}`);
       return new Response(JSON.stringify({ 
         error: 'agent_locked',
         message: `The ${agentType} agent requires the ${requiredTier} subscription tier.`,
