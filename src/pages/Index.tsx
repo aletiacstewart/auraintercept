@@ -415,7 +415,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Operatives',
-  description: 'Enable up to 10 consolidated AI operatives and configure your knowledge base for your business.',
+  description: 'Enable up to 24 Smart AI Agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
