@@ -804,6 +804,7 @@ export default function Index() {
                 <Badge className="mb-2 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-[10px]">Entry Level</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & outreach</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, salons, consultants, and small service businesses that need AI-powered booking, outreach, and web presence.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-cyan-400">$297</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
@@ -857,6 +858,7 @@ export default function Index() {
                 <Badge className="mb-2 gradient-primary border-0 text-[10px]">Most Popular</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Full automation suite</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for HVAC, plumbing, electrical, and field service companies that dispatch technicians and manage jobs on the go.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold gradient-text">$497</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
@@ -906,7 +908,8 @@ export default function Index() {
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Command</h3>
-                <p className="text-[10px] text-amber-400/80 mb-2">Multi-Location / Enterprise</p>
+                <p className="text-[10px] text-amber-400/80 mb-1">Multi-Location / Enterprise</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for multi-location franchises, property management firms, and enterprise teams that need full analytics, white-label branding, and centralized control.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-amber-400">$697</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
