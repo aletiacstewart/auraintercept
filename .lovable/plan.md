@@ -23,7 +23,23 @@
 
 ---
 
-## Phase 2: Fast Start Wizard — TODO
+## Phase 2: Fast Start Wizard — ✅ COMPLETE (2B core wizard + 2D mode toggle)
+
+### What Was Done
+- Created `BusinessTypeSelector` with 6 trade templates (HVAC, Plumbing, Electrical, General Contractor, Landscaping, Other)
+- Created `FastStartWizard` with 4 streamlined steps: Business Type → Integrations → Tell Aura → Launch
+- Updated `OnboardingForm` page with "Fast Start (5 min)" / "Full Setup" mode toggle
+- Each template pre-fills services, hours, core agents, and business description
+
+### Remaining (2A templates DB save, 2C post-setup redirect with sample command)
+
+## Phase 3A: Core vs Advanced Agent Sections — ✅ COMPLETE
+
+### What Was Done
+- Split AI Operatives Hub agent grid into **Core** (Triage, Customer Journey, Dispatch, Business Finance) and **Advanced** (collapsed by default) sections
+- Added "Enable Recommended for My Business" one-click button to activate all core agents
+- Added ROI hint badges on every agent card (e.g., "Handles 60-70% of first contacts", "Saves ~10 hrs/week")
+- Advanced section uses collapsible toggle with chevron animation
 
 ### 2A — Business Type Templates
 ### 2B — Fast Start Wizard Component (4 steps)
