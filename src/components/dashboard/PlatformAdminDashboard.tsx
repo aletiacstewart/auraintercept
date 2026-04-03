@@ -12,6 +12,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { DashboardSetupNav } from './DashboardSetupNav';
+import { AuraCommandCenter } from './AuraCommandCenter';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 
 interface CompanyStats {
   id: string;
