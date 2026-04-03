@@ -12,6 +12,7 @@ import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
+import { AnalyticsNLHero } from './AnalyticsNLHero';
 import { PerformanceReportForm } from './forms/PerformanceReportForm';
 import { RevenueAnalysisForm } from './forms/RevenueAnalysisForm';
 import { CustomerInsightsForm } from './forms/CustomerInsightsForm';
