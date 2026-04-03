@@ -703,6 +703,7 @@ interface AgentCardProps {
     requires_human_review: boolean;
   } | null;
   onReviewClick: () => void;
+  roiHint?: string;
 }
 
 function AgentCard({ 
@@ -716,6 +717,7 @@ function AgentCard({
   getTierInfo,
   latestEvent,
   onReviewClick,
+  roiHint,
 }: AgentCardProps) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
