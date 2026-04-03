@@ -22,8 +22,10 @@ import {
   Phone,
   TrendingUp,
   Camera,
-  Play
+  Play,
+  Mic
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
