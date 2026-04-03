@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, BarChart3 } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function AnalyticsConsole() {
