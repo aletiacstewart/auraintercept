@@ -1,40 +1,52 @@
 
 
-## Phase 1: Aura Command Center as Default Dashboard
+## Phase 1: Aura Command Center as Default Dashboard — ✅ COMPLETE
 
-### What We're Building
-Replace the current stat-card-heavy company admin dashboard with an **Aura-first Command Center** — a simplified hero experience that puts natural language interaction front and center, with existing business data moved into a collapsible section below.
+## Phase 3D: Empty States Overhaul — ✅ COMPLETE (batch 1)
 
-### Changes
+### What Was Done
+- Created reusable `AuraEmptyState` component (`src/components/ui/aura-empty-state.tsx`) with themed icon glow, title, description, and optional Aura action button
+- Replaced empty states in 7 high-traffic components:
+  - `QuotesManager` — "Let Aura create a quote" action
+  - `InvoicesManager` — "Create an invoice" action
+  - `LeadsManager` — "Add a new lead" action
+  - `InventoryMatrix` — contextual low-stock vs general message
+  - `InventoryManager` — themed empty state
+  - `AppointmentTrackingView` — themed empty state
+  - `SocialFeedQueue` — "Let Aura generate sample posts" action with contextual descriptions
 
-**1. New file: `src/components/dashboard/AuraCommandCenter.tsx`**
+### Remaining Empty States (batch 2)
+- `BillingLookupForm`, `BillingAgentConsole`, `CustomersManager`, `FinancialPulseDashboard`
+- `ConversationHistoryBrowser`, `CommunicationLogs`, `CustomerPreferencesManager`
+- `ReminderHistoryLog`, `BookingAgentConsole`, `DigestDeliveryHistory`
+- `PlatformAnalytics` (call/revenue/company data)
 
-Top-to-bottom layout:
-- **Hero command input** — large text input: "What do you want Aura to do today?" with voice toggle button. Uses existing `useUnifiedAura` hook for processing and `useVoice` for voice input.
-- **6 suggested command cards** in a 2x3 grid (1-col on mobile): "Book today's emergency job", "Show overdue invoices & chase them", "Generate social posts for spring tune-ups", "Check today's dispatch schedule", "Create a quote for a new lead", "Show me this week's revenue". Clicking a card auto-populates and submits the command.
-- **Aura Live activity feed** — renders the existing `AuraLiveStream` component showing real-time agent actions.
+---
 
-**2. Refactor: `src/components/dashboard/CompanyAdminDashboard.tsx`**
+## Phase 2: Fast Start Wizard — TODO
 
-- Import and render `AuraCommandCenter` as the primary top section
-- Wrap the existing stat cards grid, quick actions, and business metrics in a collapsible **"Business Snapshot"** section (collapsed by default, toggle with chevron)
-- Keep all existing data queries, tier gating, and logic intact — just restructure the JSX layout
+### 2A — Business Type Templates
+### 2B — Fast Start Wizard Component (4 steps)
+### 2C — Post-Setup Redirect
+### 2D — Integration with Existing Flow
 
-### Styling
+## Phase 3: Reduce Complexity — TODO (3A, 3B, 3C remaining)
 
-All new UI uses **existing theme tokens only** — no hardcoded cyan/teal RGBA values:
-- Card backgrounds: `bg-card`, `bg-muted`
-- Borders: `border-border`, `hover:border-primary`
-- Text: `text-foreground`, `text-muted-foreground`, `text-primary`
-- Gradients: `from-primary to-secondary` (resolves via CSS variables)
-- Shadows/glows: Tailwind shadow utilities + `shadow-glow` tokens
-- The existing hardcoded `rgba(4,12,26,...)` and `rgba(0,229,255,...)` in the stat cards and quick actions will also be migrated to theme tokens in this pass
+### 3A — AI Operatives Hub: Core vs Advanced Sections
+### 3B — Console Icon Bar Tooltips
+### 3C — Active Agents Panel Improvements
 
-### What Stays the Same
-- All backend/database untouched
-- Sidebar navigation unchanged
-- All existing consoles remain accessible
-- `useUnifiedAura` hook reused as-is
-- `AuraLiveStream` component reused as-is
-- All stat data queries preserved (just visually collapsed)
+## Phase 4: Console Improvements — TODO
 
+### 4A — Workflow Chain Buttons
+### 4B — Social Media: Prominent Multi-Channel Generator
+### 4C — Analytics: Natural Language First
+### 4D — Web Presence: Live Preview Pane
+### 4E — Customer Portal Admin Preview
+
+## Phase 5: General Polish — TODO
+
+### 5A — Value Indicators
+### 5B — Human Override UX
+### 5C — Mobile Technician Mode
+### 5D — Theme Cleanup
