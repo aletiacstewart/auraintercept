@@ -20,8 +20,8 @@ import {
   normalizeTierName,
 } from '@/lib/subscriptionAgentConfig';
 
-// 5-TIER STRUCTURE: Connect, Growth, Logistics (field_ops), Performance, Command
-export type SubscriptionTier = 'free' | 'connect' | 'growth' | 'field_ops' | 'performance' | 'command';
+// 3-TIER STRUCTURE: Connect, Performance, Command
+export type SubscriptionTier = 'free' | 'connect' | 'performance' | 'command';
 
 // All features available on Command tier
 const ALL_FEATURES = [
@@ -33,34 +33,22 @@ const ALL_FEATURES = [
   'smart_links',
 ];
 
-// Feature mapping for 5-tier structure
+// Feature mapping for 3-tier structure
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
   free: ['basic_dashboard'],
   connect: [
     'voice_reminders', 'email_reminders', 'sms_reminders',
+    'advanced_dashboard', 'appointments_unlimited',
     'widget', 'smart_links', 'api_access',
-    'advanced_dashboard', 'appointments_unlimited',
     'calendar_sync', 'customer_portal',
+    'social_media', 'marketing_automation', 'creative_tools', 'web_presence',
   ],
-  growth: [
-    'voice_reminders', 'email_reminders', 'sms_reminders',
-    'advanced_dashboard', 'appointments_unlimited',
-    'widget', 'customer_portal', 'social_media',
-    'marketing_automation', 'creative_tools', 'web_presence', 'api_access',
-  ],
-  field_ops: [
+  performance: [
     'email_reminders', 'sms_reminders', 'voice_reminders',
     'advanced_dashboard', 'appointments_unlimited',
     'widget', 'customer_portal', 'field_ops',
     'quotes', 'invoices', 'social_media',
     'marketing_automation', 'creative_tools', 'web_presence', 'api_access',
-  ],
-  performance: [
-    'email_reminders', 'sms_reminders', 'voice_reminders',
-    'advanced_dashboard', 'appointments_unlimited', 'advanced_ai',
-    'widget', 'field_ops', 'invoices', 'customer_portal',
-    'social_media', 'marketing_automation', 'creative_tools',
-    'web_presence', 'analytics', 'api_access',
   ],
   command: ALL_FEATURES,
 };
@@ -70,11 +58,11 @@ export type Feature = string;
 export const useSubscription = () => {
   const { subscribed, subscriptionTier: authTier, subscriptionEnd, inTrial, trialEndsAt, checkSubscription } = useAuth();
 
-  // Normalize tier to our 5-tier system (handles all legacy names)
+  // Normalize tier to our 3-tier system (handles all legacy names)
   const normalizeSubscriptionTier = (tier: string | null): SubscriptionTier => {
     if (!tier) return 'free';
     const normalized = normalizeTierName(tier);
-    if (['free', 'connect', 'growth', 'field_ops', 'performance', 'command'].includes(normalized)) {
+    if (['free', 'connect', 'performance', 'command'].includes(normalized)) {
       return normalized as SubscriptionTier;
     }
     return 'free';
@@ -152,7 +140,7 @@ export const useSubscription = () => {
 
   // Get all tiers for display
   const getAllTiers = (): { tier: SubscriptionTier; label: string; price: string; description: string }[] => {
-    return (['connect', 'growth', 'field_ops', 'performance', 'command'] as SubscriptionTier[]).map(tier => ({
+    return (['connect', 'performance', 'command'] as SubscriptionTier[]).map(tier => ({
       tier,
       ...getTierDisplayInfo(tier as ConfigTier),
     }));

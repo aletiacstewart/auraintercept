@@ -21,12 +21,11 @@ export interface ConsoleHelpConfig {
   features: { text: string; tier?: SubscriptionTier }[];
   useCases: string[];
   requiredTier: SubscriptionTier;
-  tabs?: string[]; // Quick action tabs available in the console
+  tabs?: string[];
 }
 
 // Agent display names mapping (ID to display name) — 10 Consolidated Operatives
 export const AGENT_DISPLAY_NAMES: Record<string, string> = {
-  // Core 10 operatives
   triage: 'AI Receptionist',
   customer_journey: 'Customer Journey Agent',
   dispatch: 'Dispatch Agent',
@@ -37,7 +36,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   creative_content: 'Creative Content Agent',
   web_presence: 'Web Presence Agent',
   analytics_intelligence: 'Analytics Intelligence Agent',
-  // Legacy aliases for backward compatibility
+  // Legacy aliases
   booking: 'Customer Journey Agent',
   followup: 'Customer Journey Agent',
   review: 'Customer Journey Agent',
@@ -57,7 +56,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   assistant: 'Aura Assistant',
 };
 
-// Console configurations with tier-based content - 5-TIER STRUCTURE
+// Console configurations with tier-based content - 3-TIER STRUCTURE
 export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   {
     id: 'customer_portal',
@@ -77,13 +76,13 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { text: 'Voice Reminders for appointments - requires ElevenLabs + SignalWire', tier: 'connect' },
       { text: 'Answer questions using your Knowledge Base', tier: 'connect' },
       { text: 'Automated follow-up sequences via Email/SMS', tier: 'connect' },
-      { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'growth' },
+      { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'connect' },
       { text: 'Service catalog display with pricing', tier: 'connect' },
       { text: 'Business hours display', tier: 'connect' },
       { text: 'Online appointment booking via AI chat', tier: 'connect' },
       { text: 'Appointment tracking and status updates', tier: 'connect' },
-      { text: 'Instant quote requests', tier: 'field_ops' },
-      { text: 'Invoice viewing and billing status', tier: 'field_ops' },
+      { text: 'Instant quote requests', tier: 'performance' },
+      { text: 'Invoice viewing and billing status', tier: 'performance' },
     ],
     useCases: [
       '"What are your business hours?"',
@@ -101,11 +100,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Field Operations',
     icon: Truck,
     description: 'Mobile-optimized console powered by Dispatch Agent + Field Navigation Agent covering GPS routing, real-time ETA updates, and one-tap job check-in.',
-    requiredTier: 'field_ops',
+    requiredTier: 'performance',
     tabs: ['Accept Job', 'Get Directions', 'Mark En Route', 'Update ETA', 'Arrive & Start', 'Complete Job', 'Generate Quote', 'Generate Invoice', 'Contact Dispatch'],
     agents: [
-      { name: 'Dispatch Agent', tier: 'field_ops' },
-      { name: 'Field Navigation Agent', tier: 'field_ops' },
+      { name: 'Dispatch Agent', tier: 'performance' },
+      { name: 'Field Navigation Agent', tier: 'performance' },
     ],
     features: [
       { text: 'Accept assigned jobs with one tap' },
@@ -138,22 +137,22 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Business Operations',
     icon: Briefcase,
     description: 'Comprehensive business management console powered by Admin Agent + Business Finance Agent (Quoting, Invoicing, Inventory).',
-    requiredTier: 'field_ops',
+    requiredTier: 'performance',
     tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
     agents: [
-      { name: 'Business Finance Agent', tier: 'field_ops' },
-      { name: 'Admin Agent', tier: 'performance' },
+      { name: 'Business Finance Agent', tier: 'performance' },
+      { name: 'Admin Agent', tier: 'command' },
     ],
     features: [
-      { text: 'Create and send professional quotes', tier: 'field_ops' },
-      { text: 'Generate and track invoices with payment status', tier: 'field_ops' },
-      { text: 'Service catalog with pricing management', tier: 'field_ops' },
-      { text: 'Lead capture and pipeline management', tier: 'growth' },
+      { text: 'Create and send professional quotes', tier: 'performance' },
+      { text: 'Generate and track invoices with payment status', tier: 'performance' },
+      { text: 'Service catalog with pricing management', tier: 'performance' },
+      { text: 'Lead capture and pipeline management', tier: 'connect' },
       { text: 'Appointment scheduling and calendar management', tier: 'connect' },
-      { text: 'Inventory tracking with stock levels', tier: 'performance' },
-      { text: 'Reorder alerts and supplier management', tier: 'performance' },
+      { text: 'Inventory tracking with stock levels', tier: 'command' },
+      { text: 'Reorder alerts and supplier management', tier: 'command' },
       { text: 'Multi-company management (Platform Admin)', tier: 'command' },
-      { text: 'Employee management and job assignments', tier: 'field_ops' },
+      { text: 'Employee management and job assignments', tier: 'performance' },
       { text: 'Customer database with service history', tier: 'connect' },
     ],
     useCases: [
@@ -171,10 +170,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Outreach & Sales Ops',
     icon: Megaphone,
     description: 'AI-powered marketing automation — all in one Outreach Agent covering campaign management, lead nurturing, customer segmentation, and promotional tools.',
-    requiredTier: 'growth',
+    requiredTier: 'connect',
     tabs: ['Campaign', 'Leads', 'Marketing'],
     agents: [
-      { name: 'Outreach Agent', tier: 'growth' },
+      { name: 'Outreach Agent', tier: 'connect' },
     ],
     features: [
       { text: 'Create targeted Email and SMS campaigns' },
@@ -202,10 +201,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Social Media Ops',
     icon: Share2,
     description: 'AI-powered creative studio powered by the Creative Content Agent — generates platform-optimized posts, AI images/videos, and multi-channel content for 6 platforms.',
-    requiredTier: 'growth',
+    requiredTier: 'connect',
     tabs: ['Home', 'Create Content', 'My Posts'],
     agents: [
-      { name: 'Creative Content Agent', tier: 'growth' },
+      { name: 'Creative Content Agent', tier: 'connect' },
     ],
     features: [
       { text: 'AI content generation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, SMS' },
@@ -219,10 +218,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { text: 'Draft management for pending posts' },
       { text: 'Automatic is_aigc disclosure for TikTok compliance' },
       { text: 'Brand voice integration from Knowledge Base' },
-      { text: 'Content Engine for multi-channel generation (Social, Blog, Email, SMS, Website)', tier: 'growth' },
-      { text: 'Web Presence Manager with AI-powered website and blog', tier: 'growth' },
-      { text: 'Auto-publish blog posts from Content Engine', tier: 'growth' },
-      { text: 'SEO optimization for all pages and posts', tier: 'growth' },
+      { text: 'Content Engine for multi-channel generation (Social, Blog, Email, SMS, Website)', tier: 'connect' },
+      { text: 'Web Presence Manager with AI-powered website and blog', tier: 'connect' },
+      { text: 'Auto-publish blog posts from Content Engine', tier: 'connect' },
+      { text: 'SEO optimization for all pages and posts', tier: 'connect' },
     ],
     useCases: [
       '"Create an Instagram post about our summer special"',
@@ -241,11 +240,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Creative & Web Presence',
     icon: Palette,
     description: 'AI-powered content generation and web management hub with Creative Content Agent + Web Presence Agent.',
-    requiredTier: 'growth',
+    requiredTier: 'connect',
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     agents: [
-      { name: 'Creative Content Agent', tier: 'growth' },
-      { name: 'Web Presence Agent', tier: 'growth' },
+      { name: 'Creative Content Agent', tier: 'connect' },
+      { name: 'Web Presence Agent', tier: 'connect' },
     ],
     features: [
       { text: 'Multi-channel content generation (Social, Blog, Email, SMS, Website)' },
@@ -275,10 +274,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     title: 'Analytics & Reports',
     icon: BarChart3,
     description: 'Advanced analytics console with 8 specialized tabs for comprehensive business intelligence, forecasting, and multi-format report export.',
-    requiredTier: 'performance',
+    requiredTier: 'command',
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     agents: [
-      { name: 'Analytics Intelligence Agent', tier: 'performance' },
+      { name: 'Analytics Intelligence Agent', tier: 'command' },
     ],
     features: [
       { text: 'Performance reports with AI analysis' },
@@ -340,17 +339,15 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
 ];
 
-// 5-tier hierarchy for console/feature filtering
+// 3-tier hierarchy for console/feature filtering
 const TIER_HIERARCHY_HELP: Record<SubscriptionTier, number> = {
   free: 0,
   connect: 1,
-  growth: 2,
-  field_ops: 3,
-  performance: 4,
-  command: 5,
+  performance: 2,
+  command: 3,
 };
 
-// Get consoles available for a specific tier - 5-TIER STRUCTURE
+// Get consoles available for a specific tier - 3-TIER STRUCTURE
 export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] {
   const currentTierLevel = TIER_HIERARCHY_HELP[tier] ?? 0;
   return CONSOLE_HELP_CONFIG.filter(console => {
@@ -378,7 +375,7 @@ export function getFilteredAgents(console: ConsoleHelpConfig, tier: Subscription
     .map(a => a.name);
 }
 
-// Tier descriptions for Help page - 5-TIER STRUCTURE
+// Tier descriptions for Help page - 3-TIER STRUCTURE
 export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; description: string; highlights: string[] }> = {
   free: {
     title: 'Free Plan',
@@ -387,36 +384,23 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   connect: {
     title: 'Aura Connect',
-    description: '24/7 AI answering, automated booking, customer follow-up, and review collection.',
+    description: '24/7 AI answering, booking, marketing automation, and web presence.',
     highlights: [
       'AI Receptionist for 24/7 customer engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
       'Customer Journey Agent (Scheduling, Follow-up, Review)',
-      'Customer Portal Console',
-      'Smart Link Sharing & Embeddable Chat Widget',
-      '3 Employee Accounts',
-      'Requires ElevenLabs + SignalWire integrations',
-    ],
-  },
-  growth: {
-    title: 'Aura Growth',
-    description: 'Full marketing automation with social content, outreach campaigns, and web presence.',
-    highlights: [
-      'Everything in Connect',
-      'Outreach Agent (Campaign, Lead Capture & Scoring, Marketing)',
+      'Outreach Agent (Campaign, Lead Capture, Marketing)',
       'Creative Content Agent (Social, Images, Video, Web Copy)',
       'Web Presence Agent (AI-powered site + SEO)',
-      'Outreach & Sales Ops Console',
-      'Social Media Ops Console',
-      'Creative & Web Presence Console',
-      '8 Employee Accounts',
+      'Customer Portal + Outreach & Sales + Social Media + Creative & Web Consoles',
+      '5 Employee Accounts',
     ],
   },
-  field_ops: {
-    title: 'Aura Logistics',
-    description: 'Complete field operations with dispatch, routing, quoting, and invoicing.',
+  performance: {
+    title: 'Aura Performance',
+    description: 'Full field operations with dispatch, routing, quoting, and invoicing.',
     highlights: [
-      'Everything in Growth',
+      'Everything in Connect',
       'Dispatch Agent (Smart job assignment)',
       'Field Navigation Agent (Route, ETA, Check-in)',
       'Business Finance Agent (Quoting, Invoice, Inventory)',
@@ -426,36 +410,24 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       '15 Employee Accounts',
     ],
   },
-  performance: {
-    title: 'Aura Performance',
-    description: 'Full business automation with all 10 AI operatives, analytics intelligence, and admin control.',
-    highlights: [
-      'Everything in Logistics',
-      'All 10 AI Operatives',
-      'All 7 Consoles',
-      'Admin Agent (Scheduling, Staff, Customers)',
-      'Analytics Intelligence Agent (Insights, Performance, Revenue, Forecast)',
-      'Multi-format report export',
-      'Priority Support',
-      '30 Employee Accounts',
-    ],
-  },
   command: {
     title: 'Aura Command',
     description: 'Enterprise AI operating system with unlimited employees, white-label branding, and predictive analytics.',
     highlights: [
       'Everything in Performance',
+      'Admin Agent (Scheduling, Staff, Customers)',
+      'Analytics Intelligence Agent (Insights, Performance, Revenue, Forecast)',
+      'Analytics & Reports Console',
+      'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
       'Multi-location support',
       'White-label branding',
-      'AI Operatives Hub (Management Interface)',
-      'Advanced Predictive Analytics & Demand Forecasting',
       'Priority Support & Custom Implementation',
     ],
   },
 };
 
-// Get tier by agent type - 5-TIER MAPPING
+// Get tier by agent type - 3-TIER MAPPING
 export function getTierForAgent(agentType: string): SubscriptionTier | null {
   const agentTierMap: Record<string, SubscriptionTier> = {
     // Connect tier
@@ -463,65 +435,58 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
     customer_journey: 'connect',
     booking: 'connect',
     followup: 'connect',
-    // Growth tier
-    outreach: 'growth',
-    creative_content: 'growth',
-    web_presence: 'growth',
-    review: 'growth',
-    campaign: 'growth',
-    lead: 'growth',
-    marketing: 'growth',
-    social_content: 'growth',
-    social_scheduler: 'growth',
-    social_analytics: 'growth',
-    creative: 'growth',
-    // Field Ops tier
-    dispatch: 'field_ops',
-    field_navigation: 'field_ops',
-    business_finance: 'field_ops',
-    route: 'field_ops',
-    eta: 'field_ops',
-    checkin: 'field_ops',
-    quoting: 'field_ops',
-    invoice: 'field_ops',
+    outreach: 'connect',
+    creative_content: 'connect',
+    web_presence: 'connect',
+    review: 'connect',
+    campaign: 'connect',
+    lead: 'connect',
+    marketing: 'connect',
+    social_content: 'connect',
+    social_scheduler: 'connect',
+    social_analytics: 'connect',
+    creative: 'connect',
     // Performance tier
-    admin: 'performance',
-    analytics_intelligence: 'performance',
-    inventory: 'performance',
-    insights: 'performance',
-    revenue: 'performance',
-    forecast: 'performance',
+    dispatch: 'performance',
+    field_navigation: 'performance',
+    business_finance: 'performance',
+    route: 'performance',
+    eta: 'performance',
+    checkin: 'performance',
+    quoting: 'performance',
+    invoice: 'performance',
+    // Command tier
+    admin: 'command',
+    analytics_intelligence: 'command',
+    inventory: 'command',
+    insights: 'command',
+    revenue: 'command',
+    forecast: 'command',
   };
   
   return agentTierMap[agentType] || null;
 }
 
-// Operative count per tier - 5-TIER STRUCTURE
+// Operative count per tier - 3-TIER STRUCTURE
 export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 2,
-  growth: 5,
-  field_ops: 8,
-  performance: 10,
+  connect: 5,
+  performance: 8,
   command: 10,
 };
 
 // Console count per tier
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 1,
-  growth: 4,
-  field_ops: 6,
-  performance: 7,
+  connect: 4,
+  performance: 6,
   command: 7,
 };
 
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 3,
-  growth: 8,
-  field_ops: 15,
-  performance: 30,
+  connect: 5,
+  performance: 15,
   command: 999,  // Unlimited
 };

@@ -40,12 +40,10 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   analytics: { name: 'Analytics Agent', description: 'Data analysis', icon: '📊' },
 };
 
-// 5-TIER STRUCTURE
+// 3-TIER STRUCTURE
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
   connect: 'bg-cyan-500',
-  growth: 'bg-rose-500',
-  field_ops: 'bg-amber-600',
   performance: 'bg-sky-600',
   command: 'bg-violet-600',
 };
@@ -53,8 +51,6 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
   connect: 297,
-  growth: 597,
-  field_ops: 1497,
   performance: 497,
   command: 697,
 };
@@ -91,7 +87,7 @@ const AgentRequirementCalculator: React.FC = () => {
     calculateRequirements.forEach(agent => {
       const tierNeeded = getRequiredTierForAgent(agent);
       if (tierNeeded) {
-        const tierOrder: SubscriptionTier[] = ['free', 'connect', 'growth', 'field_ops', 'performance', 'command'];
+        const tierOrder: SubscriptionTier[] = ['free', 'connect', 'performance', 'command'];
         if (tierOrder.indexOf(tierNeeded) > tierOrder.indexOf(maxTier)) {
           maxTier = tierNeeded;
         }
@@ -117,8 +113,6 @@ const AgentRequirementCalculator: React.FC = () => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
       connect: [],
-      growth: [],
-      field_ops: [],
       performance: [],
       command: [],
     };
@@ -145,7 +139,7 @@ const AgentRequirementCalculator: React.FC = () => {
       <CardContent className="space-y-6">
         {/* Agent Selection Grid */}
         <div className="space-y-4">
-          {(['scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'] as SubscriptionTier[]).map(tier => (
+          {(['connect', 'performance', 'command'] as SubscriptionTier[]).map(tier => (
             agentsByTier[tier].length > 0 && (
               <div key={tier} className="space-y-2">
                 <div className="flex items-center gap-2">

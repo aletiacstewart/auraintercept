@@ -12,34 +12,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Subscription tier configuration with Stripe Price IDs
-// NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
+// 3-TIER STRUCTURE: Connect ($297), Performance ($497), Command ($697)
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
-  // New tier names - Updated pricing January 2026
-  starter: {
-    price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
-    name: "Aura Starter",
-    price: 19700, // $197 in cents (unchanged)
-  },
-  scheduling: {
+  connect: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Connect",
-    price: 39700, // $397 in cents
-  },
-  growth: {
-    price_id: "price_1T02LLJ9fo9y8fGHMVJDpK7p",
-    name: "Aura Growth",
-    price: 59700, // $597 in cents
-  },
-  business: {
-    price_id: "price_1T028dJ9fo9y8fGH92xnAk1x",
-    name: "Aura Presence",
-    price: 79700, // $797 in cents
-  },
-  field_ops: {
-    price_id: "price_1T028oJ9fo9y8fGHIiNuzVSC",
-    name: "Aura Logistics",
-    price: 149700, // $1,497 in cents
+    price: 29700, // $297 in cents
   },
   performance: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
@@ -51,31 +29,56 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
     name: "Aura Command",
     price: 69700, // $697 in cents
   },
-  // Legacy tier name aliases for backward compatibility
+  // Legacy tier aliases → map to canonical 3 tiers
+  starter: {
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 29700,
+  },
+  scheduling: {
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 29700,
+  },
+  growth: {
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 29700,
+  },
+  business: {
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
+    name: "Aura Performance",
+    price: 49700,
+  },
+  field_ops: {
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
+    name: "Aura Performance",
+    price: 49700,
+  },
   express: {
-    price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
-    name: "Aura Starter",
-    price: 19700,
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 29700,
   },
   aura_flow: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Connect",
-    price: 39700,
+    price: 29700,
   },
   halo: {
-    price_id: "price_1T02LLJ9fo9y8fGHMVJDpK7p",
-    name: "Aura Growth",
-    price: 59700,
+    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
+    name: "Aura Connect",
+    price: 29700,
   },
   core: {
-    price_id: "price_1T028dJ9fo9y8fGH92xnAk1x",
-    name: "Aura Presence",
-    price: 79700,
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
+    name: "Aura Performance",
+    price: 49700,
   },
   single_point: {
-    price_id: "price_1T028oJ9fo9y8fGHIiNuzVSC",
-    name: "Aura Logistics",
-    price: 149700,
+    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
+    name: "Aura Performance",
+    price: 49700,
   },
   multi_track: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
@@ -113,7 +116,6 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Check user role - only company_admin can subscribe
     const { data: roleData } = await supabaseClient
       .from('user_roles')
       .select('role')
@@ -135,7 +137,6 @@ serve(async (req) => {
       throw new Error("Only company administrators can manage subscriptions");
     }
 
-    // Get user's company
     const { data: profileData } = await supabaseClient
       .from('profiles')
       .select('company_id')
@@ -149,7 +150,6 @@ serve(async (req) => {
     const companyId = profileData.company_id;
     logStep("Company ID found", { companyId });
 
-    // Get company data
     const { data: companyData, error: companyError } = await supabaseClient
       .from('companies')
       .select('id, name, email, stripe_customer_id')
@@ -161,8 +161,7 @@ serve(async (req) => {
     }
     logStep("Company data fetched", { companyName: companyData.name });
 
-    // Parse request body for tier selection
-    let requestedTier = "command"; // Default to command tier
+    let requestedTier = "command";
     try {
       const body = await req.json();
       if (body.tier && SUBSCRIPTION_TIERS[body.tier]) {
@@ -177,13 +176,11 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
-    // Use company's existing Stripe customer or create a new one
     let customerId = companyData.stripe_customer_id;
     
     if (customerId) {
       logStep("Found existing Stripe customer for company", { customerId });
     } else {
-      // Create new Stripe customer for the company
       const customer = await stripe.customers.create({
         name: companyData.name,
         email: companyData.email || user.email,
@@ -195,7 +192,6 @@ serve(async (req) => {
       customerId = customer.id;
       logStep("Created new Stripe customer for company", { customerId });
 
-      // Save stripe_customer_id to company record
       const { error: updateError } = await supabaseClient
         .from('companies')
         .update({ stripe_customer_id: customerId })

@@ -1,6 +1,6 @@
-// Subscription tier types — 5-TIER STRUCTURE
-// Internal names: connect, growth, field_ops, performance, command
-export type SubscriptionTier = 'free' | 'connect' | 'growth' | 'field_ops' | 'performance' | 'command';
+// Subscription tier types — 3-TIER STRUCTURE
+// Internal names: connect, performance, command
+export type SubscriptionTier = 'free' | 'connect' | 'performance' | 'command';
 
 // Configuration for each subscription tier
 export interface TierConfig {
@@ -13,7 +13,7 @@ export interface TierConfig {
 
 // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
 // Map subscription tiers to available agents and consoles
-// 10-OPERATIVE CONSOLIDATED STRUCTURE — 5 TIERS
+// 10-OPERATIVE CONSOLIDATED STRUCTURE — 3 TIERS
 export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   free: {
     agents: [],
@@ -23,31 +23,21 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   connect: {
-    // Aura Connect ($297/mo): AI Receptionist + Customer Journey
+    // Aura Connect ($297/mo): 5 operatives, 4 consoles, 5 employees
     agents: [
-      'triage',          // AI Receptionist
-      'customer_journey',// Scheduling + Follow-up + Review
-    ],
-    consoles: ['customer_portal'],
-    label: 'Aura Connect',
-    price: '$297/mo',
-    description: '24/7 AI answering, booking, and customer follow-up',
-  },
-  growth: {
-    // Aura Growth ($597/mo): + Outreach, Creative, Web Presence
-    agents: [
-      'triage', 'customer_journey',   // Customer Portal (2)
-      'outreach',                     // Outreach & Sales (1)
-      'creative_content',             // Social Media & Creative (1)
-      'web_presence',                 // Creative & Web Presence (1)
+      'triage',              // AI Receptionist
+      'customer_journey',    // Scheduling + Follow-up + Review
+      'outreach',            // Campaign, Lead, Marketing
+      'creative_content',    // Social, Images, Video, Web Copy
+      'web_presence',        // AI-powered site + SEO
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],
-    label: 'Aura Growth',
-    price: '$597/mo',
-    description: 'Full marketing automation with social, outreach, and web presence',
+    label: 'Aura Connect',
+    price: '$297/mo',
+    description: '24/7 AI answering, booking, marketing automation, and web presence',
   },
-  field_ops: {
-    // Aura Logistics ($1,497/mo): + Field Operations Stack
+  performance: {
+    // Aura Performance ($497/mo): 8 operatives, 6 consoles, 15 employees
     agents: [
       'triage', 'customer_journey',              // Customer Portal (2)
       'outreach',                                // Outreach & Sales (1)
@@ -55,28 +45,13 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'dispatch', 'field_navigation',            // Field Operations (2)
       'business_finance',                        // Business Finance (1)
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence'],
-    label: 'Aura Logistics',
-    price: '$1,497/mo',
-    description: 'Complete field operations with dispatch, routing, quoting, and invoicing',
-  },
-  performance: {
-    // Aura Performance ($497/mo): All 10 operatives
-    agents: [
-      'triage', 'customer_journey',              // Customer Portal (2)
-      'dispatch', 'field_navigation',            // Field Operations (2)
-      'admin', 'business_finance',               // Business Operations (2)
-      'outreach',                                // Outreach & Sales (1)
-      'creative_content', 'web_presence',        // Creative & Web Presence (2)
-      'analytics_intelligence',                  // Analytics & Reports (1)
-    ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports'],
+    consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations', 'business_management'],
     label: 'Aura Performance',
     price: '$497/mo',
-    description: 'Full business automation with all 10 AI operatives and analytics intelligence',
+    description: 'Full field operations with dispatch, routing, quoting, and invoicing',
   },
   command: {
-    // Aura Command ($697/mo): All 10 operatives + enterprise features
+    // Aura Command ($697/mo): All 10 operatives, all 7 consoles + AI Operatives Hub, unlimited employees
     agents: [
       'triage', 'customer_journey',              // Customer Portal (2)
       'dispatch', 'field_navigation',            // Field Operations (2)
@@ -114,19 +89,17 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   ai_operatives_hub: [],
 };
 
-// Tier hierarchy — 5-tier + free
+// Tier hierarchy — 3-tier + free
 export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
   free: 0,
   connect: 1,
-  growth: 2,
-  field_ops: 3,
-  performance: 4,
-  command: 5,
+  performance: 2,
+  command: 3,
 };
 
 // Get the minimum tier required for a specific agent
 export function getRequiredTierForAgent(agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['connect', 'growth', 'field_ops', 'performance', 'command'];
+  const tiers: SubscriptionTier[] = ['connect', 'performance', 'command'];
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].agents.includes(agentType)) return tier;
   }
@@ -135,7 +108,7 @@ export function getRequiredTierForAgent(agentType: string): SubscriptionTier | n
 
 // Get the minimum tier required for a specific console
 export function getRequiredTierForConsole(consoleType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['connect', 'growth', 'field_ops', 'performance', 'command'];
+  const tiers: SubscriptionTier[] = ['connect', 'performance', 'command'];
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].consoles.includes(consoleType)) return tier;
   }
@@ -176,7 +149,7 @@ export function getTierDisplayInfo(tier: SubscriptionTier): { label: string; pri
 }
 
 export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['connect', 'growth', 'field_ops', 'performance', 'command'];
+  const tiers: SubscriptionTier[] = ['connect', 'performance', 'command'];
   const currentIndex = tiers.indexOf(currentTier);
   if (currentTier === 'command') return null;
   for (let i = Math.max(0, currentIndex + 1); i < tiers.length; i++) {
@@ -194,22 +167,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
   connect: [
     'can_access_appointments',
     'can_access_customers',
-    'api_access',
-  ],
-  growth: [
-    'can_access_appointments',
-    'can_access_customers',
     'can_access_leads',
-    'can_access_campaigns',
-    'api_access',
-  ],
-  field_ops: [
-    'can_access_appointments',
-    'can_access_customers',
-    'can_access_quotes',
-    'can_access_leads',
-    'can_access_invoices',
-    'can_access_field_ops',
     'can_access_campaigns',
     'api_access',
   ],
@@ -222,7 +180,6 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_field_ops',
     'can_access_inventory',
     'can_access_campaigns',
-    'can_access_analytics',
     'api_access',
   ],
   command: [
@@ -241,7 +198,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
 };
 
 export function getRequiredTierForFeature(featureField: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['connect', 'growth', 'field_ops', 'performance', 'command'];
+  const tiers: SubscriptionTier[] = ['connect', 'performance', 'command'];
   for (const tier of tiers) {
     if (TIER_FEATURE_CONFIG[tier].includes(featureField)) return tier;
   }
@@ -256,28 +213,29 @@ export function tierIncludesFeature(tier: SubscriptionTier, featureField: string
 // LEGACY TIER MAPS — backward compatibility
 // ============================================
 
-// Maps any legacy/old/external tier name → current 5-tier internal ID
+// Maps any legacy/old/external tier name → current 3-tier internal ID
 export const LEGACY_TIER_MAP: Record<string, SubscriptionTier> = {
-  // Old docConfig 7-tier IDs
+  // Old docConfig IDs
   'express': 'connect',
   'aura_flow': 'connect',
-  'halo': 'growth',
-  'core': 'growth',
-  'single_point': 'field_ops',
+  'halo': 'connect',
+  'core': 'connect',
+  'single_point': 'performance',
   'multi_track': 'performance',
   // Old subscriptionAgentConfig names
   'starter': 'connect',
   'scheduling': 'connect',
-  'business': 'growth',
+  'business': 'connect',
+  // Legacy 5-tier names → 3-tier
+  'growth': 'connect',
+  'field_ops': 'performance',
   // Already-canonical names (self-map for safety)
   'connect': 'connect',
-  'growth': 'growth',
-  'field_ops': 'field_ops',
   'performance': 'performance',
   'command': 'command',
-  // Supabase DB values (check-subscription returns these)
+  // Supabase DB values
   'aura_connect': 'connect',
-  'aura_growth': 'growth',
+  'aura_growth': 'connect',
 };
 
 export function normalizeTierName(tier: string): SubscriptionTier {

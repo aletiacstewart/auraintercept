@@ -12,24 +12,35 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map price IDs to tier names
-// NEW 7-TIER STRUCTURE: Starter, Scheduling, Growth, Business, Field Ops, Performance, Command
+// Map price IDs to 3 canonical tiers: connect, performance, command
 const PRICE_TO_TIER: Record<string, string> = {
-  // New tier price IDs mapped to NEW tier names
-  "price_1SuzwwJ9fo9y8fGH0rJZBw5q": "starter",      // Aura Starter - $197/month
-  "price_1SxfFNJ9fo9y8fGH2rcByvoY": "scheduling",   // Aura Connect (legacy price)
-  "price_1T0285J9fo9y8fGHURkfEnLp": "scheduling",   // Aura Connect - $397/month
-  "price_1StwXqJ9fo9y8fGHwzQk17IN": "business",     // Aura Presence (legacy price)
-  "price_1T028dJ9fo9y8fGH92xnAk1x": "business",     // Aura Presence - $797/month
-  "price_1StwY2J9fo9y8fGHwOIrLZ8q": "field_ops",    // Aura Logistics (legacy price)
-  "price_1T028oJ9fo9y8fGHIiNuzVSC": "field_ops",    // Aura Logistics - $1,497/month
-  "price_1StwXbJ9fo9y8fGHMaCGdnDV": "growth",       // Aura Growth (legacy price - $397)
-  "price_1T02LLJ9fo9y8fGHMVJDpK7p": "growth",       // Aura Growth - $597/month
-  "price_1StwYEJ9fo9y8fGHdwAoYr5E": "performance",  // Aura Performance (legacy price)
-  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "performance",  // Aura Performance - $497/month
-  "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",      // Aura Command (legacy price)
-  "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",      // Aura Command - $697/month
-  // Legacy Enterprise -> Command (backward compatibility)
+  // === CANONICAL 3-TIER PRICE IDS ===
+  // Aura Connect - $297/mo
+  "price_1T0285J9fo9y8fGHURkfEnLp": "connect",
+  // Aura Performance - $497/mo
+  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "performance",
+  // Aura Command - $697/mo
+  "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",
+
+  // === LEGACY PRICE IDS (backward compat for existing subscribers) ===
+  // Starter $197 → connect
+  "price_1SuzwwJ9fo9y8fGH0rJZBw5q": "connect",
+  // Old Connect/Scheduling $397 → connect
+  "price_1SxfFNJ9fo9y8fGH2rcByvoY": "connect",
+  // Growth $597 → connect
+  "price_1StwXbJ9fo9y8fGHMaCGdnDV": "connect",
+  "price_1T02LLJ9fo9y8fGHMVJDpK7p": "connect",
+  // Business/Presence $797 → performance
+  "price_1StwXqJ9fo9y8fGHwzQk17IN": "performance",
+  "price_1T028dJ9fo9y8fGH92xnAk1x": "performance",
+  // Logistics $1497 → performance
+  "price_1StwY2J9fo9y8fGHwOIrLZ8q": "performance",
+  "price_1T028oJ9fo9y8fGHIiNuzVSC": "performance",
+  // Old Performance → performance
+  "price_1StwYEJ9fo9y8fGHdwAoYr5E": "performance",
+  // Old Command → command
+  "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",
+  // Legacy Enterprise → command
   "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command",
 };
 
@@ -57,18 +68,15 @@ serve(async (req) => {
 
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 
-    // Auth client with user's token for JWT validation
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false },
     });
 
-    // Service-role client for DB operations
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
 
-    // Validate JWT using getClaims (works even when session is expired/missing)
     const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
     let user: { id: string; email: string } | null = null;
 
@@ -81,7 +89,6 @@ serve(async (req) => {
         user = { id: authUser.id, email: authUser.email! };
       } else {
         logStep("getUser also failed — session likely expired", { error: authError?.message });
-        // Return gracefully instead of crashing — the client will handle re-auth
         return new Response(JSON.stringify({ 
           subscribed: false, tier: "free", in_trial: false,
           trial_ends_at: null, subscription_end: null,
@@ -100,7 +107,6 @@ serve(async (req) => {
     }
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Get user's role
     const { data: roleData } = await supabaseClient
       .from('user_roles')
       .select('role')
@@ -110,7 +116,6 @@ serve(async (req) => {
     const userRole = roleData?.role;
     logStep("User role fetched", { role: userRole });
 
-    // Platform admins get full access (command tier)
     if (userRole === 'platform_admin') {
       logStep("Platform admin detected, granting command access");
       return new Response(JSON.stringify({
@@ -125,7 +130,6 @@ serve(async (req) => {
       });
     }
 
-    // Get user's profile to find company_id
     const { data: profileData } = await supabaseClient
       .from('profiles')
       .select('company_id')
@@ -135,7 +139,6 @@ serve(async (req) => {
     let companyId = profileData?.company_id;
     let companyData = null;
 
-    // For customers, look up their associated company
     if (userRole === 'customer') {
       logStep("Customer role detected, looking up associated company");
       
@@ -152,7 +155,6 @@ serve(async (req) => {
       }
     }
 
-    // Get company data if we have a company_id
     if (companyId) {
       const { data: company } = await supabaseClient
         .from('companies')
@@ -168,7 +170,6 @@ serve(async (req) => {
       });
     }
 
-    // Check trial status
     let inTrial = false;
     let trialEndsAt = null;
     if (companyData?.trial_ends_at) {
@@ -179,7 +180,6 @@ serve(async (req) => {
       logStep("Trial status checked", { inTrial, trialEndsAt });
     }
 
-    // If in trial, return full access (command tier)
     if (inTrial) {
       logStep("Company in active trial, granting command access");
       return new Response(JSON.stringify({
@@ -194,7 +194,6 @@ serve(async (req) => {
       });
     }
 
-    // For employees and customers: inherit company's tier without Stripe lookup
     if (userRole === 'employee' || userRole === 'customer') {
       const tier = companyData?.subscription_tier || 'free';
       const isSubscribed = tier !== 'free';
@@ -214,19 +213,16 @@ serve(async (req) => {
       });
     }
 
-    // For company_admin: Check Stripe subscription using company's stripe_customer_id
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
     let customerId = companyData?.stripe_customer_id;
     
-    // If no stripe_customer_id on company, try to find by user email (legacy)
     if (!customerId) {
       const customers = await stripe.customers.list({ email: user.email, limit: 1 });
       if (customers.data.length > 0) {
         customerId = customers.data[0].id;
         logStep("Found Stripe customer by email (legacy)", { customerId });
         
-        // Update company with stripe_customer_id for future lookups
         if (companyId) {
           await supabaseClient
             .from('companies')
@@ -273,16 +269,13 @@ serve(async (req) => {
         currentPeriodEnd: subscription.current_period_end,
       });
       
-      // Safely handle the subscription end date
       if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
         subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       }
       
-      // Get price ID and map to tier
       priceId = subscription.items?.data?.[0]?.price?.id;
       tier = priceId ? (PRICE_TO_TIER[priceId] || companyData?.subscription_tier || "command") : (companyData?.subscription_tier || "command");
       
-      // Update company's subscription_tier in database
       if (companyId && tier) {
         const { error: updateError } = await supabaseClient
           .from('companies')
@@ -321,7 +314,6 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-subscription", { message: errorMessage });
     
-    // Return 401 for auth errors instead of 500
     const isAuthError = errorMessage.includes('Authentication error') || 
                         errorMessage.includes('session') || 
                         errorMessage.includes('token') ||
