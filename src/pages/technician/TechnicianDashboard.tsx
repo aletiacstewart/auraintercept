@@ -45,6 +45,7 @@ export default function TechnicianDashboard() {
   const { shouldShowWelcome, markTourCompleted, isLoading: onboardingLoading } = useOnboardingState();
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Fetch profile and company for welcome modal
   const { data: profileData } = useQuery({
