@@ -52,8 +52,8 @@ export default function TermsOfService() {
             
             <h3 className="text-xl font-semibold mt-4 mb-3">Billing & Subscription</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Subscription plans range from $197 to $697 per month across 7 tiers (Aura Starter through Aura Command).</li>
-              <li>Employee accounts vary by tier (2–50 included). Additional employees: $25/month per 10 employees.</li>
+              <li>Subscription plans range from $297 to $697 per month across 3 tiers (Aura Connect, Aura Performance, and Aura Command).</li>
+              <li>Employee accounts vary by tier (5–Unlimited included). Additional employees: $25/month per 10 employees.</li>
               <li>New accounts receive a 30-day free trial with full platform access.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>

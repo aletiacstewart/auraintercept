@@ -726,27 +726,11 @@ export default function Subscription() {
                     <tr className="border-b border-border bg-muted/50">
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Starter</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$197/mo</div>
-                      </th>
-                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Sched</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$397/mo</div>
-                      </th>
-                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Growth</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$597/mo</div>
-                      </th>
-                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Biz</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$797/mo</div>
+                        <div>Connect</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$297/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
-                        <div className="text-primary">Field Ops</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,497/mo</div>
-                      </th>
-                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Perf</div>
+                        <div className="text-primary">Performance</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
@@ -759,7 +743,7 @@ export default function Subscription() {
                     {sections.map((section) => (
                       <>
                         <tr key={`section-${section.title}`} className="bg-muted/30">
-                          <td colSpan={8} className="py-1.5 px-4 font-semibold text-primary">
+                          <td colSpan={4} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
                           </td>
                         </tr>
@@ -772,12 +756,8 @@ export default function Subscription() {
                             <Tooltip key={feature.name}>
                               <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                                {renderFeatureValue(feature.starter, false, feature.name)}
-                                {renderFeatureValue(feature.scheduling, false, feature.name)}
-                                {renderFeatureValue(feature.growth, false, feature.name)}
-                                {renderFeatureValue(feature.business, false, feature.name)}
-                                {renderFeatureValue(feature.fieldOps, true, feature.name)}
-                                {renderFeatureValue(feature.performance, false, feature.name)}
+                                {renderFeatureValue(feature.connect, false, feature.name)}
+                                {renderFeatureValue(feature.performance, true, feature.name)}
                                 {renderFeatureValue(feature.command, false, feature.name)}
                               </tr>
                             </Tooltip>
