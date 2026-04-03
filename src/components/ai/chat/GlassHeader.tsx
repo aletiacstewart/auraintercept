@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, Mic, ArrowLeft, Radio } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import aiCircleLogo from '@/assets/aura-intercept-logo.png';
 import { formatUptime } from '@/hooks/useCompanyUptime';
