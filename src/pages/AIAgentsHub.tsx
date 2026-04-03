@@ -104,6 +104,22 @@ const CATEGORY_INFO: Record<string, {
   },
 };
 
+// Core agents that should always be visible & recommended first
+const CORE_AGENT_TYPES = new Set(['triage', 'customer_journey', 'dispatch', 'business_finance']);
+
+// ROI hint text per agent
+const AGENT_ROI_HINTS: Record<string, string> = {
+  triage: 'Handles 60-70% of first contacts',
+  customer_journey: 'Saves ~8 hrs/week on follow-ups',
+  dispatch: 'Saves ~10 hrs/week on scheduling',
+  business_finance: 'Saves ~6 hrs/week on quoting & invoicing',
+  outreach: 'Boosts lead conversion by ~25%',
+  creative_content: 'Creates content 10× faster',
+  web_presence: 'Keeps your site fresh automatically',
+  field_navigation: 'Reduces drive time by ~15%',
+  analytics_intelligence: 'Surfaces insights you'd miss',
+  admin: 'Automates routine admin tasks',
+};
 
 const PHASE_LABELS: Record<number, string> = {
   1: 'Phase 1',
