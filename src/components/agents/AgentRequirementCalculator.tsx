@@ -40,12 +40,10 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   analytics: { name: 'Analytics Agent', description: 'Data analysis', icon: '📊' },
 };
 
-// 5-TIER STRUCTURE
+// 3-TIER STRUCTURE
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
   connect: 'bg-cyan-500',
-  growth: 'bg-rose-500',
-  field_ops: 'bg-amber-600',
   performance: 'bg-sky-600',
   command: 'bg-violet-600',
 };
@@ -53,8 +51,6 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
   connect: 297,
-  growth: 597,
-  field_ops: 1497,
   performance: 497,
   command: 697,
 };
