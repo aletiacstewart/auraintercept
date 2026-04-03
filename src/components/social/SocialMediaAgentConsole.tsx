@@ -191,21 +191,35 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         <>
           <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
             {showWelcome ? (
-              <WelcomeScreen
-                companyName={company?.name || 'Social Media'}
-                title="Social Media Ops"
-                subtitle="Create content for all your platforms, schedule posts, or ask me anything about your social strategy."
-                actions={QUICK_ACTIONS}
-                onAction={handleQuickAction}
-                consoleType="social"
-                headerAction={
+              <div className="space-y-6 animate-fade-in">
+                {/* Hero: Multi-Channel Generator */}
+                <div className="text-center space-y-2 pt-2">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pink-500/10 mb-1">
+                    <Share2 className="h-5 w-5 text-pink-400" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-foreground">Create Content for All Platforms</h2>
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                    Generate posts, captions, and visuals for every channel in one click — or ask Aura anything about your social strategy.
+                  </p>
+                </div>
+
+                {/* Prominent Multi-Channel Generator */}
+                {effectiveCompanyId && <MultiChannelGenerator />}
+
+                {/* Secondary actions */}
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => handleQuickAction('View saved drafts and posts', 'my-posts')}
+                    className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+                  >
+                    View saved drafts & posts
+                  </button>
+                  <span className="text-muted-foreground/40">·</span>
                   <IndustryTemplateSelector
-                    onSelectTemplate={(template) => {
-                      setInputValue(template);
-                    }}
+                    onSelectTemplate={(template) => setInputValue(template)}
                   />
-                }
-              />
+                </div>
+              </div>
             ) : (
               <div className="space-y-4">
                 {/* Content Engine */}
