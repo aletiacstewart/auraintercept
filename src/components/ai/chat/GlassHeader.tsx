@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, Mic, ArrowLeft, Radio } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import aiCircleLogo from '@/assets/aura-intercept-logo.png';
 import { formatUptime } from '@/hooks/useCompanyUptime';
@@ -80,14 +81,21 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         {/* LEFT: Logo + Name */}
         <div className="flex items-center gap-2 min-w-0">
           {showBackButton && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
-              onClick={onBackClick}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
+                    onClick={onBackClick}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Go back</p></TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
 
           <div className="relative shrink-0">
@@ -166,50 +174,62 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
             </>
           )}
 
+          <TooltipProvider delayDuration={200}>
           {showPhone && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
-              onClick={onPhoneClick}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.color = 'hsl(84,100%,60%)';
-                el.style.background = 'rgba(100,220,50,0.12)';
-                el.style.boxShadow = '0 0 14px rgba(100,220,50,0.45)';
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.color = '';
-                el.style.background = '';
-                el.style.boxShadow = '';
-              }}
-            >
-              <Phone className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
+                  onClick={onPhoneClick}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = 'hsl(84,100%,60%)';
+                    el.style.background = 'rgba(100,220,50,0.12)';
+                    el.style.boxShadow = '0 0 14px rgba(100,220,50,0.45)';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = '';
+                    el.style.background = '';
+                    el.style.boxShadow = '';
+                  }}
+                >
+                  <Phone className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom"><p>Start phone call</p></TooltipContent>
+            </Tooltip>
           )}
           {showVoice && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
-              onClick={onVoiceClick}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.color = 'hsl(292,100%,75%)';
-                el.style.background = 'rgba(180,50,255,0.12)';
-                el.style.boxShadow = '0 0 14px rgba(180,50,255,0.45)';
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.color = '';
-                el.style.background = '';
-                el.style.boxShadow = '';
-              }}
-            >
-              <Mic className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
+                  onClick={onVoiceClick}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = 'hsl(292,100%,75%)';
+                    el.style.background = 'rgba(180,50,255,0.12)';
+                    el.style.boxShadow = '0 0 14px rgba(180,50,255,0.45)';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = '';
+                    el.style.background = '';
+                    el.style.boxShadow = '';
+                  }}
+                >
+                  <Mic className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom"><p>Voice input</p></TooltipContent>
+            </Tooltip>
           )}
+          </TooltipProvider>
         </div>
       </div>
     </div>
