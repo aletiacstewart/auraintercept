@@ -591,7 +591,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Intelligence Network</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              24 Smart AI Agents
+              10 AI Operatives
             </h2>
             <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
           </div>
