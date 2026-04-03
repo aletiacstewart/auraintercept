@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Plus, FileText, Eye, Send, Check, X, Search, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Quote {
   id: string;
@@ -233,9 +234,15 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
                 </TableRow>
               ) : filteredQuotes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6 text-foreground/60">
-                    <FileText className="w-6 h-6 mx-auto mb-2 opacity-50" />
-                    <span className="text-sm">No quotes found</span>
+                  <TableCell colSpan={5}>
+                    <AuraEmptyState
+                      icon={FileText}
+                      title="No quotes yet"
+                      description="Your first quote is just a command away — let Aura draft one for you."
+                      actionLabel="Let Aura create a quote"
+                      onAction={() => setIsAddOpen(true)}
+                      compact
+                    />
                   </TableCell>
                 </TableRow>
               ) : (

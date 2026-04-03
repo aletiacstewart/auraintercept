@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Appointment {
   id: string;
@@ -411,10 +412,12 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
         ) : searchLoading ? (
           <div className="p-4 text-center text-sm text-muted-foreground">Searching...</div>
         ) : appointments.length === 0 ? (
-          <div className="p-6 text-center text-sm text-muted-foreground">
-            <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            No appointments found
-          </div>
+          <AuraEmptyState
+            icon={MapPin}
+            title="No appointments found"
+            description="Appointments will show up here once they're booked. Try asking Aura to schedule one."
+            compact
+          />
         ) : (
           <div className="divide-y">
             {appointments.map((apt) => (

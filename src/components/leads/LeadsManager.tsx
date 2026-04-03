@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { LeadScoreBadge } from '@/components/leads';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Lead {
   id: string;
@@ -221,9 +222,14 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
           {isLoading ? (
             <div className="text-center py-6 text-foreground/70 text-sm">Loading...</div>
           ) : filteredLeads.length === 0 ? (
-            <div className="text-center py-6 text-foreground/70 text-sm">
-              No leads found.
-            </div>
+            <AuraEmptyState
+              icon={Users}
+              title="No leads yet"
+              description="Leads from your website, calls, and campaigns will appear here. Add your first one now."
+              actionLabel="Add a new lead"
+              onAction={() => setIsAddLeadOpen(true)}
+              compact
+            />
           ) : (
             <div className="space-y-2">
               {filteredLeads.slice(0, 6).map((lead) => {
