@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Plus, FileText, Eye, Send, Check, X, Search, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Quote {
   id: string;

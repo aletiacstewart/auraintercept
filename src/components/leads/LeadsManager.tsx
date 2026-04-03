@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { LeadScoreBadge } from '@/components/leads';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Lead {
   id: string;

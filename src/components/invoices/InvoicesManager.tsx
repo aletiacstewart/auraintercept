@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Plus, Receipt, Eye, Send, Check, Search, Trash2, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Invoice {
   id: string;

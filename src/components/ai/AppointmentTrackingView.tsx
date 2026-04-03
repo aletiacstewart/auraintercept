@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Appointment {
   id: string;
