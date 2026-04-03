@@ -273,7 +273,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
         </div>
 
         {/* ── CENTER: Content ── */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-background/95">
           {children}
         </div>
 
