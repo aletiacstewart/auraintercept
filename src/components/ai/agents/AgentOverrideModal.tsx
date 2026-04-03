@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { DecisionModeBadge, DecisionMode } from './DecisionModeBadge';
 import { ConfidenceIndicator } from './ConfidenceIndicator';
-import { AlertTriangle, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Clock, Loader2, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -206,9 +206,25 @@ export const AgentOverrideModal: React.FC<AgentOverrideModalProps> = ({
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Confirm Override
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            className={
+              selectedAction === 'approve' 
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+                : selectedAction === 'reject' 
+                ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground' 
+                : ''
+            }
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <ShieldCheck className="h-4 w-4 mr-2" />
+            )}
+            {selectedAction === 'approve' ? 'Approve & Execute'
+              : selectedAction === 'reject' ? 'Reject Decision'
+              : 'Put on Hold'}
           </Button>
         </DialogFooter>
       </DialogContent>

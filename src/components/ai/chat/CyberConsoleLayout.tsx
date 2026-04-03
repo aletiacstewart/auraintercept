@@ -171,13 +171,12 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
 
         {/* ── LEFT PANEL: Active Agents ── */}
         <div
-          className="hidden lg:flex flex-col w-56 shrink-0 border-r overflow-y-auto"
-          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+          className="hidden lg:flex flex-col w-56 shrink-0 border-r border-border/30 overflow-y-auto bg-card/95"
         >
           {/* Panel Header */}
-          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Active Agents</span>
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-border/20">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Active Agents</span>
           </div>
 
           {/* Agent Cards */}
@@ -221,15 +220,15 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                         <AgentIcon className={`h-3.5 w-3.5 ${colors.text}`} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-white/90 truncate">{agent.name}</p>
-                        <p className="text-[9px] text-white/40 truncate max-w-[90px]">{agent.description}</p>
+                        <p className="text-[11px] font-semibold text-foreground/90 truncate">{agent.name}</p>
+                        <p className="text-[9px] text-muted-foreground truncate max-w-[90px]">{agent.description}</p>
                       </div>
                     </div>
                     <div
                       className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ml-1 transition-all duration-200"
                       style={
                         agent.status === 'off'
-                          ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
+                          ? { color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted) / 0.5)' }
                           : isActive
                           ? { color: 'rgb(0,229,255)', background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.3)' }
                           : { color: 'rgb(250,204,21)', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)' }
@@ -239,13 +238,13 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-1">
-                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <div className="text-center p-1 rounded bg-muted/30">
                       <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric1Value}</p>
-                      <p className="text-[8px] text-white/30 uppercase">{agent.metric1Label}</p>
+                      <p className="text-[8px] text-muted-foreground uppercase">{agent.metric1Label}</p>
                     </div>
-                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <div className="text-center p-1 rounded bg-muted/30">
                       <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric2Value}</p>
-                      <p className="text-[8px] text-white/30 uppercase">{agent.metric2Label}</p>
+                      <p className="text-[8px] text-muted-foreground uppercase">{agent.metric2Label}</p>
                     </div>
                   </div>
                 </div>
@@ -254,19 +253,19 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
           </div>
 
           {/* Session Metrics Footer */}
-          <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session Metrics</p>
+          <div className="p-3 border-t border-border/20">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2">Session Metrics</p>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Session Status</span>
-                <span className="text-[10px] font-bold text-cyan-400">{metrics.status}</span>
+                <span className="text-[10px] text-muted-foreground">Session Status</span>
+                <span className="text-[10px] font-bold text-primary">{metrics.status}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Avg Response</span>
+                <span className="text-[10px] text-muted-foreground">Avg Response</span>
                 <span className="text-[10px] font-bold text-orange-400">{metrics.avgResponse}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Satisfaction</span>
+                <span className="text-[10px] text-muted-foreground">Satisfaction</span>
                 <span className="text-[10px] font-bold text-emerald-400">{metrics.satisfaction}</span>
               </div>
             </div>
@@ -274,7 +273,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
         </div>
 
         {/* ── CENTER: Content ── */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-background/95">
           {children}
         </div>
 
