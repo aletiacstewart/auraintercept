@@ -1,65 +1,115 @@
 
 
-# Phase 4E (Customer Portal Admin Preview) + Phase 2A/2C (Templates DB + Post-Setup Redirect) + Batch 2 Empty States
+# 3-Tier Pricing Consolidation: Deep Audit & Migration Plan
 
-## Phase 4E — Customer Portal Admin Preview Pane
+## The Problem
 
-**Goal**: Add a live widget preview alongside the admin chat so admins can see what customers experience.
+The platform has **7 different tier names and prices** scattered across 30+ files, but the correct model is **3 tiers only**:
 
-**Changes**:
-- **`CustomerPortalConsole.tsx`**: Add a "Preview" tab alongside "Customer View" and "Debug" — or add a split-pane toggle (like the Smart Website Manager pattern). When toggled, show the `WidgetPreview` iframe side-by-side with the existing `AIAgentConsole`.
-- Reuse the existing `WidgetPreview` component (already fetches company slug and renders the `/chat/{slug}` iframe).
-- Desktop only — on mobile viewports, hide the preview toggle.
+| Tier | Price | Operatives | Consoles | Employees |
+|------|-------|-----------|----------|-----------|
+| **Aura Connect** | $297/mo | 5 (triage, customer_journey, outreach, creative_content, web_presence) | 4 (Customer Portal, Marketing/Sales, Social Media, Creative/Web) | 5 |
+| **Aura Performance** | $497/mo | 8 (+ dispatch, field_navigation, business_finance) | 6 (+ Field Ops, Business Mgmt) | 15 |
+| **Aura Command** | $697/mo | All 10 (+ admin, analytics_intelligence) | All 7 + AI Operatives Hub | Unlimited |
 
----
-
-## Phase 2A — Save Business Templates to DB
-
-**Goal**: When the Fast Start wizard completes, persist the selected template's services and hours to the database.
-
-**Changes**:
-- **`FastStartWizard.tsx` → `handleLaunch`**: After updating the company record, insert the template's pre-loaded services into the `services` table (if it exists) using the template's `services` array. Also save the business type selection to the company record (e.g., an `industry` or `business_type` column, or store in `ai_agent_prompt`).
+**Tiers to REMOVE entirely**: Aura Starter ($197), Aura Connect ($397 — old price), Aura Growth ($597), Aura Presence ($797), Aura Logistics ($1,497)
 
 ---
 
-## Phase 2C — Post-Setup Redirect with Sample Command
+## Files Requiring Changes (Grouped by Area)
 
-**Goal**: After completing Fast Start, redirect to the dashboard with a contextual first command pre-filled.
+### 1. Source of Truth Config Files
 
-**Changes**:
-- **`FastStartWizard.tsx` → `handleLaunch`**: Navigate to `/dashboard` with a query param like `?firstCommand=true` or pass state via `navigate`.
-- **Aura Command Center** (main dashboard): Detect the `firstCommand` param and auto-populate the chat input with a contextual starter like "Show me what you can do" or a template-specific prompt (e.g., "Create a sample HVAC maintenance quote").
+| File | Change |
+|------|--------|
+| `src/lib/subscriptionAgentConfig.ts` | Remove `growth` and `field_ops` tiers from `SubscriptionTier` type, `TIER_AGENT_CONFIG`, `TIER_HIERARCHY`, `TIER_FEATURE_CONFIG`. Update `connect` to include 5 agents + 4 consoles at $297. Keep legacy maps pointing old names → 3 canonical tiers. |
+| `src/lib/documentationConfig.ts` | Remove `aura_growth` and `single_point` tier configs. Rename `aura_connect` price to 297, update operatives/consoles/employees. Rename `multi_track` → keep as performance key. Update `TIER_ORDER` to 3 entries. Update `LEGACY_TIER_ID_MAP`. |
+
+### 2. Edge Functions (Backend)
+
+| File | Change |
+|------|--------|
+| `supabase/functions/check-subscription/index.ts` | Map all old price IDs to 3 canonical tiers (connect, performance, command). Remove "7-TIER" comments. Map starter/scheduling/growth/business/field_ops → connect or performance. |
+| `supabase/functions/create-checkout/index.ts` | Reduce to 3 tier entries with correct Stripe price IDs ($297, $497, $697). Keep legacy ID aliases pointing to canonical 3. |
+| `supabase/functions/landing-chat/index.ts` | Update system prompt to describe 3 tiers only. |
+
+### 3. Auth & Signup
+
+| File | Change |
+|------|--------|
+| `src/pages/Auth.tsx` | Replace 7-tier selector with 3-tier selector (Connect $297, Performance $497, Command $697). Remove all industry-specific tier grouping. Update `selectedTier` type. |
+
+### 4. Subscription & Pricing Pages
+
+| File | Change |
+|------|--------|
+| `src/pages/Subscription.tsx` | Replace 7-tier `TIERS` array with 3. Rebuild comparison table for 3 columns. Update FAQ section. |
+| `src/pages/DemoAccounts.tsx` | Reduce demo accounts to 3 tiers + platform admin. Update tier features. |
+
+### 5. Homepage
+
+| File | Change |
+|------|--------|
+| `src/pages/Index.tsx` | Change "24 Smart AI Agents" → "10 AI Operatives". Update any pricing references on the landing page. |
+
+### 6. Help & Documentation
+
+| File | Change |
+|------|--------|
+| `src/components/help/AIHelpCenter.tsx` | Update embedded knowledge base text from 7-tier to 3-tier. |
+| `src/pages/Help.tsx` | Update FAQ references from 24 agents / 7 tiers to 10 operatives / 3 tiers. |
+| `src/pages/PlatformGuides.tsx` | Update tier listing in guide content. |
+| `src/pages/ExportDocumentation.tsx` | Update "7-Tier" references to "3-Tier". |
+| `src/pages/TermsOfService.tsx` | Update "$197 to $697 across 7 tiers" → "$297 to $697 across 3 tiers". |
+| `src/pages/Contact.tsx` | Update tier selector dropdown from 7 to 3 options. |
+
+### 7. PDF Documentation Components
+
+| File | Change |
+|------|--------|
+| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | Rewrite all tier listings to 3-tier model. |
+| `src/components/documentation/PlatformFAQPDF.tsx` | Update FAQ answers to 3-tier model. |
+| `src/components/documentation/PricingSummaryPDF.tsx` | Rebuild entire PDF for 3 tiers instead of 7. |
+| `src/components/documentation/SalesPitchDataPDF.tsx` | Update ROI calculators and tier cards to 3. |
+| `src/components/documentation/BrandAssetGuidePDF.tsx` | Remove extra tier color swatches, keep 3. |
+| `src/components/documentation/WebsiteCopyPDF.tsx` | Rewrite copy blocks for 3 tiers. |
+| `src/components/documentation/SocialMediaContentPackPDF.tsx` | Update pricing references. |
+
+### 8. Audit System
+
+| File | Change |
+|------|--------|
+| `src/components/audit/types.ts` | Reduce `TierType` from 7 to 3. Update tier configs, scores, and question mappings. |
+| `src/components/audit/AgentOpportunityAudit.tsx` | Update tier scoring to 3 tiers. |
+| `src/components/audit/AuditResults.tsx` | Update comparison table to 3 tiers. |
+
+### 9. Other UI References
+
+| File | Change |
+|------|--------|
+| `src/pages/TalkToAura.tsx` | Update `tierLabels` map to 3 tiers. |
+| `src/pages/VideoPromptsPage.tsx` | Update "24 AI" references to "10 AI operatives". |
+| `src/pages/IntegrationDocs.tsx` | Update tier references. |
+| `src/components/landing/CompetitiveDifferentiation.tsx` | Update "From $397" → "From $297". |
 
 ---
 
-## Batch 2 Empty States
+## Implementation Strategy
 
-**Goal**: Replace plain text/icon empty states in remaining components with the themed `AuraEmptyState` component.
+Due to the sheer volume (~30+ files, thousands of lines), this will be executed in **4 batches**:
 
-**Components to update** (each is a small inline replacement):
+**Batch 1 — Config & Backend** (Critical path): `subscriptionAgentConfig.ts`, `documentationConfig.ts`, `check-subscription`, `create-checkout`, `landing-chat`
 
-| Component | File | Empty State Update |
-|---|---|---|
-| `CustomersManager` | `src/components/businessops/CustomersManager.tsx` | Replace `<Users>` div with `AuraEmptyState` |
-| `ConversationHistoryBrowser` | `src/components/ai/agents/ConversationHistoryBrowser.tsx` | Replace `<MessageSquare>` div with `AuraEmptyState` |
-| `CommunicationLogs` | `src/components/employee/CommunicationLogs.tsx` | Add `AuraEmptyState` for empty log list |
-| `ReminderHistoryLog` | `src/components/company/ReminderHistoryLog.tsx` | Replace `<History>` div with `AuraEmptyState` |
-| `DigestDeliveryHistory` | `src/components/company/DigestDeliveryHistory.tsx` | Add `AuraEmptyState` |
-| `BillingLookupForm` | `src/components/billing/forms/BillingLookupForm.tsx` | Add `AuraEmptyState` for no results |
-| `BillingAgentConsole` | `src/components/billing/BillingAgentConsole.tsx` | Add `AuraEmptyState` |
-| `CustomerPreferencesManager` | `src/components/company/CustomerPreferencesManager.tsx` | Add `AuraEmptyState` |
-| `BookingAgentConsole` | `src/components/booking/BookingAgentConsole.tsx` | Replace search no-results div |
-| `PlatformAnalytics` | `src/components/analytics/PlatformAnalytics.tsx` | Add `AuraEmptyState` for empty chart data |
-| `FinancialPulseDashboard` | `src/components/businessops/FinancialPulseDashboard.tsx` | Add `AuraEmptyState` |
+**Batch 2 — Core UI Pages**: `Auth.tsx`, `Subscription.tsx`, `Index.tsx`, `DemoAccounts.tsx`, `Help.tsx`, `Contact.tsx`, `TermsOfService.tsx`
 
-Each follows the same pattern: import `AuraEmptyState`, replace the inline `<div>` with `<AuraEmptyState icon={X} title="..." description="..." />`, with optional `actionLabel`/`onAction` where appropriate.
+**Batch 3 — PDF Documentation**: All 7 PDF component files + `ExportDocumentation.tsx` + `PlatformGuides.tsx`
 
----
+**Batch 4 — Audit & Misc**: Audit system files, `TalkToAura.tsx`, `VideoPromptsPage.tsx`, `AIHelpCenter.tsx`, `CompetitiveDifferentiation.tsx`, `IntegrationDocs.tsx`
 
-## Technical Summary
-
-- **Files created**: None
-- **Files modified**: ~14 files total
-- **No database migrations needed** (business type can be stored in existing `ai_agent_prompt` field)
-- **No new dependencies**
+### Key Decisions
+- **Agent count**: 10 operatives (not 24) across the platform
+- **Console count**: 7 consoles (unchanged)
+- **Legacy Stripe price IDs**: Keep in `check-subscription` for backward compatibility with existing subscribers, but map them all to the 3 canonical tiers
+- **"24 Smart AI Agents"**: Replace with "10 AI Operatives" on homepage and all marketing materials
+- **Annual pricing**: Connect $2,970/yr, Performance $4,970/yr, Command $6,970/yr
 
