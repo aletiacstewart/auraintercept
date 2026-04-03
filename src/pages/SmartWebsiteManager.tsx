@@ -1088,6 +1088,26 @@ export default function SmartWebsiteManager() {
             )}
           </TabsContent>
         </Tabs>
+        </div>
+
+        {/* Live Preview Pane */}
+        {showLivePreview && websiteUrl && (
+          <div className="w-[420px] shrink-0 sticky top-0 h-[calc(100vh-12rem)] flex flex-col rounded-lg border border-border/50 overflow-hidden bg-card">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
+              <span className="text-xs font-medium text-muted-foreground">Live Preview</span>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={refreshPreview}>
+                <RefreshCcw className="h-3 w-3" />
+              </Button>
+            </div>
+            <iframe
+              key={previewKey}
+              src={websiteUrl}
+              className="flex-1 w-full bg-white"
+              title="Website Preview"
+            />
+          </div>
+        )}
+        </div>
 
         {/* Visitor Limit Modal */}
         <VisitorLimitModal
