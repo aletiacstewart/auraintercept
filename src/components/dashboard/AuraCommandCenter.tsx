@@ -77,7 +77,7 @@ export function AuraCommandCenter() {
               size="icon"
               variant="ghost"
               className="h-12 w-12 shrink-0 text-muted-foreground hover:text-primary"
-              onClick={toggleListening}
+              onClick={toggleVoiceMode}
               aria-label={isListening ? 'Stop voice' : 'Start voice'}
             >
               {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5" />}
