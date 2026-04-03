@@ -134,15 +134,97 @@ export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
   performance: 15,
   command: 50,
 };
-    consoleCount: 0,
-    highlights: [
-      'AI Receptionist (Triage)',
-      'Message Aura (Text)',
-      'Talk to Aura (Voice)',
-      'Smart Link Sharing',
-      'Knowledge Base for FAQs',
+
+type FeatureValue = 'check' | 'x' | string;
+
+interface FeatureRow {
+  name: string;
+  connect: FeatureValue;
+  performance: FeatureValue;
+  command: FeatureValue;
+}
+
+interface FeatureSection {
+  title: string;
+  features: FeatureRow[];
+}
+
+const sections: FeatureSection[] = [
+  {
+    title: 'AI Operatives (5 / 8 / 10)',
+    features: [
+      { name: 'AI Receptionist (Triage)', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Customer Journey (Booking, Follow-up, Review)', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Outreach (Campaign, Lead, Marketing)', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative Content Agent', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Dispatch Agent', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Field Navigation (Route, ETA, Check-in)', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Business Finance (Quote, Invoice, Inventory)', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Admin Agent', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Analytics Intelligence (Insights, Performance, Revenue, Forecast)', connect: 'x', performance: 'x', command: 'check' },
     ],
   },
+  {
+    title: 'Control Centers (4 / 6 / 7+)',
+    features: [
+      { name: 'Customer Portal Console', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Marketing & Sales Console', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative & Web Presence Console', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Field Operations Console', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Business Management Console', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Analytics & Reports Console', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'AI Operatives Hub', connect: 'x', performance: 'x', command: 'check' },
+    ],
+  },
+  {
+    title: 'Communication Channels',
+    features: [
+      { name: 'Message Aura (Text)', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Talk to Aura (Voice)', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Email Reminders', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'SMS Reminders', connect: 'check', performance: 'check', command: 'check' },
+    ],
+  },
+  {
+    title: 'Platform Limits & Features',
+    features: [
+      { name: 'Appointments', connect: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
+      { name: 'Employee Accounts', connect: '5 included', performance: '15 included', command: 'Unlimited' },
+      { name: 'Additional Employees', connect: '$25/10 employees', performance: '$25/10 employees', command: 'Included' },
+      { name: 'White-Label Branding', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Embeddable Chat Widget', connect: 'check', performance: 'check', command: 'check' },
+    ],
+  },
+  {
+    title: 'Integration & Support',
+    features: [
+      { name: 'Calendar Sync', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'API Access', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Priority Support', connect: 'x', performance: 'x', command: 'check' },
+    ],
+  },
+  {
+    title: 'Required 3rd Party Integrations',
+    features: [
+      { name: 'Resend (Email)', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Voice)', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'A2P 10DLC Compliance', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', connect: 'Optional', performance: 'Required', command: 'Required' },
+      { name: 'Social Media Accounts', connect: 'Optional', performance: 'Required', command: 'Required' },
+    ],
+  },
+  {
+    title: 'Pricing',
+    features: [
+      { name: 'Monthly Price', connect: '$297', performance: '$497', command: '$697' },
+      { name: 'Annual Price', connect: '$2,970/year', performance: '$4,970/year', command: '$6,970/year' },
+      { name: 'Annual Savings', connect: 'Save $594', performance: 'Save $994', command: 'Save $1,394' },
+    ],
+  },
+];
   {
     id: 'aura_flow',
     name: 'Aura Connect',
