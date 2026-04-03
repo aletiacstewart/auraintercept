@@ -81,14 +81,21 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         {/* LEFT: Logo + Name */}
         <div className="flex items-center gap-2 min-w-0">
           {showBackButton && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
-              onClick={onBackClick}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
+                    onClick={onBackClick}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom"><p>Go back</p></TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
 
           <div className="relative shrink-0">
