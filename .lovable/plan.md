@@ -1,115 +1,67 @@
 
 
-# 3-Tier Pricing Consolidation: Deep Audit & Migration Plan
+# Batch 2 — Core UI Pages (3-Tier Consolidation)
 
-## The Problem
-
-The platform has **7 different tier names and prices** scattered across 30+ files, but the correct model is **3 tiers only**:
-
-| Tier | Price | Operatives | Consoles | Employees |
-|------|-------|-----------|----------|-----------|
-| **Aura Connect** | $297/mo | 5 (triage, customer_journey, outreach, creative_content, web_presence) | 4 (Customer Portal, Marketing/Sales, Social Media, Creative/Web) | 5 |
-| **Aura Performance** | $497/mo | 8 (+ dispatch, field_navigation, business_finance) | 6 (+ Field Ops, Business Mgmt) | 15 |
-| **Aura Command** | $697/mo | All 10 (+ admin, analytics_intelligence) | All 7 + AI Operatives Hub | Unlimited |
-
-**Tiers to REMOVE entirely**: Aura Starter ($197), Aura Connect ($397 — old price), Aura Growth ($597), Aura Presence ($797), Aura Logistics ($1,497)
+## Summary
+Update 7 UI files to remove all legacy 7-tier references and align with the canonical 3-tier model (Connect $297, Performance $497, Command $697).
 
 ---
 
-## Files Requiring Changes (Grouped by Area)
+## Changes by File
 
-### 1. Source of Truth Config Files
+### 1. `src/pages/Auth.tsx`
+- **Line 56**: Change `selectedTier` type from `'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'` to `'connect' | 'performance' | 'command'`
+- **Line 57**: Update comment from "7-tier" to "3-tier"
+- **Lines 709**: Change "all 24 AI agents" → "all 10 AI operatives"
+- **Lines 725-792**: Replace the 7-tier selector (two groups: "Industry-Specific Packages" + "General Business Plans") with 3 simple rows:
+  - Connect ($297) — Solo operators, salons, consultants
+  - Performance ($497) — HVAC, plumbing, field service — marked Popular
+  - Command ($697) — Multi-location, enterprise
+- **Lines 794-809**: Update the selected tier display to only reference 3 tiers
+- **Lines 841-843**: Update 3rd-party cost notes (remove "Logistics+" references, use "Performance+" instead; remove "Presence+" use "Connect+")
 
-| File | Change |
-|------|--------|
-| `src/lib/subscriptionAgentConfig.ts` | Remove `growth` and `field_ops` tiers from `SubscriptionTier` type, `TIER_AGENT_CONFIG`, `TIER_HIERARCHY`, `TIER_FEATURE_CONFIG`. Update `connect` to include 5 agents + 4 consoles at $297. Keep legacy maps pointing old names → 3 canonical tiers. |
-| `src/lib/documentationConfig.ts` | Remove `aura_growth` and `single_point` tier configs. Rename `aura_connect` price to 297, update operatives/consoles/employees. Rename `multi_track` → keep as performance key. Update `TIER_ORDER` to 3 entries. Update `LEGACY_TIER_ID_MAP`. |
+### 2. `src/pages/Subscription.tsx`
+- **Lines 71-203**: Replace the 7-entry `TIERS` array with 3 entries:
+  - `{ id: 'connect', name: 'Aura Connect', monthlyPrice: '$297', annualPrice: '$2,970', annualSavings: 'Save $594', agentCount: 5, consoleCount: 4, ... }`
+  - `{ id: 'performance', name: 'Aura Performance', monthlyPrice: '$497', annualPrice: '$4,970', annualSavings: 'Save $994', agentCount: 8, consoleCount: 6, popular: true, ... }`
+  - `{ id: 'command', name: 'Aura Command', monthlyPrice: '$697', annualPrice: '$6,970', annualSavings: 'Save $1,394', agentCount: 10, consoleCount: 7, ... }`
+- **Lines 206-214**: Replace `TIER_EMPLOYEE_LIMITS` with 3 entries: `connect: 5, performance: 15, command: 50`
+- **Lines 216-323**: Replace the 7-column `FeatureRow` interface and `sections` array with a 3-column structure (`connect`, `performance`, `command`). Rebuild all feature comparison rows for 3 tiers with correct agent/console gating per the canonical model.
+- **Lines 635**: Change grid from `lg:grid-cols-4` to `lg:grid-cols-3`
+- **Lines 726-756**: Replace 7-column table headers with 3 columns (Connect $297, Performance $497, Command $697)
+- **Lines 758-789**: Update table body rendering to use 3 columns instead of 7
 
-### 2. Edge Functions (Backend)
+### 3. `src/pages/Index.tsx`
+- **Line 418**: Change "up to 24 Smart AI Agents" → "up to 10 AI Operatives"
+- **Line 593-596**: Change heading "24 Smart AI Agents" → "10 AI Operatives" and update subtitle
+- **Line 867**: Change "7 AI Operatives" → "8 AI Operatives" (Performance tier has 8)
+- **Line 1049**: Change "Required for: Logistics, Performance, Command" → "Required for: Performance, Command"
+- **Line 1060**: Change "Required for: Presence, Performance, Command • Optional for: Growth, Logistics" → "Required for: Performance, Command • Optional for: Connect"
 
-| File | Change |
-|------|--------|
-| `supabase/functions/check-subscription/index.ts` | Map all old price IDs to 3 canonical tiers (connect, performance, command). Remove "7-TIER" comments. Map starter/scheduling/growth/business/field_ops → connect or performance. |
-| `supabase/functions/create-checkout/index.ts` | Reduce to 3 tier entries with correct Stripe price IDs ($297, $497, $697). Keep legacy ID aliases pointing to canonical 3. |
-| `supabase/functions/landing-chat/index.ts` | Update system prompt to describe 3 tiers only. |
+### 4. `src/pages/DemoAccounts.tsx`
+- **Lines 30-107**: Replace 7 demo account entries with 3 + platform admin:
+  - Aura Connect ($297) — 5 agents, 4 consoles
+  - Aura Performance ($497) — 8 agents, 6 consoles
+  - Aura Command ($697) — 10 agents, 7 consoles
 
-### 3. Auth & Signup
+### 5. `src/pages/TermsOfService.tsx`
+- **Line 36**: Change "24 specialized AI operatives" → "10 AI operatives"
+- **Line 55**: Change "$197 to $697 per month across 7 tiers (Aura Starter through Aura Command)" → "$297 to $697 per month across 3 tiers (Aura Connect, Aura Performance, and Aura Command)"
+- **Line 56**: Update employee range from "2–50" to "5–Unlimited"
 
-| File | Change |
-|------|--------|
-| `src/pages/Auth.tsx` | Replace 7-tier selector with 3-tier selector (Connect $297, Performance $497, Command $697). Remove all industry-specific tier grouping. Update `selectedTier` type. |
+### 6. `src/pages/Contact.tsx`
+- **Lines 174-179**: Replace 6 tier options in the service interest dropdown with 3:
+  - Aura Connect ($297)
+  - Aura Performance ($497)
+  - Aura Command ($697)
 
-### 4. Subscription & Pricing Pages
-
-| File | Change |
-|------|--------|
-| `src/pages/Subscription.tsx` | Replace 7-tier `TIERS` array with 3. Rebuild comparison table for 3 columns. Update FAQ section. |
-| `src/pages/DemoAccounts.tsx` | Reduce demo accounts to 3 tiers + platform admin. Update tier features. |
-
-### 5. Homepage
-
-| File | Change |
-|------|--------|
-| `src/pages/Index.tsx` | Change "24 Smart AI Agents" → "10 AI Operatives". Update any pricing references on the landing page. |
-
-### 6. Help & Documentation
-
-| File | Change |
-|------|--------|
-| `src/components/help/AIHelpCenter.tsx` | Update embedded knowledge base text from 7-tier to 3-tier. |
-| `src/pages/Help.tsx` | Update FAQ references from 24 agents / 7 tiers to 10 operatives / 3 tiers. |
-| `src/pages/PlatformGuides.tsx` | Update tier listing in guide content. |
-| `src/pages/ExportDocumentation.tsx` | Update "7-Tier" references to "3-Tier". |
-| `src/pages/TermsOfService.tsx` | Update "$197 to $697 across 7 tiers" → "$297 to $697 across 3 tiers". |
-| `src/pages/Contact.tsx` | Update tier selector dropdown from 7 to 3 options. |
-
-### 7. PDF Documentation Components
-
-| File | Change |
-|------|--------|
-| `src/components/documentation/ComprehensiveGuidesPDF.tsx` | Rewrite all tier listings to 3-tier model. |
-| `src/components/documentation/PlatformFAQPDF.tsx` | Update FAQ answers to 3-tier model. |
-| `src/components/documentation/PricingSummaryPDF.tsx` | Rebuild entire PDF for 3 tiers instead of 7. |
-| `src/components/documentation/SalesPitchDataPDF.tsx` | Update ROI calculators and tier cards to 3. |
-| `src/components/documentation/BrandAssetGuidePDF.tsx` | Remove extra tier color swatches, keep 3. |
-| `src/components/documentation/WebsiteCopyPDF.tsx` | Rewrite copy blocks for 3 tiers. |
-| `src/components/documentation/SocialMediaContentPackPDF.tsx` | Update pricing references. |
-
-### 8. Audit System
-
-| File | Change |
-|------|--------|
-| `src/components/audit/types.ts` | Reduce `TierType` from 7 to 3. Update tier configs, scores, and question mappings. |
-| `src/components/audit/AgentOpportunityAudit.tsx` | Update tier scoring to 3 tiers. |
-| `src/components/audit/AuditResults.tsx` | Update comparison table to 3 tiers. |
-
-### 9. Other UI References
-
-| File | Change |
-|------|--------|
-| `src/pages/TalkToAura.tsx` | Update `tierLabels` map to 3 tiers. |
-| `src/pages/VideoPromptsPage.tsx` | Update "24 AI" references to "10 AI operatives". |
-| `src/pages/IntegrationDocs.tsx` | Update tier references. |
-| `src/components/landing/CompetitiveDifferentiation.tsx` | Update "From $397" → "From $297". |
+### 7. `src/components/landing/CompetitiveDifferentiation.tsx`
+- **Line 41**: Change "From $397" → "From $297"
 
 ---
 
-## Implementation Strategy
-
-Due to the sheer volume (~30+ files, thousands of lines), this will be executed in **4 batches**:
-
-**Batch 1 — Config & Backend** (Critical path): `subscriptionAgentConfig.ts`, `documentationConfig.ts`, `check-subscription`, `create-checkout`, `landing-chat`
-
-**Batch 2 — Core UI Pages**: `Auth.tsx`, `Subscription.tsx`, `Index.tsx`, `DemoAccounts.tsx`, `Help.tsx`, `Contact.tsx`, `TermsOfService.tsx`
-
-**Batch 3 — PDF Documentation**: All 7 PDF component files + `ExportDocumentation.tsx` + `PlatformGuides.tsx`
-
-**Batch 4 — Audit & Misc**: Audit system files, `TalkToAura.tsx`, `VideoPromptsPage.tsx`, `AIHelpCenter.tsx`, `CompetitiveDifferentiation.tsx`, `IntegrationDocs.tsx`
-
-### Key Decisions
-- **Agent count**: 10 operatives (not 24) across the platform
-- **Console count**: 7 consoles (unchanged)
-- **Legacy Stripe price IDs**: Keep in `check-subscription` for backward compatibility with existing subscribers, but map them all to the 3 canonical tiers
-- **"24 Smart AI Agents"**: Replace with "10 AI Operatives" on homepage and all marketing materials
-- **Annual pricing**: Connect $2,970/yr, Performance $4,970/yr, Command $6,970/yr
+## Technical Notes
+- The `PricingComparisonTable.tsx` on the homepage is already updated to 3 tiers — no changes needed there.
+- The homepage pricing cards (lines 800-953 in Index.tsx) are already correct with 3 tiers and correct prices — only minor copy fixes needed (agent counts, integration requirement labels).
+- The `Subscription.tsx` comparison table is the largest single change — the 7-column `FeatureRow` type and all `sections` data must be rebuilt for 3 columns.
 
