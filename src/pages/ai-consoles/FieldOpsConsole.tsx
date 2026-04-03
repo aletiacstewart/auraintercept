@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, HardHat, Route, MapPin, Wrench } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { toast } from 'sonner';
@@ -54,6 +55,7 @@ export default function FieldOpsConsole() {
               description="Your intelligent field operations assistant"
               featureColor="fieldops"
               showAuraBar
+              badge={<ValueBadge label="Saves ~10 hrs/week on dispatch" />}
               action={
                 canManageSettings ? (
                   <Button

@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, Briefcase, Receipt, ClipboardList, ArrowRightLeft } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { toast } from 'sonner';
@@ -54,6 +55,7 @@ export default function BusinessManagementConsole() {
               description="AI-powered business operations and management tools"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="Automates 60-70% of admin tasks" />}
               action={
                 canManageSettings ? (
                   <Button

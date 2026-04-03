@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { SocialMediaAgentConsole } from '@/components/social/SocialMediaAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, Share2 } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function SocialMediaConsole() {
@@ -25,6 +26,7 @@ export default function SocialMediaConsole() {
               description="AI-powered social media content creation, scheduling, and analytics"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="Saves ~8 hrs/week on content" />}
               action={
                 canManageSettings ? (
                   <Button

@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, Megaphone } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function MarketingSalesConsole() {
@@ -25,6 +26,7 @@ export default function MarketingSalesConsole() {
               description="AI-powered marketing automation and sales intelligence"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="2-3x lead conversion improvement" />}
               action={
                 canManageSettings ? (
                   <Button
