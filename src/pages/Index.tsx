@@ -864,7 +864,7 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save $994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">7 AI Operatives with dispatch & field navigation added.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">8 AI Operatives with dispatch & field navigation added.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
