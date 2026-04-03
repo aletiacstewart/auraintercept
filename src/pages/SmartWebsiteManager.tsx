@@ -110,6 +110,7 @@ interface ExtendedWebsiteData {
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
