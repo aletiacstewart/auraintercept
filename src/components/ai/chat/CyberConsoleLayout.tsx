@@ -240,11 +240,11 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                   <div className="grid grid-cols-2 gap-1">
                     <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
                       <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric1Value}</p>
-                      <p className="text-[8px] text-white/30 uppercase">{agent.metric1Label}</p>
+                      <p className="text-[8px] text-muted-foreground uppercase">{agent.metric1Label}</p>
                     </div>
-                    <div className="text-center p-1 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <div className="text-center p-1 rounded bg-muted/30">
                       <p className={`text-[12px] font-bold ${colors.text}`}>{agent.metric2Value}</p>
-                      <p className="text-[8px] text-white/30 uppercase">{agent.metric2Label}</p>
+                      <p className="text-[8px] text-muted-foreground uppercase">{agent.metric2Label}</p>
                     </div>
                   </div>
                 </div>
