@@ -506,33 +506,97 @@ export default function AIAgentsHub() {
                 })}
               </TabsList>
 
-              <TabsContent value={activeCategory} className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {filteredAgents.map((agent) => {
-                    const isAvailableInTier = canAccessAgent(agent.type);
-                    const requiredTier = getAgentRequiredTier(agent.type);
-                    const dependencies = getAgentDependencies(agent.type);
-                    const missingDependencies = dependencies.filter(
-                      dep => !agents.find(a => a.type === dep)?.is_enabled
-                    );
-                    
-                    return (
-                      <AgentCard
-                        key={agent.type}
-                        agent={agent}
-                        onToggle={(enabled) => toggleAgent(agent.type, enabled)}
-                        onClick={() => handleAgentClick(agent.type)}
-                        canManage={canManageAgents}
-                        isAvailableInTier={isAvailableInTier}
-                        requiredTier={requiredTier}
-                        missingDependencies={missingDependencies}
-                        getTierInfo={getTierInfo}
-                        latestEvent={latestEvents?.[agent.type] || null}
-                        onReviewClick={() => setActiveTab('review')}
-                      />
-                    );
-                  })}
-                </div>
+              <TabsContent value={activeCategory} className="mt-6 space-y-6">
+                {/* Enable Recommended Button */}
+                {canManageAgents && coreAgents.some(a => !a.is_enabled) && (
+                  <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Enable Recommended for My Business</p>
+                      <p className="text-xs text-muted-foreground">Activate the 4 core agents to start automating immediately</p>
+                    </div>
+                    <Button size="sm" onClick={handleEnableRecommended} className="gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      Enable Core Agents
+                    </Button>
+                  </div>
+                )}
+
+                {/* Core Agents Section */}
+                {coreAgents.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-semibold text-foreground">Core Agents</h3>
+                      <Badge variant="secondary" className="text-[10px]">Recommended</Badge>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                      {coreAgents.map((agent) => {
+                        const isAvailableInTier = canAccessAgent(agent.type);
+                        const requiredTier = getAgentRequiredTier(agent.type);
+                        const dependencies = getAgentDependencies(agent.type);
+                        const missingDependencies = dependencies.filter(
+                          dep => !agents.find(a => a.type === dep)?.is_enabled
+                        );
+                        return (
+                          <AgentCard
+                            key={agent.type}
+                            agent={agent}
+                            onToggle={(enabled) => toggleAgent(agent.type, enabled)}
+                            onClick={() => handleAgentClick(agent.type)}
+                            canManage={canManageAgents}
+                            isAvailableInTier={isAvailableInTier}
+                            requiredTier={requiredTier}
+                            missingDependencies={missingDependencies}
+                            getTierInfo={getTierInfo}
+                            latestEvent={latestEvents?.[agent.type] || null}
+                            onReviewClick={() => setActiveTab('review')}
+                            roiHint={AGENT_ROI_HINTS[agent.type]}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Advanced Agents Section */}
+                {advancedAgents.length > 0 && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowAdvanced(!showAdvanced)}
+                      className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                      <ChevronRight className={cn('h-4 w-4 transition-transform', showAdvanced && 'rotate-90')} />
+                      Advanced Agents ({advancedAgents.length})
+                    </button>
+                    {showAdvanced && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                        {advancedAgents.map((agent) => {
+                          const isAvailableInTier = canAccessAgent(agent.type);
+                          const requiredTier = getAgentRequiredTier(agent.type);
+                          const dependencies = getAgentDependencies(agent.type);
+                          const missingDependencies = dependencies.filter(
+                            dep => !agents.find(a => a.type === dep)?.is_enabled
+                          );
+                          return (
+                            <AgentCard
+                              key={agent.type}
+                              agent={agent}
+                              onToggle={(enabled) => toggleAgent(agent.type, enabled)}
+                              onClick={() => handleAgentClick(agent.type)}
+                              canManage={canManageAgents}
+                              isAvailableInTier={isAvailableInTier}
+                              requiredTier={requiredTier}
+                              missingDependencies={missingDependencies}
+                              getTierInfo={getTierInfo}
+                              latestEvent={latestEvents?.[agent.type] || null}
+                              onReviewClick={() => setActiveTab('review')}
+                              roiHint={AGENT_ROI_HINTS[agent.type]}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
 
