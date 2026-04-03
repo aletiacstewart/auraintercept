@@ -1,68 +1,65 @@
 
 
-## Phase 1: Aura Command Center as Default Dashboard — ✅ COMPLETE
+# Phase 4E (Customer Portal Admin Preview) + Phase 2A/2C (Templates DB + Post-Setup Redirect) + Batch 2 Empty States
 
-## Phase 3D: Empty States Overhaul — ✅ COMPLETE (batch 1)
+## Phase 4E — Customer Portal Admin Preview Pane
 
-### What Was Done
-- Created reusable `AuraEmptyState` component (`src/components/ui/aura-empty-state.tsx`) with themed icon glow, title, description, and optional Aura action button
-- Replaced empty states in 7 high-traffic components:
-  - `QuotesManager` — "Let Aura create a quote" action
-  - `InvoicesManager` — "Create an invoice" action
-  - `LeadsManager` — "Add a new lead" action
-  - `InventoryMatrix` — contextual low-stock vs general message
-  - `InventoryManager` — themed empty state
-  - `AppointmentTrackingView` — themed empty state
-  - `SocialFeedQueue` — "Let Aura generate sample posts" action with contextual descriptions
+**Goal**: Add a live widget preview alongside the admin chat so admins can see what customers experience.
 
-### Remaining Empty States (batch 2)
-- `BillingLookupForm`, `BillingAgentConsole`, `CustomersManager`, `FinancialPulseDashboard`
-- `ConversationHistoryBrowser`, `CommunicationLogs`, `CustomerPreferencesManager`
-- `ReminderHistoryLog`, `BookingAgentConsole`, `DigestDeliveryHistory`
-- `PlatformAnalytics` (call/revenue/company data)
+**Changes**:
+- **`CustomerPortalConsole.tsx`**: Add a "Preview" tab alongside "Customer View" and "Debug" — or add a split-pane toggle (like the Smart Website Manager pattern). When toggled, show the `WidgetPreview` iframe side-by-side with the existing `AIAgentConsole`.
+- Reuse the existing `WidgetPreview` component (already fetches company slug and renders the `/chat/{slug}` iframe).
+- Desktop only — on mobile viewports, hide the preview toggle.
 
 ---
 
-## Phase 2: Fast Start Wizard — ✅ COMPLETE (2B core wizard + 2D mode toggle)
+## Phase 2A — Save Business Templates to DB
 
-### What Was Done
-- Created `BusinessTypeSelector` with 6 trade templates (HVAC, Plumbing, Electrical, General Contractor, Landscaping, Other)
-- Created `FastStartWizard` with 4 streamlined steps: Business Type → Integrations → Tell Aura → Launch
-- Updated `OnboardingForm` page with "Fast Start (5 min)" / "Full Setup" mode toggle
-- Each template pre-fills services, hours, core agents, and business description
+**Goal**: When the Fast Start wizard completes, persist the selected template's services and hours to the database.
 
-### Remaining (2A templates DB save, 2C post-setup redirect with sample command)
+**Changes**:
+- **`FastStartWizard.tsx` → `handleLaunch`**: After updating the company record, insert the template's pre-loaded services into the `services` table (if it exists) using the template's `services` array. Also save the business type selection to the company record (e.g., an `industry` or `business_type` column, or store in `ai_agent_prompt`).
 
-## Phase 3A: Core vs Advanced Agent Sections — ✅ COMPLETE
+---
 
-### What Was Done
-- Split AI Operatives Hub agent grid into **Core** (Triage, Customer Journey, Dispatch, Business Finance) and **Advanced** (collapsed by default) sections
-- Added "Enable Recommended for My Business" one-click button to activate all core agents
-- Added ROI hint badges on every agent card (e.g., "Handles 60-70% of first contacts", "Saves ~10 hrs/week")
-- Advanced section uses collapsible toggle with chevron animation
+## Phase 2C — Post-Setup Redirect with Sample Command
 
-### 2A — Business Type Templates
-### 2B — Fast Start Wizard Component (4 steps)
-### 2C — Post-Setup Redirect
-### 2D — Integration with Existing Flow
+**Goal**: After completing Fast Start, redirect to the dashboard with a contextual first command pre-filled.
 
-## Phase 3: Reduce Complexity — TODO (3A, 3B, 3C remaining)
+**Changes**:
+- **`FastStartWizard.tsx` → `handleLaunch`**: Navigate to `/dashboard` with a query param like `?firstCommand=true` or pass state via `navigate`.
+- **Aura Command Center** (main dashboard): Detect the `firstCommand` param and auto-populate the chat input with a contextual starter like "Show me what you can do" or a template-specific prompt (e.g., "Create a sample HVAC maintenance quote").
 
-### 3A — AI Operatives Hub: Core vs Advanced Sections
-### 3B — Console Icon Bar Tooltips
-### 3C — Active Agents Panel Improvements
+---
 
-## Phase 4: Console Improvements — TODO
+## Batch 2 Empty States
 
-### 4A — Workflow Chain Buttons
-### 4B — Social Media: Prominent Multi-Channel Generator
-### 4C — Analytics: Natural Language First
-### 4D — Web Presence: Live Preview Pane
-### 4E — Customer Portal Admin Preview
+**Goal**: Replace plain text/icon empty states in remaining components with the themed `AuraEmptyState` component.
 
-## Phase 5: General Polish — TODO
+**Components to update** (each is a small inline replacement):
 
-### 5A — Value Indicators
-### 5B — Human Override UX
-### 5C — Mobile Technician Mode
-### 5D — Theme Cleanup
+| Component | File | Empty State Update |
+|---|---|---|
+| `CustomersManager` | `src/components/businessops/CustomersManager.tsx` | Replace `<Users>` div with `AuraEmptyState` |
+| `ConversationHistoryBrowser` | `src/components/ai/agents/ConversationHistoryBrowser.tsx` | Replace `<MessageSquare>` div with `AuraEmptyState` |
+| `CommunicationLogs` | `src/components/employee/CommunicationLogs.tsx` | Add `AuraEmptyState` for empty log list |
+| `ReminderHistoryLog` | `src/components/company/ReminderHistoryLog.tsx` | Replace `<History>` div with `AuraEmptyState` |
+| `DigestDeliveryHistory` | `src/components/company/DigestDeliveryHistory.tsx` | Add `AuraEmptyState` |
+| `BillingLookupForm` | `src/components/billing/forms/BillingLookupForm.tsx` | Add `AuraEmptyState` for no results |
+| `BillingAgentConsole` | `src/components/billing/BillingAgentConsole.tsx` | Add `AuraEmptyState` |
+| `CustomerPreferencesManager` | `src/components/company/CustomerPreferencesManager.tsx` | Add `AuraEmptyState` |
+| `BookingAgentConsole` | `src/components/booking/BookingAgentConsole.tsx` | Replace search no-results div |
+| `PlatformAnalytics` | `src/components/analytics/PlatformAnalytics.tsx` | Add `AuraEmptyState` for empty chart data |
+| `FinancialPulseDashboard` | `src/components/businessops/FinancialPulseDashboard.tsx` | Add `AuraEmptyState` |
+
+Each follows the same pattern: import `AuraEmptyState`, replace the inline `<div>` with `<AuraEmptyState icon={X} title="..." description="..." />`, with optional `actionLabel`/`onAction` where appropriate.
+
+---
+
+## Technical Summary
+
+- **Files created**: None
+- **Files modified**: ~14 files total
+- **No database migrations needed** (business type can be stored in existing `ai_agent_prompt` field)
+- **No new dependencies**
+
