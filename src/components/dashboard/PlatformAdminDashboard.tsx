@@ -516,7 +516,6 @@ export function PlatformAdminDashboard() {
             </CardContent>
           </Card>
         </CollapsibleContent>
-        </CollapsibleContent>
       </Collapsible>
 
     </div>
