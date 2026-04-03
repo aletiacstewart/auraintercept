@@ -26,6 +26,7 @@ export default function MarketingSalesConsole() {
               description="AI-powered marketing automation and sales intelligence"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="2-3x lead conversion improvement" />}
               action={
                 canManageSettings ? (
                   <Button

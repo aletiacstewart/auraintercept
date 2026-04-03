@@ -55,6 +55,7 @@ export default function BusinessManagementConsole() {
               description="AI-powered business operations and management tools"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="Automates 60-70% of admin tasks" />}
               action={
                 canManageSettings ? (
                   <Button

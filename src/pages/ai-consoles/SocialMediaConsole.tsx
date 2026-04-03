@@ -26,6 +26,7 @@ export default function SocialMediaConsole() {
               description="AI-powered social media content creation, scheduling, and analytics"
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="Saves ~8 hrs/week on content" />}
               action={
                 canManageSettings ? (
                   <Button

@@ -55,6 +55,7 @@ export default function FieldOpsConsole() {
               description="Your intelligent field operations assistant"
               featureColor="fieldops"
               showAuraBar
+              badge={<ValueBadge label="Saves ~10 hrs/week on dispatch" />}
               action={
                 canManageSettings ? (
                   <Button

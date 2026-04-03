@@ -23,9 +23,10 @@ export default function AnalyticsConsole() {
             <PageHeader
               icon={BarChart3}
               title="Analytics & Reports Ops"
-              description="AI-powered analytics, reporting, and business insights. Includes performance metrics, revenue analysis, forecasting, and multi-format exports."
+              description="AI-powered analytics, reporting, and business insights."
               featureColor="platform"
               showAuraBar
+              badge={<ValueBadge label="Saves ~5 hrs/week on reporting" />}
               action={
                 canManageSettings ? (
                   <Button
