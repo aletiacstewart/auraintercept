@@ -171,13 +171,12 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
 
         {/* ── LEFT PANEL: Active Agents ── */}
         <div
-          className="hidden lg:flex flex-col w-56 shrink-0 border-r overflow-y-auto"
-          style={{ background: 'rgba(2,6,14,0.98)', borderColor: 'rgba(0,229,255,0.1)' }}
+          className="hidden lg:flex flex-col w-56 shrink-0 border-r border-border/30 overflow-y-auto bg-card/95"
         >
           {/* Panel Header */}
-          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Active Agents</span>
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-border/20">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Active Agents</span>
           </div>
 
           {/* Agent Cards */}
