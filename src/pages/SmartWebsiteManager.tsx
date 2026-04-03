@@ -363,6 +363,8 @@ export default function SmartWebsiteManager() {
           </CardContent>
         </Card>
 
+        <div className={showLivePreview ? "flex gap-4" : ""}>
+        <div className={showLivePreview ? "flex-1 min-w-0" : ""}>
         <Tabs defaultValue="content" className="space-y-6">
           <TabsList className="w-full flex overflow-x-auto scrollbar-hide">
             <TabsTrigger value="content" className="flex-shrink-0">Content</TabsTrigger>
