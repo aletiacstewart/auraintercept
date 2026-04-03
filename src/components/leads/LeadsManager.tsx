@@ -227,7 +227,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
               title="No leads yet"
               description="Leads from your website, calls, and campaigns will appear here. Add your first one now."
               actionLabel="Add a new lead"
-              onAction={() => setIsAddOpen(true)}
+              onAction={() => setIsAddLeadOpen(true)}
               compact
             />
           ) : (
