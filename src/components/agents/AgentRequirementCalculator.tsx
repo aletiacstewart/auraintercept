@@ -139,7 +139,7 @@ const AgentRequirementCalculator: React.FC = () => {
       <CardContent className="space-y-6">
         {/* Agent Selection Grid */}
         <div className="space-y-4">
-          {(['scheduling', 'growth', 'business', 'field_ops', 'performance', 'command'] as SubscriptionTier[]).map(tier => (
+          {(['connect', 'performance', 'command'] as SubscriptionTier[]).map(tier => (
             agentsByTier[tier].length > 0 && (
               <div key={tier} className="space-y-2">
                 <div className="flex items-center gap-2">
