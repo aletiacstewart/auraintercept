@@ -185,6 +185,7 @@ export default function AIAgentsHub() {
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [autoActivationDone, setAutoActivationDone] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Fetch employee's job assignments
   const { data: userJobAssignments } = useQuery({
