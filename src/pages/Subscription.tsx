@@ -224,10 +224,8 @@ const sections: FeatureSection[] = [
       { name: 'Annual Savings', connect: 'Save $594', performance: 'Save $994', command: 'Save $1,394' },
     ],
   },
-];
-  {
-    id: 'aura_flow',
-    name: 'Aura Connect',
+
+
     monthlyPrice: '$397',
     annualPrice: '$3,970',
     annualSavings: 'Save $794',
