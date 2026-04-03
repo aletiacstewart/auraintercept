@@ -221,9 +221,14 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
           {isLoading ? (
             <div className="text-center py-6 text-foreground/70 text-sm">Loading...</div>
           ) : filteredLeads.length === 0 ? (
-            <div className="text-center py-6 text-foreground/70 text-sm">
-              No leads found.
-            </div>
+            <AuraEmptyState
+              icon={Users}
+              title="No leads yet"
+              description="Leads from your website, calls, and campaigns will appear here. Add your first one now."
+              actionLabel="Add a new lead"
+              onAction={() => setIsAddOpen(true)}
+              compact
+            />
           ) : (
             <div className="space-y-2">
               {filteredLeads.slice(0, 6).map((lead) => {

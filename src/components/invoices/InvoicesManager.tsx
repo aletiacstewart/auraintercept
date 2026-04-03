@@ -215,9 +215,15 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
                 </TableRow>
               ) : filteredInvoices.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6 text-foreground/60">
-                    <Receipt className="w-6 h-6 mx-auto mb-2 opacity-50" />
-                    <span className="text-sm">No invoices found</span>
+                  <TableCell colSpan={5}>
+                    <AuraEmptyState
+                      icon={Receipt}
+                      title="No invoices yet"
+                      description="Create your first invoice or let Aura generate one from a completed quote."
+                      actionLabel="Create an invoice"
+                      onAction={() => setIsAddOpen(true)}
+                      compact
+                    />
                   </TableCell>
                 </TableRow>
               ) : (

@@ -186,9 +186,13 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
                 </TableRow>
               ) : filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    {showLowStockOnly ? 'No low stock items' : 'No inventory items found'}
+                  <TableCell colSpan={8}>
+                    <AuraEmptyState
+                      icon={Package}
+                      title={showLowStockOnly ? 'No low stock items' : 'No inventory items yet'}
+                      description={showLowStockOnly ? 'All items are well-stocked — great job!' : 'Track your parts and materials. Add items to get started.'}
+                      compact
+                    />
                   </TableCell>
                 </TableRow>
               ) : (
