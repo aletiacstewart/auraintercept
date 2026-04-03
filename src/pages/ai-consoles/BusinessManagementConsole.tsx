@@ -69,6 +69,11 @@ export default function BusinessManagementConsole() {
               }
             />
             
+            <WorkflowChainButtons
+              chains={BUSINESS_WORKFLOWS}
+              onTrigger={(cmd) => toast.info('Workflow queued', { description: cmd.slice(0, 80) + '...' })}
+            />
+
             <BusinessOpsAgentConsole />
           </div>
         </FeatureGate>

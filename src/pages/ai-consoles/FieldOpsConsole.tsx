@@ -69,6 +69,11 @@ export default function FieldOpsConsole() {
               }
             />
 
+            <WorkflowChainButtons
+              chains={FIELD_OPS_WORKFLOWS}
+              onTrigger={(cmd) => toast.info('Workflow queued', { description: cmd.slice(0, 80) + '...' })}
+            />
+
             <FieldOpsAgentConsole />
           </div>
         </FeatureGate>

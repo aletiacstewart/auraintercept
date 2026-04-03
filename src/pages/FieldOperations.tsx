@@ -71,7 +71,11 @@ export default function FieldOperations() {
             featureColor="fieldops"
             showAuraBar
           />
-          <div className="h-[calc(100vh-14rem)]">
+          <WorkflowChainButtons
+            chains={DISPATCH_WORKFLOWS}
+            onTrigger={(cmd) => toast.info('Workflow queued', { description: cmd.slice(0, 80) + '...' })}
+          />
+          <div className="h-[calc(100vh-20rem)]">
             <FieldOpsManager companyId={companyId} />
           </div>
         </div>

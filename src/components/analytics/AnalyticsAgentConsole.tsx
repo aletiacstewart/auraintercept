@@ -289,13 +289,12 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
-            <WelcomeScreen
-              companyName={company?.name || 'Analytics & Optimization'}
-              title="Analytics & Optimization"
-              subtitle="I can help you with performance reports, revenue analysis, customer insights, and forecasting. What would you like to explore?"
-              actions={QUICK_ACTIONS}
-              onAction={handleQuickAction}
-              consoleType="analytics"
+            <AnalyticsNLHero
+              onSubmit={async (query) => {
+                hideAllForms();
+                await sendMessage(query);
+              }}
+              isLoading={isLoading}
             />
           ) : (
             <div className="space-y-4">
