@@ -228,7 +228,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                       className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ml-1 transition-all duration-200"
                       style={
                         agent.status === 'off'
-                          ? { color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)' }
+                          ? { color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted) / 0.5)' }
                           : isActive
                           ? { color: 'rgb(0,229,255)', background: 'rgba(0,229,255,0.12)', border: '1px solid rgba(0,229,255,0.3)' }
                           : { color: 'rgb(250,204,21)', background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)' }
