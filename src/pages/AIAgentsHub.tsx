@@ -798,6 +798,11 @@ function AgentCard({
           )}
           {agent.is_enabled && latestEvent && <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />}
           <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0 h-4 w-fit">{agent.category.replace('_', ' ')}</Badge>
+          {roiHint && (
+            <Badge variant="outline" className="text-primary/80 border-primary/20 bg-primary/5 text-[10px] px-1.5 py-0 h-4">
+              {roiHint}
+            </Badge>
+          )}
         </div>
 
         {/* Row 3: Confidence + Time (only if active) */}
