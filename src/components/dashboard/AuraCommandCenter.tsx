@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useVoice } from '@/contexts/VoiceContext';
@@ -33,6 +34,15 @@ export function AuraCommandCenter() {
   const { isListening, toggleVoiceMode } = useVoice();
   const aura = useUnifiedAura({ companyId: companyId ?? undefined, userId: user?.id });
   const [input, setInput] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Auto-populate first command after Fast Start onboarding
+  useEffect(() => {
+    if (searchParams.get('firstCommand') === 'true') {
+      setInput('Show me what you can do');
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const handleSubmit = useCallback(
     (text?: string) => {

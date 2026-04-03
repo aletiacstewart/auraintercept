@@ -35,6 +35,7 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface QuickAction {
   id: string;
@@ -671,15 +672,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
                 ))}
               </div>
             ) : customerSearchQuery && !isSearching ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No results found for "{customerSearchQuery}"</p>
-              </div>
+              <AuraEmptyState icon={Search} title="No results found" description={`No matches for "${customerSearchQuery}"`} compact />
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>Enter a name, phone, or email to search</p>
-              </div>
+              <AuraEmptyState icon={Search} title="Search customers" description="Enter a name, phone, or email to search" compact />
             )}
           </div>
         </div>

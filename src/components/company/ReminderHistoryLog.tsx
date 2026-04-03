@@ -12,6 +12,7 @@ import { History, Mail, MessageSquare, CheckCircle, XCircle, Clock, Loader2, Dow
 import { format, startOfDay, endOfDay, subDays } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface ReminderLog {
   id: string;
@@ -245,11 +246,7 @@ export function ReminderHistoryLog() {
       </CardHeader>
       <CardContent>
         {!logs || logs.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <History className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No reminders found</p>
-            <p className="text-sm">Try adjusting the date range</p>
-          </div>
+          <AuraEmptyState icon={History} title="No reminders found" description="Try adjusting the date range" />
         ) : (
           <>
             <p className="text-sm text-muted-foreground mb-3">{logs.length} reminder{logs.length !== 1 ? 's' : ''} found</p>

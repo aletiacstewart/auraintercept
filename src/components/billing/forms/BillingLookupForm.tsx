@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface Invoice {
   id: string;
@@ -107,10 +108,7 @@ export function BillingLookupForm({ companyId, onCancel, onSelectInvoice }: Bill
           ) : isLoading ? (
             <div className="p-4 text-center text-sm text-muted-foreground">Searching...</div>
           ) : invoices.length === 0 ? (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              No invoices found
-            </div>
+            <AuraEmptyState icon={FileText} title="No invoices found" description="Try a different search term" compact />
           ) : (
             <div className="divide-y">
               {invoices.map((invoice) => (
