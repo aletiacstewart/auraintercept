@@ -1046,7 +1046,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Logistics, Performance, Command (Invoicing)</p>
+                <p className="text-[10px] text-white/60">Required for: Performance, Command (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
