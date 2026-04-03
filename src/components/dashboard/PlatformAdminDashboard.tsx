@@ -32,6 +32,7 @@ interface CompanyStats {
 
 export function PlatformAdminDashboard() {
   const [showAllCompanies, setShowAllCompanies] = useState(false);
+  const [snapshotOpen, setSnapshotOpen] = useState(false);
   const navigate = useNavigate();
 
   const { data: stats, isLoading } = useQuery({
