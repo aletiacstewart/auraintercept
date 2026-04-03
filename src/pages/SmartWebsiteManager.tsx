@@ -114,6 +114,10 @@ export default function SmartWebsiteManager() {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [hasShownLimitWarning, setHasShownLimitWarning] = useState(false);
   const [previewMode, setPreviewMode] = useState<'day' | 'night'>('day');
+  const [showLivePreview, setShowLivePreview] = useState(false);
+  const [previewKey, setPreviewKey] = useState(0);
+
+  const refreshPreview = useCallback(() => setPreviewKey(k => k + 1), []);
 
   // Fetch website data
   const { data: website, isLoading } = useQuery({
