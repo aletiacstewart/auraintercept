@@ -33,41 +33,29 @@ interface SubscriptionStatus {
 // Feature definitions with tooltips
 const featureDescriptions: Record<string, string> = {
   'AI Receptionist (Triage)': 'Your 24/7 virtual receptionist that answers calls, qualifies leads, and routes inquiries to the right team member or agent.',
-  'Follow-up Agent': 'Automatically follows up with leads and customers via email and SMS to ensure no opportunity is missed.',
-  'Review Agent': 'Requests reviews from satisfied customers and monitors your online reputation across platforms.',
-  'Scheduling Agent (Booking)': 'Handles appointment scheduling, rescheduling, and cancellations with smart calendar management.',
-  'Dispatch Agent': 'Intelligently assigns technicians to jobs based on skills, location, and availability.',
-  'Route Agent': 'Optimizes daily routes for field technicians to minimize drive time and maximize productivity.',
-  'ETA Agent': 'Provides real-time arrival estimates to customers and updates them automatically on delays.',
-  'Check-in Agent': 'Manages technician check-ins and check-outs, tracking job progress in real-time.',
-  'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
-  'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
-  'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
-  'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
-  'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
-  'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
-  'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
-  'Revenue Agent': 'Tracks revenue trends, forecasts income, and identifies growth opportunities.',
-  'Insights Agent': 'Generates business intelligence reports and identifies patterns in your data.',
-  'Forecast Agent': 'Predicts demand, resource needs, and revenue based on historical data.',
-  'Social Media Agent': 'Creates, schedules, and publishes social media content to grow your online presence.',
-  'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, and blogs.',
+  'Customer Journey (Booking, Follow-up, Review)': 'Handles appointment scheduling, follow-ups, and review requests in one unified operative.',
+  'Outreach (Campaign, Lead, Marketing)': 'Manages campaigns, lead qualification, and marketing automation.',
+  'Creative Content Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, and blogs.',
   'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, monitors site performance, and auto-publishes blog posts from the Content Engine.',
+  'Dispatch Agent': 'Intelligently assigns technicians to jobs based on skills, location, and availability.',
+  'Field Navigation (Route, ETA, Check-in)': 'Optimizes routes, provides real-time ETAs, and manages technician check-ins.',
+  'Business Finance (Quote, Invoice, Inventory)': 'Generates quotes, creates invoices, and tracks inventory in one operative.',
+  'Admin Agent': 'Platform administration, user management, and system configuration.',
+  'Analytics Intelligence (Insights, Performance, Revenue, Forecast)': 'Comprehensive business intelligence with performance metrics, revenue tracking, and demand forecasting.',
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
   'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',
-  'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
+  'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
-  // Communication Channels - Chat vs Voice distinction
-  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or SignalWire needed).',
-  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Available on Aura Express and above (where enabled). Requires ElevenLabs for voice synthesis and SignalWire for telephony.',
-  // 3rd Party Integrations
+  'AI Operatives Hub': 'Central control center for managing and monitoring all AI operatives.',
+  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required.',
+  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for voice synthesis and SignalWire for telephony.',
   'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based). NOT required for Message Aura (Text).',
   'SignalWire (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text). 40% cheaper SMS than alternatives.',
 };
 
-// Tier configuration matching homepage
+// 3-Tier configuration
 const TIERS = [
   {
     id: 'connect',
@@ -222,235 +210,6 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price', connect: '$297', performance: '$497', command: '$697' },
       { name: 'Annual Price', connect: '$2,970/year', performance: '$4,970/year', command: '$6,970/year' },
       { name: 'Annual Savings', connect: 'Save $594', performance: 'Save $994', command: 'Save $1,394' },
-    ],
-  },
-];
-    annualSavings: 'Save $794',
-    description: 'AI booking with calendar sync',
-    popular: false,
-    agentCount: 3,
-    consoleCount: 1,
-    highlights: [
-      'AI Receptionist (Triage)',
-      'Scheduling Agent',
-      'Follow-up Agent',
-      'Customer Portal Console',
-      'Talk to Aura (Voice)',
-      'Direct calendar sync',
-    ],
-  },
-  {
-    id: 'halo',
-    name: 'Aura Growth',
-    monthlyPrice: '$597',
-    annualPrice: '$5,970',
-    annualSavings: 'Save $1,194',
-    description: '11 AI agents + Marketing Automation',
-    popular: false,
-    agentCount: 11,
-    consoleCount: 3,
-    highlights: [
-      '11 AI Operatives',
-      '3 Control Centers',
-      'Marketing Automation',
-      'Outreach & Sales Ops',
-      'Social Media Console',
-      'Talk to Aura (Voice)',
-    ],
-  },
-  {
-    id: 'core',
-    name: 'Aura Presence',
-    monthlyPrice: '$797',
-    annualPrice: '$7,970',
-    annualSavings: 'Save $1,594',
-    description: 'Creative & Web Presence Focus',
-    popular: false,
-    agentCount: 12,
-    consoleCount: 4,
-    highlights: [
-      '12 AI Operatives',
-      '4 Control Centers',
-      'Creative & Web Presence',
-      'Voice, SMS & Email',
-      'Content Engine',
-      '8 Employee Accounts',
-    ],
-  },
-  {
-    id: 'single_point',
-    name: 'Aura Logistics',
-    monthlyPrice: '$1,497',
-    annualPrice: '$14,970',
-    annualSavings: 'Save $2,994',
-    description: 'Field Operations + Business Management',
-    popular: true,
-    agentCount: 18,
-    consoleCount: 6,
-    highlights: [
-      '18 AI Operatives',
-      '6 Control Centers',
-      'Field Operations Console',
-      'Business Management Console',
-      'Talk to Aura (Voice) & Calling',
-      '15 Employee Accounts',
-    ],
-  },
-  {
-    id: 'multi_track',
-    name: 'Aura Performance',
-    monthlyPrice: '$497',
-    annualPrice: '$4,970',
-    annualSavings: 'Save $994',
-    description: 'Full automation + Analytics & Reports',
-    popular: false,
-    agentCount: 22,
-    consoleCount: 7,
-    highlights: [
-      '22 AI Operatives',
-      'All 7 Control Centers',
-      'Analytics & Reports Console',
-      'Customer Support',
-      '25 Employee Accounts',
-    ],
-  },
-  {
-    id: 'command',
-    name: 'Aura Command',
-    monthlyPrice: '$697',
-    annualPrice: '$6,970',
-    annualSavings: 'Save $1,394',
-    description: 'Full business automation suite',
-    popular: false,
-    agentCount: 24,
-    consoleCount: 7,
-    highlights: [
-      'All 24 AI Operatives',
-      'All 7 Control Centers',
-      'AI Operatives Hub',
-      'Revenue & Forecast Agents',
-      'Customer Support',
-      '50 Employee Accounts',
-    ],
-  },
-];
-
-// Employee limits per tier
-export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
-  express: 2,
-  aura_flow: 3,
-  halo: 5,
-  core: 8,
-  single_point: 15,
-  multi_track: 25,
-  command: 50,
-};
-
-type FeatureValue = 'check' | 'x' | string;
-
-interface FeatureRow {
-  name: string;
-  starter: FeatureValue;
-  scheduling: FeatureValue;
-  growth: FeatureValue;
-  business: FeatureValue;
-  fieldOps: FeatureValue;
-  performance: FeatureValue;
-  command: FeatureValue;
-}
-
-interface FeatureSection {
-  title: string;
-  features: FeatureRow[];
-}
-
-const sections: FeatureSection[] = [
-  {
-    title: 'AI Agents (1 / 3 / 11 / 12 / 18 / 22 / 24)',
-    features: [
-      { name: 'AI Receptionist (Triage)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Scheduling Agent (Booking)', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Follow-up Agent', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Review Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Campaign Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Lead Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Marketing Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Scheduler', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Analytics', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Creative Agent', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Web Presence Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Dispatch Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Route Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'ETA Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Check-in Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Quote Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Invoice Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Admin Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Inventory Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Performance Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Insights Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-      { name: 'Revenue Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
-      { name: 'Forecast Agent', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'x', command: 'check' },
-    ],
-  },
-  {
-    title: 'Control Centers (0 / 1 / 3 / 4 / 6 / 7 / 7)',
-    features: [
-      { name: 'Customer Portal Console', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Outreach & Sales Ops Console', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Console', starter: 'x', scheduling: 'x', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Creative & Web Presence Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Field Operations Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Business Management Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Analytics & Reports Console', starter: 'x', scheduling: 'x', growth: 'x', business: 'x', fieldOps: 'x', performance: 'check', command: 'check' },
-    ],
-  },
-  {
-    title: 'Communication Channels',
-    features: [
-      { name: 'Message Aura (Text)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Talk to Aura (Voice)', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Email Reminders', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'SMS Reminders', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-    ],
-  },
-  {
-    title: 'Platform Limits & Features',
-    features: [
-      { name: 'Appointments', starter: 'x', scheduling: 'Unlimited', growth: 'Unlimited', business: 'Unlimited', fieldOps: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
-      { name: 'Employee Accounts', starter: '2 included', scheduling: '3 included', growth: '5 included', business: '8 included', fieldOps: '15 included', performance: '25 included', command: '50 included' },
-      { name: 'Additional Employees', starter: '$25/10 employees', scheduling: '$25/10 employees', growth: '$25/10 employees', business: '$25/10 employees', fieldOps: '$25/10 employees', performance: '$25/10 employees', command: '$25/10 employees' },
-      { name: 'White-Label Branding', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Embeddable Chat Widget', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-    ],
-  },
-  {
-    title: 'Integration & Support',
-    features: [
-      { name: 'Calendar Sync', starter: 'x', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'API Access', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-      { name: 'Customer Support', starter: 'check', scheduling: 'check', growth: 'check', business: 'check', fieldOps: 'check', performance: 'check', command: 'check' },
-    ],
-  },
-  {
-    title: 'Required 3rd Party Integrations',
-    features: [
-      { name: 'Resend (Email)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Stripe (Payments)', starter: 'Optional', scheduling: 'Optional', growth: 'Optional', business: 'Optional', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'SignalWire (SMS & Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Voice)', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'A2P 10DLC Compliance', starter: 'Required', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Calendar Sync', starter: 'Optional', scheduling: 'Required', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Social Media Accounts', starter: 'Optional', scheduling: 'Optional', growth: 'Required', business: 'Required', fieldOps: 'Required', performance: 'Required', command: 'Required' },
-    ],
-  },
-  {
-    title: 'Pricing',
-    features: [
-      { name: 'Monthly Price', starter: '$197', scheduling: '$397', growth: '$597', business: '$797', fieldOps: '$1,497', performance: '$497', command: '$697' },
-      { name: 'Annual Price', starter: '$1,970/year', scheduling: '$3,970/year', growth: '$5,970/year', business: '$7,970/year', fieldOps: '$14,970/year', performance: '$4,970/year', command: '$6,970/year' },
-      { name: 'Annual Savings', starter: 'Save $394', scheduling: 'Save $794', growth: 'Save $1,194', business: 'Save $1,594', fieldOps: 'Save $2,994', performance: 'Save $994', command: 'Save $1,394' },
     ],
   },
 ];
@@ -970,9 +729,9 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-card-foreground">What's the difference between Field Ops and Performance?</h4>
+              <h4 className="font-medium text-card-foreground">What's the difference between Connect, Performance, and Command?</h4>
               <p className="text-sm text-muted-foreground">
-                Field Ops ($1,497/mo) includes 18 agents for field operations and business management. Performance ($497/mo) adds Analytics & Reports with 22 agents and advanced reporting capabilities.
+                Connect ($297/mo) includes 5 AI operatives ideal for solo operators and salons. Performance ($497/mo) adds dispatch, field navigation, and business finance — perfect for HVAC, plumbing, and field service. Command ($697/mo) includes all 10 operatives plus admin and analytics intelligence for enterprise teams.
               </p>
             </div>
             <div>
@@ -984,7 +743,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Each tier includes a set number of employee accounts (2-50). Additional employees beyond your tier's limit cost $10/month each.
+                Connect includes 5 employees, Performance includes 15, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
               </p>
             </div>
             <div>
