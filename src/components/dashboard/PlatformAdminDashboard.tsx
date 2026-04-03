@@ -283,241 +283,239 @@ export function PlatformAdminDashboard() {
       {/* Setup Navigation & Progress */}
       <DashboardSetupNav />
 
-      {/* Stats Grid */}
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat, index) => (
-          <Card key={stat.title} className="relative overflow-hidden border-border/50">
-            <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium text-foreground">
-                {stat.title}
-              </CardTitle>
-              <div className={`w-8 h-8 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
-                <stat.icon className={`w-4 h-4 ${stat.colorClass}`} />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-1 pb-3 px-3">
-              {isLoading ? (
-                <Skeleton className="h-6 w-16" />
-              ) : (
-                <div className="text-2xl font-bold">
-                  {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
+      {/* ===== AURA COMMAND CENTER (Primary) ===== */}
+      <AuraCommandCenter />
+
+      {/* ===== PLATFORM SNAPSHOT (Collapsible) ===== */}
+      <Collapsible open={snapshotOpen} onOpenChange={setSnapshotOpen}>
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            className="w-full flex items-center justify-between py-3 px-4 bg-card border border-border rounded-lg hover:bg-accent"
+          >
+            <span className="text-sm font-medium text-foreground flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              Platform Snapshot
+            </span>
+            <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform', snapshotOpen && 'rotate-180')} />
+          </Button>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent className="mt-4 space-y-6">
+          {/* Stats Grid */}
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {statCards.map((stat) => (
+              <Card key={stat.title} className="relative overflow-hidden border-border/50">
+                <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
+                  <CardTitle className="text-xs font-medium text-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <div className={`w-8 h-8 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
+                    <stat.icon className={`w-4 h-4 ${stat.colorClass}`} />
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-1 pb-3 px-3">
+                  {isLoading ? (
+                    <Skeleton className="h-6 w-16" />
+                  ) : (
+                    <div className="text-2xl font-bold">
+                      {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
+                    </div>
+                  )}
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Platform Activity & Growth Metrics */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  Platform Activity
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">Recent activity across all tenants</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <span className="text-sm text-foreground">System Status</span>
+                    <span className="text-sm font-medium text-secondary flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                      Operational
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <span className="text-sm text-foreground">New Signups (7 days)</span>
+                    <span className="text-sm font-medium text-primary">{stats?.recentSignups ?? 0} companies</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <span className="text-sm text-foreground">Active Integrations</span>
+                    <span className="text-sm font-medium text-accent-foreground">{stats?.activeIntegrations ?? 0} configured</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <span className="text-sm text-foreground">AI Agent Events (7 days)</span>
+                    <span className="text-sm font-medium text-warning">{stats?.recentAgentEvents ?? 0} events</span>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-secondary" />
+                  Growth Metrics
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">Platform performance overview</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { label: 'Monthly Active Companies', value: Math.min((stats?.companies ?? 0) * 10, 100), display: stats?.companies ?? 0, colorVar: 'hsl(var(--primary))' },
+                    { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, display: `${stats?.leadConversionRate ?? 0}%`, colorVar: 'hsl(var(--secondary))' },
+                    { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, display: `${stats?.quoteConversionRate ?? 0}%`, colorVar: 'hsl(var(--primary))' },
+                    { label: 'Appointment Completion', value: stats?.appointmentCompletionRate ?? 0, display: `${stats?.appointmentCompletionRate ?? 0}%`, colorVar: 'hsl(var(--accent-foreground))' },
+                  ].map(metric => (
+                    <div key={metric.label} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{metric.label}</span>
+                        <span className="font-medium">{metric.display}</span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-muted">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${metric.value}%`, background: metric.colorVar }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Company Breakdown */}
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-primary" />
+                Company Breakdown
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Per-company metrics and performance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingBreakdown ? (
+                <div className="space-y-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-border">
+                          <TableHead>Company</TableHead>
+                          <TableHead className="text-center">Users</TableHead>
+                          <TableHead className="text-center">Customers</TableHead>
+                          <TableHead className="text-center">Leads</TableHead>
+                          <TableHead className="text-center">Appointments</TableHead>
+                          <TableHead className="text-center">Quotes</TableHead>
+                          <TableHead className="text-center">Invoices</TableHead>
+                          <TableHead className="text-center">Revenue</TableHead>
+                          <TableHead className="text-center">Inventory</TableHead>
+                          <TableHead className="text-center">Campaigns</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {(showAllCompanies ? companyBreakdown : companyBreakdown?.slice(0, 5))?.map((company) => (
+                          <TableRow key={company.id} className="border-border hover:bg-muted/50 cursor-pointer" onClick={() => navigate(`/dashboard/analytics?company=${company.id}`)}>
+                            <TableCell className="font-medium text-foreground">
+                              <div className="flex items-center gap-2 group">
+                                {company.name}
+                                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-employees/20 text-feature-employees border-feature-employees/30">
+                                {company.users}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-customers/20 text-feature-customers border-feature-customers/30">
+                                {company.customers}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-leads/20 text-feature-leads border-feature-leads/30">
+                                {company.leads}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-appointments/20 text-feature-appointments border-feature-appointments/30">
+                                {company.appointments}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-quotes/20 text-feature-quotes border-feature-quotes/30">
+                                {company.quotes}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-invoices/20 text-feature-invoices border-feature-invoices/30">
+                                {company.invoices}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <span className="text-secondary font-medium">
+                                ${company.revenue.toLocaleString()}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-inventory/20 text-feature-inventory border-feature-inventory/30">
+                                {company.inventory}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline" className="bg-feature-marketing/20 text-feature-marketing border-feature-marketing/30">
+                                {company.campaigns}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {(companyBreakdown?.length ?? 0) > 5 && (
+                    <div className="mt-4 flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAllCompanies(!showAllCompanies)}
+                        className="gap-2"
+                      >
+                        {showAllCompanies ? (
+                          <>
+                            <ChevronUp className="w-4 h-4" />
+                            Show Less
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-4 h-4" />
+                            Show All {companyBreakdown?.length} Companies
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
-              <p className="text-[10px] text-muted-foreground mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
-              Platform Activity
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">Recent activity across all tenants</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
-                <span className="text-sm text-foreground">System Status</span>
-                <span className="text-sm font-medium text-green-400 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  Operational
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
-                <span className="text-sm text-foreground">New Signups (7 days)</span>
-                <span className="text-sm font-medium text-cyan-400">{stats?.recentSignups ?? 0} companies</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
-                <span className="text-sm text-foreground">Active Integrations</span>
-                <span className="text-sm font-medium text-purple-400">{stats?.activeIntegrations ?? 0} configured</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
-                <span className="text-sm text-foreground">AI Agent Events (7 days)</span>
-                <span className="text-sm font-medium text-amber-400">{stats?.recentAgentEvents ?? 0} events</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-secondary" />
-              Growth Metrics
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">Platform performance overview</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Monthly Active Companies</span>
-                  <span className="font-medium">{stats?.companies ?? 0}</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${Math.min((stats?.companies ?? 0) * 10, 100)}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Lead Conversion</span>
-                  <span className="font-medium">{stats?.leadConversionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: `${stats?.leadConversionRate ?? 0}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Quote Conversion</span>
-                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Appointment Completion</span>
-                  <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-
-      {/* Company Breakdown */}
-      <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-primary" />
-            Company Breakdown
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Per-company metrics and performance
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoadingBreakdown ? (
-            <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border">
-                      <TableHead>Company</TableHead>
-                      <TableHead className="text-center">Users</TableHead>
-                      <TableHead className="text-center">Customers</TableHead>
-                      <TableHead className="text-center">Leads</TableHead>
-                      <TableHead className="text-center">Appointments</TableHead>
-                      <TableHead className="text-center">Quotes</TableHead>
-                      <TableHead className="text-center">Invoices</TableHead>
-                      <TableHead className="text-center">Revenue</TableHead>
-                      <TableHead className="text-center">Inventory</TableHead>
-                      <TableHead className="text-center">Campaigns</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {(showAllCompanies ? companyBreakdown : companyBreakdown?.slice(0, 5))?.map((company) => (
-                      <TableRow key={company.id} className="border-border hover:bg-muted/50 cursor-pointer" onClick={() => navigate(`/dashboard/analytics?company=${company.id}`)}>
-                        <TableCell className="font-medium text-foreground">
-                          <div className="flex items-center gap-2 group">
-                            {company.name}
-                            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-employees/20 text-feature-employees border-feature-employees/30">
-                            {company.users}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-customers/20 text-feature-customers border-feature-customers/30">
-                            {company.customers}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-leads/20 text-feature-leads border-feature-leads/30">
-                            {company.leads}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-appointments/20 text-feature-appointments border-feature-appointments/30">
-                            {company.appointments}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-quotes/20 text-feature-quotes border-feature-quotes/30">
-                            {company.quotes}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-invoices/20 text-feature-invoices border-feature-invoices/30">
-                            {company.invoices}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <span className="text-green-400 font-medium">
-                            ${company.revenue.toLocaleString()}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-inventory/20 text-feature-inventory border-feature-inventory/30">
-                            {company.inventory}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-feature-marketing/20 text-feature-marketing border-feature-marketing/30">
-                            {company.campaigns}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              {(companyBreakdown?.length ?? 0) > 5 && (
-                <div className="mt-4 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAllCompanies(!showAllCompanies)}
-                    className="gap-2"
-                  >
-                    {showAllCompanies ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" />
-                        Show Less
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" />
-                        Show All {companyBreakdown?.length} Companies
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-    </PageContainer>
+        </CollapsibleContent>
+      </Collapsible>
   );
 }
