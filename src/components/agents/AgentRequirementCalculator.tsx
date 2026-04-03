@@ -113,8 +113,6 @@ const AgentRequirementCalculator: React.FC = () => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
       connect: [],
-      growth: [],
-      field_ops: [],
       performance: [],
       command: [],
     };
