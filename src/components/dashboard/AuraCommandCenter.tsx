@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useVoice } from '@/contexts/VoiceContext';
