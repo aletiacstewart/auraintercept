@@ -5,8 +5,37 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { Button } from '@/components/ui/button';
-import { Cpu, HardHat } from 'lucide-react';
+import { Cpu, HardHat, Route, MapPin, Wrench } from 'lucide-react';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
+import { toast } from 'sonner';
+
+const FIELD_OPS_WORKFLOWS: WorkflowChain[] = [
+  {
+    id: 'dispatch-complete',
+    label: 'Dispatch → Complete',
+    description: 'Full field job from dispatch to completion report',
+    icon: Route,
+    steps: ['Dispatch', 'Route', 'Arrive', 'Complete'],
+    command: 'Dispatch the next pending job to the nearest available technician, optimize the route, and prepare the completion checklist',
+  },
+  {
+    id: 'emergency-dispatch',
+    label: 'Emergency Job',
+    description: 'Fast-track an emergency service call',
+    icon: MapPin,
+    steps: ['Triage', 'Assign', 'Route', 'ETA Notify'],
+    command: 'Create an emergency service call, assign the closest available technician, calculate the fastest route, and send the customer an ETA notification',
+  },
+  {
+    id: 'end-of-day',
+    label: 'End of Day Wrap-Up',
+    description: 'Close out all field jobs and generate daily summary',
+    icon: Wrench,
+    steps: ['Review Jobs', 'Close Open', 'Summary'],
+    command: 'Review all field jobs from today, close any that are completed, and generate an end-of-day summary with technician performance metrics',
+  },
+];
 
 export default function FieldOpsConsole() {
   const { userRole } = useAuth();
