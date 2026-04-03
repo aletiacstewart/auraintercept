@@ -389,9 +389,13 @@ export function InventoryManager() {
                 </TableRow>
               ) : filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    No inventory items found
+                  <TableCell colSpan={8}>
+                    <AuraEmptyState
+                      icon={Package}
+                      title="No inventory items yet"
+                      description="Add parts and materials to track stock levels and costs."
+                      compact
+                    />
                   </TableCell>
                 </TableRow>
               ) : (

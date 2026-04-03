@@ -346,19 +346,18 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 rounded-xl bg-muted/20 border border-card-foreground/10">
-            <div className="p-3 rounded-xl bg-feature-marketing/15 border border-feature-marketing/30 w-fit mx-auto mb-4">
-              <Share2 className="h-8 w-8 text-feature-marketing" />
-            </div>
-            <h3 className="text-lg font-medium text-card-foreground mb-1">No content yet</h3>
-            <p className="text-sm text-card-foreground/60 max-w-md mx-auto">
-              {statusFilter === 'pending' 
+          <AuraEmptyState
+            icon={Share2}
+            title="No content yet"
+            description={
+              statusFilter === 'pending' 
                 ? "When technicians complete jobs with photos, AI-generated social content will appear here."
                 : statusFilter === 'published'
                 ? "No published content yet. Approve pending content to see it here."
-                : "No social content drafts found."}
-            </p>
-          </div>
+                : "No social content drafts found."
+            }
+            actionLabel="Let Aura generate sample posts"
+          />
         )}
       </CardContent>
     </Card>
