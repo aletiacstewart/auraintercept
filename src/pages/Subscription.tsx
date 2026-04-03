@@ -70,14 +70,70 @@ const featureDescriptions: Record<string, string> = {
 // Tier configuration matching homepage
 const TIERS = [
   {
-    id: 'express',
-    name: 'Aura Starter',
-    monthlyPrice: '$197',
-    annualPrice: '$1,970',
-    annualSavings: 'Save $394',
-    description: 'AI Receptionist for 24/7 lead capture',
+    id: 'connect',
+    name: 'Aura Connect',
+    monthlyPrice: '$297',
+    annualPrice: '$2,970',
+    annualSavings: 'Save $594',
+    description: 'Solo operators, salons, consultants',
     popular: false,
-    agentCount: 1,
+    agentCount: 5,
+    consoleCount: 4,
+    highlights: [
+      '5 AI Operatives',
+      '4 Control Centers',
+      'Triage + Customer Journey',
+      'Outreach & Creative Content',
+      'Web Presence Agent',
+      '5 Employee Accounts',
+    ],
+  },
+  {
+    id: 'performance',
+    name: 'Aura Performance',
+    monthlyPrice: '$497',
+    annualPrice: '$4,970',
+    annualSavings: 'Save $994',
+    description: 'HVAC, plumbing, field service',
+    popular: true,
+    agentCount: 8,
+    consoleCount: 6,
+    highlights: [
+      '8 AI Operatives',
+      '6 Control Centers',
+      'Dispatch & Field Navigation',
+      'Business Finance (Quotes/Invoices)',
+      'Field Operations Console',
+      '15 Employee Accounts',
+    ],
+  },
+  {
+    id: 'command',
+    name: 'Aura Command',
+    monthlyPrice: '$697',
+    annualPrice: '$6,970',
+    annualSavings: 'Save $1,394',
+    description: 'Multi-location, enterprise',
+    popular: false,
+    agentCount: 10,
+    consoleCount: 7,
+    highlights: [
+      'All 10 AI Operatives',
+      'All 7 Control Centers + AI Hub',
+      'Admin & Analytics Intelligence',
+      'Revenue & Forecast',
+      'Priority Support',
+      'Unlimited Employees',
+    ],
+  },
+];
+
+// Employee limits per tier
+export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
+  connect: 5,
+  performance: 15,
+  command: 50,
+};
     consoleCount: 0,
     highlights: [
       'AI Receptionist (Triage)',
