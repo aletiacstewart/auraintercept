@@ -56,7 +56,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
           companyId,
           userId,
           sessionId,
-          pageContext: buildEnrichedContext(), // Pass enriched context with date/time to backend
+          pageContext: buildEnrichedContext(),
           conversationHistory: messages.map(m => ({
             role: m.role,
             content: m.content,
@@ -64,11 +64,12 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
         },
       });
 
-      if (response.error) {
+      // Try to parse data even on error responses (e.g. 403 agent_locked)
+      const data = response.data;
+
+      if (response.error && (!data || !data.error)) {
         throw new Error(response.error.message);
       }
-
-      const data = response.data;
 
       // Handle agent locked error
       if (data?.error === 'agent_locked') {
