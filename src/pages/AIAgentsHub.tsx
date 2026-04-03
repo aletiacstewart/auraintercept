@@ -117,7 +117,7 @@ const AGENT_ROI_HINTS: Record<string, string> = {
   creative_content: 'Creates content 10× faster',
   web_presence: 'Keeps your site fresh automatically',
   field_navigation: 'Reduces drive time by ~15%',
-  analytics_intelligence: 'Surfaces insights you'd miss',
+  analytics_intelligence: 'Surfaces insights you would miss',
   admin: 'Automates routine admin tasks',
 };
 
