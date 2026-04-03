@@ -1,67 +1,119 @@
 
 
-# Batch 2 — Core UI Pages (3-Tier Consolidation)
+# Batches 3 & 4 — PDF Documentation, Audit, and Remaining UI (3-Tier Consolidation)
 
 ## Summary
-Update 7 UI files to remove all legacy 7-tier references and align with the canonical 3-tier model (Connect $297, Performance $497, Command $697).
+Complete the migration by updating ~20 files still referencing legacy 7-tier data. This covers PDF documentation, the audit scoring system, the help center knowledge base, and miscellaneous UI pages.
 
 ---
 
-## Changes by File
+## Batch 3 — PDF Documentation & Guides
 
-### 1. `src/pages/Auth.tsx`
-- **Line 56**: Change `selectedTier` type from `'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'` to `'connect' | 'performance' | 'command'`
-- **Line 57**: Update comment from "7-tier" to "3-tier"
-- **Lines 709**: Change "all 24 AI agents" → "all 10 AI operatives"
-- **Lines 725-792**: Replace the 7-tier selector (two groups: "Industry-Specific Packages" + "General Business Plans") with 3 simple rows:
-  - Connect ($297) — Solo operators, salons, consultants
-  - Performance ($497) — HVAC, plumbing, field service — marked Popular
-  - Command ($697) — Multi-location, enterprise
-- **Lines 794-809**: Update the selected tier display to only reference 3 tiers
-- **Lines 841-843**: Update 3rd-party cost notes (remove "Logistics+" references, use "Performance+" instead; remove "Presence+" use "Connect+")
+### 3A. `src/components/documentation/PricingSummaryPDF.tsx` (1122 lines)
+Full rewrite of pricing content:
+- Cover page: "7" tiers → "3", "24" operatives → "10", "$197" starting → "$297"
+- Table of contents: Remove Starter/Connect-old/Growth/Presence/Logistics pages, replace with 3 tier pages
+- Executive summary: 7 summary cards → 3 cards (Connect $297, Performance $497, Command $697)
+- Comparison table: 7 columns → 3 columns
+- Individual tier detail pages: Remove 4 legacy pages, keep/update Connect, Performance, Command
+- Third-party integrations: Update "Growth+" references to "Performance+"
+- Annual savings table: 3 rows instead of 7
 
-### 2. `src/pages/Subscription.tsx`
-- **Lines 71-203**: Replace the 7-entry `TIERS` array with 3 entries:
-  - `{ id: 'connect', name: 'Aura Connect', monthlyPrice: '$297', annualPrice: '$2,970', annualSavings: 'Save $594', agentCount: 5, consoleCount: 4, ... }`
-  - `{ id: 'performance', name: 'Aura Performance', monthlyPrice: '$497', annualPrice: '$4,970', annualSavings: 'Save $994', agentCount: 8, consoleCount: 6, popular: true, ... }`
-  - `{ id: 'command', name: 'Aura Command', monthlyPrice: '$697', annualPrice: '$6,970', annualSavings: 'Save $1,394', agentCount: 10, consoleCount: 7, ... }`
-- **Lines 206-214**: Replace `TIER_EMPLOYEE_LIMITS` with 3 entries: `connect: 5, performance: 15, command: 50`
-- **Lines 216-323**: Replace the 7-column `FeatureRow` interface and `sections` array with a 3-column structure (`connect`, `performance`, `command`). Rebuild all feature comparison rows for 3 tiers with correct agent/console gating per the canonical model.
-- **Lines 635**: Change grid from `lg:grid-cols-4` to `lg:grid-cols-3`
-- **Lines 726-756**: Replace 7-column table headers with 3 columns (Connect $297, Performance $497, Command $697)
-- **Lines 758-789**: Update table body rendering to use 3 columns instead of 7
+### 3B. `src/components/documentation/SalesPitchDataPDF.tsx`
+- "7-Tier ROI Calculators" → "3-Tier ROI Calculators"
+- Remove legacy tier ROI cards (Starter, Growth, Presence, Logistics)
+- "All 24 AI Operatives" → "All 10 AI Operatives"
+- "All 7 Consoles" → "All 7 Consoles" (unchanged)
+- Update tier bullet points for Connect/Performance/Command only
 
-### 3. `src/pages/Index.tsx`
-- **Line 418**: Change "up to 24 Smart AI Agents" → "up to 10 AI Operatives"
-- **Line 593-596**: Change heading "24 Smart AI Agents" → "10 AI Operatives" and update subtitle
-- **Line 867**: Change "7 AI Operatives" → "8 AI Operatives" (Performance tier has 8)
-- **Line 1049**: Change "Required for: Logistics, Performance, Command" → "Required for: Performance, Command"
-- **Line 1060**: Change "Required for: Presence, Performance, Command • Optional for: Growth, Logistics" → "Required for: Performance, Command • Optional for: Connect"
+### 3C. `src/components/documentation/BrandAssetGuidePDF.tsx`
+- "24 AI OPERATIVES ACROSS 7 CONSOLES" → "10 AI OPERATIVES ACROSS 7 CONSOLES"
+- Remove extra tier color swatches, keep 3
 
-### 4. `src/pages/DemoAccounts.tsx`
-- **Lines 30-107**: Replace 7 demo account entries with 3 + platform admin:
-  - Aura Connect ($297) — 5 agents, 4 consoles
-  - Aura Performance ($497) — 8 agents, 6 consoles
-  - Aura Command ($697) — 10 agents, 7 consoles
+### 3D. `src/components/documentation/PlatformDocumentPDF.tsx`
+- "Our 24 AI operatives" → "Our 10 AI operatives"
+- "24 AI Operatives Working Together" → "10 AI Operatives Working Together"
 
-### 5. `src/pages/TermsOfService.tsx`
-- **Line 36**: Change "24 specialized AI operatives" → "10 AI operatives"
-- **Line 55**: Change "$197 to $697 per month across 7 tiers (Aura Starter through Aura Command)" → "$297 to $697 per month across 3 tiers (Aura Connect, Aura Performance, and Aura Command)"
-- **Line 56**: Update employee range from "2–50" to "5–Unlimited"
+### 3E. `src/components/documentation/AIAgentGuidesPDF.tsx`
+- Update tier pricing table to reference 3 tiers from `SUBSCRIPTION_TIERS` using keys `aura_connect`, `aura_performance`, `command`
+- Remove references to `multi_track`, `single_point`, etc.
 
-### 6. `src/pages/Contact.tsx`
-- **Lines 174-179**: Replace 6 tier options in the service interest dropdown with 3:
-  - Aura Connect ($297)
-  - Aura Performance ($497)
-  - Aura Command ($697)
+### 3F. `src/components/documentation/ComprehensiveGuidesPDF.tsx`
+- Rewrite tier listings from 7 to 3
 
-### 7. `src/components/landing/CompetitiveDifferentiation.tsx`
-- **Line 41**: Change "From $397" → "From $297"
+### 3G. `src/components/documentation/PlatformFAQPDF.tsx`
+- Update FAQ answers referencing 7 tiers / 24 agents
+
+### 3H. `src/components/documentation/WebsiteCopyPDF.tsx`
+- Update copy blocks for 3 tiers
+
+### 3I. `src/components/documentation/SocialMediaContentPackPDF.tsx`
+- Update pricing references
+
+### 3J. `src/pages/PlatformGuides.tsx`
+- Lines 95-128: Replace 7-tier listing with 3-tier listing (Connect $297, Performance $497, Command $697)
+- Lines 186-193: "24 AI Operatives organized into 6 stacks" → "10 AI Operatives organized into 5 stacks"
+- Line 544: "all 24 AI Operatives" → "all 10 AI Operatives"
+
+### 3K. `src/pages/ExportDocumentation.tsx`
+- Update any "7-Tier" labels in export UI
+
+### 3L. `src/pages/Help.tsx`
+- Line 654: "all 24 AI agents, all 7 Control Centers" → "all 10 AI operatives, all 7 Control Centers"
 
 ---
 
-## Technical Notes
-- The `PricingComparisonTable.tsx` on the homepage is already updated to 3 tiers — no changes needed there.
-- The homepage pricing cards (lines 800-953 in Index.tsx) are already correct with 3 tiers and correct prices — only minor copy fixes needed (agent counts, integration requirement labels).
-- The `Subscription.tsx` comparison table is the largest single change — the 7-column `FeatureRow` type and all `sections` data must be rebuilt for 3 columns.
+## Batch 4 — Audit System, Help Center, Misc UI
+
+### 4A. `src/components/audit/types.ts` (569 lines — largest single change)
+- `TierType`: Change from 7 keys to `'CONNECT' | 'PERFORMANCE' | 'COMMAND'`
+- `TierScores`: Reduce to 3 fields
+- All 30 questions: Collapse 7 `tierScores` values into 3 per option. Mapping logic: EXPRESS/FLOW/CORE/HALO → max of those = CONNECT score; SINGLE_POINT/MULTI_TRACK → max = PERFORMANCE; COMMAND stays
+- `TIER_RECOMMENDATIONS`: Replace 7 entries with 3 matching the canonical model (Connect 5 agents/4 consoles, Performance 8/6, Command 10/7)
+- Section order stays the same (9 sections, 30 questions)
+
+### 4B. `src/components/audit/AuditResults.tsx`
+- `TIER_ICONS`: 3 entries (Zap for Connect, Users for Performance, Crown for Command)
+- `TIER_COLORS`, `TIER_BG_COLORS`: 3 entries
+- `TIER_ORDER`: 3 entries
+- `TIER_ROI_ESTIMATES`: 3 entries
+- "7-Tier Comparison" comment/heading → "3-Tier Comparison"
+
+### 4C. `src/components/audit/AgentOpportunityAudit.tsx`
+- "7 tiers" comment → "3 tiers"
+- `tierPercentages` initial object: 3 keys
+- `recommendedTier` scoring: 3 entries
+
+### 4D. `src/components/help/AIHelpCenter.tsx`
+- Lines 110-117: Replace "7-Tier Growth Ladder" with 3-tier listing:
+  - Aura Connect ($297/mo): 5 operatives, 4 consoles, 5 employees
+  - Aura Performance ($497/mo): 8 operatives, 6 consoles, 15 employees
+  - Aura Command ($697/mo): 10 operatives, all 7 consoles, Unlimited employees
+- Lines 99-101: Update "Logistics+" → "Performance+"
+
+### 4E. `src/pages/TalkToAura.tsx`
+- Lines 44-52: Replace 7-entry `tierLabels` with 3 entries:
+  ```
+  connect: 'Aura Connect',
+  performance: 'Aura Performance',
+  command: 'Aura Command',
+  ```
+
+### 4F. `src/pages/VideoPromptsPage.tsx`
+- Lines 326-328: "All 24 AI operative icons" → "All 10 AI operative icons", "24 agents" → "10 operatives"
+
+### 4G. `src/pages/DesignPreview.tsx`
+- Line 463: "24 AI operatives" → "10 AI operatives"
+
+### 4H. `src/pages/DemoAccounts.tsx`
+- Lines 154-205: `tierFeatures` record still has legacy tier entries (Starter, Growth, Presence, Logistics). Replace with 3 tier feature lists matching canonical model.
+
+---
+
+## Execution Order
+Batch 3 and 4 will be implemented together since they are independent changes. The audit system (4A-4C) is the most complex change due to collapsing 30 questions x 7 scores into 3 scores each.
+
+## Risk Notes
+- PDF files reference `SUBSCRIPTION_TIERS` keys from `documentationConfig.ts`. The config was already updated to use `aura_connect`, `aura_performance`, `command` keys, so PDF files referencing old keys like `express`, `aura_flow`, `halo`, `core`, `single_point`, `multi_track` will cause runtime errors until fixed.
+- The audit scoring collapse (7→3) uses a max-of-group strategy to preserve relative differentiation.
 
