@@ -5,10 +5,9 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { Button } from '@/components/ui/button';
-import { Cpu, Briefcase, FileText, Receipt, ClipboardList, ArrowRightLeft } from 'lucide-react';
+import { Cpu, Briefcase, Receipt, ClipboardList, ArrowRightLeft } from 'lucide-react';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
-import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { toast } from 'sonner';
 
 const BUSINESS_WORKFLOWS: WorkflowChain[] = [
