@@ -53,8 +53,8 @@ export default function Auth() {
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command' | null>(null);
-  // Add-on selection removed - now using 7-tier structure
+  const [selectedTier, setSelectedTier] = useState<'connect' | 'performance' | 'command' | null>(null);
+  // 3-tier structure: Connect, Performance, Command
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
   const [wantsConcierge, setWantsConcierge] = useState(false);
