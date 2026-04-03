@@ -30,6 +30,7 @@ import {
   Cell
 } from 'recharts';
 import { format, subDays, startOfDay, endOfDay
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 } from 'date-fns';
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
@@ -451,9 +452,7 @@ export function PlatformAnalytics() {
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                    No call data yet
-                  </div>
+                  <AuraEmptyState icon={Phone} title="No call data yet" description="Call analytics will appear once calls are logged" compact />
                 )}
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
@@ -516,9 +515,7 @@ export function PlatformAnalytics() {
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                    No revenue data yet
-                  </div>
+                  <AuraEmptyState icon={TrendingUp} title="No revenue data yet" description="Revenue breakdown will appear as invoices are paid" compact />
                 )}
               </CardContent>
             </Card>
@@ -610,9 +607,7 @@ export function PlatformAnalytics() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-[400px] flex items-center justify-center text-muted-foreground">
-                  No company data yet
-                </div>
+                <AuraEmptyState icon={Building2} title="No company data yet" description="Company performance metrics will appear here" />
               )}
             </CardContent>
           </Card>

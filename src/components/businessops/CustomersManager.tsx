@@ -37,6 +37,7 @@ import {
 import { format } from 'date-fns';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
 import { CustomerImportDialog } from '@/components/customers/CustomerImportDialog';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface CustomerProfile {
   id: string;
@@ -323,11 +324,7 @@ export function CustomersManager() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="font-medium">No customers found</p>
-              <p className="text-sm">Customers will appear here when they book appointments or request quotes</p>
-            </div>
+            <AuraEmptyState icon={Users} title="No customers found" description="Customers will appear here when they book appointments or request quotes" />
           )}
         </CardContent>
       </Card>

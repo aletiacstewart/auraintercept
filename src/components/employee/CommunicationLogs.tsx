@@ -10,6 +10,7 @@ import { MessageSquare, Phone, Mail, Search, Filter, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface CommunicationLog {
   id: string;
@@ -260,13 +261,7 @@ export function CommunicationLogs() {
                 })}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">No communication logs found</p>
-                <p className="text-sm text-muted-foreground/80">
-                  Your calls, SMS, and emails will appear here
-                </p>
-              </div>
+              <AuraEmptyState icon={MessageSquare} title="No communication logs found" description="Your calls, SMS, and emails will appear here" />
             )}
           </TabsContent>
         </Tabs>

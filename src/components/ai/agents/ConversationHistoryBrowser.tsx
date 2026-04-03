@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface ConversationEvent {
   id: string;
@@ -204,11 +205,7 @@ export function ConversationHistoryBrowser({ companyId }: ConversationHistoryBro
         <ScrollArea className="h-[500px]">
           <div className="space-y-2">
             {filteredConversations.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <MessageSquare className="h-12 w-12 mx-auto mb-3" />
-                <p className="font-medium">No conversations found</p>
-                <p className="text-sm">Try adjusting your filters or wait for more activity</p>
-              </div>
+              <AuraEmptyState icon={MessageSquare} title="No conversations found" description="Try adjusting your filters or wait for more activity" />
             ) : (
               filteredConversations.map((conv) => {
                 const StatusIcon = STATUS_STYLES[conv.status]?.icon || Clock;

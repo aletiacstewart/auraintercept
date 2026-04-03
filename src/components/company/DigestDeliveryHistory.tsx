@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
 import { History, Mail, CheckCircle2, XCircle, Calendar, FileText, TrendingUp, Download, RotateCcw, Loader2, AlertTriangle, Ban } from 'lucide-react';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface DeliveryLog {
   id: string;
@@ -208,11 +209,7 @@ export function DigestDeliveryHistory() {
       </CardHeader>
       <CardContent>
         {!logs || logs.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Mail className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No digest emails have been sent yet.</p>
-            <p className="text-sm mt-1">Delivery history will appear here once reports are sent.</p>
-          </div>
+          <AuraEmptyState icon={Mail} title="No digest emails sent yet" description="Delivery history will appear here once reports are sent" />
         ) : (
           <ScrollArea className="h-[400px]">
             <div className="space-y-3">

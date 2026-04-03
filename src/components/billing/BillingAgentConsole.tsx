@@ -32,6 +32,7 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 const BILLING_AGENTS = [
   { id: 'invoice', name: 'Invoice Agent', color: 'bg-blue-500' },
@@ -513,10 +514,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : filteredInvoices.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Receipt className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No invoices found</p>
-            </div>
+            <AuraEmptyState icon={Receipt} title="No invoices found" description="Create an invoice to get started" compact />
           ) : (
             <div className="space-y-2">
               {filteredInvoices.map((invoice) => (

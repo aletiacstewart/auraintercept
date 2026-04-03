@@ -30,6 +30,7 @@ import { triggerSetupProgressRefresh } from "@/hooks/useSetupProgress";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 interface AppointmentWithPrefs {
   id: string;
@@ -332,10 +333,7 @@ export function CustomerPreferencesManager() {
 
         {/* Table */}
         {filteredAppointments.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No appointments found</p>
-          </div>
+          <AuraEmptyState icon={Users} title="No appointments found" description="Appointments with customer preferences will appear here" />
         ) : (
           <ScrollArea className="h-[500px]">
             <Table>
