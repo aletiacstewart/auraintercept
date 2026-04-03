@@ -162,7 +162,7 @@ export default function TechnicianDashboard() {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-white/70 text-sm mt-0.5">Good {getGreeting()}! Here's your day</p>
+          <p className="text-muted-foreground text-sm mt-0.5">Good {getGreeting()}! Here's your day</p>
         </div>
 
         {/* Stats Grid - Compact for mobile */}
@@ -179,7 +179,7 @@ export default function TechnicianDashboard() {
                   <stat.icon className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <p className="text-xl font-bold text-center">{isLoading ? '-' : stat.value}</p>
-                <p className="text-[10px] text-white/70 text-center uppercase tracking-wide">{stat.label}</p>
+                <p className="text-[10px] text-muted-foreground text-center uppercase tracking-wide">{stat.label}</p>
               </CardContent>
             </Card>
           ))}
@@ -212,7 +212,7 @@ export default function TechnicianDashboard() {
               <CardTitle className="text-base mt-2">
                 {currentJob.appointment?.service_type || 'Service Call'}
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 {currentJob.appointment?.customer_name}
               </CardDescription>
             </CardHeader>
@@ -272,7 +272,7 @@ export default function TechnicianDashboard() {
                   Awaiting Acceptance
                 </Badge>
                 {nextJob.appointment?.datetime && (
-                  <span className="text-sm text-white/70">
+                  <span className="text-sm text-muted-foreground">
                     {format(parseUTCDateTime(nextJob.appointment.datetime), 'h:mm a')}
                   </span>
                 )}
@@ -280,7 +280,7 @@ export default function TechnicianDashboard() {
               <CardTitle className="text-base mt-2">
                 {nextJob.appointment?.service_type || 'Service Call'}
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 {nextJob.appointment?.customer_name}
               </CardDescription>
             </CardHeader>
@@ -297,11 +297,11 @@ export default function TechnicianDashboard() {
           // No Jobs
           <Card className="border-border/50">
             <CardContent className="flex flex-col items-center justify-center py-10">
-              <div className="w-14 h-14 rounded-xl bg-slate-600 flex items-center justify-center mb-3">
-                <CheckCircle2 className="h-7 w-7 text-white/70" />
+              <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-3">
+                <CheckCircle2 className="h-7 w-7 text-muted-foreground" />
               </div>
               <p className="font-medium">No Active Jobs</p>
-              <p className="text-sm text-white/70 mt-1">You're all caught up!</p>
+              <p className="text-sm text-muted-foreground mt-1">You're all caught up!</p>
             </CardContent>
           </Card>
         )}
@@ -360,10 +360,10 @@ export default function TechnicianDashboard() {
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/70">Completed</span>
+                  <span className="text-muted-foreground">Completed</span>
                   <span className="font-semibold">{completedJobs.length}/{jobs?.length || 0}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
                   <div 
                     className="h-full rounded-full bg-gradient-to-r from-accent to-accent/60 transition-all duration-500" 
                     style={{ width: jobs?.length ? `${(completedJobs.length / jobs.length) * 100}%` : '0%' }} 
@@ -384,7 +384,7 @@ export default function TechnicianDashboard() {
         {/* View All Jobs Link */}
         <Button 
           variant="ghost" 
-          className="w-full justify-between text-white/70"
+          className="w-full justify-between text-muted-foreground"
           onClick={() => navigate('/technician/jobs')}
         >
           View all jobs

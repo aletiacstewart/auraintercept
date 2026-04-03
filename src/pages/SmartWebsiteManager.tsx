@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,7 +21,9 @@ import {
   Globe, 
   ExternalLink, 
   Copy, 
-  Eye, 
+  Eye,
+  PanelRightOpen,
+  RefreshCcw,
   Settings, 
   BarChart3,
   CheckCircle,
@@ -107,12 +110,17 @@ interface ExtendedWebsiteData {
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [hasShownLimitWarning, setHasShownLimitWarning] = useState(false);
   const [previewMode, setPreviewMode] = useState<'day' | 'night'>('day');
+  const [showLivePreview, setShowLivePreview] = useState(false);
+  const [previewKey, setPreviewKey] = useState(0);
+
+  const refreshPreview = useCallback(() => setPreviewKey(k => k + 1), []);
 
   // Fetch website data
   const { data: website, isLoading } = useQuery({
@@ -312,6 +320,16 @@ export default function SmartWebsiteManager() {
             action={
               websiteUrl ? (
                 <div className="flex flex-col sm:flex-row gap-2">
+                  {!isMobile && (
+                    <Button
+                      variant={showLivePreview ? "default" : "outline"}
+                      className="w-full sm:w-auto"
+                      onClick={() => { setShowLivePreview(p => !p); refreshPreview(); }}
+                    >
+                      <PanelRightOpen className="w-4 h-4 mr-2" />
+                      {showLivePreview ? 'Hide Preview' : 'Live Preview'}
+                    </Button>
+                  )}
                   <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
@@ -345,6 +363,8 @@ export default function SmartWebsiteManager() {
           </CardContent>
         </Card>
 
+        <div className={showLivePreview ? "flex gap-4" : ""}>
+        <div className={showLivePreview ? "flex-1 min-w-0" : ""}>
         <Tabs defaultValue="content" className="space-y-6">
           <TabsList className="w-full flex overflow-x-auto scrollbar-hide">
             <TabsTrigger value="content" className="flex-shrink-0">Content</TabsTrigger>
@@ -1068,6 +1088,26 @@ export default function SmartWebsiteManager() {
             )}
           </TabsContent>
         </Tabs>
+        </div>
+
+        {/* Live Preview Pane */}
+        {showLivePreview && websiteUrl && (
+          <div className="w-[420px] shrink-0 sticky top-0 h-[calc(100vh-12rem)] flex flex-col rounded-lg border border-border/50 overflow-hidden bg-card">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
+              <span className="text-xs font-medium text-muted-foreground">Live Preview</span>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={refreshPreview}>
+                <RefreshCcw className="h-3 w-3" />
+              </Button>
+            </div>
+            <iframe
+              key={previewKey}
+              src={websiteUrl}
+              className="flex-1 w-full bg-white"
+              title="Website Preview"
+            />
+          </div>
+        )}
+        </div>
 
         {/* Visitor Limit Modal */}
         <VisitorLimitModal

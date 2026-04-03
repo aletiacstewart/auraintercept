@@ -182,7 +182,7 @@ export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({
                 {showHandoff && (
                   <div className="flex items-center justify-center gap-2 my-3">
                     <div className="h-px flex-1 bg-border" />
-                    <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+                    <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">
                       Connected to {agentInfo.label}
                     </Badge>
                     <div className="h-px flex-1 bg-border" />
