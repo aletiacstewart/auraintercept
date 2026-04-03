@@ -87,7 +87,7 @@ const AgentRequirementCalculator: React.FC = () => {
     calculateRequirements.forEach(agent => {
       const tierNeeded = getRequiredTierForAgent(agent);
       if (tierNeeded) {
-        const tierOrder: SubscriptionTier[] = ['free', 'connect', 'growth', 'field_ops', 'performance', 'command'];
+        const tierOrder: SubscriptionTier[] = ['free', 'connect', 'performance', 'command'];
         if (tierOrder.indexOf(tierNeeded) > tierOrder.indexOf(maxTier)) {
           maxTier = tierNeeded;
         }
