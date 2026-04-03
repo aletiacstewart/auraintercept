@@ -320,6 +320,16 @@ export default function SmartWebsiteManager() {
             action={
               websiteUrl ? (
                 <div className="flex flex-col sm:flex-row gap-2">
+                  {!isMobile && (
+                    <Button
+                      variant={showLivePreview ? "default" : "outline"}
+                      className="w-full sm:w-auto"
+                      onClick={() => { setShowLivePreview(p => !p); refreshPreview(); }}
+                    >
+                      <PanelRightOpen className="w-4 h-4 mr-2" />
+                      {showLivePreview ? 'Hide Preview' : 'Live Preview'}
+                    </Button>
+                  )}
                   <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
