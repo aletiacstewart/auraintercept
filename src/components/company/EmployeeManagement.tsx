@@ -597,8 +597,8 @@ export function EmployeeManagement() {
           ) : (
             <div className="text-center py-8">
               <Users className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-white/70">No employees yet</p>
-              <p className="text-sm text-white/70">
+              <p className="text-muted-foreground">No employees yet</p>
+              <p className="text-sm text-muted-foreground">
                 Invite your first team member to get started
               </p>
             </div>
@@ -611,7 +611,7 @@ export function EmployeeManagement() {
         <Card className="border-border/50 border-dashed">
           <CardHeader>
             <CardTitle className="text-lg">Pending Invitations</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardDescription className="text-muted-foreground">
               Codes waiting to be used
             </CardDescription>
           </CardHeader>
