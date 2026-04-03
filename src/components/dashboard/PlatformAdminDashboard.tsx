@@ -277,7 +277,7 @@ export function PlatformAdminDashboard() {
         title="Platform Dashboard"
         description="Welcome to the Aura Intercept admin panel"
         featureColor="overview"
-        showAuraBar
+        
       />
 
       {/* Setup Navigation & Progress */}
