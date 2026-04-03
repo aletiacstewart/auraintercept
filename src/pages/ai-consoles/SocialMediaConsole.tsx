@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { SocialMediaAgentConsole } from '@/components/social/SocialMediaAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, Share2 } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function SocialMediaConsole() {
