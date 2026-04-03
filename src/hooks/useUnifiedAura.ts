@@ -78,7 +78,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
   const multiAgent = useMultiAgentChat({
     companyId,
     userId,
-    initialAgent: 'analytics',
+    initialAgent: 'triage',
     pageContext: getPageContext(),
   });
   
