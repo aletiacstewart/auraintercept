@@ -225,7 +225,6 @@ const sections: FeatureSection[] = [
     ],
   },
 ];
-    annualPrice: '$3,970',
     annualSavings: 'Save $794',
     description: 'AI booking with calendar sync',
     popular: false,
