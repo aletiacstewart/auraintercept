@@ -5,11 +5,12 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
+import { WidgetPreview } from '@/components/widget/WidgetPreview';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Monitor, Code, Cpu, Eye, HeadphonesIcon } from 'lucide-react';
+import { Monitor, Code, Cpu, Eye, HeadphonesIcon, PanelRightOpen } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
@@ -17,6 +18,7 @@ export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
+  const [showPreview, setShowPreview] = useState(false);
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
@@ -52,14 +54,25 @@ export default function CustomerPortalConsole() {
               action={
                 <div className="flex items-center gap-2">
                   {canManageSettings && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate('/dashboard/ai-agents')}
-                    >
-                      <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                      Manage Agents
-                    </Button>
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowPreview((p) => !p)}
+                        className="hidden lg:flex gap-1.5"
+                      >
+                        <PanelRightOpen className="h-3.5 w-3.5" />
+                        {showPreview ? 'Hide Preview' : 'Live Preview'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/ai-agents')}
+                      >
+                        <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                        Manage Agents
+                      </Button>
+                    </>
                   )}
                   {userRole !== 'employee' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
@@ -79,11 +92,20 @@ export default function CustomerPortalConsole() {
               }
             />
             
-            {viewMode === 'customer' ? (
-              <AIAgentConsole allowCompanySelection={userRole === 'platform_admin' || userRole === 'company_admin'} />
-            ) : (
-              <AIAgentChat />
-            )}
+            <div className={showPreview ? 'flex gap-6' : ''}>
+              <div className={showPreview ? 'flex-1 min-w-0' : ''}>
+                {viewMode === 'customer' ? (
+                  <AIAgentConsole allowCompanySelection={userRole === 'platform_admin' || userRole === 'company_admin'} />
+                ) : (
+                  <AIAgentChat />
+                )}
+              </div>
+              {showPreview && (
+                <div className="hidden lg:block w-[420px] shrink-0 sticky top-4 self-start">
+                  <WidgetPreview />
+                </div>
+              )}
+            </div>
           </div>
         </FeatureGate>
       </PageContainer>

@@ -71,24 +71,42 @@ export function FastStartWizard() {
   const handleLaunch = async () => {
     setIsSubmitting(true);
     try {
-      // Save company basics if we have a companyId
       if (companyId && data.companyName) {
+        // Save company basics + business type in ai_agent_prompt
+        const promptParts: string[] = [];
+        if (template && template.id !== 'other') {
+          promptParts.push(`Industry: ${template.label}`);
+        }
+        if (data.businessDescription) {
+          promptParts.push(data.businessDescription);
+        }
+
         await supabase
           .from('companies')
           .update({
             name: data.companyName,
             phone: data.phone || undefined,
             address: data.address || undefined,
-            ai_agent_prompt: data.businessDescription || undefined,
+            ai_agent_prompt: promptParts.join('\n\n') || undefined,
           })
           .eq('id', companyId);
+
+        // Persist template services
+        if (template && template.services.length > 0) {
+          const serviceRows = template.services.map((name) => ({
+            company_id: companyId,
+            name,
+            is_active: true,
+          }));
+          await supabase.from('services').upsert(serviceRows, { onConflict: 'company_id,name', ignoreDuplicates: true });
+        }
       }
 
       toast.success('Your AI team is ready! Try a command to get started.', {
         duration: 5000,
         icon: '🚀',
       });
-      navigate('/dashboard');
+      navigate('/dashboard?firstCommand=true');
     } catch (err) {
       console.error('Fast Start error:', err);
       toast.error('Something went wrong. You can finish setup later.');
