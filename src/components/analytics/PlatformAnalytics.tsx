@@ -29,9 +29,8 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { format, subDays, startOfDay, endOfDay
+import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
-} from 'date-fns';
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
