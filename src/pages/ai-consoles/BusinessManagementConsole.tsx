@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { Button } from '@/components/ui/button';
 import { Cpu, Briefcase, Receipt, ClipboardList, ArrowRightLeft } from 'lucide-react';
+import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { toast } from 'sonner';
