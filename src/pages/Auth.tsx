@@ -722,48 +722,16 @@ export default function Auth() {
                   </p>
                 </div>
 
-{/* 7 Tier Rows - Ultra Compact Single Line */}
+{/* 3 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Industry-Specific Packages</p>
-
                   {[
-                    { id: 'express', name: 'Aura Starter',     sub: 'Restaurants • Food Service',  price: '$197',   color: 'amber'  },
-                    { id: 'flow',    name: 'Aura Connect',     sub: 'Personal Services • Real Estate', price: '$397', color: 'teal'  },
-                    { id: 'halo',    name: 'Aura Growth',      sub: 'Salons • Spas • Wellness',     price: '$597',   color: 'rose'   },
+                    { id: 'connect',     name: 'Aura Connect',     sub: 'Solo operators • Salons • Consultants', price: '$297', color: 'teal',   popular: false },
+                    { id: 'performance', name: 'Aura Performance', sub: 'HVAC • Plumbing • Field Service',       price: '$497', color: 'primary', popular: true  },
+                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise',           price: '$697', color: 'purple',  popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "express" | "flow" | "halo")}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all ${
-                        selectedTier === t.id
-                          ? `border-${t.color}-500 bg-${t.color}-500/10`
-                          : `border-border/40 bg-card/60 hover:border-${t.color}-500/40`
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className={`w-3 h-3 shrink-0 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === t.id ? `border-${t.color}-500 bg-${t.color}-500` : 'border-muted-foreground/40'
-                        }`}>
-                          {selectedTier === t.id && <Check className="w-1.5 h-1.5 text-white" />}
-                        </div>
-                        <span className="text-xs font-semibold text-card-foreground truncate">{t.name}</span>
-                        <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
-                      </div>
-                      <span className={`text-xs font-bold shrink-0 ml-2 text-${t.color}-500`}>{t.price}<span className="font-normal text-muted-foreground">/mo</span></span>
-                    </div>
-                  ))}
-
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pt-1.5 mb-1">General Business Plans</p>
-
-                  {[
-                    { id: 'core',        name: 'Aura Presence',    sub: 'Web Presence Focus',     price: '$797',   color: 'slate',  popular: false },
-                    { id: 'single_point',name: 'Aura Logistics',   sub: 'Field Service Teams',    price: '$1,497', color: 'blue',   popular: false },
-                    { id: 'multi_track', name: 'Aura Performance', sub: 'Full Automation',        price: '$497', color: 'primary',popular: true  },
-                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise', price: '$697', color: 'purple', popular: false },
-                  ].map(t => (
-                    <div
-                      key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "core" | "single_point" | "multi_track" | "command")}
+                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as 'connect' | 'performance' | 'command')}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all relative ${
                         t.popular
                           ? selectedTier === t.id
@@ -796,12 +764,8 @@ export default function Auth() {
                   <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
                     <p className="text-xs text-center text-foreground">
                       <span className="font-medium">Selected: {
-                        selectedTier === 'express' ? 'Aura Starter' :
-                        selectedTier === 'flow' ? 'Aura Connect' :
-                        selectedTier === 'halo' ? 'Aura Growth' :
-                        selectedTier === 'core' ? 'Aura Presence' :
-                        selectedTier === 'single_point' ? 'Aura Logistics' :
-                        selectedTier === 'multi_track' ? 'Aura Performance' :
+                        selectedTier === 'connect' ? 'Aura Connect' :
+                        selectedTier === 'performance' ? 'Aura Performance' :
                         'Aura Command'
                       }</span>
                     </p>
