@@ -220,8 +220,8 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
                         <AgentIcon className={`h-3.5 w-3.5 ${colors.text}`} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-white/90 truncate">{agent.name}</p>
-                        <p className="text-[9px] text-white/40 truncate max-w-[90px]">{agent.description}</p>
+                        <p className="text-[11px] font-semibold text-foreground/90 truncate">{agent.name}</p>
+                        <p className="text-[9px] text-muted-foreground truncate max-w-[90px]">{agent.description}</p>
                       </div>
                     </div>
                     <div
