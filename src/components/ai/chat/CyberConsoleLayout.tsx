@@ -253,19 +253,19 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
           </div>
 
           {/* Session Metrics Footer */}
-          <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session Metrics</p>
+          <div className="p-3 border-t border-border/20">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2">Session Metrics</p>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Session Status</span>
-                <span className="text-[10px] font-bold text-cyan-400">{metrics.status}</span>
+                <span className="text-[10px] text-muted-foreground">Session Status</span>
+                <span className="text-[10px] font-bold text-primary">{metrics.status}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Avg Response</span>
+                <span className="text-[10px] text-muted-foreground">Avg Response</span>
                 <span className="text-[10px] font-bold text-orange-400">{metrics.avgResponse}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white/40">Satisfaction</span>
+                <span className="text-[10px] text-muted-foreground">Satisfaction</span>
                 <span className="text-[10px] font-bold text-emerald-400">{metrics.satisfaction}</span>
               </div>
             </div>
