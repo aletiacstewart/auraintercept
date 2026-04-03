@@ -390,6 +390,18 @@ export default function TechnicianDashboard() {
           View all jobs
           <ArrowRight className="h-4 w-4" />
         </Button>
+
+        {/* Voice Input FAB — mobile only */}
+        {isMobile && (
+          <button
+            onClick={() => navigate('/technician/ai-console')}
+            className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full bg-primary shadow-lg flex items-center justify-center transition-transform active:scale-95"
+            style={{ boxShadow: '0 4px 20px hsl(var(--primary) / 0.4)' }}
+            aria-label="Voice command"
+          >
+            <Mic className="h-6 w-6 text-primary-foreground" />
+          </button>
+        )}
       </div>
       
       <WelcomeModal
