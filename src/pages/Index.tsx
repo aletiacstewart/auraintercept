@@ -415,7 +415,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Operatives',
-  description: 'Enable up to 24 Smart AI Agents and configure your knowledge base for your business.',
+  description: 'Enable up to 10 AI Operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -591,7 +591,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Intelligence Network</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              24 Smart AI Agents
+              10 AI Operatives
             </h2>
             <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
           </div>
@@ -864,11 +864,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save $994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">7 AI Operatives with dispatch & field navigation added.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">8 AI Operatives with dispatch & field navigation added.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">7 AI Operatives</span>
+                    <span className="text-xs">8 AI Operatives</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -1046,7 +1046,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Logistics, Performance, Command (Invoicing)</p>
+                <p className="text-[10px] text-white/60">Required for: Performance, Command (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1057,7 +1057,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white/60">Required for: Presence, Performance, Command • Optional for: Growth, Logistics</p>
+                <p className="text-[10px] text-white/60">Required for: Performance, Command • Optional for: Connect</p>
               </div>
 
 

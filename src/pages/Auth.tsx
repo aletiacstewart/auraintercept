@@ -53,8 +53,8 @@ export default function Auth() {
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command' | null>(null);
-  // Add-on selection removed - now using 7-tier structure
+  const [selectedTier, setSelectedTier] = useState<'connect' | 'performance' | 'command' | null>(null);
+  // 3-tier structure: Connect, Performance, Command
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
   const [wantsConcierge, setWantsConcierge] = useState(false);
@@ -706,7 +706,7 @@ export default function Auth() {
                       <h3 className="text-sm font-bold text-foreground">30-Day Free Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
+                      Your trial includes <span className="font-semibold text-foreground">all 10 AI operatives</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
                     </p>
                   </div>
                 </div>
@@ -722,48 +722,16 @@ export default function Auth() {
                   </p>
                 </div>
 
-{/* 7 Tier Rows - Ultra Compact Single Line */}
+{/* 3 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Industry-Specific Packages</p>
-
                   {[
-                    { id: 'express', name: 'Aura Starter',     sub: 'Restaurants • Food Service',  price: '$197',   color: 'amber'  },
-                    { id: 'flow',    name: 'Aura Connect',     sub: 'Personal Services • Real Estate', price: '$397', color: 'teal'  },
-                    { id: 'halo',    name: 'Aura Growth',      sub: 'Salons • Spas • Wellness',     price: '$597',   color: 'rose'   },
+                    { id: 'connect',     name: 'Aura Connect',     sub: 'Solo operators • Salons • Consultants', price: '$297', color: 'teal',   popular: false },
+                    { id: 'performance', name: 'Aura Performance', sub: 'HVAC • Plumbing • Field Service',       price: '$497', color: 'primary', popular: true  },
+                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise',           price: '$697', color: 'purple',  popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "express" | "flow" | "halo")}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all ${
-                        selectedTier === t.id
-                          ? `border-${t.color}-500 bg-${t.color}-500/10`
-                          : `border-border/40 bg-card/60 hover:border-${t.color}-500/40`
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className={`w-3 h-3 shrink-0 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === t.id ? `border-${t.color}-500 bg-${t.color}-500` : 'border-muted-foreground/40'
-                        }`}>
-                          {selectedTier === t.id && <Check className="w-1.5 h-1.5 text-white" />}
-                        </div>
-                        <span className="text-xs font-semibold text-card-foreground truncate">{t.name}</span>
-                        <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
-                      </div>
-                      <span className={`text-xs font-bold shrink-0 ml-2 text-${t.color}-500`}>{t.price}<span className="font-normal text-muted-foreground">/mo</span></span>
-                    </div>
-                  ))}
-
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pt-1.5 mb-1">General Business Plans</p>
-
-                  {[
-                    { id: 'core',        name: 'Aura Presence',    sub: 'Web Presence Focus',     price: '$797',   color: 'slate',  popular: false },
-                    { id: 'single_point',name: 'Aura Logistics',   sub: 'Field Service Teams',    price: '$1,497', color: 'blue',   popular: false },
-                    { id: 'multi_track', name: 'Aura Performance', sub: 'Full Automation',        price: '$497', color: 'primary',popular: true  },
-                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise', price: '$697', color: 'purple', popular: false },
-                  ].map(t => (
-                    <div
-                      key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as "core" | "single_point" | "multi_track" | "command")}
+                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as 'connect' | 'performance' | 'command')}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all relative ${
                         t.popular
                           ? selectedTier === t.id
@@ -796,12 +764,8 @@ export default function Auth() {
                   <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
                     <p className="text-xs text-center text-foreground">
                       <span className="font-medium">Selected: {
-                        selectedTier === 'express' ? 'Aura Starter' :
-                        selectedTier === 'flow' ? 'Aura Connect' :
-                        selectedTier === 'halo' ? 'Aura Growth' :
-                        selectedTier === 'core' ? 'Aura Presence' :
-                        selectedTier === 'single_point' ? 'Aura Logistics' :
-                        selectedTier === 'multi_track' ? 'Aura Performance' :
+                        selectedTier === 'connect' ? 'Aura Connect' :
+                        selectedTier === 'performance' ? 'Aura Performance' :
                         'Aura Command'
                       }</span>
                     </p>
@@ -838,9 +802,9 @@ export default function Auth() {
                           { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: '$2/num · $0.004/SMS · $0.006/min', note: 'All tiers', color: 'text-green-400' },
                           { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Free–$99/mo (voice chars)', note: 'All tiers', color: 'text-purple-400' },
                           { icon: <Mail className="w-2.5 h-2.5 text-blue-400" />, name: 'Resend', cost: 'Free–$20/mo (email)', note: 'All tiers', color: 'text-blue-400' },
-                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'Connect+', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Logistics+', color: 'text-amber-400' },
-                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Presence+', color: 'text-pink-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Performance+', color: 'text-amber-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Connect+', color: 'text-pink-400' },
                           { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Free–1k searches/mo', note: 'Optional', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, note, color }) => (
                           <div key={name} className="flex items-center justify-between text-[9px] py-0.5 border-b border-border/20 last:border-0">
