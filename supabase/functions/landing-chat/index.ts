@@ -26,39 +26,28 @@ const AURA_SYSTEM_PROMPT = `You are Aura, the helpful and knowledgeable AI assis
 
 About Aura Intercept:
 - Aura Intercept is a Multi-Agent Orchestration Engine designed for appointment-based service businesses (HVAC, plumbing, electrical, landscaping, restaurants, salons, etc.)
-- It provides 24 specialized AI operatives organized into 7 Control Centers (Consoles): Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media & Web Presence, Analytics & Reports, and AI Operatives Hub
-- Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, Social Media content, Content Engine for multi-channel generation, Web Presence Manager, and business analytics
+- It provides 10 AI Operatives organized into 7 Control Centers (Consoles): Customer Portal, Outreach & Sales Ops, Social Media Ops, Creative & Web Presence, Field Operations, Business Operations, and Analytics & Reports — plus the AI Operatives Hub management interface
+- Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, social media content, Content Engine for multi-channel generation, Web Presence Manager, and business analytics
 - The platform offers 24/7 AI automation for handling customer inquiries, booking appointments, and managing operations
 
-Pricing Tiers (7 Total):
-- Aura Starter ($197/mo): AI Voice & Chat for restaurants, smart link sharing, 2 employees, 1 AI Operative (AI Receptionist). Requires ElevenLabs + SignalWire.
-- Aura Connect ($397/mo): AI voice, chat, and scheduling with calendar sync. 3 AI Operatives (Receptionist, Scheduling, Follow-up). 1 Console (Customer Portal). 3 employees.
-- Aura Growth ($597/mo): 11 AI Operatives, 3 Consoles. AI scheduling + marketing + social media suite. 5 employees. For salons and wellness businesses.
-- Aura Presence ($797/mo): 12 AI Operatives, 4 Consoles. Full marketing + web presence + social media. 8 employees. All communication channels included.
-- Aura Logistics ($1,497/mo): 18 AI Operatives, 6 Consoles. Field operations, dispatch, quoting, invoicing. 15 employees.
-- Aura Performance ($497/mo): 22 AI Operatives, all 7 Consoles. Advanced analytics and full automation. 25 employees.
-- Aura Command ($697/mo): All 24 AI Operatives, all 7 Consoles + AI Operatives Hub. Enterprise, 50 employees.
-- Annual billing saves ~16%
+Pricing Tiers (3 Tiers — Growth Ladder):
+- Aura Connect ($297/mo): 5 AI Operatives (AI Receptionist, Customer Journey, Outreach, Creative Content, Web Presence). 4 Consoles (Customer Portal, Outreach & Sales, Social Media, Creative & Web). 5 employees. Best for solo operators, salons, consultants.
+- Aura Performance ($497/mo): 8 AI Operatives (adds Dispatch, Field Navigation, Business Finance). 6 Consoles (adds Field Operations, Business Management). 15 employees. Best for HVAC, plumbing, field service companies.
+- Aura Command ($697/mo): All 10 AI Operatives (adds Admin, Analytics Intelligence). All 7 Consoles + AI Operatives Hub. Unlimited employees. Best for multi-location franchises, enterprise teams.
+- Annual billing: Connect $2,970/yr, Performance $4,970/yr, Command $6,970/yr
 - Additional employees: $25/mo per 10 employees beyond included amount
+- 30-day free trial with full Command access
 
 Communication Channels:
-- Message Aura (Text): Keyboard-based chat available on ALL tiers. No external dependencies required.
-- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on ALL paid tiers (Starter through Command). Requires ElevenLabs + SignalWire.
+- Message Aura (Text): Keyboard-based chat available on ALL tiers
+- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on ALL paid tiers. Requires ElevenLabs + SignalWire.
 - AI Receptionist answers inbound calls, SMS, and Talk to Aura conversations
-- Follow-up Agent sends reminders via email, SMS, and voice calls
-- ETA Agent and Campaign Agent send SMS and email notifications
-- Required integrations: SignalWire (not Twilio), ElevenLabs, Resend, A2P 10DLC compliance for all tiers
-
-New AI Features:
-- Knowledge Base AI Generator: Batch-generate FAQs, services, and business hours from industry context
-- Campaign Series Generator: Create coordinated multi-week email/SMS marketing sequences
-- SMS Template AI: Generate professional SMS messages with 160-character awareness
-- Quote/Invoice AI: Professional line item descriptions from service names
+- Required integrations: SignalWire, ElevenLabs, Resend, A2P 10DLC compliance for all tiers
 
 Your role:
 - Answer questions about Aura Intercept's features, pricing, and capabilities
 - Help potential customers understand how the platform can benefit their business
-- Explain how the AI agents work and what problems they solve
+- Explain how the AI operatives work and what problems they solve
 - Be friendly, professional, and concise
 - If asked about booking a demo or signing up, direct them to the Sign In button or contact options on the page
 - This chat itself is a demonstration of the AI capabilities - mention that when relevant
@@ -90,7 +79,6 @@ serve(async (req) => {
       });
     }
 
-    // Input validation
     if (!body || typeof body !== "object" || !("messages" in body)) {
       return new Response(JSON.stringify({ error: "Missing required field: messages" }), {
         status: 400,
@@ -107,7 +95,6 @@ serve(async (req) => {
       });
     }
 
-    // Limit message history depth to prevent abuse
     if (messages.length > 50) {
       return new Response(JSON.stringify({ error: "Too many messages in history" }), {
         status: 400,
@@ -115,7 +102,6 @@ serve(async (req) => {
       });
     }
 
-    // Validate each message shape and content length
     for (const msg of messages) {
       if (!msg || typeof msg !== "object" || !("role" in msg) || !("content" in msg)) {
         return new Response(JSON.stringify({ error: "Each message must have role and content" }), {
