@@ -706,7 +706,7 @@ export default function Auth() {
                       <h3 className="text-sm font-bold text-foreground">30-Day Free Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
+                      Your trial includes <span className="font-semibold text-foreground">all 10 AI operatives</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
                     </p>
                   </div>
                 </div>
