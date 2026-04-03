@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { DecisionModeBadge, DecisionMode } from './DecisionModeBadge';
 import { ConfidenceIndicator } from './ConfidenceIndicator';
-import { AlertTriangle, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Clock, Loader2, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
