@@ -286,6 +286,26 @@ export default function AIAgentsHub() {
     ? accessibleAgents 
     : accessibleAgents.filter(a => a.category === activeCategory);
 
+  // Split agents into Core and Advanced
+  const coreAgents = filteredAgents.filter(a => CORE_AGENT_TYPES.has(a.type));
+  const advancedAgents = filteredAgents.filter(a => !CORE_AGENT_TYPES.has(a.type));
+
+  const handleEnableRecommended = async () => {
+    if (!companyId) return;
+    const availableAgents = getAvailableAgents();
+    const coreToEnable = agents.filter(
+      a => CORE_AGENT_TYPES.has(a.type) && !a.is_enabled && availableAgents.includes(a.type)
+    );
+    for (const agent of coreToEnable) {
+      await toggleAgent(agent.type, true);
+    }
+    await refetch();
+    if (coreToEnable.length > 0) {
+      toast.success(`${coreToEnable.length} core agents activated!`);
+    } else {
+      toast.info('All core agents are already active.');
+    }
+  };
   const handleAgentClick = (agentType: string) => {
     navigate(`/dashboard/ai-agents/${agentType}`);
   };
