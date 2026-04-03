@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { Plus, Package, AlertTriangle, Edit, Trash2, Search } from 'lucide-react';
 import { InventoryUploadDialog } from '@/components/inventory/InventoryUploadDialog';
 
