@@ -30,7 +30,7 @@ const SUGGESTED_COMMANDS = [
 
 export function AuraCommandCenter() {
   const { companyId, user } = useAuth();
-  const { isListening, toggleListening } = useVoice();
+  const { isListening, toggleVoiceMode } = useVoice();
   const aura = useUnifiedAura({ companyId: companyId ?? undefined, userId: user?.id });
   const [input, setInput] = useState('');
 
