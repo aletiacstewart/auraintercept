@@ -38,7 +38,7 @@ export function AuraCommandCenter() {
     (text?: string) => {
       const command = text ?? input;
       if (!command.trim()) return;
-      aura.processInput(command);
+      aura.handleInput(command);
       setInput('');
     },
     [input, aura],
