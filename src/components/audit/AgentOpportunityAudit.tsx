@@ -24,7 +24,6 @@ export function AgentOpportunityAudit() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const progress: SavedProgress = JSON.parse(saved);
-        // Only restore if saved within last 24 hours
         const dayInMs = 24 * 60 * 60 * 1000;
         if (Date.now() - progress.savedAt < dayInMs) {
           setCurrentStep(progress.currentStep);
@@ -66,7 +65,6 @@ export function AgentOpportunityAudit() {
       setCurrentStep((prev) => prev + 1);
     } else {
       setShowResults(true);
-      // Clear saved progress when complete
       localStorage.removeItem(STORAGE_KEY);
     }
   };
@@ -84,9 +82,9 @@ export function AgentOpportunityAudit() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Calculate tier fit percentages for all 7 tiers
+  // Calculate tier fit percentages for all 3 tiers
   const tierPercentages = useMemo((): TierScores => {
-    const totals: TierScores = { EXPRESS: 0, FLOW: 0, CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    const totals: TierScores = { CONNECT: 0, PERFORMANCE: 0, COMMAND: 0 };
     let answeredCount = 0;
 
     QUESTIONS.forEach((question) => {
@@ -96,52 +94,34 @@ export function AgentOpportunityAudit() {
           (opt) => opt.label === selectedLabel
         );
         if (selectedOption) {
-          totals.EXPRESS += selectedOption.tierScores.EXPRESS;
-          totals.FLOW += selectedOption.tierScores.FLOW;
-          totals.CORE += selectedOption.tierScores.CORE;
-          totals.HALO += selectedOption.tierScores.HALO;
-          totals.SINGLE_POINT += selectedOption.tierScores.SINGLE_POINT;
-          totals.MULTI_TRACK += selectedOption.tierScores.MULTI_TRACK;
+          totals.CONNECT += selectedOption.tierScores.CONNECT;
+          totals.PERFORMANCE += selectedOption.tierScores.PERFORMANCE;
           totals.COMMAND += selectedOption.tierScores.COMMAND;
           answeredCount++;
         }
       }
     });
 
-    // Calculate average percentage for each tier
     if (answeredCount === 0) {
-      return { EXPRESS: 0, FLOW: 0, CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+      return { CONNECT: 0, PERFORMANCE: 0, COMMAND: 0 };
     }
 
     return {
-      EXPRESS: Math.round(totals.EXPRESS / answeredCount),
-      FLOW: Math.round(totals.FLOW / answeredCount),
-      CORE: Math.round(totals.CORE / answeredCount),
-      HALO: Math.round(totals.HALO / answeredCount),
-      SINGLE_POINT: Math.round(totals.SINGLE_POINT / answeredCount),
-      MULTI_TRACK: Math.round(totals.MULTI_TRACK / answeredCount),
+      CONNECT: Math.round(totals.CONNECT / answeredCount),
+      PERFORMANCE: Math.round(totals.PERFORMANCE / answeredCount),
       COMMAND: Math.round(totals.COMMAND / answeredCount),
     };
   }, [answers]);
 
   // Determine recommended tier based on highest fit
   const recommendedTier = useMemo((): TierType => {
-    const { EXPRESS, FLOW, CORE, HALO, SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
-    
-    // Find the tier with highest score
     const scores: { tier: TierType; score: number }[] = [
-      { tier: 'EXPRESS', score: EXPRESS },
-      { tier: 'FLOW', score: FLOW },
-      { tier: 'CORE', score: CORE },
-      { tier: 'HALO', score: HALO },
-      { tier: 'SINGLE_POINT', score: SINGLE_POINT },
-      { tier: 'MULTI_TRACK', score: MULTI_TRACK },
-      { tier: 'COMMAND', score: COMMAND },
+      { tier: 'CONNECT', score: tierPercentages.CONNECT },
+      { tier: 'PERFORMANCE', score: tierPercentages.PERFORMANCE },
+      { tier: 'COMMAND', score: tierPercentages.COMMAND },
     ];
     
-    // Sort by score descending
     scores.sort((a, b) => b.score - a.score);
-    
     return scores[0].tier;
   }, [tierPercentages]);
 

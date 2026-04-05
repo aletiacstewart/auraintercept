@@ -13,11 +13,7 @@ import {
   Clock,
   Phone,
   Star,
-  MessageSquare,
-  Utensils,
-  CalendarDays
 } from "lucide-react";
-import { Sparkles } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 
@@ -28,45 +24,29 @@ interface AuditResultsProps {
 }
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
-  EXPRESS: <Utensils className="h-6 w-6" />,
-  FLOW: <CalendarDays className="h-6 w-6" />,
-  CORE: <MessageSquare className="h-6 w-6" />,
-  HALO: <Sparkles className="h-6 w-6" />,
-  SINGLE_POINT: <Zap className="h-6 w-6" />,
-  MULTI_TRACK: <Users className="h-6 w-6" />,
+  CONNECT: <Zap className="h-6 w-6" />,
+  PERFORMANCE: <Users className="h-6 w-6" />,
   COMMAND: <Crown className="h-6 w-6" />,
 };
 
 const TIER_COLORS: Record<TierType, string> = {
-  EXPRESS: 'from-amber-500 to-orange-500',
-  FLOW: 'from-teal-400 to-cyan-500',
-  CORE: 'from-slate-500 to-slate-600',
-  HALO: 'from-rose-400 to-pink-500',
-  SINGLE_POINT: 'from-blue-500 to-cyan-500',
-  MULTI_TRACK: 'from-emerald-500 to-teal-500',
+  CONNECT: 'from-blue-500 to-cyan-500',
+  PERFORMANCE: 'from-emerald-500 to-teal-500',
   COMMAND: 'from-primary to-orange-500',
 };
 
 const TIER_BG_COLORS: Record<TierType, string> = {
-  EXPRESS: 'bg-amber-50 border-amber-200',
-  FLOW: 'bg-teal-50 border-teal-200',
-  CORE: 'bg-slate-50 border-slate-300',
-  HALO: 'bg-rose-50 border-rose-200',
-  SINGLE_POINT: 'bg-blue-50 border-blue-200',
-  MULTI_TRACK: 'bg-emerald-50 border-emerald-200',
+  CONNECT: 'bg-blue-50 border-blue-200',
+  PERFORMANCE: 'bg-emerald-50 border-emerald-200',
   COMMAND: 'bg-primary/10 border-primary/30',
 };
 
-const TIER_ORDER: TierType[] = ['EXPRESS', 'FLOW', 'CORE', 'HALO', 'SINGLE_POINT', 'MULTI_TRACK', 'COMMAND'];
+const TIER_ORDER: TierType[] = ['CONNECT', 'PERFORMANCE', 'COMMAND'];
 
 // ROI estimates by tier
 const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered: number; revenueImpact: string }> = {
-  EXPRESS: { hoursSaved: 8, leadsRecovered: 4, revenueImpact: '$2,000-5,000' },
-  FLOW: { hoursSaved: 10, leadsRecovered: 5, revenueImpact: '$3,000-6,000' },
-  CORE: { hoursSaved: 5, leadsRecovered: 3, revenueImpact: '$1,500-3,000' },
-  HALO: { hoursSaved: 12, leadsRecovered: 6, revenueImpact: '$4,000-8,000' },
-  SINGLE_POINT: { hoursSaved: 15, leadsRecovered: 8, revenueImpact: '$5,000-10,000' },
-  MULTI_TRACK: { hoursSaved: 30, leadsRecovered: 15, revenueImpact: '$15,000-30,000' },
+  CONNECT: { hoursSaved: 10, leadsRecovered: 5, revenueImpact: '$3,000-6,000' },
+  PERFORMANCE: { hoursSaved: 25, leadsRecovered: 12, revenueImpact: '$10,000-20,000' },
   COMMAND: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
 };
 
@@ -202,7 +182,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
           </CardContent>
         </Card>
 
-        {/* 7-Tier Comparison */}
+        {/* 3-Tier Comparison */}
         <Card className="mb-8 border border-border bg-white">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-center text-foreground">
@@ -243,7 +223,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                           )}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {tierRec.price} • {tierRec.agentCount} agents • {tierRec.consoleCount} consoles
+                          {tierRec.price} • {tierRec.agentCount} operatives • {tierRec.consoleCount} consoles
                         </p>
                       </div>
                     </div>
@@ -303,7 +283,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
         <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
-          All plans include a 30-day free trial. Implementation fees start at $299.
+          All plans include a 14-day free trial. Implementation fees start at $299.
         </p>
       </div>
     </div>
