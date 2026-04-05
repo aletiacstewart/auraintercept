@@ -75,12 +75,12 @@ Aura Intercept is an AI-powered business automation platform with 10 AI Operativ
 
 ## 7 Control Centers (Consoles) + 1 Management Interface
 1. **Customer Portal** (Connect+): AI-powered customer engagement with Message Aura (Text), Talk to Aura (Voice), appointment booking. Tabs: AI Assistant, Services, Appointments, Voice AI, Contact, Hours.
-2. **Field Operations** (Logistics+): Mobile console for technicians with GPS routing, job management, customer notifications
-3. **Business Operations** (Logistics+): Finance management, invoicing, inventory tracking, employee management
-4. **Outreach & Sales Ops** (Growth+): Full-funnel lead management, campaign creation, segmentation, promotional tools, lead nurturing, win-back targeting
-5. **Social Media Ops** (Growth+): Content creation for 6 platforms via MultiChannelGenerator, Manual Bridge posting, AI Suggest topics. Tabs: Home, Create Content, My Posts.
-6. **Creative & Web Presence** (Presence+): Content Engine, AI website builder, blog management, SEO optimization
-7. **Analytics & Reports** (Performance+): KPIs, revenue analysis, forecasting, multi-format export
+2. **Field Operations** (Performance+): Mobile console for technicians with GPS routing, job management, customer notifications
+3. **Business Operations** (Performance+): Finance management, invoicing, inventory tracking, employee management
+4. **Outreach & Sales Ops** (Connect+): Full-funnel lead management, campaign creation, segmentation, promotional tools, lead nurturing, win-back targeting
+5. **Social Media Ops** (Connect+): Content creation for 6 platforms via MultiChannelGenerator, Manual Bridge posting, AI Suggest topics. Tabs: Home, Create Content, My Posts.
+6. **Creative & Web Presence** (Connect+): Content Engine, AI website builder, blog management, SEO optimization
+7. **Analytics & Reports** (Command): KPIs, revenue analysis, forecasting, multi-format export
 8. **AI Operatives Hub** (Command only): Central management interface for all operatives, monitoring, testing, analytics (not counted as a console)
 
 ## 10 AI Operatives
@@ -107,14 +107,10 @@ Aura Intercept is an AI-powered business automation platform with 10 AI Operativ
 ### Analytics & Reports Stack
 - **Analytics Intelligence** (Performance+): Unified insights + performance + revenue + forecast operative. Customer behavior analysis, natural language queries, KPI dashboards, agent metrics, operational reports, revenue tracking, projections, financial analysis, demand forecasting, seasonal trends, resource planning
 
-## Subscription Tiers (7-Tier Growth Ladder)
-- **Aura Starter ($197/mo)**: 1 operative (AI Receptionist), 0 consoles, 2 employees
-- **Aura Connect ($397/mo)**: 2 operatives, 1 console (Customer Portal), 3 employees
-- **Aura Growth ($597/mo)**: 3 operatives, 3 consoles (adds Outreach & Sales, Social Media), 5 employees
-- **Aura Presence ($797/mo)**: 5 operatives, 4 consoles (adds Creative & Web Presence), 8 employees
-- **Aura Logistics ($1,497/mo)**: 8 operatives, 6 consoles (adds Field Ops, Business Ops), 15 employees
-- **Aura Performance ($497/mo)**: 9 operatives, all 7 consoles, 25 employees
-- **Aura Command ($697/mo)**: All 10 operatives, all 7 consoles + AI Operatives Hub, 50 employees
+## Subscription Tiers (3-Tier Growth Ladder)
+- **Aura Connect ($297/mo)**: 5 operatives, 4 consoles, 5 employees — Solo operators, salons, consultants
+- **Aura Performance ($497/mo)**: 8 operatives, 6 consoles, 15 employees — HVAC, plumbing, field service
+- **Aura Command ($697/mo)**: All 10 operatives, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup

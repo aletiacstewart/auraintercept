@@ -42,12 +42,8 @@ export default function TalkToAura() {
   }, []);
 
   const tierLabels: Record<string, string> = {
-    express: 'Aura Starter',
-    aura_flow: 'Aura Connect',
-    halo: 'Aura Growth',
-    core: 'Aura Presence',
-    single_point: 'Aura Logistics',
-    multi_track: 'Aura Performance',
+    connect: 'Aura Connect',
+    performance: 'Aura Performance',
     command: 'Aura Command',
   };
 
