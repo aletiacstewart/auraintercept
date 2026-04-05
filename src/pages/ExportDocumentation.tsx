@@ -43,7 +43,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
             <CardDescription>
-                Complete guide to all 24 AI operatives, 7 Control Centers, communication channels & integrations
+                Complete guide to all 10 AI operatives, 7 Control Centers, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -51,11 +51,11 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>7 Console Overviews</li>
-                  <li>24 AI Operative Descriptions</li>
+                  <li>10 AI Operative Descriptions</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
-                  <li>7-Tier Subscription Access</li>
+                  <li>3-Tier Subscription Access</li>
                 </ul>
               </div>
 
@@ -110,7 +110,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
                   <li>Project Complexity Score</li>
-                  <li>Complete AI Operatives Catalog (24 agents)</li>
+                  <li>Complete AI Operatives Catalog (10 operatives)</li>
                   <li>7 Control Center Descriptions</li>
                   <li>Technical Architecture</li>
                 </ul>
@@ -165,7 +165,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Pricing Summary</li>
-                  <li>Seven-Tier Comparison</li>
+                  <li>Three-Tier Comparison</li>
                   <li>Detailed Tier Breakdowns</li>
                   <li>Implementation Fees</li>
                   <li>3rd Party Integration Costs</li>
