@@ -140,31 +140,36 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   },
 };
 
-// Tier order for display (price ascending) — 3-tier structure
-export const TIER_ORDER = ['aura_connect', 'multi_track', 'command'] as const;
+// Tier order for display (price ascending) — 4-tier structure
+export const TIER_ORDER = ['aura_core', 'aura_boost', 'aura_pro', 'aura_elite'] as const;
 
-// Legacy tier ID → new 3-tier ID (for backward compatibility with DB records)
+// Legacy tier ID → new 4-tier ID (for backward compatibility with DB records)
 export const LEGACY_TIER_ID_MAP: Record<string, string> = {
   // Old 7-tier / 5-tier docConfig IDs
-  'express': 'aura_connect',
-  'aura_flow': 'aura_connect',
-  'halo': 'aura_connect',
-  'core': 'aura_connect',
-  'single_point': 'multi_track',
+  'express': 'aura_core',
+  'aura_flow': 'aura_core',
+  'halo': 'aura_core',
+  'core': 'aura_core',
+  'single_point': 'aura_pro',
   // subscriptionAgentConfig internal names
-  'starter': 'aura_connect',
-  'scheduling': 'aura_connect',
-  'growth': 'aura_connect',
-  'business': 'aura_connect',
-  'field_ops': 'multi_track',
-  'performance': 'multi_track',
+  'starter': 'aura_core',
+  'scheduling': 'aura_core',
+  'growth': 'aura_boost',
+  'business': 'aura_boost',
+  'field_ops': 'aura_pro',
+  'performance': 'aura_pro',
   // Old 5-tier names
-  'aura_growth': 'aura_connect',
+  'aura_growth': 'aura_boost',
   // Keep existing IDs valid
-  'multi_track': 'multi_track',
-  'command': 'command',
-  'aura_connect': 'aura_connect',
-  'connect': 'aura_connect',
+  'multi_track': 'aura_pro',
+  'command': 'aura_elite',
+  'aura_connect': 'aura_boost',
+  'connect': 'aura_boost',
+  // Self-map canonical IDs
+  'aura_core': 'aura_core',
+  'aura_boost': 'aura_boost',
+  'aura_pro': 'aura_pro',
+  'aura_elite': 'aura_elite',
 };
 
 // ============================================
