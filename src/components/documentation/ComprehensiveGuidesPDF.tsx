@@ -216,12 +216,13 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Connect ($297/mo): 11 Smart AI Agents + 4 Consoles, 5 employees',
-          'Aura Performance ($497/mo): 18 Smart AI Agents + 6 Consoles, 15 employees',
-          'Aura Command ($697/mo): All 24 Smart AI Agents + 7 Consoles + AI Operatives Hub, Unlimited employees',
-          'All tiers include API Access, White-Label Branding, and Chat Widget'
+          'Aura Core ($197/mo): 8 Smart AI Agents + 3 Consoles, 10 employees',
+          'Aura Boost ($497/mo): 12 Smart AI Agents + 5 Consoles, 25 employees',
+          'Aura Pro ($997/mo): 16 Smart AI Agents + 5 Consoles, 50 employees, White-Label',
+          'Aura Elite ($1,997/mo): All 24 Smart AI Agents + 7 Consoles + AI Operatives Hub, Unlimited employees',
+          'All tiers include API Access and Embeddable Chat Widget'
         ],
-        tips: ['Trial users get full Command tier access', 'Annual billing = 10x monthly rate']
+        tips: ['Trial users get full Elite tier access', 'Annual billing saves ~20%']
       },
       {
         title: 'User Roles & Permissions',

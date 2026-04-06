@@ -1169,8 +1169,8 @@ const PlatformDocumentPDF = () => (
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Aura Pro (Growth)</Text>
         <Text style={styles.pricingPrice}>$997/month</Text>
-        <Text style={styles.pricingFeature}>- 18 Smart AI Agents + 6 Consoles</Text>
-        <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Admin, Quoting</Text>
+        <Text style={styles.pricingFeature}>- 16 Smart AI Agents + 5 Consoles</Text>
+        <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Social</Text>
         <Text style={styles.pricingFeature}>- White-Label Branding included</Text>
         <Text style={styles.pricingFeature}>- 50 Employee Accounts</Text>
         <Text style={styles.pricingFeature}>- $599 implementation fee</Text>
