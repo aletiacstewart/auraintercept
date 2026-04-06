@@ -831,12 +831,12 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Connect */}
+            {/* Aura Boost */}
             <Card className="relative overflow-hidden border-sky-400/50 shadow-glow dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">Most Popular</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Boost</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Field service automation</p>
                 <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
                 <div className="flex items-baseline gap-1 mb-1">
@@ -847,9 +847,9 @@ export default function Index() {
                 <p className="text-xs text-card-foreground/70 mb-4">12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">12 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">4 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">5 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Dispatch + Route + ETA + Check-In</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Field Operations Console</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Field Operations + Social Media Console</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white" onClick={() => navigate('/auth?mode=company')}>
@@ -862,12 +862,12 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Performance */}
+            {/* Aura Pro */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-purple-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-violet-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-purple-500/20 text-purple-400 border-purple-500/30 text-[10px]">Growth</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Pro</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Full business management</p>
                 <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-1 mb-1">
@@ -875,11 +875,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">18 Smart AI Agents with social media, web presence & white-label.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">18 Smart AI Agents with social media, admin & white-label.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">18 Smart AI Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">6 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Marketing + Web Presence + Social</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Campaign + Outreach + Social + Admin</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-purple-400">White-Label Branding</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">50 Employee Accounts</span></div>
                 </div>
@@ -893,12 +893,12 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            {/* Aura Command */}
+            {/* Aura Elite */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-500/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Command</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Elite</h3>
                 <p className="text-[10px] text-amber-400/80 mb-1">Multi-Location / Enterprise</p>
                 <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for multi-location franchises, property management firms, and enterprise teams.</p>
                 <div className="flex items-baseline gap-1 mb-1">
