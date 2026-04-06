@@ -562,7 +562,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Competitor Comparison */}
     <Page size="A4" style={styles.page}>
-      <Header title="Competitor Comparison" pageNum={4} />
+      <Header title="Competitor Comparison" pageNum={5} />
       
       <Text style={styles.sectionTitle}>Market Positioning</Text>
       <Text style={styles.sectionSubtitle}>How Aura Intercept compares to alternatives</Text>
@@ -640,7 +640,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Objection Handling */}
     <Page size="A4" style={styles.page}>
-      <Header title="Objection Handling Scripts" pageNum={5} />
+      <Header title="Objection Handling Scripts" pageNum={6} />
       
       <Text style={styles.sectionTitle}>Common Objections & Responses</Text>
       <Text style={styles.sectionSubtitle}>Proven responses to overcome sales resistance</Text>
@@ -686,7 +686,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Case Studies */}
     <Page size="A4" style={styles.page}>
-      <Header title="Case Study Frameworks" pageNum={6} />
+      <Header title="Case Study Frameworks" pageNum={7} />
       
       <Text style={styles.sectionTitle}>Customer Success Stories</Text>
       <Text style={styles.sectionSubtitle}>Real scenarios to reference in sales conversations</Text>
@@ -748,7 +748,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Tier Recommendation Guide */}
     <Page size="A4" style={styles.page}>
-      <Header title="Tier Recommendation Guide" pageNum={7} />
+      <Header title="Tier Recommendation Guide" pageNum={8} />
       
       <Text style={styles.sectionTitle}>Matching Customers to Tiers</Text>
       <Text style={styles.sectionSubtitle}>Use these criteria to recommend the right tier</Text>
@@ -801,7 +801,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Closing Scripts */}
     <Page size="A4" style={styles.page}>
-      <Header title="Closing Scripts" pageNum={8} />
+      <Header title="Closing Scripts" pageNum={9} />
       
       <Text style={styles.sectionTitle}>Proven Closing Techniques</Text>
       <Text style={styles.sectionSubtitle}>Scripts to move prospects to decision</Text>
