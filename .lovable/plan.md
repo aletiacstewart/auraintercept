@@ -1,81 +1,125 @@
 
 
-# Rename Tiers to Core / Boost / Pro / Elite + Update Agent Distribution
+# Platform-Wide Consistency Deep Dive — Full Synchronization Plan
 
-## Summary
-Rename all 4 tier display names platform-wide and update the agent distribution for the Core tier. Internal tier IDs (`starter`, `connect`, `performance`, `command`) remain unchanged for backward compatibility — only user-facing labels change.
+## Problem Summary
+Despite previous updates, significant inconsistencies remain across the platform. The canonical model is:
+- **Aura Core** ($197/mo) — 8 agents, 3 consoles, 10 employees, $0 implementation fee
+- **Aura Boost** ($497/mo) — 12 agents, 5 consoles, 25 employees, $299 implementation fee
+- **Aura Pro** ($997/mo) — 16 agents, 5 consoles, 50 employees, $599 implementation fee
+- **Aura Elite** ($1,997/mo) — 24 agents, 7 consoles + AI Hub, unlimited employees, $999 implementation fee
 
-**Name mapping:** Aura Starter → **Aura Core**, Aura Connect → **Aura Boost**, Aura Performance → **Aura Pro**, Aura Command → **Aura Elite**
+## Issues Found (grouped by file)
 
-**Agent redistribution for Aura Core (8 agents):**
-- Remove: Campaign Agent, Outreach Agent
-- Add: Web Presence Agent, Marketing Agent
-- New Core agents: Triage, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing
+### 1. `supabase/functions/create-checkout/index.ts`
+- **CRITICAL**: Still says "3-TIER STRUCTURE: Boost ($297), Pro ($497), Elite ($697)" with old prices ($297/$497/$697 instead of $197/$497/$997/$1,997)
+- Missing Aura Core tier entirely
+- All legacy aliases map to wrong prices
+- **Fix**: Rewrite to 4-tier structure with correct prices ($19700/$49700/$99700/$199700 cents)
 
-**Agent redistribution for Aura Boost (12 agents):**
-- All Core agents + Dispatch, Route, ETA, Check-In (no Campaign/Outreach here either — those move up)
-- Wait — user spec says Boost includes "Campaign Agent, Outreach Agent, Social Feed Queue Agent" on top of Core + field ops. Let me re-read.
-- Boost = All Core (8) + Dispatch, Route, ETA, Check-In, Campaign, Outreach, Social Feed Queue = **15 agents?** But user says 12.
-- User says: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent" — that's 8+7=15, but labeled "12". I'll follow the explicit count of 12 and the listed agents. Actually re-reading: "All Core agents + Dispatch, Route, ETA, Check-In" = 12. Then the See More Details says the full list including Campaign, Outreach, Social Feed Queue — that's 15. There's a contradiction.
-- Looking more carefully at See More Details: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent" = 8+7=15. But the card says "12". I'll go with the See More Details list (which is the detailed spec) and update the count to match — likely the user wants all those agents, so 15 is wrong for "12". Actually the simplest interpretation: the card count should match the detailed list. So either the count or the list needs adjustment.
+### 2. `supabase/functions/trial-reminders/index.ts`
+- Two email templates say "Starting at $297/month" — should be "$197/month"
+- **Fix**: Update both CTA buttons
 
-I'll present both options and default to trusting the detailed "See More Details" list as authoritative, updating the card count to match (15 for Boost). But actually let me re-read once more...
+### 3. `src/components/audit/types.ts`
+- Still uses 3-tier model (CONNECT/PERFORMANCE/COMMAND) — missing Aura Core and Aura Pro
+- `TierType` only has 3 values
+- PERFORMANCE is mislabeled as "Aura Boost" ($497) — should be Aura Boost mapped to CONNECT tier
+- No CORE or PRO tier definitions
+- **Fix**: Expand to 4-tier model (CORE/BOOST/PRO/ELITE) with correct agent counts and features
 
-User says for Boost:
-- Card: "AI Operatives / Agents: 12"
-- See More: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent"
+### 4. `src/components/audit/AuditResults.tsx` & `AgentOpportunityAudit.tsx`
+- References "3-Tier Comparison" and "3 tiers"
+- Implementation fees text says "start at $299" — should mention $0 for Core
+- 14-day trial reference — should be 30-day
+- **Fix**: Update to 4-tier comparison
 
-8 Core + 7 new = 15, not 12. I'll flag this discrepancy and go with the See More Details list as the definitive spec (15 agents for Boost), OR I'll count exactly what the user listed. Since the user explicitly says "12" on the card, perhaps Campaign and Outreach are already in Core via the "All Core agents" part? Let me check Core's See More: "8 AI Agents: AI Receptionist (Triage), Booking Agent, Follow-Up Agent, Review Agent, Creative Content Agent, Web Presence Agent, Lead Agent, Marketing Agent". No Campaign or Outreach in Core. So 8+7=15. This is a discrepancy I should flag.
+### 5. `src/components/documentation/PricingSummaryPDF.tsx`
+- Line 194: Says "18 AI Agents" for Pro — should be 16
+- Line 232: Old implementation fees "Connect: $299 | Performance: $499 | Command: Custom"
+- Still references old 3-column table (columns c/p/cmd) — needs 4-column (core/boost/pro/elite)
+- Lines 387: "Everything in Boost (12 agents)" then lists Campaign/Outreach as Boost — wrong, those are Pro
+- **Fix**: Full rewrite of tier detail pages and implementation fee text
 
-Similarly for Pro: "18 AI Agents: All Boost agents + Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, Forecast, Social Analytics" = 15+9=24, but says 18. Another discrepancy.
+### 6. `src/components/documentation/WebsiteCopyPDF.tsx`
+- Line 599: Implementation fee text says "$299–$499 depending on tier, Custom for Command"
+- Line 594: Says "14-day free trial" — should be 30-day
+- **Fix**: Update to "$0–$999" range and 30-day trial
 
-I'll ask the user to clarify.
+### 7. `src/components/documentation/PlatformDocumentPDF.tsx`
+- Line 880: References "Single-Point/Multi-Track" tiers (legacy)
+- Line 935: Says "14-day free trial" — should be 30-day
+- Line 1277: "14-day free trial"
+- **Fix**: Replace all legacy tier references with Core/Boost/Pro/Elite
 
-## Files to Modify (once agent counts confirmed)
+### 8. `src/components/documentation/ComprehensiveGuidesPDF.tsx`
+- Lines 244-248: Legacy tier names "Single-Point", "Multi-Track+"
+- Lines 284, 302, 312, 356: Legacy tier references
+- **Fix**: Replace with current tier names
 
-### 1. `src/lib/subscriptionAgentConfig.ts`
-- Update `label` fields: 'Aura Core', 'Aura Boost', 'Aura Pro', 'Aura Elite'
-- Update agent arrays for starter tier: swap `campaign`+`outreach` for `web_presence`+`marketing`
-- Update connect tier agents per confirmed list
-- Update `LEGACY_TIER_MAP`: add `'aura_core': 'starter'`, `'aura_boost': 'connect'`, etc.
+### 9. `src/components/documentation/BrandAssetGuidePDF.tsx`
+- Lines 928-935: Says "23 AI Agents" and "6 Control Centers" — should be 24 and 7
+- Line 974: References "Multi-Track tier"
+- **Fix**: Update stats to 24 agents, 7 consoles
 
-### 2. `src/pages/Index.tsx`
-- Rename all card titles, descriptions, badge text, and "See More Details" content
-- Update implementation fee line: "$0 Core • $299 Boost • $599 Pro • $999 Elite"
-- Update agent lists per confirmed distribution
+### 10. `src/pages/PlatformGuides.tsx`
+- Line 122: "18 AI Agents" for Pro — should be 16; includes "Admin, Quoting" which are Elite-only
+- Lines 148-152: Legacy "Single-Point", "Multi-Track+" references
+- Lines 160-166: Legacy tier names "Connect+", "Logistics+", "Growth+", "Presence+", "Performance+"
+- Lines 186-191: Outdated agent stack groupings
+- **Fix**: Rewrite with current tier names (Core/Boost/Pro/Elite) and correct agent lists
 
-### 3. `src/components/landing/PricingComparisonTable.tsx`
-- Rename column headers from Starter/Connect/Performance/Command → Core/Boost/Pro/Elite
-- Update agent gating rows per new distribution
-- Update section count headers
+### 11. `src/pages/Help.tsx`
+- Line 699: "18 AI Agents" for Pro with "Admin, Quoting" — should be 16 without those
+- **Fix**: Update Pro agent description
 
-### 4. `src/pages/Subscription.tsx`
-- Rename TIERS array names, FAQ text, implementation fee text
-- Update comparison table headers
-- Update agent gating in comparison sections
+### 12. `src/components/help/AIHelpCenter.tsx`
+- Lines 76-101: Legacy tier suffixes ("Connect+", "Performance+", "Logistics+", "Growth+", "Presence+")
+- **Fix**: Replace with current tier names (Core/Boost/Pro/Elite)
 
-### 5. `src/components/agents/TierComparisonCards.tsx`
-- Labels auto-derive from `TIER_AGENT_CONFIG` — will update automatically
+### 13. `src/lib/helpContentConfig.ts`
+- Line 59: Comment says "3-TIER STRUCTURE"
+- Line 351: Comment says "3-TIER STRUCTURE"
+- **Fix**: Update comments to "4-TIER STRUCTURE"
 
-### 6. `supabase/functions/ai-agent-chat/index.ts`
-- Update tier display names in system prompt and TIER_AGENTS mapping
+### 14. `src/components/smartwebsite/VisitorLimitModal.tsx`
+- Line 43: "6 Control Centers" for Pro — should be "5 Control Centers"
+- **Fix**: Update console count
 
-### 7. `supabase/functions/landing-chat/index.ts`
-- Update pricing tier descriptions in system prompt
+### 15. `src/components/documentation/SalesPitchDataPDF.tsx`
+- Lines 506-508: "3-Tier ROI Calculators" — should be 4-tier
+- Line 974: References "Multi-Track tier"
+- **Fix**: Update to 4-tier
 
-### 8. `supabase/functions/create-checkout/index.ts`
-- Update `name` fields to new tier names
+### 16. `src/pages/ExportDocumentation.tsx`
+- Line 58: "3-Tier Subscription Access" — should be 4-Tier
+- **Fix**: Update label
 
-### 9. Other files (Help.tsx, helpContentConfig.ts, documentationConfig.ts, PlatformDocumentPDF.tsx)
-- Find-and-replace tier display names
+### 17. `src/components/documentation/AIAgentGuidesPDF.tsx`
+- Line 752: Comment says "3-tier model" — should be 4-tier
+- **Fix**: Update comment
 
-## Clarification Needed
+### 18. `src/pages/Auth.tsx`
+- Line 808: "Performance+" legacy tier reference
+- **Fix**: Replace with "Pro+" or "All tiers"
 
-The agent counts on the cards don't match the "See More Details" lists:
-- **Aura Core**: Card says 8, Details lists 8 agents — OK
-- **Aura Boost**: Card says 12, but Details lists 8 Core + 7 new = **15 agents**
-- **Aura Pro**: Card says 18, but Details lists all Boost + 9 more = **24 agents** (or 27 if Boost is 15+9)
-- **Aura Elite**: Card says 24 — this is the full suite
+## Implementation Approach
 
-Should I (A) keep the card counts (8/12/18/24) and trim the "See More Details" agent lists to match, or (B) keep the detailed agent lists and update the card counts?
+### Batch 1 — Backend / Edge Functions (3 files)
+- `create-checkout/index.ts`: 4-tier pricing with correct cents values
+- `trial-reminders/index.ts`: "$197/month" CTA
+- `check-subscription/index.ts`: Verify mappings (already looks correct)
+
+### Batch 2 — Audit System (3 files)
+- `audit/types.ts`: Expand to 4-tier (CORE/BOOST/PRO/ELITE)
+- `audit/AuditResults.tsx`: 4-tier comparison
+- `audit/AgentOpportunityAudit.tsx`: 4-tier scoring
+
+### Batch 3 — PDF Documents (6 files)
+- `PricingSummaryPDF.tsx`, `WebsiteCopyPDF.tsx`, `PlatformDocumentPDF.tsx`, `ComprehensiveGuidesPDF.tsx`, `BrandAssetGuidePDF.tsx`, `SalesPitchDataPDF.tsx`
+
+### Batch 4 — Platform Pages & Components (8 files)
+- `PlatformGuides.tsx`, `Help.tsx`, `AIHelpCenter.tsx`, `helpContentConfig.ts`, `VisitorLimitModal.tsx`, `ExportDocumentation.tsx`, `AIAgentGuidesPDF.tsx`, `Auth.tsx`
+
+Total: ~20 files with targeted fixes to achieve full platform consistency.
 
