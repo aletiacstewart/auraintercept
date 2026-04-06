@@ -107,10 +107,11 @@ Aura Intercept is an AI-powered business automation platform with 24 Smart AI Ag
 ### Analytics & Reports Stack
 - **Analytics Intelligence** (Performance+): Unified insights + performance + revenue + forecast operative. Customer behavior analysis, natural language queries, KPI dashboards, agent metrics, operational reports, revenue tracking, projections, financial analysis, demand forecasting, seasonal trends, resource planning
 
-## Subscription Tiers (3-Tier Growth Ladder)
-- **Aura Connect ($297/mo)**: 11 agents, 4 consoles, 5 employees — Solo operators, salons, consultants
-- **Aura Performance ($497/mo)**: 18 agents, 6 consoles, 15 employees — HVAC, plumbing, field service
-- **Aura Command ($697/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
+## Subscription Tiers (4-Tier Growth Ladder)
+- **Aura Core ($197/mo)**: 8 agents, 3 consoles, 10 employees — Solo operators, restaurants, single-location
+- **Aura Boost ($497/mo)**: 12 agents, 5 consoles, 25 employees — HVAC, plumbing, field service
+- **Aura Pro ($997/mo)**: 16 agents, 5 consoles, 50 employees — Growing companies, white-label branding
+- **Aura Elite ($1,997/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup

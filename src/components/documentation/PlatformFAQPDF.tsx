@@ -460,12 +460,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Are there annual billing discounts?"
-          answer="Yes! Save approximately 16% with annual billing. For example, Multi-Track annual is $39,970 (saving $7,994 vs monthly). Annual plans are billed upfront and include priority support."
+          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $19,970/year (saving ~$3,994 vs monthly). Annual plans are billed upfront and include priority support."
         />
         
         <FAQItem 
           question="What add-ons are available?"
-          answer={`Available add-ons include: Additional Employees ($${ADDON_PRICING.additionalEmployees.price} per 10 employees/month) for Logistics and Performance tiers. Social media, web presence, and creative tools are included starting at the Aura Growth tier.`}
+          answer={`Available add-ons include: Additional Employees ($${ADDON_PRICING.additionalEmployees.price} per 10 employees/month) for Pro and Elite tiers. Social media, web presence, and creative tools are included starting at the Aura Core tier.`}
         />
 
         <FAQItem 
@@ -495,8 +495,8 @@ const PlatformFAQPDF = () => {
         />
 
         <FAQItem 
-          question="What's included in the Aura Growth tier specifically?"
-          answer={`Aura Halo ($${SUBSCRIPTION_TIERS.halo.price}/mo) is designed for salons and wellness businesses. It includes: ${SUBSCRIPTION_TIERS.halo.highlights.slice(0, 5).join(', ')}. Perfect for nail salons, hair salons, barbers, massage centers, and spas.`}
+          question="What's included in the Aura Core tier specifically?"
+          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 197}/mo) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses.`}
         />
 
         <View style={styles.warningBox}>
