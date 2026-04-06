@@ -455,7 +455,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the implementation fees?"
-          answer={`One-time implementation fees vary by tier: Express ($${SUBSCRIPTION_TIERS.express.implementationFee}), Flow ($${SUBSCRIPTION_TIERS.aura_flow.implementationFee}), Halo ($${SUBSCRIPTION_TIERS.halo.implementationFee}), Core ($${SUBSCRIPTION_TIERS.core.implementationFee}), Single-Point ($${SUBSCRIPTION_TIERS.single_point.implementationFee}), Multi-Track ($${SUBSCRIPTION_TIERS.multi_track.implementationFee}), and Command (Custom). This covers initial setup, configuration, and training.`}
+          answer={`One-time implementation fees vary by tier: Core ($0), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 299}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 599}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 999}). This covers initial setup, configuration, and training.`}
         />
         
         <FAQItem 
@@ -837,7 +837,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Can I add more employees to my plan?"
-          answer={`Each tier includes a set number of employee accounts. Additional employees can be added for $${ADDON_PRICING.additionalEmployees.price} per 10 employees on Single-Point and Multi-Track tiers. Command tier includes up to ${SUBSCRIPTION_TIERS.command.employees} employees. Contact sales for enterprise employee needs.`}
+          answer={`Each tier includes a set number of employee accounts (Core: 10, Boost: 25, Pro: 50, Elite: Unlimited). Additional employees can be added for $25 per 10 employees on Core, Boost, and Pro tiers. Elite tier includes unlimited employees.`}
         />
         
         <FAQItem 
