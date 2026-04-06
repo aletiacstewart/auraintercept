@@ -40,7 +40,7 @@ const tierUpgrades = {
     price: '$997/mo',
     limit: '10,000',
     icon: TrendingUp,
-    features: ['20x more visitors', '6 Control Centers', 'White-Label Branding'],
+    features: ['20x more visitors', '5 Control Centers', 'White-Label Branding'],
   },
   command: {
     name: 'Elite',

@@ -749,7 +749,7 @@ const COMMUNICATION_CHANNELS = [
   },
 ];
 
-// Subscription tiers - pulled from centralized config (3-tier model)
+// Subscription tiers - pulled from centralized config (4-tier model)
 const TIERS = [
   {
     name: SUBSCRIPTION_TIERS.aura_core?.name ?? 'Aura Core',

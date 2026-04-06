@@ -55,7 +55,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
-                  <li>3-Tier Subscription Access</li>
+                  <li><li>4-Tier Subscription Access</li></li>
                 </ul>
               </div>
 
