@@ -800,25 +800,25 @@ export default function Index() {
           {/* 4-Tier Pricing Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
 
-            {/* Aura Starter */}
+            {/* Aura Core */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-teal-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-teal-500/20 text-teal-400 border-teal-500/30 text-[10px]">Entry Level</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Starter</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & outreach</p>
+                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & web presence</p>
                 <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, restaurants, single-location service businesses.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-teal-400">$197</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">8 Smart AI Agents handling booking, follow-up, outreach & creative content.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">8 Smart AI Agents handling booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">8 Smart AI Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">3 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Triage + Booking + Follow-Up + Review</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Creative Content Agent</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Creative Content + Web Presence</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">10 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company')}>
