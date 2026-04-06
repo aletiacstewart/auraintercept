@@ -53,8 +53,8 @@ export default function Auth() {
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<'connect' | 'performance' | 'command' | null>(null);
-  // 3-tier structure: Connect, Performance, Command
+  const [selectedTier, setSelectedTier] = useState<'starter' | 'connect' | 'performance' | 'command' | null>(null);
+  // 4-tier structure: Core, Boost, Pro, Elite
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
   const [wantsConcierge, setWantsConcierge] = useState(false);
@@ -706,7 +706,7 @@ export default function Auth() {
                       <h3 className="text-sm font-bold text-foreground">30-Day Free Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your trial includes <span className="font-semibold text-foreground">all 10 AI operatives</span>, <span className="font-semibold text-foreground">all 7 control centers</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
+                      Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers + AI Hub</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
                     </p>
                   </div>
                 </div>
@@ -722,16 +722,17 @@ export default function Auth() {
                   </p>
                 </div>
 
-{/* 3 Tier Rows - Compact Single Line */}
+{/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'connect',     name: 'Aura Connect',     sub: 'Solo operators • Salons • Consultants', price: '$297', color: 'teal',   popular: false },
-                    { id: 'performance', name: 'Aura Performance', sub: 'HVAC • Plumbing • Field Service',       price: '$497', color: 'primary', popular: true  },
-                    { id: 'command',     name: 'Aura Command',     sub: 'Multi-Location • Enterprise',           price: '$697', color: 'purple',  popular: false },
+                    { id: 'starter',     name: 'Aura Core',       sub: 'Solo operators • Restaurants • Single-location', price: '$197', color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost',      sub: 'HVAC • Plumbing • Field Service',               price: '$497', color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',         sub: 'Growing companies • Multiple technicians',      price: '$997', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite',       sub: 'Multi-Location • Franchise • Enterprise',       price: '$1,997', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as 'connect' | 'performance' | 'command')}
+                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as 'starter' | 'connect' | 'performance' | 'command')}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all relative ${
                         t.popular
                           ? selectedTier === t.id
@@ -764,9 +765,10 @@ export default function Auth() {
                   <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
                     <p className="text-xs text-center text-foreground">
                       <span className="font-medium">Selected: {
-                        selectedTier === 'connect' ? 'Aura Connect' :
-                        selectedTier === 'performance' ? 'Aura Performance' :
-                        'Aura Command'
+                        selectedTier === 'starter' ? 'Aura Core' :
+                        selectedTier === 'connect' ? 'Aura Boost' :
+                        selectedTier === 'performance' ? 'Aura Pro' :
+                        'Aura Elite'
                       }</span>
                     </p>
                   </div>
@@ -774,7 +776,7 @@ export default function Auth() {
 
                 {/* Annual Savings Note */}
                 <p className="text-xs text-center text-green-500">
-                  Save 16% with annual billing
+                  Save ~20% with annual billing
                 </p>
 
                 {/* Customer Info */}
