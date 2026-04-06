@@ -20,8 +20,8 @@ import {
   normalizeTierName,
 } from '@/lib/subscriptionAgentConfig';
 
-// 3-TIER STRUCTURE: Connect, Performance, Command
-export type SubscriptionTier = 'free' | 'connect' | 'performance' | 'command';
+// 4-TIER STRUCTURE: Starter, Connect, Performance, Command
+export type SubscriptionTier = 'free' | 'starter' | 'connect' | 'performance' | 'command';
 
 // All features available on Command tier
 const ALL_FEATURES = [
@@ -33,15 +33,23 @@ const ALL_FEATURES = [
   'smart_links',
 ];
 
-// Feature mapping for 3-tier structure
+// Feature mapping for 4-tier structure
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
   free: ['basic_dashboard'],
+  starter: [
+    'email_reminders',
+    'advanced_dashboard', 'appointments_unlimited',
+    'widget', 'smart_links', 'api_access',
+    'calendar_sync', 'customer_portal',
+    'creative_tools', 'marketing_automation',
+  ],
   connect: [
     'voice_reminders', 'email_reminders', 'sms_reminders',
     'advanced_dashboard', 'appointments_unlimited',
     'widget', 'smart_links', 'api_access',
     'calendar_sync', 'customer_portal',
     'social_media', 'marketing_automation', 'creative_tools', 'web_presence',
+    'field_ops',
   ],
   performance: [
     'email_reminders', 'sms_reminders', 'voice_reminders',
@@ -49,6 +57,7 @@ export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
     'widget', 'customer_portal', 'field_ops',
     'quotes', 'invoices', 'social_media',
     'marketing_automation', 'creative_tools', 'web_presence', 'api_access',
+    'white_label',
   ],
   command: ALL_FEATURES,
 };
@@ -58,11 +67,11 @@ export type Feature = string;
 export const useSubscription = () => {
   const { subscribed, subscriptionTier: authTier, subscriptionEnd, inTrial, trialEndsAt, checkSubscription } = useAuth();
 
-  // Normalize tier to our 3-tier system (handles all legacy names)
+  // Normalize tier to our 4-tier system (handles all legacy names)
   const normalizeSubscriptionTier = (tier: string | null): SubscriptionTier => {
     if (!tier) return 'free';
     const normalized = normalizeTierName(tier);
-    if (['free', 'connect', 'performance', 'command'].includes(normalized)) {
+    if (['free', 'starter', 'connect', 'performance', 'command'].includes(normalized)) {
       return normalized as SubscriptionTier;
     }
     return 'free';
@@ -140,7 +149,7 @@ export const useSubscription = () => {
 
   // Get all tiers for display
   const getAllTiers = (): { tier: SubscriptionTier; label: string; price: string; description: string }[] => {
-    return (['connect', 'performance', 'command'] as SubscriptionTier[]).map(tier => ({
+    return (['starter', 'connect', 'performance', 'command'] as SubscriptionTier[]).map(tier => ({
       tier,
       ...getTierDisplayInfo(tier as ConfigTier),
     }));
