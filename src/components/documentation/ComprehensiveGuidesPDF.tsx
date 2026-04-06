@@ -684,7 +684,7 @@ const guideCategories = [
         title: 'Social Media Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
+          'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
           'Supports 6 platforms: IG, FB, LI, TT, GMB, SMS',
           'AI-powered content generation and scheduling',

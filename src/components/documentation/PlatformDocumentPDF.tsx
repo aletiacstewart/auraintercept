@@ -1360,7 +1360,7 @@ const PlatformDocumentPDF = () => (
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
-          Free 14-day trial. No credit card. Start now"
+          Free 30-day trial. No credit card. Start now"
         </Text>
       </View>
 

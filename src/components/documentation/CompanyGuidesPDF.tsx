@@ -303,7 +303,7 @@ const companyGuideCategories = [
         steps: [
           'Access via AI Consoles → Customer Portal',
           'AI Chat Widget (Text-Based) available on ALL tiers - customers type, AI responds in text',
-          'AI Voice Chat (Speech-Based) available on Single-Point+ - requires ElevenLabs',
+          'AI Voice Chat (Speech-Based) available on Core+ - requires ElevenLabs',
           'Use quick actions: Book, Emergency, Quote, etc.',
           'Monitor conversation context and handoffs',
           'Test customer-facing interactions'
@@ -362,7 +362,7 @@ const companyGuideCategories = [
         title: 'Social Media Ops Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Social Media Ops (Growth+ tier)',
+          'Access via AI Consoles → Social Media Ops (Pro+ tier)',
           'Create AI-generated content for 6 platforms',
           'Schedule posts using the Content Calendar',
           'Track engagement metrics across channels',
@@ -390,11 +390,11 @@ const companyGuideCategories = [
         tips: ['Text-based chat works out of the box. Voice features require additional setup.']
       },
       {
-        title: 'AI Voice Integration (Single-Point+ Only)',
+        title: 'AI Voice Integration (Core+ Only)',
         duration: '20 min',
         steps: [
           'Navigate to Integrations → Voice Agent',
-          'NOTE: AI Voice (Speech-Based) requires Single-Point tier or higher',
+          'NOTE: AI Voice (Speech-Based) requires Core tier or higher',
           'Create SignalWire account at signalwire.com',
           'Obtain Project ID and API Token',
           'Purchase a phone number from SignalWire',
