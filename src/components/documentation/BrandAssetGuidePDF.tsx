@@ -494,40 +494,28 @@ export const BrandAssetGuidePDF: React.FC = () => (
           <View style={styles.colorCard}>
             <Text style={styles.colorCardTitle}>Subscription Tiers</Text>
             <ColorSwatch 
-              color="#f97316" 
-              name="Aura Starter Orange" 
-              hex="#f97316" 
-              usage="Aura Starter tier ($197/mo)"
-            />
-            <ColorSwatch 
               color="#14b8a6" 
-              name="Aura Connect Teal" 
+              name="Aura Core Teal" 
               hex="#14b8a6" 
-              usage="Aura Connect tier ($397/mo)"
-            />
-            <ColorSwatch 
-              color="#ec4899" 
-              name="Aura Growth Rose" 
-              hex="#ec4899" 
-              usage="Aura Growth tier ($597/mo)"
+              usage="Aura Core tier ($197/mo)"
             />
             <ColorSwatch 
               color="#3b82f6" 
-              name="Aura Presence Blue" 
+              name="Aura Boost Blue" 
               hex="#3b82f6" 
-              usage="Aura Presence tier ($797/mo)"
+              usage="Aura Boost tier ($497/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 
-              name="Aura Performance Purple" 
+              name="Aura Pro Purple" 
               hex="#8b5cf6" 
-              usage="Aura Performance tier ($497/mo)"
+              usage="Aura Pro tier ($997/mo)"
             />
             <ColorSwatch 
               color="#f59e0b" 
-              name="Aura Command Gold" 
+              name="Aura Elite Gold" 
               hex="#f59e0b" 
-              usage="Aura Command tier ($697/mo)"
+              usage="Aura Elite tier ($1,997/mo)"
             />
           </View>
         </View>
@@ -592,7 +580,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         </View>
         <View style={{ marginBottom: 0 }}>
           <Text style={styles.fontName}>Monospace: JetBrains Mono</Text>
-          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$197-$697/month</Text>
+          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$197-$1,997/month</Text>
           <Text style={styles.fontMeta}>Weights: 400 (Regular), 500 (Medium){'\n'}Use for: Code, data, pricing, technical specs</Text>
         </View>
       </View>

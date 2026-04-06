@@ -14,12 +14,13 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // Map price IDs to 3 canonical tiers: connect, performance, command
 const PRICE_TO_TIER: Record<string, string> = {
-  // === CANONICAL 3-TIER PRICE IDS ===
-  // Aura Connect - $297/mo
-  "price_1T0285J9fo9y8fGHURkfEnLp": "connect",
-  // Aura Performance - $497/mo
-  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "performance",
-  // Aura Command - $697/mo
+  // === CANONICAL 4-TIER PRICE IDS ===
+  // Aura Core - $197/mo
+  "price_1T0285J9fo9y8fGHURkfEnLp": "starter",
+  // Aura Boost - $497/mo
+  "price_1T02XqJ9fo9y8fGHMDDvQxR3": "connect",
+  // Aura Pro - $997/mo (placeholder)
+  // Aura Elite - $1,997/mo
   "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",
 
   // === LEGACY PRICE IDS (backward compat for existing subscribers) ===
