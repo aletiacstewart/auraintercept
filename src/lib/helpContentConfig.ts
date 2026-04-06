@@ -56,7 +56,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   assistant: 'Aura Assistant',
 };
 
-// Console configurations with tier-based content - 3-TIER STRUCTURE
+// Console configurations with tier-based content - 4-TIER STRUCTURE
 export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   {
     id: 'customer_portal',
@@ -348,7 +348,7 @@ const TIER_HIERARCHY_HELP: Record<SubscriptionTier, number> = {
   command: 4,
 };
 
-// Get consoles available for a specific tier - 3-TIER STRUCTURE
+// Get consoles available for a specific tier - 4-TIER STRUCTURE
 export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] {
   const currentTierLevel = TIER_HIERARCHY_HELP[tier] ?? 0;
   return CONSOLE_HELP_CONFIG.filter(console => {

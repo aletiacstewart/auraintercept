@@ -925,14 +925,14 @@ export const BrandAssetGuidePDF: React.FC = () => (
           <View style={styles.infographicCard}>
             <Text style={styles.infographicTitle}>Platform Stats</Text>
             <View style={styles.dataPoint}>
-              <Text style={styles.dataPointValue}>23</Text>
+              <Text style={styles.dataPointValue}>24</Text>
               <Text style={styles.dataPointLabel}>AI Agents</Text>
-              <Text style={styles.dataPointContext}>Specialized agents across 6 Control Centers</Text>
+              <Text style={styles.dataPointContext}>Specialized agents across 7 Control Centers</Text>
             </View>
             <View style={styles.dataPoint}>
-              <Text style={styles.dataPointValue}>6</Text>
+              <Text style={styles.dataPointValue}>7</Text>
               <Text style={styles.dataPointLabel}>Control Centers</Text>
-              <Text style={styles.dataPointContext}>Customer, Field, Business, Marketing, Social, Analytics</Text>
+              <Text style={styles.dataPointContext}>Customer, Field, Business, Marketing, Social, Creative, Analytics</Text>
             </View>
             <View style={styles.dataPoint}>
               <Text style={styles.dataPointValue}>6</Text>
@@ -971,7 +971,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <View style={styles.dataPoint}>
               <Text style={styles.dataPointValue}>$11,500</Text>
               <Text style={styles.dataPointLabel}>Month 1 Revenue Recovery</Text>
-              <Text style={styles.dataPointContext}>Average for Multi-Track tier</Text>
+              <Text style={styles.dataPointContext}>Average for Pro tier</Text>
             </View>
           </View>
           <View style={styles.column}>

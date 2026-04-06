@@ -13,6 +13,7 @@ import {
   Clock,
   Phone,
   Star,
+  Rocket,
 } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
@@ -24,30 +25,34 @@ interface AuditResultsProps {
 }
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
-  CONNECT: <Zap className="h-6 w-6" />,
-  PERFORMANCE: <Users className="h-6 w-6" />,
-  COMMAND: <Crown className="h-6 w-6" />,
+  CORE: <Zap className="h-6 w-6" />,
+  BOOST: <Rocket className="h-6 w-6" />,
+  PRO: <Users className="h-6 w-6" />,
+  ELITE: <Crown className="h-6 w-6" />,
 };
 
 const TIER_COLORS: Record<TierType, string> = {
-  CONNECT: 'from-blue-500 to-cyan-500',
-  PERFORMANCE: 'from-emerald-500 to-teal-500',
-  COMMAND: 'from-primary to-orange-500',
+  CORE: 'from-blue-500 to-cyan-500',
+  BOOST: 'from-violet-500 to-purple-500',
+  PRO: 'from-emerald-500 to-teal-500',
+  ELITE: 'from-primary to-orange-500',
 };
 
 const TIER_BG_COLORS: Record<TierType, string> = {
-  CONNECT: 'bg-blue-50 border-blue-200',
-  PERFORMANCE: 'bg-emerald-50 border-emerald-200',
-  COMMAND: 'bg-primary/10 border-primary/30',
+  CORE: 'bg-blue-50 border-blue-200',
+  BOOST: 'bg-violet-50 border-violet-200',
+  PRO: 'bg-emerald-50 border-emerald-200',
+  ELITE: 'bg-primary/10 border-primary/30',
 };
 
-const TIER_ORDER: TierType[] = ['CONNECT', 'PERFORMANCE', 'COMMAND'];
+const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
 
 // ROI estimates by tier
 const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered: number; revenueImpact: string }> = {
-  CONNECT: { hoursSaved: 10, leadsRecovered: 5, revenueImpact: '$3,000-6,000' },
-  PERFORMANCE: { hoursSaved: 25, leadsRecovered: 12, revenueImpact: '$10,000-20,000' },
-  COMMAND: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
+  CORE: { hoursSaved: 8, leadsRecovered: 4, revenueImpact: '$2,000-4,000' },
+  BOOST: { hoursSaved: 15, leadsRecovered: 8, revenueImpact: '$6,000-12,000' },
+  PRO: { hoursSaved: 30, leadsRecovered: 15, revenueImpact: '$15,000-30,000' },
+  ELITE: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
 };
 
 export function AuditResults({ tierPercentages, recommendedTier, onRestart }: AuditResultsProps) {
@@ -174,15 +179,16 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 </h4>
                 <p className="text-xs text-muted-foreground">
                   Upgrade to unlock {nextTierRec.agentCount - recommendation.agentCount} more AI Operatives 
-                  and {nextTierRec.consoleCount - recommendation.consoleCount} additional Control Centers 
-                  for enhanced automation.
+                  {nextTierRec.consoleCount - recommendation.consoleCount > 0 
+                    ? ` and ${nextTierRec.consoleCount - recommendation.consoleCount} additional Control Centers`
+                    : ''} for enhanced automation.
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* 3-Tier Comparison */}
+        {/* 4-Tier Comparison */}
         <Card className="mb-8 border border-border bg-white">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-center text-foreground">
@@ -247,7 +253,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
           <CardContent className="pt-8 pb-8 text-center">
             <h3 className="text-xl font-bold mb-2 text-card-foreground">Ready to Deploy Your AI Workforce?</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Start your 14-day guided launch or schedule a concierge kickoff call.
+              Start your 30-day guided launch or schedule a concierge kickoff call.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -255,7 +261,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 onClick={handleViewPricing}
                 className="gap-2"
               >
-                Start Your 14-Day Launch
+                Start Your 30-Day Launch
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button 
@@ -283,7 +289,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
         <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
-          All plans include a 14-day free trial. Implementation fees start at $299.
+          All plans include a 30-day free trial. Implementation fees: $0 (Core), $299 (Boost), $599 (Pro), $999 (Elite).
         </p>
       </div>
     </div>

@@ -241,10 +241,10 @@ const guideCategories = [
         duration: '8 min',
         steps: [
           'Customers access portal at /customer-portal or via widget',
-          'Single-Point: Call to Book, Emergency, Services, Hours, Feedback',
-          'Multi-Track+: Book Appointment, Get Quote, Track, Billing',
+          'Core: AI Assistant, Services, Contact, Hours tabs',
+          'Boost+: Full suite with Appointments, Voice AI, Contact, Hours tabs',
           'Portal supports multi-company access',
-          'Talk to Aura (Voice) included for Single-Point+ tiers'
+          'Talk to Aura (Voice) included for Core+ tiers'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site']
       }
@@ -281,7 +281,7 @@ const guideCategories = [
         title: 'Scheduling Agent',
         duration: '10 min',
         steps: [
-          'Enable in AI Agents Hub (requires Multi-Track+ tier)',
+          'Enable in AI Agents Hub (requires Boost+ tier)',
           'Checks business hours and employee availability',
           'Presents available time slots to customers',
           'Creates confirmed appointments in the system',
@@ -299,7 +299,7 @@ const guideCategories = [
           'Configure templates in Settings → Email Templates',
           'Negative feedback routes internally first'
         ],
-        tips: ['Both agents included in Single-Point tier']
+        tips: ['Both agents included in Core tier']
       },
       {
         title: 'Field Operations Agents',
@@ -309,7 +309,7 @@ const guideCategories = [
           'Route Agent: Optimizes travel routes',
           'ETA Agent: Sends real-time arrival updates',
           'Check-in Agent: On-site status with photo documentation',
-          'All require Multi-Track+ tier'
+          'All require Boost+ tier'
         ],
         tips: ['Enable GPS on technician mobile devices']
       },
@@ -333,7 +333,7 @@ const guideCategories = [
           'Social Feed Queue: Queues and publishes content',
           'Social Media Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Social Media agents require Pro Command tier'
+          'All Social Media agents require Pro+ tier'
         ],
         tips: ['Respects platform character limits automatically']
       },
@@ -353,7 +353,7 @@ const guideCategories = [
         title: 'Talk to Aura (Voice)',
         duration: '8 min',
         steps: [
-          'Talk to Aura (Voice) powered by ElevenLabs included in Single-Point+ tiers',
+          'Talk to Aura (Voice) powered by ElevenLabs included in Core+ tiers',
           'Customers can speak naturally with AI agents',
           'Supports inbound and outbound voice interactions',
           'Configure voice settings in Integrations → Voice Agent',
@@ -684,7 +684,7 @@ const guideCategories = [
         title: 'Social Media Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
+          'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
           'Supports 6 platforms: IG, FB, LI, TT, GMB, SMS',
           'AI-powered content generation and scheduling',

@@ -503,9 +503,9 @@ export const SalesPitchDataPDF: React.FC = () => (
       <Footer />
     </Page>
 
-    {/* 3-Tier ROI Calculator */}
+    {/* 4-Tier ROI Calculator */}
     <Page size="A4" style={styles.page}>
-      <Header title="3-Tier ROI Calculators" pageNum={4} />
+      <Header title="4-Tier ROI Calculators" pageNum={4} />
       
       <Text style={styles.sectionTitle}>ROI by Subscription Tier</Text>
       <Text style={styles.sectionSubtitle}>Expected monthly return for each pricing tier</Text>
@@ -814,7 +814,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.closingCard}>
         <Text style={styles.closingTitle}>[TARGET] Closing Question</Text>
         <Text style={styles.closingText}>
-          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 14-day trial?"
+          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 30-day trial?"
         </Text>
       </View>
 
@@ -850,7 +850,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionLabel}>The Risk Reversal Close</Text>
         <Text style={styles.responseText}>
           "I understand you want to be careful with this decision. Here's what I can offer:{'\n\n'}
-          Start your 14-day trial today. Full access to [tier]. If after two weeks you don't see the value—if you're not capturing more leads and saving time—you pay nothing.{'\n\n'}
+          Start your 30-day trial today. Full access to [tier]. If after two weeks you don't see the value—if you're not capturing more leads and saving time—you pay nothing.{'\n\n'}
           There's literally zero risk. The only risk is continuing to miss calls while you think about it.{'\n\n'}
           Can I get you started with that trial right now?"
         </Text>

@@ -805,7 +805,7 @@ export default function Auth() {
                           { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Free–$99/mo (voice chars)', note: 'All tiers', color: 'text-purple-400' },
                           { icon: <Mail className="w-2.5 h-2.5 text-blue-400" />, name: 'Resend', cost: 'Free–$20/mo (email)', note: 'All tiers', color: 'text-blue-400' },
                           { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Performance+', color: 'text-amber-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Pro+', color: 'text-amber-400' },
                           { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Connect+', color: 'text-pink-400' },
                           { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Free–1k searches/mo', note: 'Optional', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, note, color }) => (

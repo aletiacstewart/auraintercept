@@ -626,11 +626,11 @@ const AuditQuestionsPages = () => {
 // Integration Requirements Page
 const IntegrationRequirementsPage = () => {
   const integrations = [
-    { name: 'SignalWire', purpose: 'Voice & SMS Communications', tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command' },
-    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command' },
-    { name: 'Resend', purpose: 'Email Delivery', tiers: 'Flow, Single-Point, Multi-Track, Command (Required)' },
-    { name: 'Stripe', purpose: 'Payment Processing', tiers: 'Multi-Track, Command (Required)' },
-    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Flow, Halo, Multi-Track, Command (Required)' },
+    { name: 'SignalWire', purpose: 'Voice & SMS Communications', tiers: 'Express, Flow, Halo, Core, Boost, Command' },
+    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', tiers: 'Express, Flow, Halo, Core, Boost, Command' },
+    { name: 'Resend', purpose: 'Email Delivery', tiers: 'Flow, Core, Boost, Command (Required)' },
+    { name: 'Stripe', purpose: 'Payment Processing', tiers: 'Boost, Command (Required)' },
+    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Flow, Halo, Boost, Command (Required)' },
     { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'All tiers with Social Media Ops' },
     { name: 'Tavily', purpose: 'AI Content Research', tiers: 'All tiers (Optional)' },
   ];
@@ -806,7 +806,7 @@ const EmployeeInfoPage = () => (
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Employee Limits by Tier')}</Text>
       <Text style={styles.infoBoxText}>
-        {sanitizePdfText('Express/Flow/Core: 2 employees | Halo: 3 employees | Single-Point: 5 employees | Multi-Track: 10 employees | Command: 25 employees')}
+        {sanitizePdfText('Express/Flow/Core: 2 employees | Halo: 3 employees | Core: 5 employees | Boost: 10 employees | Command: 25 employees')}
       </Text>
     </View>
   </Page>

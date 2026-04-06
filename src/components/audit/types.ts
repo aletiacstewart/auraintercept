@@ -1,11 +1,12 @@
 // Tier-based scoring for subscription plan recommendations
-// Updated to 3-tier model: Connect, Performance, Command
-export type TierType = 'CONNECT' | 'PERFORMANCE' | 'COMMAND';
+// Updated to 4-tier model: Core, Boost, Pro, Elite
+export type TierType = 'CORE' | 'BOOST' | 'PRO' | 'ELITE';
 
 export interface TierScores {
-  CONNECT: number;      // 0-100 contribution (solo operators, salons, consultants)
-  PERFORMANCE: number;  // 0-100 contribution (HVAC, plumbing, field service)
-  COMMAND: number;      // 0-100 contribution (multi-location, enterprise)
+  CORE: number;      // 0-100 contribution (solo operators, salons, restaurants)
+  BOOST: number;     // 0-100 contribution (small service teams, HVAC, plumbing)
+  PRO: number;       // 0-100 contribution (growing companies, scaling field teams)
+  ELITE: number;     // 0-100 contribution (multi-location, enterprise, franchise)
 }
 
 export interface AuditOption {
@@ -33,8 +34,7 @@ export interface TierRecommendation {
   implementationFee: string;
 }
 
-// 30 Questions aligned to 3 subscription tiers (9 sections)
-// Scoring collapsed from legacy 7-tier: max(EXPRESS,FLOW,CORE,HALO)→CONNECT, max(SINGLE_POINT,MULTI_TRACK)→PERFORMANCE, COMMAND stays
+// 30 Questions aligned to 4 subscription tiers (9 sections)
 export const QUESTIONS: AuditQuestion[] = [
   // ========================================
   // Section 1: Business Basics (4 questions)
@@ -45,10 +45,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Team size determines operational complexity and tier fit',
     section: 'Business Basics',
     options: [
-      { label: '1-2 employees (owner-operated)', tierScores: { CONNECT: 95, PERFORMANCE: 50, COMMAND: 10 } },
-      { label: '3-5 employees', tierScores: { CONNECT: 70, PERFORMANCE: 90, COMMAND: 30 } },
-      { label: '6-10 employees', tierScores: { CONNECT: 40, PERFORMANCE: 90, COMMAND: 60 } },
-      { label: '11-25 employees', tierScores: { CONNECT: 15, PERFORMANCE: 70, COMMAND: 95 } },
+      { label: '1-2 employees (owner-operated)', tierScores: { CORE: 95, BOOST: 50, PRO: 25, ELITE: 10 } },
+      { label: '3-5 employees', tierScores: { CORE: 70, BOOST: 90, PRO: 60, ELITE: 30 } },
+      { label: '6-10 employees', tierScores: { CORE: 40, BOOST: 80, PRO: 90, ELITE: 60 } },
+      { label: '11-25 employees', tierScores: { CORE: 15, BOOST: 50, PRO: 80, ELITE: 95 } },
     ],
   },
   {
@@ -57,9 +57,9 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Multi-location operations require enterprise-level coordination',
     section: 'Business Basics',
     options: [
-      { label: 'Single location', tierScores: { CONNECT: 90, PERFORMANCE: 80, COMMAND: 50 } },
-      { label: '2-3 locations', tierScores: { CONNECT: 45, PERFORMANCE: 85, COMMAND: 80 } },
-      { label: '4+ locations or franchise model', tierScores: { CONNECT: 20, PERFORMANCE: 60, COMMAND: 95 } },
+      { label: 'Single location', tierScores: { CORE: 90, BOOST: 80, PRO: 60, ELITE: 50 } },
+      { label: '2-3 locations', tierScores: { CORE: 45, BOOST: 75, PRO: 85, ELITE: 80 } },
+      { label: '4+ locations or franchise model', tierScores: { CORE: 20, BOOST: 45, PRO: 70, ELITE: 95 } },
     ],
   },
   {
@@ -68,10 +68,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Helps us calibrate recommendations to your budget',
     section: 'Business Basics',
     options: [
-      { label: 'Under $100K', tierScores: { CONNECT: 95, PERFORMANCE: 55, COMMAND: 5 } },
-      { label: '$100K - $500K', tierScores: { CONNECT: 80, PERFORMANCE: 85, COMMAND: 30 } },
-      { label: '$500K - $2M', tierScores: { CONNECT: 50, PERFORMANCE: 90, COMMAND: 70 } },
-      { label: 'Over $2M', tierScores: { CONNECT: 25, PERFORMANCE: 70, COMMAND: 95 } },
+      { label: 'Under $100K', tierScores: { CORE: 95, BOOST: 55, PRO: 20, ELITE: 5 } },
+      { label: '$100K - $500K', tierScores: { CORE: 80, BOOST: 85, PRO: 55, ELITE: 30 } },
+      { label: '$500K - $2M', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 70 } },
+      { label: 'Over $2M', tierScores: { CORE: 25, BOOST: 55, PRO: 80, ELITE: 95 } },
     ],
   },
   {
@@ -80,10 +80,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Different industries have different automation needs',
     section: 'Business Basics',
     options: [
-      { label: 'Restaurant, cafe, or food service', tierScores: { CONNECT: 95, PERFORMANCE: 45, COMMAND: 20 } },
-      { label: 'Salon, spa, or wellness', tierScores: { CONNECT: 95, PERFORMANCE: 60, COMMAND: 25 } },
-      { label: 'Personal services (consultant, coach, etc.)', tierScores: { CONNECT: 95, PERFORMANCE: 55, COMMAND: 20 } },
-      { label: 'Home/field services (HVAC, plumbing, etc.)', tierScores: { CONNECT: 40, PERFORMANCE: 95, COMMAND: 85 } },
+      { label: 'Restaurant, cafe, or food service', tierScores: { CORE: 95, BOOST: 45, PRO: 25, ELITE: 20 } },
+      { label: 'Salon, spa, or wellness', tierScores: { CORE: 95, BOOST: 60, PRO: 35, ELITE: 25 } },
+      { label: 'Personal services (consultant, coach, etc.)', tierScores: { CORE: 95, BOOST: 55, PRO: 30, ELITE: 20 } },
+      { label: 'Home/field services (HVAC, plumbing, etc.)', tierScores: { CORE: 40, BOOST: 90, PRO: 95, ELITE: 85 } },
     ],
   },
 
@@ -96,10 +96,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Scheduling needs determine automation requirements',
     section: 'Industry & Services',
     options: [
-      { label: 'Mostly walk-ins, no appointments needed', tierScores: { CONNECT: 95, PERFORMANCE: 55, COMMAND: 40 } },
-      { label: 'Mix of walk-ins and scheduled appointments', tierScores: { CONNECT: 80, PERFORMANCE: 75, COMMAND: 55 } },
-      { label: 'All appointments are scheduled in advance', tierScores: { CONNECT: 95, PERFORMANCE: 85, COMMAND: 75 } },
-      { label: 'Complex scheduling with multiple team members', tierScores: { CONNECT: 60, PERFORMANCE: 95, COMMAND: 90 } },
+      { label: 'Mostly walk-ins, no appointments needed', tierScores: { CORE: 95, BOOST: 55, PRO: 45, ELITE: 40 } },
+      { label: 'Mix of walk-ins and scheduled appointments', tierScores: { CORE: 80, BOOST: 75, PRO: 60, ELITE: 55 } },
+      { label: 'All appointments are scheduled in advance', tierScores: { CORE: 95, BOOST: 85, PRO: 80, ELITE: 75 } },
+      { label: 'Complex scheduling with multiple team members', tierScores: { CORE: 60, BOOST: 90, PRO: 95, ELITE: 90 } },
     ],
   },
   {
@@ -108,10 +108,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Service location affects routing and dispatch needs',
     section: 'Industry & Services',
     options: [
-      { label: 'At my business location only', tierScores: { CONNECT: 95, PERFORMANCE: 75, COMMAND: 30 } },
-      { label: 'At customer locations (field service)', tierScores: { CONNECT: 35, PERFORMANCE: 95, COMMAND: 90 } },
-      { label: 'Mix of both locations', tierScores: { CONNECT: 60, PERFORMANCE: 85, COMMAND: 80 } },
-      { label: 'Virtual/remote services', tierScores: { CONNECT: 95, PERFORMANCE: 65, COMMAND: 35 } },
+      { label: 'At my business location only', tierScores: { CORE: 95, BOOST: 75, PRO: 45, ELITE: 30 } },
+      { label: 'At customer locations (field service)', tierScores: { CORE: 35, BOOST: 90, PRO: 95, ELITE: 90 } },
+      { label: 'Mix of both locations', tierScores: { CORE: 60, BOOST: 85, PRO: 85, ELITE: 80 } },
+      { label: 'Virtual/remote services', tierScores: { CORE: 95, BOOST: 65, PRO: 45, ELITE: 35 } },
     ],
   },
 
@@ -124,10 +124,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Response time significantly impacts conversion rates',
     section: 'Lead Intake & Response',
     options: [
-      { label: 'Under 5 minutes - we have great coverage', tierScores: { CONNECT: 50, PERFORMANCE: 40, COMMAND: 20 } },
-      { label: 'Same hour - could be faster', tierScores: { CONNECT: 75, PERFORMANCE: 75, COMMAND: 45 } },
-      { label: 'Same day - we miss some opportunities', tierScores: { CONNECT: 85, PERFORMANCE: 85, COMMAND: 65 } },
-      { label: 'Next day or longer - this is a problem', tierScores: { CONNECT: 90, PERFORMANCE: 95, COMMAND: 85 } },
+      { label: 'Under 5 minutes - we have great coverage', tierScores: { CORE: 50, BOOST: 40, PRO: 25, ELITE: 20 } },
+      { label: 'Same hour - could be faster', tierScores: { CORE: 75, BOOST: 75, PRO: 55, ELITE: 45 } },
+      { label: 'Same day - we miss some opportunities', tierScores: { CORE: 85, BOOST: 85, PRO: 75, ELITE: 65 } },
+      { label: 'Next day or longer - this is a problem', tierScores: { CORE: 90, BOOST: 95, PRO: 90, ELITE: 85 } },
     ],
   },
   {
@@ -136,10 +136,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'After-hours leads are often high-intent buyers',
     section: 'Lead Intake & Response',
     options: [
-      { label: 'We have 24/7 live coverage', tierScores: { CONNECT: 40, PERFORMANCE: 30, COMMAND: 20 } },
-      { label: 'Voicemail - we call back next day', tierScores: { CONNECT: 75, PERFORMANCE: 70, COMMAND: 50 } },
-      { label: 'Calls go unanswered, no follow-up', tierScores: { CONNECT: 85, PERFORMANCE: 85, COMMAND: 75 } },
-      { label: 'We lose most after-hours leads', tierScores: { CONNECT: 90, PERFORMANCE: 90, COMMAND: 95 } },
+      { label: 'We have 24/7 live coverage', tierScores: { CORE: 40, BOOST: 30, PRO: 22, ELITE: 20 } },
+      { label: 'Voicemail - we call back next day', tierScores: { CORE: 75, BOOST: 70, PRO: 55, ELITE: 50 } },
+      { label: 'Calls go unanswered, no follow-up', tierScores: { CORE: 85, BOOST: 85, PRO: 80, ELITE: 75 } },
+      { label: 'We lose most after-hours leads', tierScores: { CORE: 90, BOOST: 90, PRO: 92, ELITE: 95 } },
     ],
   },
   {
@@ -148,10 +148,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Higher lead volume benefits more from automation',
     section: 'Lead Intake & Response',
     options: [
-      { label: '1-5 leads per week', tierScores: { CONNECT: 90, PERFORMANCE: 70, COMMAND: 25 } },
-      { label: '6-15 leads per week', tierScores: { CONNECT: 80, PERFORMANCE: 85, COMMAND: 50 } },
-      { label: '16-30 leads per week', tierScores: { CONNECT: 55, PERFORMANCE: 90, COMMAND: 75 } },
-      { label: '30+ leads per week', tierScores: { CONNECT: 30, PERFORMANCE: 80, COMMAND: 95 } },
+      { label: '1-5 leads per week', tierScores: { CORE: 90, BOOST: 70, PRO: 40, ELITE: 25 } },
+      { label: '6-15 leads per week', tierScores: { CORE: 80, BOOST: 85, PRO: 65, ELITE: 50 } },
+      { label: '16-30 leads per week', tierScores: { CORE: 55, BOOST: 85, PRO: 90, ELITE: 75 } },
+      { label: '30+ leads per week', tierScores: { CORE: 30, BOOST: 65, PRO: 85, ELITE: 95 } },
     ],
   },
 
@@ -164,10 +164,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'All tiers include voice, SMS, and email capability',
     section: 'Communication Preferences',
     options: [
-      { label: 'Text chat only is fine', tierScores: { CONNECT: 80, PERFORMANCE: 55, COMMAND: 45 } },
-      { label: 'Voice/speech capability is important', tierScores: { CONNECT: 90, PERFORMANCE: 90, COMMAND: 80 } },
-      { label: 'Need both text and voice', tierScores: { CONNECT: 90, PERFORMANCE: 90, COMMAND: 90 } },
-      { label: 'We want AI to make outbound calls', tierScores: { CONNECT: 80, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Text chat only is fine', tierScores: { CORE: 80, BOOST: 55, PRO: 48, ELITE: 45 } },
+      { label: 'Voice/speech capability is important', tierScores: { CORE: 90, BOOST: 90, PRO: 85, ELITE: 80 } },
+      { label: 'Need both text and voice', tierScores: { CORE: 90, BOOST: 90, PRO: 90, ELITE: 90 } },
+      { label: 'We want AI to make outbound calls', tierScores: { CORE: 80, BOOST: 85, PRO: 90, ELITE: 95 } },
     ],
   },
   {
@@ -176,10 +176,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Meeting customers where they are increases engagement',
     section: 'Communication Preferences',
     options: [
-      { label: 'Email works fine for most', tierScores: { CONNECT: 85, PERFORMANCE: 75, COMMAND: 40 } },
-      { label: 'SMS/texting is increasingly preferred', tierScores: { CONNECT: 85, PERFORMANCE: 85, COMMAND: 70 } },
-      { label: 'Phone calls are still essential', tierScores: { CONNECT: 85, PERFORMANCE: 85, COMMAND: 90 } },
-      { label: 'We need all channels - it varies', tierScores: { CONNECT: 70, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Email works fine for most', tierScores: { CORE: 85, BOOST: 75, PRO: 55, ELITE: 40 } },
+      { label: 'SMS/texting is increasingly preferred', tierScores: { CORE: 85, BOOST: 85, PRO: 78, ELITE: 70 } },
+      { label: 'Phone calls are still essential', tierScores: { CORE: 85, BOOST: 85, PRO: 88, ELITE: 90 } },
+      { label: 'We need all channels - it varies', tierScores: { CORE: 70, BOOST: 80, PRO: 90, ELITE: 95 } },
     ],
   },
   {
@@ -188,10 +188,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Each missed call can cost $300-1000 in lost revenue',
     section: 'Communication Preferences',
     options: [
-      { label: 'Rarely miss calls (0-2/week)', tierScores: { CONNECT: 70, PERFORMANCE: 55, COMMAND: 35 } },
-      { label: '3-5 missed calls per week', tierScores: { CONNECT: 80, PERFORMANCE: 80, COMMAND: 60 } },
-      { label: '6-10 missed calls per week', tierScores: { CONNECT: 85, PERFORMANCE: 90, COMMAND: 80 } },
-      { label: '10+ missed calls per week', tierScores: { CONNECT: 75, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Rarely miss calls (0-2/week)', tierScores: { CORE: 70, BOOST: 55, PRO: 42, ELITE: 35 } },
+      { label: '3-5 missed calls per week', tierScores: { CORE: 80, BOOST: 80, PRO: 68, ELITE: 60 } },
+      { label: '6-10 missed calls per week', tierScores: { CORE: 85, BOOST: 90, PRO: 85, ELITE: 80 } },
+      { label: '10+ missed calls per week', tierScores: { CORE: 75, BOOST: 82, PRO: 90, ELITE: 95 } },
     ],
   },
   {
@@ -200,10 +200,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'AI can book appointments directly via phone or chat',
     section: 'Communication Preferences',
     options: [
-      { label: 'No - we don\'t take reservations', tierScores: { CONNECT: 85, PERFORMANCE: 60, COMMAND: 45 } },
-      { label: 'Yes - simple booking over phone/chat', tierScores: { CONNECT: 95, PERFORMANCE: 75, COMMAND: 65 } },
-      { label: 'Yes - with complex availability rules', tierScores: { CONNECT: 85, PERFORMANCE: 90, COMMAND: 85 } },
-      { label: 'Yes - with service matching and routing', tierScores: { CONNECT: 70, PERFORMANCE: 95, COMMAND: 95 } },
+      { label: 'No - we don\'t take reservations', tierScores: { CORE: 85, BOOST: 60, PRO: 50, ELITE: 45 } },
+      { label: 'Yes - simple booking over phone/chat', tierScores: { CORE: 95, BOOST: 75, PRO: 68, ELITE: 65 } },
+      { label: 'Yes - with complex availability rules', tierScores: { CORE: 85, BOOST: 90, PRO: 88, ELITE: 85 } },
+      { label: 'Yes - with service matching and routing', tierScores: { CORE: 70, BOOST: 90, PRO: 95, ELITE: 95 } },
     ],
   },
 
@@ -216,22 +216,22 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Booking friction directly impacts revenue',
     section: 'Scheduling & Operations',
     options: [
-      { label: 'Self-service online booking', tierScores: { CONNECT: 50, PERFORMANCE: 45, COMMAND: 35 } },
-      { label: 'Call/email, we schedule manually', tierScores: { CONNECT: 85, PERFORMANCE: 75, COMMAND: 55 } },
-      { label: 'Lots of back-and-forth to confirm', tierScores: { CONNECT: 90, PERFORMANCE: 90, COMMAND: 75 } },
-      { label: 'Phone tag is a major issue for us', tierScores: { CONNECT: 95, PERFORMANCE: 95, COMMAND: 90 } },
+      { label: 'Self-service online booking', tierScores: { CORE: 50, BOOST: 45, PRO: 38, ELITE: 35 } },
+      { label: 'Call/email, we schedule manually', tierScores: { CORE: 85, BOOST: 75, PRO: 62, ELITE: 55 } },
+      { label: 'Lots of back-and-forth to confirm', tierScores: { CORE: 90, BOOST: 90, PRO: 82, ELITE: 75 } },
+      { label: 'Phone tag is a major issue for us', tierScores: { CORE: 95, BOOST: 95, PRO: 92, ELITE: 90 } },
     ],
   },
   {
     id: 'calendar_preference',
     question: 'Would direct calendar sync (without a customer portal) work for you?',
-    description: 'Connect uses direct calendar sync; Performance+ includes full customer portal',
+    description: 'Core uses direct calendar sync; Boost+ includes full customer portal',
     section: 'Scheduling & Operations',
     options: [
-      { label: 'Yes - direct calendar sync is perfect', tierScores: { CONNECT: 95, PERFORMANCE: 55, COMMAND: 40 } },
-      { label: 'I need a customer-facing booking portal', tierScores: { CONNECT: 95, PERFORMANCE: 85, COMMAND: 75 } },
-      { label: 'I need both calendar sync AND customer portal', tierScores: { CONNECT: 90, PERFORMANCE: 90, COMMAND: 85 } },
-      { label: 'Not sure what I need yet', tierScores: { CONNECT: 75, PERFORMANCE: 70, COMMAND: 60 } },
+      { label: 'Yes - direct calendar sync is perfect', tierScores: { CORE: 95, BOOST: 55, PRO: 45, ELITE: 40 } },
+      { label: 'I need a customer-facing booking portal', tierScores: { CORE: 95, BOOST: 85, PRO: 78, ELITE: 75 } },
+      { label: 'I need both calendar sync AND customer portal', tierScores: { CORE: 90, BOOST: 90, PRO: 88, ELITE: 85 } },
+      { label: 'Not sure what I need yet', tierScores: { CORE: 75, BOOST: 70, PRO: 62, ELITE: 60 } },
     ],
   },
   {
@@ -240,10 +240,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Volume helps determine the right automation level',
     section: 'Scheduling & Operations',
     options: [
-      { label: '1-5 appointments per day', tierScores: { CONNECT: 90, PERFORMANCE: 70, COMMAND: 30 } },
-      { label: '6-15 appointments per day', tierScores: { CONNECT: 90, PERFORMANCE: 85, COMMAND: 55 } },
-      { label: '16-30 appointments per day', tierScores: { CONNECT: 70, PERFORMANCE: 90, COMMAND: 80 } },
-      { label: '30+ appointments per day', tierScores: { CONNECT: 45, PERFORMANCE: 80, COMMAND: 95 } },
+      { label: '1-5 appointments per day', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: '6-15 appointments per day', tierScores: { CORE: 90, BOOST: 85, PRO: 68, ELITE: 55 } },
+      { label: '16-30 appointments per day', tierScores: { CORE: 70, BOOST: 85, PRO: 90, ELITE: 80 } },
+      { label: '30+ appointments per day', tierScores: { CORE: 45, BOOST: 65, PRO: 85, ELITE: 95 } },
     ],
   },
   {
@@ -252,10 +252,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Efficient routing saves fuel and maximizes billable hours',
     section: 'Scheduling & Operations',
     options: [
-      { label: 'Not applicable - services at my location', tierScores: { CONNECT: 90, PERFORMANCE: 65, COMMAND: 20 } },
-      { label: 'Basic scheduling tools, some optimization', tierScores: { CONNECT: 50, PERFORMANCE: 75, COMMAND: 60 } },
-      { label: 'Manual assignment based on availability', tierScores: { CONNECT: 55, PERFORMANCE: 90, COMMAND: 80 } },
-      { label: 'First-available, no route optimization', tierScores: { CONNECT: 50, PERFORMANCE: 95, COMMAND: 90 } },
+      { label: 'Not applicable - services at my location', tierScores: { CORE: 90, BOOST: 65, PRO: 35, ELITE: 20 } },
+      { label: 'Basic scheduling tools, some optimization', tierScores: { CORE: 50, BOOST: 75, PRO: 65, ELITE: 60 } },
+      { label: 'Manual assignment based on availability', tierScores: { CORE: 55, BOOST: 90, PRO: 85, ELITE: 80 } },
+      { label: 'First-available, no route optimization', tierScores: { CORE: 50, BOOST: 92, PRO: 95, ELITE: 90 } },
     ],
   },
   {
@@ -264,10 +264,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'ETA transparency improves customer satisfaction by 40%',
     section: 'Scheduling & Operations',
     options: [
-      { label: 'Not applicable - customers come to us', tierScores: { CONNECT: 90, PERFORMANCE: 60, COMMAND: 20 } },
-      { label: 'Automated ETA texts when en route', tierScores: { CONNECT: 55, PERFORMANCE: 60, COMMAND: 50 } },
-      { label: 'We call when leaving for the job', tierScores: { CONNECT: 50, PERFORMANCE: 85, COMMAND: 70 } },
-      { label: 'They wait - no ETA communication', tierScores: { CONNECT: 55, PERFORMANCE: 95, COMMAND: 85 } },
+      { label: 'Not applicable - customers come to us', tierScores: { CORE: 90, BOOST: 60, PRO: 35, ELITE: 20 } },
+      { label: 'Automated ETA texts when en route', tierScores: { CORE: 55, BOOST: 60, PRO: 52, ELITE: 50 } },
+      { label: 'We call when leaving for the job', tierScores: { CORE: 50, BOOST: 85, PRO: 78, ELITE: 70 } },
+      { label: 'They wait - no ETA communication', tierScores: { CORE: 55, BOOST: 92, PRO: 95, ELITE: 85 } },
     ],
   },
 
@@ -280,10 +280,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Reviews drive 15-20% of new customer acquisition',
     section: 'Customer Retention & Reviews',
     options: [
-      { label: 'Automated multi-platform requests', tierScores: { CONNECT: 45, PERFORMANCE: 45, COMMAND: 40 } },
-      { label: 'Occasional email request to some customers', tierScores: { CONNECT: 65, PERFORMANCE: 70, COMMAND: 60 } },
-      { label: 'Sometimes ask verbally after service', tierScores: { CONNECT: 70, PERFORMANCE: 80, COMMAND: 85 } },
-      { label: "We don't actively collect reviews", tierScores: { CONNECT: 75, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Automated multi-platform requests', tierScores: { CORE: 45, BOOST: 45, PRO: 42, ELITE: 40 } },
+      { label: 'Occasional email request to some customers', tierScores: { CORE: 65, BOOST: 70, PRO: 62, ELITE: 60 } },
+      { label: 'Sometimes ask verbally after service', tierScores: { CORE: 70, BOOST: 80, PRO: 82, ELITE: 85 } },
+      { label: "We don't actively collect reviews", tierScores: { CORE: 75, BOOST: 85, PRO: 90, ELITE: 95 } },
     ],
   },
   {
@@ -292,10 +292,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Reactivating existing customers costs 5x less than acquiring new',
     section: 'Customer Retention & Reviews',
     options: [
-      { label: 'Active campaigns with personalization', tierScores: { CONNECT: 40, PERFORMANCE: 45, COMMAND: 40 } },
-      { label: 'Occasional promotions to our list', tierScores: { CONNECT: 55, PERFORMANCE: 65, COMMAND: 60 } },
-      { label: "We should but don't have time", tierScores: { CONNECT: 60, PERFORMANCE: 80, COMMAND: 90 } },
-      { label: 'No reactivation strategy', tierScores: { CONNECT: 65, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Active campaigns with personalization', tierScores: { CORE: 40, BOOST: 45, PRO: 42, ELITE: 40 } },
+      { label: 'Occasional promotions to our list', tierScores: { CORE: 55, BOOST: 65, PRO: 60, ELITE: 60 } },
+      { label: "We should but don't have time", tierScores: { CORE: 60, BOOST: 75, PRO: 85, ELITE: 90 } },
+      { label: 'No reactivation strategy', tierScores: { CORE: 65, BOOST: 80, PRO: 90, ELITE: 95 } },
     ],
   },
   {
@@ -304,10 +304,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Automated reminders reduce no-shows by up to 40%',
     section: 'Customer Retention & Reviews',
     options: [
-      { label: 'Yes - automated via SMS and email', tierScores: { CONNECT: 50, PERFORMANCE: 50, COMMAND: 45 } },
-      { label: 'Sometimes - manual calls or texts', tierScores: { CONNECT: 85, PERFORMANCE: 75, COMMAND: 65 } },
-      { label: 'Rarely - we forget or lack time', tierScores: { CONNECT: 90, PERFORMANCE: 85, COMMAND: 80 } },
-      { label: 'No reminders - high no-show rate', tierScores: { CONNECT: 95, PERFORMANCE: 90, COMMAND: 90 } },
+      { label: 'Yes - automated via SMS and email', tierScores: { CORE: 50, BOOST: 50, PRO: 45, ELITE: 45 } },
+      { label: 'Sometimes - manual calls or texts', tierScores: { CORE: 85, BOOST: 75, PRO: 68, ELITE: 65 } },
+      { label: 'Rarely - we forget or lack time', tierScores: { CORE: 90, BOOST: 85, PRO: 82, ELITE: 80 } },
+      { label: 'No reminders - high no-show rate', tierScores: { CORE: 95, BOOST: 90, PRO: 90, ELITE: 90 } },
     ],
   },
 
@@ -317,13 +317,13 @@ export const QUESTIONS: AuditQuestion[] = [
   {
     id: 'social_media_activity',
     question: 'How active is your business on social media?',
-    description: 'Connect includes Social Media AI for content creation',
+    description: 'Boost includes Social Media AI for content creation',
     section: 'Social Media & Web Presence',
     options: [
-      { label: 'Very active (daily posts)', tierScores: { CONNECT: 70, PERFORMANCE: 60, COMMAND: 80 } },
-      { label: 'Somewhat active (weekly)', tierScores: { CONNECT: 80, PERFORMANCE: 65, COMMAND: 75 } },
-      { label: 'Rarely post (monthly or less)', tierScores: { CONNECT: 85, PERFORMANCE: 65, COMMAND: 65 } },
-      { label: 'Not on social media currently', tierScores: { CONNECT: 75, PERFORMANCE: 75, COMMAND: 55 } },
+      { label: 'Very active (daily posts)', tierScores: { CORE: 70, BOOST: 60, PRO: 70, ELITE: 80 } },
+      { label: 'Somewhat active (weekly)', tierScores: { CORE: 80, BOOST: 65, PRO: 68, ELITE: 75 } },
+      { label: 'Rarely post (monthly or less)', tierScores: { CORE: 85, BOOST: 65, PRO: 62, ELITE: 65 } },
+      { label: 'Not on social media currently', tierScores: { CORE: 75, BOOST: 75, PRO: 62, ELITE: 55 } },
     ],
   },
   {
@@ -332,22 +332,22 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'AI can automate content creation and scheduling',
     section: 'Social Media & Web Presence',
     options: [
-      { label: 'I/we create it manually', tierScores: { CONNECT: 85, PERFORMANCE: 70, COMMAND: 80 } },
-      { label: 'We use a marketing agency', tierScores: { CONNECT: 60, PERFORMANCE: 70, COMMAND: 85 } },
-      { label: "We don't create content", tierScores: { CONNECT: 80, PERFORMANCE: 70, COMMAND: 70 } },
-      { label: 'Would love AI to handle this', tierScores: { CONNECT: 95, PERFORMANCE: 75, COMMAND: 90 } },
+      { label: 'I/we create it manually', tierScores: { CORE: 85, BOOST: 70, PRO: 75, ELITE: 80 } },
+      { label: 'We use a marketing agency', tierScores: { CORE: 60, BOOST: 70, PRO: 78, ELITE: 85 } },
+      { label: "We don't create content", tierScores: { CORE: 80, BOOST: 70, PRO: 68, ELITE: 70 } },
+      { label: 'Would love AI to handle this', tierScores: { CORE: 95, BOOST: 75, PRO: 82, ELITE: 90 } },
     ],
   },
   {
     id: 'website_status',
     question: "What's your current website situation?",
-    description: 'Connect includes a Web Presence site',
+    description: 'Core includes a Web Presence site',
     section: 'Social Media & Web Presence',
     options: [
-      { label: 'Professional website, works great', tierScores: { CONNECT: 55, PERFORMANCE: 65, COMMAND: 60 } },
-      { label: 'Basic website, needs improvement', tierScores: { CONNECT: 85, PERFORMANCE: 70, COMMAND: 60 } },
-      { label: 'No website currently', tierScores: { CONNECT: 95, PERFORMANCE: 75, COMMAND: 55 } },
-      { label: 'Website with booking capability', tierScores: { CONNECT: 50, PERFORMANCE: 80, COMMAND: 75 } },
+      { label: 'Professional website, works great', tierScores: { CORE: 55, BOOST: 65, PRO: 62, ELITE: 60 } },
+      { label: 'Basic website, needs improvement', tierScores: { CORE: 85, BOOST: 70, PRO: 62, ELITE: 60 } },
+      { label: 'No website currently', tierScores: { CORE: 95, BOOST: 75, PRO: 62, ELITE: 55 } },
+      { label: 'Website with booking capability', tierScores: { CORE: 50, BOOST: 80, PRO: 78, ELITE: 75 } },
     ],
   },
 
@@ -357,25 +357,25 @@ export const QUESTIONS: AuditQuestion[] = [
   {
     id: 'quoting_process',
     question: 'How do you create quotes/estimates for customers?',
-    description: 'Performance includes AI Quoting capabilities',
+    description: 'Elite includes AI Quoting capabilities',
     section: 'Business Operations',
     options: [
-      { label: 'Fixed pricing - no quotes needed', tierScores: { CONNECT: 90, PERFORMANCE: 70, COMMAND: 30 } },
-      { label: 'Professional quoting software', tierScores: { CONNECT: 45, PERFORMANCE: 55, COMMAND: 55 } },
-      { label: 'Manual calculation, paper/basic docs', tierScores: { CONNECT: 50, PERFORMANCE: 90, COMMAND: 80 } },
-      { label: 'Field techs need to quote on-site', tierScores: { CONNECT: 40, PERFORMANCE: 95, COMMAND: 90 } },
+      { label: 'Fixed pricing - no quotes needed', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: 'Professional quoting software', tierScores: { CORE: 45, BOOST: 55, PRO: 55, ELITE: 55 } },
+      { label: 'Manual calculation, paper/basic docs', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 80 } },
+      { label: 'Field techs need to quote on-site', tierScores: { CORE: 40, BOOST: 85, PRO: 95, ELITE: 90 } },
     ],
   },
   {
     id: 'inventory_tracking',
     question: 'Do you track inventory or parts/materials?',
-    description: 'Command includes Inventory Management',
+    description: 'Elite includes Inventory Management',
     section: 'Business Operations',
     options: [
-      { label: 'No inventory to track', tierScores: { CONNECT: 85, PERFORMANCE: 70, COMMAND: 35 } },
-      { label: 'Yes, with inventory software', tierScores: { CONNECT: 45, PERFORMANCE: 55, COMMAND: 60 } },
-      { label: 'Spreadsheets or manual tracking', tierScores: { CONNECT: 40, PERFORMANCE: 70, COMMAND: 90 } },
-      { label: 'Need better inventory management', tierScores: { CONNECT: 35, PERFORMANCE: 75, COMMAND: 95 } },
+      { label: 'No inventory to track', tierScores: { CORE: 85, BOOST: 70, PRO: 48, ELITE: 35 } },
+      { label: 'Yes, with inventory software', tierScores: { CORE: 45, BOOST: 55, PRO: 58, ELITE: 60 } },
+      { label: 'Spreadsheets or manual tracking', tierScores: { CORE: 40, BOOST: 65, PRO: 80, ELITE: 90 } },
+      { label: 'Need better inventory management', tierScores: { CORE: 35, BOOST: 60, PRO: 82, ELITE: 95 } },
     ],
   },
   {
@@ -384,10 +384,10 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Helps determine receptionist vs scheduling focus',
     section: 'Business Operations',
     options: [
-      { label: 'Walk-ins only (no appointments)', tierScores: { CONNECT: 95, PERFORMANCE: 55, COMMAND: 35 } },
-      { label: 'Mostly walk-ins, some appointments', tierScores: { CONNECT: 85, PERFORMANCE: 65, COMMAND: 50 } },
-      { label: 'Mix of both equally', tierScores: { CONNECT: 80, PERFORMANCE: 75, COMMAND: 65 } },
-      { label: 'Appointment-only', tierScores: { CONNECT: 95, PERFORMANCE: 85, COMMAND: 80 } },
+      { label: 'Walk-ins only (no appointments)', tierScores: { CORE: 95, BOOST: 55, PRO: 42, ELITE: 35 } },
+      { label: 'Mostly walk-ins, some appointments', tierScores: { CORE: 85, BOOST: 65, PRO: 55, ELITE: 50 } },
+      { label: 'Mix of both equally', tierScores: { CORE: 80, BOOST: 75, PRO: 68, ELITE: 65 } },
+      { label: 'Appointment-only', tierScores: { CORE: 95, BOOST: 85, PRO: 82, ELITE: 80 } },
     ],
   },
 
@@ -400,30 +400,30 @@ export const QUESTIONS: AuditQuestion[] = [
     description: 'Data-driven decisions increase profitability by 20%',
     section: 'Analytics & Growth',
     options: [
-      { label: 'Real-time dashboards with KPIs', tierScores: { CONNECT: 45, PERFORMANCE: 50, COMMAND: 45 } },
-      { label: 'Weekly/monthly reports from software', tierScores: { CONNECT: 55, PERFORMANCE: 70, COMMAND: 65 } },
-      { label: 'Spreadsheets and manual tracking', tierScores: { CONNECT: 60, PERFORMANCE: 80, COMMAND: 85 } },
-      { label: 'Mostly gut feel and bank balance', tierScores: { CONNECT: 65, PERFORMANCE: 85, COMMAND: 95 } },
+      { label: 'Real-time dashboards with KPIs', tierScores: { CORE: 45, BOOST: 50, PRO: 48, ELITE: 45 } },
+      { label: 'Weekly/monthly reports from software', tierScores: { CORE: 55, BOOST: 70, PRO: 68, ELITE: 65 } },
+      { label: 'Spreadsheets and manual tracking', tierScores: { CORE: 60, BOOST: 78, PRO: 82, ELITE: 85 } },
+      { label: 'Mostly gut feel and bank balance', tierScores: { CORE: 65, BOOST: 80, PRO: 90, ELITE: 95 } },
     ],
   },
   {
     id: 'marketing_automation',
     question: 'How do you run marketing campaigns and promotions?',
-    description: 'Command includes Campaign & Marketing capabilities',
+    description: 'Pro includes Campaign & Marketing capabilities',
     section: 'Analytics & Growth',
     options: [
-      { label: 'Sophisticated marketing automation', tierScores: { CONNECT: 45, PERFORMANCE: 55, COMMAND: 50 } },
-      { label: 'Basic email campaigns occasionally', tierScores: { CONNECT: 60, PERFORMANCE: 70, COMMAND: 80 } },
-      { label: 'Mostly word of mouth', tierScores: { CONNECT: 70, PERFORMANCE: 70, COMMAND: 75 } },
-      { label: 'Want AI-powered marketing automation', tierScores: { CONNECT: 45, PERFORMANCE: 75, COMMAND: 95 } },
+      { label: 'Sophisticated marketing automation', tierScores: { CORE: 45, BOOST: 55, PRO: 52, ELITE: 50 } },
+      { label: 'Basic email campaigns occasionally', tierScores: { CORE: 60, BOOST: 70, PRO: 75, ELITE: 80 } },
+      { label: 'Mostly word of mouth', tierScores: { CORE: 70, BOOST: 70, PRO: 72, ELITE: 75 } },
+      { label: 'Want AI-powered marketing automation', tierScores: { CORE: 45, BOOST: 65, PRO: 85, ELITE: 95 } },
     ],
   },
 ];
 
 // Tier recommendations matching canonical 4-tier model
 export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
-  CONNECT: {
-    tier: 'CONNECT',
+  CORE: {
+    tier: 'CORE',
     label: 'Aura Core',
     price: '$197/mo',
     description: '8 AI Agents for booking, follow-up, creative content & web presence for solo operators and restaurants',
@@ -440,8 +440,8 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     employeeLimit: '10 employees',
     implementationFee: '$0',
   },
-  PERFORMANCE: {
-    tier: 'PERFORMANCE',
+  BOOST: {
+    tier: 'BOOST',
     label: 'Aura Boost',
     price: '$497/mo',
     description: '12 AI Agents with dispatch, routing & field operations for small service teams',
@@ -458,15 +458,33 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     employeeLimit: '25 employees',
     implementationFee: '$299',
   },
-  COMMAND: {
-    tier: 'COMMAND',
+  PRO: {
+    tier: 'PRO',
+    label: 'Aura Pro',
+    price: '$997/mo',
+    description: '16 AI Agents with campaigns, outreach & analytics for scaling field teams',
+    keyFeatures: [
+      'Everything in Boost, plus:',
+      'Campaign Agent + Outreach Agent',
+      'Social Feed Queue + Social Analytics Agents',
+      'White-Label Branding',
+      '50 employee accounts',
+      'Full Analytics & Reporting',
+    ],
+    agentCount: 16,
+    consoleCount: 5,
+    employeeLimit: '50 employees',
+    implementationFee: '$599',
+  },
+  ELITE: {
+    tier: 'ELITE',
     label: 'Aura Elite',
     price: '$1,997/mo',
     description: 'Full 24-agent suite for multi-location franchises and enterprise teams',
     keyFeatures: [
       'Everything in Pro, plus:',
-      'Invoice + Inventory + Insights + Performance Agents',
-      'Revenue + Forecast Agents',
+      'Admin + Quoting + Invoice + Inventory Agents',
+      'Insights + Performance + Revenue + Forecast Agents',
       'All 7 Control Centers + AI Hub',
       'Full White-Label Branding',
       'Unlimited employees',
