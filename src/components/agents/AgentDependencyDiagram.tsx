@@ -153,16 +153,20 @@ flowchart TB
         />
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-card-foreground">Single-Point ($497/mo)</span>
+            <div className="w-4 h-4 rounded bg-green-600" />
+            <span className="text-sm text-card-foreground">Core ($197/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-sky-600" />
-            <span className="text-sm text-card-foreground">Multi-Track ($897/mo)</span>
+            <span className="text-sm text-card-foreground">Boost ($497/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-card-foreground">Command ($697/mo)</span>
+            <span className="text-sm text-card-foreground">Pro ($997/mo)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-amber-600" />
+            <span className="text-sm text-card-foreground">Elite ($1,997/mo)</span>
           </div>
         </div>
       </CardContent>
