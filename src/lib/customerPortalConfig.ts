@@ -105,13 +105,14 @@ export const CALL_TO_BOOK_ACTION: QuickActionConfig = {
 // Tier hierarchy for comparison
 const TIER_LEVELS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 1,
-  performance: 2,
-  command: 3,
+  starter: 1,
+  connect: 2,
+  performance: 3,
+  command: 4,
 };
 
-// Tiers that have customer portal access (connect and above)
-const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['connect', 'performance', 'command'];
+// Tiers that have customer portal access (starter and above)
+const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['starter', 'connect', 'performance', 'command'];
 
 // Tiers that have online booking (performance and above)
 const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['performance', 'command'];

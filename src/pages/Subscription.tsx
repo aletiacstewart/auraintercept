@@ -55,61 +55,80 @@ const featureDescriptions: Record<string, string> = {
   'SignalWire (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text). 40% cheaper SMS than alternatives.',
 };
 
-// 3-Tier configuration
+// 4-Tier configuration
 const TIERS = [
+  {
+    id: 'starter',
+    name: 'Aura Starter',
+    monthlyPrice: '$197',
+    annualPrice: '$1,970',
+    annualSavings: 'Save ~$394',
+    description: 'Solo operators, restaurants, single-location',
+    popular: false,
+    agentCount: 4,
+    consoleCount: 3,
+    highlights: [
+      '4 AI Operatives',
+      '3 Control Centers',
+      'Triage + Booking + Follow-Up',
+      'Creative Content Agent',
+      'Email Reminders',
+      '10 Employee Accounts',
+    ],
+  },
   {
     id: 'connect',
     name: 'Aura Connect',
-    monthlyPrice: '$297',
-    annualPrice: '$2,970',
-    annualSavings: 'Save $594',
-    description: 'Solo operators, salons, consultants',
-    popular: false,
-    agentCount: 11,
-    consoleCount: 4,
+    monthlyPrice: '$497',
+    annualPrice: '$4,970',
+    annualSavings: 'Save ~$994',
+    description: 'HVAC, plumbing, field service teams',
+    popular: true,
+    agentCount: 7,
+    consoleCount: 5,
     highlights: [
-      '11 AI Agents',
-      '4 Control Centers',
-      'Triage + Customer Journey',
-      'Outreach & Creative Content',
-      'Web Presence Agent',
-      '5 Employee Accounts',
+      '7 AI Operatives',
+      '5 Control Centers',
+      'Dispatch + Route Agent',
+      'Web Presence + Marketing',
+      'Voice + SMS Reminders',
+      '25 Employee Accounts',
     ],
   },
   {
     id: 'performance',
     name: 'Aura Performance',
-    monthlyPrice: '$497',
-    annualPrice: '$4,970',
-    annualSavings: 'Save $994',
-    description: 'HVAC, plumbing, field service',
-    popular: true,
-    agentCount: 18,
+    monthlyPrice: '$997',
+    annualPrice: '$9,970',
+    annualSavings: 'Save ~$1,994',
+    description: 'Growing companies with field teams',
+    popular: false,
+    agentCount: 9,
     consoleCount: 6,
     highlights: [
-      '18 AI Agents',
+      '9 AI Operatives',
       '6 Control Centers',
-      'Dispatch & Field Navigation',
-      'Business Finance (Quotes/Invoices)',
-      'Field Operations Console',
-      '15 Employee Accounts',
+      'Admin + Business Finance',
+      'White-Label Branding',
+      'Priority Support',
+      '50 Employee Accounts',
     ],
   },
   {
     id: 'command',
     name: 'Aura Command',
-    monthlyPrice: '$697',
-    annualPrice: '$6,970',
-    annualSavings: 'Save $1,394',
+    monthlyPrice: '$1,997',
+    annualPrice: '$19,970',
+    annualSavings: 'Save ~$3,994',
     description: 'Multi-location, enterprise',
     popular: false,
-    agentCount: 24,
+    agentCount: 10,
     consoleCount: 7,
     highlights: [
-      'All 24 Smart AI Agents',
+      '10+ AI Operatives (Full Suite)',
       'All 7 Control Centers + AI Hub',
-      'Admin & Analytics Intelligence',
-      'Revenue & Forecast',
+      'Predictive Analytics',
+      'Advanced Forecasting',
       'Priority Support',
       'Unlimited Employees',
     ],
@@ -118,15 +137,17 @@ const TIERS = [
 
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
-  connect: 5,
-  performance: 15,
-  command: 50,
+  starter: 10,
+  connect: 25,
+  performance: 50,
+  command: 999,
 };
 
 type FeatureValue = 'check' | 'x' | string;
 
 interface FeatureRow {
   name: string;
+  starter: FeatureValue;
   connect: FeatureValue;
   performance: FeatureValue;
   command: FeatureValue;
@@ -139,77 +160,78 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'Smart AI Agents (11 / 18 / 24)',
+    title: 'AI Operatives (4 / 7 / 9 / 10+)',
     features: [
-      { name: 'AI Receptionist (Triage)', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Customer Journey (Booking, Follow-up, Review)', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Outreach (Campaign, Lead, Marketing)', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Creative Content Agent', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Web Presence Agent', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Dispatch Agent', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Field Navigation (Route, ETA, Check-in)', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Business Finance (Quote, Invoice, Inventory)', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Admin Agent', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'Analytics Intelligence (Insights, Performance, Revenue, Forecast)', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'AI Receptionist (Triage)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Customer Journey (Booking, Follow-up, Review)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative Content Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Outreach (Campaign, Lead, Marketing)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Dispatch Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Field Navigation (Route, ETA, Check-in)', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Business Finance (Quote, Invoice, Inventory)', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Analytics Intelligence (Insights, Performance, Revenue, Forecast)', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
-    title: 'Control Centers (4 / 6 / 7+)',
+    title: 'Control Centers (3 / 5 / 6 / 7+)',
     features: [
-      { name: 'Customer Portal Console', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Marketing & Sales Console', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Console', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Creative & Web Presence Console', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Field Operations Console', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Business Management Console', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Analytics & Reports Console', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'AI Operatives Hub', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Marketing & Sales Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Creative & Web Presence Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Field Operations Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
     title: 'Communication Channels',
     features: [
-      { name: 'Message Aura (Text)', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Talk to Aura (Voice)', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Email Reminders', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'SMS Reminders', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Message Aura (Text)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Talk to Aura (Voice)', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Email Reminders', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'SMS Reminders', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Platform Limits & Features',
     features: [
-      { name: 'Appointments', connect: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
-      { name: 'Employee Accounts', connect: '5 included', performance: '15 included', command: 'Unlimited' },
-      { name: 'Additional Employees', connect: '$25/10 employees', performance: '$25/10 employees', command: 'Included' },
-      { name: 'White-Label Branding', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Embeddable Chat Widget', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Appointments', starter: 'Unlimited', connect: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
+      { name: 'Employee Accounts', starter: '10 included', connect: '25 included', performance: '50 included', command: 'Unlimited' },
+      { name: 'Additional Employees', starter: '$25/10 employees', connect: '$25/10 employees', performance: '$25/10 employees', command: 'Included' },
+      { name: 'White-Label Branding', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Embeddable Chat Widget', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Integration & Support',
     features: [
-      { name: 'Calendar Sync', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'API Access', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Priority Support', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Calendar Sync', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'API Access', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Priority Support', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
     ],
   },
   {
     title: 'Required 3rd Party Integrations',
     features: [
-      { name: 'Resend (Email)', connect: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'SignalWire (SMS & Voice)', connect: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Voice)', connect: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'A2P 10DLC Compliance', connect: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Stripe (Payments)', connect: 'Optional', performance: 'Required', command: 'Required' },
-      { name: 'Social Media Accounts', connect: 'Optional', performance: 'Required', command: 'Required' },
+      { name: 'Resend (Email)', starter: 'Required', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'SignalWire (SMS & Voice)', starter: 'Limited', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Voice)', starter: 'Limited', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'A2P 10DLC Compliance', starter: 'Optional', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', starter: 'Optional', connect: 'Optional', performance: 'Required', command: 'Required' },
+      { name: 'Social Media Accounts', starter: 'Optional', connect: 'Required', performance: 'Required', command: 'Required' },
     ],
   },
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', connect: '$297', performance: '$497', command: '$697' },
-      { name: 'Annual Price', connect: '$2,970/year', performance: '$4,970/year', command: '$6,970/year' },
-      { name: 'Annual Savings', connect: 'Save $594', performance: 'Save $994', command: 'Save $1,394' },
+      { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
+      { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
+      { name: 'Implementation Fee', starter: '$0', connect: '$299', performance: '$599', command: '$999' },
     ],
   },
 ];
@@ -524,7 +546,7 @@ export default function Subscription() {
         ) : null}
 
         {/* Tier Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {TIERS.map((tier) => (
             <Card 
               key={tier.id}
@@ -618,16 +640,20 @@ export default function Subscription() {
                     <tr className="border-b border-border bg-muted/50">
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Connect</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$297/mo</div>
+                        <div>Starter</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$197/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
-                        <div className="text-primary">Performance</div>
+                        <div className="text-primary">Connect</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Performance</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$997/mo</div>
+                      </th>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Command</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -635,7 +661,7 @@ export default function Subscription() {
                     {sections.map((section) => (
                       <>
                         <tr key={`section-${section.title}`} className="bg-muted/30">
-                          <td colSpan={4} className="py-1.5 px-4 font-semibold text-primary">
+                          <td colSpan={5} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
                           </td>
                         </tr>
@@ -646,10 +672,11 @@ export default function Subscription() {
                           
                           return (
                             <Tooltip key={feature.name}>
-                              <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
+                            <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                                {renderFeatureValue(feature.connect, false, feature.name)}
-                                {renderFeatureValue(feature.performance, true, feature.name)}
+                                {renderFeatureValue(feature.starter, false, feature.name)}
+                                {renderFeatureValue(feature.connect, currentTier === 'connect', feature.name)}
+                                {renderFeatureValue(feature.performance, false, feature.name)}
                                 {renderFeatureValue(feature.command, false, feature.name)}
                               </tr>
                             </Tooltip>
@@ -676,12 +703,12 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Additional employees: $25 per 10 employees</span>
+               <span className="text-muted-foreground">Additional employees: $25 per 10 employees</span>
               </div>
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">One-Time Implementation Fee: starting at $299</span>
+                <span className="text-muted-foreground">Implementation Fee: $0 Starter · $299 Connect · $599 Performance · $999 Command</span>
               </div>
             </div>
           </CardContent>
@@ -729,9 +756,9 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-card-foreground">What's the difference between Connect, Performance, and Command?</h4>
+              <h4 className="font-medium text-card-foreground">What's the difference between Starter, Connect, Performance, and Command?</h4>
               <p className="text-sm text-muted-foreground">
-                Connect ($297/mo) includes 5 AI operatives ideal for solo operators and salons. Performance ($497/mo) adds dispatch, field navigation, and business finance — perfect for HVAC, plumbing, and field service. Command ($697/mo) includes all 10 operatives plus admin and analytics intelligence for enterprise teams.
+                Starter ($197/mo) includes 4 AI operatives ideal for solo operators and restaurants. Connect ($497/mo) adds dispatch, routing, and web presence — perfect for HVAC, plumbing, and field service. Performance ($997/mo) adds admin, quoting, invoicing, and white-label branding. Command ($1,997/mo) includes all operatives plus predictive analytics for enterprise teams.
               </p>
             </div>
             <div>
@@ -743,7 +770,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Connect includes 5 employees, Performance includes 15, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
+                Starter includes 10 employees, Connect includes 25, Performance includes 50, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
               </p>
             </div>
             <div>

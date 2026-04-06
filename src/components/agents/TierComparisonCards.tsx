@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Users, Zap, Crown, Check } from 'lucide-react';
+import { ArrowRight, Users, Zap, Crown, Check, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { TIER_AGENT_CONFIG, type SubscriptionTier } from '@/lib/subscriptionAgentConfig';
 
@@ -85,7 +85,7 @@ const TierCard: React.FC<TierCardProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
               <Zap className="h-4 w-4" />
-              Smart AI Agents ({config.agents.length})
+              AI Operatives ({config.agents.length})
             </h4>
             <div className="grid grid-cols-2 gap-1">
               {config.agents.map(agent => (
@@ -137,52 +137,66 @@ const TierComparisonCards: React.FC = () => {
         See what each tier unlocks and the incremental cost to upgrade.
       </p>
 
-      <div className="grid gap-6 md:grid-cols-3 mt-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mt-6">
         <TierCard
-          tier="connect"
-          icon={<Zap className="h-5 w-5 text-emerald-400" />}
-          color="text-emerald-400"
-          bgColor="bg-emerald-950/30"
-          borderColor="border-emerald-600/50"
+          tier="starter"
+          icon={<Star className="h-5 w-5 text-teal-400" />}
+          color="text-teal-400"
+          bgColor="bg-teal-950/30"
+          borderColor="border-teal-600/50"
         />
 
         <TierCard
-          tier="performance"
-          icon={<Crown className="h-5 w-5 text-amber-400" />}
-          color="text-amber-400"
-          bgColor="bg-amber-950/30"
-          borderColor="border-amber-600/50"
-          upgradeFrom={{ tier: 'Aura Connect', priceDiff: 200 }}
+          tier="connect"
+          icon={<Zap className="h-5 w-5 text-sky-400" />}
+          color="text-sky-400"
+          bgColor="bg-sky-950/30"
+          borderColor="border-sky-600/50"
+          upgradeFrom={{ tier: 'Aura Starter', priceDiff: 300 }}
           highlighted
         />
 
         <TierCard
+          tier="performance"
+          icon={<Crown className="h-5 w-5 text-purple-400" />}
+          color="text-purple-400"
+          bgColor="bg-purple-950/30"
+          borderColor="border-purple-600/50"
+          upgradeFrom={{ tier: 'Aura Connect', priceDiff: 500 }}
+        />
+
+        <TierCard
           tier="command"
-          icon={<Crown className="h-5 w-5 text-violet-400" />}
-          color="text-violet-400"
-          bgColor="bg-violet-950/30"
-          borderColor="border-violet-600/50"
-          upgradeFrom={{ tier: 'Aura Performance', priceDiff: 200 }}
+          icon={<Crown className="h-5 w-5 text-amber-400" />}
+          color="text-amber-400"
+          bgColor="bg-amber-950/30"
+          borderColor="border-amber-600/50"
+          upgradeFrom={{ tier: 'Aura Performance', priceDiff: 1000 }}
         />
       </div>
 
       {/* Upgrade Summary */}
       <Card className="surface-elevated border-border/50">
         <CardContent className="py-4">
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
             <div className="flex items-center gap-2">
-              <Badge className="bg-emerald-600">Aura Connect</Badge>
-              <span className="text-muted-foreground">$297/mo · 5 agents</span>
+              <Badge className="bg-teal-600">Starter</Badge>
+              <span className="text-muted-foreground text-xs">$197 · 4</span>
             </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-amber-600">Aura Performance</Badge>
-              <span className="text-muted-foreground">$497/mo · 7 agents</span>
+              <Badge className="bg-sky-600">Connect</Badge>
+              <span className="text-muted-foreground text-xs">$497 · 7</span>
             </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
-              <Badge className="bg-violet-600">Aura Command</Badge>
-              <span className="text-muted-foreground">$697/mo · 10 agents</span>
+              <Badge className="bg-purple-600">Performance</Badge>
+              <span className="text-muted-foreground text-xs">$997 · 9</span>
+            </div>
+            <ArrowRight className="h-3 w-3 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Badge className="bg-amber-600">Command</Badge>
+              <span className="text-muted-foreground text-xs">$1,997 · 10+</span>
             </div>
           </div>
         </CardContent>
