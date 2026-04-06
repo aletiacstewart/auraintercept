@@ -14,7 +14,7 @@ export interface TierConfig {
 
 // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
 // Map subscription tiers to available agents and consoles
-// 4 TIERS: Core (8) / Boost (12) / Pro (18) / Elite (24)
+// 4 TIERS: Core (8) / Boost (12) / Pro (16) / Elite (24)
 export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   free: {
     agents: [],
