@@ -317,10 +317,11 @@ const guideCategories = [
         title: 'Business Operations Agents',
         duration: '10 min',
         steps: [
-          'Quoting Agent: Generates quotes from service catalog',
-          'Invoice Agent: Creates invoices and tracks payments',
-          'Inventory Agent: Monitors stock levels (Command)',
-          'Quoting/Invoice: Multi-Track+; Inventory: Command'
+          'Admin Agent: Business administration and settings (Elite)',
+          'Quoting Agent: Generates quotes from service catalog (Elite)',
+          'Invoice Agent: Creates invoices and tracks payments (Elite)',
+          'Inventory Agent: Monitors stock levels (Elite)',
+          'All Business Operations agents require Elite tier'
         ],
         tips: ['Link Quote Forge to your service catalog']
       },
