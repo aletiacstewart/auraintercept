@@ -297,7 +297,7 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (5)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (11)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist (Triage) - 24/7 customer engagement and routing</FeatureItem>
         <FeatureItem>Customer Journey - Booking, follow-ups, review collection</FeatureItem>
@@ -338,9 +338,9 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{performance.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (8)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (18)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Connect (5 operatives), plus:</FeatureItem>
+        <FeatureItem>Everything in Connect (11 agents), plus:</FeatureItem>
         <FeatureItem>Dispatch - Smart job assignment by skills and proximity</FeatureItem>
         <FeatureItem>Field Navigation - Route optimization, ETA, check-in</FeatureItem>
         <FeatureItem>Business Finance - Quoting, invoicing, inventory</FeatureItem>
@@ -382,15 +382,15 @@ const PricingSummaryPDF = () => (
           operations. Custom implementation and onboarding included.
         </Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (All 10)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 10 AI operatives: everything in Performance plus Admin and Analytics Intelligence operatives.
+        Full access to all 24 Smart AI Agents: everything in Performance plus Admin and Analytics Intelligence agents.
       </Text>
       <Text style={styles.subsectionTitle}>Consoles (All 7 + AI Operatives Hub)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Everything in Performance (6 consoles), plus:</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
-        <FeatureItem>AI Operatives Hub - Central operative management</FeatureItem>
+        <FeatureItem>AI Operatives Hub - Central agent management</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
