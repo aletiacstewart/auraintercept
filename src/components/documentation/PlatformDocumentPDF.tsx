@@ -1165,33 +1165,43 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Aura Connect</Text>
-        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.aura_connect.price}/month</Text>
-        <Text style={styles.pricingFeature}>- 11 Smart AI Agents + 4 Consoles</Text>
-        <Text style={styles.pricingFeature}>- 24/7 AI Receptionist + Customer Journey</Text>
-        <Text style={styles.pricingFeature}>- Outreach, Creative Content & Web Presence</Text>
-        <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
+        <Text style={styles.pricingTier}>Aura Core</Text>
+        <Text style={styles.pricingPrice}>$197/month</Text>
+        <Text style={styles.pricingFeature}>- 8 Smart AI Agents + 3 Consoles</Text>
+        <Text style={styles.pricingFeature}>- AI Receptionist, Booking, Follow-Up, Review</Text>
+        <Text style={styles.pricingFeature}>- Creative Content, Web Presence, Lead, Marketing</Text>
+        <Text style={styles.pricingFeature}>- 10 Employee Accounts</Text>
+        <Text style={styles.pricingFeature}>- $0 implementation fee</Text>
+      </View>
+
+      <View style={styles.pricingCard}>
+        <Text style={styles.pricingTier}>Aura Boost</Text>
+        <Text style={styles.pricingPrice}>$497/month</Text>
+        <Text style={styles.pricingFeature}>- 12 Smart AI Agents + 5 Consoles</Text>
+        <Text style={styles.pricingFeature}>- All Core agents + Dispatch, Route, ETA, Check-In</Text>
+        <Text style={styles.pricingFeature}>- Field Operations & Social Media</Text>
+        <Text style={styles.pricingFeature}>- 25 Employee Accounts</Text>
         <Text style={styles.pricingFeature}>- $299 implementation fee</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
-        <Text style={styles.pricingTier}>Aura Performance (Most Popular)</Text>
-        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.multi_track.price.toLocaleString()}/month</Text>
+        <Text style={styles.pricingTier}>Aura Pro (Growth)</Text>
+        <Text style={styles.pricingPrice}>$997/month</Text>
         <Text style={styles.pricingFeature}>- 18 Smart AI Agents + 6 Consoles</Text>
-        <Text style={styles.pricingFeature}>- Everything in Connect + Field Operations</Text>
-        <Text style={styles.pricingFeature}>- Dispatch, Field Navigation & Business Finance</Text>
-        <Text style={styles.pricingFeature}>- Up to {SUBSCRIPTION_TIERS.multi_track.employees} employees</Text>
-        <Text style={styles.pricingFeature}>- $499 implementation fee</Text>
+        <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Admin, Quoting</Text>
+        <Text style={styles.pricingFeature}>- White-Label Branding included</Text>
+        <Text style={styles.pricingFeature}>- 50 Employee Accounts</Text>
+        <Text style={styles.pricingFeature}>- $599 implementation fee</Text>
       </View>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Aura Command (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.command.price.toLocaleString()}/month</Text>
-        <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + All {SUBSCRIPTION_TIERS.command.consoles} Consoles</Text>
-        <Text style={styles.pricingFeature}>- Admin & Analytics Intelligence Agents</Text>
-        <Text style={styles.pricingFeature}>- AI Operatives Hub + White-label</Text>
-        <Text style={styles.pricingFeature}>- Unlimited employees</Text>
-        <Text style={styles.pricingFeature}>- Custom implementation</Text>
+        <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
+        <Text style={styles.pricingPrice}>$1,997/month</Text>
+        <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + 7 Consoles + AI Hub</Text>
+        <Text style={styles.pricingFeature}>- Predictive Analytics & Revenue Forecasting</Text>
+        <Text style={styles.pricingFeature}>- Full White-Label + AI Hub</Text>
+        <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
+        <Text style={styles.pricingFeature}>- $999 implementation fee</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>

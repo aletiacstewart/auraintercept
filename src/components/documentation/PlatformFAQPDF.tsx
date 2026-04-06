@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Connect ($297/mo) for solo operators and small businesses, Aura Performance ($497/mo) for field service companies with technicians, and Aura Command ($697/mo) for multi-location enterprise teams. All tiers include voice, SMS, and email communication channels."
+          answer="Choose based on your business needs: Aura Core ($197/mo) for solo operators and restaurants, Aura Boost ($497/mo) for small service teams with field operations, Aura Pro ($997/mo) for growing companies with multiple technicians, and Aura Elite ($1,997/mo) for multi-location franchises and enterprise teams. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 
@@ -486,7 +486,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Which tier includes Talk to Aura (Voice)?"
-          answer="Talk to Aura (Voice) is included on ALL paid tiers. Every tier from Aura Starter through Aura Command includes full voice, SMS, and email capabilities."
+          answer="Talk to Aura (Voice) is included on ALL paid tiers. Every tier from Aura Core through Aura Elite includes full voice, SMS, and email capabilities."
         />
         
         <FAQItem 
