@@ -436,7 +436,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       '4 Control Centers included',
       'Voice, SMS & Email channels',
     ],
-    agentCount: 5,
+    agentCount: 11,
     consoleCount: 4,
     employeeLimit: '5 employees',
     implementationFee: '$299',
