@@ -546,7 +546,7 @@ export default function Subscription() {
         ) : null}
 
         {/* Tier Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {TIERS.map((tier) => (
             <Card 
               key={tier.id}
@@ -640,16 +640,20 @@ export default function Subscription() {
                     <tr className="border-b border-border bg-muted/50">
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Connect</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$297/mo</div>
+                        <div>Starter</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$197/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
-                        <div className="text-primary">Performance</div>
+                        <div className="text-primary">Connect</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
+                        <div>Performance</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$997/mo</div>
+                      </th>
+                      <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Command</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -657,7 +661,7 @@ export default function Subscription() {
                     {sections.map((section) => (
                       <>
                         <tr key={`section-${section.title}`} className="bg-muted/30">
-                          <td colSpan={4} className="py-1.5 px-4 font-semibold text-primary">
+                          <td colSpan={5} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
                           </td>
                         </tr>
@@ -668,10 +672,11 @@ export default function Subscription() {
                           
                           return (
                             <Tooltip key={feature.name}>
-                              <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
+                            <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                                {renderFeatureValue(feature.connect, false, feature.name)}
-                                {renderFeatureValue(feature.performance, true, feature.name)}
+                                {renderFeatureValue(feature.starter, false, feature.name)}
+                                {renderFeatureValue(feature.connect, currentTier === 'connect', feature.name)}
+                                {renderFeatureValue(feature.performance, false, feature.name)}
                                 {renderFeatureValue(feature.command, false, feature.name)}
                               </tr>
                             </Tooltip>
@@ -698,12 +703,12 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Additional employees: $25 per 10 employees</span>
+               <span className="text-muted-foreground">Additional employees: $25 per 10 employees</span>
               </div>
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">One-Time Implementation Fee: starting at $299</span>
+                <span className="text-muted-foreground">Implementation Fee: $0 Starter · $299 Connect · $599 Performance · $999 Command</span>
               </div>
             </div>
           </CardContent>
@@ -751,9 +756,9 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-card-foreground">What's the difference between Connect, Performance, and Command?</h4>
+              <h4 className="font-medium text-card-foreground">What's the difference between Starter, Connect, Performance, and Command?</h4>
               <p className="text-sm text-muted-foreground">
-                Connect ($297/mo) includes 5 AI operatives ideal for solo operators and salons. Performance ($497/mo) adds dispatch, field navigation, and business finance — perfect for HVAC, plumbing, and field service. Command ($697/mo) includes all 10 operatives plus admin and analytics intelligence for enterprise teams.
+                Starter ($197/mo) includes 4 AI operatives ideal for solo operators and restaurants. Connect ($497/mo) adds dispatch, routing, and web presence — perfect for HVAC, plumbing, and field service. Performance ($997/mo) adds admin, quoting, invoicing, and white-label branding. Command ($1,997/mo) includes all operatives plus predictive analytics for enterprise teams.
               </p>
             </div>
             <div>
@@ -765,7 +770,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Connect includes 5 employees, Performance includes 15, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
+                Starter includes 10 employees, Connect includes 25, Performance includes 50, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
               </p>
             </div>
             <div>
