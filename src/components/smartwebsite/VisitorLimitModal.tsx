@@ -63,7 +63,7 @@ export function VisitorLimitModal({
   const isAtLimit = currentVisitors >= visitorLimit;
   const isNearLimit = usagePercent >= 80;
   
-  const currentTierInfo = tierLimits[currentTier as keyof typeof tierLimits] || tierLimits.single_point;
+  const currentTierInfo = tierLimits[currentTier as keyof typeof tierLimits] || tierLimits.starter;
   const nextTier = currentTierInfo.next;
   const upgradeInfo = nextTier ? tierUpgrades[nextTier as keyof typeof tierUpgrades] : null;
 
