@@ -942,7 +942,7 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>30-day free trial • No credit card required</p>
             <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Starter • $299 Connect • $599 Performance • $999 Command</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Core • $299 Boost • $599 Pro • $999 Elite</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
@@ -963,7 +963,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Required for: Connect, Performance, Command</p>
+                <p className="text-[10px] text-white/60">Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1018,7 +1018,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Performance, Command (Invoicing)</p>
+                <p className="text-[10px] text-white/60">Required for: Pro, Elite (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1029,7 +1029,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white/60">Required for: Performance, Command • Optional for: Connect</p>
+                <p className="text-[10px] text-white/60">Required for: Pro, Elite • Optional for: Boost</p>
               </div>
 
 
