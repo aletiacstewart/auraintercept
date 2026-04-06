@@ -755,9 +755,9 @@ export const BrandAssetGuidePDF: React.FC = () => (
       </View>
 
       <View style={styles.guidelinesCard}>
-        <Text style={styles.guidelinesTitle}>24 AI OPERATIVES ACROSS 7 CONSOLES</Text>
+        <Text style={styles.guidelinesTitle}>24 SMART AI AGENTS ACROSS 7 CONSOLES</Text>
         <Text style={styles.guidelinesText}>
-          The complete Aura Intelligence Network includes 24 specialized AI operatives organized across 7 Control Centers: Customer Portal, Field Operations, Business Management, Outreach and Sales, Social Media, Creative and Web Presence, and Analytics and Reports. Each operative has a unique icon combining a primary symbol with a secondary indicator.
+          The complete Aura Intelligence Network includes 24 Smart AI Agents organized across 7 Control Centers: Customer Portal, Field Operations, Business Management, Outreach and Sales, Social Media, Creative and Web Presence, and Analytics and Reports. Each agent has a unique icon combining a primary symbol with a secondary indicator.
         </Text>
       </View>
 

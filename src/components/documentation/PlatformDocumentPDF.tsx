@@ -582,7 +582,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
           Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
-          With 24 specialized AI operatives, we handle everything from answering calls and booking appointments 
+          With 24 Smart AI Agents, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
         </Text>
@@ -624,7 +624,7 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Key Differentiator</Text>
       <Text style={styles.paragraph}>
-        Unlike generic CRMs or answering services, Aura Intercept uses 24 specialized AI operatives that 
+        Unlike generic CRMs or answering services, Aura Intercept uses 24 Smart AI Agents that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
         classifies the urgency, Scheduling Agent books the appointment, Dispatch Agent assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
