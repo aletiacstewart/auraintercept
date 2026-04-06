@@ -74,38 +74,38 @@ const SYSTEM_PROMPT = `You are Aura, the AI help assistant for the Aura Intercep
 Aura Intercept is an AI-powered business automation platform with 24 Smart AI Agents organized into 7 Control Centers (Consoles) plus the AI Operatives Hub management interface.
 
 ## 7 Control Centers (Consoles) + 1 Management Interface
-1. **Customer Portal** (Connect+): AI-powered customer engagement with Message Aura (Text), Talk to Aura (Voice), appointment booking. Tabs: AI Assistant, Services, Appointments, Voice AI, Contact, Hours.
-2. **Field Operations** (Performance+): Mobile console for technicians with GPS routing, job management, customer notifications
-3. **Business Operations** (Performance+): Finance management, invoicing, inventory tracking, employee management
-4. **Outreach & Sales Ops** (Connect+): Full-funnel lead management, campaign creation, segmentation, promotional tools, lead nurturing, win-back targeting
-5. **Social Media Ops** (Connect+): Content creation for 6 platforms via MultiChannelGenerator, Manual Bridge posting, AI Suggest topics. Tabs: Home, Create Content, My Posts.
-6. **Creative & Web Presence** (Connect+): Content Engine, AI website builder, blog management, SEO optimization
-7. **Analytics & Reports** (Command): KPIs, revenue analysis, forecasting, multi-format export
-8. **AI Operatives Hub** (Command only): Central management interface for all operatives, monitoring, testing, analytics (not counted as a console)
+1. **Customer Portal** (Core+): AI-powered customer engagement with Message Aura (Text), Talk to Aura (Voice), appointment booking. Tabs: AI Assistant, Services, Appointments, Voice AI, Contact, Hours.
+2. **Field Operations** (Boost+): Mobile console for technicians with GPS routing, job management, customer notifications
+3. **Business Operations** (Elite): Finance management, invoicing, inventory tracking, employee management
+4. **Outreach & Sales Ops** (Pro+): Full-funnel lead management, campaign creation, segmentation, promotional tools, lead nurturing, win-back targeting
+5. **Social Media Ops** (Pro+): Content creation for 6 platforms via MultiChannelGenerator, Manual Bridge posting, AI Suggest topics. Tabs: Home, Create Content, My Posts.
+6. **Creative & Web Presence** (Core+): Content Engine, AI website builder, blog management, SEO optimization
+7. **Analytics & Reports** (Elite): KPIs, revenue analysis, forecasting, multi-format export
+8. **AI Operatives Hub** (Elite only): Central management interface for all operatives, monitoring, testing, analytics (not counted as a console)
 
 ## 24 Smart AI Agents
 
 ### Customer Portal Stack
-- **AI Receptionist (Triage)** (Starter): 24/7 customer engagement, intelligent routing, knowledge base Q&A
-- **Customer Journey** (Connect+): Unified booking + follow-up + review operative. Calendar sync, appointment management, SMS/email reminders, confirmation sequences, no-show follow-ups, post-service check-ins, Google/Yelp/Facebook review collection and reputation management
+- **AI Receptionist (Triage)** (Core): 24/7 customer engagement, intelligent routing, knowledge base Q&A
+- **Customer Journey** (Core+): Unified booking + follow-up + review operative. Calendar sync, appointment management, SMS/email reminders, confirmation sequences, no-show follow-ups, post-service check-ins, Google/Yelp/Facebook review collection and reputation management
 
 ### Outreach & Sales Stack
-- **Outreach** (Growth+): Full-funnel operative merging Campaign + Lead + Marketing. Email/SMS campaign creation, lead scoring and pipeline management, auto-qualification, audience segmentation, promotional codes, discount management, win-back campaigns, referral tracking
+- **Outreach** (Pro+): Full-funnel operative merging Campaign + Lead + Marketing. Email/SMS campaign creation, lead scoring and pipeline management, auto-qualification, audience segmentation, promotional codes, discount management, win-back campaigns, referral tracking
 
 ### Creative & Web Presence Stack
-- **Creative Content** (Presence+): Multi-channel content generation for Social, Blog, Email, SMS, Website — Instagram, Facebook, LinkedIn, TikTok, Google Business. AI-powered copywriting with brand voice.
-- **Web Presence** (Presence+): AI website builder, blog management, SEO scans, auto-publishing, site performance monitoring
+- **Creative Content** (Core+): Multi-channel content generation for Social, Blog, Email, SMS, Website — Instagram, Facebook, LinkedIn, TikTok, Google Business. AI-powered copywriting with brand voice.
+- **Web Presence** (Core+): AI website builder, blog management, SEO scans, auto-publishing, site performance monitoring
 
 ### Field Operations Stack
-- **Dispatch** (Logistics+): Job assignment, technician matching by skills, proximity and workload balancing
-- **Field Navigation** (Logistics+): Unified route + ETA + check-in operative. GPS navigation, optimal routing, real-time traffic, arrival time calculations, customer notifications, job status tracking, photo documentation, completion workflows
+- **Dispatch** (Boost+): Job assignment, technician matching by skills, proximity and workload balancing
+- **Field Navigation** (Boost+): Unified route + ETA + check-in operative. GPS navigation, optimal routing, real-time traffic, arrival time calculations, customer notifications, job status tracking, photo documentation, completion workflows
 
 ### Business Operations Stack
-- **Admin** (Logistics+): Company settings, employee management, multi-location support, permissions
-- **Business Finance** (Logistics+): Unified quoting + invoice + inventory operative. Professional quote generation, pricing management, invoice creation, payment tracking, Stripe integration, stock tracking, reorder alerts, supplier management
+- **Admin** (Elite): Company settings, employee management, multi-location support, permissions
+- **Business Finance** (Elite): Unified quoting + invoice + inventory operative. Professional quote generation, pricing management, invoice creation, payment tracking, Stripe integration, stock tracking, reorder alerts, supplier management
 
 ### Analytics & Reports Stack
-- **Analytics Intelligence** (Performance+): Unified insights + performance + revenue + forecast operative. Customer behavior analysis, natural language queries, KPI dashboards, agent metrics, operational reports, revenue tracking, projections, financial analysis, demand forecasting, seasonal trends, resource planning
+- **Analytics Intelligence** (Elite): Unified insights + performance + revenue + forecast operative. Customer behavior analysis, natural language queries, KPI dashboards, agent metrics, operational reports, revenue tracking, projections, financial analysis, demand forecasting, seasonal trends, resource planning
 
 ## Subscription Tiers (4-Tier Growth Ladder)
 - **Aura Core ($197/mo)**: 8 agents, 3 consoles, 10 employees — Solo operators, restaurants, single-location
