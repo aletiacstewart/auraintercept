@@ -503,42 +503,29 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Flow - $297/mo</Text>
-        <Text style={styles.copyHeadline}>AI Personal Assistant</Text>
+        <Text style={styles.copyLabel}>Aura Core - $197/mo</Text>
+        <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
-          Your intelligent scheduling companion with direct calendar sync. Perfect for personal service providers.{'\n\n'}
+          Your AI-powered business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
+          - 8 Smart AI Agents{'\n'}
+          - 3 Control Centers{'\n'}
           - AI Receptionist (24/7){'\n'}
-          - Scheduling Agent (calendar sync){'\n'}
-          - Talk to Aura (Voice){'\n'}
-          - Automated reminders{'\n'}
-          - Up to 2 employees
+          - Booking, Follow-Up & Review Agents{'\n'}
+          - Creative Content & Web Presence{'\n'}
+          - Up to 10 employees
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Halo - $397/mo</Text>
-        <Text style={styles.copyHeadline}>Beauty & Wellness Suite</Text>
+        <Text style={styles.copyLabel}>Aura Boost - $497/mo</Text>
+        <Text style={styles.copyHeadline}>Field Operations Power</Text>
         <Text style={styles.copyBody}>
-          Built for salons, spas, and wellness businesses. Reduce no-shows, fill every chair, and build your reputation.{'\n\n'}
-          - AI Receptionist (24/7 booking){'\n'}
-          - Customer Portal Console{'\n'}
-          - Talk to Aura (Voice){'\n'}
-          - Message Aura (Text){'\n'}
-          - Up to 3 employees
-        </Text>
-      </View>
-
-      <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Presence - $797/mo</Text>
-        <Text style={styles.copyHeadline}>Digital Foundation</Text>
-        <Text style={styles.copyBody}>
-          AI-assisted operations for growing businesses. Build your digital presence with intelligent automation.{'\n\n'}
-          - 12 AI Operatives{'\n'}
-          - 4 Control Centers{'\n'}
-          - Message Aura (Chat){'\n'}
-          - Talk to Aura (Voice){'\n'}
-          - Social Media Console{'\n'}
-          - Up to 8 employees
+          Built for service teams that dispatch. HVAC, plumbing, and field service businesses scale with intelligent routing.{'\n\n'}
+          - 12 Smart AI Agents{'\n'}
+          - 5 Control Centers{'\n'}
+          - Dispatch, Route, ETA & Check-In Agents{'\n'}
+          - Field Operations Console{'\n'}
+          - Up to 25 employees
         </Text>
       </View>
 
@@ -550,44 +537,30 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Logistics - $1,497/mo</Text>
-        <Text style={styles.copyHeadline}>Lead Capture Excellence</Text>
+        <Text style={styles.copyLabel}>Aura Pro - $997/mo</Text>
+        <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
-          Stop missing calls and start building your reputation. 24/7 AI reception with automated follow-up and review collection.{'\n\n'}
-          - 18 AI Operatives{'\n'}
-          - 6 Control Centers{'\n'}
-          - AI Receptionist (24/7){'\n'}
-          - Talk to Aura (Voice){'\n'}
-          - Customer Portal Console{'\n'}
-          - Up to 15 employees
+          Scale your brand with campaigns, social media, and white-label branding for growing companies.{'\n\n'}
+          - 16 Smart AI Agents{'\n'}
+          - 5 Control Centers{'\n'}
+          - Campaign & Outreach Agents{'\n'}
+          - Social Feed Queue & Analytics{'\n'}
+          - White-Label Branding{'\n'}
+          - Up to 50 employees
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Performance - $497/mo</Text>
-        <Text style={styles.copyHeadline}>Field Operations Command</Text>
-        <Text style={styles.copyBody}>
-          Scale your operations without the chaos. Intelligent scheduling, dispatch optimization, and complete financial automation.{'\n\n'}
-          - 22 AI Operatives{'\n'}
-          - 7 Control Centers{'\n'}
-          - Full Field Operations suite{'\n'}
-          - Scheduling and Dispatch{'\n'}
-          - Quoting and Invoicing{'\n'}
-          - Up to 25 employees
-        </Text>
-      </View>
-
-      <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Command - $697/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $1,997/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 24-agent suite handles every operational task from marketing to analytics.{'\n\n'}
+          Full command of your business. The complete 24-agent suite handles every operational task from marketing to predictive analytics.{'\n\n'}
           - All 24 Smart AI Agents{'\n'}
-          - All 7 Control Centers{'\n'}
-          - Creative and Web Presence{'\n'}
-          - Advanced Analytics{'\n'}
+          - All 7 Control Centers + AI Operatives Hub{'\n'}
+          - Admin, Quoting, Invoice & Inventory{'\n'}
+          - Revenue, Forecast & Predictive Analytics{'\n'}
           - Priority Support{'\n'}
-          - Up to 50 employees
+          - Unlimited employees
         </Text>
       </View>
 

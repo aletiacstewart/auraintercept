@@ -118,10 +118,10 @@ const PricingSummaryPDF = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete 3-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverSubtitle}>Complete 4-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>3</Text>
+          <Text style={styles.coverStatNumber}>4</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
@@ -237,43 +237,45 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* 3-Tier Comparison Table */}
+    {/* 4-Tier Comparison Table */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Complete 3-Tier Comparison</Text>
+      <Text style={styles.sectionTitle}>Complete 4-Tier Comparison</Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Connect</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Performance</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Boost</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Pro</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { category: 'Monthly Price', c: '$297', p: '$497', cmd: '$697' },
-          { category: 'Annual Price', c: '$2,970', p: '$4,970', cmd: '$6,970' },
-          { category: 'Annual Savings', c: '$594', p: '$994', cmd: '$1,394' },
-          { category: '', c: '', p: '', cmd: '' },
-          { category: 'Smart AI Agents', c: '11', p: '18', cmd: 'All 24' },
-          { category: 'Consoles', c: '4', p: '6', cmd: 'All 7' },
-          { category: 'Employees', c: '5', p: '15', cmd: 'Unlimited' },
-          { category: '', c: '', p: '', cmd: '' },
-          { category: 'Message Aura (Text)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Talk to Aura (Voice)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Online Booking', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Customer Portal', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Field Operations', c: '-', p: 'Yes', cmd: 'Yes' },
-          { category: 'Business Ops', c: '-', p: 'Yes', cmd: 'Yes' },
-          { category: 'Marketing Console', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Analytics Console', c: '-', p: '-', cmd: 'Yes' },
-          { category: 'AI Operatives Hub', c: '-', p: '-', cmd: 'Yes' },
+          { category: 'Monthly Price', core: '$197', boost: '$497', pro: '$997', elite: '$1,997' },
+          { category: 'Annual Price', core: '$1,970', boost: '$4,970', pro: '$9,970', elite: '$19,970' },
+          { category: 'Implementation Fee', core: '$0', boost: '$299', pro: '$599', elite: '$999' },
+          { category: '', core: '', boost: '', pro: '', elite: '' },
+          { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
+          { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
+          { category: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
+          { category: '', core: '', boost: '', pro: '', elite: '' },
+          { category: 'Message Aura (Text)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Online Booking', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Customer Portal', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Field Operations', core: '-', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Business Ops', core: '-', boost: '-', pro: '-', elite: 'Yes' },
+          { category: 'Marketing Console', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
+          { category: 'AI Operatives Hub', core: '-', boost: '-', pro: '-', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
-                <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.c}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.p}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.cmd}</Text>
+                <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Fee') ? 700 : 400 }]}>{row.category}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.boost}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.pro}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.elite}</Text>
               </>
             )}
           </View>
