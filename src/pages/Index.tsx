@@ -824,15 +824,9 @@ export default function Index() {
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
-                <Collapsible>
-                  {({ open }: { open: boolean }) => (
-                    <>
-                      <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
-                        See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                      </button>
-                    </>
-                  )}
-                </Collapsible>
+                <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
+                  See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
                 <p className="text-[9px] text-teal-400/70 mt-2 text-center">Requires: Resend + ElevenLabs (limited) + SignalWire (limited)</p>
               </CardContent>
             </Card>
