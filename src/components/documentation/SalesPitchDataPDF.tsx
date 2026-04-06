@@ -645,7 +645,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <VisualDataRow label="Part-time + After-hours" value={70} display="$28,000" color={colors.warning} />
         <VisualDataRow label="Aura Elite Tier" value={57} display="$23,964" color={colors.primary} />
         <VisualDataRow label="Aura Pro Tier" value={28} display="$11,964" color={colors.secondary} />
-        <VisualDataRow label="Aura Boost Tier" value={14} display="$5,964" color={colors.info} />
+        <VisualDataRow label="Aura Boost Tier" value={14} display="$5,964" color={colors.accent} />
         <VisualDataRow label="Aura Core Tier" value={6} display="$2,364" color={colors.success} />
       </View>
 
