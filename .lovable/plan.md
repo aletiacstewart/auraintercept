@@ -1,43 +1,81 @@
 
 
-# Update AI Agent Counts to Full 24 Agents
+# Rename Tiers to Core / Boost / Pro / Elite + Update Agent Distribution
 
 ## Summary
-The pricing cards currently show "4 / 7 / 9 / 10+ AI Operatives" (the consolidated operative count). Update all pricing cards, "See More Details" sections, and comparison tables to reflect the full 24 Smart AI Agents distributed across tiers.
+Rename all 4 tier display names platform-wide and update the agent distribution for the Core tier. Internal tier IDs (`starter`, `connect`, `performance`, `command`) remain unchanged for backward compatibility — only user-facing labels change.
 
-## Agent Distribution (24 total)
+**Name mapping:** Aura Starter → **Aura Core**, Aura Connect → **Aura Boost**, Aura Performance → **Aura Pro**, Aura Command → **Aura Elite**
 
-- **Aura Starter (8 agents)**: AI Receptionist, Booking Agent, Follow-Up Agent, Review Agent, Creative Content Agent, Campaign Agent, Lead Agent, Outreach Agent
-- **Aura Connect (16 agents)**: All Starter + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Marketing Agent, Web Presence Agent, Social Feed Queue, Social Analytics Agent
-- **Aura Performance (22 agents)**: All Connect + Admin Agent, Quoting Agent, Invoice Agent, Inventory Agent, Insights Agent, Performance Agent
-- **Aura Command (24 agents)**: All Performance + Revenue Agent, Forecast Agent (+ Predictive AI Hub)
+**Agent redistribution for Aura Core (8 agents):**
+- Remove: Campaign Agent, Outreach Agent
+- Add: Web Presence Agent, Marketing Agent
+- New Core agents: Triage, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing
 
-## Files to Modify
+**Agent redistribution for Aura Boost (12 agents):**
+- All Core agents + Dispatch, Route, ETA, Check-In (no Campaign/Outreach here either — those move up)
+- Wait — user spec says Boost includes "Campaign Agent, Outreach Agent, Social Feed Queue Agent" on top of Core + field ops. Let me re-read.
+- Boost = All Core (8) + Dispatch, Route, ETA, Check-In, Campaign, Outreach, Social Feed Queue = **15 agents?** But user says 12.
+- User says: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent" — that's 8+7=15, but labeled "12". I'll follow the explicit count of 12 and the listed agents. Actually re-reading: "All Core agents + Dispatch, Route, ETA, Check-In" = 12. Then the See More Details says the full list including Campaign, Outreach, Social Feed Queue — that's 15. There's a contradiction.
+- Looking more carefully at See More Details: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent" = 8+7=15. But the card says "12". I'll go with the See More Details list (which is the detailed spec) and update the count to match — likely the user wants all those agents, so 15 is wrong for "12". Actually the simplest interpretation: the card count should match the detailed list. So either the count or the list needs adjustment.
 
-### 1. `src/pages/Index.tsx` — Pricing cards
-- Update bullet points on each card: "4 AI Operatives" → "8 Smart AI Agents", "7" → "16", "9" → "22", "10+" → "24"
-- Update description text under price to match new counts
-- Update the checklist items to list key agent names relevant to each tier
-- Update "See More Details" expanded content (currently just toggles the comparison table — keep that behavior, but update card-level details)
+I'll present both options and default to trusting the detailed "See More Details" list as authoritative, updating the card count to match (15 for Boost). But actually let me re-read once more...
 
-### 2. `src/components/landing/PricingComparisonTable.tsx` — Comparison table
-- Update section title from "AI Agents (4 / 7 / 9 / 10+)" → "AI Agents (8 / 16 / 22 / 24)"
-- Add missing agents to the feature rows: Review Agent, ETA Agent, Check-In Agent, Campaign Agent, Lead Agent, Outreach Agent, Revenue Agent, Forecast Agent, Social Feed Queue, Social Analytics Agent
-- Set correct check/x gating per tier for each of the 24 agents
-- Add tooltip descriptions for new agents
+User says for Boost:
+- Card: "AI Operatives / Agents: 12"
+- See More: "12 AI Agents: All Core agents + Dispatch Agent, Route Agent, ETA Agent, Check-In Agent, Campaign Agent, Outreach Agent, Social Feed Queue Agent"
 
-### 3. `src/lib/subscriptionAgentConfig.ts` — Core config
-- Update `TIER_AGENT_CONFIG` agent arrays to include all 24 granular agent names per tier (not just the consolidated operatives)
-- Update tier descriptions to reference correct agent counts (8/16/22/24)
+8 Core + 7 new = 15, not 12. I'll flag this discrepancy and go with the See More Details list as the definitive spec (15 agents for Boost), OR I'll count exactly what the user listed. Since the user explicitly says "12" on the card, perhaps Campaign and Outreach are already in Core via the "All Core agents" part? Let me check Core's See More: "8 AI Agents: AI Receptionist (Triage), Booking Agent, Follow-Up Agent, Review Agent, Creative Content Agent, Web Presence Agent, Lead Agent, Marketing Agent". No Campaign or Outreach in Core. So 8+7=15. This is a discrepancy I should flag.
 
-### 4. `src/components/agents/TierComparisonCards.tsx` — Dashboard tier cards
-- Update `AGENT_NAMES` map with all 24 agents
-- Agent counts will auto-update from config changes
+Similarly for Pro: "18 AI Agents: All Boost agents + Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, Forecast, Social Analytics" = 15+9=24, but says 18. Another discrepancy.
 
-### 5. `src/pages/Subscription.tsx` — Dashboard subscription page
-- Update agent counts in tier cards and comparison sections to match 24-agent model
+I'll ask the user to clarify.
 
-## Technical Notes
-- The `subscriptionAgentConfig.ts` currently uses consolidated operative names (e.g., `customer_journey` for Booking+Follow-Up+Review). We'll expand the agent arrays to list all 24 individual agent IDs while keeping the legacy mapping intact for backward compatibility.
-- The comparison table adds 10 new rows to the AI Agents section (from 14 → 24 rows).
+## Files to Modify (once agent counts confirmed)
+
+### 1. `src/lib/subscriptionAgentConfig.ts`
+- Update `label` fields: 'Aura Core', 'Aura Boost', 'Aura Pro', 'Aura Elite'
+- Update agent arrays for starter tier: swap `campaign`+`outreach` for `web_presence`+`marketing`
+- Update connect tier agents per confirmed list
+- Update `LEGACY_TIER_MAP`: add `'aura_core': 'starter'`, `'aura_boost': 'connect'`, etc.
+
+### 2. `src/pages/Index.tsx`
+- Rename all card titles, descriptions, badge text, and "See More Details" content
+- Update implementation fee line: "$0 Core • $299 Boost • $599 Pro • $999 Elite"
+- Update agent lists per confirmed distribution
+
+### 3. `src/components/landing/PricingComparisonTable.tsx`
+- Rename column headers from Starter/Connect/Performance/Command → Core/Boost/Pro/Elite
+- Update agent gating rows per new distribution
+- Update section count headers
+
+### 4. `src/pages/Subscription.tsx`
+- Rename TIERS array names, FAQ text, implementation fee text
+- Update comparison table headers
+- Update agent gating in comparison sections
+
+### 5. `src/components/agents/TierComparisonCards.tsx`
+- Labels auto-derive from `TIER_AGENT_CONFIG` — will update automatically
+
+### 6. `supabase/functions/ai-agent-chat/index.ts`
+- Update tier display names in system prompt and TIER_AGENTS mapping
+
+### 7. `supabase/functions/landing-chat/index.ts`
+- Update pricing tier descriptions in system prompt
+
+### 8. `supabase/functions/create-checkout/index.ts`
+- Update `name` fields to new tier names
+
+### 9. Other files (Help.tsx, helpContentConfig.ts, documentationConfig.ts, PlatformDocumentPDF.tsx)
+- Find-and-replace tier display names
+
+## Clarification Needed
+
+The agent counts on the cards don't match the "See More Details" lists:
+- **Aura Core**: Card says 8, Details lists 8 agents — OK
+- **Aura Boost**: Card says 12, but Details lists 8 Core + 7 new = **15 agents**
+- **Aura Pro**: Card says 18, but Details lists all Boost + 9 more = **24 agents** (or 27 if Boost is 15+9)
+- **Aura Elite**: Card says 24 — this is the full suite
+
+Should I (A) keep the card counts (8/12/18/24) and trim the "See More Details" agent lists to match, or (B) keep the detailed agent lists and update the card counts?
 
