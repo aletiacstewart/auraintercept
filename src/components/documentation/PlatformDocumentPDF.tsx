@@ -877,7 +877,7 @@ const PlatformDocumentPDF = () => (
       ))}
 
       <Text style={styles.categoryHeader}>Social Media Add-ons (3 Agents)</Text>
-      <Text style={styles.paragraph}>Premium add-on available for Single-Point/Multi-Track tiers ($150/mo)</Text>
+      <Text style={styles.paragraph}><Text style={styles.paragraph}>Premium agents available with Pro and Elite tiers</Text></Text>
       {agents.socialMediaAddons.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -932,7 +932,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.ctaBox}>
         <Text style={styles.ctaTitle}>Ready to Transform Your Business?</Text>
-        <Text style={styles.ctaText}>Start your 14-day free trial today. No credit card required.</Text>
+        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 30-day free trial today. No credit card required.</Text></Text>
       </View>
     </Page>
 
@@ -1274,7 +1274,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 14-day free trial today—no credit card required."</BulletPoint>
+      <BulletPoint><BulletPoint>"Let's start your 30-day free trial today—no credit card required."</BulletPoint></BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>

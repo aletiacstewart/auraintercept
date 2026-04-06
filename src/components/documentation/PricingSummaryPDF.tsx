@@ -182,20 +182,26 @@ const PricingSummaryPDF = () => (
       </Text>
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CONNECT</Text>
-          <Text style={styles.summaryPrice}>${connect.price}</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
+          <Text style={styles.summaryPrice}>$197</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>11 AI Agents</Text>
-        </View>
-        <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PERFORMANCE</Text>
-          <Text style={styles.summaryPrice}>${performance.price}</Text>
-          <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>18 AI Agents</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 AI Agents</Text>
         </View>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA COMMAND</Text>
-          <Text style={styles.summaryPrice}>${command.price}</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BOOST</Text>
+          <Text style={styles.summaryPrice}>$497</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>12 AI Agents</Text>
+        </View>
+        <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PRO</Text>
+          <Text style={styles.summaryPrice}>$997</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>16 AI Agents</Text>
+        </View>
+        <View style={styles.summaryCard}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
+          <Text style={styles.summaryPrice}>$1,997</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 24 AI Agents</Text>
         </View>
@@ -205,31 +211,34 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Feature</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Connect</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Performance</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Boost</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Pro</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { feature: 'Smart AI Agents', c: '11', p: '18', cmd: 'All 24' },
-          { feature: 'Consoles', c: String(connect.consoles), p: String(performance.consoles), cmd: `All ${command.consoles}` },
-          { feature: 'Employees', c: String(connect.employees), p: String(performance.employees), cmd: String(command.employees) },
-          { feature: 'Talk to Aura (Voice)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { feature: 'Online Booking', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { feature: 'Field Operations', c: '-', p: 'Yes', cmd: 'Yes' },
-          { feature: 'Analytics Console', c: '-', p: '-', cmd: 'Yes' },
+          { feature: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
+          { feature: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
+          { feature: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
+          { feature: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { feature: 'Online Booking', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { feature: 'Field Operations', core: '-', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { feature: 'White-Label', core: '-', boost: '-', pro: 'Yes', elite: 'Yes' },
+          { feature: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.c}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.p}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.cmd}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.boost}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.pro}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.elite}</Text>
           </View>
         ))}
       </View>
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Implementation Fees</Text>
         <Text style={styles.noticeText}>
-          Connect: $299 | Performance: $499 | Command: Custom. Annual billing = 10x monthly rate.
+          Core: $0 | Boost: $299 | Pro: $599 | Elite: $999. Annual billing = 10x monthly rate.
         </Text>
       </View>
       <View style={styles.footer}>

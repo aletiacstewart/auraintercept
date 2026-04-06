@@ -503,9 +503,9 @@ export const SalesPitchDataPDF: React.FC = () => (
       <Footer />
     </Page>
 
-    {/* 3-Tier ROI Calculator */}
+    {/* 4-Tier ROI Calculator */}
     <Page size="A4" style={styles.page}>
-      <Header title="3-Tier ROI Calculators" pageNum={4} />
+      <Header title="4-Tier ROI Calculators" pageNum={4} />
       
       <Text style={styles.sectionTitle}>ROI by Subscription Tier</Text>
       <Text style={styles.sectionSubtitle}>Expected monthly return for each pricing tier</Text>
