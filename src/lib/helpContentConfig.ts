@@ -440,17 +440,22 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
 };
 
-// Get tier by agent type - 3-TIER MAPPING
+// Get tier by agent type - 4-TIER MAPPING
 export function getTierForAgent(agentType: string): SubscriptionTier | null {
   const agentTierMap: Record<string, SubscriptionTier> = {
+    // Starter tier
+    triage: 'starter',
+    customer_journey: 'starter',
+    booking: 'starter',
+    followup: 'starter',
+    creative_content: 'starter',
+    creative: 'starter',
     // Connect tier
-    triage: 'connect',
-    customer_journey: 'connect',
-    booking: 'connect',
-    followup: 'connect',
     outreach: 'connect',
-    creative_content: 'connect',
     web_presence: 'connect',
+    dispatch: 'connect',
+    field_navigation: 'connect',
+    route: 'connect',
     review: 'connect',
     campaign: 'connect',
     lead: 'connect',
@@ -458,21 +463,17 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
     social_content: 'connect',
     social_scheduler: 'connect',
     social_analytics: 'connect',
-    creative: 'connect',
     // Performance tier
-    dispatch: 'performance',
-    field_navigation: 'performance',
+    admin: 'performance',
     business_finance: 'performance',
-    route: 'performance',
     eta: 'performance',
     checkin: 'performance',
     quoting: 'performance',
     invoice: 'performance',
+    inventory: 'performance',
+    insights: 'performance',
     // Command tier
-    admin: 'command',
     analytics_intelligence: 'command',
-    inventory: 'command',
-    insights: 'command',
     revenue: 'command',
     forecast: 'command',
   };
