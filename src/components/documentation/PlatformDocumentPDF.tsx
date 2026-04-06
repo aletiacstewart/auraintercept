@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
-import { SUBSCRIPTION_TIERS } from '@/lib/documentationConfig';
+
 
 const colors = {
   primary: '#6366f1',
