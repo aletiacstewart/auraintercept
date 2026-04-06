@@ -1145,23 +1145,13 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Pricing & ROI Calculator</Text>
       
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Aura Express (Restaurants)</Text>
+        <Text style={styles.pricingTier}>Aura Core</Text>
         <Text style={styles.pricingPrice}>$197/month</Text>
-        <Text style={styles.pricingFeature}>- AI Voice + Chat for restaurants</Text>
-        <Text style={styles.pricingFeature}>- Smart link sharing to menu/ordering</Text>
-        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
-        <Text style={styles.pricingFeature}>- $299 implementation fee</Text>
-      </View>
-
-      <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Aura Flow (AI Personal Assistant)</Text>
-        <Text style={styles.pricingPrice}>$297/month</Text>
-        <Text style={styles.pricingFeature}>- AI Personal Assistant with scheduling</Text>
-        <Text style={styles.pricingFeature}>- Direct calendar sync (no portal)</Text>
-        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
-        <Text style={styles.pricingFeature}>- $399 implementation fee</Text>
+        <Text style={styles.pricingFeature}>- 8 Smart AI Agents + 3 Consoles</Text>
+        <Text style={styles.pricingFeature}>- AI Receptionist, Booking, Follow-Up, Review</Text>
+        <Text style={styles.pricingFeature}>- Creative Content, Web Presence, Lead, Marketing</Text>
+        <Text style={styles.pricingFeature}>- 10 Employee Accounts</Text>
+        <Text style={styles.pricingFeature}>- $0 implementation fee</Text>
       </View>
 
       <View style={styles.pricingCard}>
