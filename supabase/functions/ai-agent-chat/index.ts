@@ -3316,26 +3316,33 @@ serve(async (req) => {
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
     // === SUBSCRIPTION TIER GATING ===
-    // 10-OPERATIVE CONSOLIDATED MODEL — 3 TIERS (Connect / Performance / Command)
+    // 10-OPERATIVE CONSOLIDATED MODEL — 4 TIERS (Starter / Connect / Performance / Command)
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Connect ($297/mo): 11 agents (5 operative groups) — AI receptionist, customer journey, outreach, creative, web
+      // Aura Starter ($197/mo): 8 agents — AI receptionist, customer journey, outreach, creative
+      starter: [
+        'triage', 'customer_journey',   // Customer Portal
+        'outreach',                     // Marketing & Sales
+        'creative_content',             // Creative Content
+      ],
+      // Aura Connect ($497/mo): 12 agents — adds field ops (dispatch + field navigation)
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
-        'creative_content',             // Social Media & Creative
-        'web_presence',                 // Web Presence
+        'creative_content',             // Creative Content
+        'dispatch', 'field_navigation', // Field Operations
       ],
-      // Aura Performance ($497/mo): 18 agents (8 operative groups) — adds field ops + business finance
+      // Aura Performance ($997/mo): 18 agents — adds web presence, social, admin, quoting
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
-        'business_finance',                        // Business Finance
+        'business_finance',                        // Business (quoting)
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
+        'admin',                                   // Admin
       ],
-      // Aura Command ($697/mo): All 24 agents (10 operative groups) + enterprise features
+      // Aura Command ($1,997/mo): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
@@ -3348,11 +3355,11 @@ serve(async (req) => {
 
     // Legacy tier name → canonical tier mapping
     const LEGACY_TIER_MAP: Record<string, string> = {
-      starter: 'connect', scheduling: 'connect', express: 'connect', aura_flow: 'connect', aura_connect: 'connect',
-      growth: 'connect', business: 'connect', halo: 'connect', core: 'connect', aura_growth: 'connect',
+      scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter',
+      growth: 'connect', business: 'connect', aura_connect: 'connect', aura_growth: 'connect',
       single_point: 'performance', field_ops: 'performance', multi_track: 'performance',
       // Self-maps
-      connect: 'connect', performance: 'performance', command: 'command',
+      starter: 'starter', connect: 'connect', performance: 'performance', command: 'command',
     };
 
     // Legacy agent name → consolidated operative mapping

@@ -74,7 +74,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Smart AI Agents (8 / 16 / 22 / 24)',
+    title: 'Smart AI Agents (8 / 12 / 18 / 24)',
     features: [
       { name: 'AI Receptionist (Triage)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Booking Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
@@ -88,29 +88,29 @@ const sections: FeatureSection[] = [
       { name: 'Route Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'ETA Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Check-In Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Marketing Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Web Presence Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Feed Queue', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Analytics Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Marketing Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Social Feed Queue', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Social Analytics Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Quoting Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Invoice Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Inventory Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Insights Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Performance Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Invoice Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Inventory Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Insights Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Performance Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Revenue Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Forecast Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Predictive AI Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
-    title: 'Control Centers (3 / 5 / 6 / 7+)',
+    title: 'Control Centers (3 / 4 / 6 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Outreach & Sales Ops Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative & Web Presence Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Field Operations Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
@@ -285,19 +285,19 @@ export const PricingComparisonTable = () => {
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-2 font-semibold bg-teal-500/20 border-x border-teal-400/30 text-xs">
               <div className="text-teal-300">Aura Starter</div>
-              <div className="text-[10px] font-normal text-teal-300/70">$197/mo · 4 agents</div>
+              <div className="text-[10px] font-normal text-teal-300/70">$197/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
               <div className="text-sky-300">Aura Connect</div>
-              <div className="text-[10px] font-normal text-sky-300/70">$497/mo · 7 agents</div>
+              <div className="text-[10px] font-normal text-sky-300/70">$497/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Performance</div>
-              <div className="text-[10px] font-normal text-purple-300/70">$997/mo · 9 agents</div>
+              <div className="text-[10px] font-normal text-purple-300/70">$997/mo · 18 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
               <div className="text-amber-300">Aura Command</div>
-              <div className="text-[10px] font-normal text-amber-300/70">$1,997/mo · 10+</div>
+              <div className="text-[10px] font-normal text-amber-300/70">$1,997/mo · 24</div>
             </th>
           </tr>
         </thead>

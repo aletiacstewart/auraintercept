@@ -40,7 +40,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '8 Smart AI Agents for booking, follow-up, outreach & creative content',
   },
   connect: {
-    // Aura Connect ($497/mo): 16 agents, 5 consoles, 25 employees
+    // Aura Connect ($497/mo): 12 agents, 4 consoles, 25 employees
     agents: [
       'triage',              // AI Receptionist
       'booking',             // Booking Agent
@@ -54,18 +54,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'route',               // Route Agent
       'eta',                 // ETA Agent
       'checkin',             // Check-In Agent
-      'marketing',           // Marketing Agent
-      'web_presence',        // Web Presence Agent
-      'social_scheduler',    // Social Feed Queue
-      'social_analytics',    // Social Analytics Agent
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'social_media', 'field_operations'],
+    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations'],
     label: 'Aura Connect',
     price: '$497/mo',
-    description: '16 Smart AI Agents with dispatch, routing, web presence & social media',
+    description: '12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Performance ($997/mo): 22 agents, 6 consoles, 50 employees
+    // Aura Performance ($997/mo): 18 agents, 6 consoles, 50 employees
     agents: [
       'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
       'campaign', 'lead', 'outreach', 'marketing',          // Outreach & Sales (4)
@@ -73,13 +69,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_scheduler', 'social_analytics',               // Social Media (2)
       'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
       'admin',                                              // Admin Agent (1)
-      'quoting', 'invoice', 'inventory',                    // Business Finance (3)
-      'insights', 'performance',                            // Analytics (2)
+      'quoting',                                            // Quoting (1)
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations', 'business_management'],
     label: 'Aura Performance',
     price: '$997/mo',
-    description: '22 Smart AI Agents with full business management & white-label branding',
+    description: '18 Smart AI Agents with social media, web presence & white-label branding',
   },
   command: {
     // Aura Command ($1,997/mo): All 24 agents, all 7 consoles + AI Hub, unlimited employees
@@ -218,9 +213,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_customers',
     'can_access_quotes',
     'can_access_leads',
-    'can_access_invoices',
     'can_access_field_ops',
-    'can_access_inventory',
     'can_access_campaigns',
     'api_access',
   ],
