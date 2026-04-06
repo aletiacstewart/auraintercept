@@ -171,9 +171,10 @@ export default function Contact() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="connect">Aura Connect — $297/mo</SelectItem>
-                                <SelectItem value="performance">Aura Performance — $497/mo</SelectItem>
-                                <SelectItem value="command">Aura Command — $697/mo</SelectItem>
+                                <SelectItem value="starter">Aura Core — $197/mo</SelectItem>
+                                <SelectItem value="connect">Aura Boost — $497/mo</SelectItem>
+                                <SelectItem value="performance">Aura Pro — $997/mo</SelectItem>
+                                <SelectItem value="command">Aura Elite — $1,997/mo</SelectItem>
                                 <SelectItem value="other">Other / Not Sure</SelectItem>
                               </SelectContent>
                             </Select>

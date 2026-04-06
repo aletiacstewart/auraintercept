@@ -150,13 +150,14 @@ const PricingSummaryPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Executive Pricing Summary', page: '3' },
-          { title: '3-Tier Comparison Table', page: '4' },
-          { title: 'Aura Connect Tier Details', page: '5' },
-          { title: 'Aura Performance Tier Details', page: '6' },
-          { title: 'Aura Command Tier (Enterprise)', page: '7' },
-          { title: 'Annual Discount Savings', page: '8' },
-          { title: '3rd Party Integration Requirements', page: '9' },
-          { title: 'Add-Ons & Implementation Fees', page: '10' },
+          { title: '4-Tier Comparison Table', page: '4' },
+          { title: 'Aura Core Tier Details', page: '5' },
+          { title: 'Aura Boost Tier Details', page: '6' },
+          { title: 'Aura Pro Tier Details', page: '7' },
+          { title: 'Aura Elite Tier (Enterprise)', page: '8' },
+          { title: 'Annual Discount Savings', page: '9' },
+          { title: '3rd Party Integration Requirements', page: '10' },
+          { title: 'Add-Ons & Implementation Fees', page: '11' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -568,9 +569,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Connect', fee: '$299', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Performance', fee: '$499', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Command', fee: 'Custom', includes: 'Enterprise onboarding, custom setup' },
+          { tier: 'Aura Core', fee: '$0', includes: 'Self-service onboarding' },
+          { tier: 'Aura Boost', fee: '$299', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Pro', fee: '$599', includes: 'Onboarding, setup, training, white-label' },
+          { tier: 'Aura Elite', fee: '$999', includes: 'Enterprise onboarding, custom setup' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>

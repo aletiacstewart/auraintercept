@@ -634,7 +634,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $297/mo. 24 Smart AI Agents, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
+          Meta: Plans from $197/mo. 24 Smart AI Agents, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
         </Text>
       </View>
 

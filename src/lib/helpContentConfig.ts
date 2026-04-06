@@ -384,7 +384,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     highlights: [],
   },
   starter: {
-    title: 'Aura Starter',
+    title: 'Aura Core',
     description: 'AI answering, booking, follow-up, and creative content for solo operators.',
     highlights: [
       'AI Receptionist (Triage)',
