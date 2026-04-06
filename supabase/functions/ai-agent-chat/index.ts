@@ -3320,20 +3320,20 @@ serve(async (req) => {
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Starter ($197/mo): 8 agents — AI receptionist, customer journey, outreach, creative
+      // Aura Core ($197/mo): 8 agents — AI receptionist, customer journey, outreach, creative
       starter: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
       ],
-      // Aura Connect ($497/mo): 12 agents — adds field ops (dispatch + field navigation)
+      // Aura Boost ($497/mo): 12 agents — adds field ops (dispatch + field navigation)
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
         'dispatch', 'field_navigation', // Field Operations
       ],
-      // Aura Performance ($997/mo): 18 agents — adds web presence, social, admin, quoting
+      // Aura Pro ($997/mo): 18 agents — adds web presence, social, admin, quoting
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
@@ -3342,7 +3342,7 @@ serve(async (req) => {
         'creative_content', 'web_presence',        // Creative & Web Presence
         'admin',                                   // Admin
       ],
-      // Aura Command ($1,997/mo): All 24 agents (10 operative groups) + enterprise features
+      // Aura Elite ($1,997/mo): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
@@ -3355,11 +3355,11 @@ serve(async (req) => {
 
     // Legacy tier name → canonical tier mapping
     const LEGACY_TIER_MAP: Record<string, string> = {
-      scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter',
-      growth: 'connect', business: 'connect', aura_connect: 'connect', aura_growth: 'connect',
-      single_point: 'performance', field_ops: 'performance', multi_track: 'performance',
+      scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter', aura_core: 'starter',
+      growth: 'connect', business: 'connect', aura_connect: 'connect', aura_growth: 'connect', aura_boost: 'connect',
+      single_point: 'performance', field_ops: 'performance', multi_track: 'performance', aura_pro: 'performance',
       // Self-maps
-      starter: 'starter', connect: 'connect', performance: 'performance', command: 'command',
+      starter: 'starter', connect: 'connect', performance: 'performance', command: 'command', aura_elite: 'command',
     };
 
     // Legacy agent name → consolidated operative mapping

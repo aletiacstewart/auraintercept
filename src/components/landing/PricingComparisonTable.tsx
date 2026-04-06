@@ -70,7 +70,7 @@ const sections: FeatureSection[] = [
     title: 'Ideal For',
     features: [
       { name: 'Business Size', starter: 'Solo / Small', connect: 'Small teams', performance: 'Growing companies', command: 'Enterprise' },
-      { name: 'Use Case', starter: 'Booking & outreach', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Multi-location' },
+      { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Multi-location' },
     ],
   },
   {
@@ -81,15 +81,15 @@ const sections: FeatureSection[] = [
       { name: 'Follow-Up Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Review Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative Content Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Campaign Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Lead Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Outreach Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Marketing Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Dispatch Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Route Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'ETA Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Check-In Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Marketing Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Web Presence Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Campaign Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Outreach Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Social Feed Queue', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Social Analytics Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
@@ -104,13 +104,13 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Control Centers (3 / 4 / 6 / 7+)',
+    title: 'Control Centers (3 / 5 / 6 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Outreach & Sales Ops Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative & Web Presence Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Field Operations Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
@@ -284,19 +284,19 @@ export const PricingComparisonTable = () => {
           <tr className="border-b border-white/20 bg-slate-700/80">
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-2 font-semibold bg-teal-500/20 border-x border-teal-400/30 text-xs">
-              <div className="text-teal-300">Aura Starter</div>
+              <div className="text-teal-300">Aura Core</div>
               <div className="text-[10px] font-normal text-teal-300/70">$197/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
-              <div className="text-sky-300">Aura Connect</div>
+              <div className="text-sky-300">Aura Boost</div>
               <div className="text-[10px] font-normal text-sky-300/70">$497/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
-              <div className="text-purple-300">Aura Performance</div>
+              <div className="text-purple-300">Aura Pro</div>
               <div className="text-[10px] font-normal text-purple-300/70">$997/mo · 18 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
-              <div className="text-amber-300">Aura Command</div>
+              <div className="text-amber-300">Aura Elite</div>
               <div className="text-[10px] font-normal text-amber-300/70">$1,997/mo · 24</div>
             </th>
           </tr>

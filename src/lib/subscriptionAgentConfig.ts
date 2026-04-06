@@ -1,5 +1,6 @@
 // Subscription tier types — 4-TIER STRUCTURE
 // Internal names: starter, connect, performance, command
+// Display names: Aura Core, Aura Boost, Aura Pro, Aura Elite
 export type SubscriptionTier = 'free' | 'starter' | 'connect' | 'performance' | 'command';
 
 // Configuration for each subscription tier
@@ -13,7 +14,7 @@ export interface TierConfig {
 
 // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
 // Map subscription tiers to available agents and consoles
-// 4 TIERS
+// 4 TIERS: Core (8) / Boost (12) / Pro (18) / Elite (24)
 export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   free: {
     agents: [],
@@ -23,61 +24,62 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Starter ($197/mo): 8 agents, 3 consoles, 10 employees
+    // Aura Core ($197/mo): 8 agents, 3 consoles, 10 employees
     agents: [
       'triage',              // AI Receptionist
       'booking',             // Booking Agent
       'followup',            // Follow-Up Agent
       'review',              // Review Agent
       'creative_content',    // Creative Content Agent
-      'campaign',            // Campaign Agent
+      'web_presence',        // Web Presence Agent
       'lead',                // Lead Agent
-      'outreach',            // Outreach Agent
+      'marketing',           // Marketing Agent
     ],
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence'],
-    label: 'Aura Starter',
+    label: 'Aura Core',
     price: '$197/mo',
-    description: '8 Smart AI Agents for booking, follow-up, outreach & creative content',
+    description: '8 Smart AI Agents for booking, follow-up, creative content & web presence',
   },
   connect: {
-    // Aura Connect ($497/mo): 12 agents, 4 consoles, 25 employees
+    // Aura Boost ($497/mo): 12 agents, 5 consoles, 25 employees
     agents: [
       'triage',              // AI Receptionist
       'booking',             // Booking Agent
       'followup',            // Follow-Up Agent
       'review',              // Review Agent
       'creative_content',    // Creative Content Agent
-      'campaign',            // Campaign Agent
+      'web_presence',        // Web Presence Agent
       'lead',                // Lead Agent
-      'outreach',            // Outreach Agent
+      'marketing',           // Marketing Agent
       'dispatch',            // Dispatch Agent
       'route',               // Route Agent
       'eta',                 // ETA Agent
       'checkin',             // Check-In Agent
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations'],
-    label: 'Aura Connect',
+    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations', 'social_media'],
+    label: 'Aura Boost',
     price: '$497/mo',
     description: '12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Performance ($997/mo): 18 agents, 6 consoles, 50 employees
+    // Aura Pro ($997/mo): 18 agents, 6 consoles, 50 employees
     agents: [
       'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
-      'campaign', 'lead', 'outreach', 'marketing',          // Outreach & Sales (4)
       'creative_content', 'web_presence',                   // Creative & Web (2)
-      'social_scheduler', 'social_analytics',               // Social Media (2)
+      'lead', 'marketing',                                  // Core marketing (2)
       'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
+      'campaign', 'outreach',                               // Outreach & Sales (2)
+      'social_scheduler', 'social_analytics',               // Social Media (2)
       'admin',                                              // Admin Agent (1)
       'quoting',                                            // Quoting (1)
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations', 'business_management'],
-    label: 'Aura Performance',
+    label: 'Aura Pro',
     price: '$997/mo',
-    description: '18 Smart AI Agents with social media, web presence & white-label branding',
+    description: '18 Smart AI Agents with social media, admin & white-label branding',
   },
   command: {
-    // Aura Command ($1,997/mo): All 24 agents, all 7 consoles + AI Hub, unlimited employees
+    // Aura Elite ($1,997/mo): All 24 agents, all 7 consoles + AI Hub, unlimited employees
     agents: [
       'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
       'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
@@ -89,7 +91,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'revenue', 'forecast',                                // Predictive (2)
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
-    label: 'Aura Command',
+    label: 'Aura Elite',
     price: '$1,997/mo',
     description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub',
   },
@@ -272,6 +274,11 @@ export const LEGACY_TIER_MAP: Record<string, SubscriptionTier> = {
   'aura_starter': 'starter',
   'aura_connect': 'connect',
   'aura_growth': 'connect',
+  // New display name aliases
+  'aura_core': 'starter',
+  'aura_boost': 'connect',
+  'aura_pro': 'performance',
+  'aura_elite': 'command',
 };
 
 export function normalizeTierName(tier: string): SubscriptionTier {

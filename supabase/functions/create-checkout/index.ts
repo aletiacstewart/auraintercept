@@ -12,77 +12,77 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// 3-TIER STRUCTURE: Connect ($297), Performance ($497), Command ($697)
+// 3-TIER STRUCTURE: Boost ($297), Pro ($497), Elite ($697)
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
   connect: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700, // $297 in cents
   },
   performance: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700, // $497 in cents
   },
   command: {
     price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
-    name: "Aura Command",
+    name: "Aura Elite",
     price: 69700, // $697 in cents
   },
   // Legacy tier aliases → map to canonical 3 tiers
   starter: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   scheduling: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   growth: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   business: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700,
   },
   field_ops: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700,
   },
   express: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   aura_flow: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   halo: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Connect",
+    name: "Aura Boost",
     price: 29700,
   },
   core: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700,
   },
   single_point: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700,
   },
   multi_track: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Performance",
+    name: "Aura Pro",
     price: 49700,
   },
 };
