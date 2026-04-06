@@ -134,11 +134,11 @@ const agentCategories = [{
   color: 'from-pink-500 to-rose-500',
   neonRgb: '236,72,153',
   agents: [{
-    name: 'Social Content Agent',
+    name: 'Creative Content Agent',
     description: 'AI-generated posts for Instagram, Facebook, LinkedIn, and TikTok',
     icon: Camera
   }, {
-    name: 'Social Scheduler Agent',
+    name: 'Social Feed Queue',
     description: 'Cross-platform scheduling, optimal timing, and auto-publishing',
     icon: Calendar
   }, {

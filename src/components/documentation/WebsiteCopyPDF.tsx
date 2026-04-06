@@ -429,11 +429,11 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>Marketing that runs itself. Seasonal promotions, re-engagement campaigns, referral programs—all automated.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Social Content Agent</Text>
+            <Text style={styles.agentName}>Creative Content Agent</Text>
             <Text style={styles.agentDesc}>AI-generated posts for every platform. On-brand content created in seconds, not hours.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Social Scheduler</Text>
+            <Text style={styles.agentName}>Social Feed Queue</Text>
             <Text style={styles.agentDesc}>Post at the perfect time. Queue content across all platforms with a single click.</Text>
           </View>
           <View style={styles.agentCard}>

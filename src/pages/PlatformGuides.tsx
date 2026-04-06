@@ -188,7 +188,7 @@ const guideCategories = [
           'The platform includes 24 AI Operatives organized into 6 functional stacks:',
           '1. Lead Capture Stack (Starter): AI Receptionist (triage)',
           '2. Booking Stack (Scheduling): Scheduling Agent, Follow-up Agent',
-          '3. Marketing Stack (Growth): Review, Campaign, Lead, Marketing, Creative, Social Content, Social Scheduler, Social Analytics',
+          '3. Marketing Stack (Growth): Review, Campaign, Lead, Marketing, Creative Content, Social Feed Queue, Social Analytics',
           '4. Office Stack (Business): Web Presence Agent',
           '5. Field Ops Stack (Field Ops): Dispatch, Route, ETA, Check-in, Quoting, Invoice',
           '6. Business Intelligence Stack (Performance+): Admin, Inventory, Insights, Performance, Revenue, Forecast',
@@ -299,8 +299,8 @@ const guideCategories = [
         title: 'Social Media Agents (3 Agents)',
         duration: '12 min',
         steps: [
-          'Social Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
-          'Social Scheduler Agent: Queues and publishes at optimal times',
+          'Creative Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
+          'Social Feed Queue: Queues and publishes at optimal times',
           'Social Analytics Agent: Tracks engagement across platforms',
           'All three require Growth+ tier',
           'Uses 3-step Content Wizard: Topic → Generate → Schedule',
@@ -493,10 +493,10 @@ const guideCategories = [
         steps: [
           'Navigate to Social Media Ops from sidebar (Growth+ tier)',
           'Tabs: Home, Create Content, My Posts',
-          'Home: AI Chat with Social Content agent for guidance',
+          'Home: AI Chat with Creative Content agent for guidance',
           'Create Content: MultiChannelGenerator with AI Suggest topics, Industry Templates, and Manual Bridge posting',
           'My Posts: SocialFeedQueue showing all drafts and published content',
-          'Agents: Social Content, Social Scheduler, Social Analytics',
+          'Agents: Creative Content, Social Feed Queue, Social Analytics',
           'Supports: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS'
         ],
         tips: ['Use AI Suggest for topic inspiration', 'Manual Bridge lets you post without API setup']
