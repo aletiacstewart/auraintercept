@@ -257,7 +257,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Operatives Hub from the sidebar',
-          'View all 24 specialized operatives organized across 7 Control Centers (Consoles)',
+          'View all 24 Smart AI Agents organized across 7 Control Centers (Consoles)',
           'Operatives locked by tier show "Locked" badge',
           'Click any operative card to view settings and dependencies',
           'Enable/disable operatives with the toggle switch'
@@ -1034,7 +1034,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 agents, 7 consoles + AI Operatives Hub</Text>
+          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 Smart AI Agents, 7 consoles + AI Operatives Hub</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>
