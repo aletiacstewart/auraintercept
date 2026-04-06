@@ -630,7 +630,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$297-$697</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$197-$1,997</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>

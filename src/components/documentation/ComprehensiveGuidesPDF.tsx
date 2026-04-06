@@ -193,7 +193,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier (Aura Starter, Aura Connect, Aura Growth, Aura Presence, Aura Logistics, Aura Performance, or Aura Command)',
+          'Review your subscription tier (Aura Core, Aura Boost, Aura Pro, or Aura Elite)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -1009,34 +1009,22 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
           <Text style={styles.bulletText}>Analytics & Reports (4 agents): Insights, Performance, Revenue, Forecast</Text>
         </View>
 
-        <Text style={styles.categoryTitle}>Subscription Tiers (7-Tier Growth Ladder)</Text>
+        <Text style={styles.categoryTitle}>Subscription Tiers (4-Tier Growth Ladder)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Starter ($197/mo): 1 agent (AI Receptionist), 0 consoles</Text>
+          <Text style={styles.bulletText}>Aura Core ($197/mo): 8 agents, 3 consoles, 10 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Connect ($397/mo): 3 agents, 1 console (Customer Portal)</Text>
+          <Text style={styles.bulletText}>Aura Boost ($497/mo): 12 agents, 5 consoles, 25 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Growth ($597/mo): 11 agents, 3 consoles</Text>
+          <Text style={styles.bulletText}>Aura Pro ($997/mo): 16 agents, 5 consoles, 50 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Presence ($797/mo): 12 agents, 4 consoles</Text>
-        </View>
-        <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Logistics ($1,497/mo): 18 agents, 6 consoles</Text>
-        </View>
-        <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Performance ($497/mo): 22 agents, 7 consoles</Text>
-        </View>
-        <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 Smart AI Agents, 7 consoles + AI Operatives Hub</Text>
+          <Text style={styles.bulletText}>Aura Elite ($1,997/mo): All 24 Smart AI Agents, 7 consoles + AI Operatives Hub, unlimited employees</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

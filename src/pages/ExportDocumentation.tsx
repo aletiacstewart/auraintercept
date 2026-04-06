@@ -745,13 +745,14 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 2, title: 'Table of Contents', desc: 'Document navigation' },
                   { page: 3, title: 'Executive Summary', desc: 'Pricing overview and quick comparison' },
                   { page: 4, title: 'Tier Comparison', desc: 'Full feature matrix by tier' },
-                  { page: 5, title: 'Single-Point Details', desc: '$497/mo tier breakdown' },
-                  { page: 6, title: 'Multi-Track Details', desc: '$897/mo tier breakdown' },
-                  { page: 7, title: 'Command Details', desc: '$697/mo tier breakdown' },
-                  { page: 8, title: 'Annual Savings', desc: 'Discount calculations' },
-                  { page: 9, title: '3rd Party Costs', desc: 'Integration pricing details' },
-                  { page: 10, title: 'Billing Clarifications', desc: 'Company Stripe requirements' },
-                  { page: 11, title: 'Cost Examples', desc: 'Total monthly cost scenarios' },
+                  { page: 5, title: 'Core Details', desc: '$197/mo tier breakdown' },
+                  { page: 6, title: 'Boost Details', desc: '$497/mo tier breakdown' },
+                  { page: 7, title: 'Pro Details', desc: '$997/mo tier breakdown' },
+                  { page: 8, title: 'Elite Details', desc: '$1,997/mo tier breakdown' },
+                  { page: 9, title: 'Annual Savings', desc: 'Discount calculations' },
+                  { page: 10, title: '3rd Party Costs', desc: 'Integration pricing details' },
+                  { page: 11, title: 'Billing Clarifications', desc: 'Company Stripe requirements' },
+                  { page: 12, title: 'Cost Examples', desc: 'Total monthly cost scenarios' },
                 ].map((section, i) => (
                   <div key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">

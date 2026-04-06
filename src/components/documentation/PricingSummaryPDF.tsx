@@ -118,10 +118,10 @@ const PricingSummaryPDF = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete 3-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverSubtitle}>Complete 4-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>3</Text>
+          <Text style={styles.coverStatNumber}>4</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
@@ -150,13 +150,14 @@ const PricingSummaryPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Executive Pricing Summary', page: '3' },
-          { title: '3-Tier Comparison Table', page: '4' },
-          { title: 'Aura Connect Tier Details', page: '5' },
-          { title: 'Aura Performance Tier Details', page: '6' },
-          { title: 'Aura Command Tier (Enterprise)', page: '7' },
-          { title: 'Annual Discount Savings', page: '8' },
-          { title: '3rd Party Integration Requirements', page: '9' },
-          { title: 'Add-Ons & Implementation Fees', page: '10' },
+          { title: '4-Tier Comparison Table', page: '4' },
+          { title: 'Aura Core Tier Details', page: '5' },
+          { title: 'Aura Boost Tier Details', page: '6' },
+          { title: 'Aura Pro Tier Details', page: '7' },
+          { title: 'Aura Elite Tier (Enterprise)', page: '8' },
+          { title: 'Annual Discount Savings', page: '9' },
+          { title: '3rd Party Integration Requirements', page: '10' },
+          { title: 'Add-Ons & Implementation Fees', page: '11' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -237,43 +238,45 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* 3-Tier Comparison Table */}
+    {/* 4-Tier Comparison Table */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Complete 3-Tier Comparison</Text>
+      <Text style={styles.sectionTitle}>Complete 4-Tier Comparison</Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Connect</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Performance</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Boost</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Pro</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { category: 'Monthly Price', c: '$297', p: '$497', cmd: '$697' },
-          { category: 'Annual Price', c: '$2,970', p: '$4,970', cmd: '$6,970' },
-          { category: 'Annual Savings', c: '$594', p: '$994', cmd: '$1,394' },
-          { category: '', c: '', p: '', cmd: '' },
-          { category: 'Smart AI Agents', c: '11', p: '18', cmd: 'All 24' },
-          { category: 'Consoles', c: '4', p: '6', cmd: 'All 7' },
-          { category: 'Employees', c: '5', p: '15', cmd: 'Unlimited' },
-          { category: '', c: '', p: '', cmd: '' },
-          { category: 'Message Aura (Text)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Talk to Aura (Voice)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Online Booking', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Customer Portal', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Field Operations', c: '-', p: 'Yes', cmd: 'Yes' },
-          { category: 'Business Ops', c: '-', p: 'Yes', cmd: 'Yes' },
-          { category: 'Marketing Console', c: 'Yes', p: 'Yes', cmd: 'Yes' },
-          { category: 'Analytics Console', c: '-', p: '-', cmd: 'Yes' },
-          { category: 'AI Operatives Hub', c: '-', p: '-', cmd: 'Yes' },
+          { category: 'Monthly Price', core: '$197', boost: '$497', pro: '$997', elite: '$1,997' },
+          { category: 'Annual Price', core: '$1,970', boost: '$4,970', pro: '$9,970', elite: '$19,970' },
+          { category: 'Implementation Fee', core: '$0', boost: '$299', pro: '$599', elite: '$999' },
+          { category: '', core: '', boost: '', pro: '', elite: '' },
+          { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
+          { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
+          { category: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
+          { category: '', core: '', boost: '', pro: '', elite: '' },
+          { category: 'Message Aura (Text)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Online Booking', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Customer Portal', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Field Operations', core: '-', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Business Ops', core: '-', boost: '-', pro: '-', elite: 'Yes' },
+          { category: 'Marketing Console', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
+          { category: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
+          { category: 'AI Operatives Hub', core: '-', boost: '-', pro: '-', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
-                <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.c}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.p}</Text>
-                <Text style={[styles.tableCell, { flex: 1 }]}>{row.cmd}</Text>
+                <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Fee') ? 700 : 400 }]}>{row.category}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.boost}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.pro}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{row.elite}</Text>
               </>
             )}
           </View>
@@ -285,39 +288,79 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Connect Tier */}
+    {/* Aura Core Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Connect Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Core Tier</Text>
       <View style={styles.pricingCard}>
-        <Text style={{ fontSize: 9, color: colors.green, fontWeight: 700, marginBottom: 4 }}>SOLO OPERATORS & SMALL BUSINESSES</Text>
-        <Text style={styles.pricingTierName}>Aura Connect</Text>
-        <Text style={styles.pricingPrice}>$297/month</Text>
-        <Text style={styles.pricingAnnual}>or $2,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $594 with annual billing</Text>
+        <Text style={{ fontSize: 9, color: colors.green, fontWeight: 700, marginBottom: 4 }}>ENTRY LEVEL</Text>
+        <Text style={styles.pricingTierName}>Aura Core</Text>
+        <Text style={styles.pricingPrice}>$197/month</Text>
+        <Text style={styles.pricingAnnual}>or $1,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$394 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included Smart AI Agents (11)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (8)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist (Triage) - 24/7 customer engagement and routing</FeatureItem>
-        <FeatureItem>Customer Journey - Booking, follow-ups, review collection</FeatureItem>
-        <FeatureItem>Outreach - Campaign creation, lead management, marketing</FeatureItem>
-        <FeatureItem>Creative Content - Multi-channel content generation</FeatureItem>
-        <FeatureItem>Web Presence - AI website builder and SEO</FeatureItem>
+        <FeatureItem>Booking Agent - Appointment scheduling</FeatureItem>
+        <FeatureItem>Follow-Up Agent - Automated follow-ups</FeatureItem>
+        <FeatureItem>Review Agent - Review collection and management</FeatureItem>
+        <FeatureItem>Creative Content Agent - Multi-channel content generation</FeatureItem>
+        <FeatureItem>Web Presence Agent - AI website builder and SEO</FeatureItem>
+        <FeatureItem>Lead Agent - Lead capture and nurturing</FeatureItem>
+        <FeatureItem>Marketing Agent - Marketing automation</FeatureItem>
       </View>
-      <Text style={styles.subsectionTitle}>Consoles (4)</Text>
+      <Text style={styles.subsectionTitle}>Consoles (3)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console</FeatureItem>
         <FeatureItem>Outreach & Sales Ops Console</FeatureItem>
-        <FeatureItem>Social Media Ops Console</FeatureItem>
         <FeatureItem>Creative & Web Presence Console</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
-        <FeatureItem>5 employee accounts included</FeatureItem>
+        <FeatureItem>10 employee accounts included</FeatureItem>
+        <FeatureItem>$0 implementation fee</FeatureItem>
+      </View>
+      <View style={styles.footer}>
+        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+      </View>
+    </Page>
+
+    {/* Aura Boost Tier */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Aura Intercept - Pricing Guide" />
+      <Text style={styles.sectionTitle}>Aura Boost Tier</Text>
+      <View style={styles.pricingCardHighlight}>
+        <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
+        <Text style={styles.pricingTierName}>Aura Boost</Text>
+        <Text style={styles.pricingPrice}>$497/month</Text>
+        <Text style={styles.pricingAnnual}>or $4,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$994 with annual billing</Text>
+        <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{performance.bestFor}</Text>
+      </View>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (12)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Everything in Core (8 agents), plus:</FeatureItem>
+        <FeatureItem>Dispatch Agent - Smart job assignment by skills and proximity</FeatureItem>
+        <FeatureItem>Route Agent - Optimal route planning</FeatureItem>
+        <FeatureItem>ETA Agent - Real-time arrival estimates</FeatureItem>
+        <FeatureItem>Check-In Agent - Job status tracking and photo documentation</FeatureItem>
+      </View>
+      <Text style={styles.subsectionTitle}>Consoles (5)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Everything in Core (3 consoles), plus:</FeatureItem>
+        <FeatureItem>Field Operations Console</FeatureItem>
+        <FeatureItem>Social Media Ops Console</FeatureItem>
+      </View>
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>25 employees included</FeatureItem>
         <FeatureItem>$299 implementation fee</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -326,36 +369,36 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Performance Tier */}
+    {/* Aura Pro Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Performance Tier</Text>
-      <View style={styles.pricingCardHighlight}>
-        <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
-        <Text style={styles.pricingTierName}>Aura Performance</Text>
-        <Text style={styles.pricingPrice}>$497/month</Text>
-        <Text style={styles.pricingAnnual}>or $4,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $994 with annual billing</Text>
+      <Text style={styles.sectionTitle}>Aura Pro Tier</Text>
+      <View style={styles.pricingCard}>
+        <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>GROWTH</Text>
+        <Text style={styles.pricingTierName}>Aura Pro</Text>
+        <Text style={styles.pricingPrice}>$997/month</Text>
+        <Text style={styles.pricingAnnual}>or $9,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,994 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
-        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{performance.bestFor}</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{pro.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included Smart AI Agents (18)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (16)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Connect (11 agents), plus:</FeatureItem>
-        <FeatureItem>Dispatch - Smart job assignment by skills and proximity</FeatureItem>
-        <FeatureItem>Field Navigation - Route optimization, ETA, check-in</FeatureItem>
-        <FeatureItem>Business Finance - Quoting, invoicing, inventory</FeatureItem>
+        <FeatureItem>Everything in Boost (12 agents), plus:</FeatureItem>
+        <FeatureItem>Campaign Agent - Automated campaign creation</FeatureItem>
+        <FeatureItem>Outreach Agent - Sales outreach automation</FeatureItem>
+        <FeatureItem>Social Feed Queue - Social media scheduling</FeatureItem>
+        <FeatureItem>Social Analytics - Social media performance tracking</FeatureItem>
       </View>
-      <Text style={styles.subsectionTitle}>Consoles (6)</Text>
+      <Text style={styles.subsectionTitle}>Consoles (5)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Connect (4 consoles), plus:</FeatureItem>
-        <FeatureItem>Field Operations Console</FeatureItem>
-        <FeatureItem>Business Operations Console</FeatureItem>
+        <FeatureItem>Same 5 consoles as Boost</FeatureItem>
+        <FeatureItem>White-label branding included</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>15 employees included</FeatureItem>
-        <FeatureItem>$499 implementation fee</FeatureItem>
+        <FeatureItem>50 employees included</FeatureItem>
+        <FeatureItem>$599 implementation fee</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -363,33 +406,34 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Aura Command Tier */}
+    {/* Aura Elite Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Command Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Elite Tier</Text>
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.primary, fontWeight: 700, marginBottom: 4 }}>ENTERPRISE</Text>
-        <Text style={styles.pricingTierName}>Aura Command</Text>
-        <Text style={styles.pricingPrice}>$697/month</Text>
-        <Text style={styles.pricingAnnual}>or $6,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $1,394 with annual billing</Text>
+        <Text style={styles.pricingTierName}>Aura Elite</Text>
+        <Text style={styles.pricingPrice}>$1,997/month</Text>
+        <Text style={styles.pricingAnnual}>or $19,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$3,994 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{command.bestFor}</Text>
       </View>
       <View style={styles.noticeBox}>
         <Text style={styles.noticeTitle}>Enterprise Qualification</Text>
         <Text style={styles.noticeText}>
-          Aura Command is designed for service companies with large teams or multi-location
+          Aura Elite is designed for service companies with large teams or multi-location
           operations. Custom implementation and onboarding included.
         </Text>
       </View>
       <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 24 Smart AI Agents: everything in Performance plus Admin and Analytics Intelligence agents.
+        Full access to all 24 Smart AI Agents: everything in Pro plus Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, and Forecast agents.
       </Text>
       <Text style={styles.subsectionTitle}>Consoles (All 7 + AI Operatives Hub)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Performance (6 consoles), plus:</FeatureItem>
+        <FeatureItem>Everything in Pro (5 consoles), plus:</FeatureItem>
+        <FeatureItem>Business Management Console</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
         <FeatureItem>AI Operatives Hub - Central agent management</FeatureItem>
       </View>
@@ -398,7 +442,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Multi-location support</FeatureItem>
         <FeatureItem>White-label branding</FeatureItem>
-        <FeatureItem>Custom implementation</FeatureItem>
+        <FeatureItem>$999 implementation fee</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -425,9 +469,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Savings</Text>
         </View>
         {[
-          { tier: 'Aura Connect', monthly: '$297', yearlyPath: '$3,564', annual: '$2,970', savings: '$594' },
-          { tier: 'Aura Performance', monthly: '$497', yearlyPath: '$5,964', annual: '$4,970', savings: '$994' },
-          { tier: 'Aura Command', monthly: '$697', yearlyPath: '$8,364', annual: '$6,970', savings: '$1,394' },
+          { tier: 'Aura Core', monthly: '$197', yearlyPath: '$2,364', annual: '$1,970', savings: '$394' },
+          { tier: 'Aura Boost', monthly: '$497', yearlyPath: '$5,964', annual: '$4,970', savings: '$994' },
+          { tier: 'Aura Pro', monthly: '$997', yearlyPath: '$11,964', annual: '$9,970', savings: '$1,994' },
+          { tier: 'Aura Elite', monthly: '$1,997', yearlyPath: '$23,964', annual: '$19,970', savings: '$3,994' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.tier}</Text>
@@ -524,9 +569,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Connect', fee: '$299', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Performance', fee: '$499', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Command', fee: 'Custom', includes: 'Enterprise onboarding, custom setup' },
+          { tier: 'Aura Core', fee: '$0', includes: 'Self-service onboarding' },
+          { tier: 'Aura Boost', fee: '$299', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Pro', fee: '$599', includes: 'Onboarding, setup, training, white-label' },
+          { tier: 'Aura Elite', fee: '$999', includes: 'Enterprise onboarding, custom setup' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>

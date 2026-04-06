@@ -58,8 +58,8 @@ const demoAccounts = [
     employee: 'employeepro@demo.com',
     customer: 'customerpro@demo.com',
     businessType: 'Growing Field Service',
-    agents: 18,
-    consoles: 6,
+    agents: 16,
+    consoles: 5,
   },
   {
     tier: 'Aura Elite',
@@ -163,54 +163,41 @@ const employeeOnboardingSteps = [
 ];
 
 const tierFeatures: Record<string, string[]> = {
-  'Aura Starter': [
+  'Aura Core': [
+    '8 Smart AI Agents',
     'AI Receptionist (Triage)',
-    'Talk to Aura (Voice)',
-    'Message Aura (Text)',
-    'Smart Link Sharing',
-    'Lead Capture',
+    'Booking, Follow-Up, Review Agents',
+    'Creative Content & Web Presence',
+    'Lead & Marketing Agents',
+    '3 Control Centers',
+    '10 Employees',
   ],
-  'Aura Connect': [
-    'All Starter features',
-    'Scheduling Agent',
-    'Follow-up Agent',
-    'Customer Portal Console',
-    'Calendar Integration',
-  ],
-  'Aura Growth': [
-    'All Connect features',
-    '11 AI Agents',
-    'Outreach & Sales Console',
-    'Social Media Console',
-    'Marketing Automation',
-  ],
-  'Aura Presence': [
-    'All Growth features',
-    '12 AI Agents',
-    'Creative & Web Console',
-    'Web Presence Agent',
-    'Brand Management',
-  ],
-  'Aura Logistics': [
-    'All Presence features',
-    '18 AI Agents',
+  'Aura Boost': [
+    'All Core features',
+    '12 Smart AI Agents',
+    'Dispatch, Route, ETA, Check-In Agents',
+    '5 Control Centers',
     'Field Operations Console',
-    'Business Management Console',
-    'Dispatch & Route Optimization',
+    '25 Employees',
   ],
-  'Aura Performance': [
-    'All Field Ops features',
-    '22 AI Agents',
+  'Aura Pro': [
+    'All Boost features',
+    '16 Smart AI Agents',
+    'Campaign & Outreach Agents',
+    'Social Feed Queue & Social Analytics',
+    '5 Control Centers',
+    'White-Label Branding',
+    '50 Employees',
+  ],
+  'Aura Elite': [
+    'All Pro features',
+    '24 Smart AI Agents (Full Suite)',
+    'Admin, Quoting, Invoice, Inventory Agents',
+    'Insights, Performance, Revenue, Forecast Agents',
+    'All 7 Control Centers + AI Operatives Hub',
     'Analytics & Reports Console',
-    'Insights & Performance Agents',
-    'Business Intelligence',
-  ],
-  'Aura Command': [
-    'All Performance features',
-    '24 AI Agents (Full Suite)',
-    'AI Operatives Hub Console',
-    'Revenue & Forecast Agents',
     'Predictive Analytics',
+    'Unlimited Employees',
   ],
 };
 

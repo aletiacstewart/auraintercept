@@ -42,12 +42,13 @@ export default function TalkToAura() {
   }, []);
 
   const tierLabels: Record<string, string> = {
-    connect: 'Aura Connect',
-    performance: 'Aura Performance',
-    command: 'Aura Command',
+    starter: 'Aura Core',
+    connect: 'Aura Boost',
+    performance: 'Aura Pro',
+    command: 'Aura Elite',
   };
 
-  const tierLabel = tierLabels[tier] || 'Aura Command';
+  const tierLabel = tierLabels[tier] || 'Aura Elite';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
