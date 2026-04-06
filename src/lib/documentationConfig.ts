@@ -499,29 +499,33 @@ export function getTierByPrice(price: number): TierConfig | undefined {
   return Object.values(SUBSCRIPTION_TIERS).find(tier => tier.price === price);
 }
 
-// Tier hierarchy for the 3-tier system
+// Tier hierarchy for the 4-tier system
 const TIER_HIERARCHY_DOC: Record<string, number> = {
   free: 0,
-  // Legacy IDs (all map to canonical 3)
+  // Legacy IDs (all map to canonical 4)
   express: 1,
   aura_flow: 1,
   starter: 1,
   scheduling: 1,
   halo: 1,
   core: 1,
-  business: 1,
-  growth: 1,
-  aura_growth: 1,
-  // 3-Tier IDs
-  aura_connect: 1,
-  connect: 1,
-  // Performance
-  single_point: 2,
-  field_ops: 2,
-  multi_track: 2,
-  performance: 2,
-  // Command
-  command: 3,
+  business: 2,
+  growth: 2,
+  aura_growth: 2,
+  // 4-Tier IDs
+  aura_core: 1,
+  connect: 2,
+  aura_connect: 2,
+  aura_boost: 2,
+  // Pro
+  single_point: 3,
+  field_ops: 3,
+  multi_track: 3,
+  performance: 3,
+  aura_pro: 3,
+  // Elite
+  command: 4,
+  aura_elite: 4,
 };
 
 export function getOperativesForTier(tierId: string): OperativeConfig[] {
@@ -568,27 +572,37 @@ export interface IntegrationRequirement {
 }
 
 export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
-  aura_connect: {
+  aura_core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: true, reason: 'Required for Customer Journey Agent calendar sync' },
-    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: false, reason: 'Optional for Connect tier' },
+    calendar: { required: true, reason: 'Required for booking agent calendar sync' },
+    a2p_10dlc: { required: false, reason: 'Optional for Core tier' },
+    social_media: { required: false, reason: 'Optional for Core tier' },
   },
-  multi_track: {
-    stripe: { required: true, reason: 'Required for Business Finance Agent invoice payments' },
+  aura_boost: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for dispatch notifications and voice' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Performance tier)' },
+    social_media: { required: true, reason: 'Required for Social Media Console' },
   },
-  command: {
+  aura_pro: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    signalwire: { required: true, reason: 'Required for dispatch notifications and voice' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email notifications' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: true, reason: 'Required for field operations scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Pro tier)' },
+  },
+  aura_elite: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
     signalwire: { required: true, reason: 'Required for full communication suite' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
@@ -596,7 +610,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for enterprise scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Command tier)' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Elite tier)' },
   },
   free: {
     stripe: { required: false, reason: 'Subscribe to enable payments' },
@@ -610,21 +624,24 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
 };
 
-// Backward compatibility aliases — all legacy names → canonical 3 tier keys
+// Backward compatibility aliases — all legacy names → canonical 4 tier keys
 export const INTEGRATION_REQUIREMENTS_COMPAT: Record<string, string> = {
-  express: 'aura_connect',
-  aura_flow: 'aura_connect',
-  starter: 'aura_connect',
-  scheduling: 'aura_connect',
-  halo: 'aura_connect',
-  core: 'aura_connect',
-  growth: 'aura_connect',
-  business: 'aura_connect',
-  aura_growth: 'aura_connect',
-  field_ops: 'multi_track',
-  performance: 'multi_track',
-  single_point: 'multi_track',
-  connect: 'aura_connect',
+  express: 'aura_core',
+  aura_flow: 'aura_core',
+  starter: 'aura_core',
+  scheduling: 'aura_core',
+  halo: 'aura_core',
+  core: 'aura_core',
+  growth: 'aura_boost',
+  business: 'aura_boost',
+  aura_growth: 'aura_boost',
+  aura_connect: 'aura_boost',
+  connect: 'aura_boost',
+  field_ops: 'aura_pro',
+  performance: 'aura_pro',
+  single_point: 'aura_pro',
+  multi_track: 'aura_pro',
+  command: 'aura_elite',
 };
 
 // Get integration requirements for a specific tier
