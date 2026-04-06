@@ -1154,15 +1154,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- $0 implementation fee</Text>
       </View>
 
-      <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Aura Core</Text>
-        <Text style={styles.pricingPrice}>$197/month</Text>
-        <Text style={styles.pricingFeature}>- 8 Smart AI Agents + 3 Consoles</Text>
-        <Text style={styles.pricingFeature}>- AI Receptionist, Booking, Follow-Up, Review</Text>
-        <Text style={styles.pricingFeature}>- Creative Content, Web Presence, Lead, Marketing</Text>
-        <Text style={styles.pricingFeature}>- 10 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $0 implementation fee</Text>
-      </View>
+
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Boost</Text>
