@@ -46,33 +46,45 @@ const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({
         
         const diagram = `
 flowchart TB
-    subgraph SP["🟠 SINGLE-POINT — $497/mo"]
+    subgraph CORE["🟢 CORE — $197/mo"]
         direction TB
         Triage["🎧 AI Receptionist"]
+        Booking["📅 Booking Agent"]
         Followup["📞 Follow-up Agent"]
         Review["⭐ Review Agent"]
+        CreativeContent["🎨 Creative Content"]
+        WebPresence["🌐 Web Presence"]
+        LeadAgent["🎯 Lead Agent"]
+        Marketing["📣 Marketing Agent"]
     end
     
-    subgraph MT["🔵 MULTI-TRACK — $897/mo"]
+    subgraph BOOST["🔵 BOOST — $497/mo"]
         direction TB
-        Booking["📅 Scheduling Agent"]
         Dispatch["🚚 Dispatch Agent"]
         Route["🗺️ Route Agent"]
         ETA["⏱️ ETA Agent"]
         Checkin["✅ Check-in Agent"]
-        Quoting["💼 Quoting Agent"]
-        Invoice["💳 Invoice Agent"]
     end
     
-    subgraph CMD["🟣 COMMAND — $697/mo"]
+    subgraph PRO["🟣 PRO — $997/mo"]
         direction TB
-        Admin["👔 Admin Agent"]
-        Inventory["📦 Inventory Agent"]
         Campaign["📣 Campaign Agent"]
-        Lead["🎯 Lead Agent"]
-        SocialContent["✏️ Social Content"]
-        SocialScheduler["📆 Social Scheduler"]
+        Outreach["📧 Outreach Agent"]
+        SocialScheduler["📆 Social Feed Queue"]
         SocialAnalytics["📊 Social Analytics"]
+        Admin["👔 Admin Agent"]
+        Quoting["💼 Quoting Agent"]
+    end
+
+    subgraph ELITE["🟡 ELITE — $1,997/mo"]
+        direction TB
+        Invoice["💳 Invoice Agent"]
+        Inventory["📦 Inventory Agent"]
+        Insights["📈 Insights Agent"]
+        Performance["⚡ Performance Agent"]
+        Revenue["💰 Revenue Agent"]
+        Forecast["🔮 Forecast Agent"]
+    end
         Insights["💡 Insights Agent"]
         Performance["📈 Performance Agent"]
         Revenue["💰 Revenue Agent"]
