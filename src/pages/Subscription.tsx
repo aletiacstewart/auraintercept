@@ -189,29 +189,28 @@ const sections: FeatureSection[] = [
       { name: 'Route Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'ETA Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Check-In Agent', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Marketing Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Web Presence Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Marketing Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Web Presence Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Social Feed Queue', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Social Analytics Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Quoting Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Campaign Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Outreach Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Invoice Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Inventory Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Insights Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Performance Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'Revenue Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'Forecast Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'Predictive AI Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
     ],
   },
   {
-    title: 'Control Centers (3 / 4 / 6 / 7+)',
+    title: 'Control Centers (3 / 5 / 6 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Marketing & Sales Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative & Web Presence Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Field Operations Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Social Media Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
@@ -670,19 +669,19 @@ export default function Subscription() {
                     <tr className="border-b border-border bg-muted/50">
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Starter</div>
+                        <div>Core</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$197/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
-                        <div className="text-primary">Connect</div>
+                        <div className="text-primary">Boost</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Performance</div>
+                        <div>Pro</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$997/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
-                        <div>Command</div>
+                        <div>Elite</div>
                         <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
                       </th>
                     </tr>
@@ -738,7 +737,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Implementation Fee: $0 Starter · $299 Connect · $599 Performance · $999 Command</span>
+                <span className="text-muted-foreground">Implementation Fee: $0 Core · $299 Boost · $599 Pro · $999 Elite</span>
               </div>
             </div>
           </CardContent>
@@ -786,9 +785,9 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-card-foreground">What's the difference between Starter, Connect, Performance, and Command?</h4>
+              <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Starter ($197/mo) includes 4 AI operatives ideal for solo operators and restaurants. Connect ($497/mo) adds dispatch, routing, and web presence — perfect for HVAC, plumbing, and field service. Performance ($997/mo) adds admin, quoting, invoicing, and white-label branding. Command ($1,997/mo) includes all operatives plus predictive analytics for enterprise teams.
+                Core ($197/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($497/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($997/mo) adds campaign, outreach, social media, admin, quoting, and white-label branding. Elite ($1,997/mo) includes all agents plus predictive analytics for enterprise teams.
               </p>
             </div>
             <div>
@@ -800,7 +799,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Starter includes 10 employees, Connect includes 25, Performance includes 50, and Command includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
+                Core includes 10 employees, Boost includes 25, Pro includes 50, and Elite includes unlimited. Additional employees beyond your tier's limit cost $25/month per 10 employees.
               </p>
             </div>
             <div>
