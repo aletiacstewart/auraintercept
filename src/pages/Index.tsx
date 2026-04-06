@@ -417,8 +417,8 @@ const howItWorks = [{
   icon: Building2
 }, {
   step: 2,
-  title: 'Activate AI Operatives',
-  description: 'Enable up to 10 AI Operatives and configure your knowledge base for your business.',
+  title: 'Activate AI Agents',
+  description: 'Enable up to 24 Smart AI Agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -432,8 +432,8 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '10+',
-  label: 'AI Operatives'
+  value: '24',
+  label: 'Smart AI Agents'
 }, {
   value: '24/7',
   label: 'Automation'
@@ -594,7 +594,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Intelligence Network</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              10 AI Operatives
+              24 Smart AI Agents
             </h2>
             <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>Intercept Every Lead. Automate Every Move.</p>
           </div>
@@ -813,11 +813,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">4 AI Operatives handling booking, follow-up & creative content.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">8 Smart AI Agents handling booking, follow-up, outreach & creative content.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">4 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">8 Smart AI Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">3 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Triage + Booking + Follow-Up</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Triage + Booking + Follow-Up + Review</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Creative Content Agent</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">10 Employee Accounts</span></div>
                 </div>
@@ -844,11 +844,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">7 AI Operatives with dispatch, routing & web presence.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">16 Smart AI Agents with dispatch, routing, web presence & social.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">7 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">16 Smart AI Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">5 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Dispatch + Route Agent</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Dispatch + Route + ETA + Check-In</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Web Presence + Marketing</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">25 Employee Accounts</span></div>
                 </div>
@@ -875,11 +875,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">9 AI Operatives with quoting, invoicing & white-label.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">22 Smart AI Agents with quoting, invoicing & white-label.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">9 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">22 Smart AI Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">6 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Admin + Business Finance</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Admin + Quoting + Invoice + Inventory</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-purple-400">White-Label Branding</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">50 Employee Accounts</span></div>
                 </div>
@@ -906,11 +906,11 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$19,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">10+ AI Operatives with Predictive AI Hub.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">All 24 Smart AI Agents with Predictive AI Hub.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">10+ AI Operatives (Full Suite)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">24 Smart AI Agents (Full Suite)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">7 Control Centers + AI Hub</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-amber-400">Predictive Analytics</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-amber-400">Predictive AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">White-Label Branding</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">Unlimited Employees</span></div>
                 </div>

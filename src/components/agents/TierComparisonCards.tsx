@@ -8,15 +8,29 @@ import { TIER_AGENT_CONFIG, type SubscriptionTier } from '@/lib/subscriptionAgen
 
 const AGENT_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
-  customer_journey: 'Customer Journey',
-  outreach: 'Outreach Agent',
+  booking: 'Booking Agent',
+  followup: 'Follow-Up Agent',
+  review: 'Review Agent',
   creative_content: 'Creative Content',
-  web_presence: 'Web Presence',
+  campaign: 'Campaign Agent',
+  lead: 'Lead Agent',
+  outreach: 'Outreach Agent',
   dispatch: 'Dispatch Agent',
-  field_navigation: 'Field Navigation',
-  business_finance: 'Business Finance',
+  route: 'Route Agent',
+  eta: 'ETA Agent',
+  checkin: 'Check-In Agent',
+  marketing: 'Marketing Agent',
+  web_presence: 'Web Presence',
+  social_scheduler: 'Social Feed Queue',
+  social_analytics: 'Social Analytics',
   admin: 'Admin Agent',
-  analytics_intelligence: 'Analytics Intelligence',
+  quoting: 'Quoting Agent',
+  invoice: 'Invoice Agent',
+  inventory: 'Inventory Agent',
+  insights: 'Insights Agent',
+  performance: 'Performance Agent',
+  revenue: 'Revenue Agent',
+  forecast: 'Forecast Agent',
 };
 
 const CONSOLE_NAMES: Record<string, string> = {
@@ -181,22 +195,22 @@ const TierComparisonCards: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
             <div className="flex items-center gap-2">
               <Badge className="bg-teal-600">Starter</Badge>
-              <span className="text-muted-foreground text-xs">$197 · 4</span>
+              <span className="text-muted-foreground text-xs">$197 · 8</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-sky-600">Connect</Badge>
-              <span className="text-muted-foreground text-xs">$497 · 7</span>
+              <span className="text-muted-foreground text-xs">$497 · 16</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-purple-600">Performance</Badge>
-              <span className="text-muted-foreground text-xs">$997 · 9</span>
+              <span className="text-muted-foreground text-xs">$997 · 22</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-amber-600">Command</Badge>
-              <span className="text-muted-foreground text-xs">$1,997 · 10+</span>
+              <span className="text-muted-foreground text-xs">$1,997 · 24</span>
             </div>
           </div>
         </CardContent>
