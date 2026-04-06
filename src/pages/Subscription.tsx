@@ -65,10 +65,10 @@ const TIERS = [
     annualSavings: 'Save $594',
     description: 'Solo operators, salons, consultants',
     popular: false,
-    agentCount: 5,
+    agentCount: 11,
     consoleCount: 4,
     highlights: [
-      '5 AI Operatives',
+      '11 AI Agents',
       '4 Control Centers',
       'Triage + Customer Journey',
       'Outreach & Creative Content',
@@ -84,10 +84,10 @@ const TIERS = [
     annualSavings: 'Save $994',
     description: 'HVAC, plumbing, field service',
     popular: true,
-    agentCount: 8,
+    agentCount: 18,
     consoleCount: 6,
     highlights: [
-      '8 AI Operatives',
+      '18 AI Agents',
       '6 Control Centers',
       'Dispatch & Field Navigation',
       'Business Finance (Quotes/Invoices)',
@@ -103,10 +103,10 @@ const TIERS = [
     annualSavings: 'Save $1,394',
     description: 'Multi-location, enterprise',
     popular: false,
-    agentCount: 10,
+    agentCount: 24,
     consoleCount: 7,
     highlights: [
-      'All 10 AI Operatives',
+      'All 24 Smart AI Agents',
       'All 7 Control Centers + AI Hub',
       'Admin & Analytics Intelligence',
       'Revenue & Forecast',
@@ -139,7 +139,7 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Operatives (5 / 8 / 10)',
+    title: 'Smart AI Agents (11 / 18 / 24)',
     features: [
       { name: 'AI Receptionist (Triage)', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Customer Journey (Booking, Follow-up, Review)', connect: 'check', performance: 'check', command: 'check' },
