@@ -166,7 +166,7 @@ const TierComparisonCards: React.FC = () => {
           color="text-sky-400"
           bgColor="bg-sky-950/30"
           borderColor="border-sky-600/50"
-          upgradeFrom={{ tier: 'Aura Starter', priceDiff: 300 }}
+          upgradeFrom={{ tier: 'Aura Core', priceDiff: 300 }}
           highlighted
         />
 
@@ -176,7 +176,7 @@ const TierComparisonCards: React.FC = () => {
           color="text-purple-400"
           bgColor="bg-purple-950/30"
           borderColor="border-purple-600/50"
-          upgradeFrom={{ tier: 'Aura Connect', priceDiff: 500 }}
+          upgradeFrom={{ tier: 'Aura Boost', priceDiff: 500 }}
         />
 
         <TierCard
@@ -185,7 +185,7 @@ const TierComparisonCards: React.FC = () => {
           color="text-amber-400"
           bgColor="bg-amber-950/30"
           borderColor="border-amber-600/50"
-          upgradeFrom={{ tier: 'Aura Performance', priceDiff: 1000 }}
+          upgradeFrom={{ tier: 'Aura Pro', priceDiff: 1000 }}
         />
       </div>
 
