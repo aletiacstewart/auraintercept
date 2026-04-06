@@ -244,7 +244,7 @@ const scenes: Scene[] = [
   {
     id: 'scene-9',
     title: 'The Full Aura Network',
-    narration: 'All 10 AI operatives work as one intelligent network across 7 consoles. AI Receptionist and Triage form the entry point. Customer Journey, Field Navigation, Business Finance, and Analytics Intelligence handle the core. Outreach, Creative Content, Web Presence, and Admin complete the ecosystem.',
+    narration: 'All 24 Smart AI Agents work as one intelligent network across 7 consoles. AI Receptionist and Triage form the entry point. Customer Journey, Field Navigation, Business Finance, and Analytics Intelligence handle the core. Outreach, Creative Content, Web Presence, and Admin complete the ecosystem.',
     agents: [
       // Customer Portal (top-left)
       { id: 'triage', label: 'AI\nReceptionist', emoji: '🤖', color: C.customer, x: 12, y: 20 },
@@ -293,10 +293,10 @@ const scenes: Scene[] = [
   {
     id: 'scene-10',
     title: 'Everyone Benefits',
-    narration: 'With 10 AI operatives across 7 consoles, the company gets 24/7 coverage with zero missed leads. Customers get instant, professional service across every channel. Employees receive pre-qualified jobs with clear instructions.',
+    narration: 'With 24 Smart AI Agents across 7 consoles, the company gets 24/7 coverage with zero missed leads. Customers get instant, professional service across every channel. Employees receive pre-qualified jobs with clear instructions.',
     agents: [
       { id: 'company', label: 'Company', emoji: '🏢', color: C.benefit, x: 50, y: 15 },
-      { id: 'b1', label: '24/7 Coverage\n10 AI Operatives', emoji: '🌙', color: 'hsl(260, 50%, 42%)', x: 15, y: 12 },
+      { id: 'b1', label: '24/7 Coverage\n24 AI Agents', emoji: '🌙', color: 'hsl(260, 50%, 42%)', x: 15, y: 12 },
       { id: 'b2', label: 'Automated\n7 Consoles', emoji: '⚡', color: 'hsl(260, 50%, 42%)', x: 85, y: 12 },
       { id: 'customer', label: 'Customer', emoji: '👤', color: C.person, x: 50, y: 50 },
       { id: 'b3', label: 'Instant Service\nEvery Channel', emoji: '🚀', color: 'hsl(220, 50%, 42%)', x: 15, y: 50 },
@@ -375,7 +375,7 @@ export default function AIAgentFlowDemo() {
   }, []);
 
   const downloadScript = useCallback(() => {
-    const header = '=== AURA INTELLIGENCE NETWORK — AGENT FLOW DEMO SCRIPT ===\n10 AI Operatives across 7 Consoles\n\n';
+    const header = '=== AURA INTELLIGENCE NETWORK — AGENT FLOW DEMO SCRIPT ===\n24 Smart AI Agents across 7 Consoles\n\n';
     const script = scenes.map((s, i) =>
       `Scene ${i + 1}: ${s.title}\n${'─'.repeat(40)}\n${s.narration}\nAgents: ${s.agents.map(a => a.label.replace(/\n/g, ' ')).join(', ')}\n`
     ).join('\n---\n\n');

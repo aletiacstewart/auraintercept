@@ -216,15 +216,9 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Starter ($197/mo): AI Receptionist for 24/7 lead capture with 1 agent',
-          'Aura Connect ($397/mo): AI booking with calendar sync + Customer Portal (3 agents)',
-          'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation + Outreach & Sales',
-          'Aura Presence ($797/mo): 12 AI Operatives + Creative & Web Presence console',
-          'Aura Logistics ($1,497/mo): 18 AI Operatives + Field Operations + Business Management',
-          'Aura Performance ($497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
-          'Aura Command ($697/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
-          'Performance tier includes insights + performance agents; Command adds revenue + forecast agents',
-          'Employee limits: 2 (Starter), 3 (Connect), 5 (Growth), 8 (Presence), 15 (Logistics), 25 (Performance), 50 (Command)',
+          'Aura Connect ($297/mo): 11 Smart AI Agents + 4 Consoles, 5 employees',
+          'Aura Performance ($497/mo): 18 Smart AI Agents + 6 Consoles, 15 employees',
+          'Aura Command ($697/mo): All 24 Smart AI Agents + 7 Consoles + AI Operatives Hub, Unlimited employees',
           'All tiers include API Access, White-Label Branding, and Chat Widget'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing = 10x monthly rate']
@@ -263,7 +257,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Operatives Hub from the sidebar',
-          'View all 24 specialized operatives organized across 7 Control Centers (Consoles)',
+          'View all 24 Smart AI Agents organized across 7 Control Centers (Consoles)',
           'Operatives locked by tier show "Locked" badge',
           'Click any operative card to view settings and dependencies',
           'Enable/disable operatives with the toggle switch'
@@ -1040,7 +1034,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 agents, 7 consoles + AI Operatives Hub</Text>
+          <Text style={styles.bulletText}>Aura Command ($697/mo): All 24 Smart AI Agents, 7 consoles + AI Operatives Hub</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

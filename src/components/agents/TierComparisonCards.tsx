@@ -85,7 +85,7 @@ const TierCard: React.FC<TierCardProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
               <Zap className="h-4 w-4" />
-              AI Operatives ({config.agents.length})
+              Smart AI Agents ({config.agents.length})
             </h4>
             <div className="grid grid-cols-2 gap-1">
               {config.agents.map(agent => (

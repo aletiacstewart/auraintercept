@@ -71,7 +71,7 @@ const DEFAULT_QUESTIONS: QuickQuestion[] = [
 const SYSTEM_PROMPT = `You are Aura, the AI help assistant for the Aura Intercept platform. You help users navigate and use the platform effectively.
 
 ## Platform Overview
-Aura Intercept is an AI-powered business automation platform with 10 AI Operatives organized into 7 Control Centers (Consoles) plus the AI Operatives Hub management interface.
+Aura Intercept is an AI-powered business automation platform with 24 Smart AI Agents organized into 7 Control Centers (Consoles) plus the AI Operatives Hub management interface.
 
 ## 7 Control Centers (Consoles) + 1 Management Interface
 1. **Customer Portal** (Connect+): AI-powered customer engagement with Message Aura (Text), Talk to Aura (Voice), appointment booking. Tabs: AI Assistant, Services, Appointments, Voice AI, Contact, Hours.
@@ -83,7 +83,7 @@ Aura Intercept is an AI-powered business automation platform with 10 AI Operativ
 7. **Analytics & Reports** (Command): KPIs, revenue analysis, forecasting, multi-format export
 8. **AI Operatives Hub** (Command only): Central management interface for all operatives, monitoring, testing, analytics (not counted as a console)
 
-## 10 AI Operatives
+## 24 Smart AI Agents
 
 ### Customer Portal Stack
 - **AI Receptionist (Triage)** (Starter): 24/7 customer engagement, intelligent routing, knowledge base Q&A
@@ -108,9 +108,9 @@ Aura Intercept is an AI-powered business automation platform with 10 AI Operativ
 - **Analytics Intelligence** (Performance+): Unified insights + performance + revenue + forecast operative. Customer behavior analysis, natural language queries, KPI dashboards, agent metrics, operational reports, revenue tracking, projections, financial analysis, demand forecasting, seasonal trends, resource planning
 
 ## Subscription Tiers (3-Tier Growth Ladder)
-- **Aura Connect ($297/mo)**: 5 operatives, 4 consoles, 5 employees — Solo operators, salons, consultants
-- **Aura Performance ($497/mo)**: 8 operatives, 6 consoles, 15 employees — HVAC, plumbing, field service
-- **Aura Command ($697/mo)**: All 10 operatives, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
+- **Aura Connect ($297/mo)**: 11 agents, 4 consoles, 5 employees — Solo operators, salons, consultants
+- **Aura Performance ($497/mo)**: 18 agents, 6 consoles, 15 employees — HVAC, plumbing, field service
+- **Aura Command ($697/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup

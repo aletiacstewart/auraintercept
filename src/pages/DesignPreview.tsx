@@ -460,7 +460,7 @@ export default function DesignPreview() {
               EVERYTHING YOUR BUSINESS NEEDS
             </h2>
             <p style={{ fontSize: 15, color: "rgba(200,220,240,0.5)", maxWidth: 480, margin: "0 auto" }}>
-              10 AI operatives working in concert to run your operations
+              24 Smart AI Agents working in concert to run your operations
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>

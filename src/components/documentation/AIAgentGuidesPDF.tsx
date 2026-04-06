@@ -638,7 +638,7 @@ const CONSOLES = [
     name: 'AI Operatives Hub',
     color: colors.blue,
     colorLight: colors.blueLight,
-    description: 'Central management console for configuring, monitoring, and analyzing all 24 AI operatives.',
+    description: 'Central management console for configuring, monitoring, and analyzing all 24 Smart AI Agents.',
     features: [
       'Operative configuration and activation',
       'Quick Start batch activation',

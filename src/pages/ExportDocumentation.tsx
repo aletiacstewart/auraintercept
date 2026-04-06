@@ -43,7 +43,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
             <CardDescription>
-                Complete guide to all 10 AI operatives, 7 Control Centers, communication channels & integrations
+                Complete guide to all 24 Smart AI Agents, 7 Control Centers, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -51,7 +51,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>7 Console Overviews</li>
-                  <li>10 AI Operative Descriptions</li>
+                  <li>24 Smart AI Agent Descriptions</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
@@ -110,7 +110,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
                   <li>Project Complexity Score</li>
-                  <li>Complete AI Operatives Catalog (10 operatives)</li>
+                  <li>Complete Smart AI Agents Catalog (24 agents)</li>
                   <li>7 Control Center Descriptions</li>
                   <li>Technical Architecture</li>
                 </ul>
@@ -711,7 +711,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 3, title: 'Executive Summary', desc: 'Platform overview and value proposition' },
                   { page: 4, title: 'Development Timeline', desc: '6 phases with 30+ milestones' },
                   { page: 5, title: 'Complexity Score', desc: '87/100 enterprise-grade rating' },
-                  { page: '6-8', title: 'AI Operatives Catalog', desc: '24 operatives across 7 consoles' },
+                  { page: '6-8', title: 'Smart AI Agents Catalog', desc: '24 agents across 7 consoles' },
                   { page: 9, title: 'Control Centers', desc: '7 specialized consoles' },
                   { page: 10, title: 'Platform Features', desc: '8 key platform capabilities' },
                   { page: 11, title: 'Integrations', desc: 'Third-party services and APIs' },

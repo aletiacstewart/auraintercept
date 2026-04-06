@@ -274,8 +274,8 @@ const PlatformFAQPDF = () => {
             <Text style={styles.coverStatLabel}>Subscription Tiers</Text>
           </View>
           <View style={styles.coverStat}>
-            <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalOperatives}</Text>
-            <Text style={styles.coverStatLabel}>AI Operatives</Text>
+            <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalAgents}</Text>
+            <Text style={styles.coverStatLabel}>Smart AI Agents</Text>
           </View>
           <View style={styles.coverStat}>
             <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalConsoles}</Text>
@@ -301,7 +301,7 @@ const PlatformFAQPDF = () => {
           {[
             { title: 'Section 1: Getting Started', page: '3' },
             { title: 'Section 2: Subscription Plans & Pricing', page: '5' },
-            { title: 'Section 3: AI Operatives & Features', page: '8' },
+            { title: 'Section 3: Smart AI Agents & Features', page: '8' },
             { title: 'Section 4: Consoles & Dashboards', page: '11' },
             { title: 'Section 5: Integrations & Technical Setup', page: '13' },
             { title: 'Section 6: Knowledge Base & Training', page: '15' },
@@ -337,7 +337,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Aura Intercept?"
-          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 AI Operatives and 7 Control Centers designed for service businesses."
+          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 Smart AI Agents and 7 Control Centers designed for service businesses."
         />
         
         <FAQItem 
@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Starter ($197/mo) for basic AI reception, Aura Connect ($397/mo) for appointment automation, Aura Growth ($597/mo) for marketing and outreach, Aura Presence ($797/mo) for creative and web presence, Aura Logistics ($1,497/mo) for field service operations, Aura Performance ($497/mo) for advanced analytics, and Aura Command ($697/mo) for full enterprise suite. All tiers include voice, SMS, and email communication channels."
+          answer="Choose based on your business needs: Aura Connect ($297/mo) for solo operators and small businesses, Aura Performance ($497/mo) for field service companies with technicians, and Aura Command ($697/mo) for multi-location enterprise teams. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 
@@ -392,7 +392,7 @@ const PlatformFAQPDF = () => {
           <BulletPoint>Configure business hours and service areas</BulletPoint>
           <BulletPoint>Set up required integrations (SignalWire, Resend)</BulletPoint>
           <BulletPoint>Train Knowledge Base with services and FAQs</BulletPoint>
-          <BulletPoint>Enable AI Operatives for your workflow</BulletPoint>
+          <BulletPoint>Enable Smart AI Agents for your workflow</BulletPoint>
           <BulletPoint>Test communication channels before going live</BulletPoint>
         </View>
 
@@ -409,7 +409,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plans are available?"
-          answer={`Aura Intercept offers 7 subscription tiers: ${tiers.map(t => `${t.name} ($${t.price.toLocaleString()}/mo)`).join(', ')}. Each tier is designed for specific business needs and includes varying numbers of AI Operatives and Consoles.`}
+          answer={`Aura Intercept offers 3 subscription tiers: ${tiers.map(t => `${t.name} ($${t.price.toLocaleString()}/mo)`).join(', ')}. Each tier is designed for specific business needs and includes varying numbers of Smart AI Agents and Consoles.`}
         />
         
         <FAQItem 

@@ -44,7 +44,7 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 10 consolidated operatives across 7 categories
+// Default agent definitions - 10 consolidated operative groups representing 24 Smart AI Agents
 // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Portal (2 agents)

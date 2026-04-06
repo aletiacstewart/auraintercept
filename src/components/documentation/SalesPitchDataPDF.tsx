@@ -762,7 +762,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- Up to 5 employees</Text>
         <Text style={styles.tierBullet}>- Primary pain: Booking automation + marketing</Text>
         <Text style={styles.tierBullet}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.tierBullet}>- 5 AI Operatives, 4 Consoles</Text>
+        <Text style={styles.tierBullet}>- 11 Smart AI Agents, 4 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -774,7 +774,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- Up to 15 employees</Text>
         <Text style={styles.tierBullet}>- Multiple technicians to dispatch</Text>
         <Text style={styles.tierBullet}>- Need route optimization + quoting/invoicing</Text>
-        <Text style={styles.tierBullet}>- 8 AI Operatives, 6 Consoles</Text>
+        <Text style={styles.tierBullet}>- 18 Smart AI Agents, 6 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -786,7 +786,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- Unlimited employees</Text>
         <Text style={styles.tierBullet}>- Need comprehensive analytics</Text>
         <Text style={styles.tierBullet}>- All 7 Consoles + AI Operatives Hub</Text>
-        <Text style={styles.tierBullet}>- All 10 AI Operatives: Full enterprise suite</Text>
+        <Text style={styles.tierBullet}>- All 24 Smart AI Agents: Full enterprise suite</Text>
       </View>
 
       <View style={styles.closingCard}>

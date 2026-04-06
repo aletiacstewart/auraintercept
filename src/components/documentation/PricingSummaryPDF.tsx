@@ -124,8 +124,8 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>10</Text>
-          <Text style={styles.coverStatLabel}>AI Operatives</Text>
+          <Text style={styles.coverStatNumber}>24</Text>
+          <Text style={styles.coverStatLabel}>Smart AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>7</Text>
@@ -175,7 +175,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>Executive Pricing Summary</Text>
       <Text style={styles.paragraph}>
         Aura Intercept offers three subscription tiers designed to scale with your business needs.
-        All tiers include access to our AI-powered platform with varying levels of operatives,
+        All tiers include access to our AI-powered platform with varying levels of smart AI agents,
         consoles, and features. Annual billing is priced at 10x the monthly rate.
       </Text>
       <View style={styles.summaryGrid}>
@@ -183,19 +183,19 @@ const PricingSummaryPDF = () => (
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CONNECT</Text>
           <Text style={styles.summaryPrice}>${connect.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>{connect.operatives} Operatives</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>11 AI Agents</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PERFORMANCE</Text>
           <Text style={styles.summaryPrice}>${performance.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>{performance.operatives} Operatives</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>18 AI Agents</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA COMMAND</Text>
           <Text style={styles.summaryPrice}>${command.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All {command.operatives} Operatives</Text>
+          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 24 AI Agents</Text>
         </View>
       </View>
 
@@ -208,7 +208,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Operatives', c: String(connect.operatives), p: String(performance.operatives), cmd: `All ${command.operatives}` },
+          { feature: 'Smart AI Agents', c: '11', p: '18', cmd: 'All 24' },
           { feature: 'Consoles', c: String(connect.consoles), p: String(performance.consoles), cmd: `All ${command.consoles}` },
           { feature: 'Employees', c: String(connect.employees), p: String(performance.employees), cmd: String(command.employees) },
           { feature: 'Talk to Aura (Voice)', c: 'Yes', p: 'Yes', cmd: 'Yes' },
@@ -252,7 +252,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', c: '$2,970', p: '$4,970', cmd: '$6,970' },
           { category: 'Annual Savings', c: '$594', p: '$994', cmd: '$1,394' },
           { category: '', c: '', p: '', cmd: '' },
-          { category: 'AI Operatives', c: '5', p: '8', cmd: 'All 10' },
+          { category: 'Smart AI Agents', c: '11', p: '18', cmd: 'All 24' },
           { category: 'Consoles', c: '4', p: '6', cmd: 'All 7' },
           { category: 'Employees', c: '5', p: '15', cmd: 'Unlimited' },
           { category: '', c: '', p: '', cmd: '' },
@@ -297,7 +297,7 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (5)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (11)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist (Triage) - 24/7 customer engagement and routing</FeatureItem>
         <FeatureItem>Customer Journey - Booking, follow-ups, review collection</FeatureItem>
@@ -338,9 +338,9 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{performance.bestFor}</Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (8)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (18)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Connect (5 operatives), plus:</FeatureItem>
+        <FeatureItem>Everything in Connect (11 agents), plus:</FeatureItem>
         <FeatureItem>Dispatch - Smart job assignment by skills and proximity</FeatureItem>
         <FeatureItem>Field Navigation - Route optimization, ETA, check-in</FeatureItem>
         <FeatureItem>Business Finance - Quoting, invoicing, inventory</FeatureItem>
@@ -382,15 +382,15 @@ const PricingSummaryPDF = () => (
           operations. Custom implementation and onboarding included.
         </Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (All 10)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 10 AI operatives: everything in Performance plus Admin and Analytics Intelligence operatives.
+        Full access to all 24 Smart AI Agents: everything in Performance plus Admin and Analytics Intelligence agents.
       </Text>
       <Text style={styles.subsectionTitle}>Consoles (All 7 + AI Operatives Hub)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Everything in Performance (6 consoles), plus:</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
-        <FeatureItem>AI Operatives Hub - Central operative management</FeatureItem>
+        <FeatureItem>AI Operatives Hub - Central agent management</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>

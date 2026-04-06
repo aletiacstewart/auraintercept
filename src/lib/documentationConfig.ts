@@ -1,7 +1,7 @@
 /**
  * Master Documentation Configuration
  * Single source of truth for all platform data used across PDFs, Help pages, and guides.
- * Last updated: April 2026 — Consolidated to 3-Tier Growth Ladder + 10 AI Operatives
+ * Last updated: April 2026 — Consolidated to 3-Tier Growth Ladder + 24 Smart AI Agents
  */
 
 // ============================================
@@ -146,7 +146,7 @@ export const LEGACY_TIER_ID_MAP: Record<string, string> = {
 };
 
 // ============================================
-// AI OPERATIVES - 10 TOTAL (Consolidated)
+// AI AGENTS - 24 TOTAL (10 consolidated operative groups)
 // ============================================
 
 export interface OperativeConfig {
@@ -356,9 +356,9 @@ export const MANAGEMENT_INTERFACES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management interface for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management interface for all 24 Smart AI Agents with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     tier: 'command',
-    agentCount: 10,
+    agentCount: 24,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     color: 'indigo',
   },
@@ -440,7 +440,8 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 // ============================================
 
 export const PLATFORM_STATS = {
-  totalOperatives: 10,
+  totalAgents: 24,
+  totalOperatives: 10, // 10 consolidated operative groups
   totalConsoles: 7,
   totalTiers: 3,
   startingPrice: 297,
