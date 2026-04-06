@@ -114,7 +114,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
       { step: 4, title: 'Listen to Response', description: 'Hear the AI\'s spoken response through your speakers' },
     ],
     tips: [
-      'Requires Single-Point tier or higher',
+      'Requires Core tier or higher',
       'Uses ElevenLabs for natural-sounding voice',
       'Great for hands-free interactions',
       'Transcripts are available after the call'

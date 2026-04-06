@@ -375,7 +375,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       return;
     }
     if (actionId === 'call_to_book') {
-      // Open phone dialer for Single-Point tier "Call to Book" action
+      // Open phone dialer for Core tier "Call to Book" action
       if (company?.dispatch_phone) {
         window.location.href = `tel:${company.dispatch_phone}`;
       }

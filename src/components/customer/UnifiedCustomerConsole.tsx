@@ -424,7 +424,7 @@ export function UnifiedCustomerConsole({
 
       {/* Navigation Tabs - filtered by subscription tier */}
       <Tabs value={activeTab} onValueChange={(tab) => {
-        // Handle tabs that trigger chat (schedule, quote for Multi-Track+)
+        // Handle tabs that trigger chat (schedule, quote for Boost+)
         const tabConfig = visibleTabs.find(t => t.value === tab);
         if (tabConfig?.triggersChat && tabConfig.chatMessage) {
           handleSendMessage(tabConfig.chatMessage);
@@ -443,7 +443,7 @@ export function UnifiedCustomerConsole({
             <span className="text-xs">Chat</span>
           </TabsTrigger>
           
-          {/* Schedule tab - only for Multi-Track+ */}
+          {/* Schedule tab - only for Boost+ */}
           {visibleTabs.some(t => t.value === 'schedule') && (
             <TabsTrigger 
               value="schedule" 
@@ -454,7 +454,7 @@ export function UnifiedCustomerConsole({
             </TabsTrigger>
           )}
           
-          {/* Quote tab - only for Multi-Track+ */}
+          {/* Quote tab - only for Boost+ */}
           {visibleTabs.some(t => t.value === 'quote') && (
             <TabsTrigger 
               value="quote" 

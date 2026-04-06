@@ -718,7 +718,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'All agents can respond via handoff',
     agents: ['AI Receptionist', 'All Agents via Handoff'],
     integration: 'Built-in - No external dependencies required',
-    tiers: 'All tiers (Core, Single-Point, Multi-Track, Command)',
+    tiers: 'All tiers (Core, Core, Boost, Command)',
   },
   {
     channel: 'Talk to Aura (Voice/Speech-Based)',
@@ -727,7 +727,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'Follow-up Agent (reminders), Missed Call Callbacks via speakers',
     agents: ['AI Receptionist', 'Follow-up Agent'],
     integration: 'SignalWire + ElevenLabs (required)',
-    tiers: 'Express, Flow, Halo, Single-Point, Multi-Track, Command',
+    tiers: 'All tiers (Core, Boost, Pro, Elite)',
   },
   {
     channel: 'SMS Text',
@@ -736,7 +736,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'Follow-up, ETA, Campaign, Review agents send messages',
     agents: ['AI Receptionist', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent', 'Review Agent'],
     integration: 'SignalWire',
-    tiers: 'Single-Point and above',
+    tiers: 'All tiers',
   },
   {
     channel: 'Email',
@@ -745,7 +745,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'Follow-up, Campaign, Review, Invoice agents send emails',
     agents: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
     integration: 'Resend',
-    tiers: 'Single-Point and above',
+    tiers: 'All tiers',
   },
 ];
 
