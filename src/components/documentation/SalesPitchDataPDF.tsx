@@ -556,59 +556,13 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
         </View>
       </View>
-            <Text style={styles.tierBullet}>- Social engagement: +$300</Text>
-            <Text style={styles.tierBullet}>- Cost: -$797</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,003/mo</Text>
-          </View>
-        </View>
-        <View style={styles.column}>
-          <View style={styles.tierCard}>
-            <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Logistics</Text>
-              <Text style={styles.tierPrice}>$1,497/mo</Text>
-            </View>
-            <Text style={styles.tierDesc}>Field Operations</Text>
-            <Text style={styles.tierBullet}>- Missed calls recovered: +$5,000</Text>
-            <Text style={styles.tierBullet}>- Follow-up conversions: +$1,800</Text>
-            <Text style={styles.tierBullet}>- Review revenue: +$500</Text>
-            <Text style={styles.tierBullet}>- Cost: -$1,497</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$5,803/mo</Text>
-          </View>
-
-          <View style={styles.tierCard}>
-            <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Performance</Text>
-            <Text style={styles.tierPrice}>$497/mo</Text>
-            </View>
-            <Text style={styles.tierDesc}>Full Automation</Text>
-            <Text style={styles.tierBullet}>- Calls recovered: +$11,500</Text>
-            <Text style={styles.tierBullet}>- Route savings: +$400</Text>
-            <Text style={styles.tierBullet}>- Admin time: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$497</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$11,403/mo</Text>
-          </View>
-
-          <View style={styles.tierCard}>
-            <View style={styles.tierHeader}>
-              <Text style={styles.tierName}>Aura Command</Text>
-            <Text style={styles.tierPrice}>$697/mo</Text>
-            </View>
-            <Text style={styles.tierDesc}>Enterprise Suite</Text>
-            <Text style={styles.tierBullet}>- Full operations: +$17,000</Text>
-            <Text style={styles.tierBullet}>- Marketing automation: +$3,000</Text>
-            <Text style={styles.tierBullet}>- Analytics insights: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$697</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$18,503/mo</Text>
-          </View>
-        </View>
-      </View>
 
       <Footer />
     </Page>
 
     {/* Competitor Comparison */}
     <Page size="A4" style={styles.page}>
-      <Header title="Competitor Comparison" pageNum={4} />
+      <Header title="Competitor Comparison" pageNum={5} />
       
       <Text style={styles.sectionTitle}>Market Positioning</Text>
       <Text style={styles.sectionSubtitle}>How Aura Intercept compares to alternatives</Text>
@@ -686,7 +640,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Objection Handling */}
     <Page size="A4" style={styles.page}>
-      <Header title="Objection Handling Scripts" pageNum={5} />
+      <Header title="Objection Handling Scripts" pageNum={6} />
       
       <Text style={styles.sectionTitle}>Common Objections & Responses</Text>
       <Text style={styles.sectionSubtitle}>Proven responses to overcome sales resistance</Text>
@@ -732,7 +686,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Case Studies */}
     <Page size="A4" style={styles.page}>
-      <Header title="Case Study Frameworks" pageNum={6} />
+      <Header title="Case Study Frameworks" pageNum={7} />
       
       <Text style={styles.sectionTitle}>Customer Success Stories</Text>
       <Text style={styles.sectionSubtitle}>Real scenarios to reference in sales conversations</Text>
@@ -794,7 +748,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Tier Recommendation Guide */}
     <Page size="A4" style={styles.page}>
-      <Header title="Tier Recommendation Guide" pageNum={7} />
+      <Header title="Tier Recommendation Guide" pageNum={8} />
       
       <Text style={styles.sectionTitle}>Matching Customers to Tiers</Text>
       <Text style={styles.sectionSubtitle}>Use these criteria to recommend the right tier</Text>
@@ -847,7 +801,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
     {/* Closing Scripts */}
     <Page size="A4" style={styles.page}>
-      <Header title="Closing Scripts" pageNum={8} />
+      <Header title="Closing Scripts" pageNum={9} />
       
       <Text style={styles.sectionTitle}>Proven Closing Techniques</Text>
       <Text style={styles.sectionSubtitle}>Scripts to move prospects to decision</Text>
