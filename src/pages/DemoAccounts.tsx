@@ -59,7 +59,7 @@ const demoAccounts = [
     customer: 'customerpro@demo.com',
     businessType: 'Growing Field Service',
     agents: 16,
-    consoles: 6,
+    consoles: 5,
   },
   {
     tier: 'Aura Elite',
