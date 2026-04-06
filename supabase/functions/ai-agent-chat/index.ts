@@ -3333,14 +3333,12 @@ serve(async (req) => {
         'creative_content',             // Creative Content
         'dispatch', 'field_navigation', // Field Operations
       ],
-      // Aura Pro ($997/mo): 18 agents — adds web presence, social, admin, quoting
+      // Aura Pro ($997/mo): 16 agents — adds campaign, outreach, social
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
-        'business_finance',                        // Business (quoting)
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
-        'admin',                                   // Admin
       ],
       // Aura Elite ($1,997/mo): All 24 agents (10 operative groups) + enterprise features
       command: [

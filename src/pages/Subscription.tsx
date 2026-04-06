@@ -118,13 +118,12 @@ const TIERS = [
     annualSavings: 'Save ~$1,994',
     description: 'Growing companies with field teams',
     popular: false,
-    agentCount: 18,
-    consoleCount: 6,
+    agentCount: 16,
+    consoleCount: 5,
     highlights: [
-      '18 Smart AI Agents',
-      '6 Control Centers',
-      'Campaign + Outreach + Social + Admin',
-      'Business Management Console',
+      '16 Smart AI Agents',
+      '5 Control Centers',
+      'Campaign + Outreach + Social',
       'White-Label Branding',
       '50 Employee Accounts',
     ],
@@ -175,7 +174,7 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'Smart AI Agents (8 / 12 / 18 / 24)',
+    title: 'Smart AI Agents (8 / 12 / 16 / 24)',
     features: [
       { name: 'AI Receptionist (Triage)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Booking Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
@@ -193,10 +192,10 @@ const sections: FeatureSection[] = [
       { name: 'Web Presence Agent', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Social Feed Queue', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Social Analytics Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
-      { name: 'Quoting Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Campaign Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Outreach Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Admin Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      { name: 'Quoting Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Invoice Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Inventory Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Insights Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
@@ -204,14 +203,14 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Control Centers (3 / 5 / 6 / 7+)',
+    title: 'Control Centers (3 / 5 / 5 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Marketing & Sales Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative & Web Presence Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Field Operations Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
     ],
@@ -787,7 +786,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($197/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($497/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($997/mo) adds campaign, outreach, social media, admin, quoting, and white-label branding. Elite ($1,997/mo) includes all agents plus predictive analytics for enterprise teams.
+                Core ($197/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($497/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($997/mo) adds campaign, outreach, social media, and white-label branding. Elite ($1,997/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams.
               </p>
             </div>
             <div>

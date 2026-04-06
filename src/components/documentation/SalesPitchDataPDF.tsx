@@ -794,9 +794,9 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <Text style={styles.tierDesc}>Best for: Growing companies with multiple technicians</Text>
         <Text style={styles.tierBullet}>- 50 Employee Accounts</Text>
-        <Text style={styles.tierBullet}>- Need campaign, outreach + business management</Text>
+        <Text style={styles.tierBullet}>- Need campaign, outreach + social media</Text>
         <Text style={styles.tierBullet}>- White-Label Branding included</Text>
-        <Text style={styles.tierBullet}>- 18 Smart AI Agents, 6 Consoles</Text>
+        <Text style={styles.tierBullet}>- 16 Smart AI Agents, 5 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>

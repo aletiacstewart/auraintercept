@@ -90,17 +90,14 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 1994,
     implementationFee: 599,
     employees: 50,
-    operatives: 18,
-    consoles: 6,
-    description: '18 Smart AI Agents with social media, admin & white-label branding.',
+    operatives: 16,
+    consoles: 5,
+    description: '16 Smart AI Agents with social media, campaigns & white-label branding.',
     bestFor: 'Growing companies with field teams and multiple technicians.',
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
       'Social Feed Queue Agent + Social Analytics Agent',
-      'Admin Agent + Quoting Agent',
-      'Business Management Console',
-      'Analytics & Reports Console',
       'White-Label Branding included',
       '50 Employee Accounts',
       'Full API Access + Priority Support',
@@ -122,9 +119,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     bestFor: 'Multi-location franchises, property management firms, enterprise teams.',
     highlights: [
       'Everything in Aura Pro',
+      'Admin Agent + Quoting Agent',
       'Invoice Agent + Inventory Agent',
       'Insights Agent + Performance Agent',
       'Revenue Agent + Forecast Agent',
+      'Business Management Console',
+      'Analytics & Reports Console',
       'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
       'Advanced Predictive Analytics & Demand Forecasting',
@@ -140,31 +140,36 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   },
 };
 
-// Tier order for display (price ascending) — 3-tier structure
-export const TIER_ORDER = ['aura_connect', 'multi_track', 'command'] as const;
+// Tier order for display (price ascending) — 4-tier structure
+export const TIER_ORDER = ['aura_core', 'aura_boost', 'aura_pro', 'aura_elite'] as const;
 
-// Legacy tier ID → new 3-tier ID (for backward compatibility with DB records)
+// Legacy tier ID → new 4-tier ID (for backward compatibility with DB records)
 export const LEGACY_TIER_ID_MAP: Record<string, string> = {
   // Old 7-tier / 5-tier docConfig IDs
-  'express': 'aura_connect',
-  'aura_flow': 'aura_connect',
-  'halo': 'aura_connect',
-  'core': 'aura_connect',
-  'single_point': 'multi_track',
+  'express': 'aura_core',
+  'aura_flow': 'aura_core',
+  'halo': 'aura_core',
+  'core': 'aura_core',
+  'single_point': 'aura_pro',
   // subscriptionAgentConfig internal names
-  'starter': 'aura_connect',
-  'scheduling': 'aura_connect',
-  'growth': 'aura_connect',
-  'business': 'aura_connect',
-  'field_ops': 'multi_track',
-  'performance': 'multi_track',
+  'starter': 'aura_core',
+  'scheduling': 'aura_core',
+  'growth': 'aura_boost',
+  'business': 'aura_boost',
+  'field_ops': 'aura_pro',
+  'performance': 'aura_pro',
   // Old 5-tier names
-  'aura_growth': 'aura_connect',
+  'aura_growth': 'aura_boost',
   // Keep existing IDs valid
-  'multi_track': 'multi_track',
-  'command': 'command',
-  'aura_connect': 'aura_connect',
-  'connect': 'aura_connect',
+  'multi_track': 'aura_pro',
+  'command': 'aura_elite',
+  'aura_connect': 'aura_boost',
+  'connect': 'aura_boost',
+  // Self-map canonical IDs
+  'aura_core': 'aura_core',
+  'aura_boost': 'aura_boost',
+  'aura_pro': 'aura_pro',
+  'aura_elite': 'aura_elite',
 };
 
 // ============================================
@@ -189,7 +194,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'AI Receptionist',
     description: 'First point of contact for all customers. Greets visitors, understands their needs, and routes them to the right agent or information.',
     console: 'customer_portal',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -199,7 +204,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Customer Journey Agent',
     description: 'End-to-end customer lifecycle management. Books appointments with calendar sync, sends SMS/email reminders, checks in after service completion, and collects Google/Yelp/Facebook reviews from satisfied customers.',
     console: 'customer_portal',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     dependencies: ['triage'],
     isCore: false,
     worksAlone: false,
@@ -210,7 +215,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Outreach Agent',
     description: 'Unified marketing and sales automation. Creates and sends email/SMS campaigns, qualifies and scores incoming leads with automated nurturing sequences, manages customer segments, promo codes, referral tracking, and win-back targeting.',
     console: 'marketing_sales',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -221,7 +226,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Creative Content Agent',
     description: 'All-in-one creative studio. Generates platform-optimized social posts for Instagram, Facebook, LinkedIn, TikTok, Google Business, and SMS. Creates AI-generated images and video scripts, blog posts, email copy, website landing pages, and multi-channel content campaigns with consistent brand voice.',
     console: 'social_media',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -232,7 +237,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Web Presence Agent',
     description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
     console: 'creative_web_presence',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     dependencies: ['creative_content'],
     isCore: true,
     worksAlone: true,
@@ -243,7 +248,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Dispatch Agent',
     description: 'Assigns technicians to jobs based on skills, location, availability, and workload. Optimizes assignments for efficiency.',
     console: 'field_operations',
-    tier: 'multi_track',
+    tier: 'aura_boost',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -253,7 +258,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Field Navigation Agent',
     description: 'End-to-end field mobility management. Plans traffic-aware driving routes, calculates and communicates real-time arrival times to customers, and tracks technician check-ins, job progress, and completion.',
     console: 'field_operations',
-    tier: 'multi_track',
+    tier: 'aura_boost',
     dependencies: ['dispatch'],
     isCore: false,
     worksAlone: false,
@@ -264,7 +269,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Business Finance Agent',
     description: 'Full financial operations management. Creates multi-line price quotes, generates invoices and tracks payments via Stripe, and monitors parts/materials inventory with low-stock alerts and reorder management.',
     console: 'business_management',
-    tier: 'multi_track',
+    tier: 'aura_elite',
     dependencies: [],
     isCore: false,
     worksAlone: true,
@@ -275,7 +280,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Admin Agent',
     description: 'Handles general business administration. Manages scheduling workflows, team assignments, customer profiles, and operational settings.',
     console: 'business_management',
-    tier: 'command',
+    tier: 'aura_elite',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -286,7 +291,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Analytics Intelligence Agent',
     description: 'Unified business intelligence engine. Answers natural language queries, tracks KPIs and technician performance, analyzes revenue trends by service and period, and predicts future demand with capacity planning — all in one conversation.',
     console: 'analytics_reports',
-    tier: 'command',
+    tier: 'aura_elite',
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -312,7 +317,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'customer_portal',
     name: 'Customer Portal',
     description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     agentCount: 2,
     tabs: ['AI Assistant', 'Services', 'Appointments', 'Voice AI', 'Contact', 'Hours'],
     color: 'blue',
@@ -321,7 +326,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'marketing_sales',
     name: 'Outreach & Sales Ops',
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing — all in one Outreach Agent.',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     agentCount: 1,
     tabs: ['Campaign', 'Leads', 'Marketing'],
     color: 'orange',
@@ -330,7 +335,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'social_media',
     name: 'Social Media Ops',
     description: 'AI-powered creative studio for social media content creation across 6 platforms, AI image/video generation, and brand-consistent multi-channel content.',
-    tier: 'aura_connect',
+    tier: 'aura_boost',
     agentCount: 1,
     tabs: ['Home', 'Create Content', 'My Posts'],
     color: 'pink',
@@ -339,7 +344,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'creative_web_presence',
     name: 'Creative & Web Presence',
     description: 'Content Engine for unified multi-channel generation plus AI-powered website builder, blog management, and SEO optimization.',
-    tier: 'aura_connect',
+    tier: 'aura_core',
     agentCount: 1,
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
     color: 'violet',
@@ -348,7 +353,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'field_operations',
     name: 'Field Operations',
     description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
-    tier: 'multi_track',
+    tier: 'aura_boost',
     agentCount: 2,
     tabs: ['Map View', 'Schedule', 'Dispatch', 'Check-in'],
     color: 'green',
@@ -357,7 +362,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'business_management',
     name: 'Business Operations',
     description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
-    tier: 'multi_track',
+    tier: 'aura_elite',
     agentCount: 2,
     tabs: ['Aura Live', 'Quote', 'Invoice', 'Lead', 'Appts', 'Inventory', 'Companies', 'Employees', 'Customers'],
     color: 'purple',
@@ -366,7 +371,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'analytics_reports',
     name: 'Analytics & Reports',
     description: 'Advanced analytics console powered by a single Analytics Intelligence Agent covering performance, revenue, insights, and forecasting with 8 specialized tabs.',
-    tier: 'command',
+    tier: 'aura_elite',
     agentCount: 1,
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     color: 'cyan',
@@ -379,7 +384,7 @@ export const MANAGEMENT_INTERFACES: ConsoleConfig[] = [
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
     description: 'Central management interface for all 24 Smart AI Agents with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
-    tier: 'command',
+    tier: 'aura_elite',
     agentCount: 24,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     color: 'indigo',
@@ -494,29 +499,33 @@ export function getTierByPrice(price: number): TierConfig | undefined {
   return Object.values(SUBSCRIPTION_TIERS).find(tier => tier.price === price);
 }
 
-// Tier hierarchy for the 3-tier system
+// Tier hierarchy for the 4-tier system
 const TIER_HIERARCHY_DOC: Record<string, number> = {
   free: 0,
-  // Legacy IDs (all map to canonical 3)
+  // Legacy IDs (all map to canonical 4)
   express: 1,
   aura_flow: 1,
   starter: 1,
   scheduling: 1,
   halo: 1,
   core: 1,
-  business: 1,
-  growth: 1,
-  aura_growth: 1,
-  // 3-Tier IDs
-  aura_connect: 1,
-  connect: 1,
-  // Performance
-  single_point: 2,
-  field_ops: 2,
-  multi_track: 2,
-  performance: 2,
-  // Command
-  command: 3,
+  business: 2,
+  growth: 2,
+  aura_growth: 2,
+  // 4-Tier IDs
+  aura_core: 1,
+  connect: 2,
+  aura_connect: 2,
+  aura_boost: 2,
+  // Pro
+  single_point: 3,
+  field_ops: 3,
+  multi_track: 3,
+  performance: 3,
+  aura_pro: 3,
+  // Elite
+  command: 4,
+  aura_elite: 4,
 };
 
 export function getOperativesForTier(tierId: string): OperativeConfig[] {
@@ -563,27 +572,37 @@ export interface IntegrationRequirement {
 }
 
 export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
-  aura_connect: {
+  aura_core: {
     stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for Talk to Aura voice calls and SMS reminders' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
-    calendar: { required: true, reason: 'Required for Customer Journey Agent calendar sync' },
-    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: false, reason: 'Optional for Connect tier' },
+    calendar: { required: true, reason: 'Required for booking agent calendar sync' },
+    a2p_10dlc: { required: false, reason: 'Optional for Core tier' },
+    social_media: { required: false, reason: 'Optional for Core tier' },
   },
-  multi_track: {
-    stripe: { required: true, reason: 'Required for Business Finance Agent invoice payments' },
+  aura_boost: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
     signalwire: { required: true, reason: 'Required for dispatch notifications and voice' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
     resend: { required: true, reason: 'Required for email notifications' },
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Performance tier)' },
+    social_media: { required: true, reason: 'Required for Social Media Console' },
   },
-  command: {
+  aura_pro: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    signalwire: { required: true, reason: 'Required for dispatch notifications and voice' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email notifications' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: true, reason: 'Required for field operations scheduling' },
+    a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Pro tier)' },
+  },
+  aura_elite: {
     stripe: { required: true, reason: 'Required for invoicing and payments' },
     signalwire: { required: true, reason: 'Required for full communication suite' },
     elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
@@ -591,7 +610,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for enterprise scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Ops (Command tier)' },
+    social_media: { required: true, reason: 'Required for Social Media Ops (Elite tier)' },
   },
   free: {
     stripe: { required: false, reason: 'Subscribe to enable payments' },
@@ -605,21 +624,24 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
   },
 };
 
-// Backward compatibility aliases — all legacy names → canonical 3 tier keys
+// Backward compatibility aliases — all legacy names → canonical 4 tier keys
 export const INTEGRATION_REQUIREMENTS_COMPAT: Record<string, string> = {
-  express: 'aura_connect',
-  aura_flow: 'aura_connect',
-  starter: 'aura_connect',
-  scheduling: 'aura_connect',
-  halo: 'aura_connect',
-  core: 'aura_connect',
-  growth: 'aura_connect',
-  business: 'aura_connect',
-  aura_growth: 'aura_connect',
-  field_ops: 'multi_track',
-  performance: 'multi_track',
-  single_point: 'multi_track',
-  connect: 'aura_connect',
+  express: 'aura_core',
+  aura_flow: 'aura_core',
+  starter: 'aura_core',
+  scheduling: 'aura_core',
+  halo: 'aura_core',
+  core: 'aura_core',
+  growth: 'aura_boost',
+  business: 'aura_boost',
+  aura_growth: 'aura_boost',
+  aura_connect: 'aura_boost',
+  connect: 'aura_boost',
+  field_ops: 'aura_pro',
+  performance: 'aura_pro',
+  single_point: 'aura_pro',
+  multi_track: 'aura_pro',
+  command: 'aura_elite',
 };
 
 // Get integration requirements for a specific tier
