@@ -1,7 +1,5 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { sanitizePdfText } from './pdfSanitize';
-import { SUBSCRIPTION_TIERS } from '@/lib/documentationConfig';
 
 const colors = {
   primary: '#214ebb',
