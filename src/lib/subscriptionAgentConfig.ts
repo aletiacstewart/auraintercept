@@ -23,63 +23,80 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Starter ($197/mo): 4 operatives, 3 consoles, 10 employees
+    // Aura Starter ($197/mo): 8 agents, 3 consoles, 10 employees
     agents: [
       'triage',              // AI Receptionist
-      'customer_journey',    // Booking + Follow-Up
+      'booking',             // Booking Agent
+      'followup',            // Follow-Up Agent
+      'review',              // Review Agent
       'creative_content',    // Creative Content Agent
-      'outreach',            // Marketing/Outreach (limited)
+      'campaign',            // Campaign Agent
+      'lead',                // Lead Agent
+      'outreach',            // Outreach Agent
     ],
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence'],
     label: 'Aura Starter',
     price: '$197/mo',
-    description: 'AI answering, booking, follow-up, and creative content for solo operators',
+    description: '8 Smart AI Agents for booking, follow-up, outreach & creative content',
   },
   connect: {
-    // Aura Connect ($497/mo): 7 operatives, 5 consoles, 25 employees
+    // Aura Connect ($497/mo): 16 agents, 5 consoles, 25 employees
     agents: [
       'triage',              // AI Receptionist
-      'customer_journey',    // Booking + Follow-Up + Review
-      'outreach',            // Campaign, Lead, Marketing
+      'booking',             // Booking Agent
+      'followup',            // Follow-Up Agent
+      'review',              // Review Agent
       'creative_content',    // Creative Content Agent
-      'web_presence',        // Web Presence Agent
+      'campaign',            // Campaign Agent
+      'lead',                // Lead Agent
+      'outreach',            // Outreach Agent
       'dispatch',            // Dispatch Agent
-      'field_navigation',    // Route Agent
+      'route',               // Route Agent
+      'eta',                 // ETA Agent
+      'checkin',             // Check-In Agent
+      'marketing',           // Marketing Agent
+      'web_presence',        // Web Presence Agent
+      'social_scheduler',    // Social Feed Queue
+      'social_analytics',    // Social Analytics Agent
     ],
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'social_media', 'field_operations'],
     label: 'Aura Connect',
     price: '$497/mo',
-    description: 'Full field dispatch, routing, web presence, and marketing for service teams',
+    description: '16 Smart AI Agents with dispatch, routing, web presence & social media',
   },
   performance: {
-    // Aura Performance ($997/mo): 9 operatives, 6 consoles, 50 employees
+    // Aura Performance ($997/mo): 22 agents, 6 consoles, 50 employees
     agents: [
-      'triage', 'customer_journey',              // Customer Portal (2)
-      'outreach',                                // Outreach & Sales (1)
-      'creative_content', 'web_presence',        // Creative & Web Presence (2)
-      'dispatch', 'field_navigation',            // Field Operations (2)
-      'business_finance',                        // Business Finance (1)
-      'admin',                                   // Admin Agent (1)
+      'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
+      'campaign', 'lead', 'outreach', 'marketing',          // Outreach & Sales (4)
+      'creative_content', 'web_presence',                   // Creative & Web (2)
+      'social_scheduler', 'social_analytics',               // Social Media (2)
+      'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
+      'admin',                                              // Admin Agent (1)
+      'quoting', 'invoice', 'inventory',                    // Business Finance (3)
+      'insights', 'performance',                            // Analytics (2)
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations', 'business_management'],
     label: 'Aura Performance',
     price: '$997/mo',
-    description: 'Full business management with quoting, invoicing, inventory, and white-label branding',
+    description: '22 Smart AI Agents with full business management & white-label branding',
   },
   command: {
-    // Aura Command ($1,997/mo): All 10+ operatives, all 7 consoles + AI Hub, unlimited employees
+    // Aura Command ($1,997/mo): All 24 agents, all 7 consoles + AI Hub, unlimited employees
     agents: [
-      'triage', 'customer_journey',              // Customer Portal (2)
-      'dispatch', 'field_navigation',            // Field Operations (2)
-      'admin', 'business_finance',               // Business Operations (2)
-      'outreach',                                // Outreach & Sales (1)
-      'creative_content', 'web_presence',        // Creative & Web Presence (2)
-      'analytics_intelligence',                  // Analytics & Reports (1)
+      'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
+      'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
+      'admin', 'quoting', 'invoice', 'inventory',           // Business Operations (4)
+      'campaign', 'lead', 'outreach', 'marketing',          // Outreach & Sales (4)
+      'creative_content', 'web_presence',                   // Creative & Web (2)
+      'social_scheduler', 'social_analytics',               // Social Media (2)
+      'insights', 'performance',                            // Analytics (2)
+      'revenue', 'forecast',                                // Predictive (2)
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Command',
     price: '$1,997/mo',
-    description: 'Enterprise AI operating system with predictive analytics, AI Hub, and unlimited employees',
+    description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub',
   },
 };
 
