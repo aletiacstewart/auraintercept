@@ -45,7 +45,7 @@ const AGENT_NAMES: Record<string, string> = {
   followup: 'Follow-up Agent',
   invoice: 'Invoice Agent',
   marketing: 'Marketing Agent',
-  social: 'Social Media Agent',
+  social: 'Creative Content Agent',
   analytics: 'Analytics Agent'
 };
 

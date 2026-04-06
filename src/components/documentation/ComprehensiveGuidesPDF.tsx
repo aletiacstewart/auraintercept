@@ -327,8 +327,8 @@ const guideCategories = [
         title: 'Social Media Agents',
         duration: '12 min',
         steps: [
-          'Social Media Agent: Creates posts for 6 platforms',
-          'Social Media Scheduler: Queues and publishes content',
+          'Creative Content Agent: Creates posts for 6 platforms',
+          'Social Feed Queue: Queues and publishes content',
           'Social Media Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
           'All Social Media agents require Pro Command tier'

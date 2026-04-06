@@ -43,8 +43,8 @@ const QUICK_REFERENCE_DATA = [
     notes: 'Full analytics suite' 
   },
   { 
-    agent: 'Social Scheduler', 
-    requires: ['Social Content'], 
+    agent: 'Social Feed Queue', 
+    requires: ['Creative Content'], 
     tier: 'Command', 
     cost: '$697', 
     notes: 'Social media automation' 
@@ -58,7 +58,7 @@ const QUICK_REFERENCE_DATA = [
   },
   { 
     agent: 'Social Analytics', 
-    requires: ['Social Content'], 
+    requires: ['Creative Content'], 
     tier: 'Command', 
     cost: '$697', 
     notes: 'Engagement metrics' 
