@@ -432,13 +432,13 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '10',
+  value: '10+',
   label: 'AI Operatives'
 }, {
   value: '24/7',
   label: 'Automation'
 }, {
-  value: '7',
+  value: '7+',
   label: 'Control Centers (Consoles)'
 }];
 const subtitles = ['Booking & Scheduling', 'Field Operations', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
@@ -797,111 +797,105 @@ export default function Index() {
             </Link>
           </div>
 
-          {/* 3-Tier Pricing Grid */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {/* 4-Tier Pricing Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
 
-            {/* Aura Connect */}
-            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-cyan-400/30 dark-card-surface">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
+            {/* Aura Starter */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-teal-400/30 dark-card-surface">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
               <CardContent className="p-5">
-                <Badge className="mb-2 bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-[10px]">Entry Level</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
+                <Badge className="mb-2 bg-teal-500/20 text-teal-400 border-teal-500/30 text-[10px]">Entry Level</Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Starter</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & outreach</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, salons, consultants, and small service businesses that need AI-powered booking, outreach, and web presence.</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, restaurants, single-location service businesses.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-cyan-400">$297</span>
+                  <span className="text-3xl font-bold text-teal-400">$197</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$2,970/year (Save $594)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">5 AI Operatives handling booking, outreach & web presence.</p>
+                <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">4 AI Operatives handling booking, follow-up & creative content.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">5 AI Operatives</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">4 Control Centers</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Triage + Customer Journey</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">Outreach + Creative + Web</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                    <span className="text-xs">10 Employee Accounts</span>
-                  </div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">4 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">3 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Triage + Booking + Follow-Up</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Creative Content Agent</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">10 Employee Accounts</span></div>
                 </div>
-                <Button
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white"
-                  onClick={() => navigate('/auth?mode=company')}
-                >
+                <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
-                <button
-                  onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
-                >
-                  See More Details
-                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                <Collapsible>
+                  {({ open }: { open: boolean }) => (
+                    <>
+                      <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
+                        See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+                    </>
+                  )}
+                </Collapsible>
+                <p className="text-[9px] text-teal-400/70 mt-2 text-center">Requires: Resend + ElevenLabs (limited) + SignalWire (limited)</p>
+              </CardContent>
+            </Card>
+
+            {/* Aura Connect */}
+            <Card className="relative overflow-hidden border-sky-400/50 shadow-glow dark-card-surface">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-500" />
+              <CardContent className="p-5">
+                <Badge className="mb-2 bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">Most Popular</Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Connect</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">Full field service automation</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-3xl font-bold text-sky-400">$497</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">7 AI Operatives with dispatch, routing & web presence.</p>
+                <div className="space-y-1.5 text-left mb-4">
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">7 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">5 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Dispatch + Route Agent</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Web Presence + Marketing</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">25 Employee Accounts</span></div>
+                </div>
+                <Button size="sm" className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white" onClick={() => navigate('/auth?mode=company')}>
+                  <Zap className="w-3 h-3 mr-1" />Start Free Trial
+                </Button>
+                <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
+                  See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: ElevenLabs + SignalWire + Resend</p>
+                <p className="text-[9px] text-sky-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
 
             {/* Aura Performance */}
-            <Card className="relative overflow-hidden border-primary/50 shadow-glow dark-card-surface">
-              <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-purple-400/30 dark-card-surface">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-violet-500" />
               <CardContent className="p-5">
-                <Badge className="mb-2 gradient-primary border-0 text-[10px]">Most Popular</Badge>
+                <Badge className="mb-2 bg-purple-500/20 text-purple-400 border-purple-500/30 text-[10px]">Growth</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Performance</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">Full automation suite</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for HVAC, plumbing, electrical, and field service companies that dispatch technicians and manage jobs on the go.</p>
+                <p className="text-[10px] text-card-foreground/60 mb-1">Full business management</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold gradient-text">$497</span>
+                  <span className="text-3xl font-bold text-purple-400">$997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$4,970/year (Save $994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">8 AI Operatives with dispatch & field navigation added.</p>
+                <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">9 AI Operatives with quoting, invoicing & white-label.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">8 AI Operatives</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">6 Control Centers</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Dispatch Operative</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Field Navigation Operative</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">25 Employee Accounts</span>
-                  </div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">9 AI Operatives</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">6 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Admin + Business Finance</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-purple-400">White-Label Branding</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">50 Employee Accounts</span></div>
                 </div>
-                <Button size="sm" className="w-full gradient-primary shadow-glow" onClick={() => navigate('/auth?mode=company')}>
-                  <Zap className="w-3 h-3 mr-1" />
+                <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
-                <button
-                  onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
-                >
-                  See More Details
-                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
+                  See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-purple-400/70 mt-2 text-center">All integrations required</p>
               </CardContent>
             </Card>
 
@@ -912,46 +906,27 @@ export default function Index() {
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Command</h3>
                 <p className="text-[10px] text-amber-400/80 mb-1">Multi-Location / Enterprise</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for multi-location franchises, property management firms, and enterprise teams that need full analytics, white-label branding, and centralized control.</p>
+                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for multi-location franchises, property management firms, and enterprise teams.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-amber-400">$697</span>
+                  <span className="text-3xl font-bold text-amber-400">$1,997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$6,970/year (Save $1,394)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">All 10 AI Operatives with predictive analytics & AI Hub.</p>
+                <p className="text-xs text-secondary mb-3">$19,970/year (Save ~20%)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">10+ AI Operatives with Predictive AI Hub.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">All 10 AI Operatives</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">All 7 Control Centers + AI Hub</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Analytics Intelligence (Full Suite)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">White-Label Branding</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">50 Employee Accounts</span>
-                  </div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">10+ AI Operatives (Full Suite)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">7 Control Centers + AI Hub</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-amber-400">Predictive Analytics</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">White-Label Branding</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">Unlimited Employees</span></div>
                 </div>
                 <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
-                <button
-                  onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
-                >
-                  See More Details
-                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
+                  See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-amber-400/70 mt-2 text-center">All integrations + advanced compliance</p>
               </CardContent>
             </Card>
           </div>
@@ -973,7 +948,7 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>30-day free trial • No credit card required</p>
             <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">starting at $299</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Starter • $299 Connect • $599 Performance • $999 Command</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
