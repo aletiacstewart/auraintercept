@@ -82,9 +82,9 @@ export function AgentOpportunityAudit() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Calculate tier fit percentages for all 3 tiers
+  // Calculate tier fit percentages for all 4 tiers
   const tierPercentages = useMemo((): TierScores => {
-    const totals: TierScores = { CONNECT: 0, PERFORMANCE: 0, COMMAND: 0 };
+    const totals: TierScores = { CORE: 0, BOOST: 0, PRO: 0, ELITE: 0 };
     let answeredCount = 0;
 
     QUESTIONS.forEach((question) => {
@@ -94,31 +94,34 @@ export function AgentOpportunityAudit() {
           (opt) => opt.label === selectedLabel
         );
         if (selectedOption) {
-          totals.CONNECT += selectedOption.tierScores.CONNECT;
-          totals.PERFORMANCE += selectedOption.tierScores.PERFORMANCE;
-          totals.COMMAND += selectedOption.tierScores.COMMAND;
+          totals.CORE += selectedOption.tierScores.CORE;
+          totals.BOOST += selectedOption.tierScores.BOOST;
+          totals.PRO += selectedOption.tierScores.PRO;
+          totals.ELITE += selectedOption.tierScores.ELITE;
           answeredCount++;
         }
       }
     });
 
     if (answeredCount === 0) {
-      return { CONNECT: 0, PERFORMANCE: 0, COMMAND: 0 };
+      return { CORE: 0, BOOST: 0, PRO: 0, ELITE: 0 };
     }
 
     return {
-      CONNECT: Math.round(totals.CONNECT / answeredCount),
-      PERFORMANCE: Math.round(totals.PERFORMANCE / answeredCount),
-      COMMAND: Math.round(totals.COMMAND / answeredCount),
+      CORE: Math.round(totals.CORE / answeredCount),
+      BOOST: Math.round(totals.BOOST / answeredCount),
+      PRO: Math.round(totals.PRO / answeredCount),
+      ELITE: Math.round(totals.ELITE / answeredCount),
     };
   }, [answers]);
 
   // Determine recommended tier based on highest fit
   const recommendedTier = useMemo((): TierType => {
     const scores: { tier: TierType; score: number }[] = [
-      { tier: 'CONNECT', score: tierPercentages.CONNECT },
-      { tier: 'PERFORMANCE', score: tierPercentages.PERFORMANCE },
-      { tier: 'COMMAND', score: tierPercentages.COMMAND },
+      { tier: 'CORE', score: tierPercentages.CORE },
+      { tier: 'BOOST', score: tierPercentages.BOOST },
+      { tier: 'PRO', score: tierPercentages.PRO },
+      { tier: 'ELITE', score: tierPercentages.ELITE },
     ];
     
     scores.sort((a, b) => b.score - a.score);
