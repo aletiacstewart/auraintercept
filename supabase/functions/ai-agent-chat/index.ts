@@ -3320,14 +3320,14 @@ serve(async (req) => {
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Connect ($297/mo): 5 operatives — AI receptionist, customer journey, outreach, creative, web
+      // Aura Connect ($297/mo): 11 agents (5 operative groups) — AI receptionist, customer journey, outreach, creative, web
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Social Media & Creative
         'web_presence',                 // Web Presence
       ],
-      // Aura Performance ($497/mo): 8 operatives — adds field ops + business finance
+      // Aura Performance ($497/mo): 18 agents (8 operative groups) — adds field ops + business finance
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
@@ -3335,7 +3335,7 @@ serve(async (req) => {
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
       ],
-      // Aura Command ($697/mo): All 10 operatives + enterprise features
+      // Aura Command ($697/mo): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
