@@ -339,12 +339,13 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
 ];
 
-// 3-tier hierarchy for console/feature filtering
+// 4-tier hierarchy for console/feature filtering
 const TIER_HIERARCHY_HELP: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 1,
-  performance: 2,
-  command: 3,
+  starter: 1,
+  connect: 2,
+  performance: 3,
+  command: 4,
 };
 
 // Get consoles available for a specific tier - 3-TIER STRUCTURE
@@ -375,12 +376,24 @@ export function getFilteredAgents(console: ConsoleHelpConfig, tier: Subscription
     .map(a => a.name);
 }
 
-// Tier descriptions for Help page - 3-TIER STRUCTURE
+// Tier descriptions for Help page - 4-TIER STRUCTURE
 export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; description: string; highlights: string[] }> = {
   free: {
     title: 'Free Plan',
     description: 'Limited access to platform features.',
     highlights: [],
+  },
+  starter: {
+    title: 'Aura Starter',
+    description: 'AI answering, booking, follow-up, and creative content for solo operators.',
+    highlights: [
+      'AI Receptionist (Triage)',
+      'Booking Agent + Follow-Up Agent',
+      'Creative Content Agent',
+      'Customer Portal + Outreach & Sales + Creative & Web Consoles',
+      'Message Aura (Text) + Email Reminders',
+      '10 Employee Accounts',
+    ],
   },
   connect: {
     title: 'Aura Connect',
@@ -467,18 +480,20 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
   return agentTierMap[agentType] || null;
 }
 
-// Operative count per tier - 3-TIER STRUCTURE
+// Operative count per tier - 4-TIER STRUCTURE
 export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 5,
-  performance: 8,
+  starter: 4,
+  connect: 7,
+  performance: 9,
   command: 10,
 };
 
 // Console count per tier
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 4,
+  starter: 3,
+  connect: 5,
   performance: 6,
   command: 7,
 };
@@ -486,7 +501,8 @@ export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<SubscriptionTier, number> = {
   free: 0,
-  connect: 5,
-  performance: 15,
+  starter: 10,
+  connect: 25,
+  performance: 50,
   command: 999,  // Unlimited
 };
