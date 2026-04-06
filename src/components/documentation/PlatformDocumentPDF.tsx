@@ -506,8 +506,8 @@ const agents = {
   ],
   // Social Media agents are premium add-ons (not included in core 19)
   socialMediaAddons: [
-    { name: 'Social Content Agent', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, GMB, and SMS.' },
-    { name: 'Social Scheduler Agent', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
+    { name: 'Creative Content Agent', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, GMB, and SMS.' },
+    { name: 'Social Feed Queue', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
     { name: 'Social Analytics Agent', desc: 'Performance tracking and engagement insights for continuous improvement.' },
   ],
 };

@@ -367,7 +367,7 @@ const AGENT_DEFINITIONS: Record<string, {
   },
   // Social Media Agents
   social_content: {
-    name: 'Social Content Agent',
+    name: 'Creative Content Agent',
     description: 'Creates platform-optimized content for Facebook, Instagram, LinkedIn, TikTok, Google Business, and SMS. Content is ready to copy and post via the Manual Bridge or auto-publish via your own API credentials.',
     category: 'social_media',
     phase: 1,
@@ -388,7 +388,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   social_scheduler: {
-    name: 'Social Scheduler Agent',
+    name: 'Social Feed Queue',
     description: "Manages the content calendar and queue across 6 platforms. Sets posts to 'Ready to Post' status so your team can use the Manual Bridge or auto-publish via configured API credentials.",
     category: 'social_media',
     phase: 2,
