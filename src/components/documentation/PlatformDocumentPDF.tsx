@@ -1274,7 +1274,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint><BulletPoint>"Let's start your 30-day free trial today—no credit card required."</BulletPoint></BulletPoint>
+      <BulletPoint>"Let's start your 30-day free trial today—no credit card required."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>

@@ -696,7 +696,7 @@ export default function Help() {
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Pro ($997/mo):</strong>
-                              <p className="mt-1">18 AI Agents: All Boost agents + Campaign, Outreach, Social Feed Queue, Social Analytics, Admin, Quoting. Full business automation.</p>
+                              <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Feed Queue, Social Analytics. Full marketing and outreach automation.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Elite ($1,997/mo):</strong>
