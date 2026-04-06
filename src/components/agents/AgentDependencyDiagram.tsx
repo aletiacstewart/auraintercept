@@ -46,33 +46,45 @@ const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({
         
         const diagram = `
 flowchart TB
-    subgraph SP["🟠 SINGLE-POINT — $497/mo"]
+    subgraph CORE["🟢 CORE — $197/mo"]
         direction TB
         Triage["🎧 AI Receptionist"]
+        Booking["📅 Booking Agent"]
         Followup["📞 Follow-up Agent"]
         Review["⭐ Review Agent"]
+        CreativeContent["🎨 Creative Content"]
+        WebPresence["🌐 Web Presence"]
+        LeadAgent["🎯 Lead Agent"]
+        Marketing["📣 Marketing Agent"]
     end
     
-    subgraph MT["🔵 MULTI-TRACK — $897/mo"]
+    subgraph BOOST["🔵 BOOST — $497/mo"]
         direction TB
-        Booking["📅 Scheduling Agent"]
         Dispatch["🚚 Dispatch Agent"]
         Route["🗺️ Route Agent"]
         ETA["⏱️ ETA Agent"]
         Checkin["✅ Check-in Agent"]
-        Quoting["💼 Quoting Agent"]
-        Invoice["💳 Invoice Agent"]
     end
     
-    subgraph CMD["🟣 COMMAND — $697/mo"]
+    subgraph PRO["🟣 PRO — $997/mo"]
         direction TB
-        Admin["👔 Admin Agent"]
-        Inventory["📦 Inventory Agent"]
         Campaign["📣 Campaign Agent"]
-        Lead["🎯 Lead Agent"]
-        SocialContent["✏️ Social Content"]
-        SocialScheduler["📆 Social Scheduler"]
+        Outreach["📧 Outreach Agent"]
+        SocialScheduler["📆 Social Feed Queue"]
         SocialAnalytics["📊 Social Analytics"]
+        Admin["👔 Admin Agent"]
+        Quoting["💼 Quoting Agent"]
+    end
+
+    subgraph ELITE["🟡 ELITE — $1,997/mo"]
+        direction TB
+        Invoice["💳 Invoice Agent"]
+        Inventory["📦 Inventory Agent"]
+        Insights["📈 Insights Agent"]
+        Performance["⚡ Performance Agent"]
+        Revenue["💰 Revenue Agent"]
+        Forecast["🔮 Forecast Agent"]
+    end
         Insights["💡 Insights Agent"]
         Performance["📈 Performance Agent"]
         Revenue["💰 Revenue Agent"]
@@ -141,16 +153,20 @@ flowchart TB
         />
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-card-foreground">Single-Point ($497/mo)</span>
+            <div className="w-4 h-4 rounded bg-green-600" />
+            <span className="text-sm text-card-foreground">Core ($197/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-sky-600" />
-            <span className="text-sm text-card-foreground">Multi-Track ($897/mo)</span>
+            <span className="text-sm text-card-foreground">Boost ($497/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-card-foreground">Command ($697/mo)</span>
+            <span className="text-sm text-card-foreground">Pro ($997/mo)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-amber-600" />
+            <span className="text-sm text-card-foreground">Elite ($1,997/mo)</span>
           </div>
         </div>
       </CardContent>

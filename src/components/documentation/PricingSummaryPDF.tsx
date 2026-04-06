@@ -107,9 +107,10 @@ const FeatureItem = ({ children }: { children: string }) => (
   </View>
 );
 
-const connect = SUBSCRIPTION_TIERS.aura_connect;
-const performance = SUBSCRIPTION_TIERS.multi_track;
-const command = SUBSCRIPTION_TIERS.command;
+const connect = SUBSCRIPTION_TIERS.aura_core;
+const performance = SUBSCRIPTION_TIERS.aura_boost;
+const pro = SUBSCRIPTION_TIERS.aura_pro;
+const command = SUBSCRIPTION_TIERS.aura_elite;
 
 const PricingSummaryPDF = () => (
   <Document>

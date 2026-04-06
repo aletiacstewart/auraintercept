@@ -74,9 +74,10 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
       // Handle agent locked error
       if (data?.error === 'agent_locked') {
         const tierLabels: Record<string, string> = {
-          connect: 'Aura Connect',
-          performance: 'Aura Performance',
-          command: 'Aura Command'
+          starter: 'Aura Core',
+          connect: 'Aura Boost',
+          performance: 'Aura Pro',
+          command: 'Aura Elite'
         };
         const requiredTierLabel = tierLabels[data.required_tier] || data.required_tier;
         

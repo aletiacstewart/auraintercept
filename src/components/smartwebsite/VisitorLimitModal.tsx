@@ -21,25 +21,33 @@ interface VisitorLimitModalProps {
 }
 
 const tierLimits = {
-  single_point: { limit: 1000, name: 'Single-Point', next: 'multi_track' },
-  multi_track: { limit: 5000, name: 'Multi-Track', next: 'command' },
-  command: { limit: 25000, name: 'Command', next: null },
+  starter: { limit: 500, name: 'Core', next: 'connect' },
+  connect: { limit: 2000, name: 'Boost', next: 'performance' },
+  performance: { limit: 10000, name: 'Pro', next: 'command' },
+  command: { limit: 25000, name: 'Elite', next: null },
 };
 
 const tierUpgrades = {
-  multi_track: {
-    name: 'Multi-Track',
-    price: '$897/mo',
-    limit: '5,000',
+  connect: {
+    name: 'Boost',
+    price: '$497/mo',
+    limit: '2,000',
     icon: TrendingUp,
-    features: ['5x more visitors', '2 AI Consoles', 'Priority support'],
+    features: ['4x more visitors', '5 Control Centers', 'Field Operations'],
+  },
+  performance: {
+    name: 'Pro',
+    price: '$997/mo',
+    limit: '10,000',
+    icon: TrendingUp,
+    features: ['20x more visitors', '6 Control Centers', 'White-Label Branding'],
   },
   command: {
-    name: 'Command',
-    price: '$697/mo',
+    name: 'Elite',
+    price: '$1,997/mo',
     limit: '25,000',
     icon: Crown,
-    features: ['25x more visitors', 'All 5 Control Centers', 'White-glove onboarding'],
+    features: ['50x more visitors', 'All 7 Centers + AI Hub', 'Unlimited employees'],
   },
 };
 
@@ -55,7 +63,7 @@ export function VisitorLimitModal({
   const isAtLimit = currentVisitors >= visitorLimit;
   const isNearLimit = usagePercent >= 80;
   
-  const currentTierInfo = tierLimits[currentTier as keyof typeof tierLimits] || tierLimits.single_point;
+  const currentTierInfo = tierLimits[currentTier as keyof typeof tierLimits] || tierLimits.starter;
   const nextTier = currentTierInfo.next;
   const upgradeInfo = nextTier ? tierUpgrades[nextTier as keyof typeof tierUpgrades] : null;
 

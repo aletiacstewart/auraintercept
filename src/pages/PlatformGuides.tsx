@@ -94,7 +94,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier in the bottom left (Aura Starter, Connect, Growth, Presence, Logistics, Performance, or Command)',
+          'Review your subscription tier in the bottom left (Aura Core, Boost, Pro, or Elite)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -117,16 +117,13 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Starter ($197/mo): AI Receptionist for 24/7 lead capture with 1 agent',
-          'Aura Connect ($397/mo): AI booking with calendar sync + Customer Portal (3 agents)',
-          'Aura Growth ($597/mo): 11 AI Operatives + Marketing Automation + Outreach & Sales',
-          'Aura Presence ($797/mo): 12 AI Operatives + Creative & Web Presence console',
-          'Aura Logistics ($1,497/mo): 18 AI Operatives + Field Operations + Business Management',
-          'Aura Performance ($497/mo): 22 AI Operatives + Analytics & Reports (basic analytics)',
-          'Aura Command ($697/mo): All 24 AI Operatives + 8 Consoles + AI Operatives Hub',
-          'Performance tier includes insights + performance agents; Command adds revenue + forecast agents',
-          'Employee limits: 2 (Starter), 3 (Connect), 5 (Growth), 8 (Presence), 15 (Logistics), 25 (Performance), 50 (Command)',
-          'All tiers include API Access, White-Label Branding, and Chat Widget'
+          'Aura Core ($197/mo): 8 AI Agents — Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing',
+          'Aura Boost ($497/mo): 12 AI Agents — All Core + Dispatch, Route, ETA, Check-In',
+          'Aura Pro ($997/mo): 18 AI Agents — All Boost + Campaign, Outreach, Social, Admin, Quoting',
+          'Aura Elite ($1,997/mo): All 24 AI Agents + 7 Consoles + AI Hub + Predictive Analytics',
+          'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
+          'White-Label Branding available from Pro tier and above',
+          'All tiers include API Access and Chat Widget'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing = 10x monthly rate']
       },
