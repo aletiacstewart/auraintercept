@@ -252,6 +252,11 @@ export default function Integrations() {
           />
         </div>
 
+        {/* Vendor fee disclaimer */}
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-700 dark:text-amber-400 italic">
+          All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+        </div>
+
         {/* Setup Progress */}
         {(() => {
           const isTTSConfigured = !!integrations?.has_elevenlabs;
