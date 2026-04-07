@@ -115,7 +115,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     employees: 'Unlimited',
     operatives: 24,
     consoles: 7,
-    description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub.',
+    description: '24 Smart AI Agents — full suite with business operations, analytics & AI Hub.',
     bestFor: 'Multi-location franchises, property management firms, enterprise teams.',
     highlights: [
       'Everything in Aura Pro',
@@ -127,7 +127,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Analytics & Reports Console',
       'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
-      'Advanced Predictive Analytics & Demand Forecasting',
+      'Advanced Analytics & Demand Forecasting',
       'Multi-location support',
       'Full White-Label Branding',
       'Dedicated Onboarding + Priority Support',
@@ -590,7 +590,7 @@ export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, Inte
     tavily: { required: false, reason: 'Optional for AI content research' },
     calendar: { required: true, reason: 'Required for field operations scheduling' },
     a2p_10dlc: { required: true, reason: 'Required for US SMS compliance' },
-    social_media: { required: true, reason: 'Required for Social Media Console' },
+    social_media: { required: false, reason: 'Optional for Boost tier' },
   },
   aura_pro: {
     stripe: { required: false, reason: 'Optional for accepting payments' },

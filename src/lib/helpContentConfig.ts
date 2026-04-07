@@ -434,63 +434,65 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
 };
 
-// Get tier by agent type - 4-TIER MAPPING
+// Get tier by agent type - 4-TIER MAPPING (matches subscriptionAgentConfig.ts)
 export function getTierForAgent(agentType: string): SubscriptionTier | null {
   const agentTierMap: Record<string, SubscriptionTier> = {
-    // Starter tier
+    // Starter tier (8 agents)
     triage: 'starter',
-    customer_journey: 'starter',
     booking: 'starter',
     followup: 'starter',
+    review: 'starter',
     creative_content: 'starter',
+    web_presence: 'starter',
+    lead: 'starter',
+    marketing: 'starter',
+    // Consolidated operative aliases
+    customer_journey: 'starter',
     creative: 'starter',
-    // Connect tier
-    outreach: 'connect',
-    web_presence: 'connect',
+    // Connect tier (+4 = 12 agents)
     dispatch: 'connect',
-    field_navigation: 'connect',
     route: 'connect',
-    review: 'connect',
-    campaign: 'connect',
-    lead: 'connect',
-    marketing: 'connect',
-    social_content: 'connect',
-    social_scheduler: 'connect',
-    social_analytics: 'connect',
-    // Performance tier
-    eta: 'performance',
-    checkin: 'performance',
-    // Command tier
+    eta: 'connect',
+    checkin: 'connect',
+    field_navigation: 'connect',
+    // Performance tier (+4 = 16 agents)
+    campaign: 'performance',
+    outreach: 'performance',
+    social_scheduler: 'performance',
+    social_analytics: 'performance',
+    social_content: 'performance',
+    // Command tier (+8 = 24 agents)
     admin: 'command',
-    business_finance: 'command',
     quoting: 'command',
     invoice: 'command',
     inventory: 'command',
     insights: 'command',
-    analytics_intelligence: 'command',
+    performance: 'command',
     revenue: 'command',
     forecast: 'command',
+    business_finance: 'command',
+    analytics_intelligence: 'command',
   };
   
   return agentTierMap[agentType] || null;
 }
 
-// Operative count per tier - 4-TIER STRUCTURE
+// Operative count per tier - 4-TIER STRUCTURE (10 consolidated operatives)
 export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 4,
-  connect: 7,
-  performance: 9,
-  command: 10,
+  starter: 5,   // triage, customer_journey, outreach, creative_content, web_presence
+  connect: 7,   // + dispatch, field_navigation
+  performance: 7, // same operatives, more agents within them
+  command: 10,  // + business_finance, admin, analytics_intelligence
 };
 
 // Console count per tier
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 3,
-  connect: 5,
-  performance: 6,
-  command: 7,
+  starter: 3,   // customer_portal, marketing_sales, creative_web_presence
+  connect: 5,   // + field_operations, social_media
+  performance: 5, // same consoles as connect
+  command: 7,   // + business_management, analytics_reports (+ AI Operatives Hub)
 };
 
 // Employee limits per tier
