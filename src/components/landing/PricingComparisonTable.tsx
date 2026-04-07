@@ -33,7 +33,7 @@ const featureDescriptions: Record<string, string> = {
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Revenue analytics, profitability reports, and financial trend analysis.',
   'Forecast Agent': 'Demand prediction, seasonal trends, and capacity planning for your business.',
-  'Predictive AI Hub': 'Full suite predictive analytics with demand forecasting, revenue projections, and AI-driven business intelligence.',
+  
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Social Media Console': 'Unified control center to create, schedule, approve, and post social content across 6 platforms.',
@@ -100,7 +100,7 @@ const sections: FeatureSection[] = [
       { name: 'Performance Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Revenue Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Forecast Agent', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'Predictive AI Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+      
     ],
   },
   {

@@ -906,11 +906,10 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$19,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">All 24 Smart AI Agents with Predictive AI Hub.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">24 Smart AI Agents (Full Suite)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">7 Control Centers + AI Hub</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-amber-400">Predictive AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">White-Label Branding</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">Unlimited Employees</span></div>
                 </div>
