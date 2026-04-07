@@ -10,17 +10,19 @@ import { Network } from 'lucide-react';
 const diagrams = {
   overview: {
     title: 'Platform Architecture Overview',
-    description: 'High-level view of all platform entry points and modules',
+    description: 'High-level view of all 7 consoles, AI Operatives Hub, and platform entry points',
     chart: `flowchart TB
     subgraph Public["🌐 Public Access"]
         Landing[Landing Page]
         PublicChat[Public Chat Widget]
+        SmartWebsite[AI Smart Website]
     end
     
-    subgraph CustomerPortal["👤 Customer Portal"]
+    subgraph CustomerPortal["👤 Customer Portal Console"]
         CustAuth[Customer Auth]
         CustDash[Customer Dashboard]
-        CustChat[AI Chat Interface]
+        CustChat[Message Aura - Text]
+        CustVoice[Talk to Aura - Voice]
         CustAppts[My Appointments]
     end
     
@@ -32,6 +34,22 @@ const diagrams = {
             CompanyAdmin[Company Admin]
         end
         
+        subgraph Consoles["7 Control Centers"]
+            CustomerPortalC[Customer Portal]
+            FieldOps[Field Operations]
+            OutreachSales[Outreach & Sales Ops]
+            SocialMedia[Social Media Ops]
+            CreativeWeb[Creative & Web Presence]
+            BusinessOps[Business Operations]
+            AnalyticsReports[Analytics & Reports]
+        end
+        
+        subgraph AIHub["🤖 AI Operatives Hub"]
+            OperativesList[24 Smart AI Agents]
+            AgentMonitor[Real-Time Monitor]
+            AgentAnalytics[Performance Analytics]
+        end
+        
         subgraph Modules["Core Modules"]
             Appointments[Appointments]
             Customers[Customers]
@@ -40,23 +58,17 @@ const diagrams = {
             Invoices[Invoices]
             Quotes[Quotes]
             Campaigns[Campaigns]
-            Analytics[Analytics]
+            Leads[Leads]
             KnowledgeBase[Knowledge Base]
             Settings[Settings]
-        end
-        
-        subgraph AIHub["🤖 AI Agents Hub"]
-            AIConsole[AI Agent Console]
-            AgentSettings[Agent Settings]
-            AgentTest[Agent Testing]
+            ContentEngine[Content Engine]
         end
     end
     
     subgraph TechPortal["🔧 Technician Portal"]
         TechDash[Technician Dashboard]
         TechJobs[Job Queue]
-        TechCalendar[Calendar]
-        TechAI[Technician-Field Ops]
+        TechFieldOps[Field Operations AI]
     end
     
     Landing --> Auth
@@ -79,6 +91,7 @@ const diagrams = {
     PublicRoutes --> Landing[Landing Page]
     PublicRoutes --> PublicChat[Public Chat]
     PublicRoutes --> CustAuth[Customer Auth]
+    PublicRoutes --> SmartWeb[AI Smart Website]
     
     RoleCheck -->|platform_admin| PA[Platform Admin Dashboard]
     RoleCheck -->|company_admin| CA[Company Admin Dashboard]
@@ -91,28 +104,30 @@ const diagrams = {
     PA --> AllCompanies[Manage All Companies]
     PA --> PlatformAnalytics[Platform Analytics]
     PA --> SystemSettings[System Settings]
+    PA --> PlatformResources[Platform Resources]
     
     CA --> CompanySettings[Company Settings]
     CA --> ManageEmployees[Manage Employees]
-    CA --> AIAgents[AI Agents Hub]
-    CA --> Reports[Reports & Analytics]
+    CA --> AIHub[AI Operatives Hub]
+    CA --> Consoles7[7 Control Centers]
+    CA --> Reports[Analytics & Reports]
     
     Tech --> JobQueue[Job Queue]
     Tech --> TechCalendar[Calendar]
-    Tech --> FieldOpsAI[Technician-Field Ops]
+    Tech --> FieldOpsAI[Field Operations AI]
     
     Cust --> MyAppts[My Appointments]
-    Cust --> CustAI[Customer AI Chat]`
+    Cust --> CustAI[Message Aura / Talk to Aura]`
   },
   agents: {
-    title: 'Multi-Agent Orchestration System',
-    description: 'AI agent types and orchestration flow',
+    title: '24 Smart AI Agents — 10 Consolidated Operatives',
+    description: 'AI agent distribution across 4 tiers: Core (8), Boost (12), Pro (16), Elite (24)',
     chart: `flowchart TB
     subgraph Entry["Customer Entry Points"]
         Widget[Chat Widget]
         Console[AI Console]
-        Voice[Voice Call]
-        SMS[SMS]
+        Voice[Voice Call - SignalWire]
+        SMS[SMS - SignalWire]
     end
     
     subgraph Orchestrator["🎯 AI Orchestrator"]
@@ -121,131 +136,92 @@ const diagrams = {
         Handoff[Handoff Controller]
     end
     
-    subgraph Agents["🤖 Specialized Agents"]
-        subgraph Phase1["Customer Engagement"]
-            Triage[AI Receptionist]
-            Booking[Scheduling Agent]
-            Support[Support Agent]
-        end
-        
-        subgraph Phase2["Field Operations"]
-            Dispatch[Dispatch Agent]
-            FieldOps[Field Ops Agent]
-            Quality[Quality Agent]
-        end
-        
-        subgraph Phase3["Business Ops"]
-            Billing[Billing Agent]
-            BizOps[Business Ops Agent]
-            Inventory[Inventory Agent]
-        end
-        
-        subgraph Phase4["Marketing"]
-            Marketing[Marketing Agent]
-            Retention[Retention Agent]
-            Feedback[Feedback Agent]
-        end
-        
-        subgraph Phase5["Analytics"]
-            AnalyticsAgent[Analytics Agent]
-            Reporting[Reporting Agent]
-            Forecast[Forecast Agent]
-        end
+    subgraph CoreAgents["🟢 Aura Core — 8 Agents"]
+        Triage[AI Receptionist]
+        CJ[Customer Journey Agent<br/>Booking · Follow-Up · Review]
+        CC[Creative Content Agent]
+        WP[Web Presence Agent]
+        OA[Outreach Agent<br/>Lead · Marketing]
+    end
+    
+    subgraph BoostAgents["🔵 Aura Boost — +4 Agents"]
+        Dispatch[Dispatch Agent]
+        FN[Field Navigation Agent<br/>Route · ETA · Check-In]
+    end
+    
+    subgraph ProAgents["🟣 Aura Pro — +4 Agents"]
+        Campaign[Campaign Agent]
+        OutreachAdv[Outreach Agent - Advanced]
+        SFQ[Social Feed Queue Agent]
+        SA[Social Analytics Agent]
+    end
+    
+    subgraph EliteAgents["🟡 Aura Elite — +8 Agents"]
+        Admin[Admin Agent]
+        BF[Business Finance Agent<br/>Quoting · Invoice · Inventory]
+        AI_Analytics[Analytics Intelligence Agent<br/>Insights · Performance · Revenue · Forecast]
     end
     
     Entry --> Router
     Router --> Context
     Context --> Triage
     Triage --> Handoff
-    Handoff --> Booking
-    Handoff --> Support
+    Handoff --> CJ
+    Handoff --> CC
+    Handoff --> OA
     Handoff --> Dispatch
-    Handoff --> Billing
-    Handoff --> Marketing
-    Handoff --> AnalyticsAgent`
+    Handoff --> BF
+    Handoff --> AI_Analytics`
   },
   handoff: {
     title: 'Agent Handoff Flow',
-    description: 'How agents collaborate and hand off conversations',
+    description: 'How operatives collaborate and hand off conversations',
     chart: `sequenceDiagram
     participant C as Customer
     participant T as AI Receptionist
-    participant B as Scheduling Agent
+    participant CJ as Customer Journey
     participant D as Dispatch Agent
+    participant FN as Field Navigation
     participant N as Notification System
     
     C->>T: "I need someone to fix my AC"
     T->>T: Analyze intent
-    T->>B: Handoff with context
-    B->>C: "I can help schedule that. When works for you?"
-    C->>B: "Tomorrow at 2pm"
-    B->>B: Check availability
-    B->>C: "Confirmed for tomorrow 2pm"
-    B->>D: Handoff for assignment
-    D->>D: Find available technician
-    D->>N: Trigger notifications
-    N->>C: Email/SMS confirmation`
-  },
-  database: {
-    title: 'Database Entity Relationships',
-    description: 'Core database tables and relationships',
-    chart: `erDiagram
-    companies ||--o{ profiles : "has employees"
-    companies ||--o{ appointments : "has"
-    companies ||--o{ customers : "has"
-    companies ||--o{ services : "offers"
-    companies ||--o{ ai_agent_configs : "configures"
-    
-    profiles ||--o{ job_assignments : "assigned to"
-    profiles ||--o{ employee_availability : "has"
-    
-    appointments ||--o{ job_assignments : "has"
-    appointments ||--o{ reminder_logs : "triggers"
-    appointments ||--o{ invoices : "generates"
-    
-    customers ||--o{ appointments : "books"
-    customers ||--o{ customer_feedback : "provides"
-    
-    ai_agent_configs ||--o{ ai_agent_logs : "generates"
-    ai_agent_context ||--o{ ai_agent_events : "triggers"
-    
-    companies {
-        uuid id PK
-        string name
-        string slug
-        string logo_url
-    }
-    
-    profiles {
-        uuid id PK
-        uuid company_id FK
-        string full_name
-        string email
-    }
-    
-    appointments {
-        uuid id PK
-        uuid company_id FK
-        uuid employee_id FK
-        timestamp datetime
-        string status
-    }`
+    T->>CJ: Handoff with context
+    CJ->>C: "I can help schedule that. When works for you?"
+    C->>CJ: "Tomorrow at 2pm"
+    CJ->>CJ: Check availability via Calendar Sync
+    CJ->>C: "Confirmed for tomorrow 2pm"
+    CJ->>D: Handoff for technician assignment
+    D->>D: Find best available technician
+    D->>FN: Assign route & ETA
+    FN->>N: Trigger notifications
+    N->>C: Email/SMS confirmation via Resend/SignalWire`
   },
   consoles: {
-    title: 'AI Console Types & Components',
-    description: 'Different AI console implementations',
+    title: '7 Control Centers + AI Operatives Hub',
+    description: 'Console architecture with tier-based access',
     chart: `flowchart TB
-    subgraph Consoles["AI Agent Consoles"]
-        AIAgent[AIAgentConsole<br/>Customer Engagement]
-        Booking[BookingAgentConsole<br/>Appointment Management]
-        FieldOps[FieldOpsAgentConsole<br/>Technician Support]
-        Billing[BillingAgentConsole<br/>Financial Operations]
-        BizOps[BusinessOpsAgentConsole<br/>Business & Accounting]
-        Marketing[MarketingSalesAgentConsole<br/>Outreach & Sales Ops]
-        Analytics[AnalyticsAgentConsole<br/>Analytics & Optimization]
+    subgraph CoreTier["🟢 Aura Core — 3 Consoles"]
+        CP[Customer Portal<br/>AI Receptionist + Customer Journey]
+        OS[Outreach & Sales Ops<br/>Outreach Agent]
+        CW[Creative & Web Presence<br/>Creative Content + Web Presence]
     end
     
-    subgraph SharedUI["Shared UI Components"]
+    subgraph BoostTier["🔵 Aura Boost — +2 Consoles"]
+        FO[Field Operations<br/>Dispatch + Field Navigation]
+        SM[Social Media Ops<br/>Creative Content Agent]
+    end
+    
+    subgraph EliteTier["🟡 Aura Elite — +2 Consoles"]
+        BO[Business Operations<br/>Admin + Business Finance]
+        AR[Analytics & Reports<br/>Analytics Intelligence]
+    end
+    
+    subgraph Universal["🤖 All Tiers"]
+        Hub[AI Operatives Hub<br/>Management Interface]
+    end
+    
+    subgraph SharedUI["Shared Components"]
         ChatBubble[ChatBubble]
         FloatingInput[FloatingInput]
         QuickActions[QuickActionGrid]
@@ -264,49 +240,101 @@ const diagrams = {
         OrchestratorFn[ai-orchestrator]
     end
     
-    Consoles --> SharedUI
-    Consoles --> Hooks
+    CoreTier --> SharedUI
+    BoostTier --> SharedUI
+    EliteTier --> SharedUI
+    SharedUI --> Hooks
     Hooks --> Backend`
+  },
+  database: {
+    title: 'Database Entity Relationships',
+    description: 'Core database tables and relationships',
+    chart: `erDiagram
+    companies ||--o{ profiles : "has employees"
+    companies ||--o{ appointments : "has"
+    companies ||--o{ customers : "has"
+    companies ||--o{ services : "offers"
+    companies ||--o{ ai_agent_configs : "configures"
+    companies ||--o{ marketing_campaigns : "runs"
+    companies ||--o{ content_engine_history : "generates"
+    
+    profiles ||--o{ job_assignments : "assigned to"
+    profiles ||--o{ employee_availability : "has"
+    
+    appointments ||--o{ job_assignments : "has"
+    appointments ||--o{ reminder_logs : "triggers"
+    appointments ||--o{ invoices : "generates"
+    
+    customers ||--o{ appointments : "books"
+    customers ||--o{ customer_feedback : "provides"
+    
+    ai_agent_configs ||--o{ ai_agent_logs : "generates"
+    ai_agent_context ||--o{ ai_agent_events : "triggers"
+    
+    companies {
+        uuid id PK
+        string name
+        string slug
+        string subscription_tier
+        string logo_url
+    }
+    
+    profiles {
+        uuid id PK
+        uuid company_id FK
+        string full_name
+        string email
+    }
+    
+    appointments {
+        uuid id PK
+        uuid company_id FK
+        uuid employee_id FK
+        timestamp datetime
+        string status
+    }`
   },
   journey: {
     title: 'Customer Journey Flow',
-    description: 'End-to-end customer experience',
+    description: 'End-to-end customer experience across operatives',
     chart: `journey
     title Customer Journey
     section Discovery
-      Visit website: 5: Customer
+      Visit website or Smart Website: 5: Customer
       Explore services: 4: Customer
-      Start chat: 5: Customer
+      Start chat via Widget: 5: Customer
     section Booking
-      Describe need: 5: Customer, Triage
-      Get quote: 4: Customer, Billing
-      Schedule appointment: 5: Customer, Booking
+      AI Receptionist greets: 5: Customer, Triage
+      Customer Journey books: 5: Customer, CustomerJourney
+      Calendar sync confirms: 5: System
       Receive confirmation: 5: Customer, System
     section Service Day
-      Get reminder: 5: System
-      Tech assigned: 4: Dispatch
-      Tech en route: 5: Customer, Tech
+      Get reminder via SMS/Email: 5: System
+      Dispatch assigns technician: 4: Dispatch
+      Field Navigation routes tech: 5: FieldNav
+      Tech checks in on arrival: 5: Tech
       Service completed: 5: Tech
     section Post-Service
-      Receive invoice: 4: Billing
-      Make payment: 5: Customer
-      Leave review: 4: Customer, Feedback
-      Get follow-up: 5: Marketing`
+      Follow-up sent: 5: CustomerJourney
+      Review request: 4: CustomerJourney
+      Leave Google/Yelp review: 4: Customer
+      Win-back campaign later: 5: Outreach`
   },
   edgeFunctions: {
     title: 'Edge Functions Architecture',
-    description: 'Backend serverless functions',
+    description: 'Backend serverless functions and external integrations',
     chart: `flowchart LR
     subgraph Frontend["Frontend"]
         App[React App]
         Widget[Chat Widget]
+        SmartWeb[Smart Website]
     end
     
-    subgraph EdgeFunctions["Supabase Edge Functions"]
+    subgraph EdgeFunctions["Edge Functions"]
         subgraph AI["AI Functions"]
             AIChat[ai-agent-chat]
             AIOrch[ai-orchestrator]
-            AIAgent[ai-agent]
+            ContentGen[generate-content]
         end
         
         subgraph Comms["Communication"]
@@ -318,7 +346,9 @@ const diagrams = {
         subgraph Integrations["Integrations"]
             Stripe[create-checkout]
             GoogleCal[google-calendar-sync]
-            SignalWire[voice-handler]
+            VoiceHandler[voice-handler]
+            VoiceSWAIG[voice-swaig]
+            SocialPublish[publish-social-content]
         end
         
         subgraph Voice["Voice AI"]
@@ -326,18 +356,27 @@ const diagrams = {
             VoiceClone[elevenlabs-clone-voice]
         end
         
-        subgraph WidgetAPI["Widget"]
+        subgraph WidgetAPI["Widget & Web"]
             WidgetAPI2[widget-api]
             ChatWidget[chat-widget]
+            SmartWebAPI[smart-website-api]
+        end
+        
+        subgraph Subscription["Billing"]
+            CheckSub[check-subscription]
+            CreateCheckout[create-checkout]
+            StripePortal[stripe-customer-portal]
         end
     end
     
     subgraph External["External Services"]
         Resend[Resend Email]
-        SignalWireExt[SignalWire]
-        StripeExt[Stripe]
-        ElevenLabsExt[ElevenLabs]
+        SignalWireExt[SignalWire - Voice & SMS]
+        StripeExt[Stripe - Payments]
+        ElevenLabsExt[ElevenLabs - Voice AI]
         GoogleExt[Google Calendar]
+        SocialAPIs[Social Media APIs]
+        TavilyExt[Tavily - AI Research]
     end
     
     Frontend --> EdgeFunctions
@@ -355,7 +394,7 @@ export default function Architecture() {
           <PageHeader
             icon={Network}
             title="Architecture Documentation"
-            description="Interactive platform flowcharts with download functionality"
+            description="Interactive platform flowcharts — 7 consoles, 24 agents, 10 operatives"
             featureColor="overview"
           />
 
@@ -364,10 +403,10 @@ export default function Architecture() {
               <TabsList className="inline-flex w-max mb-4">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="roles">Roles & Access</TabsTrigger>
-                <TabsTrigger value="agents">AI Agents</TabsTrigger>
+                <TabsTrigger value="agents">AI Agents (24)</TabsTrigger>
                 <TabsTrigger value="handoff">Agent Handoffs</TabsTrigger>
+                <TabsTrigger value="consoles">Consoles (7+Hub)</TabsTrigger>
                 <TabsTrigger value="database">Database</TabsTrigger>
-                <TabsTrigger value="consoles">AI Consoles</TabsTrigger>
                 <TabsTrigger value="journey">Customer Journey</TabsTrigger>
                 <TabsTrigger value="edgeFunctions">Edge Functions</TabsTrigger>
               </TabsList>
