@@ -833,11 +833,11 @@ export default function Auth() {
                       <div className="space-y-1 mb-3">
                         {[
                           { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
-                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: '$2/num · $0.004/SMS · $0.006/min', note: 'All tiers', color: 'text-green-400' },
-                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Free–$99/mo (voice chars)', note: 'All tiers', color: 'text-purple-400' },
+                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: '$2/num · $0.004/SMS · $0.006/min', note: 'Boost+', color: 'text-green-400' },
+                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Free–$99/mo (voice chars)', note: 'Boost+', color: 'text-purple-400' },
                           { icon: <Mail className="w-2.5 h-2.5 text-blue-400" />, name: 'Resend', cost: 'Free–$20/mo (email)', note: 'All tiers', color: 'text-blue-400' },
                           { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Pro+', color: 'text-amber-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Elite', color: 'text-amber-400' },
                           { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Pro+', color: 'text-pink-400' },
                           { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Free–1k searches/mo', note: 'Optional', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, note, color }) => (

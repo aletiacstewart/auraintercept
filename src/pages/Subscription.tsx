@@ -248,8 +248,8 @@ const sections: FeatureSection[] = [
       { name: 'SignalWire (SMS & Voice)', starter: 'Limited', connect: 'Required', performance: 'Required', command: 'Required' },
       { name: 'ElevenLabs (Voice)', starter: 'Limited', connect: 'Required', performance: 'Required', command: 'Required' },
       { name: 'A2P 10DLC Compliance', starter: 'Optional', connect: 'Required', performance: 'Required', command: 'Required' },
-      { name: 'Stripe (Payments)', starter: 'Optional', connect: 'Optional', performance: 'Required', command: 'Required' },
-      { name: 'Social Media Accounts', starter: 'Optional', connect: 'Required', performance: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', starter: 'Optional', connect: 'Optional', performance: 'Optional', command: 'Required' },
+      { name: 'Social Media Accounts', starter: 'Optional', connect: 'Optional', performance: 'Required', command: 'Required' },
     ],
   },
   {

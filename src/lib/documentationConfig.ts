@@ -408,14 +408,14 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'SignalWire',
     purpose: 'SMS & Voice Calls',
     cost: '$2/number + ~$20-80/mo usage (40% cheaper SMS)',
-    requiredFor: 'All Tiers (Voice & SMS)',
+    requiredFor: 'Limited for Core • Required for Boost, Pro, Elite (Voice & SMS)',
     optional: false,
   },
   {
     name: 'ElevenLabs',
     purpose: 'AI Voice Synthesis (Proxy Voice Chat)',
     cost: '$0-99+/month based on usage',
-    requiredFor: 'All Tiers (Voice)',
+    requiredFor: 'Limited for Core • Required for Boost, Pro, Elite (Voice)',
     optional: false,
   },
   {
@@ -429,7 +429,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'A2P 10DLC Compliance',
     purpose: 'US SMS Regulatory Compliance (via SignalWire)',
     cost: 'Included with SignalWire registration',
-    requiredFor: 'All Tiers (SMS)',
+    requiredFor: 'Optional for Core • Required for Boost, Pro, Elite (SMS)',
     optional: false,
   },
   {
@@ -450,7 +450,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'Social Media (Platform OAuth)',
     purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting.',
     cost: 'Free (Manual Bridge) or Free (Own API setup)',
-    requiredFor: 'Pro+ (Social Media — Creative Content Agent)',
+    requiredFor: 'Required for Pro, Elite • Optional for Core, Boost',
     optional: true,
   },
   {
