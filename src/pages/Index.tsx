@@ -962,7 +962,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
                 <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white/60">Required for: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -984,7 +984,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">AI Voice Synthesis (Voice features only)</p>
                 <p className="text-[10px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-[10px] text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -995,7 +995,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (40% cheaper SMS)</p>
                 <p className="text-[10px] text-white/70">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1017,7 +1017,7 @@ export default function Index() {
                 <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
                 <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Pro, Elite (Invoicing)</p>
+                <p className="text-[10px] text-white/60">Required for: Elite (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
