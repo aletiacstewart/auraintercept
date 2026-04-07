@@ -740,10 +740,10 @@ export default function Auth() {
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', monthlyPrice: '$197',   annualPrice: '$164', color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$497',   annualPrice: '$414', color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$997',   annualPrice: '$831', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Multi-Location • Franchise • Enterprise',       monthlyPrice: '$1,997', annualPrice: '$1,664', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', monthlyPrice: '$197',   annualPrice: '$164', annualTotal: '$1,970', savings: '$394',   color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$497',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$997',   annualPrice: '$831', annualTotal: '$9,970', savings: '$1,994', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Multi-Location • Franchise • Enterprise',       monthlyPrice: '$1,997', annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -770,10 +770,15 @@ export default function Auth() {
                         {t.popular && <span className="text-[8px] px-1 py-0.5 rounded gradient-primary text-primary-foreground font-medium shrink-0">Popular</span>}
                         <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
-                      <span className={`text-xs font-bold shrink-0 ml-2 ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>
-                        {isAnnualBilling ? t.annualPrice : t.monthlyPrice}
-                        <span className="font-normal text-muted-foreground">/mo</span>
-                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        <span className={`text-xs font-bold ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>
+                          {isAnnualBilling ? t.annualPrice : t.monthlyPrice}
+                          <span className="font-normal text-muted-foreground">/mo</span>
+                        </span>
+                        {isAnnualBilling && (
+                          <span className="text-[9px] text-muted-foreground">({t.annualTotal}/yr)</span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -793,7 +798,14 @@ export default function Auth() {
                 )}
 
                 {/* Annual Savings Note */}
-                {isAnnualBilling && (
+                {isAnnualBilling && selectedTier && (
+                  <p className="text-xs text-center text-green-500">
+                    💰 Billed annually — save ${
+                      { starter: '394', connect: '994', performance: '1,994', command: '3,994' }[selectedTier]
+                    }/year
+                  </p>
+                )}
+                {isAnnualBilling && !selectedTier && (
                   <p className="text-xs text-center text-green-500">
                     💰 Billed annually — save up to $3,994/year
                   </p>
