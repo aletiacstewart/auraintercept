@@ -113,7 +113,12 @@ const sections: FeatureSection[] = [
       { name: 'Social Media Console', starter: 'x', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Business Management Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
-      { name: 'AI Operatives Hub', starter: 'x', connect: 'x', performance: 'x', command: 'check' },
+    ],
+  },
+  {
+    title: 'AI Operatives Hub',
+    features: [
+      { name: 'AI Operatives Hub', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
     ],
   },
   {
