@@ -3865,8 +3865,9 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             }
           }
 
-          // Subscription tier gating for handoff target
-          if (!allowedAgents.includes(target)) {
+          // Subscription tier gating for handoff target (normalize legacy agent names first)
+          const normalizedTarget = LEGACY_AGENT_MAP[target] || target;
+          if (!allowedAgents.includes(normalizedTarget)) {
             const requiredTier = getRequiredTierForAgent(target);
             console.log(`[AI Agent Chat] Handoff blocked: ${target} requires ${requiredTier}, company has ${subscriptionTier}`);
             // Block the handoff and provide a graceful message
@@ -3980,8 +3981,9 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             if (funcName === 'handoff_to_agent') {
               const targetAgent = args.target_agent;
               
-              // Subscription tier gating for handoff target in follow-up calls
-              if (!allowedAgents.includes(targetAgent)) {
+              // Subscription tier gating for handoff target in follow-up calls (normalize legacy names)
+              const normalizedTargetAgent = LEGACY_AGENT_MAP[targetAgent] || targetAgent;
+              if (!allowedAgents.includes(normalizedTargetAgent)) {
                 const requiredTier = getRequiredTierForAgent(targetAgent);
                 console.log(`[AI Agent Chat] Handoff blocked in loop: ${targetAgent} requires ${requiredTier}`);
                 toolCalls.push({

@@ -25,7 +25,7 @@ const featureDescriptions: Record<string, string> = {
   'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts.',
   'Social Feed Queue': 'Cross-platform scheduling, optimal timing, and auto-publishing across 6 social platforms.',
   'Social Analytics Agent': 'Engagement metrics, audience insights, and growth tracking across all social channels.',
-  'Admin Agent': 'User management, company settings, multi-location support, and access control.',
+  'Admin Agent': 'User management, company settings, role-based permissions, and access control.',
   'Quoting Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
   'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
@@ -70,7 +70,7 @@ const sections: FeatureSection[] = [
     title: 'Ideal For',
     features: [
       { name: 'Business Size', starter: 'Solo / Small', connect: 'Small teams', performance: 'Growing companies', command: 'Enterprise' },
-      { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Multi-location' },
+      { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Full suite enterprise' },
     ],
   },
   {

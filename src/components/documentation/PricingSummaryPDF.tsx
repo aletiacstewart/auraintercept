@@ -431,8 +431,8 @@ const PricingSummaryPDF = () => (
       <View style={styles.noticeBox}>
         <Text style={styles.noticeTitle}>Enterprise Qualification</Text>
         <Text style={styles.noticeText}>
-          Aura Elite is designed for service companies with large teams or multi-location
-          operations. Custom implementation and onboarding included.
+          Aura Elite is designed for service companies with large teams and
+          enterprise operations. Custom implementation and onboarding included.
         </Text>
       </View>
       <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
@@ -449,7 +449,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Unlimited employee accounts</FeatureItem>
-        <FeatureItem>Multi-location support</FeatureItem>
+        <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>White-label branding</FeatureItem>
         <FeatureItem>$999 implementation fee</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>

@@ -6,7 +6,7 @@ export interface TierScores {
   CORE: number;      // 0-100 contribution (solo operators, salons, restaurants)
   BOOST: number;     // 0-100 contribution (small service teams, HVAC, plumbing)
   PRO: number;       // 0-100 contribution (growing companies, scaling field teams)
-  ELITE: number;     // 0-100 contribution (multi-location, enterprise, franchise)
+  ELITE: number;     // 0-100 contribution (large teams, enterprise, full suite)
 }
 
 export interface AuditOption {
@@ -49,17 +49,6 @@ export const QUESTIONS: AuditQuestion[] = [
       { label: '3-5 employees', tierScores: { CORE: 70, BOOST: 90, PRO: 60, ELITE: 30 } },
       { label: '6-10 employees', tierScores: { CORE: 40, BOOST: 80, PRO: 90, ELITE: 60 } },
       { label: '11-25 employees', tierScores: { CORE: 15, BOOST: 50, PRO: 80, ELITE: 95 } },
-    ],
-  },
-  {
-    id: 'multi_location',
-    question: 'Do you operate from multiple locations?',
-    description: 'Multi-location operations require enterprise-level coordination',
-    section: 'Business Basics',
-    options: [
-      { label: 'Single location', tierScores: { CORE: 90, BOOST: 80, PRO: 60, ELITE: 50 } },
-      { label: '2-3 locations', tierScores: { CORE: 45, BOOST: 75, PRO: 85, ELITE: 80 } },
-      { label: '4+ locations or franchise model', tierScores: { CORE: 20, BOOST: 45, PRO: 70, ELITE: 95 } },
     ],
   },
   {
@@ -480,7 +469,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     tier: 'ELITE',
     label: 'Aura Elite',
     price: '$1,997/mo',
-    description: 'Full 24-agent suite for multi-location franchises and enterprise teams',
+    description: 'Full 24-agent suite for large service teams and enterprise operations',
     keyFeatures: [
       'Everything in Pro, plus:',
       'Admin + Quoting + Invoice + Inventory Agents',
