@@ -137,7 +137,7 @@ const guideCategories = [
           'White-Label Branding available from Pro tier and above',
           'All tiers include API Access and Chat Widget'
         ],
-        tips: ['Trial users get full Command tier access', 'Annual billing = 10x monthly rate']
+        tips: ['Trial users get full Elite tier access', 'Annual billing = 10x monthly rate']
       },
       {
         title: 'User Roles & Permissions',
@@ -215,7 +215,7 @@ const guideCategories = [
           'Routes to specialized agents based on inquiry type',
           'Configure greeting in AI Agents Hub → AI Receptionist',
           'Works across Voice, SMS, Email, and Widget channels',
-          'Available in all paid tiers (Starter+)',
+          'Available in all paid tiers (Core+)',
           'Uses Knowledge Base for FAQ responses'
         ],
         tips: ['AI Receptionist is required for all other customer-facing agents', 'Customize greeting for your brand voice']
@@ -224,7 +224,7 @@ const guideCategories = [
         title: 'Scheduling Agent',
         duration: '10 min',
         steps: [
-          'Enable in AI Agents Hub (requires Scheduling+ tier)',
+          'Enable in AI Agents Hub (requires Core+ tier)',
           'Checks business hours and employee availability automatically',
           'Presents available time slots to customers',
           'Creates confirmed appointments in the system',
@@ -243,7 +243,7 @@ const guideCategories = [
           'Handles confirmation and rescheduling requests',
           'Configure templates in Settings → Email Templates',
           'Set timing delays for post-service follow-up',
-          'Requires Scheduling+ tier',
+          'Requires Core+ tier',
           'Depends on AI Receptionist being enabled'
         ],
         tips: ['Customize reminder timing based on service type', 'Use personalization tokens in templates']
@@ -257,7 +257,7 @@ const guideCategories = [
           'Negative feedback routed internally before public review',
           'Configure review links in company settings',
           'Set timing delay (recommended: 2 hours after service)',
-          'Requires Growth+ tier',
+          'Requires Pro+ tier',
           'Depends on Follow-up Agent being enabled'
         ],
         tips: ['Ask immediately after positive service', 'Respond to all reviews promptly']
@@ -271,7 +271,7 @@ const guideCategories = [
           'Schedule campaigns for optimal send times',
           'A/B test subject lines and content',
           'Track open rates and click-through',
-          'Requires Growth+ tier',
+          'Requires Pro+ tier',
           'Access via Outreach & Sales Ops Console'
         ],
         tips: ['Segment audiences for better engagement', 'Use AI content generation for copy']
@@ -285,7 +285,7 @@ const guideCategories = [
           'Manages lead pipeline stages',
           'Triggers nurture sequences for cold leads',
           'Integrates with appointment booking',
-          'Requires Growth+ tier',
+          'Requires Pro+ tier',
           'Configure scoring thresholds in agent settings'
         ],
         tips: ['Define clear qualification criteria', 'Follow up quickly on hot leads']
@@ -299,7 +299,7 @@ const guideCategories = [
           'Handles referral program rewards',
           'Win-back campaigns for inactive customers',
           'Discount management with expiration rules',
-          'Requires Growth+ tier',
+          'Requires Pro+ tier',
           'Works with Campaign Agent for distribution'
         ],
         tips: ['Use memorable promo codes', 'Set reasonable usage limits']
@@ -311,7 +311,7 @@ const guideCategories = [
           'Creative Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
           'Social Feed Queue: Queues and publishes at optimal times',
           'Social Analytics Agent: Tracks engagement across platforms',
-          'All three require Growth+ tier',
+          'All three require Pro+ tier',
           'Uses 3-step Content Wizard: Topic → Generate → Schedule',
           'Auto-adjusts content for platform character limits',
           'Access via Social Media Ops Console'
@@ -327,7 +327,7 @@ const guideCategories = [
           'Outputs: Social posts, Blog, Email, SMS, Website copy',
           'Uses Brand Voice from AI Content Profile',
           'Push content to Web Presence, Blog, or Campaigns',
-          'Requires Growth+ tier',
+          'Requires Pro+ tier',
           'Access via Creative & Web Presence Console'
         ],
         tips: ['Set up AI Content Profile first', 'Generate from one topic for consistent messaging']
@@ -341,7 +341,7 @@ const guideCategories = [
           'Monitors site performance metrics',
           'Auto-publishes blog posts from Content Engine',
           'Handles custom domain setup',
-          'Requires Business+ tier',
+          'Requires Core+ tier',
           'Depends on Creative Agent being enabled'
         ],
         tips: ['Connect custom domain for branding', 'Enable auto-publish for hands-off management']
@@ -354,7 +354,7 @@ const guideCategories = [
           'Route Agent: Optimizes travel routes with traffic awareness',
           'ETA Agent: Calculates arrival times, sends customer updates',
           'Check-in Agent: Tracks on-site status with photo documentation',
-          'All four require Field Ops+ tier',
+          'All four require Boost+ tier',
           'GPS tracking required on technician devices',
           'Access via Field Operations Console'
         ],
@@ -368,7 +368,7 @@ const guideCategories = [
           'Invoice Agent: Creates invoices, tracks payments',
           'Both support multi-line items with AI descriptions',
           'Stripe integration for payment links',
-          'Both require Field Ops+ tier',
+          'Both require Boost+ tier',
           'Invoice Agent depends on Quoting Agent',
           'Access via Business Operations Console'
         ],
@@ -380,7 +380,7 @@ const guideCategories = [
         steps: [
           'Admin Agent: Company settings, user management, multi-location',
           'Inventory Agent: Stock tracking, low-level alerts, reorder planning',
-          'Both require Performance+ tier',
+          'Both require Elite tier',
           'Inventory tracks parts usage per job',
           'Admin handles role-based permissions',
           'Access via Business Operations Console'
@@ -393,10 +393,10 @@ const guideCategories = [
         steps: [
           'Insights Agent: Natural language business queries',
           'Performance Agent: KPIs and operational metrics',
-          'Revenue Agent: Financial trends and analysis (Command only)',
-          'Forecast Agent: Demand prediction and capacity planning (Command only)',
-          'Insights + Performance require Performance+ tier',
-          'Revenue + Forecast require Command tier',
+          'Revenue Agent: Financial trends and analysis (Elite only)',
+          'Forecast Agent: Demand prediction and capacity planning (Elite only)',
+          'Insights + Performance require Elite tier',
+          'Revenue + Forecast require Elite tier',
           'Access via Analytics & Reports Console'
         ],
         tips: ['Use structured forms for consistent reports', 'Forecasts help with staffing decisions']
@@ -459,7 +459,7 @@ const guideCategories = [
         title: 'Field Operations Console',
         duration: '12 min',
         steps: [
-          'Navigate to Field Operations from sidebar (Field Ops+ tier)',
+          'Navigate to Field Operations from sidebar (Boost+ tier)',
           'Quick Action Tabs: Map View, Schedule, Dispatch, Check-in',
           'Map View: Real-time technician GPS locations',
           'Dispatch tab: Job assignment and technician routing',
@@ -487,7 +487,7 @@ const guideCategories = [
         title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Outreach & Sales Ops from sidebar (Growth+ tier)',
+          'Navigate to Outreach & Sales Ops from sidebar (Pro+ tier)',
           'Tabs: Campaign, Leads, Marketing',
           'Campaign: Create and manage email/SMS campaigns',
           'Leads: Pipeline management and scoring',
@@ -500,7 +500,7 @@ const guideCategories = [
         title: 'Social Media Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
+          'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Tabs: Home, Create Content, My Posts',
           'Home: AI Chat with Creative Content agent for guidance',
           'Create Content: MultiChannelGenerator with AI Suggest topics, Industry Templates, and Manual Bridge posting',
@@ -514,7 +514,7 @@ const guideCategories = [
         title: 'Creative & Web Presence Console',
         duration: '12 min',
         steps: [
-          'Navigate to Creative & Web Presence from sidebar (Business+ tier)',
+          'Navigate to Creative & Web Presence from sidebar (Core+ tier)',
           'Tabs: Content Engine, Brand Voice, Generate, Dashboard, Calendar, Web Presence, Blog, SEO',
           'Content Engine: Multi-channel content generation',
           'Brand Voice: Configure your brand personality',
@@ -529,11 +529,11 @@ const guideCategories = [
         title: 'Analytics & Reports Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports from sidebar (Performance+ tier)',
+          'Navigate to Analytics & Reports from sidebar (Elite tier)',
           'Tabs: Performance, Revenue, Insights, Forecast, KPIs, Social, Reminders, Export',
           'Performance: Operational metrics and trends',
           'Revenue: Financial analysis (Command for full features)',
-          'Forecast: Demand prediction (Command only)',
+          'Forecast: Demand prediction (Elite only)',
           'Export: CSV and PDF report generation',
           'Agents: Insights, Performance, Revenue, Forecast'
         ],
@@ -543,7 +543,7 @@ const guideCategories = [
         title: 'AI Operatives Hub',
         duration: '15 min',
         steps: [
-          'Navigate to AI Operatives Hub from sidebar (Command tier only)',
+          'Navigate to AI Operatives Hub from sidebar (Elite tier only)',
           'Tabs: Operatives, Quick Start, Monitor, Analytics, History',
           'Operatives: Individual agent management with toggle enable/disable',
           'Quick Start: Batch activation and dependency visualization',
@@ -666,7 +666,7 @@ const guideCategories = [
         title: 'Social Media Integration',
         duration: '15 min',
         steps: [
-          'Navigate to Social Media Ops → Settings (Growth+ tier)',
+          'Navigate to Social Media Ops → Settings (Pro+ tier)',
           'Connect social accounts via OAuth for each platform',
           'Supported platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
           'Grant posting permissions when prompted',
@@ -700,7 +700,7 @@ const guideCategories = [
           'Generate and enter API key',
           'Content Engine uses Tavily for real-time research',
           'Improves accuracy of AI-generated content',
-          'Available for Business+ tiers'
+          'Available for Core+ tiers'
         ],
         tips: ['Optional enhancement for content quality', 'Useful for industry-specific content']
       }
@@ -716,7 +716,7 @@ const guideCategories = [
         title: 'Creative & Web Presence Console',
         duration: '12 min',
         steps: [
-          'Navigate to Creative & Web Presence from sidebar (Business+ tier)',
+          'Navigate to Creative & Web Presence from sidebar (Core+ tier)',
           'Tabs: Content Engine, Brand Voice, Generate, Dashboard, Calendar, Web Presence, Blog, SEO',
           'Content Engine: Multi-channel content generation hub',
           'Brand Voice: Configure your brand personality for AI',
@@ -781,7 +781,7 @@ const guideCategories = [
           'Edit hero section: headline, subheadline, CTA button',
           'Manage about section, services, and testimonials',
           'Push website content from Content Engine',
-          'Configure custom domain (Business+ tier)',
+          'Configure custom domain (Core+ tier)',
           'Preview changes before publishing'
         ],
         tips: ['Use Push to Web Presence for quick updates', 'Keep hero section focused on your main offer']
@@ -840,7 +840,7 @@ const guideCategories = [
         title: 'Field Operations Console',
         duration: '12 min',
         steps: [
-          'Navigate to Field Operations from sidebar (Field Ops+ tier)',
+          'Navigate to Field Operations from sidebar (Boost+ tier)',
           'Use Quick Action Tabs: Map View, Schedule, Dispatch, Check-in',
           'Map View shows real-time technician GPS locations',
           'Dispatch tab for job assignment and routing',
@@ -936,7 +936,7 @@ const guideCategories = [
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
           'Monitor payment status and outstanding invoices',
-          'Inventory tab requires Performance+ tier'
+          'Inventory tab requires Elite tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard', 'Quote Forge saves time on complex quotes']
       },
@@ -986,7 +986,7 @@ const guideCategories = [
         title: 'Inventory Tracking',
         duration: '10 min',
         steps: [
-          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Navigate to Knowledge Base → Inventory (Elite tier)',
           'Add inventory items with SKU codes',
           'Set minimum quantity thresholds',
           'Configure low-stock alert notifications',
@@ -1014,7 +1014,7 @@ const guideCategories = [
         title: 'Financial Reports',
         duration: '8 min',
         steps: [
-          'Navigate to Analytics & Reports Console (Command tier)',
+          'Navigate to Analytics & Reports Console (Elite tier)',
           'Select Revenue tab for financial analysis',
           'Choose date range and apply filters',
           'View revenue breakdown by service type',
@@ -1036,7 +1036,7 @@ const guideCategories = [
         title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Outreach & Sales Ops from sidebar (Growth+ tier)',
+          'Navigate to Outreach & Sales Ops from sidebar (Pro+ tier)',
           'Quick Action Tabs: Campaign, Leads, Marketing',
           'Create and manage marketing campaigns',
           'Configure promo codes and discounts',
@@ -1127,7 +1127,7 @@ const guideCategories = [
         title: 'Social Media Console',
         duration: '10 min',
         steps: [
-          'Navigate to Social Media Ops from sidebar (Growth+ tier)',
+          'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Tabs: Home, Create Content, My Posts',
           'Supports 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
           'AI-powered content generation via MultiChannelGenerator',
@@ -1190,7 +1190,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports Ops from sidebar (Performance+ tier)',
+          'Navigate to Analytics & Reports Ops from sidebar (Elite tier)',
           'Quick Action Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Social, Reminders, Export',
           'Form-based interfaces for structured reporting',
           'AI Insights Agent for natural language queries',
@@ -1338,7 +1338,7 @@ const guideCategories = [
         title: 'Inventory Management',
         duration: '12 min',
         steps: [
-          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Navigate to Knowledge Base → Inventory (Elite tier)',
           'Add parts and supplies with SKU codes',
           'Set stock quantities and minimum levels',
           'Configure low-stock alert thresholds',
@@ -1352,7 +1352,7 @@ const guideCategories = [
   }
 ];
 
-// Guides restricted to platform_admin only (Command tier content)
+// Guides restricted to platform_admin only (Elite tier content)
 const RESTRICTED_GUIDE_TITLES = [
   'Inventory Tracking', 
   'Inventory Management', 
@@ -1368,7 +1368,7 @@ const RESTRICTED_GUIDE_TITLES = [
   'Social Analytics'
 ];
 
-// Categories hidden from non-platform-admin (Command tier only)
+// Categories hidden from non-platform-admin (Elite tier only)
 const RESTRICTED_CATEGORIES = ['marketing', 'analytics', 'social-media'];
 
 // Helper component to render interactive steps with clickable links
