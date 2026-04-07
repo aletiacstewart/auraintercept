@@ -822,11 +822,11 @@ export default function Help() {
                         <div className="text-card-foreground/70 space-y-2">
                           <ul className="space-y-2">
                             <li>
-                              <strong className="text-card-foreground">Call to Book (Single-Point):</strong>
+                              <strong className="text-card-foreground">Call to Book (Core):</strong>
                               <p>Customers click a button that opens their phone dialer to call your business. The AI handles questions but scheduling is done by phone.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Online Booking (Multi-Track+):</strong>
+                              <strong className="text-card-foreground">Online Booking (Boost+):</strong>
                               <p>Customers book appointments directly through the AI chat. The Scheduling Agent checks availability and confirms bookings automatically.</p>
                             </li>
                           </ul>

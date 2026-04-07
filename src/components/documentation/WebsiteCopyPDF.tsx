@@ -618,7 +618,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 14 days.
+          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 30 days.
         </Text>
       </View>
 

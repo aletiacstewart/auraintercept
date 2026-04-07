@@ -28,7 +28,7 @@ export function LaunchPathSelector({
   onSelect, 
   onBack 
 }: LaunchPathSelectorProps) {
-  const isHighTier = ['MULTI_TRACK', 'COMMAND'].includes(recommendedTier);
+  const isHighTier = ['PERFORMANCE', 'COMMAND'].includes(recommendedTier);
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 bg-background min-h-screen">

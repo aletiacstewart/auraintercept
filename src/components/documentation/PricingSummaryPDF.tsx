@@ -82,8 +82,8 @@ const THIRD_PARTY_INTEGRATIONS = [
   { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'All Tiers (for Voice)' },
   { name: 'Resend', purpose: 'Email Notifications', cost: '$0-20+/month based on volume', required: 'All Tiers' },
   { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'Optional (All Tiers)' },
-  { name: 'Stripe', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'Performance+ (for Invoicing)' },
-  { name: 'Social Media Accounts', purpose: 'Content Publishing', cost: 'Free (platform accounts)', required: 'Connect+ (Social Media)' },
+  { name: 'Stripe', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'Elite (for Invoicing)' },
+  { name: 'Social Media Accounts', purpose: 'Content Publishing', cost: 'Free (platform accounts)', required: 'Pro+ (Social Media)' },
 ];
 
 const Header = ({ title }: { title: string }) => (
@@ -550,7 +550,7 @@ const PricingSummaryPDF = () => (
         </View>
         <View style={styles.column}>
           <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>Content Features (Connect+)</Text>
+            <Text style={styles.columnTitle}>Content Features (Pro+)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
               Required for Social Media:
             </Text>

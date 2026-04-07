@@ -204,9 +204,9 @@ export default function SmartWebsite() {
   const openStatus = isCurrentlyOpen();
 
   // Tier-based widget visibility
-  // Voice and Chat require paid subscription (Single-Point+) or active trial
+  // Voice and Chat require paid subscription (Core+) or active trial
   const isInTrial = website?.trial_ends_at && new Date(website.trial_ends_at) > new Date();
-  const isPaidTier = ['single_point', 'multi_track', 'command'].includes(website?.subscription_tier || '');
+  const isPaidTier = ['starter', 'connect', 'performance', 'command', 'single_point', 'multi_track'].includes(website?.subscription_tier || '');
   const canShowChat = website?.show_chat_widget && (isInTrial || isPaidTier);
 
   if (isLoading) {
