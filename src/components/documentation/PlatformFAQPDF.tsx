@@ -632,12 +632,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How do I access the Customer Portal console?"
-          answer="The Customer Portal console is your hub for customer engagement. Access it from the main dashboard navigation. It includes tabs for Chat, Voice, Services, Hours, Feedback, Track, and Billing. Available on Halo tier and above."
+          answer="The Customer Portal console is your hub for customer engagement. Access it from the main dashboard navigation. It includes tabs for Chat, Voice, Services, Hours, Feedback, Track, and Billing. Available on all tiers (Core and above)."
         />
         
         <FAQItem 
           question="What's in the Field Operations console?"
-          answer="Field Operations is a mobile-optimized console for technicians with: Accept Job, Get Directions, Mark En Route, Update ETA, Arrive & Start, Complete Job, Generate Quote, Generate Invoice, and Contact Dispatch. Available on Multi-Track and Command tiers."
+          answer="Field Operations is a mobile-optimized console for technicians with: Accept Job, Get Directions, Mark En Route, Update ETA, Arrive & Start, Complete Job, Generate Quote, Generate Invoice, and Contact Dispatch. Available on Boost and above (Field Ops agents)."
         />
         
         <FAQItem 

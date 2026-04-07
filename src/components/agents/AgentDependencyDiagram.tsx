@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GitBranch } from 'lucide-react';
 
 interface AgentDependencyDiagramProps {
-  highlightTier?: 'single_point' | 'multi_track' | 'command' | 'all';
+  highlightTier?: 'starter' | 'connect' | 'performance' | 'command' | 'all';
 }
 
 const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({ 

@@ -436,21 +436,21 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'Google Calendar',
     purpose: 'Calendar Sync (Two-way)',
     cost: 'Free',
-    requiredFor: 'Connect+ (Customer Journey Agent)',
+    requiredFor: 'All tiers (Calendar Sync)',
     optional: true,
   },
   {
     name: 'Stripe',
     purpose: 'Invoice Payments',
     cost: '2.9% + $0.30/transaction',
-    requiredFor: 'Performance+ (Business Finance Agent)',
+    requiredFor: 'Elite (Invoice Agent)',
     optional: true,
   },
   {
     name: 'Social Media (Platform OAuth)',
     purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting.',
     cost: 'Free (Manual Bridge) or Free (Own API setup)',
-    requiredFor: 'Performance+ (Social Media Ops — Creative Content Agent)',
+    requiredFor: 'Pro+ (Social Media — Creative Content Agent)',
     optional: true,
   },
   {
@@ -487,7 +487,7 @@ export const ADDON_PRICING = {
     name: 'Additional Employees',
     price: 25,
     unit: 'per 10 employees/month',
-    availableFor: ['multi_track'],
+    availableFor: ['connect', 'performance', 'command'],
   },
 };
 

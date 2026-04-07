@@ -50,12 +50,16 @@ import { TechnicianServiceAssignments } from './TechnicianServiceAssignments';
 
 // Employee limits per subscription tier
 const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
-  core: 2,
-  single_point: 5,
-  multi_track: 10,
-  command: 25,
+  starter: 10,
+  connect: 25,
+  performance: 50,
+  command: 999,
   free: 2,
-  enterprise: 100,
+  // Legacy aliases
+  core: 10,
+  single_point: 10,
+  multi_track: 25,
+  enterprise: 999,
 };
 
 // Job types that correspond to AI agent categories
