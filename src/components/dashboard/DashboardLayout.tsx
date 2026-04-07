@@ -623,8 +623,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
       </main>
       
-      {/* Unified Aura Floating Button */}
-      <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
+      {/* Unified Aura Floating Button — hide on dashboard where AuraCommandCenter already provides the input */}
+      {location.pathname !== '/dashboard' && (
+        <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
+      )}
     </div>
     </DashboardTutorialProvider>
   );
