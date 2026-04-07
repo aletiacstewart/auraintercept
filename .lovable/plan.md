@@ -1,70 +1,62 @@
 
 
-# Rebuild All Documentation & Resource Pages
+# Remove Multi-Location Claims + Test AI Agent Flow
 
-This is a comprehensive rebuild of 7 dashboard pages and 13 PDF components to align with the current 4-tier platform model (Core/Boost/Pro/Elite), 24 Smart AI Agents (10 consolidated operatives), 7 consoles + AI Operatives Hub, and current 3rd-party integration requirements.
+## Part 1: Remove "Multi-location support" from Elite tier (13 files)
 
-## Key Inconsistencies Found
+Strip all multi-location/franchise references from the Elite tier description since this feature is not implemented. Replace with accurate language about the full agent suite.
 
-- **helpContentConfig.ts** uses old internal tier IDs (`connect`, `performance`) and wrong tier assignments (e.g., Field Ops set to `performance` instead of Boost-level, Customer Portal set to `connect` instead of Core-level)
-- **DemoAccounts.tsx** references "Twilio" instead of "SignalWire", has stale email patterns, mentions "Predictive Analytics" in Elite features
-- **PlatformGuides.tsx** has 1,667 lines of hardcoded guide content that may reference outdated agent names, counts, and tier structures
-- **Architecture.tsx** diagrams reference old module names and miss current consoles
-- **VideoPromptsPage.tsx** references 7 consoles but may have outdated agent names
-- **ExportDocumentation.tsx** links to 13 PDF generators, all potentially out of date
-- **Help.tsx** renders tier-filtered content from the stale `helpContentConfig.ts`
-- **All 13 PDF components** (~13,000 lines total) contain hardcoded content that needs auditing
+### Files to update:
 
-## Implementation Plan
+1. **`src/lib/documentationConfig.ts`** (lines 119, 131)
+   - Remove `'Multi-location support'` from highlights array
+   - Change `bestFor` from "Multi-location franchises, property management firms, enterprise teams" to "Large service teams, property management firms, enterprise operations"
 
-Given the enormous scope (~18,000+ lines across 20+ files), this will be executed in batches:
+2. **`src/lib/helpContentConfig.ts`** (line 430)
+   - Remove `'Multi-location support'` from command tier highlights
 
-### Batch 1: Config Sources (foundation — must be done first)
-1. **`src/lib/helpContentConfig.ts`** — Fix all tier IDs to match `subscriptionAgentConfig.ts` internal names (`starter`/`connect`/`performance`/`command`). Fix console `requiredTier` assignments: Customer Portal → `starter`, Field Ops → `connect`, Social Media → `connect`, Business Management → `command`, Analytics → `command`. Update agent names to match consolidated operative model. Fix integration references (Twilio → SignalWire).
+3. **`src/pages/Index.tsx`** (lines 69, 902-903)
+   - Admin Agent description: change "multi-location support" to "access control"
+   - Elite card: change "Multi-Location / Enterprise" to "Full Suite / Enterprise" and update bestFor text
 
-2. **`src/lib/documentationConfig.ts`** — Already mostly correct. Minor fixes: remove "Predictive AI Hub" from Elite description (line 118/130), verify Social Media console tier is `aura_boost` not `aura_core`.
+4. **`src/pages/Auth.tsx`** (line 746)
+   - Change Elite subtitle from "Multi-Location • Franchise • Enterprise" to "Full Suite • Enterprise • Unlimited"
 
-### Batch 2: Dashboard Pages
-3. **`src/pages/Help.tsx`** — Rebuild to pull from corrected `helpContentConfig.ts`. Structure: AI Agents tab (console-filtered agents), Ask Aura tab, Company & Employees tab, FAQs tab. Ensure tier-based filtering works with corrected tier IDs.
+5. **`src/pages/DemoAccounts.tsx`** (line 71)
+   - Change businessType from "Multi-Location Enterprise" to "Enterprise Operations"
 
-4. **`src/pages/PlatformGuides.tsx`** — Full rewrite of guide content to reflect current platform: 4-tier model, correct agent names (10 operatives / 24 agents), correct console names and routes, current integration requirements (SignalWire not Twilio, Stripe for Elite only, etc.).
+6. **`src/pages/PlatformGuides.tsx`** (line 381)
+   - Remove "multi-location" from Admin Agent step description
 
-5. **`src/pages/DemoAccounts.tsx`** — Update demo account data: fix tier features (remove "Predictive Analytics"), fix integration references (Twilio → SignalWire), update agent counts per tier (8/12/16/24), update console counts (3/5/5/7), ensure email patterns match actual demo accounts.
+7. **`src/components/audit/types.ts`** (lines 9, 55-57, 483)
+   - Update ELITE comment, remove multi_location audit question, update Elite description
 
-6. **`src/pages/Architecture.tsx`** — Rebuild Mermaid diagrams to reflect current platform: add all 7 consoles + AI Operatives Hub, show correct module routes, update edge functions list, add Content Engine and Social Media console flows.
+8. **`src/components/landing/PricingComparisonTable.tsx`** (line 28)
+   - Admin Agent tooltip: remove "multi-location support"
 
-7. **`src/pages/AIAgentFlowDemo.tsx`** — Update scene data to use correct 24-agent names across 10 operative groups. Ensure agent node labels and connection narratives match current platform.
+9. **`src/components/documentation/SalesPitchDataPDF.tsx`** (lines 561, 564, 734, 807)
+   - Remove multi-location references from sales pitch content
 
-8. **`src/pages/VideoPromptsPage.tsx`** — Audit all 34 clip prompts for outdated agent names or console references. Update to match current terminology (Social Feed Queue, not Social Scheduler, etc.).
+10. **`src/pages/Subscription.tsx`** — verify no multi-location references (likely clean)
 
-9. **`src/pages/ExportDocumentation.tsx`** — Update card descriptions and metadata to match current platform stats. Ensure all PDF download links work.
+## Part 2: Test AI Agent Flow End-to-End
 
-### Batch 3: PDF Components (13 files, ~13,000 lines)
-10. **`AIAgentGuidesPDF.tsx`** — Rebuild with correct 24 agents, 10 operatives, 7 consoles, 4-tier access matrix.
-11. **`PlatformDocumentPDF.tsx`** — Update platform overview, pricing, features.
-12. **`PricingSummaryPDF.tsx`** — Update to 4-tier pricing with annual billing options.
-13. **`ComprehensiveGuidesPDF.tsx`** — Full rebuild with current guide content.
-14. **`CompanyGuidesPDF.tsx`** — Update onboarding and setup guides.
-15. **`CompanyOnboardingPDF.tsx`** — Update onboarding steps to current flow.
-16. **`SocialMediaContentPackPDF.tsx`** — Update platform references.
-17. **`VideoScriptsPDF.tsx`** — Align with updated VideoPromptsPage content.
-18. **`SalesPitchDataPDF.tsx`** — Update sales data and competitive positioning.
-19. **`BrandAssetGuidePDF.tsx`** — Update brand guidelines.
-20. **`WebsiteCopyPDF.tsx`** — Update website copy to current messaging.
-21. **`IndustryMarketingKitPDF.tsx`** — Update industry-specific content.
-22. **`PlatformFAQPDF.tsx`** — Rebuild FAQ content to match current platform.
+Run the `ai-agent-health` endpoint and then invoke `ai-agent-chat` with test messages for each of the 10 consolidated operatives to verify:
+- Health check passes (DB connectivity, agent configs, API keys)
+- Each operative responds correctly
+- Tier gating works (locked agents return proper 403)
+- Handoff routing works (triage → customer_journey → dispatch chain)
+- Legacy agent name normalization works
 
-### Batch 4: Navigation & Access Control
-23. **`src/components/dashboard/DashboardLayout.tsx`** — Verify `Platform Resources` nav group has correct role-based access for all 7 items. Currently all items except Help are platform_admin only; consider making Help and AI Agent Demo visible to company_admin and employee roles as appropriate.
+### Test sequence:
+1. Call `ai-agent-health` with the demo company ID
+2. Call `ai-agent-chat` for each of the 10 operatives: `triage`, `customer_journey`, `dispatch`, `field_navigation`, `admin`, `business_finance`, `outreach`, `creative_content`, `web_presence`, `analytics_intelligence`
+3. Test a handoff scenario: send a booking request to triage, verify it hands off to customer_journey
+4. Report results with pass/fail per agent and any errors found
 
-## Guiding Principles
-- All content pulls from `documentationConfig.ts` and `subscriptionAgentConfig.ts` wherever possible (single source of truth)
-- Agent distribution: 8 (Core) / 12 (Boost) / 16 (Pro) / 24 (Elite)
-- Console distribution: 3 / 5 / 5 / 7 + AI Operatives Hub (all tiers)
-- Integration requirements: SignalWire (not Twilio), Stripe (Elite only), Social Media (Pro+), Google Calendar (all tiers), Tavily (optional all)
-- No references to "Predictive AI Hub" anywhere
-- Internal tier IDs: `starter` = Core, `connect` = Boost, `performance` = Pro, `command` = Elite
-
-## Estimated Scope
-~18,000 lines across 22 files. This will require multiple implementation rounds.
+## Execution order
+1. Remove multi-location claims (all files in parallel)
+2. Run agent health check
+3. Run agent chat tests
+4. Report findings and fix any issues
 
