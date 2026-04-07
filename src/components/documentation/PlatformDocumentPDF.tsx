@@ -1180,7 +1180,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$1,997/month</Text>
         <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + 7 Consoles + AI Hub</Text>
-        <Text style={styles.pricingFeature}>- Predictive Analytics & Revenue Forecasting</Text>
+        <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- Full White-Label + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
         <Text style={styles.pricingFeature}>- $999 implementation fee</Text>
@@ -1416,7 +1416,7 @@ const PlatformDocumentPDF = () => (
 
       <Text style={styles.subsectionTitle}>Infographic Concepts</Text>
       <BulletPoint>"The Customer Journey with Aura" - flowchart showing AI touchpoints</BulletPoint>
-      <BulletPoint>"19 Agents, 1 Platform" - visual agent ecosystem</BulletPoint>
+      <BulletPoint>"24 Agents, 1 Platform" - visual agent ecosystem</BulletPoint>
       <BulletPoint>"Before vs After" - side-by-side metrics comparison</BulletPoint>
       <BulletPoint>"ROI Calculator" - interactive or static infographic</BulletPoint>
       <BulletPoint>"Industry Applications" - icons for each vertical</BulletPoint>

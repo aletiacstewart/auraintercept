@@ -221,16 +221,16 @@ const sections: Section[] = [
       },
       {
         num: 22,
-        name: 'Social Content Agent',
+        name: 'Creative Content Agent',
         prompt: 'AI generating social media posts in real-time: text writes itself, images compose automatically, hashtags materialize. Multiple post variants for different platforms fan out from a single content idea like cards being dealt. Creative sparks and writing animations. Pink and white on dark background. 4K.',
-        audioScript: 'The Social Content Agent generates platform-perfect posts for every channel — captions, hashtags, and visuals created in seconds.',
+        audioScript: 'The Creative Content Agent generates platform-perfect posts for every channel — captions, hashtags, and visuals created in seconds.',
         imagePrompt: 'AI generating social post cards fanning out for Facebook, Instagram, X, LinkedIn, TikTok, YouTube simultaneously. Hashtags materializing. "SOCIAL CONTENT AGENT — Aura Intercept" label. Pink and white on dark background.',
       },
       {
         num: 23,
-        name: 'Social Scheduler Agent',
+        name: 'Social Feed Queue Agent',
         prompt: 'A holographic weekly calendar with time slots filling with scheduled posts across 6 social platforms. Posts slide into optimal time slots with satisfying click animations. A clock visualization shows best-posting-time intelligence. Queue management with drag-and-drop feel. Pink and cyan on dark background. 4K cinematic.',
-        audioScript: 'The Social Scheduler Agent posts at the optimal time on every platform — so your content always reaches the largest possible audience.',
+        audioScript: 'The Social Feed Queue Agent posts at the optimal time on every platform — so your content always reaches the largest possible audience.',
         imagePrompt: 'Holographic weekly calendar with post slots filling across 6 platform rows. Best-time indicators glowing on optimal slots. "SOCIAL SCHEDULER AGENT — Aura Intercept" label. Pink and cyan on dark background.',
       },
       {
