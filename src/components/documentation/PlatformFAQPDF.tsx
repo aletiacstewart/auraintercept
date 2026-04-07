@@ -504,7 +504,7 @@ const PlatformFAQPDF = () => {
           <Text style={{ fontSize: 9, lineHeight: 1.5 }}>
             Prices shown are for the Aura Intercept platform subscription only. Third-party integration 
             costs (SignalWire, ElevenLabs, Resend, Stripe) are billed separately by those providers based on 
-            your actual usage. Estimate $50-200/month for typical integration usage.
+            your actual usage. Estimate $50-200/month for typical integration usage. All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
           </Text>
         </View>
 

@@ -207,9 +207,14 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCa
           </div>
         </div>
 
-        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
-          <strong>Estimated combined 3rd-party cost:</strong> ~${totalMin}–${totalMax}/month depending on usage.
-          This is in addition to your Aura subscription fee. Factor these into your total monthly ROI calculation.
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 space-y-1.5">
+          <p>
+            <strong>Estimated combined 3rd-party cost:</strong> ~${totalMin}–${totalMax}/month depending on usage.
+            This is in addition to your Aura subscription fee. Factor these into your total monthly ROI calculation.
+          </p>
+          <p className="italic text-[10px] opacity-80">
+            All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+          </p>
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">

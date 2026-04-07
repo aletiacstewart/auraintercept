@@ -515,7 +515,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.noticeTitle}>[WARNING] Important: Separate Billing</Text>
         <Text style={styles.noticeText}>
           A valid credit card is required for all 3rd party integration accounts. These services are
-          billed separately from your Aura Intercept subscription.
+          billed separately from your Aura Intercept subscription. All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
         </Text>
       </View>
       <Text style={styles.subsectionTitle}>Required Integrations by Tier</Text>
