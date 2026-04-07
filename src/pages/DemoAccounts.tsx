@@ -123,7 +123,7 @@ const companyOnboardingSteps = [
     icon: Puzzle,
     details: [
       'Review 3rd party integration requirements',
-      'Show Twilio, ElevenLabs, Stripe setup areas',
+      'Show SignalWire, ElevenLabs, Stripe setup areas',
       'Calendar sync demonstration (if applicable)',
     ],
   },
@@ -196,7 +196,7 @@ const tierFeatures: Record<string, string[]> = {
     'Insights, Performance, Revenue, Forecast Agents',
     'All 7 Control Centers + AI Operatives Hub',
     'Analytics & Reports Console',
-    'Predictive Analytics',
+    'Advanced Analytics & Demand Forecasting',
     'Unlimited Employees',
   ],
 };
