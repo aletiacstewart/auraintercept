@@ -54,6 +54,7 @@ export default function Auth() {
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [selectedTier, setSelectedTier] = useState<'starter' | 'connect' | 'performance' | 'command' | null>(null);
+  const [isAnnualBilling, setIsAnnualBilling] = useState(false);
   // 4-tier structure: Core, Boost, Pro, Elite
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
   const [setupAcknowledged, setSetupAcknowledged] = useState({ a2p: false, costs: false, knowledgeBase: false });
