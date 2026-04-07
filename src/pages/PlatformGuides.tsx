@@ -33,6 +33,7 @@ import { PageHeader } from '@/components/ui/page-header';
 const NAVIGATION_ROUTES: Record<string, string> = {
   'Dashboard': '/dashboard',
   'AI Agents Hub': '/dashboard/ai-operatives-hub',
+  'AI Operatives Hub': '/dashboard/ai-operatives-hub',
   'Knowledge Base': '/dashboard/knowledge',
   'Appointments': '/dashboard/appointments',
   'Calendar': '/dashboard/calendar',
@@ -49,17 +50,27 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Integrations → Email': '/dashboard/settings/integrations',
   'Integrations → Payment Connections': '/dashboard/settings/integrations',
   'Integrations → Website Embed': '/dashboard/settings/integrations',
+  'Integrations → AI Research': '/dashboard/settings/integrations',
+  'Integrations → Social Media': '/dashboard/settings/integrations',
   'Field Operations': '/dashboard/ai-consoles/field-operations',
   'Field Operations Console': '/dashboard/ai-consoles/field-operations',
   'Business Ops Hub': '/dashboard/ai-consoles/business-mgt-ops',
   'Business Ops Console': '/dashboard/ai-consoles/business-mgt-ops',
+  'Business Mgt Ops Console': '/dashboard/ai-consoles/business-mgt-ops',
+  'Business Operations Console': '/dashboard/ai-consoles/business-mgt-ops',
   'Outreach & Sales Ops': '/dashboard/ai-consoles/outreach-sales',
+  'Outreach & Sales Ops Console': '/dashboard/ai-consoles/outreach-sales',
   'Marketing Console': '/dashboard/ai-consoles/outreach-sales',
   'Social Media Ops': '/dashboard/ai-consoles/social-media',
   'Social Media Console': '/dashboard/ai-consoles/social-media',
+  'Analytics & Reports': '/dashboard/ai-consoles/analytics-reports',
   'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics-reports',
   'Analytics Console': '/dashboard/ai-consoles/analytics-reports',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
+  'Customer Portal': '/dashboard/ai-consoles/customer-portal',
+  'Creative & Web Presence': '/dashboard/ai-consoles/creative-web',
+  'Creative & Web Presence Console': '/dashboard/ai-consoles/creative-web',
+  'Creative Console': '/dashboard/ai-consoles/creative-web',
   'Knowledge Base → Services': '/dashboard/knowledge',
   'Knowledge Base → FAQs': '/dashboard/knowledge',
   'Knowledge Base → Hours': '/dashboard/knowledge',
@@ -70,6 +81,7 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Settings → Role Permissions': '/dashboard/settings',
   'Settings → Digests': '/dashboard/settings',
   'Settings → Subscription': '/dashboard/subscription',
+  'Settings → Missed Calls': '/dashboard/settings',
   'Platform Resources → AI Agent Guide': '/dashboard/ai-agent-guide',
   'AI Agent Guide': '/dashboard/ai-agent-guide',
   'Platform Guides': '/dashboard/platform-guides',
@@ -1539,7 +1551,7 @@ const PlatformGuides: React.FC = () => {
               <CardTitle className="text-base text-foreground">Guide Categories</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-auto max-h-[600px]">
+              <ScrollArea className="h-[calc(100vh-280px)] min-h-[400px]">
                 <div className="space-y-1 p-3">
                   {filteredCategories.map((category) => {
                     const Icon = category.icon;
