@@ -792,7 +792,7 @@ const TIERS = [
     agentCount: SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24,
     agents: [`All ${SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24} AI Agents`],
     voiceIncluded: SUBSCRIPTION_TIERS.aura_elite?.hasVoice ?? true,
-    note: SUBSCRIPTION_TIERS.aura_elite?.description ?? '24 Smart AI Agents — full suite with predictive analytics & AI Hub.',
+    note: SUBSCRIPTION_TIERS.aura_elite?.description ?? '24 Smart AI Agents — full suite with business operations, analytics & AI Hub.',
   },
 ];
 

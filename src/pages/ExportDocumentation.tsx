@@ -165,7 +165,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Pricing Summary</li>
-                  <li>Three-Tier Comparison</li>
+                  <li>Four-Tier Comparison</li>
                   <li>Detailed Tier Breakdowns</li>
                   <li>Implementation Fees</li>
                   <li>3rd Party Integration Costs</li>
@@ -550,7 +550,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-2 text-sm text-card-foreground/70">
                   <ul className="list-disc list-inside space-y-1 ml-2">
                     <li>Hex Color Palettes</li>
-                    <li>19 Agent Icon Concepts</li>
+                    <li>24 Agent Icon Concepts</li>
                     <li>Typography Guidelines</li>
                     <li>Template Specifications</li>
                   </ul>
@@ -579,7 +579,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-2 text-sm text-card-foreground/70">
                   <ul className="list-disc list-inside space-y-1 ml-2">
                     <li>Homepage Hero Variations</li>
-                    <li>19 Agent Descriptions</li>
+                    <li>24 Agent Descriptions</li>
                     <li>Pricing Page Copy</li>
                     <li>SEO Metadata</li>
                   </ul>

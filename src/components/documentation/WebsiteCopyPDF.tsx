@@ -554,11 +554,11 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Aura Elite - $1,997/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 24-agent suite handles every operational task from marketing to predictive analytics.{'\n\n'}
+          Full command of your business. The complete 24-agent suite handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
           - All 24 Smart AI Agents{'\n'}
           - All 7 Control Centers + AI Operatives Hub{'\n'}
           - Admin, Quoting, Invoice & Inventory{'\n'}
-          - Revenue, Forecast & Predictive Analytics{'\n'}
+          - Revenue, Forecast & Advanced Analytics{'\n'}
           - Priority Support{'\n'}
           - Unlimited employees
         </Text>

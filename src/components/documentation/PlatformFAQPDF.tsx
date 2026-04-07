@@ -503,7 +503,7 @@ const PlatformFAQPDF = () => {
           <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>Important Note on Pricing</Text>
           <Text style={{ fontSize: 9, lineHeight: 1.5 }}>
             Prices shown are for the Aura Intercept platform subscription only. Third-party integration 
-            costs (Twilio, ElevenLabs, Resend, Stripe) are billed separately by those providers based on 
+            costs (SignalWire, ElevenLabs, Resend, Stripe) are billed separately by those providers based on 
             your actual usage. Estimate $50-200/month for typical integration usage.
           </Text>
         </View>
@@ -689,7 +689,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What 3rd party integrations are required?"
-          answer="Required integrations depend on your tier features: Twilio (SMS/Voice) for tiers with Talk to Aura, ElevenLabs (AI Voice) for voice synthesis, Resend (Email) for notifications, and Stripe for payment processing. Google Calendar is optional for scheduling sync."
+          answer="Required integrations depend on your tier features: SignalWire (SMS/Voice) for tiers with Talk to Aura, ElevenLabs (AI Voice) for voice synthesis, Resend (Email) for notifications, and Stripe for payment processing. Google Calendar is optional for scheduling sync."
         />
         
         <Text style={styles.subsectionTitle}>Integration Cost Summary</Text>
@@ -735,8 +735,8 @@ const PlatformFAQPDF = () => {
         />
 
         <FAQItem 
-          question="How do I set up Twilio for voice calls?"
-          answer="1) Create a Twilio account at twilio.com, 2) Get a phone number ($1.15/month), 3) Copy your Account SID and Auth Token, 4) Add credentials in Settings > Integrations > Twilio, 5) Configure voice settings and test. Required for Talk to Aura voice functionality."
+          question="How do I set up SignalWire for voice calls?"
+          answer="1) Create a SignalWire account at signalwire.com, 2) Get a phone number ($1.15/month), 3) Copy your Project ID and API Token, 4) Add credentials in Settings > Integrations > SignalWire, 5) Configure voice settings and test. Required for Talk to Aura voice functionality."
         />
 
         <FAQItem 
@@ -832,7 +832,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How does billing work?"
-          answer="Billing is processed monthly or annually through Stripe. Monthly subscriptions are billed on the same day each month. Annual subscriptions are billed upfront with a 16% discount. Integration costs (Twilio, ElevenLabs, etc.) are billed separately by those providers."
+          answer="Billing is processed monthly or annually through Stripe. Monthly subscriptions are billed on the same day each month. Annual subscriptions are billed upfront with a 16% discount. Integration costs (SignalWire, ElevenLabs, etc.) are billed separately by those providers."
         />
         
         <FAQItem 
@@ -894,12 +894,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Why isn't my AI responding correctly?"
-          answer="Common causes: 1) Knowledge Base needs more information - add relevant FAQs, 2) Brand Voice settings conflict with query - review AI Profile, 3) Integration issues - check that Twilio/Resend are connected, 4) Operative is disabled - enable required agents in AI Hub. Review conversation logs to identify specific issues."
+          answer="Common causes: 1) Knowledge Base needs more information - add relevant FAQs, 2) Brand Voice settings conflict with query - review AI Profile, 3) Integration issues - check that SignalWire/Resend are connected, 4) Operative is disabled - enable required agents in AI Hub. Review conversation logs to identify specific issues."
         />
         
         <FAQItem 
           question="My voice calls aren't working - what should I check?"
-          answer="Troubleshoot voice issues: 1) Verify Twilio credentials are correct in Settings, 2) Check that a phone number is purchased and assigned, 3) Confirm ElevenLabs integration is active, 4) Test with a manual call from the dashboard, 5) Review call logs for error messages. Voice requires both Twilio and ElevenLabs."
+          answer="Troubleshoot voice issues: 1) Verify SignalWire credentials are correct in Settings, 2) Check that a phone number is purchased and assigned, 3) Confirm ElevenLabs integration is active, 4) Test with a manual call from the dashboard, 5) Review call logs for error messages. Voice requires both SignalWire and ElevenLabs."
         />
         
         <FAQItem 

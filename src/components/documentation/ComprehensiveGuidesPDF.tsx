@@ -998,7 +998,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Social Media (3 agents): Social Content, Social Scheduler, Social Analytics</Text>
+          <Text style={styles.bulletText}>Social Media (2 agents): Social Feed Queue, Social Analytics</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>

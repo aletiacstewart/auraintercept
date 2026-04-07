@@ -53,7 +53,7 @@ export default function Help() {
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Effective tier for display: trial users see all, others see their tier
-  const effectiveTier: SubscriptionTier = inTrial || isPlatformAdmin ? 'command' : (subscriptionTier || 'connect');
+  const effectiveTier: SubscriptionTier = inTrial || isPlatformAdmin ? 'command' : (subscriptionTier || 'starter');
   
   // Get available consoles based on tier
   const availableConsoles = useMemo(() => {
@@ -799,7 +799,7 @@ export default function Help() {
                         <div className="text-card-foreground/70 space-y-2">
                           <p>The platform integrates with:</p>
                           <ul className="list-disc ml-5 space-y-1">
-                            <li><strong className="text-card-foreground">Twilio:</strong> SMS and Voice calls</li>
+                            <li><strong className="text-card-foreground">SignalWire:</strong> SMS and Voice calls</li>
                             <li><strong className="text-card-foreground">ElevenLabs:</strong> AI Voice synthesis</li>
                             <li><strong className="text-card-foreground">Stripe:</strong> Payment processing</li>
                             <li><strong className="text-card-foreground">Resend:</strong> Email delivery</li>
