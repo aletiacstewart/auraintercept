@@ -420,7 +420,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   command: {
     title: 'Aura Elite',
-    description: 'Full 24-agent suite with predictive analytics, AI Hub & unlimited employees.',
+    description: 'Full 24-agent suite with advanced analytics, AI Hub & unlimited employees.',
     highlights: [
       'Everything in Aura Pro',
       'Invoice + Inventory + Insights + Performance Agents',
