@@ -56,7 +56,7 @@ const featureDescriptions: Record<string, string> = {
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Revenue analytics, profitability reports, and financial trend analysis.',
   'Forecast Agent': 'Demand prediction, seasonal trends, and capacity planning for your business.',
-  'Predictive AI Hub': 'Full suite predictive analytics with demand forecasting, revenue projections, and AI-driven business intelligence.',
+  
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
   'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',
@@ -142,7 +142,6 @@ const TIERS = [
       '24 Smart AI Agents (Full Suite)',
       'All 7 Control Centers + AI Hub',
       'Revenue + Forecast Agents',
-      'Predictive AI Hub',
       'Priority Support',
       'Unlimited Employees',
     ],
