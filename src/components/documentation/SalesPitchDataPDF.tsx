@@ -558,10 +558,10 @@ export const SalesPitchDataPDF: React.FC = () => (
               <Text style={styles.tierName}>Aura Elite</Text>
               <Text style={styles.tierPrice}>$1,997/mo</Text>
             </View>
-            <Text style={styles.tierDesc}>Multi-location, Franchise, Enterprise</Text>
+            <Text style={styles.tierDesc}>Full Suite, Enterprise Operations</Text>
             <Text style={styles.tierBullet}>- All Pro benefits: +$10,000</Text>
             <Text style={styles.tierBullet}>- Analytics-driven decisions: +$3,000</Text>
-            <Text style={styles.tierBullet}>- Multi-location coordination: +$2,000</Text>
+            <Text style={styles.tierBullet}>- Enterprise operations coordination: +$2,000</Text>
             <Text style={styles.tierBullet}>- Cost: -$1,997</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$13,003/mo</Text>
           </View>
@@ -731,7 +731,7 @@ export const SalesPitchDataPDF: React.FC = () => (
 
       <View style={styles.caseStudyCard}>
         <View style={styles.caseStudyHeader}>
-          <Text style={styles.caseStudyTitle}>Case Study: ProPlumb Multi-Location</Text>
+          <Text style={styles.caseStudyTitle}>Case Study: ProPlumb Enterprise</Text>
           <View style={styles.caseStudyIndustry}>
             <Text style={styles.caseStudyIndustryText}>PLUMBING</Text>
           </View>
@@ -804,7 +804,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           <Text style={styles.tierName}>Aura Elite (Enterprise)</Text>
           <Text style={styles.tierPrice}>$1,997/mo</Text>
         </View>
-        <Text style={styles.tierDesc}>Best for: Multi-location franchises, enterprise teams</Text>
+        <Text style={styles.tierDesc}>Best for: Large service teams, enterprise operations</Text>
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need comprehensive analytics + predictive AI</Text>
         <Text style={styles.tierBullet}>- All 7 Consoles + AI Hub</Text>

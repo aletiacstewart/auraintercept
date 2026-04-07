@@ -68,7 +68,7 @@ const demoAccounts = [
     companyAdmin: 'companycommand@demo.com',
     employee: 'employeecommand@demo.com',
     customer: 'customercommand@demo.com',
-    businessType: 'Multi-Location Enterprise',
+    businessType: 'Enterprise Operations',
     agents: 24,
     consoles: 7,
   },

@@ -378,7 +378,7 @@ const guideCategories = [
         title: 'Admin & Inventory Agents',
         duration: '8 min',
         steps: [
-          'Admin Agent: Company settings, user management, multi-location',
+          'Admin Agent: Company settings, user management, access control',
           'Inventory Agent: Stock tracking, low-level alerts, reorder planning',
           'Both require Elite tier',
           'Inventory tracks parts usage per job',

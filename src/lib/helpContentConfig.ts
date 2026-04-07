@@ -427,7 +427,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Revenue + Forecast Agents',
       'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
-      'Multi-location support',
+      'Enterprise Access Control',
       'Full White-Label Branding',
       'Dedicated Onboarding + Priority Support',
     ],

@@ -116,7 +116,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     operatives: 24,
     consoles: 7,
     description: '24 Smart AI Agents — full suite with business operations, analytics & AI Hub.',
-    bestFor: 'Multi-location franchises, property management firms, enterprise teams.',
+    bestFor: 'Large service teams, property management firms, enterprise operations.',
     highlights: [
       'Everything in Aura Pro',
       'Admin Agent + Quoting Agent',
@@ -128,7 +128,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
       'Advanced Analytics & Demand Forecasting',
-      'Multi-location support',
+      'Enterprise Access Control',
       'Full White-Label Branding',
       'Dedicated Onboarding + Priority Support',
       'Custom AI Training Options',
