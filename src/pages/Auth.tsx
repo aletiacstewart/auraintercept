@@ -722,13 +722,27 @@ export default function Auth() {
                   </p>
                 </div>
 
+                {/* Billing Toggle */}
+                <div className="flex items-center justify-center gap-3">
+                  <span className={`text-xs font-medium transition-colors ${!isAnnualBilling ? 'text-foreground' : 'text-muted-foreground'}`}>Monthly</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsAnnualBilling(!isAnnualBilling)}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${isAnnualBilling ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${isAnnualBilling ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                  <span className={`text-xs font-medium transition-colors ${isAnnualBilling ? 'text-foreground' : 'text-muted-foreground'}`}>Annual</span>
+                  {isAnnualBilling && <span className="text-[10px] text-green-500 font-semibold">Save ~20%</span>}
+                </div>
+
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',       sub: 'Solo operators • Restaurants • Single-location', price: '$197', color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost',      sub: 'HVAC • Plumbing • Field Service',               price: '$497', color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',         sub: 'Growing companies • Multiple technicians',      price: '$997', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite',       sub: 'Multi-Location • Franchise • Enterprise',       price: '$1,997', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', monthlyPrice: '$197',   annualPrice: '$164', color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$497',   annualPrice: '$414', color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$997',   annualPrice: '$831', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Multi-Location • Franchise • Enterprise',       monthlyPrice: '$1,997', annualPrice: '$1,664', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -755,7 +769,10 @@ export default function Auth() {
                         {t.popular && <span className="text-[8px] px-1 py-0.5 rounded gradient-primary text-primary-foreground font-medium shrink-0">Popular</span>}
                         <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
-                      <span className={`text-xs font-bold shrink-0 ml-2 ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>{t.price}<span className="font-normal text-muted-foreground">/mo</span></span>
+                      <span className={`text-xs font-bold shrink-0 ml-2 ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>
+                        {isAnnualBilling ? t.annualPrice : t.monthlyPrice}
+                        <span className="font-normal text-muted-foreground">/mo</span>
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -769,15 +786,17 @@ export default function Auth() {
                         selectedTier === 'connect' ? 'Aura Boost' :
                         selectedTier === 'performance' ? 'Aura Pro' :
                         'Aura Elite'
-                      }</span>
+                      }{isAnnualBilling ? ' (Annual)' : ' (Monthly)'}</span>
                     </p>
                   </div>
                 )}
 
                 {/* Annual Savings Note */}
-                <p className="text-xs text-center text-green-500">
-                  Save ~20% with annual billing
-                </p>
+                {isAnnualBilling && (
+                  <p className="text-xs text-center text-green-500">
+                    💰 Billed annually — save up to $3,994/year
+                  </p>
+                )}
 
                 {/* Customer Info */}
                 <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
