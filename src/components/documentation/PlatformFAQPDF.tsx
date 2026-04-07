@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Core ($197/mo) for solo operators and restaurants, Aura Boost ($497/mo) for small service teams with field operations, Aura Pro ($997/mo) for growing companies with multiple technicians, and Aura Elite ($1,997/mo) for multi-location franchises and enterprise teams. All tiers include voice, SMS, and email communication channels."
+          answer="Choose based on your business needs: Aura Core ($197/mo) for solo operators and restaurants, Aura Boost ($497/mo) for small service teams with field operations, Aura Pro ($997/mo) for growing companies with multiple technicians, and Aura Elite ($1,997/mo) for large service teams and enterprise operations. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 

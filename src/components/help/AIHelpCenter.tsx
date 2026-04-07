@@ -101,7 +101,7 @@ Aura Intercept is an AI-powered business automation platform with 24 Smart AI Ag
 - **Field Navigation** (Boost+): Unified route + ETA + check-in operative. GPS navigation, optimal routing, real-time traffic, arrival time calculations, customer notifications, job status tracking, photo documentation, completion workflows
 
 ### Business Operations Stack
-- **Admin** (Elite): Company settings, employee management, multi-location support, permissions
+- **Admin** (Elite): Company settings, employee management, access control, permissions
 - **Business Finance** (Elite): Unified quoting + invoice + inventory operative. Professional quote generation, pricing management, invoice creation, payment tracking, Stripe integration, stock tracking, reorder alerts, supplier management
 
 ### Analytics & Reports Stack
@@ -111,7 +111,7 @@ Aura Intercept is an AI-powered business automation platform with 24 Smart AI Ag
 - **Aura Core ($197/mo)**: 8 agents, 3 consoles, 10 employees — Solo operators, restaurants, single-location
 - **Aura Boost ($497/mo)**: 12 agents, 5 consoles, 25 employees — HVAC, plumbing, field service
 - **Aura Pro ($997/mo)**: 16 agents, 5 consoles, 50 employees — Growing companies, white-label branding
-- **Aura Elite ($1,997/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Multi-location, enterprise
+- **Aura Elite ($1,997/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Full suite, enterprise
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup

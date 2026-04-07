@@ -70,7 +70,7 @@ const sections: FeatureSection[] = [
     title: 'Ideal For',
     features: [
       { name: 'Business Size', starter: 'Solo / Small', connect: 'Small teams', performance: 'Growing companies', command: 'Enterprise' },
-      { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Multi-location' },
+      { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Full suite enterprise' },
     ],
   },
   {

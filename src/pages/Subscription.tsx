@@ -134,7 +134,7 @@ const TIERS = [
     monthlyPrice: '$1,997',
     annualPrice: '$19,970',
     annualSavings: 'Save ~$3,994',
-    description: 'Multi-location, enterprise',
+    description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
     consoleCount: 7,
