@@ -951,6 +951,9 @@ export default function Index() {
               <p className="text-sm text-muted-foreground">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
               </p>
+              <p className="text-xs text-muted-foreground/70 italic mt-1">
+                All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+              </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1044,6 +1047,9 @@ export default function Index() {
               </div>
             </div>
 
+            <p className="text-[10px] text-white/50 italic text-center mt-4">
+              All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+            </p>
           </div>
         </div>
       </section>

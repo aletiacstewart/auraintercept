@@ -1363,6 +1363,9 @@ const AIAgentGuidesPDF = () => (
           This is separate from the platform subscription. Stripe fees (2.9% + $0.30 per transaction) are 
           charged by Stripe directly to you, not through the platform.
         </Text>
+        <Text style={[styles.noticeText, { marginTop: 4, fontStyle: 'italic', fontSize: 8 }]}>
+          All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+        </Text>
       </View>
 
       <Footer />
