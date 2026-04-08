@@ -11,6 +11,15 @@ interface MermaidDiagramProps {
   description?: string;
 }
 
+interface SvgExportData {
+  svgString: string;
+  width: number;
+  height: number;
+}
+
+const EXPORT_SCALE = 2;
+const EXPORT_BACKGROUND = '#0f172a';
+
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
@@ -68,55 +77,137 @@ const TIER_LEGEND = [
   { label: 'Entry', color: '#0d9488', border: '#2dd4bf' },
 ];
 
-function svgToCanvas(svgString: string): Promise<HTMLCanvasElement> {
+function sanitizeFilename(value: string, extension: string) {
+  const base = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'diagram';
+
+  return `${base}.${extension}`;
+}
+
+function triggerDownload(href: string, filename: string) {
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function parseSvgLength(value: string | null) {
+  if (!value) return null;
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function serializeSvgForExport(svgElement: SVGSVGElement): SvgExportData {
+  const bounds = svgElement.getBoundingClientRect();
+  const viewBox = svgElement.viewBox.baseVal;
+  const width = Math.max(
+    Math.ceil(bounds.width),
+    Math.ceil(viewBox?.width || 0),
+    Math.ceil(parseSvgLength(svgElement.getAttribute('width')) || 0),
+    1,
+  );
+  const height = Math.max(
+    Math.ceil(bounds.height),
+    Math.ceil(viewBox?.height || 0),
+    Math.ceil(parseSvgLength(svgElement.getAttribute('height')) || 0),
+    1,
+  );
+
+  const clone = svgElement.cloneNode(true) as SVGSVGElement;
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  clone.setAttribute('width', `${width}`);
+  clone.setAttribute('height', `${height}`);
+  clone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  if (!clone.getAttribute('viewBox')) {
+    clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  }
+
+  clone.style.maxWidth = 'none';
+  clone.style.backgroundColor = EXPORT_BACKGROUND;
+
+  const svgString = `<?xml version="1.0" encoding="UTF-8"?>${new XMLSerializer().serializeToString(clone)}`;
+
+  return { svgString, width, height };
+}
+
+function svgToCanvas({ svgString, width, height }: SvgExportData): Promise<HTMLCanvasElement> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    if (!ctx) return reject(new Error('No canvas context'));
+
+    if (!ctx) {
+      reject(new Error('No canvas context'));
+      return;
+    }
+
+    const canvasWidth = Math.max(1, Math.round(width * EXPORT_SCALE));
+    const canvasHeight = Math.max(1, Math.round(height * EXPORT_SCALE));
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
-    const img = new Image();
-    img.onload = () => {
-      const scale = 2;
-      canvas.width = img.naturalWidth * scale;
-      canvas.height = img.naturalHeight * scale;
-      ctx.scale(scale, scale);
-      ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
+    const objectUrl = URL.createObjectURL(svgBlob);
+    const image = new Image();
+
+    image.onload = () => {
+      ctx.setTransform(EXPORT_SCALE, 0, 0, EXPORT_SCALE, 0, 0);
+      ctx.fillStyle = EXPORT_BACKGROUND;
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(image, 0, 0, width, height);
+      URL.revokeObjectURL(objectUrl);
       resolve(canvas);
     };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
       reject(new Error('Image load failed'));
     };
-    img.src = url;
+
+    image.src = objectUrl;
   });
 }
 
 export function MermaidDiagram({ chart, title, description }: MermaidDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
-  const [svgContent, setSvgContent] = useState<string>('');
   const uniqueId = useId().replace(/:/g, '');
 
   useEffect(() => {
     const renderDiagram = async () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-        try {
-          const cleanId = `mermaid${uniqueId}`;
-          const { svg } = await mermaid.render(cleanId, chart);
-          containerRef.current.innerHTML = svg;
-          setSvgContent(svg);
-        } catch (error) {
-          console.error('Mermaid render error:', error);
-          containerRef.current.innerHTML = '<p class="text-destructive">Failed to render diagram</p>';
-        }
+      if (!containerRef.current) return;
+
+      containerRef.current.innerHTML = '';
+
+      try {
+        const cleanId = `mermaid${uniqueId}`;
+        const { svg } = await mermaid.render(cleanId, chart);
+        containerRef.current.innerHTML = svg;
+      } catch (error) {
+        console.error('Mermaid render error:', error);
+        containerRef.current.innerHTML = '<p class="text-destructive">Failed to render diagram</p>';
       }
     };
+
     renderDiagram();
   }, [chart, uniqueId]);
+
+  const getExportData = () => {
+    const svgElement = containerRef.current?.querySelector('svg');
+
+    if (!svgElement) {
+      throw new Error('Diagram not ready');
+    }
+
+    return serializeSvgForExport(svgElement);
+  };
 
   const handleCopyCode = async () => {
     await navigator.clipboard.writeText(chart);
@@ -126,65 +217,83 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
   };
 
   const handleDownloadSVG = () => {
-    if (!svgContent) return;
-    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${title.replace(/\s/g, '-').toLowerCase()}.svg`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('SVG downloaded');
+    try {
+      const { svgString } = getExportData();
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      triggerDownload(url, sanitizeFilename(title, 'svg'));
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast.success('SVG downloaded');
+    } catch {
+      toast.error('SVG download failed');
+    }
   };
 
   const handleDownloadPNG = async () => {
-    if (!svgContent) return;
     try {
-      const canvas = await svgToCanvas(svgContent);
+      const canvas = await svgToCanvas(getExportData());
       const pngUrl = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = pngUrl;
-      a.download = `${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.png`;
-      a.click();
+      triggerDownload(pngUrl, sanitizeFilename(title, 'png'));
       toast.success('PNG downloaded');
-    } catch {
+    } catch (error) {
+      console.error('PNG download failed:', error);
       toast.error('PNG download failed - try SVG instead');
     }
   };
 
   const handleDownloadPDF = async () => {
-    if (!svgContent) return;
     try {
-      const canvas = await svgToCanvas(svgContent);
+      const exportData = getExportData();
+      const canvas = await svgToCanvas(exportData);
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
-        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-        unit: 'px',
-        format: [canvas.width / 2 + 40, canvas.height / 2 + 80],
+        orientation: exportData.width >= exportData.height ? 'landscape' : 'portrait',
+        unit: 'pt',
+        format: 'a4',
+        compress: true,
       });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 24;
+      const titleSpace = description ? 42 : 28;
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2 - titleSpace;
+      const scale = Math.min(availableWidth / exportData.width, availableHeight / exportData.height);
+      const imageWidth = exportData.width * scale;
+      const imageHeight = exportData.height * scale;
+      const imageX = (pageWidth - imageWidth) / 2;
+      const imageY = margin + titleSpace;
+
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+      pdf.setTextColor(248, 250, 252);
       pdf.setFontSize(16);
-      pdf.text(title, 20, 24);
+      pdf.text(title, margin, margin);
+
       if (description) {
         pdf.setFontSize(10);
-        pdf.text(description, 20, 40);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text(description, margin, margin + 16);
       }
-      const yOffset = description ? 50 : 34;
-      pdf.addImage(imgData, 'PNG', 20, yOffset, canvas.width / 2, canvas.height / 2);
-      pdf.save(`${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`);
+
+      pdf.addImage(imgData, 'PNG', imageX, imageY, imageWidth, imageHeight);
+      pdf.save(sanitizeFilename(title, 'pdf'));
       toast.success('PDF downloaded');
-    } catch {
+    } catch (error) {
+      console.error('PDF download failed:', error);
       toast.error('PDF download failed - try SVG instead');
     }
   };
 
   return (
     <div className="rounded-lg border border-border bg-card p-4">
-      <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-          {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+          {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={handleCopyCode}>
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             <span className="ml-1 hidden sm:inline">Code</span>
@@ -203,13 +312,12 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
           </Button>
         </div>
       </div>
-      
-      {/* Tier Color Legend */}
-      <div className="flex flex-wrap gap-3 mb-3 px-1">
+
+      <div className="mb-3 flex flex-wrap gap-3 px-1">
         {TIER_LEGEND.map((tier) => (
           <div key={tier.label} className="flex items-center gap-1.5">
             <span
-              className="inline-block w-3 h-3 rounded-sm border"
+              className="inline-block h-3 w-3 rounded-sm border"
               style={{ backgroundColor: tier.color, borderColor: tier.border }}
             />
             <span className="text-xs text-muted-foreground">{tier.label}</span>
@@ -217,9 +325,9 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
         ))}
       </div>
 
-      <div 
-        ref={containerRef} 
-        className="overflow-x-auto bg-background/50 rounded-md p-4 min-h-[200px]"
+      <div
+        ref={containerRef}
+        className="min-h-[200px] overflow-x-auto rounded-md bg-background/50 p-4"
       />
     </div>
   );
