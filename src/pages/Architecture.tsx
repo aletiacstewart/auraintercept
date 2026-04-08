@@ -23,68 +23,68 @@ const diagrams = {
     description: 'High-level view of all 7 consoles, AI Operatives Hub, and platform entry points',
     chart: `flowchart TB
     subgraph Public["Public Access"]
-        Landing[Landing Page]
-        PublicChat[Public Chat Widget]
-        SmartWebsite[AI Smart Website]
+        Landing["Landing Page"]
+        PublicChat["Public Chat\nWidget"]
+        SmartWebsite["AI Smart\nWebsite"]
     end
     
     subgraph CustomerPortal["Customer Portal Console - Core"]
-        CustAuth[Customer Auth]
-        CustDash[Customer Dashboard]
-        CustChat[Message Aura - Text]
-        CustVoice[Talk to Aura - Voice]
-        CustAppts[My Appointments]
+        CustAuth["Customer\nAuth"]
+        CustDash["Customer\nDashboard"]
+        CustChat["Message Aura\nText"]
+        CustVoice["Talk to Aura\nVoice"]
+        CustAppts["My\nAppointments"]
     end
     
     subgraph MainDashboard["Main Dashboard"]
-        Auth[Authentication]
+        Auth["Authentication"]
         
         subgraph AdminViews["Admin Views"]
-            PlatformAdmin[Platform Admin]
-            CompanyAdmin[Company Admin]
+            PlatformAdmin["Platform\nAdmin"]
+            CompanyAdmin["Company\nAdmin"]
         end
         
         subgraph CoreConsoles["Core Consoles - 3"]
-            CustomerPortalC[Customer Portal]
-            OutreachSales[Outreach and Sales Ops]
-            CreativeWeb[Creative and Web Presence]
+            CustomerPortalC["Customer\nPortal"]
+            OutreachSales["Outreach &\nSales Ops"]
+            CreativeWeb["Creative &\nWeb Presence"]
         end
 
         subgraph BoostConsoles["Boost Consoles - +2"]
-            FieldOps[Field Operations]
-            SocialMedia[Social Media Ops]
+            FieldOps["Field\nOperations"]
+            SocialMedia["Social\nMedia Ops"]
         end
 
         subgraph EliteConsoles["Elite Consoles - +2"]
-            BusinessOps[Business Operations]
-            AnalyticsReports[Analytics and Reports]
+            BusinessOps["Business\nOperations"]
+            AnalyticsReports["Analytics &\nReports"]
         end
         
         subgraph AIHub["AI Operatives Hub - All Tiers"]
-            OperativesList[10 Consolidated Operatives]
-            AgentMonitor[Real-Time Monitor]
-            AgentAnalytics[Performance Analytics]
+            OperativesList["10 Consolidated\nOperatives"]
+            AgentMonitor["Real-Time\nMonitor"]
+            AgentAnalytics["Performance\nAnalytics"]
         end
         
         subgraph Modules["Core Modules"]
-            Appointments[Appointments]
-            Customers[Customers]
-            Employees[Employees]
-            Inventory[Inventory]
-            Invoices[Invoices]
-            Quotes[Quotes]
-            Campaigns[Campaigns]
-            Leads[Leads]
-            KnowledgeBase[Knowledge Base]
-            ContentEngine[Content Engine]
-            Settings[Settings]
+            Appointments["Appointments"]
+            Customers["Customers"]
+            Employees["Employees"]
+            Inventory["Inventory"]
+            Invoices["Invoices"]
+            Quotes["Quotes"]
+            Campaigns["Campaigns"]
+            Leads["Leads"]
+            KnowledgeBase["Knowledge\nBase"]
+            ContentEngine["Content\nEngine"]
+            Settings["Settings"]
         end
     end
     
     subgraph TechPortal["Technician Portal"]
-        TechDash[Technician Dashboard]
-        TechJobs[Job Queue]
-        TechFieldOps[Field Operations AI]
+        TechDash["Technician\nDashboard"]
+        TechJobs["Job Queue"]
+        TechFieldOps["Field Ops AI"]
     end
     
     Landing --> Auth
@@ -111,42 +111,42 @@ ${tierStyles}`
     description: 'AI operative distribution: Core (8) / Boost (12) / Pro (16) / Elite (24)',
     chart: `flowchart TB
     subgraph Entry["Customer Entry Points"]
-        Widget[Chat Widget]
-        Console[AI Console]
-        Voice[Voice - SignalWire]
-        SMS[SMS - SignalWire]
+        Widget["Chat Widget"]
+        Console["AI Console"]
+        Voice["Voice\nSignalWire"]
+        SMS["SMS\nSignalWire"]
     end
     
     subgraph Orchestrator["AI Orchestrator"]
-        Router[Message Router]
-        Context[Context Manager]
-        Handoff[Handoff Controller]
+        Router["Message\nRouter"]
+        Context["Context\nManager"]
+        Handoff["Handoff\nController"]
     end
     
     subgraph CoreOps["Core - 5 Operatives / 8 Agents"]
-        Triage[AI Receptionist]
-        CJ["Customer Journey\nBooking - Follow-Up - Review"]
-        CC["Creative Content\nSocial - Blog - Email - SMS"]
-        WP["Web Presence\nSEO - Blog - Site"]
-        OA["Outreach\nLead - Marketing - Campaigns"]
+        Triage["AI\nReceptionist"]
+        CJ["Customer Journey\nBooking / Follow-Up\nReview"]
+        CC["Creative Content\nSocial / Blog\nEmail / SMS"]
+        WP["Web Presence\nSEO / Blog\nSite"]
+        OA["Outreach\nLead / Marketing\nCampaigns"]
     end
     
     subgraph BoostOps["Boost - +2 Operatives / +4 Agents"]
-        Dispatch["Dispatch\nSkills - Zones - Workload"]
-        FN["Field Navigation\nRoute - ETA - Check-In"]
+        Dispatch["Dispatch\nSkills / Zones\nWorkload"]
+        FN["Field Navigation\nRoute / ETA\nCheck-In"]
     end
     
     subgraph ProOps["Pro - +4 Agents"]
-        Campaign[Campaign Agent]
-        OutreachAdv[Outreach - Advanced]
-        SFQ[Social Feed Queue]
-        SA[Social Analytics]
+        Campaign["Campaign\nAgent"]
+        OutreachAdv["Outreach\nAdvanced"]
+        SFQ["Social Feed\nQueue"]
+        SA["Social\nAnalytics"]
     end
     
     subgraph EliteOps["Elite - +3 Operatives / +8 Agents"]
-        Admin["Admin\nSettings - Users - Ops"]
-        BF["Business Finance\nQuoting - Invoice - Inventory"]
-        Analytics["Analytics Intelligence\nInsights - Performance - Revenue - Forecast"]
+        Admin["Admin\nSettings / Users\nOps"]
+        BF["Business Finance\nQuoting / Invoice\nInventory"]
+        Analytics["Analytics Intel\nInsights / Perf\nRevenue / Forecast"]
     end
     
     Entry --> Router
@@ -172,73 +172,83 @@ ${tierStyles}`
     title: 'Cross-Console Handoff Flow',
     description: 'How operatives collaborate across consoles automatically',
     chart: `sequenceDiagram
+    box rgb(13,148,136) Entry
     participant C as Customer
+    end
+    box rgb(5,150,105) Core Agents
     participant T as AI Receptionist
     participant CJ as Customer Journey
+    end
+    box rgb(2,132,199) Boost Agents
     participant D as Dispatch
-    participant FN as Field Navigation
-    participant BF as Business Finance
-    participant AI as Analytics Intelligence
-    participant N as Notification System
+    participant FN as Field Nav
+    end
+    box rgb(180,83,9) Elite Agents
+    participant BF as Biz Finance
+    participant AI as Analytics Intel
+    end
+    box rgb(51,65,85) System
+    participant N as Notifications
+    end
     
-    C->>T: I need someone to fix my AC
-    T->>T: Analyze intent + collect info
+    C->>T: I need AC repair
+    T->>T: Analyze intent
     T->>CJ: Handoff with context
-    CJ->>C: I can help schedule that. When works?
-    C->>CJ: Tomorrow at 2pm
-    CJ->>CJ: Check availability via Calendar Sync
-    CJ->>C: Confirmed for tomorrow 2pm
-    CJ->>D: Trigger dispatch on booking
-    D->>D: Find best technician by skills + zone
-    D->>FN: Assign route and ETA
-    FN->>N: Trigger SMS/Email notifications
-    N->>C: Confirmation via Resend/SignalWire
+    CJ->>C: When works for you?
+    C->>CJ: Tomorrow 2pm
+    CJ->>CJ: Check calendar
+    CJ->>C: Confirmed 2pm
+    CJ->>D: Trigger dispatch
+    D->>D: Find best tech
+    D->>FN: Assign route + ETA
+    FN->>N: Send notifications
+    N->>C: SMS/Email confirm
     Note over FN,BF: Job completed
-    FN->>BF: Complete triggers invoice
-    BF->>AI: Revenue data flows to analytics
-    CJ->>C: Follow-up + review request`
+    FN->>BF: Trigger invoice
+    BF->>AI: Revenue data
+    CJ->>C: Follow-up + review`
   },
   consoles: {
     title: '7 Control Centers + AI Operatives Hub',
     description: 'Console architecture with tier-based access and operative mapping',
     chart: `flowchart TB
     subgraph CoreTier["Core - 3 Consoles"]
-        CP["Customer Portal\nAI Receptionist + Customer Journey"]
-        OS["Outreach and Sales Ops\nOutreach Agent"]
-        CW["Creative and Web Presence\nCreative Content + Web Presence"]
+        CP["Customer Portal\nReceptionist +\nCustomer Journey"]
+        OS["Outreach & Sales\nOutreach Agent"]
+        CW["Creative & Web\nCreative Content +\nWeb Presence"]
     end
     
     subgraph BoostTier["Boost - +2 Consoles"]
-        FO["Field Operations\nDispatch + Field Navigation"]
-        SM["Social Media Ops\nCreative Content Agent"]
+        FO["Field Operations\nDispatch +\nField Navigation"]
+        SM["Social Media Ops\nCreative Content"]
     end
     
     subgraph EliteTier["Elite - +2 Consoles"]
-        BO["Business Operations\nAdmin + Business Finance"]
-        AR["Analytics and Reports\nAnalytics Intelligence"]
+        BO["Business Ops\nAdmin +\nBiz Finance"]
+        AR["Analytics & Reports\nAnalytics Intel"]
     end
     
     subgraph Hub["All Tiers"]
-        AIHub["AI Operatives Hub\nManagement Interface"]
+        AIHub["AI Operatives Hub\nManagement"]
     end
     
     subgraph SharedUI["Shared Components"]
-        ChatBubble[ChatBubble]
-        FloatingInput[FloatingInput]
-        QuickActions[QuickActionGrid]
-        WelcomeScreen[WelcomeScreen]
-        GlassHeader[GlassHeader]
+        ChatBubble["ChatBubble"]
+        FloatingInput["FloatingInput"]
+        QuickActions["QuickAction\nGrid"]
+        WelcomeScreen["Welcome\nScreen"]
+        GlassHeader["GlassHeader"]
     end
     
     subgraph Hooks["Hook Layer"]
-        useMultiAgent[useMultiAgentChat]
-        useAIAgent[useAIAgent]
-        useOrchestrator[useAIAgentOrchestrator]
+        useMultiAgent["useMultiAgent\nChat"]
+        useAIAgent["useAIAgent"]
+        useOrchestrator["useAIAgent\nOrchestrator"]
     end
     
     subgraph Backend["Edge Functions"]
-        ChatFn[ai-agent-chat]
-        OrchestratorFn[ai-orchestrator]
+        ChatFn["ai-agent-chat"]
+        OrchestratorFn["ai-orchestrator"]
     end
     
     CoreTier --> SharedUI
@@ -261,41 +271,41 @@ ${tierStyles}`
     title: 'User Roles & Access Flow',
     description: 'Authentication and role-based access control',
     chart: `flowchart TD
-    Start([User Visits Platform]) --> AuthCheck{Authenticated?}
+    Start(["User Visits\nPlatform"]) --> AuthCheck{"Authenticated?"}
     
-    AuthCheck -->|No| PublicRoutes[Public Routes Only]
-    AuthCheck -->|Yes| RoleCheck{Check User Role}
+    AuthCheck -->|No| PublicRoutes["Public Routes"]
+    AuthCheck -->|Yes| RoleCheck{"Check Role"}
     
-    PublicRoutes --> Landing[Landing Page]
-    PublicRoutes --> PublicChat[Public Chat]
-    PublicRoutes --> CustAuth[Customer Auth]
-    PublicRoutes --> SmartWeb[AI Smart Website]
+    PublicRoutes --> Landing["Landing Page"]
+    PublicRoutes --> PublicChat["Public Chat"]
+    PublicRoutes --> CustAuth["Customer Auth"]
+    PublicRoutes --> SmartWeb["AI Smart\nWebsite"]
     
-    RoleCheck -->|platform_admin| PA[Platform Admin Dashboard]
-    RoleCheck -->|company_admin| CA[Company Admin Dashboard]
-    RoleCheck -->|employee| EmpCheck{Job Type?}
-    RoleCheck -->|customer| Cust[Customer Portal]
+    RoleCheck -->|platform_admin| PA["Platform Admin\nDashboard"]
+    RoleCheck -->|company_admin| CA["Company Admin\nDashboard"]
+    RoleCheck -->|employee| EmpCheck{"Job Type?"}
+    RoleCheck -->|customer| Cust["Customer\nPortal"]
     
-    EmpCheck -->|technician| Tech[Technician Portal]
-    EmpCheck -->|office| Emp[Employee Dashboard]
+    EmpCheck -->|technician| Tech["Technician\nPortal"]
+    EmpCheck -->|office| Emp["Employee\nDashboard"]
     
-    PA --> AllCompanies[Manage All Companies]
-    PA --> PlatformAnalytics[Platform Analytics]
-    PA --> SystemSettings[System Settings]
-    PA --> PlatformResources[Platform Resources]
+    PA --> AllCompanies["Manage All\nCompanies"]
+    PA --> PlatformAnalytics["Platform\nAnalytics"]
+    PA --> SystemSettings["System\nSettings"]
+    PA --> PlatformResources["Platform\nResources"]
     
-    CA --> CompanySettings[Company Settings]
-    CA --> ManageEmployees[Manage Employees]
-    CA --> AIHub[AI Operatives Hub]
-    CA --> Consoles7[7 Control Centers]
-    CA --> Reports[Analytics and Reports]
+    CA --> CompanySettings["Company\nSettings"]
+    CA --> ManageEmployees["Manage\nEmployees"]
+    CA --> AIHub["AI Operatives\nHub"]
+    CA --> Consoles7["7 Control\nCenters"]
+    CA --> Reports["Analytics &\nReports"]
     
-    Tech --> JobQueue[Job Queue]
-    Tech --> TechCalendar[Calendar]
-    Tech --> FieldOpsAI[Field Operations AI]
+    Tech --> JobQueue["Job Queue"]
+    Tech --> TechCalendar["Calendar"]
+    Tech --> FieldOpsAI["Field Ops AI"]
     
-    Cust --> MyAppts[My Appointments]
-    Cust --> CustAI[Message Aura / Talk to Aura]
+    Cust --> MyAppts["My\nAppointments"]
+    Cust --> CustAI["Message Aura\nTalk to Aura"]
 
     class Start,AuthCheck,RoleCheck,EmpCheck system
     class PublicRoutes,Landing,PublicChat,CustAuth,SmartWeb entry
@@ -311,31 +321,31 @@ ${tierStyles}`
     description: 'How 10 operatives connect across 7 consoles end-to-end',
     chart: `flowchart LR
     subgraph CustomerPortal["Customer Portal"]
-        Triage[AI Receptionist]
-        CJ[Customer Journey]
+        Triage["AI\nReceptionist"]
+        CJ["Customer\nJourney"]
     end
 
-    subgraph OutreachConsole["Outreach and Sales"]
-        Outreach[Outreach Agent]
+    subgraph OutreachConsole["Outreach & Sales"]
+        Outreach["Outreach\nAgent"]
     end
 
-    subgraph CreativeConsole["Creative and Web"]
-        Creative[Creative Content]
-        WebPresence[Web Presence]
+    subgraph CreativeConsole["Creative & Web"]
+        Creative["Creative\nContent"]
+        WebPresence["Web\nPresence"]
     end
 
     subgraph FieldOpsConsole["Field Operations"]
-        Dispatch[Dispatch]
-        FieldNav[Field Navigation]
+        Dispatch["Dispatch"]
+        FieldNav["Field\nNavigation"]
     end
 
-    subgraph BusinessConsole["Business Operations"]
-        Admin[Admin]
-        BizFinance[Business Finance]
+    subgraph BusinessConsole["Business Ops"]
+        Admin["Admin"]
+        BizFinance["Business\nFinance"]
     end
 
-    subgraph AnalyticsConsole["Analytics and Reports"]
-        AnalyticsInt[Analytics Intelligence]
+    subgraph AnalyticsConsole["Analytics & Reports"]
+        AnalyticsInt["Analytics\nIntelligence"]
     end
 
     Triage --> CJ
@@ -411,83 +421,83 @@ ${tierStyles}`
     chart: `journey
     title Customer Journey
     section Discovery
-      Visit website or Smart Website: 5: Customer
+      Visit website: 5: Customer
       Explore services: 4: Customer
-      Start chat via Widget: 5: Customer
+      Start chat: 5: Customer
     section Booking
-      AI Receptionist greets: 5: Customer, Triage
-      Customer Journey books: 5: Customer, CustomerJourney
-      Calendar sync confirms: 5: System
-      Receive confirmation: 5: Customer, System
+      Receptionist greets: 5: Customer, Triage
+      Journey books appt: 5: Customer, CJ
+      Calendar confirms: 5: System
+      Get confirmation: 5: Customer, System
     section Service Day
-      Get reminder via SMS and Email: 5: System
-      Dispatch assigns technician: 4: Dispatch
-      Field Navigation routes tech: 5: FieldNav
-      Tech checks in on arrival: 5: Tech
-      Service completed: 5: Tech
+      SMS/Email reminder: 5: System
+      Dispatch assigns tech: 4: Dispatch
+      Field Nav routes: 5: FieldNav
+      Tech checks in: 5: Tech
+      Service done: 5: Tech
     section Post-Service
-      Follow-up sent: 5: CustomerJourney
-      Review request: 4: CustomerJourney
-      Leave Google or Yelp review: 4: Customer
-      Win-back campaign later: 5: Outreach`
+      Follow-up sent: 5: CJ
+      Review request: 4: CJ
+      Leave review: 4: Customer
+      Win-back campaign: 5: Outreach`
   },
   edgeFunctions: {
     title: 'Edge Functions Architecture',
     description: 'Backend serverless functions and external integrations',
     chart: `flowchart LR
     subgraph Frontend["Frontend"]
-        App[React App]
-        Widget[Chat Widget]
-        SmartWeb[Smart Website]
+        App["React App"]
+        Widget["Chat Widget"]
+        SmartWeb["Smart Website"]
     end
     
     subgraph EdgeFunctions["Edge Functions"]
         subgraph AI["AI Functions"]
-            AIChat[ai-agent-chat]
-            AIOrch[ai-orchestrator]
-            ContentGen[generate-content]
+            AIChat["ai-agent-chat"]
+            AIOrch["ai-orchestrator"]
+            ContentGen["generate-content"]
         end
         
         subgraph Comms["Communication"]
-            SendEmail[send-appointment-email]
-            SendSMS[send-appointment-sms]
-            Reminders[appointment-reminders]
+            SendEmail["send-appt\nemail"]
+            SendSMS["send-appt\nsms"]
+            Reminders["appt-reminders"]
         end
         
         subgraph Integrations["Integrations"]
-            Stripe[create-checkout]
-            GoogleCal[google-calendar-sync]
-            VoiceHandler[voice-handler]
-            VoiceSWAIG[voice-swaig]
-            SocialPublish[publish-social-content]
+            Stripe["create-checkout"]
+            GoogleCal["google-cal\nsync"]
+            VoiceHandler["voice-handler"]
+            VoiceSWAIG["voice-swaig"]
+            SocialPublish["publish-social\ncontent"]
         end
         
         subgraph VoiceAI["Voice AI"]
-            ElevenLabs[elevenlabs-tts]
-            VoiceClone[elevenlabs-clone-voice]
+            ElevenLabs["elevenlabs-tts"]
+            VoiceClone["elevenlabs\nclone-voice"]
         end
         
-        subgraph WidgetAPI["Widget and Web"]
-            WidgetAPI2[widget-api]
-            ChatWidget[chat-widget]
-            SmartWebAPI[smart-website-api]
+        subgraph WidgetAPI["Widget & Web"]
+            WidgetAPI2["widget-api"]
+            ChatWidget["chat-widget"]
+            SmartWebAPI["smart-website\napi"]
         end
         
         subgraph Subscription["Billing"]
-            CheckSub[check-subscription]
-            CreateCheckout[create-checkout-session]
-            StripePortal[stripe-customer-portal]
+            CheckSub["check-sub"]
+            CreateCheckout["create-checkout\nsession"]
+            StripePortal["stripe-customer\nportal"]
         end
     end
     
     subgraph External["External Services"]
-        Resend[Resend Email]
-        SignalWireExt[SignalWire - Voice and SMS]
-        StripeExt[Stripe - Payments]
-        ElevenLabsExt[ElevenLabs - Voice AI]
-        GoogleExt[Google Calendar]
-        SocialAPIs[Social Media APIs]
-        TavilyExt[Tavily - AI Research]
+        Resend["Resend\nEmail"]
+        SignalWireExt["SignalWire\nVoice & SMS"]
+        StripeExt["Stripe\nPayments"]
+        ElevenLabsExt["ElevenLabs\nVoice AI"]
+        GoogleExt["Google\nCalendar"]
+        SocialAPIs["Social Media\nAPIs"]
+        TavilyExt["Tavily\nAI Research"]
     end
     
     Frontend --> EdgeFunctions

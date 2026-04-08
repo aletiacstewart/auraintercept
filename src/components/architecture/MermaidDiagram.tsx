@@ -30,13 +30,43 @@ mermaid.initialize({
     clusterBorder: '#334155',
     titleColor: '#f8fafc',
     edgeLabelBackground: '#1e293b',
+    actorTextColor: '#f8fafc',
+    actorBkg: '#1e293b',
+    actorBorder: '#64748b',
+    signalColor: '#f8fafc',
+    signalTextColor: '#f8fafc',
+    noteBkgColor: '#334155',
+    noteTextColor: '#f8fafc',
+    noteBorderColor: '#64748b',
   },
   flowchart: {
     useMaxWidth: true,
     htmlLabels: false,
     curve: 'basis',
+    nodeSpacing: 30,
+    rankSpacing: 50,
+    wrappingWidth: 160,
+  },
+  sequence: {
+    useMaxWidth: true,
+    wrap: true,
+    wrapPadding: 10,
+    width: 180,
+    boxMargin: 8,
+    noteMargin: 10,
+    messageMargin: 30,
   },
 });
+
+const TIER_LEGEND = [
+  { label: 'Core', color: '#059669', border: '#34d399' },
+  { label: 'Boost', color: '#0284c7', border: '#38bdf8' },
+  { label: 'Pro', color: '#7c3aed', border: '#a78bfa' },
+  { label: 'Elite', color: '#b45309', border: '#f59e0b' },
+  { label: 'System', color: '#334155', border: '#64748b' },
+  { label: 'External', color: '#be123c', border: '#fb7185' },
+  { label: 'Entry', color: '#0d9488', border: '#2dd4bf' },
+];
 
 function svgToCanvas(svgString: string): Promise<HTMLCanvasElement> {
   return new Promise((resolve, reject) => {
@@ -118,7 +148,7 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
       a.click();
       toast.success('PNG downloaded');
     } catch {
-      toast.error('PNG download failed — try SVG instead');
+      toast.error('PNG download failed - try SVG instead');
     }
   };
 
@@ -143,18 +173,18 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
       pdf.save(`${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`);
       toast.success('PDF downloaded');
     } catch {
-      toast.error('PDF download failed — try SVG instead');
+      toast.error('PDF download failed - try SVG instead');
     }
   };
 
   return (
     <div className="rounded-lg border border-border bg-card p-4">
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
         <div>
           <h3 className="text-lg font-semibold text-foreground">{title}</h3>
           {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleCopyCode}>
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             <span className="ml-1 hidden sm:inline">Code</span>
@@ -173,6 +203,20 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
           </Button>
         </div>
       </div>
+      
+      {/* Tier Color Legend */}
+      <div className="flex flex-wrap gap-3 mb-3 px-1">
+        {TIER_LEGEND.map((tier) => (
+          <div key={tier.label} className="flex items-center gap-1.5">
+            <span
+              className="inline-block w-3 h-3 rounded-sm border"
+              style={{ backgroundColor: tier.color, borderColor: tier.border }}
+            />
+            <span className="text-xs text-muted-foreground">{tier.label}</span>
+          </div>
+        ))}
+      </div>
+
       <div 
         ref={containerRef} 
         className="overflow-x-auto bg-background/50 rounded-md p-4 min-h-[200px]"
