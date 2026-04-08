@@ -7,6 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Network } from 'lucide-react';
 
+// Shared classDef block for flowcharts
+const tierStyles = `
+    classDef core fill:#059669,stroke:#34d399,color:#fff,stroke-width:2px
+    classDef boost fill:#0284c7,stroke:#38bdf8,color:#fff,stroke-width:2px
+    classDef pro fill:#7c3aed,stroke:#a78bfa,color:#fff,stroke-width:2px
+    classDef elite fill:#b45309,stroke:#f59e0b,color:#fff,stroke-width:2px
+    classDef system fill:#334155,stroke:#64748b,color:#e2e8f0,stroke-width:2px
+    classDef external fill:#be123c,stroke:#fb7185,color:#fff,stroke-width:2px
+    classDef entry fill:#0d9488,stroke:#2dd4bf,color:#fff,stroke-width:2px`;
+
 const diagrams = {
   overview: {
     title: 'Platform Architecture Overview',
@@ -18,7 +28,7 @@ const diagrams = {
         SmartWebsite[AI Smart Website]
     end
     
-    subgraph CustomerPortal["Customer Portal Console - Core+"]
+    subgraph CustomerPortal["Customer Portal Console - Core"]
         CustAuth[Customer Auth]
         CustDash[Customer Dashboard]
         CustChat[Message Aura - Text]
@@ -83,7 +93,18 @@ const diagrams = {
     Auth --> PlatformAdmin
     Auth --> CompanyAdmin
     Auth --> TechDash
-    CustAuth --> CustDash`
+    CustAuth --> CustDash
+
+    class Landing,PublicChat,SmartWebsite entry
+    class CustAuth,CustDash,CustChat,CustVoice,CustAppts core
+    class Auth,PlatformAdmin,CompanyAdmin system
+    class CustomerPortalC,OutreachSales,CreativeWeb core
+    class FieldOps,SocialMedia boost
+    class BusinessOps,AnalyticsReports elite
+    class OperativesList,AgentMonitor,AgentAnalytics pro
+    class Appointments,Customers,Employees,Inventory,Invoices,Quotes,Campaigns,Leads,KnowledgeBase,ContentEngine,Settings system
+    class TechDash,TechJobs,TechFieldOps boost
+${tierStyles}`
   },
   agents: {
     title: '10 Consolidated Operatives (24 Agents)',
@@ -137,7 +158,15 @@ const diagrams = {
     Handoff --> OA
     Handoff --> Dispatch
     Handoff --> BF
-    Handoff --> Analytics`
+    Handoff --> Analytics
+
+    class Widget,Console,Voice,SMS entry
+    class Router,Context,Handoff system
+    class Triage,CJ,CC,WP,OA core
+    class Dispatch,FN boost
+    class Campaign,OutreachAdv,SFQ,SA pro
+    class Admin,BF,Analytics elite
+${tierStyles}`
   },
   handoffs: {
     title: 'Cross-Console Handoff Flow',
@@ -217,7 +246,16 @@ const diagrams = {
     EliteTier --> SharedUI
     Hub --> SharedUI
     SharedUI --> Hooks
-    Hooks --> Backend`
+    Hooks --> Backend
+
+    class CP,OS,CW core
+    class FO,SM boost
+    class BO,AR elite
+    class AIHub pro
+    class ChatBubble,FloatingInput,QuickActions,WelcomeScreen,GlassHeader system
+    class useMultiAgent,useAIAgent,useOrchestrator system
+    class ChatFn,OrchestratorFn external
+${tierStyles}`
   },
   roles: {
     title: 'User Roles & Access Flow',
@@ -257,7 +295,16 @@ const diagrams = {
     Tech --> FieldOpsAI[Field Operations AI]
     
     Cust --> MyAppts[My Appointments]
-    Cust --> CustAI[Message Aura / Talk to Aura]`
+    Cust --> CustAI[Message Aura / Talk to Aura]
+
+    class Start,AuthCheck,RoleCheck,EmpCheck system
+    class PublicRoutes,Landing,PublicChat,CustAuth,SmartWeb entry
+    class PA,AllCompanies,PlatformAnalytics,SystemSettings,PlatformResources elite
+    class CA,CompanySettings,ManageEmployees,AIHub,Consoles7,Reports core
+    class Tech,JobQueue,TechCalendar,FieldOpsAI boost
+    class Emp system
+    class Cust,MyAppts,CustAI core
+${tierStyles}`
   },
   operativeFlow: {
     title: 'Operative Network Flow',
@@ -300,7 +347,15 @@ const diagrams = {
     FieldNav --> BizFinance
     BizFinance --> AnalyticsInt
     Admin --> BizFinance
-    Outreach --> AnalyticsInt`
+    Outreach --> AnalyticsInt
+
+    class Triage,CJ core
+    class Outreach core
+    class Creative,WebPresence core
+    class Dispatch,FieldNav boost
+    class Admin,BizFinance elite
+    class AnalyticsInt elite
+${tierStyles}`
   },
   database: {
     title: 'Database Entity Relationships',
@@ -407,7 +462,7 @@ const diagrams = {
             SocialPublish[publish-social-content]
         end
         
-        subgraph Voice["Voice AI"]
+        subgraph VoiceAI["Voice AI"]
             ElevenLabs[elevenlabs-tts]
             VoiceClone[elevenlabs-clone-voice]
         end
@@ -436,7 +491,17 @@ const diagrams = {
     end
     
     Frontend --> EdgeFunctions
-    EdgeFunctions --> External`
+    EdgeFunctions --> External
+
+    class App,Widget,SmartWeb entry
+    class AIChat,AIOrch,ContentGen pro
+    class SendEmail,SendSMS,Reminders core
+    class Stripe,GoogleCal,VoiceHandler,VoiceSWAIG,SocialPublish boost
+    class ElevenLabs,VoiceClone boost
+    class WidgetAPI2,ChatWidget,SmartWebAPI core
+    class CheckSub,CreateCheckout,StripePortal elite
+    class Resend,SignalWireExt,StripeExt,ElevenLabsExt,GoogleExt,SocialAPIs,TavilyExt external
+${tierStyles}`
   }
 };
 

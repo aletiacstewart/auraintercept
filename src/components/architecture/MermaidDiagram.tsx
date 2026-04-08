@@ -15,8 +15,28 @@ interface MermaidDiagramProps {
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
-  securityLevel: 'strict',
+  securityLevel: 'loose',
   fontFamily: 'inherit',
+  themeVariables: {
+    primaryColor: '#1e3a5f',
+    primaryTextColor: '#f8fafc',
+    primaryBorderColor: '#38bdf8',
+    lineColor: '#64748b',
+    secondaryColor: '#1e293b',
+    tertiaryColor: '#0f172a',
+    background: '#0f172a',
+    mainBkg: '#1e293b',
+    nodeBorder: '#475569',
+    clusterBkg: '#0f172a',
+    clusterBorder: '#334155',
+    titleColor: '#f8fafc',
+    edgeLabelBackground: '#1e293b',
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'basis',
+  },
 });
 
 export function MermaidDiagram({ chart, title, description }: MermaidDiagramProps) {
