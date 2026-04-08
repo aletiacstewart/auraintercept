@@ -125,15 +125,15 @@ ${tierStyles}`
     
     subgraph CoreOps["Core - 5 Operatives / 8 Agents"]
         Triage[AI Receptionist]
-        CJ[Customer Journey<br/>Booking - Follow-Up - Review]
-        CC[Creative Content<br/>Social - Blog - Email - SMS]
-        WP[Web Presence<br/>SEO - Blog - Site]
-        OA[Outreach<br/>Lead - Marketing - Campaigns]
+        CJ["Customer Journey\nBooking - Follow-Up - Review"]
+        CC["Creative Content\nSocial - Blog - Email - SMS"]
+        WP["Web Presence\nSEO - Blog - Site"]
+        OA["Outreach\nLead - Marketing - Campaigns"]
     end
     
     subgraph BoostOps["Boost - +2 Operatives / +4 Agents"]
-        Dispatch[Dispatch<br/>Skills - Zones - Workload]
-        FN[Field Navigation<br/>Route - ETA - Check-In]
+        Dispatch["Dispatch\nSkills - Zones - Workload"]
+        FN["Field Navigation\nRoute - ETA - Check-In"]
     end
     
     subgraph ProOps["Pro - +4 Agents"]
@@ -144,9 +144,9 @@ ${tierStyles}`
     end
     
     subgraph EliteOps["Elite - +3 Operatives / +8 Agents"]
-        Admin[Admin<br/>Settings - Users - Ops]
-        BF[Business Finance<br/>Quoting - Invoice - Inventory]
-        Analytics[Analytics Intelligence<br/>Insights - Performance - Revenue - Forecast]
+        Admin["Admin\nSettings - Users - Ops"]
+        BF["Business Finance\nQuoting - Invoice - Inventory"]
+        Analytics["Analytics Intelligence\nInsights - Performance - Revenue - Forecast"]
     end
     
     Entry --> Router
@@ -203,23 +203,23 @@ ${tierStyles}`
     description: 'Console architecture with tier-based access and operative mapping',
     chart: `flowchart TB
     subgraph CoreTier["Core - 3 Consoles"]
-        CP[Customer Portal<br/>AI Receptionist + Customer Journey]
-        OS[Outreach and Sales Ops<br/>Outreach Agent]
-        CW[Creative and Web Presence<br/>Creative Content + Web Presence]
+        CP["Customer Portal\nAI Receptionist + Customer Journey"]
+        OS["Outreach and Sales Ops\nOutreach Agent"]
+        CW["Creative and Web Presence\nCreative Content + Web Presence"]
     end
     
     subgraph BoostTier["Boost - +2 Consoles"]
-        FO[Field Operations<br/>Dispatch + Field Navigation]
-        SM[Social Media Ops<br/>Creative Content Agent]
+        FO["Field Operations\nDispatch + Field Navigation"]
+        SM["Social Media Ops\nCreative Content Agent"]
     end
     
     subgraph EliteTier["Elite - +2 Consoles"]
-        BO[Business Operations<br/>Admin + Business Finance]
-        AR[Analytics and Reports<br/>Analytics Intelligence]
+        BO["Business Operations\nAdmin + Business Finance"]
+        AR["Analytics and Reports\nAnalytics Intelligence"]
     end
     
     subgraph Hub["All Tiers"]
-        AIHub[AI Operatives Hub<br/>Management Interface]
+        AIHub["AI Operatives Hub\nManagement Interface"]
     end
     
     subgraph SharedUI["Shared Components"]

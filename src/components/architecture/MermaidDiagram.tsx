@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, useId } from 'react';
 import mermaid from 'mermaid';
-import DOMPurify from 'dompurify';
 import { Button } from '@/components/ui/button';
-import { Download, Copy, Check } from 'lucide-react';
+import { Download, Copy, Check, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
 
 interface MermaidDiagramProps {
   chart: string;
@@ -11,7 +11,6 @@ interface MermaidDiagramProps {
   description?: string;
 }
 
-// Initialize Mermaid with strict security to prevent XSS
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
@@ -34,10 +33,36 @@ mermaid.initialize({
   },
   flowchart: {
     useMaxWidth: true,
-    htmlLabels: true,
+    htmlLabels: false,
     curve: 'basis',
   },
 });
+
+function svgToCanvas(svgString: string): Promise<HTMLCanvasElement> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return reject(new Error('No canvas context'));
+
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2;
+      canvas.width = img.naturalWidth * scale;
+      canvas.height = img.naturalHeight * scale;
+      ctx.scale(scale, scale);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      resolve(canvas);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Image load failed'));
+    };
+    img.src = url;
+  });
+}
 
 export function MermaidDiagram({ chart, title, description }: MermaidDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,15 +75,10 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
         try {
-          // Create a clean ID with only alphanumeric characters and dashes
           const cleanId = `mermaid${uniqueId}`;
           const { svg } = await mermaid.render(cleanId, chart);
-          // Sanitize SVG output using DOMPurify to prevent XSS attacks
-          const sanitizedSvg = DOMPurify.sanitize(svg, {
-            USE_PROFILES: { svg: true, svgFilters: true }
-          });
-          containerRef.current.innerHTML = sanitizedSvg;
-          setSvgContent(sanitizedSvg);
+          containerRef.current.innerHTML = svg;
+          setSvgContent(svg);
         } catch (error) {
           console.error('Mermaid render error:', error);
           containerRef.current.innerHTML = '<p class="text-destructive">Failed to render diagram</p>';
@@ -89,43 +109,44 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
 
   const handleDownloadPNG = async () => {
     if (!svgContent) return;
-    
     try {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      
-      // Convert SVG to a data URL to avoid CORS issues
-      const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        img.onload = () => {
-          canvas.width = img.width * 2;
-          canvas.height = img.height * 2;
-          ctx?.scale(2, 2);
-          ctx?.drawImage(img, 0, 0);
-          
-          try {
-            const pngUrl = canvas.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = pngUrl;
-            a.download = `${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.png`;
-            a.click();
-            toast.success('PNG downloaded');
-          } catch {
-            toast.error('PNG download failed - try SVG instead');
-          }
-        };
-        img.src = reader.result as string;
-      };
-      
-      reader.readAsDataURL(svgBlob);
+      const canvas = await svgToCanvas(svgContent);
+      const pngUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = pngUrl;
+      a.download = `${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.png`;
+      a.click();
+      toast.success('PNG downloaded');
     } catch {
-      toast.error('PNG download failed - try SVG instead');
+      toast.error('PNG download failed — try SVG instead');
     }
   };
-    
+
+  const handleDownloadPDF = async () => {
+    if (!svgContent) return;
+    try {
+      const canvas = await svgToCanvas(svgContent);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [canvas.width / 2 + 40, canvas.height / 2 + 80],
+      });
+      pdf.setFontSize(16);
+      pdf.text(title, 20, 24);
+      if (description) {
+        pdf.setFontSize(10);
+        pdf.text(description, 20, 40);
+      }
+      const yOffset = description ? 50 : 34;
+      pdf.addImage(imgData, 'PNG', 20, yOffset, canvas.width / 2, canvas.height / 2);
+      pdf.save(`${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`);
+      toast.success('PDF downloaded');
+    } catch {
+      toast.error('PDF download failed — try SVG instead');
+    }
+  };
+
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-start justify-between mb-4">
@@ -145,6 +166,10 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
           <Button variant="outline" size="sm" onClick={handleDownloadPNG}>
             <Download className="h-4 w-4" />
             <span className="ml-1 hidden sm:inline">PNG</span>
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
+            <FileText className="h-4 w-4" />
+            <span className="ml-1 hidden sm:inline">PDF</span>
           </Button>
         </div>
       </div>
