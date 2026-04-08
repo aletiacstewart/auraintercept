@@ -1,62 +1,36 @@
 
 
-# Remove Multi-Location Claims + Test AI Agent Flow
+# Fix Architecture Diagrams: Render, Label, and Color-Code
 
-## Part 1: Remove "Multi-location support" from Elite tier (13 files)
+## Problem
+The architecture diagrams on `/dashboard/architecture` are rendering blank. Two root causes:
+1. **Mermaid `securityLevel: 'strict'`** blocks HTML labels (`<br/>`) — nodes render empty
+2. **No color coding** — diagrams lack visual distinction by platform category/tier
 
-Strip all multi-location/franchise references from the Elite tier description since this feature is not implemented. Replace with accurate language about the full agent suite.
+## Solution
 
-### Files to update:
+### 1. Fix MermaidDiagram.tsx rendering
+- Change `securityLevel` from `'strict'` to `'loose'` so HTML labels (`<br/>`) render correctly
+- Add dark-theme-compatible `themeVariables` for better contrast and readability
 
-1. **`src/lib/documentationConfig.ts`** (lines 119, 131)
-   - Remove `'Multi-location support'` from highlights array
-   - Change `bestFor` from "Multi-location franchises, property management firms, enterprise teams" to "Large service teams, property management firms, enterprise operations"
+### 2. Color-code all 9 diagrams in Architecture.tsx by category
+Apply `classDef` styles to every diagram using the platform's tier/category colors:
+- **Core** — green (`#059669` fill, `#34d399` border)
+- **Boost** — blue/sky (`#0284c7` fill, `#38bdf8` border)
+- **Pro** — purple (`#7c3aed` fill, `#a78bfa` border)
+- **Elite** — amber (`#b45309` fill, `#f59e0b` border)
+- **System/Shared** — slate (`#334155` fill, `#64748b` border)
+- **External** — rose (`#be123c` fill, `#fb7185` border)
+- **Entry/Public** — teal (`#0d9488` fill, `#2dd4bf` border)
 
-2. **`src/lib/helpContentConfig.ts`** (line 430)
-   - Remove `'Multi-location support'` from command tier highlights
+Each node gets a `classDef` class assignment so the tier it belongs to is instantly visible.
 
-3. **`src/pages/Index.tsx`** (lines 69, 902-903)
-   - Admin Agent description: change "multi-location support" to "access control"
-   - Elite card: change "Multi-Location / Enterprise" to "Full Suite / Enterprise" and update bestFor text
+### 3. Ensure all nodes have clear text labels
+- Replace any unlabeled or ambiguous nodes with descriptive text
+- Verify every subgraph has a readable title
+- Add `class` assignments to every node in every diagram
 
-4. **`src/pages/Auth.tsx`** (line 746)
-   - Change Elite subtitle from "Multi-Location • Franchise • Enterprise" to "Full Suite • Enterprise • Unlimited"
-
-5. **`src/pages/DemoAccounts.tsx`** (line 71)
-   - Change businessType from "Multi-Location Enterprise" to "Enterprise Operations"
-
-6. **`src/pages/PlatformGuides.tsx`** (line 381)
-   - Remove "multi-location" from Admin Agent step description
-
-7. **`src/components/audit/types.ts`** (lines 9, 55-57, 483)
-   - Update ELITE comment, remove multi_location audit question, update Elite description
-
-8. **`src/components/landing/PricingComparisonTable.tsx`** (line 28)
-   - Admin Agent tooltip: remove "multi-location support"
-
-9. **`src/components/documentation/SalesPitchDataPDF.tsx`** (lines 561, 564, 734, 807)
-   - Remove multi-location references from sales pitch content
-
-10. **`src/pages/Subscription.tsx`** — verify no multi-location references (likely clean)
-
-## Part 2: Test AI Agent Flow End-to-End
-
-Run the `ai-agent-health` endpoint and then invoke `ai-agent-chat` with test messages for each of the 10 consolidated operatives to verify:
-- Health check passes (DB connectivity, agent configs, API keys)
-- Each operative responds correctly
-- Tier gating works (locked agents return proper 403)
-- Handoff routing works (triage → customer_journey → dispatch chain)
-- Legacy agent name normalization works
-
-### Test sequence:
-1. Call `ai-agent-health` with the demo company ID
-2. Call `ai-agent-chat` for each of the 10 operatives: `triage`, `customer_journey`, `dispatch`, `field_navigation`, `admin`, `business_finance`, `outreach`, `creative_content`, `web_presence`, `analytics_intelligence`
-3. Test a handoff scenario: send a booking request to triage, verify it hands off to customer_journey
-4. Report results with pass/fail per agent and any errors found
-
-## Execution order
-1. Remove multi-location claims (all files in parallel)
-2. Run agent health check
-3. Run agent chat tests
-4. Report findings and fix any issues
+### Files to edit
+1. **`src/components/architecture/MermaidDiagram.tsx`** — fix `securityLevel`, add theme variables
+2. **`src/pages/Architecture.tsx`** — add `classDef` color definitions and `class` assignments to all 9 diagram charts
 
