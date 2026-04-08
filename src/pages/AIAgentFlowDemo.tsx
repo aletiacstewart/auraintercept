@@ -319,13 +319,19 @@ const scenes: Scene[] = [
 ];
 
 function AgentCard({ agent, isHighlighted, delay }: { agent: AgentNode; isHighlighted: boolean; delay: number }) {
+  // Position so the icon center (28px from top = half of 56px icon) sits exactly at the coordinate point.
+  // This ensures SVG lines connect directly to the icon center.
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.7 }}
       animate={{ opacity: isHighlighted ? 1 : 0.3, scale: isHighlighted ? 1 : 0.85 }}
       transition={{ duration: 0.5, delay }}
       className="absolute flex flex-col items-center"
-      style={{ left: `${agent.x}%`, top: `${agent.y}%`, transform: 'translate(-50%, -50%)' }}
+      style={{
+        left: `${agent.x}%`,
+        top: `${agent.y}%`,
+        transform: 'translate(-50%, -28px)',
+      }}
     >
       <motion.div
         animate={isHighlighted ? { boxShadow: `0 0 30px ${agent.color}40` } : {}}
