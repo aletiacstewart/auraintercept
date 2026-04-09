@@ -944,6 +944,38 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Core • $299 Boost • $599 Pro • $999 Elite</span></p>
           </div>
 
+          {/* Beta Testing Announcement */}
+          <div className="mt-10 max-w-3xl mx-auto">
+            <div className="rounded-xl border border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+              <div className="relative space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
+                    <Zap className="w-3 h-3" /> Beta
+                  </span>
+                  <h3 className="text-lg font-bold text-foreground">We're in Beta!</h3>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  We are currently in <span className="font-semibold text-foreground">Beta</span>. All users who join during the beta period receive{' '}
+                  <span className="font-semibold text-primary">30 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                </p>
+
+                {/* FCC 10DLC Notice */}
+                <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-4">
+                  <div className="flex items-start gap-3">
+                    <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">

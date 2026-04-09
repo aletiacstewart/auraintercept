@@ -709,6 +709,32 @@ export default function Auth() {
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers + AI Hub</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
                     </p>
+                </div>
+                </div>
+
+                {/* Beta Notice */}
+                <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 border border-primary/30 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+                      <Zap className="w-2.5 h-2.5" /> Beta
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    All users who join during the beta period receive <span className="font-semibold text-primary">30 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                  </p>
+                </div>
+
+                {/* FCC 10DLC Notice */}
+                <div className="p-3 rounded-lg border border-warning/30 bg-warning/5">
+                  <div className="flex items-start gap-2">
+                    <Shield className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-[11px] font-semibold text-warning mb-1">SMS — FCC 10DLC Compliance</h4>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
+                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once registration is approved (typically 2-4 weeks).
+                      </p>
+                    </div>
                   </div>
                 </div>
 
