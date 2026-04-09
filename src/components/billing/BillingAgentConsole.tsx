@@ -962,7 +962,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   return (
-    <Card className={cn('flex flex-col h-[600px]', className)}>
+    <Card className={cn('flex flex-col', className)}>
       <CardHeader className="pb-2 border-b shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
@@ -977,7 +977,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+      <CardContent className="flex-1 flex flex-col p-0">
         {renderContent()}
       </CardContent>
     </Card>
