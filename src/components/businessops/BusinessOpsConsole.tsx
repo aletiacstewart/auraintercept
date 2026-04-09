@@ -35,10 +35,10 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
   }
 
   return (
-    <Card className="min-h-[600px] flex flex-col overflow-hidden shadow-xl surface-elevated-dark border-border/50">
+    <Card className="flex flex-col shadow-xl surface-elevated-dark border-border/50">
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 console-surface rounded-lg">
+      <div className="flex-1 p-4 console-surface rounded-lg">
         {currentView === 'dashboard' && (
           <FinancialPulseDashboard 
             companyId={effectiveCompanyId} 

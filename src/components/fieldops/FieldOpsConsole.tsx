@@ -132,7 +132,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
   };
 
   return (
-    <div className="h-full flex flex-col text-white" style={{ background: 'rgba(2,8,18,0.97)' }}>
+    <div className="flex flex-col text-white" style={{ background: 'rgba(2,8,18,0.97)' }}>
       {/* Header */}
       <div className="p-4 border-b" style={{ borderColor: 'rgba(0,229,255,0.12)', background: 'rgba(2,6,14,0.98)', borderTop: '3px solid rgba(0,229,255,0.6)' }}>
         <div className="flex items-center justify-between">
@@ -199,7 +199,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex">
         {/* Main View */}
         <div className="flex-1 overflow-hidden">
           {activeView === 'map' ? (
