@@ -1,21 +1,40 @@
 
 
-# Add EIN/DBA/LLC/Inc Requirement to Beta & 10DLC Notices
+# Remove Internal Scrollbars from Dashboard Consoles
 
-## What changes
+## Problem
+All dashboard consoles have fixed or constrained heights (`h-[600px]`, `calc(100vh - 140px)`, `min-h-[600px]`) that create internal scrollbars instead of letting content flow naturally with the page scroll.
 
-Update the FCC 10DLC notice on both the **Homepage** and **Sign Up page** to include that each company must provide their **EIN, DBA, LLC, or Inc** documentation so we can register them for FCC 10DLC compliance.
+## Changes
 
-## Files to edit
+### 1. `src/components/ai/chat/CyberConsoleLayout.tsx`
+- Remove the fixed `height: 'calc(100vh - 140px)'` and `minHeight: '560px'` from the root container (line 138-139)
+- Change `overflow-hidden` to `overflow-visible` on the root
+- Remove `overflow-hidden` from the 3-column flex container (line 170)
+- Remove `overflow-y-auto` from the left panel (line 174) — let it flow naturally
+- Remove `overflow-hidden` from center content div (line 276)
+- This affects all 5 CyberConsoleLayout-based consoles: Business Mgt, Field Ops Agent, Marketing, Social Media, Analytics
 
-### 1. `src/pages/Index.tsx` (~lines 969-971)
-- Expand the 10DLC notice paragraph to add a sentence explaining the company registration requirement
-- Add: "Each company will be required to provide their EIN, DBA, LLC, or Inc documentation so that we can register and get your business approved for FCC 10DLC compliance."
+### 2. `src/components/businessops/BusinessOpsConsole.tsx`
+- Change `min-h-[600px]` and `overflow-hidden` on the Card (line 38) to just `min-h-0`
+- Remove `overflow-y-auto` from the content div (line 41)
 
-### 2. `src/pages/Auth.tsx` (~lines 734-736)
-- Same addition to the compact 10DLC notice on the signup page
+### 3. `src/components/billing/BillingAgentConsole.tsx`
+- Change `h-[600px]` (line 965) to `min-h-0` so it grows with content
+- Remove `overflow-hidden` from CardContent (line 980)
 
-## Content to add (appended to existing 10DLC text)
+### 4. `src/components/fieldops/FieldOpsConsole.tsx`
+- Change `h-full` (line 135) to `min-h-0` on root div
+- Remove `overflow-hidden` from the main content flex container (line 202)
 
-> **Company Requirement:** Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
+### 5. `src/components/ui/page-container.tsx`
+- Remove `overflow-hidden` and `overflow-y-auto` from the container (lines 22, 30) — the page itself (via DashboardLayout) handles scrolling
+
+### 6. Console chat areas — preserve internal scroll only for chat message lists
+- The chat message `overflow-y-auto` divs inside each console (e.g., `pb-32` scrollable areas) should keep their scroll behavior since chat threads can grow indefinitely. These will use a `max-h` instead of flex-1 overflow to cap their height while the rest of the console flows naturally.
+
+## Technical Notes
+- The `DashboardLayout` already provides page-level scrolling, so removing fixed heights lets content size naturally
+- Chat message areas will retain a `max-h-[60vh]` with `overflow-y-auto` so long threads remain scrollable without forcing the entire console into a fixed box
+- Left sidebar agent panels will display fully without their own scrollbar
 
