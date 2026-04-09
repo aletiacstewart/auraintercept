@@ -732,7 +732,7 @@ export default function Auth() {
                     <div>
                       <h4 className="text-[11px] font-semibold text-warning mb-1">SMS — FCC 10DLC Compliance</h4>
                       <p className="text-[10px] text-muted-foreground leading-relaxed">
-                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once registration is approved (typically 2-4 weeks).
+                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once registration is approved (typically 2-4 weeks). <span className="font-medium text-foreground">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
                       </p>
                     </div>
                   </div>
