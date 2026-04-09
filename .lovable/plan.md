@@ -1,49 +1,34 @@
 
 
-# Fix Architecture Diagrams: Labels, Downloads, and PDF Export
+# Add Beta Testing Banner + FCC 10DLC SMS Notice
 
-## Problem
-From your screenshots, three issues are clear:
-1. **No text labels visible** inside diagram nodes — colored boxes render but all text is stripped out. Root cause: DOMPurify sanitization is removing `foreignObject` HTML elements that Mermaid uses for labels when `htmlLabels: true`.
-2. **PNG download broken** — the canvas-based approach fails due to foreignObject/CORS issues with HTML labels in SVG.
-3. **No PDF download option** — requested but not implemented.
+## What We're Adding
 
-## Solution
+1. **Beta banner on the Homepage** — placed directly below the pricing section's existing "30-day free trial" text (around line 941-944 of Index.tsx), a prominent styled card announcing the beta program with free 30-day access for testers, and the FCC/10DLC SMS registration notice.
 
-### 1. Fix label rendering in MermaidDiagram.tsx
-- Update DOMPurify config to allow `foreignObject`, `div`, `span`, `br`, and related HTML elements inside SVG, OR switch to `htmlLabels: false` in Mermaid config so labels render as native SVG text (no foreignObject needed, simpler sanitization).
-- Best approach: set `htmlLabels: false` globally — this makes Mermaid render labels as pure SVG `<text>` elements, which DOMPurify's SVG profile already allows. This fixes labels across all diagram types without weakening sanitization.
-- Replace `<br/>` in chart definitions with `\n` line breaks (SVG text compatible).
+2. **Beta + 10DLC notice on the Sign Up page** — added to the company signup left column in Auth.tsx (below the existing "30-Day Free Trial — Full Access" banner around line 702), a compact info card with the same beta messaging and SMS compliance details.
 
-### 2. Fix PNG download
-- With `htmlLabels: false`, the SVG no longer contains foreignObject, so canvas `drawImage` will work correctly for PNG export.
-- Add proper dimensions handling: parse SVG viewBox/width/height to set canvas size accurately.
+## Content
 
-### 3. Add PDF download button
-- Use `jsPDF` library to generate a single-page PDF from the rendered SVG.
-- Convert SVG to canvas (same as PNG), then embed the canvas image into a PDF page.
-- Add a "PDF" download button alongside SVG and PNG.
+**Beta Message:**
+> We are currently in Beta. All users who join during the beta period receive 30 days of free access for testing. All we ask is your honest feedback to help us improve the platform.
 
-### 4. Ensure all diagrams have visible labels
-- Replace `<br/>` with `\n` in all flowchart node labels across all 9 diagrams in Architecture.tsx.
-- The `erDiagram` and `sequenceDiagram` and `journey` types already use plain text labels (no HTML), so they should render correctly once DOMPurify stops stripping content.
+**FCC 10DLC Notice:**
+> Our SMS system is currently undergoing FCC approval. 10DLC (10-Digit Long Code) is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks).
 
-## Files to edit
+## Files to Edit
 
-1. **`src/components/architecture/MermaidDiagram.tsx`**
-   - Set `htmlLabels: false` in mermaid config
-   - Update DOMPurify to add `WHOLE_DOCUMENT: true` and allow necessary SVG + HTML tags
-   - Fix PNG export to handle pure-SVG rendering
-   - Add PDF download button using jsPDF
-   - Add `FileText` icon import for PDF button
+1. **`src/pages/Index.tsx`** (~line 940-945)
+   - Insert a styled beta announcement card after the existing "30-day free trial" line and before the 3rd party integrations section
+   - Card with cyan/teal gradient border, beta badge, beta message, and an FCC/10DLC compliance sub-section with a shield icon
 
-2. **`src/pages/Architecture.tsx`**
-   - Replace all `<br/>` in node labels with `\n` for SVG text rendering compatibility
+2. **`src/pages/Auth.tsx`** (~line 712, after the free trial banner in company mode)
+   - Add a compact info card with beta badge and messaging
+   - Add a separate small 10DLC/FCC notice card with amber warning styling (consistent with the existing registration code warning card style)
 
-3. **Install `jspdf`** package for PDF generation
-
-## Technical details
-- `htmlLabels: false` forces Mermaid to use `<text>` SVG elements instead of `<foreignObject>` + HTML divs
-- This eliminates the DOMPurify stripping issue and the canvas taint/CORS issue for PNG export simultaneously
-- PDF export: render SVG to canvas at 2x resolution, then use `jsPDF.addImage()` to embed as PNG in an A4 landscape PDF
+## Visual Style
+- Matches existing dark theme cards with gradient borders
+- Uses existing icon imports (Shield, AlertTriangle or similar)
+- Beta badge in cyan/teal to match brand
+- 10DLC notice in amber/warning style to draw attention to the regulatory requirement
 
