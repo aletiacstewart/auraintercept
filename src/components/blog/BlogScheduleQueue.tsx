@@ -466,7 +466,7 @@ export function BlogScheduleQueue() {
               <div className="border rounded-lg p-4">
                 <article 
                   className="prose prose-sm max-w-none dark:prose-invert"
-                  dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedPost.content) }}
                 />
               </div>
             </div>
