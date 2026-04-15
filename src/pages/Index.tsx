@@ -37,7 +37,7 @@ const agentCategories = [{
   }]
 }, {
   id: 'field',
-  name: 'Field Operations',
+  name: 'Field & Dispatch Ops',
   icon: MapPin,
   color: 'from-green-500 to-emerald-500',
   neonRgb: '0,230,118',
