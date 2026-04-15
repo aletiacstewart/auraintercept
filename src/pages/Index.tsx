@@ -143,23 +143,16 @@ const agentCategories = [{
     icon: BarChart3
   }]
 }, {
-  id: 'creative_content',
-  name: 'Creative Content',
-  icon: Palette,
-  color: 'from-violet-500 to-purple-500',
-  neonRgb: '139,92,246',
-  agents: [{
-    name: 'Creative Content Agent',
-    description: 'AI-powered content generation for social media, email, SMS, blog, and website copy',
-    icon: Palette
-  }]
-}, {
   id: 'smart_website',
   name: 'Smart Website',
   icon: Globe,
   color: 'from-teal-500 to-cyan-500',
   neonRgb: '20,184,166',
   agents: [{
+    name: 'Creative Content Agent',
+    description: 'AI-powered content generation for social media, email, SMS, blog, and website copy',
+    icon: Palette
+  }, {
     name: 'Web Presence Agent',
     description: 'AI website builder, blog management, SEO scans, and performance monitoring',
     icon: Globe
