@@ -19,13 +19,16 @@ import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useDashboardViewMode } from '@/hooks/useDashboardViewMode';
+import { DashboardViewToggle } from './DashboardViewToggle';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
   const { isAtLeastTier, inTrial } = useSubscription();
   const navigate = useNavigate();
+  const { isSimple } = useDashboardViewMode();
   const [snapshotOpen, setSnapshotOpen] = useState(false);
-  
+
   // Platform admin sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
 
@@ -190,7 +193,13 @@ export function CompanyAdminDashboard() {
     { title: 'Website Traffic', value: stats?.totalPageViews ?? 0, icon: Globe, description: `${stats?.totalVisitors ?? 0} visitors, ${stats?.totalChatInteractions ?? 0} chats`, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics', requiredTier: 'multi_track' as SubscriptionTier },
   ];
 
-  const statCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+  // Simple mode: show only the 5 most actionable KPIs an SMB owner cares about daily.
+  // Pro mode: show every tier-allowed stat card.
+  const SIMPLE_TITLES = new Set(['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Leads']);
+  const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+  const statCards = isSimple
+    ? tierFilteredCards.filter(c => SIMPLE_TITLES.has(c.title)).slice(0, 5)
+    : tierFilteredCards;
 
   const allQuickActions = [
     { label: 'Appointments', icon: Calendar, colorClass: 'bg-feature-appointments/15 text-feature-appointments', href: '/dashboard/appointments' },
@@ -220,6 +229,7 @@ export function CompanyAdminDashboard() {
           
           action={
             <div className="flex items-center gap-3 flex-wrap">
+              <DashboardViewToggle />
               {company?.registration_code && (
                 <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5">
                   <span className="text-xs text-muted-foreground">Registration Code:</span>
@@ -236,51 +246,58 @@ export function CompanyAdminDashboard() {
                   </Button>
                 </div>
               )}
-              <div 
-                className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
-                onClick={() => navigate('/dashboard/ai-agents')}
-              >
-                <span className="text-xs text-muted-foreground">Intelligence Network:</span>
-                <span className="text-sm font-medium text-secondary">Active</span>
-                <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                <ExternalLink className="h-3 w-3 text-secondary" />
-              </div>
+              {!isSimple && (
+                <div 
+                  className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
+                  onClick={() => navigate('/dashboard/ai-agents')}
+                >
+                  <span className="text-xs text-muted-foreground">Intelligence Network:</span>
+                  <span className="text-sm font-medium text-secondary">Active</span>
+                  <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                  <ExternalLink className="h-3 w-3 text-secondary" />
+                </div>
+              )}
             </div>
           }
         />
 
-        {/* Setup Navigation & Progress */}
-        <DashboardSetupNav />
+        {/* Setup nav + onboarding hub: only show in Pro mode (or always, when still relevant) */}
+        {!isSimple && (
+          <>
+            <DashboardSetupNav />
+            <DashboardOnboardingHub companyId={companyId || undefined} />
+          </>
+        )}
 
-        {/* Onboarding Hub */}
-        <DashboardOnboardingHub companyId={companyId || undefined} />
-
-        <div className="flex items-center gap-4">
-          <PDFDownloadLink 
-            document={<CompanyGuidesPDF />} 
-            fileName="company-admin-guide.pdf"
-          >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading} className="gap-2">
-                <Download className="h-4 w-4" />
-                {loading ? 'Generating...' : 'Company Guide Download'}
-              </Button>
-            )}
-          </PDFDownloadLink>
-          <div 
-            className="w-16 h-16 rounded-xl border-2 border-primary overflow-hidden"
-          >
-            {company?.logo_url ? (
-              <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
-            ) : (
-              <div 
-                className="w-full h-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-primary to-secondary text-primary-foreground"
-              >
-                {company?.name?.charAt(0) || 'C'}
-              </div>
-            )}
+        {/* Company guide download + logo — Pro mode only (clutter for daily users) */}
+        {!isSimple && (
+          <div className="flex items-center gap-4">
+            <PDFDownloadLink 
+              document={<CompanyGuidesPDF />} 
+              fileName="company-admin-guide.pdf"
+            >
+              {({ loading }) => (
+                <Button variant="outline" disabled={loading} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  {loading ? 'Generating...' : 'Company Guide Download'}
+                </Button>
+              )}
+            </PDFDownloadLink>
+            <div 
+              className="w-16 h-16 rounded-xl border-2 border-primary overflow-hidden"
+            >
+              {company?.logo_url ? (
+                <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
+              ) : (
+                <div 
+                  className="w-full h-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-primary to-secondary text-primary-foreground"
+                >
+                  {company?.name?.charAt(0) || 'C'}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ===== AURA COMMAND CENTER (Primary) ===== */}
         <AuraCommandCenter />
@@ -332,68 +349,70 @@ export function CompanyAdminDashboard() {
               ))}
             </div>
 
-            {/* Quick Actions & Business Metrics */}
-            <div className="grid gap-3 md:grid-cols-2">
-              <Card className="bg-card border-border border-t-2 border-t-primary/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-sm text-card-foreground">
-                    <Activity className="w-4 h-4 text-primary" />
-                    Quick Actions
-                  </CardTitle>
-                  <CardDescription>Common tasks to manage your business</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
-                    {quickActions.map((action) => (
-                      <Button
-                        key={action.label}
-                        variant="outline"
-                        className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-card-foreground/80 transition-all duration-200"
-                        onClick={() => navigate(action.href)}
-                      >
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
-                          <action.icon className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Quick Actions & Business Metrics — Pro mode only */}
+            {!isSimple && (
+              <div className="grid gap-3 md:grid-cols-2">
+                <Card className="bg-card border-border border-t-2 border-t-primary/40">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-sm text-card-foreground">
+                      <Activity className="w-4 h-4 text-primary" />
+                      Quick Actions
+                    </CardTitle>
+                    <CardDescription>Common tasks to manage your business</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
+                      {quickActions.map((action) => (
+                        <Button
+                          key={action.label}
+                          variant="outline"
+                          className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-card-foreground/80 transition-all duration-200"
+                          onClick={() => navigate(action.href)}
+                        >
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
+                            <action.icon className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-card border-border border-t-2 border-t-secondary/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-card-foreground">
-                    <TrendingUp className="w-5 h-5 text-secondary" />
-                    Business Metrics
-                  </CardTitle>
-                  <CardDescription>Performance overview</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, colorVar: 'hsl(var(--secondary))' },
-                      { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, colorVar: 'hsl(var(--primary))' },
-                      { label: 'Appt. Completion', value: stats?.appointmentCompletionRate ?? 0, colorVar: 'hsl(var(--accent-foreground))' },
-                      { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, colorVar: 'hsl(var(--warning))' },
-                    ].map(metric => (
-                      <div key={metric.label} className="space-y-1.5">
-                        <div className="flex items-center justify-between text-sm text-card-foreground/80">
-                          <span>{metric.label}</span>
-                          <span className="font-medium text-card-foreground">{metric.value}%</span>
+                <Card className="bg-card border-border border-t-2 border-t-secondary/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-card-foreground">
+                      <TrendingUp className="w-5 h-5 text-secondary" />
+                      Business Metrics
+                    </CardTitle>
+                    <CardDescription>Performance overview</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, colorVar: 'hsl(var(--secondary))' },
+                        { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, colorVar: 'hsl(var(--primary))' },
+                        { label: 'Appt. Completion', value: stats?.appointmentCompletionRate ?? 0, colorVar: 'hsl(var(--accent-foreground))' },
+                        { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, colorVar: 'hsl(var(--warning))' },
+                      ].map(metric => (
+                        <div key={metric.label} className="space-y-1.5">
+                          <div className="flex items-center justify-between text-sm text-card-foreground/80">
+                            <span>{metric.label}</span>
+                            <span className="font-medium text-card-foreground">{metric.value}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-muted border border-border/50">
+                            <div 
+                              className="h-full rounded-full transition-all duration-700"
+                              style={{ width: `${metric.value}%`, background: metric.colorVar }} 
+                            />
+                          </div>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-muted border border-border/50">
-                          <div 
-                            className="h-full rounded-full transition-all duration-700"
-                            style={{ width: `${metric.value}%`, background: metric.colorVar }} 
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </CollapsibleContent>
         </Collapsible>
 
