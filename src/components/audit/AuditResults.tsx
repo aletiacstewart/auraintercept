@@ -165,13 +165,13 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
             </div>
 
             {/* Key Features */}
-            <div className="bg-white rounded-xl p-6 mb-6 border border-border shadow-sm">
+            <div className="bg-card rounded-xl p-6 mb-6 border border-border shadow-sm">
               <h3 className="font-semibold mb-4 text-center text-foreground">What's Included</h3>
               <ul className="space-y-3">
                 {recommendation.keyFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-foreground/70">{feature}</span>
+                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground/80">{feature}</span>
                   </li>
                 ))}
               </ul>
