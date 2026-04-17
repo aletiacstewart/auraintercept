@@ -101,7 +101,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                 {TIER_ICONS[recommendedTier]}
               </div>
             </div>
-            <Badge className="mx-auto mb-4 bg-white text-foreground/70 border border-border shadow-sm">
+            <Badge className="mx-auto mb-4 bg-card text-card-foreground border border-border shadow-sm">
               Your Recommended Plan
             </Badge>
             <CardTitle className="text-3xl sm:text-4xl font-brand uppercase tracking-wider text-foreground">
