@@ -7,16 +7,26 @@ export default function TermsOfService() {
       <PublicHeader />
       
       <main className="container max-w-4xl mx-auto px-6 py-20">
-        <h1 className="text-4xl font-bold mb-8">Terms of Service for Aura Intercept</h1>
+        <h1 className="text-4xl font-bold mb-8">Terms of Service for Aura Intercept LLC</h1>
         
-        <p className="text-muted-foreground mb-8">Effective Date: January 11, 2026</p>
+        <p className="text-muted-foreground mb-8">Effective Date: April 17, 2026</p>
         
         <div className="prose prose-invert max-w-none space-y-8">
           <p>
             Welcome to Aura Intercept. These Terms of Service ("Terms") govern your access to and use of the 
-            Aura Intercept website, services, and applications (the "Service"). By accessing or using the Service, 
-            you agree to be bound by these Terms.
+            Aura Intercept website, services, and applications (the "Service"), operated by <strong className="text-foreground">Aura Intercept LLC</strong> 
+            (referred to as "Aura Intercept," "we," "us," or "our"). By accessing or using the Service, 
+            you agree to be bound by these Terms. If you do not agree, do not use the Service.
           </p>
+
+          <div className="border border-destructive/40 bg-destructive/5 rounded-lg p-4 text-sm">
+            <strong className="text-foreground uppercase">Important Notice:</strong> The Service relies on artificial intelligence (AI) 
+            technology that is inherently probabilistic. Aura Intercept LLC <strong className="text-foreground">does not guarantee or warrant</strong> that 
+            the AI, automation, or any platform feature will function 100% accurately, reliably, continuously, or without error. 
+            By using the Service, you expressly assume all risk of AI errors, miscommunications, downtime, missed bookings, 
+            lost leads, lost customers, lost revenue, lost social media followers, likes, shares, engagement, or reach, and any other 
+            business loss arising from your use of the Service. See Sections 5, 11, 12, 12A, 12B, and 21 below.
+          </div>
 
           {/* Section 1: Acceptance of Terms */}
           <section>
