@@ -129,17 +129,17 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
 
             {/* Estimated Impact - 3 columns */}
             <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mb-8">
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Clock className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{scaledHours}+</p>
                 <p className="text-xs text-muted-foreground">Hours saved/week</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Zap className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{recommendation.agentCount}</p>
                 <p className="text-xs text-muted-foreground">AI Operatives</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Star className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{recommendation.consoleCount}</p>
                 <p className="text-xs text-muted-foreground">Control Centers</p>
