@@ -139,6 +139,7 @@ export function AgentOpportunityAudit() {
         tierPercentages={tierPercentages}
         recommendedTier={recommendedTier}
         onRestart={handleRestart}
+        answers={answers}
       />
     );
   }
