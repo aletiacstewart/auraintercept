@@ -73,12 +73,12 @@ export function AutonomyStatusPanel() {
           <StatTile
             label="Active"
             value={active}
-            icon={<CheckCircle2 className="w-4 h-4 text-success" />}
+            icon={<CheckCircle2 className="w-4 h-4" style={{ color: 'hsl(var(--neon-green))' }} />}
           />
           <StatTile
             label="Failing"
             value={failing}
-            icon={<AlertTriangle className="w-4 h-4 text-warning" />}
+            icon={<AlertTriangle className="w-4 h-4 text-accent" />}
             tone={failing > 0 ? 'warn' : 'ok'}
           />
         </div>
@@ -144,7 +144,7 @@ function StatTile({
   return (
     <div
       className={`rounded-lg border p-3 ${
-        tone === 'warn' ? 'border-warning/40 bg-warning/5' : 'bg-card'
+        tone === 'warn' ? 'border-accent/40 bg-accent/5' : 'bg-card'
       }`}
     >
       <div className="flex items-center justify-between">
@@ -161,7 +161,14 @@ function StatusBadge({ active, status }: { active: boolean; status: string | nul
   if (!status) return <Badge variant="outline">Pending</Badge>;
   if (status === 'succeeded')
     return (
-      <Badge className="bg-success/10 text-success hover:bg-success/20 border-success/30">
+      <Badge
+        className="border"
+        style={{
+          backgroundColor: 'hsl(var(--neon-green) / 0.1)',
+          color: 'hsl(var(--neon-green))',
+          borderColor: 'hsl(var(--neon-green) / 0.3)',
+        }}
+      >
         Healthy
       </Badge>
     );
