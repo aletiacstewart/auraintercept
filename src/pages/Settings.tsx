@@ -221,7 +221,7 @@ export default function Settings() {
           <div className="space-y-6 animate-fade-in">
             <PageHeader
               icon={SettingsIcon}
-              title="Quick Setup"
+              title="Settings"
               description="Manage your account settings"
               showAuraBar
             />
