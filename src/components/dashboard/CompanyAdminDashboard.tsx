@@ -19,13 +19,16 @@ import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useDashboardViewMode } from '@/hooks/useDashboardViewMode';
+import { DashboardViewToggle } from './DashboardViewToggle';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
   const { isAtLeastTier, inTrial } = useSubscription();
   const navigate = useNavigate();
+  const { isSimple } = useDashboardViewMode();
   const [snapshotOpen, setSnapshotOpen] = useState(false);
-  
+
   // Platform admin sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
 
