@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Truck, Route, MapPin, ClipboardCheck } from 'lucide-react';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
+import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 
 const DISPATCH_WORKFLOWS: WorkflowChain[] = [
