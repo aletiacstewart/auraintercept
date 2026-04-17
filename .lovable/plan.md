@@ -1,85 +1,67 @@
 
 
-# Platform Simplification Audit — Recommendations for End Users
+## Update Free Audit Tool — Public Access, Refreshed Content & Downloadable Onboarding Checklist PDF
 
-## What I reviewed
-- 82 routed pages, 14 console pages, 12 sidebar nav groups, 8 home-page agent categories, 4 subscription tiers × 24 agents × 7 consoles, plus dual "Console + Mobile App" entries for nearly every workspace.
-- Target users: HVAC, plumbing, pest, lawn, roofing, salon — typical owner has 1–10 employees, low patience for software.
+### Problem
+1. **`/audit` is gated to `platform_admin`** (Phase 6 over-restricted it) — clicking "Free Audit" in the header redirects to the auth page.
+2. Audit questions reference older agent counts ("8 AI Agents", "AI Receptionist (Triage)") rather than the current plain-English / outcome-grouped naming and 24-agent / 10-operative model.
+3. No downloadable takeaway — companies finish the audit with nothing in hand to plan their setup.
 
-## Core finding
-The **engine is well-built and real**, but the **surface area shown to a typical company admin is overwhelming**. A company on Aura Boost sees ~9 sidebar groups and ~15 separate "console" / "install" links for what is really 4 jobs: *answer customers, dispatch jobs, send invoices, post content*.
+### Fix overview
 
-## Top 10 simplification recommendations
+**A. Make `/audit` public again**
+- `src/App.tsx`: remove the `<ProtectedRoute requiredRole="platform_admin">` wrapper around `/audit`. Keep the other power-user pages (`/design-preview`, `/dashboard/architecture`, `/dashboard/calculators`, `/dashboard/export-docs`, mockup pages) admin-only.
+- Update `mem://features/dashboard/power-user-pages-restricted-v1` and the index entry to reflect that `/audit` is intentionally public-facing.
 
-### 1. Collapse "Console + Install" pairs into one page (HIGH impact)
-Today every console has a separate **Install Mobile App** sidebar entry (Field Ops Install, Dispatch Install, Customer Portal Install, Business Mgt Install, Customer Website App). That's 5 redundant routes.
-**Fix:** put a small "Install on phone" button inside each console header. Removes 5 nav items.
+**B. Refresh audit content in `src/components/audit/types.ts`**
+- Update `TIER_RECOMMENDATIONS` `keyFeatures` and `description` strings to match the current platform language:
+  - Use plain-English outcome groups: **"Front Desk"**, **"On The Way"**, **"Billing"**, **"Marketing"**, **"Reports"** (per `mem://features/dashboard/plain-english-labels-v1`).
+  - Reference the new sidebar groups (Field Ops, Marketing, Customers, Settings).
+  - Mention the Simple/Pro dashboard view.
+  - Keep the canonical 4-tier pricing ($197 / $497 / $997 / $1,997) and agent counts (8/12/16/24) — those are correct.
+- Trim the question set from **30 → ~20 questions** to reduce drop-off (SMB owners). Keep the 9 sections but consolidate the weakest 2-question pairs. Refresh question copy to match new outcome language ("Front Desk handling", "On-the-way ETA texts", etc.).
+- Add **2 new questions** that drive checklist personalization:
+  1. *"Which third-party integrations do you already have?"* (Stripe, Google Calendar, social accounts, business phone) — drives the checklist's "already done" vs "to set up" sections.
+  2. *"What's your business phone setup today?"* (port existing number, get new number, forward calls, no business line) — drives the SignalWire/CFNA setup checklist section.
 
-### 2. Merge the 4 marketing-ish nav groups into one "Marketing" group
-Today: *Marketing Console*, *Social Media Console*, *Web Presence Console*, plus Outreach inside Marketing. Four groups, four single items each.
-**Fix:** one **"Marketing"** group with 3 items (Outreach, Social, Website). Removes 3 collapsed group headers.
+**C. New "Download Your Setup Checklist" PDF on the results screen**
 
-### 3. Merge Tech-Field + Dispatch-Field into "Field Ops"
-Two separate groups with near-identical purpose. A small HVAC shop doesn't have a separate dispatcher — same person does both.
-**Fix:** one **"Field Ops"** group with role-based default tab (Tech view vs Dispatcher view). Removes 1 group.
+Create `src/components/audit/AuditChecklistPDF.tsx` using the existing `@react-pdf/renderer` + `sanitizePdfText` pattern (matches `CompanyOnboardingPDF.tsx`, etc.). The PDF is **personalized to the recommended tier and the user's integration answers** and contains:
 
-### 4. Hide the "AI Operatives Hub" by default for company admins
-24 toggles is a power-user surface. Most owners will never touch it after onboarding.
-**Fix:** move under Settings → Advanced. Keep visible to platform_admin only.
+1. **Cover page** — Aura Intercept badge logo, company-friendly title "Your Aura Intercept Setup Plan", recommended tier + price, fit score.
+2. **What's included in your plan** — full agent/operative list, consoles, employee limit, channels, white-label flag (pulled from `TIER_RECOMMENDATIONS`).
+3. **Documents to gather** — business name & EIN, business phone number, hours of operation, services list, pricing, team roster, logo + brand colors, Google Business Profile URL, customer FAQ.
+4. **Third-party setups required for your tier** (per `mem://integrations/3rd-party-requirements-standard`):
+   - **All tiers:** SignalWire (voice/SMS), ElevenLabs (voice agent), Resend (email).
+   - **Pro+:** Social platform OAuth (Facebook, Instagram, LinkedIn, TikTok, Google Business).
+   - **Elite only:** Stripe (invoicing).
+   - Each row: provider, what it's for, who needs an account, estimated monthly 3rd-party cost range, plus the **standard 3rd-party fee disclaimer** (per `mem://legal/third-party-fee-disclaimer`).
+5. **Phone setup path** — based on the new "phone setup" question: port number / new SignalWire number / call forwarding / 10DLC registration steps.
+6. **Your 30-day guided launch** — the 4-step Fast Start (Business Type → Integrations → Tell Aura → Launch) plus weekly milestones.
+7. **Plan comparison page** — 4-column table of all tiers (Core/Boost/Pro/Elite) with price, agents, consoles, employee limit, implementation fee — so the owner can show partners/decision makers.
+8. **Next steps & contact** — Start 30-day trial CTA URL (`https://auraintercept.ai/auth?mode=company`) and Concierge Kickoff Calendly link.
 
-### 5. Drop or hide rarely-used standalone pages
-These exist as routes but add noise: `BusinessOperations.tsx`, `OpportunityAudit.tsx`, `Calculators.tsx`, `Architecture.tsx`, `CyberSentryMockup.tsx`, `CyberSentryPortalMockup.tsx`, `DesignPreview.tsx`, `ExportDocumentation.tsx`.
-**Fix:** keep mockup/design/architecture/export pages **platform_admin only** (already true for some — enforce for all). Hide Calculators behind a "Tools" submenu.
+PDF rules followed: no emoji/Unicode (use `sanitizePdfText`), Helvetica only, hardcoded URLs use `https://auraintercept.ai`, includes the 3rd-party fee legal disclaimer.
 
-### 6. Consolidate Settings + Quick Setup + Knowledge Base
-Three separate destinations for "configure your business." A new owner doesn't know which to open.
-**Fix:** one **Settings** page with tabs: Business / Hours / Services / Integrations / Knowledge / Team / Notifications. Quick Setup becomes a one-time wizard, not a persistent nav item.
+**D. Wire the download button into `AuditResults.tsx`**
+- Add a third primary action below the "Estimated Monthly Impact" card: **"Download Your Setup Checklist (PDF)"** using `<PDFDownloadLink>` from `@react-pdf/renderer`.
+- Pass the recommended tier, fit score, and the raw `answers` object so the PDF can personalize the integrations section.
+- Add a small "What's in this PDF" preview list (5 bullets) so users know it's worth downloading.
 
-### 7. Replace the 8-card homepage agent grid with **3 outcome cards**
-The landing page lists 8 categories × ~4 agents = 32 capabilities. SMB owners care about *outcomes*, not agents.
-**Fix:** lead with 3 promises — **"Never miss a call"**, **"Fill your calendar"**, **"Get paid faster"** — then let curious visitors expand to see the agents underneath.
+### Files touched / created
+- `src/App.tsx` — un-gate `/audit` (1-line change)
+- `src/components/audit/types.ts` — refreshed questions + tier copy
+- `src/components/audit/AuditResults.tsx` — add PDF download CTA
+- `src/components/audit/AuditChecklistPDF.tsx` — **new file**, the personalized PDF
+- `mem://features/dashboard/power-user-pages-restricted-v1` + `mem://index.md` — note `/audit` is public
 
-### 8. Default new companies to a **simplified dashboard view**
-Add a "Simple / Pro" toggle in the dashboard header. Simple = today's top 5 KPIs + Aura command bar. Pro = current dense layout.
+### Out of scope
+- No changes to scoring logic, tier prices, or DB
+- No changes to `PublicHeader` (link is already correct, just blocked by route guard)
+- No changes to other power-user route guards
 
-### 9. Rename agent-speak to plain English everywhere user-facing
-"AI Receptionist", "Booking Agent", "Follow-Up Agent" are 3 separate things in our UI. To the owner it's just "the phone person."
-**Fix:** in customer-facing copy, group them as **"Front Desk"** (1 thing). Keep the underlying agent split for the engine. Same for Route/ETA/Check-In → "On the way."
-
-### 10. Trim the third-party integrations menu
-7 items today (Voice Agent, Voice & SMS, Email, Calendar, Social, AI Research, 3rd Party Overview). Voice Agent and Voice & SMS overlap; AI Research is invisible to users.
-**Fix:** 4 cards on one page — Phone & SMS, Email, Calendar, Social. Hide AI Research (platform_admin internal).
-
-## Estimated impact
-| Metric | Before | After |
-|---|---|---|
-| Sidebar groups (company admin, Pro tier) | 9 | 5 |
-| Sidebar items (company admin) | ~22 | ~12 |
-| Routes a new owner must understand week 1 | ~15 | 5 |
-| Homepage cognitive load | 32 agents | 3 outcomes |
-
-## Out of scope
-- No engine/agent logic changes
-- No tier/pricing changes
-- No DB migrations
-- No removal of features — just **hiding, grouping, renaming**
-
-## Files that would change
-- `src/components/dashboard/DashboardLayout.tsx` — nav restructure (#1, #2, #3, #4, #6, #10)
-- `src/pages/Index.tsx` — homepage outcome cards (#7)
-- `src/pages/Settings.tsx` — consolidate tabs (#6)
-- `src/pages/Dashboard.tsx` + `CompanyAdminDashboard.tsx` — Simple/Pro toggle (#8)
-- Console headers — add inline "Install on phone" button (#1)
-- Public copy in landing components — plain-English rename (#9)
-- Route guards on rarely-used pages — platform_admin only (#5)
-
-## Recommended rollout order
-1. Nav consolidation (#1, #2, #3, #10) — biggest visible win, lowest risk
-2. Homepage outcome cards (#7)
-3. Settings consolidation (#6)
-4. Simple/Pro dashboard toggle (#8)
-5. Plain-English rename pass (#9)
-6. Hide power-user pages (#4, #5)
-
-Want me to implement all 10, or pick a subset to start with?
+### Rollout
+1. Un-gate route (instant fix for the broken Free Audit button)
+2. Refresh question/tier copy
+3. Build and ship the checklist PDF + download CTA
 
