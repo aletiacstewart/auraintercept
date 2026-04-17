@@ -252,11 +252,22 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">11. Disclaimer of Warranties</h2>
             <p className="uppercase text-sm leading-relaxed">
-              THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. AURA INTERCEPT, ITS FOUNDERS, EMPLOYEES, 
-              AND AFFILIATES EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT 
-              LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. 
-              WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE. AI-GENERATED CONTENT 
-              IS PROVIDED WITHOUT WARRANTY OF ACCURACY OR COMPLETENESS.
+              THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITH ALL FAULTS. AURA INTERCEPT LLC, 
+              ITS MEMBERS, MANAGERS, FOUNDERS, OFFICERS, DIRECTORS, EMPLOYEES, CONTRACTORS, AGENTS, LICENSORS, AND AFFILIATES 
+              (COLLECTIVELY, THE "AURA PARTIES") EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, 
+              STATUTORY, OR OTHERWISE, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR 
+              A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+            </p>
+            <p className="uppercase text-sm leading-relaxed mt-4">
+              WITHOUT LIMITING THE FOREGOING, THE AURA PARTIES MAKE NO WARRANTY OR REPRESENTATION THAT: (A) THE SERVICE OR 
+              ANY AI FEATURE WILL BE UNINTERRUPTED, TIMELY, SECURE, ACCURATE, RELIABLE, OR ERROR-FREE; (B) AI-GENERATED 
+              CONTENT, RESPONSES, RECOMMENDATIONS, QUOTES, DISPATCH ASSIGNMENTS, OR COMMUNICATIONS WILL BE ACCURATE, 
+              COMPLETE, APPROPRIATE, OR FIT FOR ANY PURPOSE; (C) THE SERVICE WILL PRODUCE ANY SPECIFIC BUSINESS RESULT, 
+              INCLUDING BUT NOT LIMITED TO BOOKINGS, REVENUE, LEAD CONVERSION, CUSTOMER ACQUISITION, CUSTOMER RETENTION, 
+              SOCIAL MEDIA FOLLOWERS, LIKES, SHARES, COMMENTS, REACH, ENGAGEMENT, SEO RANKINGS, OR WEBSITE TRAFFIC; 
+              (D) THIRD-PARTY INTEGRATIONS (INCLUDING META, GOOGLE, TIKTOK, LINKEDIN, X, STRIPE, SIGNALWIRE, TWILIO, 
+              ELEVENLABS, RESEND, OR ANY OTHER PROVIDER) WILL REMAIN AVAILABLE, FUNCTIONAL, OR COMPATIBLE WITH THE SERVICE; 
+              OR (E) ANY DEFECT IN THE SERVICE WILL BE CORRECTED. YOU ASSUME ALL RISK OF USE.
             </p>
           </section>
 
@@ -264,28 +275,93 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">12. Limitation of Liability</h2>
             <p className="uppercase text-sm leading-relaxed">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL AURA INTERCEPT, ITS FOUNDERS, EMPLOYEES, OR AGENTS 
-              BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, 
-              LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (I) YOUR USE OR INABILITY TO 
-              USE THE SERVICE; (II) ANY UNAUTHORIZED ACCESS TO OUR SERVERS; (III) ANY CONTENT OBTAINED FROM THE SERVICE; 
-              (IV) ERRORS, INACCURACIES, OR OMISSIONS IN AI-GENERATED CONTENT; OR (V) ACTIONS TAKEN BASED ON AI RECOMMENDATIONS.
+              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL AURA INTERCEPT LLC OR ANY OF THE AURA 
+              PARTIES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR 
+              FOR ANY LOSS OF PROFITS, REVENUE, BUSINESS, CUSTOMERS, LEADS, OPPORTUNITIES, GOODWILL, REPUTATION, DATA, 
+              USE, OR OTHER INTANGIBLE LOSSES, WHETHER BASED ON CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, 
+              OR ANY OTHER LEGAL THEORY, AND WHETHER OR NOT THE AURA PARTIES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH 
+              DAMAGES, ARISING OUT OF OR RELATING TO:
             </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground mt-4 uppercase text-sm">
+              <li>Your access to, use of, or inability to use the Service;</li>
+              <li>Any AI errors, hallucinations, mistranscriptions, misclassifications, misroutings, or incorrect dispatch assignments;</li>
+              <li>Lost business, lost customers, lost leads, lost revenue, lost profits, lost goodwill, or lost opportunities;</li>
+              <li>Lost, reduced, suspended, banned, throttled, or shadow-banned social media accounts, followers, likes, shares, comments, reach, impressions, engagement, or any other social media metric or outcome on Meta, Facebook, Instagram, TikTok, LinkedIn, X (Twitter), YouTube, Google, or any other platform;</li>
+              <li>Missed, delayed, duplicated, or miscommunicated appointments, quotes, invoices, dispatch assignments, voice calls, SMS messages, emails, chats, notifications, or reminders;</li>
+              <li>Failed, delayed, dropped, or misrouted SMS, voice, email, or chat communications;</li>
+              <li>Third-party platform outages, algorithm changes, policy changes, API deprecations, account suspensions, or terminations (including but not limited to Meta, Google, TikTok, LinkedIn, X, YouTube, Stripe, SignalWire, Twilio, ElevenLabs, Resend, OpenAI, Google Gemini, Lovable, or Supabase);</li>
+              <li>Unauthorized access to or alteration of your data or transmissions;</li>
+              <li>Actions you, your employees, or your customers took (or failed to take) based on AI-generated content, recommendations, quotes, or communications;</li>
+              <li>Any content obtained from or generated through the Service.</li>
+            </ul>
+            <p className="uppercase text-sm leading-relaxed mt-4 border border-border rounded-md p-4 bg-muted/30">
+              LIABILITY CAP: THE TOTAL AGGREGATE LIABILITY OF AURA INTERCEPT LLC AND ALL AURA PARTIES TO YOU FOR ALL CLAIMS 
+              ARISING OUT OF OR RELATING TO THESE TERMS OR THE SERVICE, REGARDLESS OF THE FORM OF ACTION, SHALL NOT EXCEED 
+              THE LESSER OF (A) THE TOTAL FEES YOU ACTUALLY PAID TO AURA INTERCEPT LLC IN THE THREE (3) MONTHS IMMEDIATELY 
+              PRECEDING THE EVENT GIVING RISE TO THE CLAIM, OR (B) ONE HUNDRED U.S. DOLLARS ($100.00). YOU AGREE THIS CAP 
+              IS A REASONABLE ALLOCATION OF RISK AND AN ESSENTIAL ELEMENT OF THE BARGAIN BETWEEN THE PARTIES.
+            </p>
+            <p className="text-sm leading-relaxed mt-4 text-muted-foreground">
+              Some jurisdictions do not allow the exclusion or limitation of certain damages. To the extent such exclusions 
+              or limitations are not enforceable, the Aura Parties' liability shall be limited to the maximum extent permitted by law.
+            </p>
+          </section>
+
+          {/* Section 12A: No Guarantee of Results */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">12A. No Guarantee of Results</h2>
+            <p className="text-muted-foreground mb-4">
+              Aura Intercept LLC <strong className="text-foreground">does not guarantee, promise, or warrant</strong> any specific business 
+              outcome from your use of the Service. Without limitation, we make no guarantee of:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>Revenue, profit, return on investment (ROI), sales, or financial performance;</li>
+              <li>Volume of leads, appointments, bookings, conversions, or new customers;</li>
+              <li>Customer satisfaction, retention, reviews, ratings, or referrals;</li>
+              <li>Social media followers, likes, shares, comments, views, reach, impressions, engagement, or virality;</li>
+              <li>Search engine optimization (SEO) rankings, website traffic, or click-through rates;</li>
+              <li>Reduction in missed calls, no-shows, or operational costs.</li>
+            </ul>
+            <p className="text-muted-foreground mt-4">
+              Your business results depend on numerous factors outside our control, including market conditions, your pricing, 
+              your service quality, your industry, your geographic area, your team's execution, your customers' independent decisions, 
+              third-party platform algorithms, and macroeconomic conditions. You acknowledge and agree that any examples, case 
+              studies, screenshots, projections, demonstrations, or testimonials shown in marketing materials are illustrative only 
+              and do not constitute a guarantee of similar results for your business.
+            </p>
+          </section>
+
+          {/* Section 12B: Social Media Disclaimer */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">12B. Social Media Disclaimer</h2>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>Aura Intercept LLC is <strong className="text-foreground">not responsible</strong> for any social media platform's algorithm changes, ranking changes, content moderation decisions, shadow-bans, throttling, account suspensions, account terminations, deleted posts, removed comments, or any loss or reduction of followers, likes, shares, engagement, or reach on Meta, Facebook, Instagram, TikTok, LinkedIn, X (Twitter), YouTube, Google, or any other third-party platform.</li>
+              <li>All AI-generated social media content, captions, hashtags, images, and posts are provided as drafts. <strong className="text-foreground">You are solely responsible</strong> for reviewing, editing, approving, and verifying every piece of content before it is published, scheduled, or transmitted to a third-party platform.</li>
+              <li>You are solely responsible for ensuring all published content complies with the applicable terms of service, community guidelines, and advertising policies of each third-party platform.</li>
+              <li>We reserve the right (but have no obligation) to refuse, remove, or refuse to publish AI-generated content that we believe may violate any third-party platform policy, applicable law, or these Terms.</li>
+              <li>You acknowledge that connecting your social accounts to our Service does not transfer ownership of those accounts or guarantee continued access to those accounts.</li>
+            </ul>
           </section>
 
           {/* Section 13: Indemnification */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">13. Indemnification (The "Hold Harmless" Clause)</h2>
             <p className="mb-4">
-              You agree to defend, indemnify, and hold harmless Aura Intercept, its founders, officers, directors, employees, 
-              and agents from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt, and 
-              expenses (including but not limited to attorney's fees) resulting from or arising out of:
+              You agree to defend, indemnify, and hold harmless Aura Intercept LLC and the Aura Parties (its members, managers, 
+              officers, directors, founders, employees, contractors, agents, licensors, and affiliates) from and against any 
+              and all claims, demands, damages, obligations, losses, liabilities, costs, debts, fines, penalties, and expenses 
+              (including reasonable attorneys' fees and court costs) resulting from or arising out of:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Your use and access of the Service.</li>
-              <li>A breach of these Terms.</li>
-              <li>Any content uploaded by you to the Service.</li>
-              <li>Your violation of applicable communications laws (including TCPA and Texas TTSA).</li>
-              <li>Claims from third parties arising from communications you initiated through the platform.</li>
+              <li>Your access to or use of the Service;</li>
+              <li>Your breach of these Terms;</li>
+              <li>Any content, data, prompts, or instructions you upload, submit, or generate through the Service;</li>
+              <li>Any AI-generated content that you (or your employees or agents) reviewed, approved, transmitted, or published — including social media posts, emails, SMS, voice messages, blog posts, quotes, invoices, or website copy;</li>
+              <li>Claims by your customers, leads, employees, or other third parties relating to AI miscommunications, missed or duplicated appointments, incorrect quotes or invoices, incorrect dispatch, failed or delayed notifications, or any communication initiated or processed through the Service;</li>
+              <li>Your violation of applicable communications laws, including the TCPA, CAN-SPAM Act, Texas TTSA, Texas SB 140, GDPR, CCPA/CPRA, and any state, federal, or international equivalent;</li>
+              <li>Your violation of any third-party social media platform's terms of service, community guidelines, or advertising policies;</li>
+              <li>Your violation of any third-party right, including without limitation any intellectual property, publicity, privacy, or contractual right;</li>
+              <li>Any misrepresentation made by you to us or to your end customers.</li>
             </ul>
           </section>
 
