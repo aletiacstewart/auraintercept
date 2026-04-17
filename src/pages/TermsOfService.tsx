@@ -136,11 +136,19 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">5. AI-Specific Terms and Limitations</h2>
             
+            <h3 className="text-xl font-semibold mt-4 mb-3">No Performance Guarantee</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>Aura Intercept LLC <strong className="text-foreground">makes no guarantee, representation, or warranty</strong> that any AI agent, automation, voice, SMS, email, chat, content generation, dispatch routing, scheduling, or analytics feature will function 100% accurately, reliably, continuously, or without error, downtime, hallucination, misclassification, mistranscription, or misrouting.</li>
+              <li>We <strong className="text-foreground">do not guarantee</strong> any specific business outcome, including but not limited to bookings, appointments scheduled, revenue earned, leads captured, conversion rates, customer retention, response quality, social media engagement, or website traffic.</li>
+              <li>AI is a <strong className="text-foreground">tool to assist — not replace — human judgment</strong>. You are solely responsible for reviewing, verifying, and supervising AI-generated outputs, communications, quotes, dispatch decisions, content, and posts before they are relied upon, sent to customers, or published.</li>
+              <li>You acknowledge that AI technology is inherently probabilistic and may produce inaccurate, incomplete, biased, offensive, or unexpected results. You agree to maintain independent backup systems, manual review processes, and operational redundancy for any business-critical workflow.</li>
+            </ul>
+
             <h3 className="text-xl font-semibold mt-4 mb-3">AI Accuracy Disclaimer</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Our AI agents are designed to assist with scheduling, customer service, and business operations but may not always provide accurate or complete information.</li>
-              <li>AI-generated responses should not be relied upon as professional, legal, medical, or financial advice.</li>
-              <li>You are responsible for verifying any critical information provided by AI agents.</li>
+              <li>Our AI agents are designed to assist with scheduling, customer service, content creation, dispatching, and business operations but may not always provide accurate or complete information.</li>
+              <li>AI-generated responses, content, quotes, recommendations, and decisions should not be relied upon as professional, legal, medical, financial, or business advice.</li>
+              <li>You are solely responsible for verifying any critical information provided by AI agents before acting on it or transmitting it to a third party.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">AI Training and Improvement</h3>
