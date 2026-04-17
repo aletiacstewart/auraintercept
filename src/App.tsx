@@ -155,7 +155,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/audit" element={<ProtectedRoute requiredRole="platform_admin"><OpportunityAudit /></ProtectedRoute>} />
+                <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />

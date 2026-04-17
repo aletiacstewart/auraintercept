@@ -14,14 +14,19 @@ import {
   Phone,
   Star,
   Rocket,
+  Download,
+  FileText,
 } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { AuditChecklistPDF } from "./AuditChecklistPDF";
 
 interface AuditResultsProps {
   tierPercentages: TierScores;
   recommendedTier: TierType;
   onRestart: () => void;
+  answers?: Record<string, string>;
 }
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
