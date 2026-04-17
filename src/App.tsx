@@ -155,7 +155,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/audit" element={<OpportunityAudit />} />
+                <Route path="/audit" element={<ProtectedRoute requiredRole="platform_admin"><OpportunityAudit /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
@@ -166,7 +166,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<TalkToAura />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/design-preview" element={<DesignPreview />} />
+                <Route path="/design-preview" element={<ProtectedRoute requiredRole="platform_admin"><DesignPreview /></ProtectedRoute>} />
                 <Route path="/about" element={<About />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
@@ -227,12 +227,12 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
                 <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                 <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
-                <Route path="/dashboard/architecture" element={<ProtectedRoute><Architecture /></ProtectedRoute>} />
-                <Route path="/dashboard/calculators" element={<ProtectedRoute><Calculators /></ProtectedRoute>} />
-                <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
+                <Route path="/dashboard/architecture" element={<ProtectedRoute requiredRole="platform_admin"><Architecture /></ProtectedRoute>} />
+                <Route path="/dashboard/calculators" element={<ProtectedRoute requiredRole="platform_admin"><Calculators /></ProtectedRoute>} />
+                <Route path="/dashboard/export-docs" element={<ProtectedRoute requiredRole="platform_admin"><ExportDocumentation /></ProtectedRoute>} />
                 <Route path="/dashboard/video-prompts" element={<ProtectedRoute><VideoPromptsPage /></ProtectedRoute>} />
-                <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute><CyberSentryMockup /></ProtectedRoute>} />
-                <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute><CyberSentryPortalMockup /></ProtectedRoute>} />
+                <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryMockup /></ProtectedRoute>} />
+                <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
