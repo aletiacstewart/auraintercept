@@ -73,12 +73,12 @@ export function AutonomyStatusPanel() {
           <StatTile
             label="Active"
             value={active}
-            icon={<CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+            icon={<CheckCircle2 className="w-4 h-4 text-success" />}
           />
           <StatTile
             label="Failing"
             value={failing}
-            icon={<AlertTriangle className="w-4 h-4 text-amber-500" />}
+            icon={<AlertTriangle className="w-4 h-4 text-warning" />}
             tone={failing > 0 ? 'warn' : 'ok'}
           />
         </div>
@@ -144,7 +144,7 @@ function StatTile({
   return (
     <div
       className={`rounded-lg border p-3 ${
-        tone === 'warn' ? 'border-amber-500/40 bg-amber-500/5' : 'bg-card'
+        tone === 'warn' ? 'border-warning/40 bg-warning/5' : 'bg-card'
       }`}
     >
       <div className="flex items-center justify-between">
@@ -161,7 +161,7 @@ function StatusBadge({ active, status }: { active: boolean; status: string | nul
   if (!status) return <Badge variant="outline">Pending</Badge>;
   if (status === 'succeeded')
     return (
-      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/30">
+      <Badge className="bg-success/10 text-success hover:bg-success/20 border-success/30">
         Healthy
       </Badge>
     );
