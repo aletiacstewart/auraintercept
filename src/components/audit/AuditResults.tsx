@@ -11,7 +11,6 @@ import {
   Crown,
   TrendingUp,
   Clock,
-  Phone,
   Star,
   Rocket,
   Download,
@@ -80,9 +79,6 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
     }, 300);
   };
 
-  const handleBookCall = () => {
-    window.open('https://calendly.com/aura-intercept/implementation', '_blank');
-  };
 
   // Get the next tier up for upgrade suggestion
   const currentTierIndex = TIER_ORDER.indexOf(recommendedTier);
@@ -321,7 +317,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <CardContent className="pt-8 pb-8 text-center">
             <h3 className="text-xl font-bold mb-2 text-card-foreground">Ready to Deploy Your AI Workforce?</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Start your 30-day guided launch or schedule a concierge kickoff call.
+              Start your 30-day guided launch and we'll set up your AI workforce with you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -331,15 +327,6 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
               >
                 Start Your 30-Day Launch
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={handleBookCall}
-                className="gap-2"
-              >
-                <Phone className="h-4 w-4" />
-                Schedule Concierge Kickoff
               </Button>
             </div>
           </CardContent>
