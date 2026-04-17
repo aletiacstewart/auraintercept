@@ -195,7 +195,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
         </Card>
 
         {/* 4-Tier Comparison */}
-        <Card className="mb-8 border border-border bg-white">
+        <Card className="mb-8 border border-border bg-card">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-center text-foreground">
               Your Fit Score Across All Tiers
