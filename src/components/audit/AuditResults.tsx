@@ -60,10 +60,11 @@ const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered:
   ELITE: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
 };
 
-export function AuditResults({ tierPercentages, recommendedTier, onRestart }: AuditResultsProps) {
+export function AuditResults({ tierPercentages, recommendedTier, onRestart, answers = {} }: AuditResultsProps) {
   const navigate = useNavigate();
   const recommendation = TIER_RECOMMENDATIONS[recommendedTier];
   const roiEstimate = TIER_ROI_ESTIMATES[recommendedTier];
+  const fitScore = tierPercentages[recommendedTier];
   
   // Calculate scaled hours based on fit percentage
   const avgFit = tierPercentages[recommendedTier];
@@ -250,6 +251,68 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 </div>
               );
             })}
+          </CardContent>
+        </Card>
+
+        {/* Download Setup Checklist PDF */}
+        <Card className="mb-8 border-2 border-primary/30 bg-primary/5">
+          <CardContent className="pt-6 pb-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-primary text-primary-foreground shrink-0">
+                <FileText className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-foreground mb-1">
+                  Download Your Personalized Setup Checklist
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  An 8-page PDF tailored to your {recommendation.label} plan and your answers — share it with partners, decision makers, or your team.
+                </p>
+                <ul className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground mb-4">
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>What's included in your plan</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Documents to gather before you launch</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Third-party setups required for your tier</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Your phone setup path (port, new, or forward)</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>30-day guided launch roadmap</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Side-by-side comparison of all 4 plans</span>
+                  </li>
+                </ul>
+                <PDFDownloadLink
+                  document={
+                    <AuditChecklistPDF
+                      recommendedTier={recommendedTier}
+                      fitScore={fitScore}
+                      answers={answers}
+                    />
+                  }
+                  fileName={`aura-setup-plan-${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
+                >
+                  {({ loading }) => (
+                    <Button size="lg" className="gap-2" disabled={loading}>
+                      <Download className="h-4 w-4" />
+                      {loading ? 'Preparing your PDF...' : 'Download Setup Checklist (PDF)'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
