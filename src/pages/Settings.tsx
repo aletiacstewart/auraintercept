@@ -57,8 +57,8 @@ export default function Settings() {
           <div className="space-y-6 animate-fade-in">
             <PageHeader
               icon={SettingsIcon}
-              title="Quick Setup"
-              description="Configure your company settings and preferences"
+              title="Settings"
+              description="Configure your business, communications, and AI knowledge — all in one place"
               featureColor="config"
               showAuraBar
             />
