@@ -349,68 +349,70 @@ export function CompanyAdminDashboard() {
               ))}
             </div>
 
-            {/* Quick Actions & Business Metrics */}
-            <div className="grid gap-3 md:grid-cols-2">
-              <Card className="bg-card border-border border-t-2 border-t-primary/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-sm text-card-foreground">
-                    <Activity className="w-4 h-4 text-primary" />
-                    Quick Actions
-                  </CardTitle>
-                  <CardDescription>Common tasks to manage your business</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
-                    {quickActions.map((action) => (
-                      <Button
-                        key={action.label}
-                        variant="outline"
-                        className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-card-foreground/80 transition-all duration-200"
-                        onClick={() => navigate(action.href)}
-                      >
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
-                          <action.icon className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Quick Actions & Business Metrics — Pro mode only */}
+            {!isSimple && (
+              <div className="grid gap-3 md:grid-cols-2">
+                <Card className="bg-card border-border border-t-2 border-t-primary/40">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-sm text-card-foreground">
+                      <Activity className="w-4 h-4 text-primary" />
+                      Quick Actions
+                    </CardTitle>
+                    <CardDescription>Common tasks to manage your business</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
+                      {quickActions.map((action) => (
+                        <Button
+                          key={action.label}
+                          variant="outline"
+                          className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-card-foreground/80 transition-all duration-200"
+                          onClick={() => navigate(action.href)}
+                        >
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
+                            <action.icon className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-card border-border border-t-2 border-t-secondary/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-card-foreground">
-                    <TrendingUp className="w-5 h-5 text-secondary" />
-                    Business Metrics
-                  </CardTitle>
-                  <CardDescription>Performance overview</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, colorVar: 'hsl(var(--secondary))' },
-                      { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, colorVar: 'hsl(var(--primary))' },
-                      { label: 'Appt. Completion', value: stats?.appointmentCompletionRate ?? 0, colorVar: 'hsl(var(--accent-foreground))' },
-                      { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, colorVar: 'hsl(var(--warning))' },
-                    ].map(metric => (
-                      <div key={metric.label} className="space-y-1.5">
-                        <div className="flex items-center justify-between text-sm text-card-foreground/80">
-                          <span>{metric.label}</span>
-                          <span className="font-medium text-card-foreground">{metric.value}%</span>
+                <Card className="bg-card border-border border-t-2 border-t-secondary/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-card-foreground">
+                      <TrendingUp className="w-5 h-5 text-secondary" />
+                      Business Metrics
+                    </CardTitle>
+                    <CardDescription>Performance overview</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, colorVar: 'hsl(var(--secondary))' },
+                        { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, colorVar: 'hsl(var(--primary))' },
+                        { label: 'Appt. Completion', value: stats?.appointmentCompletionRate ?? 0, colorVar: 'hsl(var(--accent-foreground))' },
+                        { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, colorVar: 'hsl(var(--warning))' },
+                      ].map(metric => (
+                        <div key={metric.label} className="space-y-1.5">
+                          <div className="flex items-center justify-between text-sm text-card-foreground/80">
+                            <span>{metric.label}</span>
+                            <span className="font-medium text-card-foreground">{metric.value}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-muted border border-border/50">
+                            <div 
+                              className="h-full rounded-full transition-all duration-700"
+                              style={{ width: `${metric.value}%`, background: metric.colorVar }} 
+                            />
+                          </div>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-muted border border-border/50">
-                          <div 
-                            className="h-full rounded-full transition-all duration-700"
-                            style={{ width: `${metric.value}%`, background: metric.colorVar }} 
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </CollapsibleContent>
         </Collapsible>
 
