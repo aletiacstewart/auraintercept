@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Monitor, Code, Cpu, Eye, HeadphonesIcon, PanelRightOpen } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 
 export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
@@ -55,6 +56,7 @@ export default function CustomerPortalConsole() {
                 <div className="flex items-center gap-2">
                   {canManageSettings && (
                     <>
+                      <InstallOnPhoneButton to="/dashboard/customer-portal-app-install" />
                       <Button
                         variant="outline"
                         size="sm"

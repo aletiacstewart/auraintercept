@@ -83,6 +83,10 @@ interface NavGroup {
   requiredTier?: SubscriptionTier;
 }
 
+// Simplified navigation: collapsed Console+Install pairs (install lives inside each console),
+// merged marketing groups, merged field-ops groups, trimmed integrations.
+// Power-user surfaces (AI Operatives Hub, Calculators, Architecture, Export Docs, AI Research)
+// are platform_admin only to reduce SMB owner cognitive load.
 const navGroups: NavGroup[] = [
   {
     label: 'Overview',
@@ -98,82 +102,58 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Business Mgt Console & Mobile App',
-    requiredTier: 'performance',
-    items: [
-      { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
-      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-    ],
-  },
-  {
-    label: 'Marketing Console',
-    requiredTier: 'connect',
-    items: [
-      { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
-    ],
-  },
-  {
-    label: 'Social Media Console',
-    requiredTier: 'connect',
-    items: [
-      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
-    ],
-  },
-  {
-    label: 'Web Presence Console',
-    requiredTier: 'connect',
-    items: [
-      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
-    ],
-  },
-  {
-    label: 'Tech-Field Console & Mobile App',
-    requiredTier: 'performance',
-    items: [
-      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
-      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
-    ],
-  },
-  {
-    label: 'Dispatch-Field Console & Mobile App',
-    requiredTier: 'performance',
-    items: [
-      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
-      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
-    ],
-  },
-  {
-    label: 'Customer Console & Mobile App',
+    label: 'Customers',
     requiredTier: 'connect',
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
       { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
-      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
+    ],
+  },
+  {
+    label: 'Field Ops',
+    requiredTier: 'performance',
+    items: [
+      { label: 'Technician View', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
+      { label: 'Dispatch View', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
+    ],
+  },
+  {
+    label: 'Business',
+    requiredTier: 'performance',
+    items: [
+      { label: 'Business Mgt Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
+      { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+    ],
+  },
+  {
+    label: 'Marketing',
+    requiredTier: 'connect',
+    items: [
+      { label: 'Outreach & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
+      { label: 'Social Media', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
+      { label: 'Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
     ],
   },
   {
     label: 'Configuration',
     items: [
-      { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin'], featureColor: 'text-feature-config' },
+      { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
     ],
   },
   {
-    label: '3rd Party Integrations',
+    label: 'Integrations',
     items: [
-      { label: '3rd Party Overview', icon: Puzzle, href: '/dashboard/3rd-party-overview', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Voice & SMS', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Phone & SMS', icon: PhoneCall, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Social Media', icon: Share2, href: '/dashboard/integrations/social', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'AI Research', icon: Search, href: '/dashboard/integrations/tavily', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      // CRM temporarily hidden - may revisit offering this setup later
-      // { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'All Integrations', icon: Puzzle, href: '/dashboard/3rd-party-overview', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'AI Research', icon: Search, href: '/dashboard/integrations/tavily', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
     ],
   },
   {
@@ -184,7 +164,7 @@ const navGroups: NavGroup[] = [
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Demo Accounts', icon: Users, href: '/dashboard/demo-accounts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
-      { label: 'AI Agent Demo', icon: Clapperboard, href: '/dashboard/ai-agent-demo', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
+      { label: 'AI Agent Demo', icon: Clapperboard, href: '/dashboard/ai-agent-demo', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },

@@ -9,6 +9,7 @@ import { Cpu, Briefcase, Receipt, ClipboardList, ArrowRightLeft } from 'lucide-r
 import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
+import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 
 const BUSINESS_WORKFLOWS: WorkflowChain[] = [
@@ -58,14 +59,17 @@ export default function BusinessManagementConsole() {
               badge={<ValueBadge label="Automates 60-70% of admin tasks" />}
               action={
                 canManageSettings ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/dashboard/ai-agents')}
-                  >
-                    <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                    Manage Agents
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <InstallOnPhoneButton to="/dashboard/business-mgt-ops-install" />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/dashboard/ai-agents')}
+                    >
+                      <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                      Manage Agents
+                    </Button>
+                  </div>
                 ) : undefined
               }
             />

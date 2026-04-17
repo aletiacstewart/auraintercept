@@ -9,6 +9,7 @@ import { Cpu, HardHat, Route, MapPin, Wrench } from 'lucide-react';
 import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
+import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 
 const FIELD_OPS_WORKFLOWS: WorkflowChain[] = [
@@ -58,15 +59,17 @@ export default function FieldOpsConsole() {
               badge={<ValueBadge label="Saves ~10 hrs/week on dispatch" />}
               action={
                 canManageSettings ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/dashboard/ai-agents')}
-                    className="h-7"
-                  >
-                    <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                    Manage Agents
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <InstallOnPhoneButton to="/dashboard/field-ops-install" />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/dashboard/ai-agents')}
+                    >
+                      <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                      Manage Agents
+                    </Button>
+                  </div>
                 ) : null
               }
             />
