@@ -147,7 +147,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
             </div>
 
             {/* ROI Estimate */}
-            <div className="bg-white rounded-xl p-4 mb-6 border border-border shadow-sm">
+            <div className="bg-card rounded-xl p-4 mb-6 border border-border shadow-sm">
               <h3 className="font-semibold mb-3 text-center text-foreground text-sm uppercase tracking-wide">
                 Estimated Monthly Impact
               </h3>
@@ -158,7 +158,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                 </div>
                 <div className="h-8 w-px bg-border" />
                 <div className="text-center">
-                  <p className="font-bold text-emerald-600">{roiEstimate.revenueImpact}</p>
+                  <p className="font-bold text-emerald-400">{roiEstimate.revenueImpact}</p>
                   <p className="text-xs text-muted-foreground">Revenue impact/mo</p>
                 </div>
               </div>
