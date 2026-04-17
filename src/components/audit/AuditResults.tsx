@@ -120,7 +120,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <CardContent className="relative">
             {/* Match Percentage Display */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-md border border-border">
+              <div className="inline-flex items-center gap-3 bg-card rounded-full px-6 py-3 shadow-md border border-border">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">{tierPercentages[recommendedTier]}%</span>
                 <span className="text-muted-foreground">Fit Score</span>
