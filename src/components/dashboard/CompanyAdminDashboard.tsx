@@ -193,7 +193,13 @@ export function CompanyAdminDashboard() {
     { title: 'Website Traffic', value: stats?.totalPageViews ?? 0, icon: Globe, description: `${stats?.totalVisitors ?? 0} visitors, ${stats?.totalChatInteractions ?? 0} chats`, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics', requiredTier: 'multi_track' as SubscriptionTier },
   ];
 
-  const statCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+  // Simple mode: show only the 5 most actionable KPIs an SMB owner cares about daily.
+  // Pro mode: show every tier-allowed stat card.
+  const SIMPLE_TITLES = new Set(['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Leads']);
+  const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+  const statCards = isSimple
+    ? tierFilteredCards.filter(c => SIMPLE_TITLES.has(c.title)).slice(0, 5)
+    : tierFilteredCards;
 
   const allQuickActions = [
     { label: 'Appointments', icon: Calendar, colorClass: 'bg-feature-appointments/15 text-feature-appointments', href: '/dashboard/appointments' },
@@ -223,6 +229,7 @@ export function CompanyAdminDashboard() {
           
           action={
             <div className="flex items-center gap-3 flex-wrap">
+              <DashboardViewToggle />
               {company?.registration_code && (
                 <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5">
                   <span className="text-xs text-muted-foreground">Registration Code:</span>
@@ -239,18 +246,28 @@ export function CompanyAdminDashboard() {
                   </Button>
                 </div>
               )}
-              <div 
-                className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
-                onClick={() => navigate('/dashboard/ai-agents')}
-              >
-                <span className="text-xs text-muted-foreground">Intelligence Network:</span>
-                <span className="text-sm font-medium text-secondary">Active</span>
-                <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                <ExternalLink className="h-3 w-3 text-secondary" />
-              </div>
+              {!isSimple && (
+                <div 
+                  className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
+                  onClick={() => navigate('/dashboard/ai-agents')}
+                >
+                  <span className="text-xs text-muted-foreground">Intelligence Network:</span>
+                  <span className="text-sm font-medium text-secondary">Active</span>
+                  <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                  <ExternalLink className="h-3 w-3 text-secondary" />
+                </div>
+              )}
             </div>
           }
         />
+
+        {/* Setup nav + onboarding hub: only show in Pro mode (or always, when still relevant) */}
+        {!isSimple && (
+          <>
+            <DashboardSetupNav />
+            <DashboardOnboardingHub companyId={companyId || undefined} />
+          </>
+        )}
 
         {/* Setup Navigation & Progress */}
         <DashboardSetupNav />
