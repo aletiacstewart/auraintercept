@@ -44,10 +44,10 @@ const TIER_COLORS: Record<TierType, string> = {
 };
 
 const TIER_BG_COLORS: Record<TierType, string> = {
-  CORE: 'bg-blue-50 border-blue-200',
-  BOOST: 'bg-violet-50 border-violet-200',
-  PRO: 'bg-emerald-50 border-emerald-200',
-  ELITE: 'bg-primary/10 border-primary/30',
+  CORE: 'bg-primary/5 border-primary/30',
+  BOOST: 'bg-accent/10 border-accent/30',
+  PRO: 'bg-emerald-500/10 border-emerald-500/30',
+  ELITE: 'bg-primary/10 border-primary/40',
 };
 
 const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
@@ -101,7 +101,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                 {TIER_ICONS[recommendedTier]}
               </div>
             </div>
-            <Badge className="mx-auto mb-4 bg-white text-foreground/70 border border-border shadow-sm">
+            <Badge className="mx-auto mb-4 bg-card text-card-foreground border border-border shadow-sm">
               Your Recommended Plan
             </Badge>
             <CardTitle className="text-3xl sm:text-4xl font-brand uppercase tracking-wider text-foreground">
@@ -120,7 +120,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <CardContent className="relative">
             {/* Match Percentage Display */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-md border border-border">
+              <div className="inline-flex items-center gap-3 bg-card rounded-full px-6 py-3 shadow-md border border-border">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">{tierPercentages[recommendedTier]}%</span>
                 <span className="text-muted-foreground">Fit Score</span>
@@ -129,17 +129,17 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
 
             {/* Estimated Impact - 3 columns */}
             <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mb-8">
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Clock className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{scaledHours}+</p>
                 <p className="text-xs text-muted-foreground">Hours saved/week</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Zap className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{recommendation.agentCount}</p>
                 <p className="text-xs text-muted-foreground">AI Operatives</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-white/80 border border-border shadow-sm">
+              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
                 <Star className="h-5 w-5 mx-auto mb-2 text-primary" />
                 <p className="text-xl font-bold text-foreground">{recommendation.consoleCount}</p>
                 <p className="text-xs text-muted-foreground">Control Centers</p>
@@ -147,7 +147,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
             </div>
 
             {/* ROI Estimate */}
-            <div className="bg-white rounded-xl p-4 mb-6 border border-border shadow-sm">
+            <div className="bg-card rounded-xl p-4 mb-6 border border-border shadow-sm">
               <h3 className="font-semibold mb-3 text-center text-foreground text-sm uppercase tracking-wide">
                 Estimated Monthly Impact
               </h3>
@@ -158,20 +158,20 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                 </div>
                 <div className="h-8 w-px bg-border" />
                 <div className="text-center">
-                  <p className="font-bold text-emerald-600">{roiEstimate.revenueImpact}</p>
+                  <p className="font-bold text-emerald-400">{roiEstimate.revenueImpact}</p>
                   <p className="text-xs text-muted-foreground">Revenue impact/mo</p>
                 </div>
               </div>
             </div>
 
             {/* Key Features */}
-            <div className="bg-white rounded-xl p-6 mb-6 border border-border shadow-sm">
+            <div className="bg-card rounded-xl p-6 mb-6 border border-border shadow-sm">
               <h3 className="font-semibold mb-4 text-center text-foreground">What's Included</h3>
               <ul className="space-y-3">
                 {recommendation.keyFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-foreground/70">{feature}</span>
+                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground/80">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -195,7 +195,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
         </Card>
 
         {/* 4-Tier Comparison */}
-        <Card className="mb-8 border border-border bg-white">
+        <Card className="mb-8 border border-border bg-card">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-center text-foreground">
               Your Fit Score Across All Tiers
