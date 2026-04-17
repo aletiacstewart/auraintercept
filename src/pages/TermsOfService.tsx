@@ -417,6 +417,53 @@ export default function TermsOfService() {
             </p>
           </section>
 
+          {/* Section 21: Assumption of Risk & Acknowledgment */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">21. Assumption of Risk & Acknowledgment</h2>
+            <p className="mb-4 text-muted-foreground">
+              By using the Service, you expressly acknowledge, represent, and agree that:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>AI technology is inherently <strong className="text-foreground">probabilistic, non-deterministic, and imperfect</strong>, and may produce errors, inaccuracies, hallucinations, biased outputs, or unexpected behavior at any time;</li>
+              <li>You have independently evaluated the Service and have determined, in your own business judgment, that it is suitable for your needs, and you have not relied on any representation, warranty, projection, or guarantee not expressly contained in these Terms;</li>
+              <li>You assume <strong className="text-foreground">all risk and responsibility</strong> for outcomes resulting from your use of the Service, including any AI-generated communications, dispatch decisions, quotes, invoices, content, or social media posts that reach your customers, employees, or the public;</li>
+              <li>You will maintain <strong className="text-foreground">independent backup systems, manual review processes, and operational redundancy</strong> for any business-critical workflow (including but not limited to appointment scheduling, dispatching, billing, and customer communications);</li>
+              <li>You are responsible for training your employees on the proper use, supervision, and limitations of AI features;</li>
+              <li>You will not represent to any third party that AI-generated outputs are guaranteed accurate or endorsed by Aura Intercept LLC.</li>
+            </ul>
+          </section>
+
+          {/* Section 22: Force Majeure */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">22. Force Majeure</h2>
+            <p className="text-muted-foreground">
+              Aura Intercept LLC and the Aura Parties shall not be liable for any failure or delay in performance, or for any 
+              loss or damage, arising out of or resulting from causes beyond our reasonable control, including without limitation: 
+              acts of God; natural disasters; fire; flood; war; terrorism; civil unrest; pandemic or epidemic; government actions, 
+              orders, or regulations; labor disputes; cyberattacks; denial-of-service attacks; internet, telecommunications, or 
+              power outages; failures, outages, deprecations, or policy changes by hosting providers, AI providers, telephony 
+              providers, payment processors, email providers, or social media platforms (including without limitation Lovable, 
+              Supabase, OpenAI, Google, ElevenLabs, SignalWire, Twilio, Stripe, Resend, Meta, TikTok, LinkedIn, X, or YouTube); 
+              or any other event beyond our reasonable control.
+            </p>
+          </section>
+
+          {/* Section 23: Severability & Survival */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">23. Severability & Survival</h2>
+            <p className="text-muted-foreground mb-4">
+              If any provision of these Terms is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, 
+              such provision shall be modified to the minimum extent necessary to make it enforceable, or if no such modification 
+              is possible, severed from these Terms; the remaining provisions shall continue in full force and effect.
+            </p>
+            <p className="text-muted-foreground">
+              All provisions of these Terms which by their nature should survive termination shall survive, including without 
+              limitation the disclaimers of warranties (Section 11), limitations of liability (Sections 12, 12A, 12B), 
+              indemnification (Section 13), data ownership (Section 14), governing law (Section 16), assumption of risk 
+              (Section 21), and severability (Section 23).
+            </p>
+          </section>
+
           {/* Section 19: Platform Terms of Service */}
           <section className="border-t border-border pt-8 mt-12">
             <h2 className="text-2xl font-semibold mb-4">19. Platform Terms of Service</h2>
