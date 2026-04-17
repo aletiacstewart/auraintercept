@@ -71,6 +71,7 @@ export default function FieldOperations() {
             description="Real-time dispatch console for managing field technicians"
             featureColor="fieldops"
             showAuraBar
+            action={<InstallOnPhoneButton to="/dashboard/dispatch-field-ops-install" />}
           />
           <WorkflowChainButtons
             chains={DISPATCH_WORKFLOWS}
