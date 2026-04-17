@@ -44,10 +44,10 @@ const TIER_COLORS: Record<TierType, string> = {
 };
 
 const TIER_BG_COLORS: Record<TierType, string> = {
-  CORE: 'bg-blue-50 border-blue-200',
-  BOOST: 'bg-violet-50 border-violet-200',
-  PRO: 'bg-emerald-50 border-emerald-200',
-  ELITE: 'bg-primary/10 border-primary/30',
+  CORE: 'bg-primary/5 border-primary/30',
+  BOOST: 'bg-accent/10 border-accent/30',
+  PRO: 'bg-emerald-500/10 border-emerald-500/30',
+  ELITE: 'bg-primary/10 border-primary/40',
 };
 
 const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
