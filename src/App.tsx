@@ -88,6 +88,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
+import PlatformHealth from "./pages/PlatformHealth";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
@@ -241,6 +242,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
                 <Route path="/dashboard/demo-accounts" element={<ProtectedRoute><DemoAccounts /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent-demo" element={<ProtectedRoute><AIAgentFlowDemo /></ProtectedRoute>} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
