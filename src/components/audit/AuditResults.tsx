@@ -11,7 +11,6 @@ import {
   Crown,
   TrendingUp,
   Clock,
-  Phone,
   Star,
   Rocket,
   Download,
@@ -80,9 +79,6 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
     }, 300);
   };
 
-  const handleBookCall = () => {
-    window.open('https://calendly.com/aura-intercept/implementation', '_blank');
-  };
 
   // Get the next tier up for upgrade suggestion
   const currentTierIndex = TIER_ORDER.indexOf(recommendedTier);
