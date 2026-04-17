@@ -69,7 +69,7 @@ export function AuditQuestion({
                   "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200",
                   isSelected
                     ? `${colors.border} ${colors.bg}`
-                    : "border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300"
+                    : "border-border bg-muted/40 hover:bg-muted/70 hover:border-border"
                 )}
               >
                 <div
@@ -77,7 +77,7 @@ export function AuditQuestion({
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
                     isSelected
                       ? "border-white bg-white"
-                      : "border-gray-400"
+                      : "border-muted-foreground/50"
                   )}
                 >
                   {isSelected && (
@@ -86,7 +86,7 @@ export function AuditQuestion({
                 </div>
                 <span className={cn(
                   "text-sm sm:text-base font-medium",
-                  isSelected ? "text-white" : "text-gray-700"
+                  isSelected ? "text-white" : "text-foreground"
                 )}>{option.label}</span>
               </Label>
               </div>
