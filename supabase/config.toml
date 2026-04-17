@@ -215,3 +215,6 @@ verify_jwt = false
 
 [functions.social-oauth-data-deletion]
 verify_jwt = false
+
+[functions.cron-health-check]
+verify_jwt = false
