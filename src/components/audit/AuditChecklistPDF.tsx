@@ -621,7 +621,7 @@ const NextStepsPage = ({ tier }: { tier: TierType }) => (
     </View>
 
     <Text style={styles.subsectionTitle}>{t('Questions?')}</Text>
-    <Bullet>{'Email: hello@auraintercept.ai'}</Bullet>
+    <Bullet>{'Email: auraintercept@gmail.com'}</Bullet>
     <Bullet>{'Web: https://auraintercept.ai'}</Bullet>
     <Bullet>{'Help center: https://auraintercept.ai/dashboard/help (after signup)'}</Bullet>
 
