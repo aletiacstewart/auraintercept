@@ -6647,6 +6647,16 @@ export type Database = {
               isSetofReturn: true
             }
           }
+      get_autonomy_cron_jobs: {
+        Args: never
+        Returns: {
+          active: boolean
+          jobname: string
+          last_run_at: string
+          last_status: string
+          schedule: string
+        }[]
+      }
       get_company_calendar_appointments: {
         Args: { p_feed_token: string }
         Returns: {
