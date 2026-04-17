@@ -269,38 +269,35 @@ export function CompanyAdminDashboard() {
           </>
         )}
 
-        {/* Setup Navigation & Progress */}
-        <DashboardSetupNav />
-
-        {/* Onboarding Hub */}
-        <DashboardOnboardingHub companyId={companyId || undefined} />
-
-        <div className="flex items-center gap-4">
-          <PDFDownloadLink 
-            document={<CompanyGuidesPDF />} 
-            fileName="company-admin-guide.pdf"
-          >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading} className="gap-2">
-                <Download className="h-4 w-4" />
-                {loading ? 'Generating...' : 'Company Guide Download'}
-              </Button>
-            )}
-          </PDFDownloadLink>
-          <div 
-            className="w-16 h-16 rounded-xl border-2 border-primary overflow-hidden"
-          >
-            {company?.logo_url ? (
-              <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
-            ) : (
-              <div 
-                className="w-full h-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-primary to-secondary text-primary-foreground"
-              >
-                {company?.name?.charAt(0) || 'C'}
-              </div>
-            )}
+        {/* Company guide download + logo — Pro mode only (clutter for daily users) */}
+        {!isSimple && (
+          <div className="flex items-center gap-4">
+            <PDFDownloadLink 
+              document={<CompanyGuidesPDF />} 
+              fileName="company-admin-guide.pdf"
+            >
+              {({ loading }) => (
+                <Button variant="outline" disabled={loading} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  {loading ? 'Generating...' : 'Company Guide Download'}
+                </Button>
+              )}
+            </PDFDownloadLink>
+            <div 
+              className="w-16 h-16 rounded-xl border-2 border-primary overflow-hidden"
+            >
+              {company?.logo_url ? (
+                <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
+              ) : (
+                <div 
+                  className="w-full h-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-primary to-secondary text-primary-foreground"
+                >
+                  {company?.name?.charAt(0) || 'C'}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ===== AURA COMMAND CENTER (Primary) ===== */}
         <AuraCommandCenter />
