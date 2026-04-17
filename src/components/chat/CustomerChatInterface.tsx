@@ -48,14 +48,15 @@ interface CustomerChatInterfaceProps {
   dispatchPhone?: string | null;
 }
 
+// Plain-English customer-facing labels (engine agent IDs unchanged).
 const AGENT_LABELS: Record<string, { label: string; color: string }> = {
-  triage: { label: 'Assistant', color: 'bg-channel-chat' },
-  booking: { label: 'Scheduling Agent', color: 'bg-channel-sms' },
-  dispatch: { label: 'Dispatch Agent', color: 'bg-channel-voice' },
-  quote: { label: 'Quote Agent', color: 'bg-channel-chat' },
-  review: { label: 'Social Media Review Agent', color: 'bg-channel-email' },
-  eta: { label: 'ETA Agent', color: 'bg-secondary' },
-  'follow-up': { label: 'Follow-up Agent', color: 'bg-channel-voice' },
+  triage: { label: 'Front Desk', color: 'bg-channel-chat' },
+  booking: { label: 'Front Desk', color: 'bg-channel-sms' },
+  dispatch: { label: 'On The Way', color: 'bg-channel-voice' },
+  quote: { label: 'Billing', color: 'bg-channel-chat' },
+  review: { label: 'Front Desk', color: 'bg-channel-email' },
+  eta: { label: 'On The Way', color: 'bg-secondary' },
+  'follow-up': { label: 'Front Desk', color: 'bg-channel-voice' },
 };
 
 export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({

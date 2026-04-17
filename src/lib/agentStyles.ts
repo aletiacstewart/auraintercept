@@ -8,50 +8,50 @@ export interface AgentStyle {
 }
 
 export const AGENT_STYLES: Record<string, AgentStyle> = {
-  // Customer Portal Agents
-  triage: { label: 'AI Receptionist', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  customer_journey: { label: 'Customer Journey', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  // Customer-facing — grouped under "Front Desk" in plain English
+  triage: { label: 'Front Desk', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  customer_journey: { label: 'Front Desk', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   // Legacy aliases (backward compat)
-  booking: { label: 'Customer Journey', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  followup: { label: 'Customer Journey', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  review: { label: 'Customer Journey', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  booking: { label: 'Front Desk', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  followup: { label: 'Front Desk', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  review: { label: 'Front Desk', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   
-  // Field Operations Agents
+  // Field Operations — grouped as "On The Way"
   dispatch: { label: 'Dispatch', color: 'text-accent', bgColor: 'bg-accent/10' },
-  field_navigation: { label: 'Field Navigation', color: 'text-accent', bgColor: 'bg-accent/10' },
+  field_navigation: { label: 'On The Way', color: 'text-accent', bgColor: 'bg-accent/10' },
   // Legacy aliases
-  route: { label: 'Field Navigation', color: 'text-accent', bgColor: 'bg-accent/10' },
-  eta: { label: 'Field Navigation', color: 'text-accent', bgColor: 'bg-accent/10' },
-  checkin: { label: 'Field Navigation', color: 'text-accent', bgColor: 'bg-accent/10' },
+  route: { label: 'On The Way', color: 'text-accent', bgColor: 'bg-accent/10' },
+  eta: { label: 'On The Way', color: 'text-accent', bgColor: 'bg-accent/10' },
+  checkin: { label: 'On The Way', color: 'text-accent', bgColor: 'bg-accent/10' },
   
-  // Business Operations Agents
-  admin: { label: 'Admin', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
-  business_finance: { label: 'Business Finance', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
+  // Business Operations — grouped as "Billing & Office"
+  admin: { label: 'Office', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
+  business_finance: { label: 'Billing', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   // Legacy aliases
-  quoting: { label: 'Business Finance', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
-  invoice: { label: 'Business Finance', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
-  inventory: { label: 'Business Finance', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
+  quoting: { label: 'Billing', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
+  invoice: { label: 'Billing', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
+  inventory: { label: 'Billing', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   
-  // Outreach & Sales (merged)
-  outreach: { label: 'Outreach', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  // Marketing — plain "Marketing"
+  outreach: { label: 'Marketing', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
   // Legacy aliases
-  campaign: { label: 'Outreach', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
-  marketing: { label: 'Outreach', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
-  lead: { label: 'Outreach', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  campaign: { label: 'Marketing', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  marketing: { label: 'Marketing', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  lead: { label: 'Marketing', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
   
-  // Creative Content Agent
-  creative_content: { label: 'Creative Content', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
+  // Social posts
+  creative_content: { label: 'Social Posts', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
   
-  // Analytics Intelligence Agent (unified)
-  analytics_intelligence: { label: 'Analytics Intelligence', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  // Reports — friendlier than "Analytics Intelligence"
+  analytics_intelligence: { label: 'Reports', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   // Legacy aliases
-  insights: { label: 'Analytics Intelligence', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  performance: { label: 'Analytics Intelligence', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  revenue: { label: 'Analytics Intelligence', color: 'text-secondary', bgColor: 'bg-secondary/10' },
-  forecast: { label: 'Analytics Intelligence', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  insights: { label: 'Reports', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  performance: { label: 'Reports', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  revenue: { label: 'Reports', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  forecast: { label: 'Reports', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   
-  // Web Presence
-  web_presence: { label: 'Web Presence', color: 'text-purple-400', bgColor: 'bg-purple-500/10' },
+  // Website
+  web_presence: { label: 'Website', color: 'text-purple-400', bgColor: 'bg-purple-500/10' },
 };
 
 // Default style for unknown agents
