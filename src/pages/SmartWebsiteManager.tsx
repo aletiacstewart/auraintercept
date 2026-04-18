@@ -45,6 +45,8 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { PageHeader } from '@/components/ui/page-header';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
@@ -318,28 +320,31 @@ export default function SmartWebsiteManager() {
             featureColor="config"
             showAuraBar
             action={
-              websiteUrl ? (
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {!isMobile && (
-                    <Button
-                      variant={showLivePreview ? "default" : "outline"}
-                      className="w-full sm:w-auto"
-                      onClick={() => { setShowLivePreview(p => !p); refreshPreview(); }}
-                    >
-                      <PanelRightOpen className="w-4 h-4 mr-2" />
-                      {showLivePreview ? 'Hide Preview' : 'Live Preview'}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <HowToUseModal {...HOW_TO_USE.webPresenceConsole} />
+                {websiteUrl && (
+                  <>
+                    {!isMobile && (
+                      <Button
+                        variant={showLivePreview ? "default" : "outline"}
+                        className="w-full sm:w-auto"
+                        onClick={() => { setShowLivePreview(p => !p); refreshPreview(); }}
+                      >
+                        <PanelRightOpen className="w-4 h-4 mr-2" />
+                        {showLivePreview ? 'Hide Preview' : 'Live Preview'}
+                      </Button>
+                    )}
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
+                      <Eye className="w-4 h-4 mr-2" />
+                      Preview
                     </Button>
-                  )}
-                  <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview
-                  </Button>
-                  <Button variant="outline" className="w-full sm:w-auto" onClick={() => copyToClipboard(websiteUrl)}>
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy URL
-                  </Button>
-                </div>
-              ) : undefined
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => copyToClipboard(websiteUrl)}>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy URL
+                    </Button>
+                  </>
+                )}
+              </div>
             }
           />
 

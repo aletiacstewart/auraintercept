@@ -49,6 +49,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
@@ -374,6 +376,7 @@ export default function AIAgentsHub() {
                 <p className="text-2xl font-bold text-foreground">{enabledCount}/{totalCount}</p>
                 <p className="text-sm text-muted-foreground">Operatives Active</p>
               </div>
+              <HowToUseModal {...HOW_TO_USE.aiOperativesHub} />
               <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Global Settings
