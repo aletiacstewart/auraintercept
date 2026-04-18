@@ -515,7 +515,7 @@ export function FastStartWizard() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5 p-4 text-center">
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
           <Rocket className="h-8 w-8 text-primary mx-auto mb-2" />
           <p className="text-sm font-medium text-foreground">Ready to go live</p>
           <p className="text-xs text-muted-foreground mt-1">Click "Launch" — your 24 AI agents will start running 24/7.</p>
