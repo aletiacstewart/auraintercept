@@ -10,6 +10,8 @@ import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { toast } from 'sonner';
 
 const FIELD_OPS_WORKFLOWS: WorkflowChain[] = [
@@ -58,19 +60,22 @@ export default function FieldOpsConsole() {
               showAuraBar
               badge={<ValueBadge label="Saves ~10 hrs/week on dispatch" />}
               action={
-                canManageSettings ? (
-                  <div className="flex items-center gap-2">
-                    <InstallOnPhoneButton to="/dashboard/field-ops-install" />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate('/dashboard/ai-agents')}
-                    >
-                      <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                      Manage Agents
-                    </Button>
-                  </div>
-                ) : null
+                <div className="flex items-center gap-2">
+                  <HowToUseModal {...HOW_TO_USE.fieldOpsConsole} />
+                  {canManageSettings && (
+                    <>
+                      <InstallOnPhoneButton to="/dashboard/field-ops-install" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/ai-agents')}
+                      >
+                        <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                        Manage Agents
+                      </Button>
+                    </>
+                  )}
+                </div>
               }
             />
 
