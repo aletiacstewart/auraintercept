@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2, Lightbulb } from 'lucide-react';
+import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2, Lightbulb, FlaskConical } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 // Common industry categories (similar to Google My Business)
