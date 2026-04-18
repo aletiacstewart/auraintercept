@@ -509,6 +509,7 @@ export function SmartLinksManager() {
                       onEdit={() => handleOpenEdit(link)}
                       onDelete={() => deleteMutation.mutate(link.id)}
                       onCopyUrl={() => handleCopyUrl(link.url)}
+                      onShowQr={() => setQrLink(link)}
                     />
                   ))}
                 </TableBody>
