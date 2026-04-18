@@ -16,6 +16,8 @@ import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles, Li
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
