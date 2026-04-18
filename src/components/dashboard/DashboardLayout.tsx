@@ -58,6 +58,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
 import { Clapperboard, Video } from 'lucide-react';
