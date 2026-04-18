@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import jsPDF from 'jspdf';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -6,9 +7,10 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  TrendingUp, 
-  DollarSign, 
+import { Button } from '@/components/ui/button';
+import {
+  TrendingUp,
+  DollarSign,
   Calendar,
   PiggyBank,
   ArrowRight,
@@ -16,6 +18,7 @@ import {
   AlertTriangle,
   BarChart3,
   Percent,
+  Download,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
