@@ -99,7 +99,10 @@ export default function KnowledgeBase() {
             )}
           </TabsList>
 
-          <TabsContent value="ai-profile">
+          <TabsContent value="ai-profile" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.aiProfileTab} />
+            </div>
             <AIContentProfileManager />
           </TabsContent>
 
@@ -107,28 +110,46 @@ export default function KnowledgeBase() {
             <AuraIntelligenceSettings />
           </TabsContent>
 
-          <TabsContent value="services">
+          <TabsContent value="services" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.servicesTab} />
+            </div>
             <ServicesManager />
           </TabsContent>
 
-          <TabsContent value="faqs">
+          <TabsContent value="faqs" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.faqsTab} />
+            </div>
             <FAQsManager />
           </TabsContent>
 
-          <TabsContent value="hours">
+          <TabsContent value="hours" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.hoursTab} />
+            </div>
             <BusinessHoursManager />
           </TabsContent>
 
-          <TabsContent value="documents">
+          <TabsContent value="documents" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.documentsTab} />
+            </div>
             <DocumentsManager />
           </TabsContent>
 
-          <TabsContent value="smart-links">
+          <TabsContent value="smart-links" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.smartLinksTab} />
+            </div>
             <SmartLinksManager />
           </TabsContent>
 
           {isPlatformAdmin && (
-            <TabsContent value="inventory">
+            <TabsContent value="inventory" className="space-y-3">
+              <div className="flex justify-end">
+                <HowToUseModal {...HOW_TO_USE.inventoryTab} />
+              </div>
               <InventoryManager />
             </TabsContent>
           )}
