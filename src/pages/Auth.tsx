@@ -268,7 +268,8 @@ export default function Auth() {
     }
 
     if (authData.user) {
-      // Create company first
+      // Create company first — default new signups to Aura Core ('starter') with 30-day trial
+      // (DB default is 'free' which would lock everything; mark them as Core trial-tier instead).
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
         .insert({
@@ -276,6 +277,7 @@ export default function Auth() {
           slug,
           address: companyAddress || null,
           phone: companyPhone || null,
+          subscription_tier: 'starter',
         })
         .select()
         .single();
