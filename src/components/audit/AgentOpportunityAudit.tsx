@@ -149,7 +149,29 @@ export function AgentOpportunityAudit() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-brand uppercase tracking-tight mb-2">
+          <div className="flex justify-center mb-4">
+            <span
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] px-3 py-1 rounded-full border"
+              style={{
+                borderColor: "rgba(0,229,255,0.3)",
+                background: "rgba(0,229,255,0.06)",
+                color: "#7ef0ff",
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(0,229,255,0.8)]" />
+              Free • 2 Min • No Sign-Up
+            </span>
+          </div>
+          <h1
+            className="text-4xl sm:text-5xl font-brand uppercase tracking-tight mb-3"
+            style={{
+              background:
+                "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 45%, #00E5FF 70%, #214ebb 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
             AI Opportunity Audit
           </h1>
           <p className="text-muted-foreground">
@@ -159,9 +181,9 @@ export function AgentOpportunityAudit() {
 
         {/* Section Badge */}
         <div className="flex justify-center mb-6">
-          <Badge 
-            variant="outline" 
-            className="text-sm px-4 py-1.5 border-primary/30 bg-primary/5"
+          <Badge
+            variant="outline"
+            className="text-sm px-4 py-1.5 border-[rgba(0,229,255,0.3)] bg-[rgba(0,229,255,0.06)] text-cyan-300"
           >
             {currentSection} ({sectionIndex + 1}/{SECTION_ORDER.length})
           </Badge>
@@ -171,9 +193,21 @@ export function AgentOpportunityAudit() {
         <div className="mb-8">
           <div className="flex justify-between text-sm text-muted-foreground mb-2">
             <span>Question {currentStep + 1} of {QUESTIONS.length}</span>
-            <span>{Math.round(progress)}% Complete</span>
+            <span className="text-cyan-300">{Math.round(progress)}% Complete</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div
+            className="rounded-full p-px"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(0,229,255,0.4), rgba(0,229,255,0.1))",
+              boxShadow: "0 0 12px rgba(0,229,255,0.15)",
+            }}
+          >
+            <Progress
+              value={progress}
+              className="h-2 bg-[rgba(0,229,255,0.08)] [&>div]:bg-gradient-to-r [&>div]:from-cyan-400 [&>div]:to-cyan-300"
+            />
+          </div>
         </div>
 
         {/* Question Card */}
