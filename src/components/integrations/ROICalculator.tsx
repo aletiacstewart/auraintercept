@@ -115,8 +115,65 @@ export function ROICalculator() {
     };
   }, [monthlyAppointments, avgServiceValue, currentNoShowRate, remindersPerAppointment]);
 
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const margin = 48;
+    let y = margin;
+    const line = (text: string, opts?: { bold?: boolean; size?: number; color?: [number, number, number] }) => {
+      doc.setFont('helvetica', opts?.bold ? 'bold' : 'normal');
+      doc.setFontSize(opts?.size ?? 11);
+      if (opts?.color) doc.setTextColor(...opts.color);
+      else doc.setTextColor(20, 20, 20);
+      doc.text(text, margin, y);
+      y += (opts?.size ?? 11) + 6;
+    };
+    const sep = () => { y += 6; doc.setDrawColor(220); doc.line(margin, y, 612 - margin, y); y += 14; };
+
+    line('Aura Intercept — ROI Analysis', { bold: true, size: 20, color: [13, 148, 136] });
+    line(`Generated: ${new Date().toLocaleDateString()}`, { size: 9, color: [120, 120, 120] });
+    sep();
+
+    line('Your Inputs', { bold: true, size: 14 });
+    line(`Monthly appointments: ${monthlyAppointments}`);
+    line(`Average service value: ${formatCurrency(avgServiceValue)}`);
+    line(`Current no-show rate: ${currentNoShowRate}%`);
+    line(`Reminders per appointment: ${remindersPerAppointment}`);
+    sep();
+
+    line('Current Loss', { bold: true, size: 14 });
+    line(`Monthly: ${formatCurrency(calculations.currentLostRevenue)} (${calculations.currentNoShows} no-shows)`);
+    line(`Annual: ${formatCurrency(calculations.annualLostRevenue)}`, { color: [200, 30, 30] });
+    sep();
+
+    if (calculations.bestStrategy) {
+      line(`Best Strategy: ${calculations.bestStrategy.name}`, { bold: true, size: 14, color: [13, 148, 136] });
+      line(`Monthly cost: ${formatCurrency(calculations.bestStrategy.monthlyCost)}`);
+      line(`Monthly revenue saved: ${formatCurrency(calculations.bestStrategy.monthlyRevenueSaved)}`);
+      line(`Monthly net profit: ${formatCurrency(calculations.bestStrategy.monthlyNetSavings)}`, { bold: true });
+      line(`Annual net savings: ${formatCurrency(calculations.bestStrategy.annualNetSavings)}`, { bold: true, color: [16, 185, 129] });
+      line(`ROI: ${calculations.bestStrategy.roi === Infinity ? '∞' : `${calculations.bestStrategy.roi.toFixed(0)}%`}`);
+      line(`Payback: ${calculations.bestStrategy.paybackDays === 0 ? 'Instant' : `${calculations.bestStrategy.paybackDays} days`}`);
+      sep();
+    }
+
+    line('All Strategies Compared', { bold: true, size: 14 });
+    calculations.strategies.filter(s => s.key !== 'none').forEach(s => {
+      line(`• ${s.name}: ${formatCurrency(s.monthlyNetSavings)}/mo net  |  ROI ${s.roi === Infinity ? '∞' : `${s.roi.toFixed(0)}%`}`);
+    });
+
+    doc.save(`aura-roi-analysis-${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
+        {/* Download bar */}
+        <div className="flex items-center justify-end">
+          <Button onClick={handleDownloadPDF} variant="outline" size="sm" className="gap-2">
+            <Download className="h-4 w-4" />
+            Download PDF Report
+          </Button>
+        </div>
+
         {/* Input Section */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
