@@ -86,14 +86,56 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
   const nextTierRec = nextTierUp ? TIER_RECOMMENDATIONS[nextTierUp] : null;
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Cyber dot-grid overlay */}
+      <div className="absolute inset-0 cyber-dot-grid opacity-40 pointer-events-none" />
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* Results Hero Header */}
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-4">
+            <span
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] px-3 py-1 rounded-full border"
+              style={{
+                borderColor: "rgba(0,229,255,0.3)",
+                background: "rgba(0,229,255,0.06)",
+                color: "#7ef0ff",
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(0,229,255,0.8)]" />
+              Audit Complete
+            </span>
+          </div>
+          <h1
+            className="text-4xl sm:text-5xl font-brand uppercase tracking-tight mb-3"
+            style={{
+              background:
+                "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 45%, #00E5FF 70%, #214ebb 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            Your Aura Intercept Match
+          </h1>
+          <p className="text-muted-foreground">
+            Recommended plan: <span className="text-cyan-300 font-semibold">{recommendation.label}</span>
+          </p>
+        </div>
+
         {/* Hero Result Card */}
-        <Card className={`relative overflow-hidden mb-8 border-2 ${TIER_BG_COLORS[recommendedTier]}`}>
+        <Card
+          className={`relative overflow-hidden mb-8 border-2 ${TIER_BG_COLORS[recommendedTier]}`}
+          style={{
+            boxShadow: "0 0 24px rgba(0,229,255,0.06)",
+          }}
+        >
           <div className={`absolute inset-0 bg-gradient-to-br ${TIER_COLORS[recommendedTier]} opacity-5`} />
           <CardHeader className="text-center relative">
             <div className="flex justify-center mb-4">
-              <div className={`p-4 rounded-full bg-gradient-to-br ${TIER_COLORS[recommendedTier]} text-white shadow-lg`}>
+              <div
+                className={`p-4 rounded-full bg-gradient-to-br ${TIER_COLORS[recommendedTier]} text-white`}
+                style={{ boxShadow: "0 0 30px rgba(0,229,255,0.35)" }}
+              >
                 {TIER_ICONS[recommendedTier]}
               </div>
             </div>
@@ -116,8 +158,11 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <CardContent className="relative">
             {/* Match Percentage Display */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-3 bg-card rounded-full px-6 py-3 shadow-md border border-border">
-                <TrendingUp className="h-5 w-5 text-primary" />
+              <div
+                className="inline-flex items-center gap-3 bg-card rounded-full px-6 py-3 border border-[rgba(0,229,255,0.18)]"
+                style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+              >
+                <TrendingUp className="h-5 w-5 text-cyan-300" />
                 <span className="text-2xl font-bold text-foreground">{tierPercentages[recommendedTier]}%</span>
                 <span className="text-muted-foreground">Fit Score</span>
               </div>
@@ -125,25 +170,37 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
 
             {/* Estimated Impact - 3 columns */}
             <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mb-8">
-              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
-                <Clock className="h-5 w-5 mx-auto mb-2 text-primary" />
+              <div
+                className="text-center p-4 rounded-xl bg-card/60 border border-[rgba(0,229,255,0.18)]"
+                style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+              >
+                <Clock className="h-5 w-5 mx-auto mb-2 text-cyan-300" />
                 <p className="text-xl font-bold text-foreground">{scaledHours}+</p>
                 <p className="text-xs text-muted-foreground">Hours saved/week</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
-                <Zap className="h-5 w-5 mx-auto mb-2 text-primary" />
+              <div
+                className="text-center p-4 rounded-xl bg-card/60 border border-[rgba(0,229,255,0.18)]"
+                style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+              >
+                <Zap className="h-5 w-5 mx-auto mb-2 text-cyan-300" />
                 <p className="text-xl font-bold text-foreground">{recommendation.agentCount}</p>
                 <p className="text-xs text-muted-foreground">AI Operatives</p>
               </div>
-              <div className="text-center p-4 rounded-xl bg-card/60 border border-border shadow-sm">
-                <Star className="h-5 w-5 mx-auto mb-2 text-primary" />
+              <div
+                className="text-center p-4 rounded-xl bg-card/60 border border-[rgba(0,229,255,0.18)]"
+                style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+              >
+                <Star className="h-5 w-5 mx-auto mb-2 text-cyan-300" />
                 <p className="text-xl font-bold text-foreground">{recommendation.consoleCount}</p>
                 <p className="text-xs text-muted-foreground">Control Centers</p>
               </div>
             </div>
 
             {/* ROI Estimate */}
-            <div className="bg-card rounded-xl p-4 mb-6 border border-border shadow-sm">
+            <div
+              className="bg-card rounded-xl p-4 mb-6 border border-[rgba(0,229,255,0.18)]"
+              style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+            >
               <h3 className="font-semibold mb-3 text-center text-foreground text-sm uppercase tracking-wide">
                 Estimated Monthly Impact
               </h3>
@@ -161,7 +218,10 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
             </div>
 
             {/* Key Features */}
-            <div className="bg-card rounded-xl p-6 mb-6 border border-border shadow-sm">
+            <div
+              className="bg-card rounded-xl p-6 mb-6 border border-[rgba(0,229,255,0.18)]"
+              style={{ boxShadow: "0 0 24px rgba(0,229,255,0.06)" }}
+            >
               <h3 className="font-semibold mb-4 text-center text-foreground">What's Included</h3>
               <ul className="space-y-3">
                 {recommendation.keyFeatures.map((feature, index) => (
