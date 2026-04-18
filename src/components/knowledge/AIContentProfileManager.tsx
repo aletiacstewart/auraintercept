@@ -870,6 +870,48 @@ export function AIContentProfileManager() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Test Content Dialog */}
+      <Dialog open={testOpen} onOpenChange={setTestOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FlaskConical className="h-5 w-5 text-primary" />
+              Sample Content Preview
+            </DialogTitle>
+            <DialogDescription>
+              A sample Facebook post the AI would generate using your current profile.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="min-h-[200px] py-2">
+            {testLoading && (
+              <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <p className="text-sm">Generating in your brand voice...</p>
+              </div>
+            )}
+            {testError && (
+              <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                {testError}
+              </div>
+            )}
+            {testResult && (
+              <div className="rounded-md border bg-muted/30 p-4 text-sm whitespace-pre-wrap leading-relaxed">
+                {testResult}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTestOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleTestContent} disabled={testLoading}>
+              <FlaskConical className="h-4 w-4 mr-2" />
+              {testLoading ? 'Generating...' : 'Regenerate'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
