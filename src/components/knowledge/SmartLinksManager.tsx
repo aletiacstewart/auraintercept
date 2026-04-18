@@ -47,8 +47,11 @@ import {
   Link2,
   ExternalLink,
   Check,
-  X
+  X,
+  QrCode,
+  Download
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   DndContext,
   closestCenter,
