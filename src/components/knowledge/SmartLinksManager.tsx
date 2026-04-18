@@ -221,6 +221,9 @@ function SortableRow({ link, onEdit, onDelete, onCopyUrl, onShowQr }: SortableRo
       </TableCell>
       <TableCell>
         <div className="flex gap-1">
+          <Button size="icon" variant="ghost" onClick={onShowQr} title="QR code" disabled={!link.url}>
+            <QrCode className="w-4 h-4" />
+          </Button>
           <Button size="icon" variant="ghost" onClick={onEdit} title="Edit">
             <Pencil className="w-4 h-4" />
           </Button>
