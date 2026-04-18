@@ -1,38 +1,42 @@
 
 
-## Fix Audit Results — Invisible Text on Light Cards (Dark Mode)
+## Restyle Audit Pages to Match Cyber-Sentry Site Theme
 
-### Root cause
-`AuditResults.tsx` mixes hardcoded **light** Tailwind backgrounds (`bg-white`, `bg-blue-50`, `bg-violet-50`, `bg-emerald-50`, `bg-white/80`) with **theme-token text colors** (`text-foreground`, `text-muted-foreground`). The platform runs the Cyber-Sentry dark theme by default, so `text-foreground` resolves to near-white — white text on white/pale-blue cards = invisible (exact match for the screenshot).
+### What's wrong
+The audit pages (`/audit` and the results screen) feel like a generic form against the dark site shell — no cyan accents, no dot-grid texture, no cinematic gradient heading, plain `bg-background` body. The rest of the public site (Index, hero, sections) uses the Cyber-Sentry palette: obsidian backgrounds, cyan glows (`rgba(0,229,255,...)`), gradient text, dot-grid overlay, and `font-brand` Bebas Neue headings.
 
-This violates the project's core rule: *"Theme CSS vars ONLY (no hex/rgba)"* and the equivalent for hardcoded color classes.
+### Restyle scope (3 files, no logic changes)
 
-`AuditQuestion.tsx` has the same problem (`bg-white`, `text-gray-700`, `border-gray-200`) but is less obvious because selected options fill with bright accent colors.
+**1. `src/pages/OpportunityAudit.tsx`** — wrap `<main>` in a Cyber-Sentry shell:
+- Add a subtle hero band at the top (obsidian gradient + cyan dot-grid overlay + horizontal scanline) so it visually connects to the landing hero.
+- Section background `rgba(0,229,255,0.02)` to match Index sections.
 
-### Fix — swap hardcoded colors for theme tokens
+**2. `src/components/audit/AgentOpportunityAudit.tsx`** (the question flow):
+- Replace the plain centered `<h1>` with the cinematic gradient title used on Index (`linear-gradient(135deg, #00F2FF → #FFFFFF → #00E5FF → #214ebb)`, `WebkitBackgroundClip: text`) — kept in the existing `font-brand` Bebas Neue.
+- Add a small cyan-accent badge/eyebrow above the title: "FREE • 2 MIN • NO SIGN-UP".
+- Restyle the section badge with a cyan glow border (`border-[rgba(0,229,255,0.3)] bg-[rgba(0,229,255,0.06)] text-cyan-300`).
+- Style the `<Progress>` track with cyan fill via wrapping div (cyan-tinted track and indicator) and add a thin glow.
+- Keep the question card itself untouched (already on theme after the prior fix).
 
-**`src/components/audit/AuditResults.tsx`**
-- Replace `bg-white` / `bg-white/80` panels → `bg-card` (with `text-card-foreground` where needed).
-- Replace tier accent backgrounds (`TIER_BG_COLORS`: `bg-blue-50`, `bg-violet-50`, `bg-emerald-50`) → theme-aware tints: `bg-primary/5 border-primary/30`, `bg-accent/10 border-accent/30`, `bg-emerald-500/10 border-emerald-500/30`, `bg-primary/10 border-primary/40` — all readable in dark mode.
-- The "Recommended Plan" badge (`bg-white text-foreground/70`) → `bg-card text-card-foreground border-border`.
-- The "Fit Score" pill (`bg-white`) → `bg-card border-border`.
-- The 3 stat tiles (`bg-white/80`) → `bg-card/60 border-border`.
-- Keep the gradient icon badges and the green revenue-impact accent (`text-emerald-400` instead of `emerald-600` for dark-mode contrast).
+**3. `src/components/audit/AuditResults.tsx`**:
+- Add a top "results hero" header above the existing cards: gradient `font-brand` title ("YOUR AURA INTERCEPT MATCH"), small cyan eyebrow ("AUDIT COMPLETE"), and the recommended-tier name in cyan.
+- Wrap the page in a `cyber-dot-grid` background (already a global utility in `index.css`) so it matches Index sections.
+- Update the gradient icon-badge ring on the hero result card to use cyan glow (`shadow-[0_0_30px_rgba(0,229,255,0.35)]`) instead of generic shadow.
+- Re-style the "Fit Score" pill, the 3 stat tiles, and the "What's Included" panel borders to use `border-[rgba(0,229,255,0.18)]` + `shadow-[0_0_24px_rgba(0,229,255,0.06)]` so they read as Cyber-Sentry SOC tiles, not generic cards.
+- Keep all content, all numbers, the PDF download CTA, and the tier-comparison logic exactly as-is.
 
-**`src/components/audit/AuditQuestion.tsx`**
-- Unselected option rows: `bg-white hover:bg-gray-50 border-gray-200 text-gray-700` → `bg-muted/40 hover:bg-muted/70 border-border text-foreground`.
-- Unselected radio circle: `border-gray-400` → `border-muted-foreground/50`.
-- Selected state keeps its bright fill (emerald/yellow/orange/red) — those are intentional traffic-light cues and already have white text on saturated bg, which works in both themes.
-
-### Files touched
-- `src/components/audit/AuditResults.tsx` — color-token sweep (~12 class swaps)
-- `src/components/audit/AuditQuestion.tsx` — unselected-row color-token sweep (~3 class swaps)
+### What stays the same
+- All copy, scoring, tier recommendations, PDF generation, download flow, retake button, and CTAs.
+- The traffic-light answer colors (green/yellow/orange/red) — already on-brand.
+- The 4 brand colors per tier in `TIER_COLORS` (CORE cyan, BOOST violet, PRO emerald, ELITE primary/orange).
 
 ### Out of scope
-- No changes to scoring logic, tier copy, the PDF, or routing
-- No changes to the gradient icon backgrounds or selected-answer traffic-light colors (those render correctly)
-- No global theme changes
+- No changes to questions, scoring math, or `types.ts`.
+- No changes to `AuditChecklistPDF.tsx` (PDF stays Helvetica + neutral as required).
+- No changes to `PublicHeader` / `PublicFooter`.
 
-### Verification
-After the swap, every card on `/audit` and `/audit` results screen will use `bg-card` / `bg-muted` / `bg-primary/10` style tokens that automatically invert with the theme — text will be readable in both light and dark modes.
+### Files touched
+- `src/pages/OpportunityAudit.tsx`
+- `src/components/audit/AgentOpportunityAudit.tsx`
+- `src/components/audit/AuditResults.tsx`
 
