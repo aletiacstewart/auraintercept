@@ -14,6 +14,8 @@ import { Monitor, Code, Cpu, Eye, HeadphonesIcon, PanelRightOpen } from 'lucide-
 import { PageHeader } from '@/components/ui/page-header';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
@@ -54,6 +56,7 @@ export default function CustomerPortalConsole() {
               }
               action={
                 <div className="flex items-center gap-2">
+                  <HowToUseModal {...HOW_TO_USE.customerPortalConsole} />
                   {canManageSettings && (
                     <>
                       <InstallOnPhoneButton to="/dashboard/customer-portal-app-install" />
