@@ -190,6 +190,46 @@ export function AIContentProfileManager() {
   const [suggestedKeywords, setSuggestedKeywords] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
+  // Test Content state
+  const [testOpen, setTestOpen] = useState(false);
+  const [testLoading, setTestLoading] = useState(false);
+  const [testResult, setTestResult] = useState<string | null>(null);
+  const [testError, setTestError] = useState<string | null>(null);
+
+  const handleTestContent = async () => {
+    if (!companyId) return;
+    setTestOpen(true);
+    setTestLoading(true);
+    setTestResult(null);
+    setTestError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-social-content', {
+        body: {
+          companyId,
+          platform: 'facebook',
+          topic: contentTopics[0] || 'Customer success story',
+          tone,
+          industry: primaryIndustry || 'Home Services',
+          uniqueSellingPoints,
+          avoidKeywords,
+          previewOnly: true,
+        },
+      });
+      if (error) throw error;
+      const text =
+        (data as any)?.content ||
+        (data as any)?.text ||
+        (data as any)?.post ||
+        (typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+      setTestResult(text);
+    } catch (err: any) {
+      console.error('Test content error', err);
+      setTestError(err?.message || 'Could not generate sample content. Make sure your profile has at least an industry and tone set.');
+    } finally {
+      setTestLoading(false);
+    }
+  };
+
   // Fetch existing profile
   const { data: profile, isLoading } = useQuery({
     queryKey: ['ai-content-profile', companyId],
