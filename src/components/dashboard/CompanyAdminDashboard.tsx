@@ -13,6 +13,8 @@ import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { DashboardSetupNav } from './DashboardSetupNav';
 import { DashboardOnboardingHub } from './DashboardOnboardingHub';
 import { AuraCommandCenter } from './AuraCommandCenter';
+import { AuraTodayStrip } from './AuraTodayStrip';
+import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
@@ -299,8 +301,29 @@ export function CompanyAdminDashboard() {
           </div>
         )}
 
+        {/* ===== TODAY KPI STRIP (Hero) ===== */}
+        {companyId && <AuraTodayStrip companyId={companyId} />}
+
         {/* ===== AURA COMMAND CENTER (Primary) ===== */}
         <AuraCommandCenter />
+
+        {/* ===== ROI CALCULATOR (Pro mode only — promotes embedded calculator) ===== */}
+        {!isSimple && (
+          <Card className="bg-card border-border border-t-2 border-t-primary/40">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-card-foreground">
+                <DollarSign className="h-5 w-5 text-primary" />
+                ROI Calculator — see what 24/7 AI saves you
+              </CardTitle>
+              <CardDescription>
+                Live What-If sliders. Adjust your appointment volume and no-show rate to see your annual recovery.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ROICalculator />
+            </CardContent>
+          </Card>
+        )}
 
         {/* ===== BUSINESS SNAPSHOT (Collapsible) ===== */}
         <Collapsible open={snapshotOpen} onOpenChange={setSnapshotOpen}>
