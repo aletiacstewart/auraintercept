@@ -1,42 +1,70 @@
 
 
-## Restyle Audit Pages to Match Cyber-Sentry Site Theme
+## Aura Intercept — Marketing-Site Parity & "Set It and Forget It" Onboarding
 
-### What's wrong
-The audit pages (`/audit` and the results screen) feel like a generic form against the dark site shell — no cyan accents, no dot-grid texture, no cinematic gradient heading, plain `bg-background` body. The rest of the public site (Index, hero, sections) uses the Cyber-Sentry palette: obsidian backgrounds, cyan glows (`rgba(0,229,255,...)`), gradient text, dot-grid overlay, and `font-brand` Bebas Neue headings.
+This is a large, high-value initiative. Most building blocks already exist (24 agents → 10 operatives, 7 consoles, 4-tier model, `FastStartWizard`, `FeatureGate`, Knowledge Base, Customer Portal, PWA, ROI calculator). The work is to **harden, gate, and surface them** to match the new marketing site — not rebuild.
 
-### Restyle scope (3 files, no logic changes)
+To keep each step reviewable I'm proposing 5 phases. I recommend shipping Phases 1 + 2 in this loop (the highest-leverage items) and tackling 3–5 in follow-up loops.
 
-**1. `src/pages/OpportunityAudit.tsx`** — wrap `<main>` in a Cyber-Sentry shell:
-- Add a subtle hero band at the top (obsidian gradient + cyan dot-grid overlay + horizontal scanline) so it visually connects to the landing hero.
-- Section background `rgba(0,229,255,0.02)` to match Index sections.
+### Phase 1 — Plan visibility & upgrade CTAs (foundation)
+- `CurrentPlanChip` in `GlassHeader` showing "Current Plan: Core" + "Upgrade" link to `/dashboard/subscription`.
+- Standardize `FeatureGate` lock UI: tier name + one-click upgrade button on every blocked surface.
+- Audit `useSubscription` tier matrix vs. the marketing pricing table; fix mismatches in `subscriptionTiers.ts`.
+- Verify new sign-ups default to `core` + 30-day trial in `Auth.tsx` and DB defaults.
 
-**2. `src/components/audit/AgentOpportunityAudit.tsx`** (the question flow):
-- Replace the plain centered `<h1>` with the cinematic gradient title used on Index (`linear-gradient(135deg, #00F2FF → #FFFFFF → #00E5FF → #214ebb)`, `WebkitBackgroundClip: text`) — kept in the existing `font-brand` Bebas Neue.
-- Add a small cyan-accent badge/eyebrow above the title: "FREE • 2 MIN • NO SIGN-UP".
-- Restyle the section badge with a cyan glow border (`border-[rgba(0,229,255,0.3)] bg-[rgba(0,229,255,0.06)] text-cyan-300`).
-- Style the `<Progress>` track with cyan fill via wrapping div (cyan-tinted track and indicator) and add a thin glow.
-- Keep the question card itself untouched (already on theme after the prior fix).
+### Phase 2 — 5-Step onboarding wizard (your highest priority)
+Extend `FastStartWizard` from 4 → 5 steps:
+1. Welcome + plan confirmation (Core + 30-day trial badge)
+2. **NEW**: Import from Website URL or PDF → new edge function `kb-auto-import` (Lovable AI gemini-2.5-flash) auto-fills Services, Hours, FAQ, Smart Links, AI Content Profile
+3. Connect Google Calendar / Stripe (already wired) + optional QuickBooks/Xero stub
+4. One-click "Enable All Agents in My Plan"
+5. Install widget + Customer Portal QR + public URL
+- Success screen: *"Your 24 AI agents are now live 24/7"*
 
-**3. `src/components/audit/AuditResults.tsx`**:
-- Add a top "results hero" header above the existing cards: gradient `font-brand` title ("YOUR AURA INTERCEPT MATCH"), small cyan eyebrow ("AUDIT COMPLETE"), and the recommended-tier name in cyan.
-- Wrap the page in a `cyber-dot-grid` background (already a global utility in `index.css`) so it matches Index sections.
-- Update the gradient icon-badge ring on the hero result card to use cyan glow (`shadow-[0_0_30px_rgba(0,229,255,0.35)]`) instead of generic shadow.
-- Re-style the "Fit Score" pill, the 3 stat tiles, and the "What's Included" panel borders to use `border-[rgba(0,229,255,0.18)]` + `shadow-[0_0_24px_rgba(0,229,255,0.06)]` so they read as Cyber-Sentry SOC tiles, not generic cards.
-- Keep all content, all numbers, the PDF download CTA, and the tier-comparison logic exactly as-is.
+### Phase 3 — KB auto-import + universal "How to Use" pattern
+- "Import from Website / PDF" buttons in Knowledge Base console (reuses Phase 2 edge fn).
+- Reusable `<HowToUseModal>` (blue `?` trigger): What runs 24/7 · When you step in · Steps · Home-service example. Drop into all 7 consoles + KB sub-tabs + AI Operatives Hub.
+- Inventory low-stock → triggers Dispatch operative.
+- AI Content Profile "Test Content" button.
+- Smart Links auto-generate QR codes.
 
-### What stays the same
-- All copy, scoring, tier recommendations, PDF generation, download flow, retake button, and CTAs.
-- The traffic-light answer colors (green/yellow/orange/red) — already on-brand.
-- The 4 brand colors per tier in `TIER_COLORS` (CORE cyan, BOOST violet, PRO emerald, ELITE primary/orange).
+### Phase 4 — Owner dashboard + ROI
+- Reorder `AuraCommandCenter` tiles: Today's Bookings · Open Jobs · Revenue This Week + ROI · AI Activity · Quick Actions.
+- Promote ROI calculator (currently admin-only at `/dashboard/calculators`) into `CompanyAdminDashboard` Pro mode as an embedded widget.
+- Add What-If sliders + jsPDF export to ROI calculator.
+- Status color pass: green/yellow/red chips across all console KPI strips.
+
+### Phase 5 — Customer Portal & widget simplicity + mobile Field Ops
+- Settings → Customer Portal → Install: prominent "Copy Embed Code" + "Copy Portal URL" + QR card.
+- `/technician` tap-target audit (≥48 px) and verify offline PWA cache for job list.
+- Verify portal AI greeting pulls from KB.
+
+### Tier matrix (gating source of truth — confirm before Phase 1)
+
+| Console / Agent | Core | Boost | Pro | Elite |
+|---|:-:|:-:|:-:|:-:|
+| Front Desk (Receptionist, Booking, Follow-Up, Review) | ✓ | ✓ | ✓ | ✓ |
+| Web Presence + Smart Website | ✓ | ✓ | ✓ | ✓ |
+| Creative Content (basic) | ✓ | ✓ | ✓ | ✓ |
+| Dispatch + Field Ops + Check-In | — | ✓ | ✓ | ✓ |
+| Social Media Ops | — | — | ✓ | ✓ |
+| Outreach & Sales Ops | — | — | ✓ | ✓ |
+| Analytics (full 8-tab suite) | basic | basic | ✓ | ✓ |
+| Business Mgmt + Inventory automation | — | — | ✓ | ✓ |
+| Priority support + concierge | — | — | — | ✓ |
+
+This matches `mem://marketing/pricing/canonical-four-tier-model`. **Please confirm it matches your latest marketing screenshots before I start gating.**
 
 ### Out of scope
-- No changes to questions, scoring math, or `types.ts`.
-- No changes to `AuditChecklistPDF.tsx` (PDF stays Helvetica + neutral as required).
-- No changes to `PublicHeader` / `PublicFooter`.
+- Renaming or removing any of the 24 agents / 7 consoles
+- Stripe price ID changes or `LEGACY_TIER_MAP` edits
+- Multi-location features (excluded per memory)
+- `auth.users` or Supabase reserved schemas
 
-### Files touched
-- `src/pages/OpportunityAudit.tsx`
-- `src/components/audit/AgentOpportunityAudit.tsx`
-- `src/components/audit/AuditResults.tsx`
+### Two clarifications before I start building
+
+1. **Which phases this loop?** I recommend **Phase 1 + Phase 2** (plan visibility + 5-step onboarding with KB auto-import). Alternatives: Phase 1 only (safest), or all 5 (largest, more regression risk).
+2. **Tier matrix correct?** Confirm the table above matches your new marketing pricing page, or send corrections.
+
+Reply with answers (e.g. *"Phase 1+2, matrix is correct"*) and I'll start implementation.
 
