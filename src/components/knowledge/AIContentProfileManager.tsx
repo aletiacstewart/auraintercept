@@ -494,13 +494,24 @@ export function AIContentProfileManager() {
             </p>
           </div>
         </div>
-        <Button 
-          onClick={() => saveMutation.mutate()}
-          disabled={!hasChanges || saveMutation.isPending}
-        >
-          <Save className="h-4 w-4 mr-2" />
-          {saveMutation.isPending ? 'Saving...' : 'Save Profile'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleTestContent}
+            disabled={!primaryIndustry}
+            title={!primaryIndustry ? 'Set a primary industry first' : 'Generate a sample post in your voice'}
+          >
+            <FlaskConical className="h-4 w-4 mr-2" />
+            Test Content
+          </Button>
+          <Button
+            onClick={() => saveMutation.mutate()}
+            disabled={!hasChanges || saveMutation.isPending}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saveMutation.isPending ? 'Saving...' : 'Save Profile'}
+          </Button>
+        </div>
       </div>
 
       {/* Industry Selection */}
