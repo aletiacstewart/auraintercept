@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2, Lightbulb } from 'lucide-react';
+import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2, Lightbulb, FlaskConical } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 // Common industry categories (similar to Google My Business)
@@ -188,6 +189,46 @@ export function AIContentProfileManager() {
   // Keyword suggestions state
   const [suggestedKeywords, setSuggestedKeywords] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+  // Test Content state
+  const [testOpen, setTestOpen] = useState(false);
+  const [testLoading, setTestLoading] = useState(false);
+  const [testResult, setTestResult] = useState<string | null>(null);
+  const [testError, setTestError] = useState<string | null>(null);
+
+  const handleTestContent = async () => {
+    if (!companyId) return;
+    setTestOpen(true);
+    setTestLoading(true);
+    setTestResult(null);
+    setTestError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-social-content', {
+        body: {
+          companyId,
+          platform: 'facebook',
+          topic: contentTopics[0] || 'Customer success story',
+          tone,
+          industry: primaryIndustry || 'Home Services',
+          uniqueSellingPoints,
+          avoidKeywords,
+          previewOnly: true,
+        },
+      });
+      if (error) throw error;
+      const text =
+        (data as any)?.content ||
+        (data as any)?.text ||
+        (data as any)?.post ||
+        (typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+      setTestResult(text);
+    } catch (err: any) {
+      console.error('Test content error', err);
+      setTestError(err?.message || 'Could not generate sample content. Make sure your profile has at least an industry and tone set.');
+    } finally {
+      setTestLoading(false);
+    }
+  };
 
   // Fetch existing profile
   const { data: profile, isLoading } = useQuery({
@@ -453,13 +494,24 @@ export function AIContentProfileManager() {
             </p>
           </div>
         </div>
-        <Button 
-          onClick={() => saveMutation.mutate()}
-          disabled={!hasChanges || saveMutation.isPending}
-        >
-          <Save className="h-4 w-4 mr-2" />
-          {saveMutation.isPending ? 'Saving...' : 'Save Profile'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleTestContent}
+            disabled={!primaryIndustry}
+            title={!primaryIndustry ? 'Set a primary industry first' : 'Generate a sample post in your voice'}
+          >
+            <FlaskConical className="h-4 w-4 mr-2" />
+            Test Content
+          </Button>
+          <Button
+            onClick={() => saveMutation.mutate()}
+            disabled={!hasChanges || saveMutation.isPending}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saveMutation.isPending ? 'Saving...' : 'Save Profile'}
+          </Button>
+        </div>
       </div>
 
       {/* Industry Selection */}
@@ -818,6 +870,48 @@ export function AIContentProfileManager() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Test Content Dialog */}
+      <Dialog open={testOpen} onOpenChange={setTestOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FlaskConical className="h-5 w-5 text-primary" />
+              Sample Content Preview
+            </DialogTitle>
+            <DialogDescription>
+              A sample Facebook post the AI would generate using your current profile.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="min-h-[200px] py-2">
+            {testLoading && (
+              <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <p className="text-sm">Generating in your brand voice...</p>
+              </div>
+            )}
+            {testError && (
+              <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                {testError}
+              </div>
+            )}
+            {testResult && (
+              <div className="rounded-md border bg-muted/30 p-4 text-sm whitespace-pre-wrap leading-relaxed">
+                {testResult}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTestOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleTestContent} disabled={testLoading}>
+              <FlaskConical className="h-4 w-4 mr-2" />
+              {testLoading ? 'Generating...' : 'Regenerate'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

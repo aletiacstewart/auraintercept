@@ -47,8 +47,11 @@ import {
   Link2,
   ExternalLink,
   Check,
-  X
+  X,
+  QrCode,
+  Download
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   DndContext,
   closestCenter,
@@ -127,9 +130,10 @@ interface SortableRowProps {
   onEdit: () => void;
   onDelete: () => void;
   onCopyUrl: () => void;
+  onShowQr: () => void;
 }
 
-function SortableRow({ link, onEdit, onDelete, onCopyUrl }: SortableRowProps) {
+function SortableRow({ link, onEdit, onDelete, onCopyUrl, onShowQr }: SortableRowProps) {
   const {
     attributes,
     listeners,
@@ -217,6 +221,9 @@ function SortableRow({ link, onEdit, onDelete, onCopyUrl }: SortableRowProps) {
       </TableCell>
       <TableCell>
         <div className="flex gap-1">
+          <Button size="icon" variant="ghost" onClick={onShowQr} title="QR code" disabled={!link.url}>
+            <QrCode className="w-4 h-4" />
+          </Button>
           <Button size="icon" variant="ghost" onClick={onEdit} title="Edit">
             <Pencil className="w-4 h-4" />
           </Button>
@@ -240,6 +247,7 @@ export function SmartLinksManager() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<SmartLink | null>(null);
+  const [qrLink, setQrLink] = useState<SmartLink | null>(null);
   const [triggerInput, setTriggerInput] = useState('');
   const [formData, setFormData] = useState({
     category: 'custom' as SmartLinkCategory,
@@ -502,6 +510,7 @@ export function SmartLinksManager() {
                       onEdit={() => handleOpenEdit(link)}
                       onDelete={() => deleteMutation.mutate(link.id)}
                       onCopyUrl={() => handleCopyUrl(link.url)}
+                      onShowQr={() => setQrLink(link)}
                     />
                   ))}
                 </TableBody>
@@ -643,6 +652,57 @@ export function SmartLinksManager() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!qrLink} onOpenChange={(o) => !o && setQrLink(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>QR Code: {qrLink?.name}</DialogTitle>
+            <DialogDescription>
+              Scan, print, or download this QR code so customers can open the link instantly.
+            </DialogDescription>
+          </DialogHeader>
+          {qrLink && (
+            <div className="flex flex-col items-center gap-4 py-4">
+              <div className="bg-white p-4 rounded-lg" id={`qr-${qrLink.id}`}>
+                <QRCodeSVG value={qrLink.url} size={200} level="M" />
+              </div>
+              <p className="text-xs text-muted-foreground break-all text-center">{qrLink.url}</p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(qrLink.url);
+                    toast.success('URL copied');
+                  }}
+                >
+                  <Copy className="w-4 h-4 mr-1.5" /> Copy URL
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const svg = document.querySelector(`#qr-${qrLink.id} svg`) as SVGSVGElement | null;
+                    if (!svg) return;
+                    const serializer = new XMLSerializer();
+                    const svgString = serializer.serializeToString(svg);
+                    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${qrLink.name.replace(/\s+/g, '-').toLowerCase()}-qr.svg`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success('QR code downloaded');
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-1.5" /> Download
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </Card>

@@ -16,6 +16,8 @@ import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles, Li
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
@@ -50,9 +52,12 @@ export default function KnowledgeBase() {
           featureColor="config"
           showAuraBar
           action={
-            <Button onClick={() => setShowWizard(true)} variant="outline">
-              <Sparkles className="h-4 w-4 mr-2" /> AI Generate
-            </Button>
+            <div className="flex items-center gap-2">
+              <HowToUseModal {...HOW_TO_USE.knowledgeBase} />
+              <Button onClick={() => setShowWizard(true)} variant="outline">
+                <Sparkles className="h-4 w-4 mr-2" /> AI Generate
+              </Button>
+            </div>
           }
         />
 
@@ -94,7 +99,10 @@ export default function KnowledgeBase() {
             )}
           </TabsList>
 
-          <TabsContent value="ai-profile">
+          <TabsContent value="ai-profile" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.aiProfileTab} />
+            </div>
             <AIContentProfileManager />
           </TabsContent>
 
@@ -102,28 +110,46 @@ export default function KnowledgeBase() {
             <AuraIntelligenceSettings />
           </TabsContent>
 
-          <TabsContent value="services">
+          <TabsContent value="services" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.servicesTab} />
+            </div>
             <ServicesManager />
           </TabsContent>
 
-          <TabsContent value="faqs">
+          <TabsContent value="faqs" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.faqsTab} />
+            </div>
             <FAQsManager />
           </TabsContent>
 
-          <TabsContent value="hours">
+          <TabsContent value="hours" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.hoursTab} />
+            </div>
             <BusinessHoursManager />
           </TabsContent>
 
-          <TabsContent value="documents">
+          <TabsContent value="documents" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.documentsTab} />
+            </div>
             <DocumentsManager />
           </TabsContent>
 
-          <TabsContent value="smart-links">
+          <TabsContent value="smart-links" className="space-y-3">
+            <div className="flex justify-end">
+              <HowToUseModal {...HOW_TO_USE.smartLinksTab} />
+            </div>
             <SmartLinksManager />
           </TabsContent>
 
           {isPlatformAdmin && (
-            <TabsContent value="inventory">
+            <TabsContent value="inventory" className="space-y-3">
+              <div className="flex justify-end">
+                <HowToUseModal {...HOW_TO_USE.inventoryTab} />
+              </div>
               <InventoryManager />
             </TabsContent>
           )}
