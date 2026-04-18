@@ -52,9 +52,12 @@ export default function KnowledgeBase() {
           featureColor="config"
           showAuraBar
           action={
-            <Button onClick={() => setShowWizard(true)} variant="outline">
-              <Sparkles className="h-4 w-4 mr-2" /> AI Generate
-            </Button>
+            <div className="flex items-center gap-2">
+              <HowToUseModal {...HOW_TO_USE.knowledgeBase} />
+              <Button onClick={() => setShowWizard(true)} variant="outline">
+                <Sparkles className="h-4 w-4 mr-2" /> AI Generate
+              </Button>
+            </div>
           }
         />
 
