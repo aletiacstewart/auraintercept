@@ -247,6 +247,7 @@ export function SmartLinksManager() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<SmartLink | null>(null);
+  const [qrLink, setQrLink] = useState<SmartLink | null>(null);
   const [triggerInput, setTriggerInput] = useState('');
   const [formData, setFormData] = useState({
     category: 'custom' as SmartLinkCategory,
