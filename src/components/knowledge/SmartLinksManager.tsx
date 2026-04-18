@@ -130,9 +130,10 @@ interface SortableRowProps {
   onEdit: () => void;
   onDelete: () => void;
   onCopyUrl: () => void;
+  onShowQr: () => void;
 }
 
-function SortableRow({ link, onEdit, onDelete, onCopyUrl }: SortableRowProps) {
+function SortableRow({ link, onEdit, onDelete, onCopyUrl, onShowQr }: SortableRowProps) {
   const {
     attributes,
     listeners,
