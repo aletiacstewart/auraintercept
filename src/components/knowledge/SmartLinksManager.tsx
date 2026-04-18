@@ -654,6 +654,57 @@ export function SmartLinksManager() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!qrLink} onOpenChange={(o) => !o && setQrLink(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>QR Code: {qrLink?.name}</DialogTitle>
+            <DialogDescription>
+              Scan, print, or download this QR code so customers can open the link instantly.
+            </DialogDescription>
+          </DialogHeader>
+          {qrLink && (
+            <div className="flex flex-col items-center gap-4 py-4">
+              <div className="bg-white p-4 rounded-lg" id={`qr-${qrLink.id}`}>
+                <QRCodeSVG value={qrLink.url} size={200} level="M" />
+              </div>
+              <p className="text-xs text-muted-foreground break-all text-center">{qrLink.url}</p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(qrLink.url);
+                    toast.success('URL copied');
+                  }}
+                >
+                  <Copy className="w-4 h-4 mr-1.5" /> Copy URL
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const svg = document.querySelector(`#qr-${qrLink.id} svg`) as SVGSVGElement | null;
+                    if (!svg) return;
+                    const serializer = new XMLSerializer();
+                    const svgString = serializer.serializeToString(svg);
+                    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${qrLink.name.replace(/\s+/g, '-').toLowerCase()}-qr.svg`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success('QR code downloaded');
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-1.5" /> Download
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
