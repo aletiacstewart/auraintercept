@@ -132,6 +132,27 @@ export function InventoryManager() {
         manufacturer_part_number: data.manufacturer_part_number || null,
       }).eq('id', id);
       if (error) throw error;
+
+      // Low-stock → Dispatch operative automation hook
+      if (companyId && data.quantity <= data.min_quantity) {
+        await supabase.from('ai_agent_events').insert({
+          company_id: companyId,
+          event_type: 'inventory_low_stock',
+          source_agent: 'inventory',
+          target_agent: 'dispatch',
+          status: 'pending',
+          requires_human_review: false,
+          action_description: `Low stock: ${data.name} (${data.quantity} ≤ ${data.min_quantity})`,
+          payload: {
+            item_id: id,
+            name: data.name,
+            sku: data.sku,
+            quantity: data.quantity,
+            min_quantity: data.min_quantity,
+            supplier: data.supplier,
+          },
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
