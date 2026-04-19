@@ -62,7 +62,7 @@ import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner'
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video } from 'lucide-react';
+import { Clapperboard, Video, Sparkles } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
