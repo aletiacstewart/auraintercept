@@ -76,6 +76,27 @@ export default function CustomerPortalHome() {
         </div>
       </header>
 
+      {/* One-tap install hero — only shown when installable and not yet installed */}
+      {isInstallable && !isInstalled && (
+        <div className="max-w-4xl mx-auto w-full px-4 pt-4">
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-center gap-3 animate-fade-in">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Download className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">Install for one-tap access</p>
+              <p className="text-xs text-muted-foreground">
+                Add to your home screen — no app store needed.
+              </p>
+            </div>
+            <Button onClick={promptInstall} size="sm" className="gap-1.5 shrink-0">
+              <Download className="h-3.5 w-3.5" />
+              Install
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* The same AIAgentConsole used in the dashboard */}
       <main className="flex-1 max-w-4xl mx-auto w-full">
         <AIAgentConsole allowCompanySelection={true} />
