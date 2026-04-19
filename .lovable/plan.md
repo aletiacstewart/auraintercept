@@ -1,30 +1,44 @@
 
 
-## Diagnosis (root cause finally identified)
+## Plan: Remove all demo accounts and demo data
 
-The dev server has been running on the **same pid (238) since 02:57:39** — it never restarted across any of the previous fix attempts. That's why clearing `node_modules/.vite`, editing `vite.config.ts`, and changing the alias format all had zero effect: Vite holds its resolver/module graph in memory, and a config change requires a full process restart to take effect.
+### Scope
 
-The code is fine:
-- ✅ `src/components/ui/sonner.tsx` exists (877 bytes, modified 02:57)
-- ✅ `vite.config.ts` has correct `@` → `./src` alias
-- ✅ `node_modules/sonner` and `node_modules/next-themes` are installed
-- ✅ `tsconfig.json` paths are correct
+**Auth users to delete** (all `@demo.com` addresses created by `create-demo-accounts` + `seed-demo-data`):
+- 21 platform-tier accounts: `company{tier}@demo.com`, `employee{tier}@demo.com`, `customer{tier}@demo.com` (tiers: starter, connect, growth, presence, logistics, performance, command, plus legacy `pro`)
+- Seeded mock customers/leads: `customer{N}@demo.com`, `lead{N}@demo.com`, `customer{N}.{slug}@demo.com`
 
-The 40+ simultaneous `@/*` failures across unrelated files confirm this is a single resolver-process issue, not 40 separate code bugs.
+**Demo companies to delete** (7):
+Demo Starter, Demo Connect, Demo Growth, Demo Presence, Demo Logistics, Demo Performance, Demo Command.
 
-## Fix (default mode — single step)
+**Cascade data to delete** (tied to those 7 company IDs):
+appointments (56), leads (35), customer_profiles (99), customer_company_associations, job_assignments, invoices, quotes, inventory_items, call_logs, sms_keywords, smart_links, smart_websites, site_metrics, business_hours, blog_posts, smart_website_holidays, calendar_sync_jobs, google_calendar_connections, tenant_integrations, employee_job_assignments, employee_registration_codes, company_role_permissions, company_role_agent_access, customer_technician_history, warranty_policies, subscription_usage_tracking, user_roles + profiles for those auth users.
 
-**Force a hard kill + restart of the Vite dev process.**
+### Steps (in default mode)
 
-1. `pkill -9 -f vite` to terminate the stuck process (pid 238 and any children).
-2. Clear `/dev-server/node_modules/.vite` one more time for safety.
-3. The Lovable sandbox supervisor will auto-respawn the dev server with a fresh process, fresh config, and fresh resolver.
-4. Confirm via `tail /tmp/dev-server-logs/dev-server.log` that a NEW pid line appears and `VITE ready in Xms` prints again.
-5. Verify `@/*` errors are gone in the log.
+1. **Migration: cleanup SQL** (single transaction):
+   - Resolve user IDs: `WITH demo_users AS (SELECT id FROM auth.users WHERE email LIKE '%@demo.com')`
+   - Delete from all dependent tables filtered by demo company IDs OR by demo user IDs
+   - Delete from `public.user_roles`, `public.profiles` for demo users
+   - Delete the 7 rows in `public.companies`
+   - Delete the auth users themselves: `DELETE FROM auth.users WHERE email LIKE '%@demo.com'` (allowed inside a migration; this is a data delete, not a schema change to the auth table)
 
-No source files need editing. This is purely a process-restart fix.
+2. **Verification queries** post-migration:
+   - `SELECT count(*) FROM public.companies WHERE slug LIKE 'demo-%';` → 0
+   - `SELECT count(*) FROM auth.users WHERE email LIKE '%@demo.com';` → 0
 
-### Fallback if pkill doesn't trigger respawn
+3. **Code cleanup** — remove the now-broken UI/edge surface so admins can't recreate them:
+   - Delete edge functions: `create-demo-accounts`, `create-demo-customer`, `create-demo-employee`, `seed-demo-data`
+   - Delete pages/components: `src/pages/DemoAccounts.tsx`, `src/components/admin/CreateTestAccounts.tsx`, `src/components/admin/CreateTestCustomers.tsx`, `src/components/admin/CreateTestEmployees.tsx`
+   - Remove route `/dashboard/demo-accounts` from `src/App.tsx`
+   - Remove "Demo Accounts" sidebar entry from `src/components/dashboard/DashboardLayout.tsx` (lines 167 + 431)
+   - Remove `demo-accounts` step from `src/components/tutorial/tutorialSteps.ts` (lines 289–296)
+   - Remove `<CreateTestEmployees />` usage from `src/pages/Employees.tsx`
+   - Update memory file `mem://platform-operations/demo-account-registry` to reflect removal (and drop the index entry)
 
-Touch `vite.config.ts` (append a trailing newline) after the kill — Lovable's supervisor watches config files and will respawn on change.
+### Risk note
+
+Deletion is irreversible. The 7 demo companies and all `@demo.com` users will be permanently removed along with their 200+ rows of seeded data. Real customer accounts are untouched (filter is strictly `@demo.com` + the 7 hardcoded demo company UUIDs).
+
+Approve and I'll run the migration + code cleanup.
 
