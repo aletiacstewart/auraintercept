@@ -287,14 +287,6 @@ const platformAdminSteps: TutorialStep[] = [
     position: 'right',
   },
   {
-    id: 'demo-accounts',
-    title: 'Demo Accounts',
-    description: 'Create and manage demo company accounts for sales presentations and testing. Demo accounts have full platform access without production data.',
-    targetSelector: '[data-tour-id="nav-demo-accounts"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
     id: 'ai-agent-demo',
     title: 'AI Agent Flow Demo',
     description: 'An animated 10-scene visualization of the Aura AI Operative network — perfect for client presentations and sales demos. Shows how all 10 Operatives route, hand off, and collaborate across every console.',

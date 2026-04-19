@@ -116,7 +116,6 @@ import {
 import IntegrationDocs from "./pages/IntegrationDocs";
 import PlatformGuides from "./pages/PlatformGuides";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
-import DemoAccounts from "./pages/DemoAccounts";
 import AIAgentFlowDemo from "./pages/AIAgentFlowDemo";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import DesignPreview from "./pages/DesignPreview";
@@ -243,7 +242,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
-                <Route path="/dashboard/demo-accounts" element={<ProtectedRoute><DemoAccounts /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent-demo" element={<ProtectedRoute><AIAgentFlowDemo /></ProtectedRoute>} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
