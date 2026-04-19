@@ -1,36 +1,30 @@
 
 
-## Fix: Vite `@/*` alias resolution failure (site-wide)
+## Diagnosis (root cause finally identified)
 
-### Diagnosis
+The dev server has been running on the **same pid (238) since 02:57:39** — it never restarted across any of the previous fix attempts. That's why clearing `node_modules/.vite`, editing `vite.config.ts`, and changing the alias format all had zero effect: Vite holds its resolver/module graph in memory, and a config change requires a full process restart to take effect.
 
-The Vite error overlay points at `@/components/ui/sonner`, but the dev-server log shows **every `@/*` import failing simultaneously** (`@/integrations/supabase/client`, `@/components/dashboard/DashboardLayout`, `@/contexts/AuthContext`, `@/components/ui/button`, etc. — 40+ files).
+The code is fine:
+- ✅ `src/components/ui/sonner.tsx` exists (877 bytes, modified 02:57)
+- ✅ `vite.config.ts` has correct `@` → `./src` alias
+- ✅ `node_modules/sonner` and `node_modules/next-themes` are installed
+- ✅ `tsconfig.json` paths are correct
 
-Verified on disk:
-- `src/components/ui/sonner.tsx` exists (877 bytes)
-- `vite.config.ts` defines `resolve.alias["@"] = path.resolve(__dirname, "./src")` correctly
-- `tsconfig.json` defines `paths: { "@/*": ["./src/*"] }` correctly
-- `next-themes` and `sonner` are installed in `node_modules`
+The 40+ simultaneous `@/*` failures across unrelated files confirm this is a single resolver-process issue, not 40 separate code bugs.
 
-Conclusion: the source code is fine. Vite's pre-bundle / resolver state is stale. This is a runtime cache issue, not a code issue.
+## Fix (default mode — single step)
 
-### Fix steps (default mode)
+**Force a hard kill + restart of the Vite dev process.**
 
-1. **Stop the dev server**, clear stale caches:
-   - `rm -rf /dev-server/node_modules/.vite`
-   - `rm -rf /dev-server/.vite`
-2. **Touch `vite.config.ts`** (no content change) to force config re-read on restart.
-3. **Restart the dev server** and confirm the log shows no further `Failed to resolve import "@/..."` errors.
-4. **Verify in browser**: load `/` and confirm the overlay is gone.
+1. `pkill -9 -f vite` to terminate the stuck process (pid 238 and any children).
+2. Clear `/dev-server/node_modules/.vite` one more time for safety.
+3. The Lovable sandbox supervisor will auto-respawn the dev server with a fresh process, fresh config, and fresh resolver.
+4. Confirm via `tail /tmp/dev-server-logs/dev-server.log` that a NEW pid line appears and `VITE ready in Xms` prints again.
+5. Verify `@/*` errors are gone in the log.
 
-### Fallback (if step 1–3 doesn't resolve it)
+No source files need editing. This is purely a process-restart fix.
 
-5. Re-save `vite.config.ts` with an identical alias block (sometimes a no-op rewrite is enough to bust HMR's resolver cache).
-6. If still broken, reinstall deps: `rm -rf /dev-server/node_modules/.vite && npm install` (last resort — slow).
+### Fallback if pkill doesn't trigger respawn
 
-### Why not a code edit?
-
-No source files need changes. `sonner.tsx`, `next-themes`, all alias targets, and both config files are correct. Editing code would not fix a resolver-cache issue.
-
-Approve and I'll switch to default mode and run the cache clear + restart.
+Touch `vite.config.ts` (append a trailing newline) after the kill — Lovable's supervisor watches config files and will respawn on change.
 
