@@ -62,7 +62,7 @@ import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner'
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video } from 'lucide-react';
+import { Clapperboard, Video, Sparkles } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -169,6 +169,7 @@ const navGroups: NavGroup[] = [
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Demo Account Seeder', icon: Sparkles, href: '/dashboard/demo-seeder', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];
