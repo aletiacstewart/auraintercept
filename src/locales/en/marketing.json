@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "title": "Smart Agents. Automated Service.",
+    "subtitle": "Aura answers your phones, books your jobs, chases your invoices, and grows your business — 24/7.",
+    "ctaPrimary": "Start Free Trial",
+    "ctaSecondary": "See How It Works"
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Pick the tier that fits your business. Cancel anytime.",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "save": "Save ~20%",
+    "getStarted": "Get started",
+    "perMonth": "/month"
+  },
+  "audit": {
+    "title": "Free Business Audit",
+    "subtitle": "See exactly how Aura would handle your calls, leads, and follow-ups."
+  }
+}
