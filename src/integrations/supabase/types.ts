@@ -923,6 +923,7 @@ export type Database = {
           default_outbound_script: string | null
           default_sms_enabled: boolean
           dispatch_phone: string | null
+          elevenlabs_voice_id_es: string | null
           email: string | null
           emergency_keywords: string[] | null
           emergency_notification_emails: string[] | null
@@ -1047,6 +1048,7 @@ export type Database = {
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
+          elevenlabs_voice_id_es?: string | null
           email?: string | null
           emergency_keywords?: string[] | null
           emergency_notification_emails?: string[] | null
@@ -1171,6 +1173,7 @@ export type Database = {
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
+          elevenlabs_voice_id_es?: string | null
           email?: string | null
           emergency_keywords?: string[] | null
           emergency_notification_emails?: string[] | null
@@ -2091,6 +2094,7 @@ export type Database = {
           notes: string | null
           phone: string | null
           portal_token: string | null
+          preferred_language: string
           sms_opt_out: boolean | null
           updated_at: string | null
         }
@@ -2108,6 +2112,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           portal_token?: string | null
+          preferred_language?: string
           sms_opt_out?: boolean | null
           updated_at?: string | null
         }
@@ -2125,6 +2130,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           portal_token?: string | null
+          preferred_language?: string
           sms_opt_out?: boolean | null
           updated_at?: string | null
         }
@@ -3932,6 +3938,7 @@ export type Database = {
           onboarding_completed_at: string | null
           phone: string | null
           phone_number: string | null
+          preferred_language: string
           sms_notifications_enabled: boolean | null
           tours_completed: Json | null
           updated_at: string
@@ -3957,6 +3964,7 @@ export type Database = {
           onboarding_completed_at?: string | null
           phone?: string | null
           phone_number?: string | null
+          preferred_language?: string
           sms_notifications_enabled?: boolean | null
           tours_completed?: Json | null
           updated_at?: string
@@ -3982,6 +3990,7 @@ export type Database = {
           onboarding_completed_at?: string | null
           phone?: string | null
           phone_number?: string | null
+          preferred_language?: string
           sms_notifications_enabled?: boolean | null
           tours_completed?: Json | null
           updated_at?: string
