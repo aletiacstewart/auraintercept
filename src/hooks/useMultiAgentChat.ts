@@ -17,10 +17,11 @@ export interface UseMultiAgentChatOptions {
   onAgentChange?: (agent: string) => void;
   initialAgent?: string;
   pageContext?: string; // Description of the current page and visible data
+  language?: 'en' | 'es';
 }
 
 export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
-  const { companyId, userId, onAgentChange, initialAgent = 'triage', pageContext } = options;
+  const { companyId, userId, onAgentChange, initialAgent = 'triage', pageContext, language = 'en' } = options;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState<string>(initialAgent);
@@ -57,6 +58,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
           userId,
           sessionId,
           pageContext: buildEnrichedContext(),
+          language,
           conversationHistory: messages.map(m => ({
             role: m.role,
             content: m.content,
