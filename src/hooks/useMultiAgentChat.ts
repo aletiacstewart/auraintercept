@@ -134,6 +134,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
             isHandoff: true,
             handoffFrom: currentAgent,
             handoffReason: data.handoff_reason,
+            language,
             conversationHistory: [...messages, { role: 'user', content: userMessage }, assistantMsg].map(m => ({
               role: m.role,
               content: m.content,
