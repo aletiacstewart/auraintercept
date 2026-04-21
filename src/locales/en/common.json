@@ -1,0 +1,49 @@
+{
+  "brand": {
+    "name": "Aura Intercept",
+    "tagline": "Smart Agents, Automated Service."
+  },
+  "nav": {
+    "home": "Home",
+    "freeAudit": "Free Audit",
+    "customerPortal": "Customer Portal",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "startFreeTrial": "Start Free Trial",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "back": "Back",
+    "menu": "Menu"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "send": "Send",
+    "loading": "Loading…",
+    "close": "Close",
+    "confirm": "Confirm",
+    "next": "Next",
+    "previous": "Previous",
+    "viewAll": "View all",
+    "tryAgain": "Try again"
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "spanish": "Español",
+    "switchTo": "Switch to {{lang}}"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}
