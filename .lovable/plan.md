@@ -1,89 +1,119 @@
 
 
-## Plan: Recreate Demo Accounts + Data for All 4 Tiers
+## Plan: English / Spanish Language Toggle (Platform-Wide)
 
-### Scope
+### Goal
+Add a global EN/ES language toggle accessible from every dashboard and the public marketing site. Default = English. Selection persists per user (DB) or per visitor (localStorage for anonymous), and propagates to:
+1. All UI strings (sidebar, buttons, headers, labels, modals, marketing pages)
+2. AI chat responses (Aura text)
+3. Voice agent (ElevenLabs / SignalWire)
+4. AI-generated content (blog posts, social posts, SMS replies, follow-up scripts)
+5. Customer-facing channels (chat widget, customer portal, missed-call SMS)
 
-Create **4 demo companies** (one per tier), each with **1 admin + 1 employee + 1 customer** = **12 auth users total**, plus realistic demo data scoped to each company's tier.
+### Architecture
 
-### Account matrix
+**Library:** `react-i18next` + `i18next` + `i18next-browser-languagedetector`. Industry standard, hooks-based, lightweight (~30 KB), already compatible with React 18 / Vite.
 
-| Tier | Company | Admin Email | Employee Email | Customer Email |
-|---|---|---|---|---|
-| Aura Core ($197) | Demo Core | corecompany@demo.com | coreemployee@demo.com | corecustomer@demo.com |
-| Aura Boost ($497) | Demo Boost | boostcompany@demo.com | boostemployee@demo.com | boostcustomer@demo.com |
-| Aura Pro ($997) | Demo Pro | procompany@demo.com | proemployee@demo.com | procustomer@demo.com |
-| Aura Elite ($1,997) | Demo Elite | elitecompany@demo.com | eliteemployee@demo.com | elitecustomer@demo.com |
+**Translation files:** JSON namespaces under `src/locales/`
+```text
+src/locales/
+  en/
+    common.json      (buttons, nav, sidebar)
+    dashboard.json   (KPIs, console labels)
+    marketing.json   (landing, pricing, audit)
+    auth.json        (signup, login)
+    aura.json        (command center, suggestions)
+    customer.json    (customer portal)
+  es/
+    (mirrored structure)
+```
 
-**Universal password:** `aidemo*!` (12 chars, meets policy)
+**Persistence:**
+- Logged-in users → new column `profiles.preferred_language` (`'en'` | `'es'`, default `'en'`)
+- Anonymous visitors → `localStorage.aura_lang`
+- Detection priority: profile → localStorage → browser navigator → `'en'` fallback
 
-Internal tier values written to `companies.subscription_tier`: `starter`, `connect`, `performance`, `command` (per `LEGACY_TIER_MAP` — display names map to these IDs).
+**Component:** `<LanguageToggle />` — pill switcher (EN | ES) placed in:
+- `PublicHeader` (marketing site, audit, customer portal)
+- `DashboardLayout` header (right side, near user menu)
+- `TechnicianDashboard` mobile header
+- `CustomerPortal` header
 
-### Implementation (default mode)
+### AI / Voice / Content Propagation
 
-**1. New edge function: `seed-demo-accounts-v2`** (admin-gated, idempotent)
-
-Why an edge function: the AI cannot directly insert into `auth.users`. The function uses the service-role key to call `supabase.auth.admin.createUser` with `email_confirm: true` (no email verification needed for demos).
-
-Logic per tier:
-1. Create company row with tier, slug (`demo-{tier}`), branding, business hours, service area.
-2. Create 3 auth users with `email_confirm: true`, password `aidemo*!`.
-3. Insert profiles (linked via `handle_new_user` trigger), set `company_id` on admin + employee profiles.
-4. Insert `user_roles`: admin → `company_admin`, employee → (no platform role; gets job assignment), customer → `customer`.
-5. Insert `employee_job_assignments` for employee (job_type = `technician`).
-6. Insert `customer_company_associations` linking customer → company.
-7. Seed agent-driven demo data (see next section).
-
-Idempotency: check for existing `@demo.com` users / `demo-{tier}` company before creating; safe to re-run.
-
-**2. Demo data seeded per company** (scaled by tier's available agents from `TIER_AGENT_CONFIG`)
-
-For each company, insert sample rows so every tier-available AI agent has visible activity:
-
-| Agent | Data seeded |
+| Channel | How language flows in |
 |---|---|
-| triage / booking | 5 appointments (mix of scheduled/completed/cancelled) |
-| followup | 3 follow-up SMS in `call_logs` |
-| review | 2 review request entries |
-| lead | 6 leads (varied scores: hot/high/normal) |
-| marketing / campaign | 2 campaign rows |
-| outreach | 3 outreach contacts |
-| creative_content | 3 blog posts + 4 content_images entries |
-| web_presence | 1 `smart_websites` row (published) |
-| dispatch / route / eta / checkin | 4 `job_assignments` (Boost+) |
-| quoting / invoice | 3 quotes + 3 invoices (Elite only) |
-| inventory | 8 inventory_items (Elite only) |
-| social_scheduler / social_analytics | 4 social posts queued (Pro+) |
-| insights / performance / revenue / forecast | 30 days of `subscription_usage_tracking` rows (Elite) |
+| **Aura chat** (`ai-agent-chat`, `ai-agent-respond`) | Add `language` param → injected into system prompt: *"Respond strictly in {language}."* |
+| **Voice agent** (ElevenLabs) | Pass `language` to ElevenLabs `language_code` override; switch between English + Spanish voice IDs (`elevenlabs_voice_id_es` column on `companies`) |
+| **SMS auto-responder** | `language` from customer profile → prompt sets reply language |
+| **Missed-call SMS** | Same as above |
+| **Blog / social generator** | Generation form gets language selector (defaults to admin's preferred_language) |
+| **Smart Website widget** | Reads `?lang=es` query param OR detects browser; passes to chat edge function |
+| **Customer Portal** | Customer's `preferred_language` from `customer_profiles` |
 
-All data dated within last 60 days for realistic dashboards. Customer profiles for each company include the seeded customer + 4 additional sample customers (5 total per company).
+### Database changes (migration)
 
-**3. UI: Admin "Seed Demo Accounts" button**
+```sql
+ALTER TABLE public.profiles
+  ADD COLUMN preferred_language text NOT NULL DEFAULT 'en'
+  CHECK (preferred_language IN ('en','es'));
 
-Add a single button in `src/pages/PlatformAdmin.tsx` (or similar admin-only page) that calls the new edge function. Restricted to `platform_admin` role only.
+ALTER TABLE public.customer_profiles
+  ADD COLUMN preferred_language text NOT NULL DEFAULT 'en'
+  CHECK (preferred_language IN ('en','es'));
 
-**4. Memory update**
+ALTER TABLE public.companies
+  ADD COLUMN elevenlabs_voice_id_es text;  -- optional Spanish voice
+```
 
-Recreate `mem://platform-operations/demo-account-registry` with the new credentials and add to the index.
+### Edge function updates
 
-### Security
+Add `language` parameter handling (default `'en'`) to:
+- `ai-agent-chat`, `ai-agent-respond`, `voice-navigator`
+- `generate-blog-post`, `generate-social-content`, `publish-social-content`
+- `missed-call-handler`, `sms-keyword-responder`
+- `elevenlabs-signed-url` (pass `language_code` override)
 
-- Edge function checks caller's JWT for `platform_admin` role before any inserts.
-- `verify_jwt = true` (default); rejects unauthenticated calls with 401.
-- All passwords stored only in Supabase Auth (hashed); no plaintext logs.
-- Demo emails use `@demo.com` so future cleanup migrations can target them safely (same pattern as the recent purge).
+### Translation strategy
+
+**Phase 1 (this implementation):** Translate the highest-traffic surfaces — sidebar nav, dashboard headers, Aura command center, auth pages, public landing/pricing, customer portal, common buttons. ~400 strings total.
+
+**Phase 2 (deferred):** Auto-translate remaining deep settings pages on demand using Lovable AI Gateway (`google/gemini-2.5-flash`) with a one-time batch script — generates ES JSON from EN source, committed to repo.
+
+Hardcoded brand strings stay English ("Aura Intercept", "Aura Core", agent names, etc.).
 
 ### Files to create/edit
 
-- **Create:** `supabase/functions/seed-demo-accounts-v2/index.ts`
-- **Create:** SQL migration only if helper functions are needed (likely none — service-role inserts handle everything)
-- **Edit:** `src/pages/PlatformAdmin.tsx` — add seed button
-- **Create:** `mem://platform-operations/demo-account-registry`
-- **Edit:** `mem://index.md` — re-add registry entry
+**Create:**
+- `src/lib/i18n.ts` — i18next init, namespace loader
+- `src/contexts/LanguageContext.tsx` — provider, `useLanguage()` hook with DB sync
+- `src/components/common/LanguageToggle.tsx` — EN/ES pill switcher
+- `src/locales/en/*.json` and `src/locales/es/*.json` (6 namespaces each)
+- `supabase/migrations/[ts]_add_language_preference.sql`
 
-### Verification after run
+**Edit:**
+- `src/main.tsx` — import i18n init, wrap with `LanguageProvider`
+- `src/App.tsx` — provider mount
+- `src/components/layout/PublicHeader.tsx` — add toggle
+- `src/components/dashboard/DashboardLayout.tsx` — add toggle in header
+- `src/pages/TechnicianDashboard.tsx` — add toggle
+- `src/pages/CustomerPortal.tsx` — add toggle + use customer's pref
+- `src/components/dashboard/AuraCommandCenter.tsx` — translate suggestions, send `language` to `useUnifiedAura`
+- `src/hooks/useUnifiedAura.ts` — pass `language` to chat edge function
+- Edge functions listed above — accept + honor `language` param
+- `mem://index.md` — add new memory entry for language standard
 
-- `SELECT count(*) FROM auth.users WHERE email LIKE '%@demo.com'` → 12
-- `SELECT count(*) FROM public.companies WHERE slug LIKE 'demo-%'` → 4
-- Login test for each of the 4 admin accounts; confirm correct tier features unlock.
+### Verification
+
+1. Toggle on landing page → all marketing copy switches to Spanish; persists on reload (localStorage).
+2. Sign in → toggle saved to `profiles.preferred_language`; survives logout/login.
+3. Set ES → ask Aura "Book a job" → response in Spanish.
+4. Voice call → ElevenLabs replies in Spanish (with ES voice if configured, otherwise English voice speaking Spanish).
+5. Customer portal → customer with ES preference sees portal + chat in Spanish without affecting admin.
+6. Generate blog → output in admin's selected language.
+
+### Out of scope (clarify after build)
+
+- Translating user-generated content (existing blog posts, customer messages already saved). Only NEW AI generations honor the language setting.
+- Right-to-left languages, additional locales beyond ES (can be added later by dropping in new JSON namespaces).
 
