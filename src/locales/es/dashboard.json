@@ -1,0 +1,28 @@
+{
+  "greeting": {
+    "morning": "Buenos días",
+    "afternoon": "Buenas tardes",
+    "evening": "Buenas noches"
+  },
+  "kpis": {
+    "revenue": "Ingresos",
+    "appointments": "Citas",
+    "leads": "Prospectos",
+    "customers": "Clientes",
+    "today": "Hoy",
+    "thisWeek": "Esta semana",
+    "thisMonth": "Este mes"
+  },
+  "consoles": {
+    "frontDesk": "Recepción",
+    "onTheWay": "En camino",
+    "billing": "Facturación",
+    "office": "Oficina",
+    "marketing": "Marketing",
+    "social": "Redes sociales"
+  },
+  "empty": {
+    "noData": "Sin datos aún",
+    "getStarted": "Comenzar"
+  }
+}
