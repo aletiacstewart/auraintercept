@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useVoice } from '@/contexts/VoiceContext';
@@ -21,13 +22,13 @@ import {
 } from 'lucide-react';
 
 const SUGGESTED_COMMANDS = [
-  { label: "Book today's emergency job", icon: CalendarPlus },
-  { label: 'Show overdue invoices & chase them', icon: FileText },
-  { label: 'Generate social posts for spring tune-ups', icon: PenTool },
-  { label: "Check today's dispatch schedule", icon: Truck },
-  { label: 'Create a quote for a new lead', icon: UserPlus },
-  { label: "Show me this week's revenue", icon: DollarSign },
-];
+  { key: 'bookEmergency', icon: CalendarPlus },
+  { key: 'overdueInvoices', icon: FileText },
+  { key: 'generatePosts', icon: PenTool },
+  { key: 'checkDispatch', icon: Truck },
+  { key: 'createQuote', icon: UserPlus },
+  { key: 'weekRevenue', icon: DollarSign },
+] as const;
 
 export function AuraCommandCenter() {
   const { companyId, user } = useAuth();
@@ -35,6 +36,7 @@ export function AuraCommandCenter() {
   const aura = useUnifiedAura({ companyId: companyId ?? undefined, userId: user?.id });
   const [input, setInput] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useTranslation('aura');
 
   // Auto-populate first command after Fast Start onboarding
   useEffect(() => {
@@ -70,7 +72,7 @@ export function AuraCommandCenter() {
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">
-              What do you want Aura to do today?
+              {t('command.heading')}
             </h2>
           </div>
 
@@ -79,7 +81,7 @@ export function AuraCommandCenter() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              placeholder="e.g. Book a job, chase invoices, generate posts…"
+              placeholder={t('command.placeholder')}
               className="flex-1 h-12 text-base bg-muted border-border focus-visible:ring-primary"
               disabled={aura.isProcessing}
             />
@@ -88,7 +90,7 @@ export function AuraCommandCenter() {
               variant="ghost"
               className="h-12 w-12 shrink-0 text-muted-foreground hover:text-primary"
               onClick={toggleVoiceMode}
-              aria-label={isListening ? 'Stop voice' : 'Start voice'}
+              aria-label={isListening ? t('command.voiceStop') : t('command.voiceStart')}
             >
               {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5" />}
             </Button>
@@ -97,7 +99,7 @@ export function AuraCommandCenter() {
               className="h-12 w-12 shrink-0"
               onClick={() => handleSubmit()}
               disabled={!input.trim() || aura.isProcessing}
-              aria-label="Send command"
+              aria-label={t('command.send')}
             >
               <Send className="h-5 w-5" />
             </Button>
@@ -109,16 +111,16 @@ export function AuraCommandCenter() {
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {SUGGESTED_COMMANDS.map((cmd) => (
           <Card
-            key={cmd.label}
+            key={cmd.key}
             className="bg-card border-border hover:border-primary cursor-pointer transition-colors group"
-            onClick={() => handleCardClick(cmd.label)}
+            onClick={() => handleCardClick(t(`suggestions.${cmd.key}`))}
           >
             <CardContent className="flex items-center gap-3 p-4">
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                 <cmd.icon className="h-4 w-4 text-primary" />
               </div>
               <span className="text-sm font-medium text-card-foreground leading-tight">
-                {cmd.label}
+                {t(`suggestions.${cmd.key}`)}
               </span>
             </CardContent>
           </Card>
