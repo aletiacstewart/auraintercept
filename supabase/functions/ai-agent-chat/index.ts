@@ -3721,6 +3721,7 @@ Current Context: ${JSON.stringify(contextData)}
 
 ${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
+${languageDirective}
 
 CRITICAL RULES:
 ${isInternalAgent ? `- Provide data and analytics directly without customer-service language
