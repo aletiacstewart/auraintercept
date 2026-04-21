@@ -281,7 +281,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
               </Routes>
             </VoiceProvider>
           </BrowserRouter>
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </LanguageProvider>
       </AuthProvider>
     </TooltipProvider>
   );
