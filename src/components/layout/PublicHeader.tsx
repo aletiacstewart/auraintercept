@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Users, ClipboardCheck } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { useTranslation } from 'react-i18next';
 
 interface PublicHeaderProps {
   showHomeLink?: boolean;
@@ -9,6 +11,7 @@ interface PublicHeaderProps {
 
 export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <header className="bg-sidebar border-b border-border/50 sticky top-0 z-50 py-2">
@@ -28,23 +31,24 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           {showHomeLink && (
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/')}>
               <Home className="w-4 h-4 mr-1" />
-              Home
+              {t('nav.home')}
             </Button>
           )}
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/audit')}>
             <ClipboardCheck className="w-4 h-4 mr-1" />
-            Free Audit
+            {t('nav.freeAudit')}
           </Button>
           <Button variant="outline" className="text-white border-white/30 bg-white/5 hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/customer-auth')}>
             <Users className="w-4 h-4 mr-2" />
-            Customer Portal
+            {t('nav.customerPortal')}
           </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
-            Sign In
+            {t('nav.signIn')}
           </Button>
           <Button className="gradient-primary" onClick={() => navigate('/auth?mode=company')}>
-            Start Free Trial
+            {t('nav.startFreeTrial')}
           </Button>
+          <LanguageToggle variant="ghost" className="ml-1" />
         </div>
       </nav>
     </header>

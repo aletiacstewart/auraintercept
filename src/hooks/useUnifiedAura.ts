@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useVoice } from '@/contexts/VoiceContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,6 +33,8 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { injectText, isVoiceModeEnabled, transcript, isListening, clearTranscript } = useVoice();
+  const { i18n } = useTranslation();
+  const language = (i18n.language?.startsWith('es') ? 'es' : 'en');
   
   const [state, setState] = useState<UnifiedAuraState>({
     isProcessing: false,
@@ -80,6 +83,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     userId,
     initialAgent: 'triage',
     pageContext: getPageContext(),
+    language,
   });
   
   // Track if we're waiting for voice input to auto-submit

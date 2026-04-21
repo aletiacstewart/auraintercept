@@ -1,0 +1,19 @@
+{
+  "portal": {
+    "welcome": "Bienvenido",
+    "yourAppointments": "Tus citas",
+    "yourServices": "Tus servicios",
+    "messages": "Mensajes",
+    "bookAppointment": "Agenda una cita",
+    "talkToAura": "Habla con Aura",
+    "messageAura": "Envía mensaje a Aura"
+  },
+  "appointments": {
+    "upcoming": "Próximas",
+    "past": "Anteriores",
+    "cancel": "Cancelar cita",
+    "reschedule": "Reprogramar",
+    "noUpcoming": "No tienes citas próximas",
+    "bookNow": "Agenda una ahora"
+  }
+}

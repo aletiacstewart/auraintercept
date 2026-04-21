@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { VoiceProvider } from "@/contexts/VoiceContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
@@ -144,8 +145,9 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   return (
     <TooltipProvider>
       <AuthProvider>
-        <ErrorBoundary>
-          <Sonner />
+        <LanguageProvider>
+          <ErrorBoundary>
+            <Sonner />
           <Toaster />
           {!isEmbedMode && <PWAUpdatePrompt />}
           <BrowserRouter>
@@ -279,7 +281,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
               </Routes>
             </VoiceProvider>
           </BrowserRouter>
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </LanguageProvider>
       </AuthProvider>
     </TooltipProvider>
   );

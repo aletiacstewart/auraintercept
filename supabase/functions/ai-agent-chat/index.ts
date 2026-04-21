@@ -3282,7 +3282,11 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
+    const language = (requestLanguage === 'es' || requestLanguage === 'en') ? requestLanguage : 'en';
+    const languageDirective = language === 'es'
+      ? `\n\nLANGUAGE REQUIREMENT: Respond ONLY in Spanish (Español). All replies, confirmations, and questions must be in natural, professional Spanish regardless of the language used in earlier messages or system text. Keep brand names ("Aura Intercept", agent names) in English.`
+      : `\n\nLANGUAGE REQUIREMENT: Respond in clear, professional English unless the customer explicitly requests another language.`;
     
     // Use the requested model for internal requests (e.g. phone via voice-handler), default to flash
     const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
@@ -3717,6 +3721,7 @@ Current Context: ${JSON.stringify(contextData)}
 
 ${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
+${languageDirective}
 
 CRITICAL RULES:
 ${isInternalAgent ? `- Provide data and analytics directly without customer-service language

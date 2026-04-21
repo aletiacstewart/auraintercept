@@ -1,0 +1,25 @@
+{
+  "command": {
+    "heading": "¿Qué quieres que Aura haga hoy?",
+    "placeholder": "ej. Agenda un trabajo, cobra facturas, genera publicaciones…",
+    "send": "Enviar comando",
+    "voiceStart": "Activar voz",
+    "voiceStop": "Detener voz",
+    "thinking": "Pensando…"
+  },
+  "suggestions": {
+    "bookEmergency": "Agenda el trabajo urgente de hoy",
+    "overdueInvoices": "Mostrar facturas vencidas y cobrarlas",
+    "generatePosts": "Genera publicaciones para mantenimiento de primavera",
+    "checkDispatch": "Revisa el despacho de hoy",
+    "createQuote": "Crear una cotización para un nuevo cliente",
+    "weekRevenue": "Mostrar los ingresos de esta semana"
+  },
+  "chat": {
+    "title": "Agente IA",
+    "emptyTitle": "Inicia una conversación",
+    "emptyHint": "Prueba: \"¿Qué servicios ofrecen?\" o \"Me gustaría agendar una cita\"",
+    "placeholder": "Escribe un mensaje…",
+    "clear": "Limpiar chat"
+  }
+}

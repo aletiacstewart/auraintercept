@@ -1,0 +1,19 @@
+{
+  "portal": {
+    "welcome": "Welcome",
+    "yourAppointments": "Your appointments",
+    "yourServices": "Your services",
+    "messages": "Messages",
+    "bookAppointment": "Book an appointment",
+    "talkToAura": "Talk to Aura",
+    "messageAura": "Message Aura"
+  },
+  "appointments": {
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "cancel": "Cancel appointment",
+    "reschedule": "Reschedule",
+    "noUpcoming": "No upcoming appointments",
+    "bookNow": "Book one now"
+  }
+}
