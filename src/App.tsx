@@ -145,8 +145,9 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   return (
     <TooltipProvider>
       <AuthProvider>
-        <ErrorBoundary>
-          <Sonner />
+        <LanguageProvider>
+          <ErrorBoundary>
+            <Sonner />
           <Toaster />
           {!isEmbedMode && <PWAUpdatePrompt />}
           <BrowserRouter>
