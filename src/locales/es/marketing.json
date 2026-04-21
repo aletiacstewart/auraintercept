@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "title": "Agentes inteligentes. Servicio automatizado.",
+    "subtitle": "Aura contesta tus llamadas, agenda tus trabajos, cobra tus facturas y hace crecer tu negocio — 24/7.",
+    "ctaPrimary": "Iniciar prueba gratis",
+    "ctaSecondary": "Ver cómo funciona"
+  },
+  "pricing": {
+    "title": "Precios simples y transparentes",
+    "subtitle": "Elige el plan que se ajuste a tu negocio. Cancela cuando quieras.",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "save": "Ahorra ~20%",
+    "getStarted": "Comenzar",
+    "perMonth": "/mes"
+  },
+  "audit": {
+    "title": "Auditoría gratuita del negocio",
+    "subtitle": "Descubre cómo Aura manejaría tus llamadas, prospectos y seguimientos."
+  }
+}
