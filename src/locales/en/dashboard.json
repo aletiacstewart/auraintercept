@@ -1,0 +1,28 @@
+{
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "kpis": {
+    "revenue": "Revenue",
+    "appointments": "Appointments",
+    "leads": "Leads",
+    "customers": "Customers",
+    "today": "Today",
+    "thisWeek": "This week",
+    "thisMonth": "This month"
+  },
+  "consoles": {
+    "frontDesk": "Front Desk",
+    "onTheWay": "On The Way",
+    "billing": "Billing",
+    "office": "Office",
+    "marketing": "Marketing",
+    "social": "Social"
+  },
+  "empty": {
+    "noData": "No data yet",
+    "getStarted": "Get started"
+  }
+}
