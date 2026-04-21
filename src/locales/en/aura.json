@@ -1,0 +1,25 @@
+{
+  "command": {
+    "heading": "What do you want Aura to do today?",
+    "placeholder": "e.g. Book a job, chase invoices, generate posts…",
+    "send": "Send command",
+    "voiceStart": "Start voice",
+    "voiceStop": "Stop voice",
+    "thinking": "Thinking…"
+  },
+  "suggestions": {
+    "bookEmergency": "Book today's emergency job",
+    "overdueInvoices": "Show overdue invoices & chase them",
+    "generatePosts": "Generate social posts for spring tune-ups",
+    "checkDispatch": "Check today's dispatch schedule",
+    "createQuote": "Create a quote for a new lead",
+    "weekRevenue": "Show me this week's revenue"
+  },
+  "chat": {
+    "title": "AI Agent",
+    "emptyTitle": "Start a conversation",
+    "emptyHint": "Try: \"What services do you offer?\" or \"I'd like to book an appointment\"",
+    "placeholder": "Type a message…",
+    "clear": "Clear chat"
+  }
+}
