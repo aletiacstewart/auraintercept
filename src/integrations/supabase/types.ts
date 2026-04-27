@@ -925,6 +925,8 @@ export type Database = {
           default_email_enabled: boolean
           default_outbound_script: string | null
           default_sms_enabled: boolean
+          demo_email_opt_in: boolean
+          demo_sms_opt_in: boolean
           dispatch_phone: string | null
           elevenlabs_voice_id_es: string | null
           email: string | null
@@ -935,6 +937,7 @@ export type Database = {
           emergency_surcharge: number | null
           followup_call_script: string | null
           id: string
+          is_demo: boolean
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
           last_monthly_digest_at: string | null
@@ -1053,6 +1056,8 @@ export type Database = {
           default_email_enabled?: boolean
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
+          demo_email_opt_in?: boolean
+          demo_sms_opt_in?: boolean
           dispatch_phone?: string | null
           elevenlabs_voice_id_es?: string | null
           email?: string | null
@@ -1063,6 +1068,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
@@ -1181,6 +1187,8 @@ export type Database = {
           default_email_enabled?: boolean
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
+          demo_email_opt_in?: boolean
+          demo_sms_opt_in?: boolean
           dispatch_phone?: string | null
           elevenlabs_voice_id_es?: string | null
           email?: string | null
@@ -1191,6 +1199,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
@@ -2412,6 +2421,7 @@ export type Database = {
           created_ip: string | null
           customer_email: string | null
           customer_user_id: string | null
+          email_opt_in: boolean
           employee_email: string | null
           employee_user_id: string | null
           expires_at: string
@@ -2432,6 +2442,7 @@ export type Database = {
           created_ip?: string | null
           customer_email?: string | null
           customer_user_id?: string | null
+          email_opt_in?: boolean
           employee_email?: string | null
           employee_user_id?: string | null
           expires_at?: string
@@ -2452,6 +2463,7 @@ export type Database = {
           created_ip?: string | null
           customer_email?: string | null
           customer_user_id?: string | null
+          email_opt_in?: boolean
           employee_email?: string | null
           employee_user_id?: string | null
           expires_at?: string
@@ -6849,6 +6861,20 @@ export type Database = {
           name: string
           parts_covered: boolean
           terms_conditions: string
+        }[]
+      }
+      get_demo_trial_access: {
+        Args: { p_trial_id: string }
+        Returns: {
+          admin_email: string
+          company_id: string
+          customer_email: string
+          employee_email: string
+          expires_at: string
+          industry: string
+          password: string
+          status: string
+          trial_id: string
         }[]
       }
       get_employee_calendar_appointments: {

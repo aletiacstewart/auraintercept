@@ -1,93 +1,42 @@
-## Goal
+## Streamline Demo Signup + Tag Demo Companies
 
-Polish the `/for-business` Dynamic Demo Page: fix the EN/ES toggle scope, clean the industry dropdown, compact the pricing tier cards, link tiers to the real signup flow, and make sure when a prospect launches a demo they get an industry-pre-seeded company **plus** an emailed copy of the demo links so they can test on desktop and mobile.
+### What changes for the user
+1. **Form** collects only: Name, Business Name, Email, Phone — plus two opt-in checkboxes:
+   - "Email me Aura Intercept updates & demo tips"
+   - "Text me Aura Intercept updates & demo tips" (disabled until phone entered, with the existing 10DLC compliance disclaimer)
+2. **No more "Text me my demo links"** option — the demo link is shown right in the dialog instead.
+3. **After launching**, the dialog shows a single shareable demo link with two buttons next to it: **Copy link** and **Open link** (opens in a new tab). The 3 role login cards remain below for trying each view.
+4. **Every demo signup** is saved into the Aura Intercept admin "Companies" list, tagged as a **Demo** company, with the captured email/SMS opt-in flags visible.
 
----
+### Technical changes
 
-## 1. EN / ES toggle — clarify scope
+**Database migration** (new columns on `companies` so demos appear in the admin Companies dashboard with tags):
+- `is_demo BOOLEAN DEFAULT false`
+- `demo_email_opt_in BOOLEAN DEFAULT false`
+- `demo_sms_opt_in BOOLEAN DEFAULT false`
+- Index on `is_demo` for filtering
+- Add `email_opt_in BOOLEAN DEFAULT false` to `demo_trials` to mirror SMS opt-in
 
-**Issue:** The user expects toggling EN→ES to translate everything (consoles, Aura responses, AI Operatives, Ask Aura, etc.). Today only the marketing nav strings are translated; consoles, AI prompts, and AI responses are English-only.
+**`StartDemoDialog.tsx`**:
+- Add `emailOptIn` state alongside `smsOptIn`.
+- Replace the single "Text me my demo links" block with two stacked checkboxes (email + SMS), each with proper labels and the SMS one keeping the 10DLC disclaimer.
+- Pass `email_opt_in` and `sms_opt_in` to the edge function.
 
-**Plan:** Translating the entire dashboard + AI runtime is a multi-week effort (hundreds of console strings + AI prompt localization + assistant output language). For this loop I will:
+**`create-demo-trial` edge function**:
+- Accept `email_opt_in` (new) and `sms_opt_in` (already accepted).
+- On the `companies` insert, set `is_demo: true`, `demo_email_opt_in`, `demo_sms_opt_in`, and prefix the company name with `[DEMO]` so it's instantly visible in the admin Companies list.
+- Persist both opt-ins onto `demo_trials` row.
+- Build a single signed shareable URL (e.g. `https://auraintercept.ai/demo/{trial_id}` — reuses existing 3-role flow) and return it as `share_url` in the response. (For now: simplest correct implementation = `https://auraintercept.ai/for-business?demo={trial_id}` that auto-opens the credentials card; or just return `admin.redirect` URL with auto sign-in token. Final approach: return a single `share_url` pointing to a public route `/demo-access/{trial_id}` that loads the same 3-role launcher. Public RPC `get_demo_trial_access(p_trial_id)` returns the 3 role emails + universal password for that trial.)
+- Keep best-effort Resend email of the credentials.
 
-- Make the language toggle clearly **scoped to public-facing marketing pages only** by adding a small tooltip ("Marketing pages — full app translation coming soon") on the toggle.
-- Hide the EN/ES toggle from inside the dashboard / consoles where it currently does nothing meaningful, so it isn't misleading.
-- Add a follow-up note in memory so the full-app i18n becomes its own tracked initiative.
+**`DemoCredentialsCard.tsx`**:
+- Add a top section above the 3 role cards: a single read-only input showing the share URL with **Copy link** and **Open link** (new tab) buttons.
+- Remove no longer accurate "we texted you" copy; keep email confirmation line if `emailed === true`.
 
-If you want me to instead start on full app translation now, say so and I will scope a separate plan — it will be large.
+**Admin Companies dashboard**:
+- Locate the existing platform admin Companies list (likely `src/pages/admin/...` or `src/pages/Companies*.tsx`) and add a "Demo" badge column when `is_demo === true`, plus filter chip "Demos only". Will be confirmed during implementation by ripgrep.
 
----
-
-## 2. Industry dropdown cleanup
-
-In `src/components/marketing/IndustryDropdownPicker.tsx` and `src/lib/industryMarketingContent.ts`:
-
-- **Remove** the trailing "Other" group + the "other" item from the dropdown so it doesn't appear at the bottom (kept internally as a fallback only).
-- Restyle group `SelectLabel`s: **bold + underlined + cyan-blue** (`text-primary font-bold underline underline-offset-4 uppercase tracking-wide text-xs`) so titles are visually distinct from selectable items.
-- Selectable industry items stay normal weight / foreground color.
-
----
-
-## 3. Compact pricing tier cards
-
-In `ForBusiness.tsx` `PRICING_TIERS` section:
-
-- Switch from large cards to a **compact 4-column grid** (`grid-cols-2 md:grid-cols-4`) using smaller `Card` padding (`p-3`), smaller price text (`text-xl` instead of `text-3xl`), tighter tagline (`text-[10px]`), and a small CTA pill at the bottom of each card.
-- Rough layout per card: tier name (sm bold) → price (xl bold primary) → 1-line tagline → "Choose plan" button.
-
----
-
-## 4. Link tier cards to the real subscription / signup flow
-
-Each compact card becomes clickable / has a "Choose plan" button that navigates to:
-
-```
-/auth?mode=company&tab=signup&tier=<starter|connect|performance|command>
-```
-
-(Mapping: Core→starter, Boost→connect, Pro→performance, Elite→command — matches `selectedTier` in `Auth.tsx`.)
-
-Also, in `Auth.tsx`, add a small `useEffect` that reads the `tier` query param and pre-selects `selectedTier` on mount so the card lands the user on the correct plan in the signup form.
-
----
-
-## 5. Pass industry into demo signup + email the credentials
-
-### 5a. Industry → demo (already mostly done)
-
-`StartDemoDialog` already sends `industry: industryId` to `create-demo-trial`, and the edge function already seeds appointments / leads / colors / service area per industry. I'll verify the dialog is opened from the Final CTA / Hero and confirm the current `industry` query param is what flows through.
-
-### 5b. Email the demo links so the prospect can open them on desktop + mobile
-
-Update `supabase/functions/create-demo-trial/index.ts`:
-
-- After successfully creating the company + 3 users, send a Resend email to the prospect's `email` containing:
-  - Industry label + business name confirmation
-  - The 3 logins (Owner, Technician, Customer) with email + shared demo password
-  - One-click sign-in links to `https://auraintercept.ai/auth?demo=1&u=<encoded-email>` for each role
-  - A QR code link / mobile-friendly note: "Open this email on your phone to test the technician + customer mobile experience"
-  - Expiry timestamp (48h)
-  - Aura Intercept branded HTML template
-- Use existing `RESEND_API_KEY` secret (already used by other edge functions).
-- Send is best-effort — if Resend fails the demo still launches; we just log the failure and surface a toast: "Demo ready. We couldn't email a copy — credentials are shown above."
-
-### 5c. Visible confirmation in the dialog
-
-In `DemoCredentialsCard`, add a small line: "✉️ A copy was emailed to <email> so you can open the demo on your phone too."
-
----
-
-## Files to edit
-
-- `src/pages/ForBusiness.tsx` — compact pricing grid + Choose-plan links to `/auth`.
-- `src/components/marketing/IndustryDropdownPicker.tsx` — bold/underlined cyan group labels, hide "Other" group.
-- `src/lib/industryMarketingContent.ts` — drop the `Other` entry from `INDUSTRY_GROUPS` (keep `INDUSTRY_CONTENT.other` as fallback).
-- `src/components/common/LanguageToggle.tsx` — add tooltip clarifying scope.
-- `src/components/dashboard/DashboardLayout.tsx` (and any console header that renders `LanguageToggle`) — hide the toggle inside the dashboard.
-- `src/pages/Auth.tsx` — read `?tier=` query param and pre-select the matching plan.
-- `src/components/marketing/DemoCredentialsCard.tsx` — add "emailed a copy" confirmation line.
-- `supabase/functions/create-demo-trial/index.ts` — send Resend email with the 3 logins after provisioning.
-
-## Out of scope (this loop)
-
-- Full Spanish translation of consoles, AI Operatives, Ask Aura responses (large separate initiative — can plan next).
+### Notes / out of scope
+- The 48-hour auto-expiry, seeded appointments/leads, and 3-role login cards all stay exactly as they are.
+- 10DLC disclaimer text on the SMS opt-in is preserved (legal requirement).
+- No Stripe / payment changes.
