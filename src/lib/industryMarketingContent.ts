@@ -394,7 +394,6 @@ export const INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] 
   { group: 'Specialized Home', emoji: '🛠', ids: ['appliance_repair', 'handyman_cleaning', 'construction'] },
   { group: 'Mobile & Commercial', emoji: '🚗', ids: ['auto_care', 'security_systems', 'real_estate'] },
   { group: 'Wellness & Personal', emoji: '💆', ids: ['beauty_wellness', 'restaurants', 'personal_assistant'] },
-  { group: 'Other', emoji: '🏢', ids: ['other'] },
 ];
 
 export function getIndustryContent(id: string | null | undefined): IndustryContent {

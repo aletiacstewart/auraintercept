@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils';
 import { Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+const SCOPE_HINT = 'Translates marketing pages. Full app translation coming soon.';
+
 interface LanguageToggleProps {
   variant?: 'default' | 'ghost' | 'compact';
   className?: string;
@@ -21,6 +23,7 @@ export function LanguageToggle({ variant = 'default', className }: LanguageToggl
         onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
         disabled={isLoading}
         aria-label={t('language.switchTo', { lang: language === 'en' ? 'Español' : 'English' })}
+        title={SCOPE_HINT}
         className={cn(
           'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold uppercase tracking-wide',
           'bg-muted hover:bg-muted/80 text-foreground transition-colors',
@@ -37,6 +40,7 @@ export function LanguageToggle({ variant = 'default', className }: LanguageToggl
     <div
       role="group"
       aria-label={t('language.label')}
+      title={SCOPE_HINT}
       className={cn(
         'inline-flex items-center rounded-full p-0.5 border',
         isDark
