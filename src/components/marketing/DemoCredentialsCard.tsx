@@ -10,6 +10,9 @@ export interface DemoCredentialsResult {
   trial_id: string;
   expires_at: string;
   password: string;
+  emailed?: boolean;
+  prospect_email?: string;
+  industry_label?: string;
   admin: { email: string; redirect: string };
   employee: { email: string; redirect: string };
   customer: { email: string; redirect: string };
@@ -109,8 +112,13 @@ export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
         );
       })}
 
-      <p className="text-[11px] text-muted-foreground text-center">
-        We've also emailed these credentials to you. After 48 hours the demo company is automatically deleted.
+      <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
+        {result.emailed && result.prospect_email ? (
+          <>✉️ A copy of these logins was emailed to <span className="font-medium text-foreground">{result.prospect_email}</span> — open it on your phone to test the technician + customer mobile experience.</>
+        ) : (
+          <>Tip: copy these logins to your phone to test the technician + customer mobile views.</>
+        )}
+        <br />After 48 hours the demo company is automatically deleted.
       </p>
     </div>
   );
