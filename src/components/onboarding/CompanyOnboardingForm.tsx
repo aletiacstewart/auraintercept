@@ -321,7 +321,7 @@ export function CompanyOnboardingForm() {
     
     body += '--- EMPLOYEES ---\n';
     formData.employees.filter(e => e.name).forEach((e, i) => {
-      body += `${i + 1}. ${e.name} | ${e.email} | ${e.phone} | ${e.role} | ${e.jobType}\n`;
+      body += `${i + 1}. ${e.name} | ${e.email} | ${e.phone} | ${e.role} | ${e.jobType} | Aura SMS: ${e.auraSmsOptIn ? 'OPT-IN' : 'opt-out'}\n`;
     });
     body += '\n';
     
