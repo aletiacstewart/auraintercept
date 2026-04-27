@@ -27,7 +27,7 @@ export function IndustryHero({ content, onStartDemo }: IndustryHeroProps) {
             Try the demo (48 hrs free)
           </Button>
           <Button size="lg" variant="outline" asChild className="text-base">
-            <a href="tel:+18005551234">
+            <a href="tel:+15127372424">
               <Phone className="w-5 h-5" />
               Talk to a human
             </a>
