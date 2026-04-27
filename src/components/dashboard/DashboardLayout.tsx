@@ -600,7 +600,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         {/* Header with notification bell */}
         <div className="sticky top-0 z-10 border-b" style={{ background: "rgba(4,10,20,0.85)", backdropFilter: "blur(20px)", borderColor: "rgba(0,229,255,0.1)" }}>
           <div className="container max-w-7xl flex items-center justify-end gap-2 py-2 px-4">
-            <LanguageToggle />
             <CurrentPlanChip />
             <NotificationBell />
           </div>
