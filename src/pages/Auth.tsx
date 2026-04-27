@@ -41,6 +41,8 @@ export default function Auth() {
   const rawTab = searchParams.get('tab');
   const tabParam = rawTab === 'login' || rawTab === 'signup' ? rawTab : null;
   const source = searchParams.get('source');
+  const tierParam = searchParams.get('tier');
+  const industryParam = searchParams.get('industry');
   
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
@@ -92,6 +94,16 @@ export default function Auth() {
     setCompanyName('');
     setRegistrationCode('');
   }, [mode, tabParam, source]);
+
+  // Pre-select tier and industry from query params (deep-link from /for-business)
+  useEffect(() => {
+    if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
+      setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
+    }
+    if (industryParam) {
+      setBusinessIndustry(industryParam);
+    }
+  }, [tierParam, industryParam]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
