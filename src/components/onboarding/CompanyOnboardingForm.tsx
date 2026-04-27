@@ -102,7 +102,7 @@ interface FormData {
   differentiators: string;
   
   // Employee Info
-  employees: { name: string; email: string; phone: string; role: string; jobType: string }[];
+  employees: { name: string; email: string; phone: string; role: string; jobType: string; auraSmsOptIn: boolean }[];
   
   // Goals
   painPoints: string;
@@ -159,7 +159,7 @@ const initialFormData: FormData = {
   faqs: Array(5).fill({ question: '', answer: '' }),
   commonQuestions: '',
   differentiators: '',
-  employees: Array(5).fill({ name: '', email: '', phone: '', role: '', jobType: '' }),
+  employees: Array(5).fill(null).map(() => ({ name: '', email: '', phone: '', role: '', jobType: '', auraSmsOptIn: false })),
   painPoints: '',
   successGoals: '',
   excitedFeatures: '',
@@ -219,7 +219,7 @@ export function CompanyOnboardingForm() {
     updateField('faqs', newFaqs);
   };
 
-  const updateEmployee = (index: number, field: keyof FormData['employees'][0], value: string) => {
+  const updateEmployee = (index: number, field: keyof FormData['employees'][0], value: string | boolean) => {
     const newEmployees = [...formData.employees];
     newEmployees[index] = { ...newEmployees[index], [field]: value };
     updateField('employees', newEmployees);
@@ -321,7 +321,7 @@ export function CompanyOnboardingForm() {
     
     body += '--- EMPLOYEES ---\n';
     formData.employees.filter(e => e.name).forEach((e, i) => {
-      body += `${i + 1}. ${e.name} | ${e.email} | ${e.phone} | ${e.role} | ${e.jobType}\n`;
+      body += `${i + 1}. ${e.name} | ${e.email} | ${e.phone} | ${e.role} | ${e.jobType} | Aura SMS: ${e.auraSmsOptIn ? 'OPT-IN' : 'opt-out'}\n`;
     });
     body += '\n';
     
@@ -965,15 +965,16 @@ export function CompanyOnboardingForm() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-5 gap-2 pb-2 border-b font-medium text-sm text-muted-foreground">
+            <div className="grid grid-cols-6 gap-2 pb-2 border-b font-medium text-sm text-muted-foreground">
               <div>Name</div>
               <div>Email</div>
               <div>Phone</div>
               <div>Role</div>
               <div>Job Type</div>
+              <div title="Opt-in to receive SMS from Aura Intercept (product updates, billing alerts). Reply STOP to opt out.">Aura SMS</div>
             </div>
             {formData.employees.map((employee, index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-2">
+              <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-2">
                 <Input
                   placeholder="Full Name"
                   value={employee.name}
@@ -1013,6 +1014,14 @@ export function CompanyOnboardingForm() {
                     <SelectItem value="office">Office</SelectItem>
                   </SelectContent>
                 </Select>
+                <div className="flex items-center justify-center">
+                  <Checkbox
+                    id={`emp-aura-sms-${index}`}
+                    checked={employee.auraSmsOptIn}
+                    disabled={!employee.phone || employee.phone.trim().length < 7}
+                    onCheckedChange={(v) => updateEmployee(index, 'auraSmsOptIn', v === true)}
+                  />
+                </div>
               </div>
             ))}
           </div>

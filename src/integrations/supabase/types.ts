@@ -897,6 +897,9 @@ export type Database = {
           assignment_use_distance_routing: boolean | null
           assignment_use_load_balancing: boolean | null
           assignment_workload_weight: number | null
+          aura_sms_consent_at: string | null
+          aura_sms_consent_ip: string | null
+          aura_sms_opt_in: boolean
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
@@ -1022,6 +1025,9 @@ export type Database = {
           assignment_use_distance_routing?: boolean | null
           assignment_use_load_balancing?: boolean | null
           assignment_workload_weight?: number | null
+          aura_sms_consent_at?: string | null
+          aura_sms_consent_ip?: string | null
+          aura_sms_opt_in?: boolean
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -1147,6 +1153,9 @@ export type Database = {
           assignment_use_distance_routing?: boolean | null
           assignment_use_load_balancing?: boolean | null
           assignment_workload_weight?: number | null
+          aura_sms_consent_at?: string | null
+          aura_sms_consent_ip?: string | null
+          aura_sms_opt_in?: boolean
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -3919,6 +3928,9 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          aura_sms_consent_at: string | null
+          aura_sms_consent_ip: string | null
+          aura_sms_opt_in: boolean
           availability_json: Json | null
           avatar_url: string | null
           calendar_feed_token: string | null
@@ -3945,6 +3957,9 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          aura_sms_consent_at?: string | null
+          aura_sms_consent_ip?: string | null
+          aura_sms_opt_in?: boolean
           availability_json?: Json | null
           avatar_url?: string | null
           calendar_feed_token?: string | null
@@ -3971,6 +3986,9 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          aura_sms_consent_at?: string | null
+          aura_sms_consent_ip?: string | null
+          aura_sms_opt_in?: boolean
           availability_json?: Json | null
           avatar_url?: string | null
           calendar_feed_token?: string | null

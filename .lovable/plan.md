@@ -1,119 +1,67 @@
-
-
-## Plan: English / Spanish Language Toggle (Platform-Wide)
+## Plan: SMS Opt-In / Opt-Out for Aura Intercept (Company + Employee Signup)
 
 ### Goal
-Add a global EN/ES language toggle accessible from every dashboard and the public marketing site. Default = English. Selection persists per user (DB) or per visitor (localStorage for anonymous), and propagates to:
-1. All UI strings (sidebar, buttons, headers, labels, modals, marketing pages)
-2. AI chat responses (Aura text)
-3. Voice agent (ElevenLabs / SignalWire)
-4. AI-generated content (blog posts, social posts, SMS replies, follow-up scripts)
-5. Customer-facing channels (chat widget, customer portal, missed-call SMS)
+Add a clear, A2P 10DLC-compliant SMS opt-in/opt-out checkbox to the company signup flow and employee onboarding/registration, plus a way to change the choice later from settings. Consent is stored per user/company and respected by all platform-originated SMS (announcements, product updates, billing alerts, onboarding nudges) sent from Aura Intercept itself — separate from per-customer transactional SMS.
 
-### Architecture
+### Scope (what counts as "SMS from Aura Intercept")
+- Platform announcements, product updates, onboarding tips, billing/usage alerts, system status alerts sent to the **company admin / employee phone number** by Aura Intercept (the platform), not by their own business.
+- This is distinct from `customer_profiles.sms_opt_out` (their customers) and `staff_notification_preferences.sms_alerts_enabled` (job/booking alerts from their own company).
 
-**Library:** `react-i18next` + `i18next` + `i18next-browser-languagedetector`. Industry standard, hooks-based, lightweight (~30 KB), already compatible with React 18 / Vite.
+### Database changes (one migration)
 
-**Translation files:** JSON namespaces under `src/locales/`
-```text
-src/locales/
-  en/
-    common.json      (buttons, nav, sidebar)
-    dashboard.json   (KPIs, console labels)
-    marketing.json   (landing, pricing, audit)
-    auth.json        (signup, login)
-    aura.json        (command center, suggestions)
-    customer.json    (customer portal)
-  es/
-    (mirrored structure)
-```
+Add platform-SMS consent columns:
 
-**Persistence:**
-- Logged-in users → new column `profiles.preferred_language` (`'en'` | `'es'`, default `'en'`)
-- Anonymous visitors → `localStorage.aura_lang`
-- Detection priority: profile → localStorage → browser navigator → `'en'` fallback
+- `public.profiles`
+  - `aura_sms_opt_in boolean not null default false`
+  - `aura_sms_consent_at timestamptz null`
+  - `aura_sms_consent_ip text null`
+- `public.companies`
+  - `aura_sms_opt_in boolean not null default false` (company-level marketing/billing SMS to primary contact)
+  - `aura_sms_consent_at timestamptz null`
+  - `aura_sms_consent_ip text null`
 
-**Component:** `<LanguageToggle />` — pill switcher (EN | ES) placed in:
-- `PublicHeader` (marketing site, audit, customer portal)
-- `DashboardLayout` header (right side, near user menu)
-- `TechnicianDashboard` mobile header
-- `CustomerPortal` header
+Default `false` (explicit opt-in required, per 10DLC/TCPA). Consent timestamp + IP captured for audit.
 
-### AI / Voice / Content Propagation
+### UI changes
 
-| Channel | How language flows in |
-|---|---|
-| **Aura chat** (`ai-agent-chat`, `ai-agent-respond`) | Add `language` param → injected into system prompt: *"Respond strictly in {language}."* |
-| **Voice agent** (ElevenLabs) | Pass `language` to ElevenLabs `language_code` override; switch between English + Spanish voice IDs (`elevenlabs_voice_id_es` column on `companies`) |
-| **SMS auto-responder** | `language` from customer profile → prompt sets reply language |
-| **Missed-call SMS** | Same as above |
-| **Blog / social generator** | Generation form gets language selector (defaults to admin's preferred_language) |
-| **Smart Website widget** | Reads `?lang=es` query param OR detects browser; passes to chat edge function |
-| **Customer Portal** | Customer's `preferred_language` from `customer_profiles` |
+1. **Company signup — `src/pages/Auth.tsx`** (company tab)
+   - Below the existing 10DLC compliance acknowledgement and Terms checkbox, add an **unchecked-by-default** `Checkbox`:
+     > "Send me SMS from Aura Intercept at {{companyPhone}} — product updates, billing alerts, and onboarding tips. Msg & data rates may apply. Msg frequency varies. Reply STOP to opt out, HELP for help. Consent not required to purchase."
+   - Disabled until `companyPhone` is filled. State: `auraSmsOptIn`. Persisted to `companies.aura_sms_opt_in` + timestamp on company creation.
 
-### Database changes (migration)
+2. **Employee signup — `src/pages/Auth.tsx`** (employee tab) and **`src/components/onboarding/CompanyOnboardingForm.tsx`** (per-employee row)
+   - Add the same opt-in checkbox tied to the employee's phone. Stored on `profiles.aura_sms_opt_in`.
+   - For the multi-employee table in `CompanyOnboardingForm`, add a small "SMS OK" checkbox column per row.
 
-```sql
-ALTER TABLE public.profiles
-  ADD COLUMN preferred_language text NOT NULL DEFAULT 'en'
-  CHECK (preferred_language IN ('en','es'));
+3. **Reusable component — `src/components/auth/SmsOptInCheckbox.tsx`** (new)
+   - Self-contained: takes `phone`, `checked`, `onCheckedChange`, optional `recipientLabel`. Renders the full TCPA-compliant disclosure. Used in all 3 places above.
 
-ALTER TABLE public.customer_profiles
-  ADD COLUMN preferred_language text NOT NULL DEFAULT 'en'
-  CHECK (preferred_language IN ('en','es'));
+4. **Settings — change later**
+   - `src/components/settings/` → add a small "Aura Intercept SMS" toggle in the existing notification settings panel for the logged-in user (and a company-level one for company admins). Toggling off writes `aura_sms_opt_in = false` and clears consent timestamp.
 
-ALTER TABLE public.companies
-  ADD COLUMN elevenlabs_voice_id_es text;  -- optional Spanish voice
-```
+### Backend / sending logic
 
-### Edge function updates
+- Any future edge function that sends platform-originated SMS (e.g. `trial-reminders`, `cost-alerts`, future `aura-platform-sms`) must check `aura_sms_opt_in = true` on the recipient's profile/company before sending. Add a shared helper note in the new migration's comment so it's discoverable; no existing function currently sends platform SMS to admins, so no immediate edits needed beyond gating future ones.
+- Inbound `STOP` keyword handling: extend `supabase/functions/sms-handler/index.ts` so that an inbound `STOP` from a number matching a `profiles.phone` or `companies.phone` flips `aura_sms_opt_in = false` and replies with the standard confirmation. `START`/`UNSTOP` re-enables.
 
-Add `language` parameter handling (default `'en'`) to:
-- `ai-agent-chat`, `ai-agent-respond`, `voice-navigator`
-- `generate-blog-post`, `generate-social-content`, `publish-social-content`
-- `missed-call-handler`, `sms-keyword-responder`
-- `elevenlabs-signed-url` (pass `language_code` override)
+### Files touched
 
-### Translation strategy
+- **New**: `src/components/auth/SmsOptInCheckbox.tsx`
+- **New**: `supabase/migrations/<timestamp>_add_aura_sms_consent.sql`
+- **Edit**: `src/pages/Auth.tsx` (company + employee signup tabs)
+- **Edit**: `src/components/onboarding/CompanyOnboardingForm.tsx` (add per-employee checkbox)
+- **Edit**: `src/components/company/AlertsSettings.tsx` (or notification settings page) — add toggle
+- **Edit**: `supabase/functions/sms-handler/index.ts` — STOP/START handling for platform consent
+- **Edit**: `supabase/functions/create-company-admin/index.ts` — persist `aura_sms_opt_in` + consent metadata when creating company/admin
 
-**Phase 1 (this implementation):** Translate the highest-traffic surfaces — sidebar nav, dashboard headers, Aura command center, auth pages, public landing/pricing, customer portal, common buttons. ~400 strings total.
-
-**Phase 2 (deferred):** Auto-translate remaining deep settings pages on demand using Lovable AI Gateway (`google/gemini-2.5-flash`) with a one-time batch script — generates ES JSON from EN source, committed to repo.
-
-Hardcoded brand strings stay English ("Aura Intercept", "Aura Core", agent names, etc.).
-
-### Files to create/edit
-
-**Create:**
-- `src/lib/i18n.ts` — i18next init, namespace loader
-- `src/contexts/LanguageContext.tsx` — provider, `useLanguage()` hook with DB sync
-- `src/components/common/LanguageToggle.tsx` — EN/ES pill switcher
-- `src/locales/en/*.json` and `src/locales/es/*.json` (6 namespaces each)
-- `supabase/migrations/[ts]_add_language_preference.sql`
-
-**Edit:**
-- `src/main.tsx` — import i18n init, wrap with `LanguageProvider`
-- `src/App.tsx` — provider mount
-- `src/components/layout/PublicHeader.tsx` — add toggle
-- `src/components/dashboard/DashboardLayout.tsx` — add toggle in header
-- `src/pages/TechnicianDashboard.tsx` — add toggle
-- `src/pages/CustomerPortal.tsx` — add toggle + use customer's pref
-- `src/components/dashboard/AuraCommandCenter.tsx` — translate suggestions, send `language` to `useUnifiedAura`
-- `src/hooks/useUnifiedAura.ts` — pass `language` to chat edge function
-- Edge functions listed above — accept + honor `language` param
-- `mem://index.md` — add new memory entry for language standard
+### Compliance notes
+- Disclosure language follows CTIA / 10DLC best practices: identifies sender (Aura Intercept), purpose, frequency, rates, STOP/HELP, and "consent not required to purchase".
+- Default = unchecked (express written consent).
+- Consent record (timestamp + IP) stored for audit.
+- Honored across all platform SMS via the gating check + STOP keyword.
 
 ### Verification
-
-1. Toggle on landing page → all marketing copy switches to Spanish; persists on reload (localStorage).
-2. Sign in → toggle saved to `profiles.preferred_language`; survives logout/login.
-3. Set ES → ask Aura "Book a job" → response in Spanish.
-4. Voice call → ElevenLabs replies in Spanish (with ES voice if configured, otherwise English voice speaking Spanish).
-5. Customer portal → customer with ES preference sees portal + chat in Spanish without affecting admin.
-6. Generate blog → output in admin's selected language.
-
-### Out of scope (clarify after build)
-
-- Translating user-generated content (existing blog posts, customer messages already saved). Only NEW AI generations honor the language setting.
-- Right-to-left languages, additional locales beyond ES (can be added later by dropping in new JSON namespaces).
-
+- New company signup with checkbox unchecked → `companies.aura_sms_opt_in = false`.
+- Checked → `true` with timestamp populated.
+- Texting STOP from the saved phone → flips to `false` and confirmation reply sent.
+- Settings toggle round-trips correctly.

@@ -17,6 +17,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
 import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
+import { SmsOptInCheckbox } from '@/components/auth/SmsOptInCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
@@ -65,6 +66,8 @@ export default function Auth() {
   const [businessIndustry, setBusinessIndustry] = useState('');
   const [dbaFile, setDbaFile] = useState<File | null>(null);
   const [einFile, setEinFile] = useState<File | null>(null);
+  // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
+  const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
@@ -278,6 +281,8 @@ export default function Auth() {
           address: companyAddress || null,
           phone: companyPhone || null,
           subscription_tier: 'starter',
+          aura_sms_opt_in: auraSmsOptIn,
+          aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
         })
         .select()
         .single();
@@ -297,7 +302,13 @@ export default function Auth() {
       for (let i = 0; i < 3; i++) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ company_id: companyData.id, full_name: fullName })
+          .update({
+            company_id: companyData.id,
+            full_name: fullName,
+            phone: companyPhone || null,
+            aura_sms_opt_in: auraSmsOptIn,
+            aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          })
           .eq('id', authData.user.id);
 
         if (!profileError) {
@@ -1270,6 +1281,16 @@ export default function Auth() {
                               </label>
                             </div>
                           </div>
+                        )}
+
+                        {mode === 'company' && (
+                          <SmsOptInCheckbox
+                            checked={auraSmsOptIn}
+                            onCheckedChange={setAuraSmsOptIn}
+                            phone={companyPhone}
+                            recipientLabel="my business"
+                            id="aura-sms-opt-in-company"
+                          />
                         )}
 
                         {/* Concierge Onboarding Optional Add-On */}
