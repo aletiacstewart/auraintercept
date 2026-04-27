@@ -132,7 +132,7 @@ export default function ForBusiness() {
                 <Sparkles className="w-5 h-5" /> Start your 48-hour demo
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <a href="tel:+18005551234">
+                <a href="tel:+15127372424">
                   <Phone className="w-5 h-5" /> Talk to a human
                 </a>
               </Button>
