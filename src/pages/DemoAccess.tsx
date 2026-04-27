@@ -4,13 +4,16 @@ import { Card } from '@/components/ui/card';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DemoCredentialsCard, DemoCredentialsResult } from '@/components/marketing/DemoCredentialsCard';
-import { useEffect as useDocEffect } from 'react';
 
 export default function DemoAccess() {
   const { trialId } = useParams<{ trialId: string }>();
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<DemoCredentialsResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = 'Your Aura Intercept Demo';
+  }, []);
 
   useEffect(() => {
     const load = async () => {
