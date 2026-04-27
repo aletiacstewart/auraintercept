@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2, Sparkles, Mail, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -21,8 +21,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [businessName, setBusinessName] = useState('');
-  const [smsOptIn, setSmsOptIn] = useState(false);
-  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [optInChoice, setOptInChoice] = useState<'none' | 'email' | 'sms'>('none');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<DemoCredentialsResult | null>(null);
 
@@ -41,8 +40,8 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
           phone: phone || null,
           business_name: businessName,
           industry: industryId,
-          sms_opt_in: smsOptIn,
-          email_opt_in: emailOptIn,
+          sms_opt_in: optInChoice === 'sms',
+          email_opt_in: optInChoice === 'email',
         },
       });
       if (error) throw error;
@@ -64,8 +63,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
       setEmail('');
       setPhone('');
       setBusinessName('');
-      setSmsOptIn(false);
-      setEmailOptIn(false);
+      setOptInChoice('none');
     }
     onOpenChange(next);
   };
@@ -119,16 +117,15 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                 <Label htmlFor="phone">Phone (optional)</Label>
                 <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 555 5555" />
               </div>
-              <div className="space-y-2">
+              <RadioGroup
+                value={optInChoice}
+                onValueChange={(v) => setOptInChoice(v as 'none' | 'email' | 'sms')}
+                className="space-y-2"
+              >
                 <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
-                  <Checkbox
-                    id="emailOptIn"
-                    checked={emailOptIn}
-                    onCheckedChange={(c) => setEmailOptIn(c === true)}
-                    className="rounded-sm"
-                  />
+                  <RadioGroupItem value="email" id="optEmail" className="mt-0.5" />
                   <div className="space-y-0.5 flex-1">
-                    <Label htmlFor="emailOptIn" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
+                    <Label htmlFor="optEmail" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
                       <Mail className="w-3.5 h-3.5 text-primary" />
                       Email me Aura Intercept updates &amp; demo tips.
                     </Label>
@@ -138,15 +135,9 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                   </div>
                 </div>
                 <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
-                  <Checkbox
-                    id="smsOptIn"
-                    checked={smsOptIn}
-                    onCheckedChange={(c) => setSmsOptIn(c === true)}
-                    disabled={!phone}
-                    className="rounded-sm"
-                  />
+                  <RadioGroupItem value="sms" id="optSms" disabled={!phone} className="mt-0.5" />
                   <div className="space-y-0.5 flex-1">
-                    <Label htmlFor="smsOptIn" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
+                    <Label htmlFor="optSms" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
                       <MessageSquare className="w-3.5 h-3.5 text-primary" />
                       Text me Aura Intercept updates &amp; demo tips.
                     </Label>
@@ -155,7 +146,13 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                     </p>
                   </div>
                 </div>
-              </div>
+                <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
+                  <RadioGroupItem value="none" id="optNone" className="mt-0.5" />
+                  <Label htmlFor="optNone" className="text-sm font-normal leading-tight cursor-pointer flex-1">
+                    No updates — just give me the demo.
+                  </Label>
+                </div>
+              </RadioGroup>
               <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={submitting}>
                 {submitting ? (
                   <>
