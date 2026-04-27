@@ -2,14 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
-import { IndustrySelector } from '@/components/marketing/IndustrySelector';
+import { IndustryDropdownPicker } from '@/components/marketing/IndustryDropdownPicker';
+import { IntegrationStatusPanel } from '@/components/marketing/IntegrationStatusPanel';
 import { IndustryHero } from '@/components/marketing/IndustryHero';
 import { IndustryValueProps } from '@/components/marketing/IndustryValueProps';
 import { RolePreviewRow } from '@/components/marketing/RolePreviewRow';
 import { StartDemoDialog } from '@/components/marketing/StartDemoDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Phone, AlertCircle } from 'lucide-react';
+import { Sparkles, Phone, AlertCircle, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
 
@@ -44,7 +45,23 @@ export default function ForBusiness() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <PublicHeader />
-      <IndustrySelector selected={industry} onChange={setIndustry} />
+      {/* Dynamic Demo Page header */}
+      <div className="sticky top-[64px] z-40 bg-background/95 backdrop-blur border-b border-border/40">
+        <div className="container max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-semibold uppercase tracking-wider">
+              <Zap className="w-3 h-3" /> Dynamic Demo Page
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Pick your industry — page & 48-hour demo update instantly.
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">I am a:</span>
+            <IndustryDropdownPicker value={industry} onChange={setIndustry} />
+          </div>
+        </div>
+      </div>
 
       {expired && (
         <div className="container max-w-5xl mx-auto px-4 mt-4">
@@ -61,6 +78,7 @@ export default function ForBusiness() {
         <IndustryHero content={content} onStartDemo={() => setDemoOpen(true)} />
         <IndustryValueProps content={content} />
         <RolePreviewRow onTryDemo={() => setDemoOpen(true)} />
+        <IntegrationStatusPanel />
 
         {/* Pricing snapshot */}
         <section className="py-16 bg-background">

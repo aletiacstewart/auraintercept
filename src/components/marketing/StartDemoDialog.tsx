@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { INDUSTRY_LIST } from '@/lib/industryMarketingContent';
+import { INDUSTRY_LIST, getIndustryContent } from '@/lib/industryMarketingContent';
 import { DemoCredentialsCard, DemoCredentialsResult } from './DemoCredentialsCard';
 
 interface StartDemoDialogProps {
@@ -68,6 +68,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
   };
 
   const industryLabel = INDUSTRY_LIST.find((i) => i.id === industryId)?.label || 'your business';
+  const ind = getIndustryContent(industryId);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -93,6 +94,9 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                 We'll spin up a fully-loaded demo company in seconds. No credit card required.
               </DialogDescription>
             </DialogHeader>
+            <div className="text-xs px-3 py-2 rounded-md bg-primary/10 text-foreground border border-primary/20">
+              <span className="font-medium">{ind.emoji} {ind.label}</span> demo company in <span className="font-medium">{ind.serviceArea.cities[0]}</span> · pre-seeded with 6 appointments, 3 leads, and a sample customer.
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
