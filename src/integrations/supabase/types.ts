@@ -2403,6 +2403,84 @@ export type Database = {
           },
         ]
       }
+      demo_trials: {
+        Row: {
+          admin_email: string | null
+          admin_user_id: string | null
+          company_id: string | null
+          created_at: string
+          created_ip: string | null
+          customer_email: string | null
+          customer_user_id: string | null
+          employee_email: string | null
+          employee_user_id: string | null
+          expires_at: string
+          id: string
+          industry: string
+          password: string
+          prospect_email: string
+          prospect_name: string
+          prospect_phone: string | null
+          sms_opt_in: boolean
+          status: string
+        }
+        Insert: {
+          admin_email?: string | null
+          admin_user_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          created_ip?: string | null
+          customer_email?: string | null
+          customer_user_id?: string | null
+          employee_email?: string | null
+          employee_user_id?: string | null
+          expires_at?: string
+          id?: string
+          industry: string
+          password: string
+          prospect_email: string
+          prospect_name: string
+          prospect_phone?: string | null
+          sms_opt_in?: boolean
+          status?: string
+        }
+        Update: {
+          admin_email?: string | null
+          admin_user_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          created_ip?: string | null
+          customer_email?: string | null
+          customer_user_id?: string | null
+          employee_email?: string | null
+          employee_user_id?: string | null
+          expires_at?: string
+          id?: string
+          industry?: string
+          password?: string
+          prospect_email?: string
+          prospect_name?: string
+          prospect_phone?: string | null
+          sms_opt_in?: boolean
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_trials_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_trials_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       digest_delivery_logs: {
         Row: {
           company_id: string
