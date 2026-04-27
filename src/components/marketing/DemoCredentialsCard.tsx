@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Copy, CheckCircle2, LayoutDashboard, Wrench, User, ExternalLink } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Copy, CheckCircle2, LayoutDashboard, Wrench, User, ExternalLink, Link2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -13,6 +14,7 @@ export interface DemoCredentialsResult {
   emailed?: boolean;
   prospect_email?: string;
   industry_label?: string;
+  share_url?: string;
   admin: { email: string; redirect: string };
   employee: { email: string; redirect: string };
   customer: { email: string; redirect: string };
@@ -30,6 +32,7 @@ interface DemoCredentialsCardProps {
 
 export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
   const [signingIn, setSigningIn] = useState<string | null>(null);
+  const shareUrl = result.share_url || `https://auraintercept.ai/demo/${result.trial_id}`;
 
   const expiresIn = (() => {
     const ms = new Date(result.expires_at).getTime() - Date.now();
@@ -67,6 +70,42 @@ export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
         <span className="font-medium">Demo expires in {expiresIn}</span>
         <span>Universal password: <code className="font-mono">{result.password}</code></span>
       </div>
+
+      <Card className="p-4 border-primary/40 bg-primary/5">
+        <div className="flex items-center gap-2 mb-2">
+          <Link2 className="w-4 h-4 text-primary" />
+          <h4 className="font-semibold text-sm text-foreground">Your demo link</h4>
+        </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          Share this link to open your 48-hour demo from any device. The page below also lets you launch each role with one tap.
+        </p>
+        <div className="flex items-center gap-2">
+          <Input
+            readOnly
+            value={shareUrl}
+            className="font-mono text-xs flex-1"
+            onFocus={(e) => e.currentTarget.select()}
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => copy(shareUrl, 'demo link')}
+          >
+            <Copy className="w-3.5 h-3.5" />
+            Copy
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            asChild
+          >
+            <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="w-3.5 h-3.5" />
+              Open
+            </a>
+          </Button>
+        </div>
+      </Card>
 
       {(['admin', 'employee', 'customer'] as const).map((role) => {
         const meta = ROLE_META[role];
@@ -116,7 +155,7 @@ export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
         {result.emailed && result.prospect_email ? (
           <>✉️ A copy of these logins was emailed to <span className="font-medium text-foreground">{result.prospect_email}</span> — open it on your phone to test the technician + customer mobile experience.</>
         ) : (
-          <>Tip: copy these logins to your phone to test the technician + customer mobile views.</>
+          <>Tip: copy the demo link above and open it on your phone to test the technician + customer mobile views.</>
         )}
         <br />After 48 hours the demo company is automatically deleted.
       </p>
