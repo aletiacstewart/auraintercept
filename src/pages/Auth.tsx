@@ -302,7 +302,13 @@ export default function Auth() {
       for (let i = 0; i < 3; i++) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ company_id: companyData.id, full_name: fullName })
+          .update({
+            company_id: companyData.id,
+            full_name: fullName,
+            phone: companyPhone || null,
+            aura_sms_opt_in: auraSmsOptIn,
+            aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          })
           .eq('id', authData.user.id);
 
         if (!profileError) {
