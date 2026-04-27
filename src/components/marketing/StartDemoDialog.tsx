@@ -125,6 +125,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                     id="emailOptIn"
                     checked={emailOptIn}
                     onCheckedChange={(c) => setEmailOptIn(c === true)}
+                    className="rounded-sm"
                   />
                   <div className="space-y-0.5 flex-1">
                     <Label htmlFor="emailOptIn" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
@@ -132,7 +133,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                       Email me Aura Intercept updates &amp; demo tips.
                     </Label>
                     <p className="text-[10px] text-muted-foreground leading-tight">
-                      Occasional product updates &amp; tips. Unsubscribe anytime. Not required to use the demo.
+                      Occasional product updates &amp; tips. ~2 emails/mo. Unsubscribe anytime. Not required to use the demo.
                     </p>
                   </div>
                 </div>
@@ -142,6 +143,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                     checked={smsOptIn}
                     onCheckedChange={(c) => setSmsOptIn(c === true)}
                     disabled={!phone}
+                    className="rounded-sm"
                   />
                   <div className="space-y-0.5 flex-1">
                     <Label htmlFor="smsOptIn" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
@@ -149,7 +151,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                       Text me Aura Intercept updates &amp; demo tips.
                     </Label>
                     <p className="text-[10px] text-muted-foreground leading-tight">
-                      {!phone ? 'Add a phone number above to enable. ' : ''}Msg &amp; data rates may apply. ~4 msgs/mo. Reply STOP to opt out, HELP for help. Consent not required to use the demo.
+                      {!phone ? 'Add a phone number above to enable. ' : ''}Msg &amp; data rates may apply. ~2 msgs/mo. Reply STOP to opt out, HELP for help. Consent not required to use the demo.
                     </p>
                   </div>
                 </div>
