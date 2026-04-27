@@ -102,7 +102,7 @@ interface FormData {
   differentiators: string;
   
   // Employee Info
-  employees: { name: string; email: string; phone: string; role: string; jobType: string }[];
+  employees: { name: string; email: string; phone: string; role: string; jobType: string; auraSmsOptIn: boolean }[];
   
   // Goals
   painPoints: string;
@@ -159,7 +159,7 @@ const initialFormData: FormData = {
   faqs: Array(5).fill({ question: '', answer: '' }),
   commonQuestions: '',
   differentiators: '',
-  employees: Array(5).fill({ name: '', email: '', phone: '', role: '', jobType: '' }),
+  employees: Array(5).fill(null).map(() => ({ name: '', email: '', phone: '', role: '', jobType: '', auraSmsOptIn: false })),
   painPoints: '',
   successGoals: '',
   excitedFeatures: '',
