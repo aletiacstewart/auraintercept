@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DemoCredentialsCard, DemoCredentialsResult } from '@/components/marketing/DemoCredentialsCard';
-import { Helmet } from 'react-helmet-async';
+import { useEffect as useDocEffect } from 'react';
 
 export default function DemoAccess() {
   const { trialId } = useParams<{ trialId: string }>();
@@ -52,10 +52,6 @@ export default function DemoAccess() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
-      <Helmet>
-        <title>Your Aura Intercept Demo</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 text-primary font-semibold">
