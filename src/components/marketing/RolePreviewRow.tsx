@@ -29,10 +29,10 @@ const ROLES = [
 
 export function RolePreviewRow({ onTryDemo }: RolePreviewRowProps) {
   return (
-    <section className="py-16 bg-muted/20">
+    <section className="py-10 bg-muted/20">
       <div className="container max-w-5xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
             Try every view, all in one demo
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -41,17 +41,17 @@ export function RolePreviewRow({ onTryDemo }: RolePreviewRowProps) {
         </div>
 
         <Card className="border-border/60 hover:border-primary/40 transition-colors">
-          <CardContent className="p-6 md:p-8">
-            <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-6">
+          <CardContent className="p-4 md:p-6">
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
               {ROLES.map((r) => {
                 const Icon = r.icon;
                 return (
                   <div key={r.title} className="flex flex-col">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6" />
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary flex items-center justify-center mb-3">
+                      <Icon className="w-5 h-5" />
                     </div>
-                    <h3 className="font-semibold text-lg text-foreground mb-2">{r.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{r.description}</p>
+                    <h3 className="font-semibold text-base text-foreground mb-1">{r.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{r.description}</p>
                     <ul className="space-y-1.5">
                       {r.highlights.map((h) => (
                         <li key={h} className="text-xs text-foreground flex items-center gap-2">
@@ -64,8 +64,8 @@ export function RolePreviewRow({ onTryDemo }: RolePreviewRowProps) {
                 );
               })}
             </div>
-            <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="pt-4 border-t border-border/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-xs text-muted-foreground">
                 One demo unlocks <span className="text-foreground font-medium">all 3 logins</span> — admin, employee &amp; customer.
               </p>
               <Button size="lg" onClick={onTryDemo} className="sm:min-w-[240px]">
