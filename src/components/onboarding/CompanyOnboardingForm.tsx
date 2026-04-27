@@ -219,7 +219,7 @@ export function CompanyOnboardingForm() {
     updateField('faqs', newFaqs);
   };
 
-  const updateEmployee = (index: number, field: keyof FormData['employees'][0], value: string) => {
+  const updateEmployee = (index: number, field: keyof FormData['employees'][0], value: string | boolean) => {
     const newEmployees = [...formData.employees];
     newEmployees[index] = { ...newEmployees[index], [field]: value };
     updateField('employees', newEmployees);
