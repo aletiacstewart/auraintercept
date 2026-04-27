@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Users, ClipboardCheck } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
-import { LanguageToggle } from '@/components/common/LanguageToggle';
 import { useTranslation } from 'react-i18next';
 
 interface PublicHeaderProps {
@@ -48,7 +47,6 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           <Button className="gradient-primary" onClick={() => navigate('/auth?mode=company')}>
             {t('nav.startFreeTrial')}
           </Button>
-          <LanguageToggle variant="ghost" className="ml-1" />
         </div>
       </nav>
     </header>
