@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { Resend } from 'https://esm.sh/resend@4.0.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,6 +8,54 @@ const corsHeaders = {
 
 const PASSWORD = 'auratrial*!';
 const TRIAL_HOURS = 48;
+const PUBLIC_URL = 'https://auraintercept.ai';
+
+function buildDemoEmailHtml(opts: {
+  name: string;
+  businessName: string;
+  industryLabel: string;
+  password: string;
+  expiresAt: string;
+  adminEmail: string;
+  employeeEmail: string;
+  customerEmail: string;
+}) {
+  const { name, businessName, industryLabel, password, expiresAt, adminEmail, employeeEmail, customerEmail } = opts;
+  const ends = new Date(expiresAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  const row = (label: string, em: string, redirect: string) => `
+    <tr>
+      <td style="padding:14px 16px;border:1px solid #1f2937;border-radius:8px;background:#0b1220;">
+        <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#22d3ee;font-weight:700;">${label}</div>
+        <div style="margin-top:6px;font-family:Menlo,monospace;color:#e5e7eb;font-size:14px;">${em}</div>
+        <a href="${PUBLIC_URL}/auth?mode=customer&prefill=${encodeURIComponent(em)}"
+           style="display:inline-block;margin-top:10px;padding:8px 14px;background:#06b6d4;color:#0b1220;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">
+           Open ${label}
+        </a>
+      </td>
+    </tr>
+    <tr><td style="height:10px;"></td></tr>
+  `;
+  return `<!doctype html><html><body style="margin:0;background:#040a14;color:#e5e7eb;font-family:-apple-system,Segoe UI,Roboto,sans-serif;">
+    <div style="max-width:560px;margin:0 auto;padding:28px 20px;">
+      <h1 style="color:#22d3ee;font-size:22px;margin:0 0 6px;">Your ${industryLabel} demo is live</h1>
+      <p style="color:#9ca3af;margin:0 0 18px;font-size:14px;">
+        Hey ${name}, your 48-hour Aura Intercept demo for <b style="color:#e5e7eb;">${businessName}</b> is ready. Open it on your laptop, then scan/forward this email to your phone to try the technician + customer mobile experience.
+      </p>
+      <div style="background:#0b1220;border:1px solid #1f2937;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;">
+        <div>Universal password: <code style="color:#22d3ee;font-weight:700;">${password}</code></div>
+        <div style="color:#9ca3af;margin-top:4px;">Expires: ${ends}</div>
+      </div>
+      <table role="presentation" style="width:100%;border-collapse:separate;">
+        ${row('Owner Dashboard', adminEmail, '/dashboard')}
+        ${row('Technician App', employeeEmail, '/technician')}
+        ${row('Customer Portal', customerEmail, '/customer-portal')}
+      </table>
+      <p style="color:#6b7280;font-size:11px;margin-top:18px;line-height:1.5;">
+        After 48 hours your demo company is automatically deleted. Want to keep your data? Upgrade anytime from the demo banner.
+      </p>
+    </div>
+  </body></html>`;
+}
 
 interface IndustryDef {
   label: string;
@@ -284,11 +333,42 @@ Deno.serve(async (req) => {
       created_ip: req.headers.get('x-forwarded-for') || null,
     });
 
+    // 10) Best-effort: email credentials so the prospect can open the demo on desktop + mobile
+    let emailed = false;
+    const resendKey = Deno.env.get('RESEND_API_KEY');
+    if (resendKey) {
+      try {
+        const resend = new Resend(resendKey);
+        await resend.emails.send({
+          from: 'Aura Intercept <demos@auraintercept.ai>',
+          to: [email],
+          subject: `Your ${ind.label} demo is ready — 48 hours of Aura Intercept`,
+          html: buildDemoEmailHtml({
+            name,
+            businessName: business_name,
+            industryLabel: ind.label,
+            password: PASSWORD,
+            expiresAt,
+            adminEmail,
+            employeeEmail,
+            customerEmail,
+          }),
+        });
+        emailed = true;
+      } catch (mailErr) {
+        console.error('demo email send failed (non-fatal):', mailErr);
+      }
+    }
+
     return new Response(JSON.stringify({
       success: true,
       trial_id: companyId,
       expires_at: expiresAt,
       password: PASSWORD,
+      industry: industryKey,
+      industry_label: ind.label,
+      emailed,
+      prospect_email: email,
       admin: { email: adminEmail, redirect: '/dashboard' },
       employee: { email: employeeEmail, redirect: '/technician' },
       customer: { email: customerEmail, redirect: '/customer-portal' },
