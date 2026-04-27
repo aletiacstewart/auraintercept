@@ -965,15 +965,16 @@ export function CompanyOnboardingForm() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-5 gap-2 pb-2 border-b font-medium text-sm text-muted-foreground">
+            <div className="grid grid-cols-6 gap-2 pb-2 border-b font-medium text-sm text-muted-foreground">
               <div>Name</div>
               <div>Email</div>
               <div>Phone</div>
               <div>Role</div>
               <div>Job Type</div>
+              <div title="Opt-in to receive SMS from Aura Intercept (product updates, billing alerts). Reply STOP to opt out.">Aura SMS</div>
             </div>
             {formData.employees.map((employee, index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-2">
+              <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-2">
                 <Input
                   placeholder="Full Name"
                   value={employee.name}
@@ -1013,6 +1014,14 @@ export function CompanyOnboardingForm() {
                     <SelectItem value="office">Office</SelectItem>
                   </SelectContent>
                 </Select>
+                <div className="flex items-center justify-center">
+                  <Checkbox
+                    id={`emp-aura-sms-${index}`}
+                    checked={employee.auraSmsOptIn}
+                    disabled={!employee.phone || employee.phone.trim().length < 7}
+                    onCheckedChange={(v) => updateEmployee(index, 'auraSmsOptIn', v === true)}
+                  />
+                </div>
               </div>
             ))}
           </div>
