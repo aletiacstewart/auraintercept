@@ -1283,6 +1283,16 @@ export default function Auth() {
                           </div>
                         )}
 
+                        {mode === 'company' && (
+                          <SmsOptInCheckbox
+                            checked={auraSmsOptIn}
+                            onCheckedChange={setAuraSmsOptIn}
+                            phone={companyPhone}
+                            recipientLabel="my business"
+                            id="aura-sms-opt-in-company"
+                          />
+                        )}
+
                         {/* Concierge Onboarding Optional Add-On */}
                         {mode === 'company' && (
                           <div
