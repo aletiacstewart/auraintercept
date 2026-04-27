@@ -17,6 +17,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
 import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
+import { SmsOptInCheckbox } from '@/components/auth/SmsOptInCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
@@ -65,6 +66,8 @@ export default function Auth() {
   const [businessIndustry, setBusinessIndustry] = useState('');
   const [dbaFile, setDbaFile] = useState<File | null>(null);
   const [einFile, setEinFile] = useState<File | null>(null);
+  // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
+  const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
