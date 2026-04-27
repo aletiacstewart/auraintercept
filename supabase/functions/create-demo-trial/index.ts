@@ -8,13 +8,50 @@ const corsHeaders = {
 const PASSWORD = 'auratrial*!';
 const TRIAL_HOURS = 48;
 
-const INDUSTRY_DEFAULTS: Record<string, { services: string[]; categories: string[]; primary: string; secondary: string }> = {
-  hvac: { services: ['AC Repair', 'Furnace Install', 'Duct Cleaning', 'Maintenance', 'Emergency Service'], categories: ['HVAC'], primary: '#0EA5E9', secondary: '#22D3EE' },
-  plumbing: { services: ['Drain Cleaning', 'Water Heater', 'Pipe Repair', 'Fixture Install', 'Emergency Service'], categories: ['Plumbing'], primary: '#3B82F6', secondary: '#60A5FA' },
-  electrical: { services: ['Panel Upgrade', 'Wiring', 'Outlet Install', 'Lighting', 'Safety Inspection'], categories: ['Electrical'], primary: '#F59E0B', secondary: '#FBBF24' },
-  general_contractor: { services: ['Remodeling', 'Additions', 'Roofing', 'Siding', 'Deck Building'], categories: ['General Contractor'], primary: '#8B5CF6', secondary: '#A78BFA' },
-  landscaping: { services: ['Lawn Mowing', 'Tree Trimming', 'Landscape Design', 'Irrigation', 'Snow Removal'], categories: ['Landscaping'], primary: '#10B981', secondary: '#34D399' },
-  other: { services: ['Service Calls', 'Estimates', 'Maintenance', 'Emergency Service'], categories: ['Service'], primary: '#6366F1', secondary: '#818CF8' },
+interface IndustryDef {
+  label: string;
+  services: string[];
+  categories: string[];
+  primary: string;
+  secondary: string;
+  cities: string[];
+  zips: string[];
+  address: string;
+  sampleAppointment: { service: string; whenOffsetHours: number; notes: string };
+  sampleLead: { source: string; intent: string; serviceInterest: string; priority: string; score: number };
+}
+
+const A = (cities: string[], zips: string[], address: string) => ({ cities, zips, address });
+const AUSTIN = A(['Austin','Round Rock','Cedar Park'], ['78701','78702','78703'], '742 Evergreen Terrace, Austin, TX 78701');
+const DALLAS = A(['Dallas','Plano','Frisco'], ['75201','75024','75034'], '1820 Magnolia Ave, Dallas, TX 75201');
+const PHOENIX = A(['Phoenix','Scottsdale','Tempe'], ['85001','85251','85281'], '4500 Camelback Rd, Phoenix, AZ 85018');
+const HOUSTON = A(['Houston','Katy','Sugar Land'], ['77002','77494','77478'], '900 Bagby St, Houston, TX 77002');
+const ORLANDO = A(['Orlando','Winter Park','Kissimmee'], ['32801','32789','34741'], '210 Lake Eola Dr, Orlando, FL 32801');
+const DENVER = A(['Denver','Aurora','Lakewood'], ['80202','80012','80226'], '1144 15th St, Denver, CO 80202');
+
+const INDUSTRY_DEFAULTS: Record<string, IndustryDef> = {
+  hvac: { label: 'HVAC', services: ['AC Repair','Furnace Install','Duct Cleaning','Maintenance Plan','Emergency Service'], categories: ['HVAC'], primary: '#0EA5E9', secondary: '#22D3EE', ...AUSTIN, sampleAppointment: { service: 'AC Repair', whenOffsetHours: 22, notes: 'Customer reports warm air, unit running constantly. Bring R-410A.' }, sampleLead: { source: 'voice', intent: 'emergency', serviceInterest: 'AC Repair', priority: 'hot', score: 92 } },
+  plumbing: { label: 'Plumbing', services: ['Drain Cleaning','Water Heater','Pipe Repair','Fixture Install','Emergency Service'], categories: ['Plumbing'], primary: '#3B82F6', secondary: '#60A5FA', ...HOUSTON, sampleAppointment: { service: 'Water Heater', whenOffsetHours: 26, notes: '40-gal electric, no hot water since this morning. Garage install.' }, sampleLead: { source: 'chat', intent: 'quote', serviceInterest: 'Tankless Water Heater', priority: 'high', score: 78 } },
+  electrical: { label: 'Electrical', services: ['Panel Upgrade','Wiring','Outlet Install','Lighting','Safety Inspection'], categories: ['Electrical'], primary: '#F59E0B', secondary: '#FBBF24', ...DALLAS, sampleAppointment: { service: 'EV Charger Install', whenOffsetHours: 48, notes: 'Tesla Wall Connector, 60A circuit, garage panel has spare slots.' }, sampleLead: { source: 'voice', intent: 'quote', serviceInterest: 'Panel Upgrade', priority: 'high', score: 75 } },
+  solar_energy: { label: 'Solar Energy', services: ['Site Assessment','Solar Install','Battery Backup','Panel Cleaning','System Maintenance'], categories: ['Solar'], primary: '#F59E0B', secondary: '#FCD34D', ...PHOENIX, sampleAppointment: { service: 'Site Assessment', whenOffsetHours: 72, notes: '$380/mo bill, south-facing roof, 8 yrs old. Homeowner financing.' }, sampleLead: { source: 'widget', intent: 'quote', serviceInterest: 'Solar Install', priority: 'high', score: 80 } },
+  roofing: { label: 'Roofing', services: ['Roof Inspection','Storm Damage Repair','Full Replacement','Gutter Repair','Emergency Tarp'], categories: ['Roofing'], primary: '#DC2626', secondary: '#F97316', ...DALLAS, sampleAppointment: { service: 'Roof Inspection', whenOffsetHours: 30, notes: 'Hail damage from Tuesday storm. Filed claim with State Farm.' }, sampleLead: { source: 'voice', intent: 'emergency', serviceInterest: 'Storm Damage Repair', priority: 'hot', score: 90 } },
+  fencing_decking: { label: 'Fencing & Decking', services: ['Fence Install','Deck Build','Repair & Restain','Gate Install','Removal'], categories: ['Fencing','Decking'], primary: '#92400E', secondary: '#D97706', ...AUSTIN, sampleAppointment: { service: 'Site Estimate', whenOffsetHours: 30, notes: '180 lf cedar privacy, 6ft, 2 gates. HOA approval pending.' }, sampleLead: { source: 'chat', intent: 'quote', serviceInterest: 'Deck Build', priority: 'high', score: 76 } },
+  landscape_trees: { label: 'Landscape & Trees', services: ['Lawn Mowing','Tree Trimming','Landscape Design','Irrigation','Storm Cleanup'], categories: ['Landscaping'], primary: '#10B981', secondary: '#34D399', ...ORLANDO, sampleAppointment: { service: 'Weekly Mow', whenOffsetHours: 18, notes: 'Half-acre lot, gate code 4521. Recurring weekly Tuesdays.' }, sampleLead: { source: 'widget', intent: 'booking', serviceInterest: 'Tree Removal', priority: 'high', score: 70 } },
+  pool_spa: { label: 'Pool & Spa', services: ['Weekly Cleaning','Chemistry Balance','Equipment Repair','Green Pool Recovery','Pool Opening'], categories: ['Pool & Spa'], primary: '#06B6D4', secondary: '#67E8F9', ...PHOENIX, sampleAppointment: { service: 'Green Pool Recovery', whenOffsetHours: 20, notes: '15k gal in-ground, algae bloom after storm. Customer has shock on hand.' }, sampleLead: { source: 'voice', intent: 'emergency', serviceInterest: 'Green Pool Recovery', priority: 'hot', score: 88 } },
+  pest_control: { label: 'Pest Control', services: ['One-Time Treatment','Quarterly Plan','Termite Inspection','Bed Bug Treatment','Rodent Control'], categories: ['Pest Control'], primary: '#65A30D', secondary: '#A3E635', ...HOUSTON, sampleAppointment: { service: 'Quarterly Treatment', whenOffsetHours: 25, notes: '2,400 sq ft single-family. Indoor + perimeter. Pet-friendly products.' }, sampleLead: { source: 'chat', intent: 'booking', serviceInterest: 'Quarterly Plan', priority: 'high', score: 73 } },
+  appliance_repair: { label: 'Appliance Repair', services: ['Diagnostic','Refrigerator Repair','Washer/Dryer Repair','Oven/Range Repair','Dishwasher Repair'], categories: ['Appliance Repair'], primary: '#0891B2', secondary: '#22D3EE', ...DENVER, sampleAppointment: { service: 'Refrigerator Repair', whenOffsetHours: 22, notes: 'Whirlpool WRS325SDHZ, not cooling. Customer has receipts for warranty check.' }, sampleLead: { source: 'voice', intent: 'booking', serviceInterest: 'Refrigerator Repair', priority: 'high', score: 76 } },
+  handyman_cleaning: { label: 'Handyman & Cleaning', services: ['Handyman Visit','Recurring Cleaning','Deep Clean','Move-Out Clean','Furniture Assembly'], categories: ['Handyman','Cleaning'], primary: '#7C3AED', secondary: '#A78BFA', ...AUSTIN, sampleAppointment: { service: 'Recurring Cleaning', whenOffsetHours: 20, notes: '3 bed / 2 bath, biweekly Wednesdays. Pet-friendly products. Key in lockbox.' }, sampleLead: { source: 'chat', intent: 'booking', serviceInterest: 'Deep Clean', priority: 'normal', score: 65 } },
+  construction: { label: 'Construction', services: ['Remodeling','Additions','Painting','Flooring','Tile & Trim'], categories: ['Construction'], primary: '#8B5CF6', secondary: '#C4B5FD', ...DALLAS, sampleAppointment: { service: 'Walk-Through Estimate', whenOffsetHours: 48, notes: 'Kitchen remodel ~200 sqft. Budget $40-60k. Wants quartz + soft-close.' }, sampleLead: { source: 'referral', intent: 'quote', serviceInterest: 'Kitchen Remodel', priority: 'hot', score: 89 } },
+  auto_care: { label: 'Auto Care', services: ['Full Detail','Express Wash','Ceramic Coating','Oil Change','Diagnostic'], categories: ['Auto Care'], primary: '#1F2937', secondary: '#6B7280', ...PHOENIX, sampleAppointment: { service: 'Full Detail', whenOffsetHours: 24, notes: '2022 Tahoe. Interior + exterior, pet hair removal. Driveway, water access ok.' }, sampleLead: { source: 'widget', intent: 'booking', serviceInterest: 'Ceramic Coating', priority: 'high', score: 74 } },
+  security_systems: { label: 'Security Systems', services: ['Camera Install','Alarm System','Monitoring','Smart Lock Install','System Upgrade'], categories: ['Security'], primary: '#1E40AF', secondary: '#3B82F6', ...HOUSTON, sampleAppointment: { service: 'Camera Install', whenOffsetHours: 26, notes: '6 cameras + NVR + monitoring. Wired, prefer Reolink. Recent attempted break-in.' }, sampleLead: { source: 'voice', intent: 'emergency', serviceInterest: 'Camera Install', priority: 'hot', score: 87 } },
+  real_estate: { label: 'Real Estate', services: ['Showing Booking','Buyer Consult','Listing Inquiry','Open House RSVP','Market Update'], categories: ['Real Estate'], primary: '#0F766E', secondary: '#2DD4BF', ...DENVER, sampleAppointment: { service: 'Property Showing', whenOffsetHours: 30, notes: 'Buyer pre-approved $450k. Likes 4123 Maple St and 2 others nearby.' }, sampleLead: { source: 'chat', intent: 'booking', serviceInterest: 'Property Showing', priority: 'high', score: 78 } },
+  beauty_wellness: { label: 'Beauty & Wellness', services: ['Haircut','Color & Highlights','Balayage','Massage','Facial'], categories: ['Beauty','Wellness'], primary: '#DB2777', secondary: '#F472B6', ...AUSTIN, sampleAppointment: { service: 'Color & Cut', whenOffsetHours: 28, notes: 'Balayage refresh + cut with Sarah. Has color history on file.' }, sampleLead: { source: 'widget', intent: 'booking', serviceInterest: 'Color & Highlights', priority: 'high', score: 72 } },
+  restaurants: { label: 'Restaurants', services: ['Reservation','Catering Quote','Private Event','Takeout Order','Gift Card'], categories: ['Restaurants'], primary: '#B91C1C', secondary: '#F87171', ...ORLANDO, sampleAppointment: { service: 'Reservation (party of 6)', whenOffsetHours: 26, notes: 'Birthday celebration, 1 vegetarian, 1 GF. Window booth requested.' }, sampleLead: { source: 'chat', intent: 'booking', serviceInterest: 'Catering', priority: 'high', score: 75 } },
+  personal_assistant: { label: 'Personal Assistant', services: ['Discovery Call','Strategy Session','Follow-Up','Onboarding Call','Check-In'], categories: ['Professional Services'], primary: '#6366F1', secondary: '#A5B4FC', ...DENVER, sampleAppointment: { service: 'Discovery Call', whenOffsetHours: 26, notes: '30 min intro call. Topic: Q2 marketing strategy. Zoom link auto-sent.' }, sampleLead: { source: 'referral', intent: 'booking', serviceInterest: 'Strategy Session', priority: 'high', score: 80 } },
+  // Legacy alias
+  general_contractor: { label: 'General Contractor', services: ['Remodeling','Additions','Roofing','Siding','Deck Building'], categories: ['General Contractor'], primary: '#8B5CF6', secondary: '#A78BFA', ...DALLAS, sampleAppointment: { service: 'Walk-Through Estimate', whenOffsetHours: 48, notes: 'Kitchen remodel ~200 sqft.' }, sampleLead: { source: 'referral', intent: 'quote', serviceInterest: 'Remodeling', priority: 'hot', score: 89 } },
+  landscaping: { label: 'Landscaping', services: ['Lawn Mowing','Tree Trimming','Landscape Design','Irrigation','Snow Removal'], categories: ['Landscaping'], primary: '#10B981', secondary: '#34D399', ...ORLANDO, sampleAppointment: { service: 'Weekly Mow', whenOffsetHours: 18, notes: 'Half-acre lot.' }, sampleLead: { source: 'widget', intent: 'booking', serviceInterest: 'Tree Removal', priority: 'high', score: 70 } },
+  other: { label: 'Service', services: ['Service Calls','Estimates','Recurring Maintenance','Emergency Service'], categories: ['Service'], primary: '#6366F1', secondary: '#818CF8', ...AUSTIN, sampleAppointment: { service: 'Service Call', whenOffsetHours: 24, notes: 'New customer intake.' }, sampleLead: { source: 'chat', intent: 'inquiry', serviceInterest: 'General Service', priority: 'normal', score: 60 } },
 };
 
 const SAMPLE_FIRST = ['Sarah','James','Maria','David','Emma','Michael','Linda','Robert'];
@@ -28,6 +65,7 @@ function phone() {
   return `+1555${n()}${String(n()).slice(0, 3)}`;
 }
 function daysFromNow(d: number) { return new Date(Date.now() + d * 86400000).toISOString(); }
+function hoursFromNow(h: number) { return new Date(Date.now() + h * 3600000).toISOString(); }
 function daysAgo(d: number) { return new Date(Date.now() - d * 86400000).toISOString(); }
 
 Deno.serve(async (req) => {
@@ -72,7 +110,7 @@ Deno.serve(async (req) => {
 
     // 1) Create company
     const { data: company, error: companyErr } = await admin.from('companies').insert({
-      name: business_name,
+      name: business_name || `${ind.label} Demo Co.`,
       slug,
       subscription_tier: 'performance',
       primary_color: ind.primary,
@@ -80,9 +118,9 @@ Deno.serve(async (req) => {
       contact_email: email,
       contact_phone: prospectPhone || phone(),
       business_phone: phone(),
-      address: `${100 + Math.floor(Math.random() * 900)} ${rand(STREETS)}, Austin, TX 78701`,
-      service_area_cities: ['Austin','Round Rock','Cedar Park'],
-      service_area_zip_codes: ['78701','78702','78703'],
+      address: ind.address,
+      service_area_cities: ind.cities,
+      service_area_zip_codes: ind.zips,
       service_categories: ind.categories,
       industry_vertical: industryKey,
       trial_ends_at: daysFromNow(TRIAL_HOURS / 24),
@@ -153,25 +191,76 @@ Deno.serve(async (req) => {
       email: customerEmail,
       name: 'Sample Customer',
       phone: phone(),
-      address: '742 Evergreen Terrace, Austin, TX 78701',
+      address: ind.address,
     });
 
-    const apptStatuses = ['scheduled','scheduled','scheduled','completed','completed','cancelled'];
-    await admin.from('appointments').insert(apptStatuses.map((status, i) => ({
-      company_id: companyId,
-      customer_name: i === 0 ? 'Sample Customer' : `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`,
-      customer_email: i === 0 ? customerEmail : `sample${i}-${tk}@example.com`,
-      customer_phone: phone(),
-      customer_address: i === 0 ? '742 Evergreen Terrace, Austin, TX 78701' : `${100 + i} ${rand(STREETS)}, Austin, TX`,
-      service_type: rand(ind.services),
-      datetime: status === 'completed' ? daysAgo(5 + i * 2) : daysFromNow(1 + i),
-      duration_minutes: 60,
-      status,
-    })));
+    // Industry-specific featured appointment for the demo customer
+    const appts = [
+      {
+        company_id: companyId,
+        customer_name: 'Sample Customer',
+        customer_email: customerEmail,
+        customer_phone: phone(),
+        customer_address: ind.address,
+        service_type: ind.sampleAppointment.service,
+        datetime: hoursFromNow(ind.sampleAppointment.whenOffsetHours),
+        duration_minutes: 90,
+        status: 'scheduled',
+        notes: ind.sampleAppointment.notes,
+      },
+      // 2 more upcoming
+      ...[1, 2].map((i) => ({
+        company_id: companyId,
+        customer_name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`,
+        customer_email: `sample${i}-${tk}@example.com`,
+        customer_phone: phone(),
+        customer_address: `${100 + i} ${rand(STREETS)}, ${ind.cities[0]}`,
+        service_type: rand(ind.services),
+        datetime: daysFromNow(2 + i * 2),
+        duration_minutes: 60,
+        status: 'scheduled',
+      })),
+      // 2 completed in past
+      ...[3, 4].map((i) => ({
+        company_id: companyId,
+        customer_name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`,
+        customer_email: `sample${i}-${tk}@example.com`,
+        customer_phone: phone(),
+        customer_address: `${100 + i} ${rand(STREETS)}, ${ind.cities[0]}`,
+        service_type: rand(ind.services),
+        datetime: daysAgo(3 + i * 2),
+        duration_minutes: 60,
+        status: 'completed',
+      })),
+      // 1 cancelled
+      {
+        company_id: companyId,
+        customer_name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`,
+        customer_email: `sample5-${tk}@example.com`,
+        customer_phone: phone(),
+        customer_address: `${250} ${rand(STREETS)}, ${ind.cities[0]}`,
+        service_type: rand(ind.services),
+        datetime: daysFromNow(4),
+        duration_minutes: 60,
+        status: 'cancelled',
+      },
+    ];
+    await admin.from('appointments').insert(appts);
 
-    // 8) Seed leads
+    // 8) Seed leads — featured industry-specific lead first
     await admin.from('leads').insert([
-      { company_id: companyId, name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`, phone: phone(), email: `lead1-${tk}@example.com`, source: 'voice', intent: 'emergency', service_interest: rand(ind.services), priority: 'hot', score: 88, status: 'new' },
+      {
+        company_id: companyId,
+        name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`,
+        phone: phone(),
+        email: `lead1-${tk}@example.com`,
+        source: ind.sampleLead.source,
+        intent: ind.sampleLead.intent,
+        service_interest: ind.sampleLead.serviceInterest,
+        priority: ind.sampleLead.priority,
+        score: ind.sampleLead.score,
+        status: 'new',
+      },
       { company_id: companyId, name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`, phone: phone(), email: `lead2-${tk}@example.com`, source: 'chat', intent: 'quote', service_interest: rand(ind.services), priority: 'high', score: 72, status: 'contacted' },
       { company_id: companyId, name: `${rand(SAMPLE_FIRST)} ${rand(SAMPLE_LAST)}`, phone: phone(), email: `lead3-${tk}@example.com`, source: 'widget', intent: 'booking', service_interest: rand(ind.services), priority: 'normal', score: 55, status: 'new' },
     ]);
