@@ -21,7 +21,7 @@ export function IndustryDropdownPicker({ value, onChange }: IndustryDropdownPick
       <SelectContent className="max-h-[60vh]">
         {INDUSTRY_GROUPS.map((g) => (
           <SelectGroup key={g.group}>
-            <SelectLabel className="flex items-center gap-1.5">
+            <SelectLabel className="flex items-center gap-1.5 text-primary font-bold uppercase tracking-wider text-xs underline underline-offset-4 decoration-primary/60 py-1.5">
               <span>{g.emoji}</span>
               <span>{g.group}</span>
             </SelectLabel>
