@@ -383,7 +383,9 @@ Deno.serve(async (req) => {
     // 10) Best-effort: email credentials so the prospect can open the demo on desktop + mobile
     let emailed = false;
     const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (resendKey && email_opt_in) {
+    // Transactional credentials email — always sent (it's the receipt with their login info),
+    // independent of the marketing opt-in flags. Marketing opt-ins are stored separately on demo_trials.
+    if (resendKey) {
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
@@ -399,12 +401,26 @@ Deno.serve(async (req) => {
             adminEmail,
             employeeEmail,
             customerEmail,
+            shareUrl,
+          }),
+          text: buildDemoEmailText({
+            name,
+            businessName: business_name,
+            industryLabel: ind.label,
+            password: PASSWORD,
+            expiresAt,
+            adminEmail,
+            employeeEmail,
+            customerEmail,
+            shareUrl,
           }),
         });
         emailed = true;
       } catch (mailErr) {
         console.error('demo email send failed (non-fatal):', mailErr);
       }
+    } else {
+      console.warn('RESEND_API_KEY not configured — demo credentials email skipped.');
     }
 
     return new Response(JSON.stringify({
