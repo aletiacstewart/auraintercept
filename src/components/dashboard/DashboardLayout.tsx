@@ -59,6 +59,7 @@ import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner';
+import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
