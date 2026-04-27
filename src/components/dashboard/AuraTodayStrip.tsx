@@ -102,7 +102,7 @@ export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
       label: 'Open Jobs',
       value: data?.openJobs ?? 0,
       icon: Wrench,
-      href: '/dashboard/field-ops',
+      href: '/dashboard/dispatch-field-ops',
       kind: 'jobs' as const,
       hint: 'In progress + upcoming',
     },
