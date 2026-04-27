@@ -82,13 +82,13 @@ export default function ForBusiness() {
         <IntegrationStatusPanel />
 
         {/* Pricing snapshot */}
-        <section className="py-16 bg-background">
+        <section className="py-10 bg-background">
           <div className="container max-w-6xl mx-auto px-4">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                 Simple, transparent pricing
               </h2>
-              <p className="text-muted-foreground">Pick the tier that fits. Cancel anytime.</p>
+              <p className="text-sm text-muted-foreground">Pick the tier that fits. Cancel anytime.</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
               {PRICING_TIERS.map((t) => (
@@ -119,12 +119,12 @@ export default function ForBusiness() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 bg-gradient-to-br from-primary/15 via-background to-secondary/15">
+        <section className="py-10 bg-gradient-to-br from-primary/15 via-background to-secondary/15">
           <div className="container max-w-3xl mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               See it in action — for {content.label.toLowerCase()}.
             </h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm text-muted-foreground mb-4">
               48 hours. Full access. Owner, technician, and customer views — all yours.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
