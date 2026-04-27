@@ -937,6 +937,7 @@ export type Database = {
           emergency_surcharge: number | null
           followup_call_script: string | null
           id: string
+          industry_vertical: string | null
           is_demo: boolean
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -1068,6 +1069,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          industry_vertical?: string | null
           is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -1199,6 +1201,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          industry_vertical?: string | null
           is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
