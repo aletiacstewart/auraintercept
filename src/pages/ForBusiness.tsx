@@ -10,18 +10,19 @@ import { RolePreviewRow } from '@/components/marketing/RolePreviewRow';
 import { StartDemoDialog } from '@/components/marketing/StartDemoDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Phone, AlertCircle, Zap } from 'lucide-react';
+import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
+import { Link } from 'react-router-dom';
 
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
 const PRICING_TIERS = [
-  { name: 'Aura Core', price: '$197', tagline: '8 agents · 3 consoles · for solo owners' },
-  { name: 'Aura Boost', price: '$497', tagline: '14 agents · 5 consoles · growing teams' },
-  { name: 'Aura Pro', price: '$997', tagline: '20 agents · 7 consoles · scaling shops' },
-  { name: 'Aura Elite', price: '$1,997', tagline: '24 agents · 10 consoles · full automation' },
-];
+  { name: 'Aura Core', price: '$197', tagline: '8 agents · 3 consoles', tier: 'starter' },
+  { name: 'Aura Boost', price: '$497', tagline: '14 agents · 5 consoles', tier: 'connect' },
+  { name: 'Aura Pro', price: '$997', tagline: '20 agents · 7 consoles', tier: 'performance' },
+  { name: 'Aura Elite', price: '$1,997', tagline: '24 agents · full automation', tier: 'command' },
+] as const;
 
 export default function ForBusiness() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -89,17 +90,29 @@ export default function ForBusiness() {
               </h2>
               <p className="text-muted-foreground">Pick the tier that fits. Cancel anytime.</p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
               {PRICING_TIERS.map((t) => (
-                <Card key={t.name} className="border-border/60">
-                  <CardContent className="p-5 text-center">
-                    <h3 className="font-semibold text-foreground">{t.name}</h3>
-                    <div className="text-3xl font-bold text-primary my-2">
-                      {t.price}<span className="text-sm font-normal text-muted-foreground">/mo</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{t.tagline}</p>
-                  </CardContent>
-                </Card>
+                <Link
+                  key={t.name}
+                  to={`/auth?mode=company&tab=signup&tier=${t.tier}&industry=${industry}`}
+                  className="group"
+                >
+                  <Card className="border-border/60 hover:border-primary/60 hover:shadow-md transition-all h-full">
+                    <CardContent className="p-3 text-center flex flex-col items-center gap-1">
+                      <h3 className="text-sm font-semibold text-foreground">{t.name}</h3>
+                      <div className="text-xl font-bold text-primary leading-tight">
+                        {t.price}
+                        <span className="text-[10px] font-normal text-muted-foreground">/mo</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground leading-tight min-h-[24px]">
+                        {t.tagline}
+                      </p>
+                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-primary group-hover:underline">
+                        Choose plan <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>

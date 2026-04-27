@@ -63,7 +63,6 @@ import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { LanguageToggle } from '@/components/common/LanguageToggle';
 import { Clapperboard, Video, Sparkles } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
