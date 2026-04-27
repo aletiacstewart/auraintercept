@@ -19,8 +19,9 @@ function buildDemoEmailHtml(opts: {
   adminEmail: string;
   employeeEmail: string;
   customerEmail: string;
+  shareUrl: string;
 }) {
-  const { name, businessName, industryLabel, password, expiresAt, adminEmail, employeeEmail, customerEmail } = opts;
+  const { name, businessName, industryLabel, password, expiresAt, adminEmail, employeeEmail, customerEmail, shareUrl } = opts;
   const ends = new Date(expiresAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
   const row = (label: string, em: string, redirect: string) => `
     <tr>
@@ -41,6 +42,11 @@ function buildDemoEmailHtml(opts: {
       <p style="color:#9ca3af;margin:0 0 18px;font-size:14px;">
         Hey ${name}, your 48-hour Aura Intercept demo for <b style="color:#e5e7eb;">${businessName}</b> is ready. Open it on your laptop, then scan/forward this email to your phone to try the technician + customer mobile experience.
       </p>
+      <div style="background:#0b1220;border:1px solid #22d3ee;border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#22d3ee;font-weight:700;">One-tap demo link</div>
+        <a href="${shareUrl}" style="display:block;margin-top:6px;color:#e5e7eb;font-family:Menlo,monospace;font-size:13px;word-break:break-all;text-decoration:none;">${shareUrl}</a>
+        <div style="color:#9ca3af;margin-top:6px;font-size:12px;">Open this on your phone to launch any role with one tap.</div>
+      </div>
       <div style="background:#0b1220;border:1px solid #1f2937;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;">
         <div>Universal password: <code style="color:#22d3ee;font-weight:700;">${password}</code></div>
         <div style="color:#9ca3af;margin-top:4px;">Expires: ${ends}</div>
@@ -55,6 +61,40 @@ function buildDemoEmailHtml(opts: {
       </p>
     </div>
   </body></html>`;
+}
+
+function buildDemoEmailText(opts: {
+  name: string;
+  businessName: string;
+  industryLabel: string;
+  password: string;
+  expiresAt: string;
+  adminEmail: string;
+  employeeEmail: string;
+  customerEmail: string;
+  shareUrl: string;
+}) {
+  const { name, businessName, industryLabel, password, expiresAt, adminEmail, employeeEmail, customerEmail, shareUrl } = opts;
+  const ends = new Date(expiresAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  return [
+    `Hi ${name},`,
+    ``,
+    `Your 48-hour Aura Intercept ${industryLabel} demo for ${businessName} is ready.`,
+    ``,
+    `One-tap demo link (open on your phone):`,
+    `${shareUrl}`,
+    ``,
+    `Universal password: ${password}`,
+    `Expires: ${ends}`,
+    ``,
+    `Logins:`,
+    `  Owner Dashboard:  ${adminEmail}`,
+    `  Technician App:   ${employeeEmail}`,
+    `  Customer Portal:  ${customerEmail}`,
+    ``,
+    `After 48 hours the demo company is automatically deleted.`,
+    `— Aura Intercept`,
+  ].join('\n');
 }
 
 interface IndustryDef {
@@ -343,7 +383,9 @@ Deno.serve(async (req) => {
     // 10) Best-effort: email credentials so the prospect can open the demo on desktop + mobile
     let emailed = false;
     const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (resendKey && email_opt_in) {
+    // Transactional credentials email — always sent (it's the receipt with their login info),
+    // independent of the marketing opt-in flags. Marketing opt-ins are stored separately on demo_trials.
+    if (resendKey) {
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
@@ -359,12 +401,26 @@ Deno.serve(async (req) => {
             adminEmail,
             employeeEmail,
             customerEmail,
+            shareUrl,
+          }),
+          text: buildDemoEmailText({
+            name,
+            businessName: business_name,
+            industryLabel: ind.label,
+            password: PASSWORD,
+            expiresAt,
+            adminEmail,
+            employeeEmail,
+            customerEmail,
+            shareUrl,
           }),
         });
         emailed = true;
       } catch (mailErr) {
         console.error('demo email send failed (non-fatal):', mailErr);
       }
+    } else {
+      console.warn('RESEND_API_KEY not configured — demo credentials email skipped.');
     }
 
     return new Response(JSON.stringify({
