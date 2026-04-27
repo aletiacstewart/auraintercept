@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceKey);
 
     const body = await req.json();
-    const { name, email, phone: prospectPhone, business_name, industry, sms_opt_in } = body || {};
+    const { name, email, phone: prospectPhone, business_name, industry, sms_opt_in, email_opt_in } = body || {};
 
     if (!name || !email || !business_name || !industry) {
       return new Response(JSON.stringify({ success: false, error: 'name, email, business_name, and industry are required' }), {
@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
 
     // 1) Create company
     const { data: company, error: companyErr } = await admin.from('companies').insert({
-      name: business_name || `${ind.label} Demo Co.`,
+      name: `[DEMO] ${business_name || `${ind.label} Demo Co.`}`,
       slug,
       subscription_tier: 'performance',
       primary_color: ind.primary,
@@ -173,6 +173,9 @@ Deno.serve(async (req) => {
       service_categories: ind.categories,
       industry_vertical: industryKey,
       trial_ends_at: daysFromNow(TRIAL_HOURS / 24),
+      is_demo: true,
+      demo_email_opt_in: !!email_opt_in,
+      demo_sms_opt_in: !!sms_opt_in,
     }).select('id').single();
     if (companyErr) throw new Error(`company: ${companyErr.message}`);
     const companyId = company.id as string;
@@ -315,7 +318,7 @@ Deno.serve(async (req) => {
     ]);
 
     // 9) Insert trial record
-    await admin.from('demo_trials').insert({
+    const { data: trialRow, error: trialErr } = await admin.from('demo_trials').insert({
       company_id: companyId,
       prospect_email: email.toLowerCase(),
       prospect_name: name,
@@ -329,14 +332,18 @@ Deno.serve(async (req) => {
       customer_email: customerEmail,
       password: PASSWORD,
       sms_opt_in: !!sms_opt_in,
+      email_opt_in: !!email_opt_in,
       expires_at: expiresAt,
       created_ip: req.headers.get('x-forwarded-for') || null,
-    });
+    }).select('id').single();
+    if (trialErr) throw new Error(`trial: ${trialErr.message}`);
+    const trialId = trialRow.id as string;
+    const shareUrl = `${PUBLIC_URL}/demo/${trialId}`;
 
     // 10) Best-effort: email credentials so the prospect can open the demo on desktop + mobile
     let emailed = false;
     const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (resendKey) {
+    if (resendKey && email_opt_in) {
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
@@ -362,13 +369,14 @@ Deno.serve(async (req) => {
 
     return new Response(JSON.stringify({
       success: true,
-      trial_id: companyId,
+      trial_id: trialId,
       expires_at: expiresAt,
       password: PASSWORD,
       industry: industryKey,
       industry_label: ind.label,
       emailed,
       prospect_email: email,
+      share_url: shareUrl,
       admin: { email: adminEmail, redirect: '/dashboard' },
       employee: { email: employeeEmail, redirect: '/technician' },
       customer: { email: customerEmail, redirect: '/customer-portal' },
