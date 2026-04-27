@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, Sparkles, Mail, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -21,9 +21,14 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [businessName, setBusinessName] = useState('');
-  const [optInChoice, setOptInChoice] = useState<'none' | 'email' | 'sms'>('none');
+  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<DemoCredentialsResult | null>(null);
+
+  useEffect(() => {
+    if (!phone && smsOptIn) setSmsOptIn(false);
+  }, [phone, smsOptIn]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +45,8 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
           phone: phone || null,
           business_name: businessName,
           industry: industryId,
-          sms_opt_in: optInChoice === 'sms',
-          email_opt_in: optInChoice === 'email',
+          sms_opt_in: smsOptIn,
+          email_opt_in: emailOptIn,
         },
       });
       if (error) throw error;
@@ -63,7 +68,8 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
       setEmail('');
       setPhone('');
       setBusinessName('');
-      setOptInChoice('none');
+      setEmailOptIn(false);
+      setSmsOptIn(false);
     }
     onOpenChange(next);
   };
@@ -117,13 +123,14 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                 <Label htmlFor="phone">Phone (optional)</Label>
                 <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 555 5555" />
               </div>
-              <RadioGroup
-                value={optInChoice}
-                onValueChange={(v) => setOptInChoice(v as 'none' | 'email' | 'sms')}
-                className="space-y-2"
-              >
+              <div className="space-y-2">
                 <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
-                  <RadioGroupItem value="email" id="optEmail" className="mt-0.5" />
+                  <Checkbox
+                    id="optEmail"
+                    checked={emailOptIn}
+                    onCheckedChange={(c) => setEmailOptIn(!!c)}
+                    className="mt-0.5"
+                  />
                   <div className="space-y-0.5 flex-1">
                     <Label htmlFor="optEmail" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
                       <Mail className="w-3.5 h-3.5 text-primary" />
@@ -135,7 +142,13 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                   </div>
                 </div>
                 <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
-                  <RadioGroupItem value="sms" id="optSms" disabled={!phone} className="mt-0.5" />
+                  <Checkbox
+                    id="optSms"
+                    checked={smsOptIn}
+                    onCheckedChange={(c) => setSmsOptIn(!!c)}
+                    disabled={!phone}
+                    className="mt-0.5"
+                  />
                   <div className="space-y-0.5 flex-1">
                     <Label htmlFor="optSms" className="text-sm font-normal leading-tight cursor-pointer flex items-center gap-1.5">
                       <MessageSquare className="w-3.5 h-3.5 text-primary" />
@@ -146,13 +159,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 p-3 rounded-lg border border-border/60 bg-muted/30">
-                  <RadioGroupItem value="none" id="optNone" className="mt-0.5" />
-                  <Label htmlFor="optNone" className="text-sm font-normal leading-tight cursor-pointer flex-1">
-                    No updates — just give me the demo.
-                  </Label>
-                </div>
-              </RadioGroup>
+              </div>
               <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={submitting}>
                 {submitting ? (
                   <>
