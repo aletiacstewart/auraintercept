@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2, Sparkles, Mail, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -21,8 +21,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [businessName, setBusinessName] = useState('');
-  const [smsOptIn, setSmsOptIn] = useState(false);
-  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [optInChoice, setOptInChoice] = useState<'none' | 'email' | 'sms'>('none');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<DemoCredentialsResult | null>(null);
 
@@ -41,8 +40,8 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
           phone: phone || null,
           business_name: businessName,
           industry: industryId,
-          sms_opt_in: smsOptIn,
-          email_opt_in: emailOptIn,
+          sms_opt_in: optInChoice === 'sms',
+          email_opt_in: optInChoice === 'email',
         },
       });
       if (error) throw error;
