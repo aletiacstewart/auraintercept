@@ -99,6 +99,7 @@ import CompanyBlogPost from "./pages/CompanyBlogPost";
 import TalkToAura from "./pages/TalkToAura";
 import Contact from "./pages/Contact";
 import ForBusiness from "./pages/ForBusiness";
+import DemoAccess from "./pages/DemoAccess";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -160,6 +161,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
+                <Route path="/demo/:trialId" element={<DemoAccess />} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
