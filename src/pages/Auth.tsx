@@ -281,6 +281,8 @@ export default function Auth() {
           address: companyAddress || null,
           phone: companyPhone || null,
           subscription_tier: 'starter',
+          aura_sms_opt_in: auraSmsOptIn,
+          aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
         })
         .select()
         .single();
