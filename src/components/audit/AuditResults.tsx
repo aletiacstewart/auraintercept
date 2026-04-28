@@ -404,7 +404,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
         <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
-          All plans include a 90-day free trial. Implementation fees: $0 (Core), $299 (Boost), $599 (Pro), $999 (Elite).
+          All plans include a 90-day free trial. Implementation fees: $199 (Core), $399 (Boost), $599 (Pro), $799 (Elite).
         </p>
       </div>
     </div>
