@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
       .limit(1);
     if (recent && recent.length > 0 && recent[0].status === 'active') {
       return new Response(JSON.stringify({ success: false, error: 'You already have an active demo. Check your email for credentials.' }), {
-        status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
