@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
       <main className="container max-w-4xl mx-auto px-6 py-20">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy for Aura Intercept</h1>
         
-        <p className="text-muted-foreground mb-8">Effective Date: January 11, 2026</p>
+        <p className="text-muted-foreground mb-8">Effective Date: April 28, 2026</p>
         
         <div className="prose prose-invert max-w-none space-y-8">
           <p>
@@ -34,6 +34,7 @@ export default function PrivacyPolicy() {
               <li><strong className="text-foreground">SMS & Communication Data:</strong> We collect SMS message content, phone numbers, timestamps, and delivery status when you interact with our platform via text messaging. This data is used to provide customer service and maintain communication records.</li>
               <li><strong className="text-foreground">Location Data:</strong> For field operations and technician dispatch services, we may collect approximate location data to optimize scheduling and provide accurate arrival estimates. This includes service addresses and GPS coordinates during active job assignments.</li>
               <li><strong className="text-foreground">Payment Information:</strong> When you subscribe to our services, payment processing is handled by Stripe. We do not store complete credit card numbers. We may retain billing addresses, transaction history, and subscription status.</li>
+              <li><strong className="text-foreground">AI Web Search Queries:</strong> When operatives use AI-powered web search (powered by Tavily), we log the query text and timestamps to monitor monthly usage allowances and improve relevance.</li>
             </ul>
           </section>
 
@@ -72,7 +73,7 @@ export default function PrivacyPolicy() {
             <p className="mb-4">We may share information we have collected about you in certain situations:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">By Law or to Protect Rights:</strong> If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others.</li>
-              <li><strong className="text-foreground">Third-Party Service Providers:</strong> We may share your data with third-party service providers (such as SignalWire for voice/SMS, ElevenLabs for AI voice synthesis, Stripe for payment processing, Resend for email delivery, and Google for calendar integration) that perform services for us or on our behalf.</li>
+              <li><strong className="text-foreground">Third-Party Service Providers:</strong> We may share your data with third-party service providers (such as SignalWire for voice/SMS, ElevenLabs for AI voice synthesis, Tavily for AI web search, Stripe for payment processing, Resend for email delivery, Google for calendar integration, and Lovable Cloud / Supabase for application hosting, database, and authentication) that perform services for us or on our behalf.</li>
               <li><strong className="text-foreground">Business Transfers:</strong> We may share or transfer your information in connection with, or during negotiations of, any merger, sale of company assets, financing, or acquisition of all or a portion of our business to another company.</li>
             </ul>
           </section>
@@ -87,6 +88,7 @@ export default function PrivacyPolicy() {
               <li><strong className="text-foreground">Voice Recordings:</strong> Retained for 90 days unless required for ongoing support or legal matters.</li>
               <li><strong className="text-foreground">Transaction Data:</strong> Retained for 7 years to comply with financial reporting requirements.</li>
               <li><strong className="text-foreground">AI Interaction Logs:</strong> Retained for 1 year to improve service quality and train AI models.</li>
+              <li><strong className="text-foreground">Search Query Logs:</strong> Retained for 90 days for usage allowance accounting and relevance tuning.</li>
             </ul>
             <p className="mt-4">
               Upon account termination, you may request data export before deletion. Anonymized, aggregated data may be retained indefinitely for analytics purposes.
@@ -206,7 +208,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">10. Third-Party Websites</h2>
             <p>
-              The Site may contain links to third-party websites and applications of interest, including the Lovable platform. 
+              The Site may contain links to third-party websites and applications of interest, including the Lovable Cloud platform. 
               This Privacy Policy does not apply to third-party websites. We are not responsible for the content or privacy and 
               security practices of any third parties.
             </p>
@@ -243,7 +245,7 @@ export default function PrivacyPolicy() {
           <section className="border-t border-border pt-8 mt-12">
             <h2 className="text-2xl font-semibold mb-4">14. Platform Privacy Policy</h2>
             <p>
-              This application is built on Lovable. For information about how Lovable handles your data, please review the{' '}
+              This application is hosted on Lovable Cloud (powered by Supabase). For information about how the underlying platform handles your data, please review the{' '}
               <a 
                 href="https://lovable.dev/privacy" 
                 target="_blank" 

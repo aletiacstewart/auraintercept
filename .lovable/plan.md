@@ -1,90 +1,79 @@
+# Update Terms of Service & Privacy Policy
 
-# Platform-Wide Naming & Content Consistency Pass
+Audit confirmed both legal pages contain stale or inconsistent content versus current canonical truth (4-tier pricing, bundled 3rd-party usage with overage billing, 90-day trial, one-time implementation fees, 24-agent / 10-operative model, SignalWire-only telephony, Tavily search, Lovable Cloud branding).
 
-The codebase has 4 sources of truth — `subscriptionAgentConfig.ts` (tier→agents), `agentStyles.ts` (plain-English labels), console page titles, and PDF/guide copy. These have drifted apart. This plan locks them all to one canonical set.
+## TermsOfService.tsx — Changes
 
-## Canonical Names (Source of Truth)
+**Effective Date** → bump to April 28, 2026.
 
-### Tiers
-| Internal ID | Display | Price | Implementation |
-|---|---|---|---|
-| starter | Aura Core | $197/mo | $0 |
-| connect | Aura Boost | $497/mo | $299 |
-| performance | Aura Pro | $997/mo | $599 |
-| command | Aura Elite | $1,997/mo | $999 |
+**Section 2 — Description of Service**
+- Replace "10 AI operatives across seven Control Centers" line with canonical model: "**24 AI agents organized into 10 operatives** across the platform's Consoles: Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media, Web Presence, Analytics & Reports, and the AI Operatives Hub."
+- Remove "currently hosted via the Lovable.dev platform" (replace with "hosted on Lovable Cloud infrastructure").
 
-90-day free trial, no credit card. (Already correct in most places — sweep for stragglers.)
+**Section 3 — Subscription and Payment Terms** (largest rewrite)
+- Pricing line: keep "$197 to $1,997 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, Aura Elite)" — already correct.
+- Add new bullet: **One-time implementation fee** — Aura Core $199, Aura Boost $399, Aura Pro $599, Aura Elite $799 (charged once at activation, non-refundable after onboarding completes).
+- Add **Free Trial** section: "90-day free trial, no credit card required. Trial includes full platform access subject to your selected tier's monthly usage allowances."
+- Replace **Usage-Based Charges** section with **Bundled Usage & Overages** (canonical wording per `mem://legal/third-party-fee-disclaimer`):
+  - SMS, voice minutes, AI-generated voice, transactional email, and AI web search are **bundled into your Platform Plan** up to your tier's monthly allowance.
+  - Usage above your monthly allowance is **billed separately on a single overage invoice at the end of each billing month**.
+  - Aura Intercept does not pass through SignalWire, ElevenLabs, Resend, or Tavily fees as separate line items — they are absorbed into the Platform Plan and overage rate.
+  - Current allowances and overage rates are published on the pricing page and may be updated with 30 days' notice.
+- **Refund Policy** clarification: "Trial Period: cancel any time during the 90 days at no charge — no refund needed because no payment is taken." Replace "Full refund if cancelled within 90 days."
 
-### 7 Consoles (canonical titles)
-1. **Customer Portal Console** (customer_portal)
-2. **Field Operations Console** (field_operations)
-3. **Business Management Console** (business_management)
-4. **Outreach & Sales Console** (marketing_sales)
-5. **Social Media Console** (social_media)
-6. **Creative & Web Presence Console** (creative_web_presence)
-7. **Analytics & Reports Console** (analytics_reports)
+**Section 6 — Third-Party Integrations**
+- Replace "Twilio: Voice calling and SMS messaging" with "**SignalWire**: Voice calling and SMS messaging."
+- Add "**Tavily**: AI-powered web search for content and research operatives."
+- Add "**Lovable Cloud (Supabase)**: Application hosting, database, authentication, and file storage."
+- Keep ElevenLabs, Stripe, Resend, Google Calendar.
+- Add closing note: "Costs for these providers are bundled into your Platform Plan; see Section 3."
 
-Plus **AI Operatives Hub** (Elite). Eliminate variants: "Ops Console", "Mgt Ops", "Technician-Field Ops", "Business Ops Hub", etc.
+**Section 11 / 12 — Disclaimers / Limitation of Liability**
+- Find/replace "Twilio" → "SignalWire" (keep Twilio nowhere except historic carrier reference if needed — remove).
 
-### 24 AI Agents (canonical names)
-Customer Portal: **AI Receptionist, Booking Agent, Follow-Up Agent, Review Agent**
-Field Operations: **Dispatch Agent, Route Agent, ETA Agent, Check-In Agent**
-Business Management: **Admin Agent, Quoting Agent, Invoice Agent, Inventory Agent**
-Outreach & Sales: **Lead Agent, Marketing Agent, Campaign Agent, Outreach Agent**
-Creative & Web: **Creative Content Agent, Web Presence Agent**
-Social Media: **Social Scheduler Agent, Social Analytics Agent**
-Analytics & Reports: **Insights Agent, Performance Agent, Revenue Agent, Forecast Agent**
+**Section 22 — Force Majeure**
+- Replace "Twilio" with "SignalWire" in the provider list.
 
-Eliminate variants: "Scheduling Agent" → Booking Agent; "Social Feed Queue" → Social Scheduler Agent; "Customer Insights Agent" → Insights Agent (in PDFs); "Triage" used only as the internal ID (display = "AI Receptionist" or plain "Front Desk" in customer-facing chat per existing memory).
+## PrivacyPolicy.tsx — Changes
 
-### Plain-English Customer Labels (already in `agentStyles.ts` — keep)
-Front Desk · On The Way · Office/Billing · Marketing · Social Posts · Reports · Website. These are intentional customer-facing rollups; do **not** change.
+**Effective Date** → bump to April 28, 2026.
+
+**Section 1 — Information We Collect**
+- Voice recording retention line: keep 90 days.
+- Add bullet: "**AI Web Search Queries:** When operatives use AI-powered web search (Tavily), we log the query text and timestamps to monitor usage allowances and improve relevance."
+
+**Section 4 — Disclosure of Your Information**
+- Already says "SignalWire" — good. Add Tavily to the third-party service-provider list: "Tavily for AI web search."
+- Add "Lovable Cloud / Supabase for application hosting, database, and authentication."
+
+**Section 5 — Data Retention Policy**
+- Add bullet: "**Search Query Logs:** Retained for 90 days for usage allowance accounting."
+
+**Section 6 — Multi-Tenant Data Architecture** — no changes.
+
+**Section 9 — TDPSA Sensitive Personal Data**
+- Verify alignment with current GPC honoring; no content change needed.
+
+**Section 10 — Third-Party Websites**
+- Replace "the Lovable platform" with "the Lovable Cloud platform."
+
+**Section 14 — Platform Privacy Policy**
+- Reword: "This application is hosted on Lovable Cloud (powered by Supabase). For information about how the underlying platform handles your data, please review the [Lovable Privacy Policy](https://lovable.dev/privacy)."
+
+**Section 15 — ElevenLabs AI Agent Disclosure** — content accurate; verify "Message Aura (Text)" / "Talk to Aura (Voice)" branding matches canonical naming registry. No change.
+
+## Cross-link & Footer Verification
+
+- Confirm `PublicFooter.tsx` links to `/terms-of-service` and `/privacy-policy` (already does — no change).
+- No new routes needed.
 
 ## Files to Edit
 
-### Console page titles (4 fixes)
-- `src/pages/ai-consoles/AnalyticsConsole.tsx` — "Analytics & Reports Ops" → "Analytics & Reports Console"
-- `src/pages/ai-consoles/SocialMediaConsole.tsx` — "Social Media Ops" → "Social Media Console"
-- `src/pages/ai-consoles/MarketingSalesConsole.tsx` — "Outreach & Sales Ops" → "Outreach & Sales Console"
-- `src/pages/ai-consoles/FieldOpsConsole.tsx` — "Technician-Field Ops" → "Field Operations Console"
-- `src/pages/ai-consoles/BusinessManagementConsole.tsx` — "Business Mgt Ops Console" → "Business Management Console"
+- `src/pages/TermsOfService.tsx`
+- `src/pages/PrivacyPolicy.tsx`
 
-### Help / guides
-- `src/pages/PlatformGuides.tsx` — normalize the route-alias map (lines 55–67) and body copy: replace "Social Feed Queue" with "Social Scheduler Agent", "Scheduling Agent" with "Booking Agent", and rename console references to the canonical 7 titles.
-- `src/pages/Help.tsx` — fix the "Aura Pro Command tier" typo (line 762) → "Aura Elite tier"; standardize console titles in any inline copy.
-- `src/lib/howToUseContent.ts` — rename modal titles: "Field Ops + Dispatch Operative" → "Field Operations Console"; "Social Media Ops" → "Social Media Console"; "Outreach & Sales Ops" → "Outreach & Sales Console"; "Business Management Ops" → "Business Management Console".
-- `src/lib/voiceNavigation.ts` — comment cleanup only (already mostly correct).
+## Out of Scope
 
-### PDFs
-- `src/components/documentation/WebsiteCopyPDF.tsx` — fix duplicated/nested `<Text>` blocks at lines 581 and 586 (FAQ answers wrapped twice — visible bug); standardize agent names in lines 378–476.
-- `src/components/documentation/PlatformDocumentPDF.tsx`, `ComprehensiveGuidesPDF.tsx`, `AIAgentGuidesPDF.tsx`, `CompanyGuidesPDF.tsx`, `CompanyOnboardingPDF.tsx` — sweep for "Scheduling Agent" / "Social Feed Queue" / "Aura Express" / old console names; replace with canonical.
-- `src/components/documentation/PlatformFAQPDF.tsx` — fix the trial reminder cadence copy (line 473 says "7/3/1 days"; standardize to "30/7/1 days" to match `trial-reminders` edge function).
-- `src/components/documentation/SalesPitchDataPDF.tsx`, `PricingSummaryPDF.tsx`, `VideoScriptsPDF.tsx`, `SocialMediaContentPackPDF.tsx` — verify tier display names + prices (already mostly correct, light sweep).
-
-### Other UI surfaces
-- `src/pages/ForBusiness.tsx` — verify agent counts (8/14/20/24) match `subscriptionAgentConfig.ts` actual counts (8/12/16/24). **Fix tagline numbers to 8/12/16/24.**
-- `src/components/audit/AuditChecklistPDF.tsx`, `AuditResults.tsx` — verify agent/console counts match canonical.
-- `src/lib/agentStyles.ts` — no changes (already canonical).
-- `src/lib/subscriptionAgentConfig.ts` — no changes (already canonical source of truth).
-
-### Database / migrations
-- `supabase/migrations/20260115203319_*.sql` — comment-only fix: stale "single_point/multi_track" comment on `subscription_tier`. Add a new migration that updates the COMMENT to reflect the 4-tier model. (No data changes.)
-
-### Subtle fixes
-- `src/pages/Auth.tsx` line 888 — "ElevenLabs … Free–$99/mo" cost note conflicts with the "bundled in tier, no extra fees" memory rule. Remove the per-month cost text; replace with "Included in tier".
-- `src/pages/Index.tsx` line 1117 — same issue: "$5/mo (30k) • $22/mo (100k) • $99/mo (500k)" usage pricing. Replace with "Included in your tier".
-
-## Out of Scope (intentionally untouched)
-- The plain-English rollup labels in `agentStyles.ts` (Front Desk / On The Way / etc.) — these are a deliberate customer-facing UX choice per memory.
-- Internal agent IDs (`triage`, `booking`, `social_scheduler`, etc.) — they remain stable for routing.
-- Pricing values (already canonical: $197/$497/$997/$1,997).
-
-## Memory Update
-Append a "Canonical naming registry" memory pointing future sessions at `subscriptionAgentConfig.ts` + `agentStyles.ts` + this plan's console title list, so future drift is prevented.
-
-## Verification
-After edits, run two greps to confirm zero residuals:
-- `rg "Aura Express|Scheduling Agent|Social Feed Queue|Mgt Ops|Technician-Field Ops|Aura Pro Command"`
-- `rg "(Analytics|Social Media|Outreach & Sales|Business Management) Ops"` (should only match planning/comments)
-
-Estimated edits: ~15 files. No DB schema changes, no edge function logic changes (one comment-only migration).
+- No database migrations.
+- No changes to `Auth.tsx` consent checkbox (already updated in prior turn).
+- No changes to PDF-generated legal docs unless they exist as separate exports (none found in current registry).
