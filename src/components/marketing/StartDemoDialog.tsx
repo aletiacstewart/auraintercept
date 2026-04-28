@@ -182,6 +182,9 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                   </>
                 )}
               </Button>
+              <p className="text-[11px] text-muted-foreground text-center leading-tight">
+                All 3 demo links (Owner Dashboard, Technician App, Customer Portal) will be emailed to you and stay active for 48 hours.
+              </p>
             </form>
           </>
         )}
