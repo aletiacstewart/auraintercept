@@ -176,7 +176,7 @@ export default function About() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => navigate('/auth?mode=company')}>
-                Start 30-Day Free Trial
+                Start 90-Day Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline" onClick={() => navigate('/contact')}>

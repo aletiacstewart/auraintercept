@@ -724,7 +724,7 @@ export default function Subscription() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-center">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-card-foreground font-medium">30-day free trial</span>
+                <span className="text-card-foreground font-medium">90-day free trial</span>
                 <span className="text-muted-foreground">No credit card required</span>
               </div>
               <span className="text-muted-foreground">•</span>
@@ -791,7 +791,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                When your 30-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
+                When your 90-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
               </p>
             </div>
             <div>
