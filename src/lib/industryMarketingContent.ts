@@ -50,7 +50,6 @@ const DALLAS = { cities: ['Dallas', 'Plano', 'Frisco'], zips: ['75201', '75024',
 const PHOENIX = { cities: ['Phoenix', 'Scottsdale', 'Tempe'], zips: ['85001', '85251', '85281'], address: '4500 Camelback Rd, Phoenix, AZ 85018' };
 const HOUSTON = { cities: ['Houston', 'Katy', 'Sugar Land'], zips: ['77002', '77494', '77478'], address: '900 Bagby St, Houston, TX 77002' };
 const ORLANDO = { cities: ['Orlando', 'Winter Park', 'Kissimmee'], zips: ['32801', '32789', '34741'], address: '210 Lake Eola Dr, Orlando, FL 32801' };
-const DENVER = { cities: ['Denver', 'Aurora', 'Lakewood'], zips: ['80202', '80012', '80226'], address: '1144 15th St, Denver, CO 80202' };
 
 export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
   // ─── Essential Trades ─────────────────────────────────────────────

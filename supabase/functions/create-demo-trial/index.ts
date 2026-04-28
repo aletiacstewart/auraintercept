@@ -116,7 +116,6 @@ const DALLAS = A(['Dallas','Plano','Frisco'], ['75201','75024','75034'], '1820 M
 const PHOENIX = A(['Phoenix','Scottsdale','Tempe'], ['85001','85251','85281'], '4500 Camelback Rd, Phoenix, AZ 85018');
 const HOUSTON = A(['Houston','Katy','Sugar Land'], ['77002','77494','77478'], '900 Bagby St, Houston, TX 77002');
 const ORLANDO = A(['Orlando','Winter Park','Kissimmee'], ['32801','32789','34741'], '210 Lake Eola Dr, Orlando, FL 32801');
-const DENVER = A(['Denver','Aurora','Lakewood'], ['80202','80012','80226'], '1144 15th St, Denver, CO 80202');
 
 const INDUSTRY_DEFAULTS: Record<string, IndustryDef> = {
   hvac: { label: 'HVAC', services: ['AC Repair','Furnace Install','Duct Cleaning','Maintenance Plan','Emergency Service'], categories: ['HVAC'], primary: '#0EA5E9', secondary: '#22D3EE', ...AUSTIN, sampleAppointment: { service: 'AC Repair', whenOffsetHours: 22, notes: 'Customer reports warm air, unit running constantly. Bring R-410A.' }, sampleLead: { source: 'voice', intent: 'emergency', serviceInterest: 'AC Repair', priority: 'hot', score: 92 } },
