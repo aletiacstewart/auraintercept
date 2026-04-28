@@ -84,7 +84,7 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Refund Policy</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Trial Period:</strong> Full refund if cancelled within 30 days.</li>
+              <li><strong className="text-foreground">Trial Period:</strong> Full refund if cancelled within 90 days.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
               <li><strong className="text-foreground">Usage Charges:</strong> Usage charges are non-refundable.</li>
             </ul>
