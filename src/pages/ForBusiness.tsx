@@ -19,9 +19,9 @@ const STORAGE_KEY = 'aura.forbusiness.industry';
 
 const PRICING_TIERS = [
   { name: 'Aura Core', price: '$197', tagline: '8 agents · 3 consoles', tier: 'starter' },
-  { name: 'Aura Boost', price: '$497', tagline: '14 agents · 5 consoles', tier: 'connect' },
-  { name: 'Aura Pro', price: '$997', tagline: '20 agents · 7 consoles', tier: 'performance' },
-  { name: 'Aura Elite', price: '$1,997', tagline: '24 agents · full automation', tier: 'command' },
+  { name: 'Aura Boost', price: '$497', tagline: '12 agents · 5 consoles', tier: 'connect' },
+  { name: 'Aura Pro', price: '$997', tagline: '16 agents · 5 consoles', tier: 'performance' },
+  { name: 'Aura Elite', price: '$1,997', tagline: '24 agents · 7 consoles + AI Hub', tier: 'command' },
 ] as const;
 
 export default function ForBusiness() {

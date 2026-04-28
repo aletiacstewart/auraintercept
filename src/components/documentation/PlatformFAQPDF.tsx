@@ -470,7 +470,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What happens when my trial ends?"
-          answer="You'll receive email reminders at 7 days, 3 days, and 1 day before trial expiration. After the trial, your subscription begins automatically if payment is configured. Without payment, access is paused until you subscribe."
+          answer="You'll receive email reminders at 30 days, 7 days, and 1 day before trial expiration. After the trial, your subscription begins automatically if payment is configured. Without payment, access is paused until you subscribe."
         />
 
         <View style={styles.footer}>
