@@ -26,16 +26,29 @@ const PRICING_TIERS = [
 
 export default function ForBusiness() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initial = searchParams.get('industry') || localStorage.getItem(STORAGE_KEY) || 'default';
+  // Always default to generic Aura Intercept content. Only honor an explicit
+  // ?industry= query param (e.g. from marketing links). Never read from
+  // localStorage on load — that caused returning visitors to skip the default.
+  const initial = searchParams.get('industry') || 'default';
   const [industry, setIndustry] = useState<string>(initial);
   const [demoOpen, setDemoOpen] = useState(false);
 
   const expired = searchParams.get('expired') === '1';
 
   useEffect(() => {
+    const current = searchParams.get('industry');
+    const next = new URLSearchParams(searchParams);
+    if (industry === 'default') {
+      // Don't pollute URL or storage with the placeholder value.
+      if (current) {
+        next.delete('industry');
+        setSearchParams(next, { replace: true });
+      }
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
     localStorage.setItem(STORAGE_KEY, industry);
-    if (searchParams.get('industry') !== industry) {
-      const next = new URLSearchParams(searchParams);
+    if (current !== industry) {
       next.set('industry', industry);
       setSearchParams(next, { replace: true });
     }
