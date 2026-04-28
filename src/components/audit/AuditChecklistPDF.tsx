@@ -301,7 +301,7 @@ const PlanContentsPage = ({ tier }: { tier: TierType }) => {
       <Bullet>{`Control Centers: ${rec.consoleCount}`}</Bullet>
       <Bullet>{`Team: ${rec.employeeLimit}`}</Bullet>
       <Bullet>{`Implementation fee: ${rec.implementationFee} (one-time)`}</Bullet>
-      <Bullet>{`30-day free trial included on every plan`}</Bullet>
+      <Bullet>{`90-day free trial included on every plan`}</Bullet>
 
       <Text style={styles.subsectionTitle}>{t('Key features')}</Text>
       {rec.keyFeatures.map((f, i) => (
@@ -592,7 +592,7 @@ const ComparisonPage = ({ tier }: { tier: TierType }) => (
     <Bullet>{'Elite - adds Billing (quotes, invoices, inventory) + full Reports'}</Bullet>
 
     <Text style={[styles.paragraph, { marginTop: 12, fontSize: 9, color: colors.gray }]}>
-      {t('All plans include a 30-day free trial and the guided launch. You can upgrade or downgrade at any time.')}
+      {t('All plans include a 90-day free trial and the guided launch. You can upgrade or downgrade at any time.')}
     </Text>
   </Page>
 );
@@ -607,7 +607,7 @@ const NextStepsPage = ({ tier }: { tier: TierType }) => (
     </Text>
 
     <View style={styles.ctaBox}>
-      <Text style={styles.ctaTitle}>{t('Start your 30-day free trial')}</Text>
+      <Text style={styles.ctaTitle}>{t('Start your 90-day free trial')}</Text>
       <Text style={styles.ctaText}>
         {t('Sign up at https://auraintercept.ai/auth?mode=company and step through the Fast Start wizard. Front Desk can be live the same day.')}
       </Text>

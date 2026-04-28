@@ -283,7 +283,7 @@ export default function Auth() {
     }
 
     if (authData.user) {
-      // Create company first — default new signups to Aura Core ('starter') with 30-day trial
+      // Create company first — default new signups to Aura Core ('starter') with 90-day trial
       // (DB default is 'free' which would lock everything; mark them as Core trial-tier instead).
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -349,7 +349,7 @@ export default function Auth() {
 
       toast({ 
         title: 'Welcome! 🎉', 
-        description: 'Your 30-day free trial has started. Enjoy full access to all features!' 
+        description: 'Your 90-day free trial has started. Enjoy full access to all features!' 
       });
       navigate('/dashboard');
     }
@@ -550,7 +550,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Start your 30-day free trial',
+          description: 'Start your 90-day free trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -729,7 +729,7 @@ export default function Auth() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">👑</span>
-                      <h3 className="text-sm font-bold text-foreground">30-Day Free Trial — Full Access</h3>
+                      <h3 className="text-sm font-bold text-foreground">90-Day Free Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers + AI Hub</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
@@ -746,7 +746,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">30 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 
@@ -1351,7 +1351,7 @@ export default function Auth() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '30 days free • No credit card required • Cancel anytime'}
+                              : '90 days free • No credit card required • Cancel anytime'}
                           </p>
                         )}
                       </form>

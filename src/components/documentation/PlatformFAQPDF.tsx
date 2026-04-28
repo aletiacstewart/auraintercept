@@ -373,7 +373,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a free trial available?"
-          answer="Yes! All new company registrations include a 30-day free trial. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
+          answer="Yes! All new company registrations include a 90-day free trial. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
         />
         
         <FAQItem 

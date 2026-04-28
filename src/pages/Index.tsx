@@ -1034,7 +1034,7 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>30-day free trial • No credit card required</p>
+            <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>90-day free trial • No credit card required</p>
             <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Core • $299 Boost • $599 Pro • $999 Elite</span></p>
@@ -1053,7 +1053,7 @@ export default function Index() {
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   We are currently in <span className="font-semibold text-foreground">Beta</span>. All users who join during the beta period receive{' '}
-                  <span className="font-semibold text-primary">30 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                  <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
                 {/* FCC 10DLC Notice */}

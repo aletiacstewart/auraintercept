@@ -64,7 +64,7 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscription plans range from $197 to $1,997 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li>New accounts receive a 30-day free trial with full platform access.</li>
+              <li>New accounts receive a 90-day free trial with full platform access.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
