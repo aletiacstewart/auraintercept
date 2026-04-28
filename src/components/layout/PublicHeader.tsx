@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Users, ClipboardCheck } from 'lucide-react';
+import { Home, Users, ClipboardCheck, Sparkles } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { useTranslation } from 'react-i18next';
 
@@ -36,6 +36,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/audit')}>
             <ClipboardCheck className="w-4 h-4 mr-1" />
             {t('nav.freeAudit')}
+          </Button>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/for-business')}>
+            <Sparkles className="w-4 h-4 mr-1 text-primary" />
+            {t('nav.liveDemo')}
           </Button>
           <Button variant="outline" className="text-white border-white/30 bg-white/5 hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/customer-auth')}>
             <Users className="w-4 h-4 mr-2" />

@@ -6,6 +6,7 @@
   "nav": {
     "home": "Inicio",
     "freeAudit": "Auditoría gratuita",
+    "liveDemo": "Demo en vivo",
     "customerPortal": "Portal del cliente",
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
