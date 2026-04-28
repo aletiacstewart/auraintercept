@@ -7,40 +7,40 @@ export function IntegrationStatusPanel() {
   return (
     <section className="py-10 bg-background">
       <div className="container max-w-5xl mx-auto px-4">
-        <div className="text-center mb-6">
-          <Badge variant="outline" className="mb-2">Demo Transparency</Badge>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+        <div className="text-center mb-4">
+          <Badge variant="outline" className="mb-1">Demo Transparency</Badge>
+          <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
             What is live — and what is mocked
           </h2>
-          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Most features run end-to-end against a real database in your demo company. A few features need 3rd-party services to operate live; in the demo we provide a realistic mock so you can still see them in action.
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
+            What runs end-to-end vs. what's mocked in the 48-hour demo.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {DEMO_FEATURE_STATUS.map((row) => {
             const isLive = row.status === 'live';
             return (
               <Card key={row.id} className="border-border/60">
-                <CardContent className="p-3">
-                  <div className="flex items-start gap-2.5">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                <CardContent className="p-2.5">
+                  <div className="flex items-start gap-2">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
                       isLive ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
                     }`}>
-                      {isLive ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                      {isLive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold text-sm text-foreground">{row.feature}</h3>
-                        <Badge variant={isLive ? 'default' : 'secondary'} className="text-[10px]">
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <h3 className="font-semibold text-xs text-foreground leading-tight">{row.feature}</h3>
+                        <Badge variant={isLive ? 'default' : 'secondary'} className="text-[9px] px-1.5 py-0">
                           {isLive ? 'LIVE' : 'MOCK DEMO'}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{row.description}</p>
+                      <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">{row.description}</p>
                       {row.requires && (
-                        <p className="text-[11px] text-muted-foreground/80 mt-1 flex items-start gap-1">
-                          <Info className="w-3 h-3 mt-0.5 shrink-0" />
-                          <span><span className="font-medium">Real version needs:</span> {row.requires}</span>
+                        <p className="text-[10px] text-muted-foreground/80 mt-1 flex items-start gap-1 leading-snug">
+                          <Info className="w-2.5 h-2.5 mt-0.5 shrink-0" />
+                          <span className="line-clamp-1"><span className="font-medium">Needs:</span> {row.requires}</span>
                         </p>
                       )}
                     </div>
@@ -51,7 +51,7 @@ export function IntegrationStatusPanel() {
           })}
         </div>
 
-        <p className="text-[11px] text-muted-foreground text-center mt-4 max-w-3xl mx-auto">
+        <p className="text-[10px] text-muted-foreground text-center mt-3 max-w-3xl mx-auto">
           {DEMO_FEATURE_DISCLAIMER}
         </p>
       </div>
