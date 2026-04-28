@@ -387,7 +387,7 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>Turn happy customers into 5-star reviews. Automated requests timed perfectly after every job.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Scheduling Agent</Text>
+            <Text style={styles.agentName}>Booking Agent</Text>
             <Text style={styles.agentDesc}>Goodbye, calendar chaos. AI books appointments based on availability, location, and job requirements.</Text>
           </View>
           <View style={styles.agentCard}>
@@ -433,7 +433,7 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>AI-generated posts for every platform. On-brand content created in seconds, not hours.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Social Feed Queue</Text>
+            <Text style={styles.agentName}>Social Scheduler Agent</Text>
             <Text style={styles.agentDesc}>Post at the perfect time. Queue content across all platforms with a single click.</Text>
           </View>
           <View style={styles.agentCard}>
@@ -531,7 +531,7 @@ export const WebsiteCopyPDF: React.FC = () => (
           - 16 Smart AI Agents{'\n'}
           - 5 Control Centers{'\n'}
           - Campaign & Outreach Agents{'\n'}
-          - Social Feed Queue & Analytics{'\n'}
+          - Social Scheduler Agent & Analytics{'\n'}
           - White-Label Branding{'\n'}
           - Up to 50 employees
         </Text>

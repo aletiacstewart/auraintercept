@@ -46,7 +46,7 @@ import {
 // Customer Engagement agents definition
 const CUSTOMER_ENGAGEMENT_AGENTS = [
   { type: 'triage', name: 'AI Receptionist', description: 'Routes customers to the right specialist' },
-  { type: 'booking', name: 'Scheduling Agent', description: 'Handles appointment scheduling' },
+  { type: 'booking', name: 'Booking Agent', description: 'Handles appointment scheduling' },
   { type: 'followup', name: 'Follow-up Agent', description: 'Post-service engagement' },
   { type: 'review', name: 'Social Media Review Agent', description: 'Collects customer reviews' },
 ];

@@ -106,7 +106,7 @@ const agentCategories = [{
   }]
 }, {
   id: 'marketing',
-  name: 'Outreach & Sales Ops',
+  name: 'Outreach & Sales Console',
   icon: Megaphone,
   color: 'from-orange-500 to-amber-500',
   neonRgb: '249,115,22',
@@ -129,12 +129,12 @@ const agentCategories = [{
   }]
 }, {
   id: 'social_media',
-  name: 'Social Media Ops',
+  name: 'Social Media Console',
   icon: Share2,
   color: 'from-pink-500 to-rose-500',
   neonRgb: '236,72,153',
   agents: [{
-    name: 'Social Feed Queue',
+    name: 'Social Scheduler Agent',
     description: 'Cross-platform scheduling, optimal timing, and auto-publishing',
     icon: Calendar
   }, {
@@ -177,7 +177,7 @@ const agentConsoles = [{
   tier: 'performance',
   features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
 }, {
-  name: 'Business Mgt Ops Console',
+  name: 'Business Management Console',
   description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
   icon: Briefcase,
   gradient: 'from-orange-500 to-amber-500',

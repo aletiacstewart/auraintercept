@@ -42,7 +42,7 @@ const mobileNavItems = [
 
 const sidebarNavItems = [
   { icon: Home, label: 'Dashboard', path: '/technician' },
-  { icon: Bot, label: 'Technician-Field Ops', path: '/technician/ai-console' },
+  { icon: Bot, label: 'Field Operations Console', path: '/technician/ai-console' },
   { icon: ClipboardList, label: 'My Jobs', path: '/technician/jobs' },
   { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
   { icon: History, label: 'Job History', path: '/technician/history' },

@@ -33,7 +33,7 @@ About Aura Intercept:
 Pricing Tiers (4 Tiers — Growth Ladder):
 - Aura Core ($197/mo): 8 Smart AI Agents (AI Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing). 3 Consoles (Customer Portal, Outreach & Sales, Creative & Web). 10 employees. Best for solo operators, salons, restaurants.
 - Aura Boost ($497/mo): 12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In). 5 Consoles (adds Field Operations, Social Media). 25 employees. Best for HVAC, plumbing, field service companies.
-- Aura Pro ($997/mo): 16 Smart AI Agents (adds Campaign, Outreach, Social Feed Queue, Social Analytics). 5 Consoles. 50 employees. White-label branding. Best for growing companies.
+- Aura Pro ($997/mo): 16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler Agent, Social Analytics). 5 Consoles. 50 employees. White-label branding. Best for growing companies.
 - Aura Elite ($1,997/mo): All 24 Smart AI Agents (adds Invoice, Inventory, Insights, Performance, Revenue, Forecast). All 7 Consoles + AI Operatives Hub. Unlimited employees. Best for large service teams and enterprise operations.
 - Annual billing: Core $1,970/yr, Boost $4,970/yr, Pro $9,970/yr, Elite $19,970/yr
 - Additional employees: $25/mo per 10 employees beyond included amount

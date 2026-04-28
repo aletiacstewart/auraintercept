@@ -226,7 +226,7 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
               <Share2 className="h-5 w-5 text-feature-marketing" />
             </div>
             <div>
-              <CardTitle className="text-lg text-card-foreground">Social Feed Queue</CardTitle>
+              <CardTitle className="text-lg text-card-foreground">Social Scheduler Agent</CardTitle>
               <p className="text-sm text-card-foreground/60">
                 AI-generated content for social media
               </p>

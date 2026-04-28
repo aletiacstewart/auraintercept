@@ -175,7 +175,7 @@ export const HOW_TO_USE: Record<string, Content> = {
   },
 
   fieldOpsConsole: {
-    title: 'Field Ops + Dispatch Operative',
+    title: 'Field Operations Console',
     runsAutomatically: [
       'Auto-assigns jobs to the closest / most-skilled tech.',
       'Sends ETA texts to customers automatically.',
@@ -196,7 +196,7 @@ export const HOW_TO_USE: Record<string, Content> = {
   },
 
   socialMediaConsole: {
-    title: 'Social Media Ops',
+    title: 'Social Media Console',
     runsAutomatically: [
       'Generates and schedules posts across Facebook, Instagram, LinkedIn, TikTok.',
       'Replies to comments and DMs in your brand voice.',
@@ -216,7 +216,7 @@ export const HOW_TO_USE: Record<string, Content> = {
   },
 
   outreachSalesConsole: {
-    title: 'Outreach & Sales Ops',
+    title: 'Outreach & Sales Console',
     runsAutomatically: [
       'Sends follow-up emails/SMS to leads who didn\'t book.',
       'Re-engages dormant customers (e.g., "it\'s been 6 months since your tune-up").',
@@ -253,7 +253,7 @@ export const HOW_TO_USE: Record<string, Content> = {
   },
 
   businessMgmtConsole: {
-    title: 'Business Management Ops',
+    title: 'Business Management Console',
     runsAutomatically: [
       'Generates invoices and sends them automatically when a job completes.',
       'Tracks payments and follows up on overdue invoices.',

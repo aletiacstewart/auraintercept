@@ -228,9 +228,9 @@ const sections: Section[] = [
       },
       {
         num: 23,
-        name: 'Social Feed Queue Agent',
+        name: 'Social Scheduler Agent',
         prompt: 'A holographic weekly calendar with time slots filling with scheduled posts across 6 social platforms. Posts slide into optimal time slots with satisfying click animations. A clock visualization shows best-posting-time intelligence. Queue management with drag-and-drop feel. Pink and cyan on dark background. 4K cinematic.',
-        audioScript: 'The Social Feed Queue Agent posts at the optimal time on every platform — so your content always reaches the largest possible audience.',
+        audioScript: 'The Social Scheduler Agent posts at the optimal time on every platform — so your content always reaches the largest possible audience.',
         imagePrompt: 'Holographic weekly calendar with post slots filling across 6 platform rows. Best-time indicators glowing on optimal slots. "SOCIAL SCHEDULER AGENT — Aura Intercept" label. Pink and cyan on dark background.',
       },
       {

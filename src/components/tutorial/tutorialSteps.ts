@@ -68,9 +68,9 @@ const adminSteps: TutorialStep[] = [
   // Business Management
   {
     id: 'business-mgt',
-    title: 'Business Mgt Ops Console',
+    title: 'Business Management Console',
     description: 'Your central hub for daily operations. The Business Finance Operative handles quotes, invoices, and inventory. The Admin Operative manages appointments, team members, leads, and customer profiles. Includes the Aura Live real-time activity feed.',
-    tryIt: 'Open Business Mgt Ops to see the live activity feed and all operational modules.',
+    tryIt: 'Open Business Management to see the live activity feed and all operational modules.',
     targetSelector: '[data-tour-id="nav-business-mgt-ops"]',
     route: '/dashboard',
     position: 'right',
@@ -85,7 +85,7 @@ const adminSteps: TutorialStep[] = [
   },
   {
     id: 'analytics-reports',
-    title: 'Analytics & Reports Ops',
+    title: 'Analytics & Reports Console',
     description: 'AI-powered deep-dive analytics powered by the Analytics Intelligence Operative. Revenue trends, customer lifetime value, operative performance, conversion rates, and business forecasting — all generated automatically.',
     tip: 'Available on Performance and Command tiers. Upgrade to unlock predictive revenue and customer insights.',
     targetSelector: '[data-tour-id="nav-analytics-reports"]',
@@ -96,7 +96,7 @@ const adminSteps: TutorialStep[] = [
   // Marketing
   {
     id: 'marketing-sales',
-    title: 'Outreach & Sales Ops',
+    title: 'Outreach & Sales Console',
     description: 'Run SMS and email campaigns, win-back sequences, referral programs, and seasonal promos. The Outreach Operative manages campaigns, lead qualification, and customer segmentation in one unified console with Campaign, Leads, and Marketing tabs.',
     tip: 'Available on Growth tier and above. Build your customer list by syncing with your appointment history.',
     targetSelector: '[data-tour-id="nav-marketing-sales"]',
@@ -107,7 +107,7 @@ const adminSteps: TutorialStep[] = [
   // Social Media
   {
     id: 'social-media',
-    title: 'Social Media Ops',
+    title: 'Social Media Console',
     description: 'Generate AI content for Instagram, Facebook, LinkedIn, TikTok, GMB, and X. The Creative Content Operative creates platform-specific posts tailored to your brand voice. Use the Manual Bridge to copy content and post directly — no API approval needed.',
     tip: 'Available on Growth tier and above. Use Create Content for generation and My Posts to manage your drafts.',
     targetSelector: '[data-tour-id="nav-social-media"]',
@@ -129,7 +129,7 @@ const adminSteps: TutorialStep[] = [
   // Field Ops
   {
     id: 'field-ops',
-    title: 'Technician-Field Ops Console',
+    title: 'Field Operations Console',
     description: 'The Field Navigation Operative powers this mobile-first console for your field team. Accept jobs, get directions, mark en-route, update ETAs, arrive, complete, and generate invoices — all in one workflow.',
     tip: 'Available on Field Ops tier and above. Technicians install this as a PWA for hands-free field operations.',
     targetSelector: '[data-tour-id="nav-field-ops"]',
@@ -328,7 +328,7 @@ const employeeSteps: TutorialStep[] = [
   },
   {
     id: 'tech-ai-console',
-    title: 'Technician-Field Ops Console',
+    title: 'Field Operations Console',
     description: 'Your AI-powered field operations assistant. Accept jobs, get turn-by-turn directions, mark en-route, update your ETA, arrive and start jobs, then complete them and generate invoices — all in one streamlined workflow.',
     tip: 'The Field Navigation Operative is pre-trained with your company\'s service protocols so responses are accurate and on-brand.',
     targetSelector: '[data-tour-id="nav-tech-ai-console"]',

@@ -24,7 +24,7 @@ export default function MarketingSalesConsole() {
           <div className="space-y-6">
             <PageHeader
               icon={Megaphone}
-              title="Outreach & Sales Ops"
+              title="Outreach & Sales Console"
               description="AI-powered marketing automation and sales intelligence"
               featureColor="platform"
               showAuraBar

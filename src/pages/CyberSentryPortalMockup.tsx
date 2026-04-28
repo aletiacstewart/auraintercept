@@ -46,7 +46,7 @@ const styles = `
 
 const AGENTS = [
   { name: 'AI Receptionist', icon: Bot, status: 'active', color: '#00e5ff', role: 'Handles all incoming inquiries', messages: 142, responseTime: '0.8s' },
-  { name: 'Scheduling Agent', icon: Calendar, status: 'active', color: '#10b981', role: 'Books & manages appointments', messages: 89, responseTime: '1.1s' },
+  { name: 'Booking Agent', icon: Calendar, status: 'active', color: '#10b981', role: 'Books & manages appointments', messages: 89, responseTime: '1.1s' },
   { name: 'Follow-up Agent', icon: Activity, status: 'standby', color: '#a855f7', role: 'Post-service engagement', messages: 34, responseTime: '1.4s' },
   { name: 'Review Agent', icon: Star, status: 'standby', color: '#f59e0b', role: 'Feedback & review requests', messages: 21, responseTime: '1.2s' },
 ];

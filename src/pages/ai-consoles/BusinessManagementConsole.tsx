@@ -56,7 +56,7 @@ export default function BusinessManagementConsole() {
           <div className="space-y-6">
             <PageHeader
               icon={Briefcase}
-              title="Business Mgt Ops Console"
+              title="Business Management Console"
               description="AI-powered business operations and management tools"
               featureColor="platform"
               showAuraBar

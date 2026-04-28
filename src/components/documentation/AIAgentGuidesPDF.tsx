@@ -386,7 +386,7 @@ const CONSOLES = [
         requires: [],
       },
       {
-        name: 'Scheduling Agent (Booking)',
+        name: 'Booking Agent',
         description: 'Books appointments by checking technician availability, confirming dates and times, and sending confirmation messages.',
         isCore: false,
         worksAlone: false,
@@ -397,7 +397,7 @@ const CONSOLES = [
         description: 'Sends appointment reminders before service, follows up after completion, and handles confirmation requests.',
         isCore: false,
         worksAlone: false,
-        requires: ['Scheduling Agent'],
+        requires: ['Booking Agent'],
       },
       {
         name: 'Review Agent',
@@ -499,7 +499,7 @@ const CONSOLES = [
     ],
   },
   {
-    name: 'Outreach & Sales Ops',
+    name: 'Outreach & Sales Console',
     color: colors.orange,
     colorLight: colors.orangeLight,
     description: 'Customer outreach and campaign management. Create targeted campaigns to grow your customer base.',
@@ -695,7 +695,7 @@ const INTEGRATIONS = [
     cost: 'Free (requires Google account)',
     required: false,
     requiredFor: 'Two-way calendar sync with technician schedules',
-    agentsAffected: ['Scheduling Agent', 'Dispatch Agent'],
+    agentsAffected: ['Booking Agent', 'Dispatch Agent'],
     whatHappensWithout: 'Manual availability management only - no automatic calendar sync.',
   },
   {
@@ -780,7 +780,7 @@ const TIERS = [
     annualPrice: `$${(SUBSCRIPTION_TIERS.aura_pro?.annualPrice ?? 9970).toLocaleString()}/year`,
     consoles: [`${SUBSCRIPTION_TIERS.aura_pro?.consoles ?? 5} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_pro?.operatives ?? 16,
-    agents: ['All Boost Agents', 'Campaign Agent', 'Outreach Agent', 'Social Feed Queue', 'Social Analytics'],
+    agents: ['All Boost Agents', 'Campaign Agent', 'Outreach Agent', 'Social Scheduler Agent', 'Social Analytics'],
     voiceIncluded: SUBSCRIPTION_TIERS.aura_pro?.hasVoice ?? true,
     note: SUBSCRIPTION_TIERS.aura_pro?.description ?? '16 Smart AI Agents with social media, campaigns & white-label branding.',
   },

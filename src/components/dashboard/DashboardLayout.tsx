@@ -124,7 +124,7 @@ const navGroups: NavGroup[] = [
     label: 'Business',
     requiredTier: 'performance',
     items: [
-      { label: 'Business Mgt Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
+      { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
       { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
     ],
   },

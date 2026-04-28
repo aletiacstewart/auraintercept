@@ -38,7 +38,7 @@ import {
 // Agent display names - standardized with AIAgentsHub
 const AGENT_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
-  booking: 'Scheduling Agent',
+  booking: 'Booking Agent',
   followup: 'Follow-up Agent',
   review: 'Review Agent',
   dispatch: 'Dispatch Agent',
@@ -53,7 +53,7 @@ const AGENT_NAMES: Record<string, string> = {
   lead: 'Lead Agent',
   marketing: 'Marketing Agent',
   social_content: 'Creative Content Agent',
-  social_scheduler: 'Social Feed Queue',
+  social_scheduler: 'Social Scheduler Agent',
   social_analytics: 'Social Media Analytics',
   insights: 'Insights Agent',
   performance: 'Performance Agent',

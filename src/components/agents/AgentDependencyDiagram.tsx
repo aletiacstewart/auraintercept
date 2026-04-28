@@ -70,7 +70,7 @@ flowchart TB
         direction TB
         Campaign["📣 Campaign Agent"]
         Outreach["📧 Outreach Agent"]
-        SocialScheduler["📆 Social Feed Queue"]
+        SocialScheduler["📆 Social Scheduler Agent"]
         SocialAnalytics["📊 Social Analytics"]
         Admin["👔 Admin Agent"]
         Quoting["💼 Quoting Agent"]

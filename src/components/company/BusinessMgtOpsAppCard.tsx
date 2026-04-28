@@ -130,7 +130,7 @@ export function BusinessMgtOpsAppCard() {
               <div>
                 <h3 className="font-semibold text-lg">App Installed!</h3>
                 <p className="text-muted-foreground">
-                  You're using Business Mgt Ops as a standalone app
+                  You're using Business Management as a standalone app
                 </p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export function BusinessMgtOpsAppCard() {
                     <Briefcase className="h-8 w-8 text-white" />
                   </div>
                   <div className="flex-1 text-center sm:text-left">
-                    <h3 className="font-semibold text-lg">Install Business Mgt Ops</h3>
+                    <h3 className="font-semibold text-lg">Install Business Management</h3>
                     <p className="text-muted-foreground text-sm">
                       Add to your home screen for quick access
                     </p>

@@ -278,7 +278,7 @@ const guideCategories = [
         tips: ['Required for all other customer-facing agents']
       },
       {
-        title: 'Scheduling Agent',
+        title: 'Booking Agent',
         duration: '10 min',
         steps: [
           'Enable in AI Agents Hub (requires Boost+ tier)',
@@ -330,7 +330,7 @@ const guideCategories = [
         duration: '12 min',
         steps: [
           'Creative Content Agent: Creates posts for 6 platforms',
-          'Social Feed Queue: Queues and publishes content',
+          'Social Scheduler Agent: Queues and publishes content',
           'Social Media Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
           'All Social Media agents require Pro+ tier'
@@ -542,7 +542,7 @@ const guideCategories = [
         title: 'Business Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Business Ops Hub from sidebar',
+          'Navigate to Business Management Console from sidebar',
           'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
@@ -678,7 +678,7 @@ const guideCategories = [
     ]
   },
   {
-    title: 'Social Media Ops',
+    title: 'Social Media Console',
     guides: [
       {
         title: 'Social Media Console',
@@ -740,7 +740,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports Ops (Command tier)',
+          'Navigate to Analytics & Reports Console (Command tier)',
           'Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Export',
           'Form-based interfaces for structured reporting',
           'AI Insights Agent for natural language queries',
@@ -846,7 +846,7 @@ const guideCategories = [
           'Set operating hours for each day of week',
           'Add holiday closures in advance',
           'Configure after-hours messaging',
-          'Scheduling Agent respects these hours'
+          'Booking Agent respects these hours'
         ],
         tips: ['Update hours before holidays']
       },
@@ -998,7 +998,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Social Media (2 agents): Social Feed Queue, Social Analytics</Text>
+          <Text style={styles.bulletText}>Social Media (2 agents): Social Scheduler Agent, Social Analytics</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>

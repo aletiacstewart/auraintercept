@@ -69,7 +69,7 @@ export function FieldOpsAppCard() {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Smartphone className="w-5 h-5 text-primary" />
-              Technician-Field Ops App Install
+              Field Operations Console App Install
             </CardTitle>
             <CardDescription className="mt-1 text-white/80">
               Quick-access AI Console for field technicians

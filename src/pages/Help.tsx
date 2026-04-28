@@ -696,7 +696,7 @@ export default function Help() {
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Pro ($997/mo):</strong>
-                              <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Feed Queue, Social Analytics. Full marketing and outreach automation.</p>
+                              <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Scheduler Agent, Social Analytics. Full marketing and outreach automation.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Elite ($1,997/mo):</strong>
@@ -759,7 +759,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="text-card-foreground/70 space-y-2">
-                          <p>Social Media Ops (Aura Pro Command tier) supports 6 platforms:</p>
+                          <p>Social Media Ops (Aura Elite tier) supports 6 platforms:</p>
                           <ul className="list-disc ml-5 space-y-1">
                             <li><strong className="text-card-foreground">Instagram</strong> - Posts with character optimization</li>
                             <li><strong className="text-card-foreground">Facebook</strong> - Posts and business updates</li>
@@ -827,7 +827,7 @@ export default function Help() {
                             </li>
                             <li>
                               <strong className="text-card-foreground">Online Booking (Boost+):</strong>
-                              <p>Customers book appointments directly through the AI chat. The Scheduling Agent checks availability and confirms bookings automatically.</p>
+                              <p>Customers book appointments directly through the AI chat. The Booking Agent checks availability and confirms bookings automatically.</p>
                             </li>
                           </ul>
                         </div>

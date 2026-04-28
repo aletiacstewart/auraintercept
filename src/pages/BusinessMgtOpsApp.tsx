@@ -20,9 +20,9 @@ const loginSchema = z.object({
 });
 
 /**
- * Standalone Business Management Ops App - Lightweight PWA for managers
+ * Standalone Business Management Console App - Lightweight PWA for managers
  * This is the installable mobile app that provides quick access to both
- * Business Management Ops and Analytics & Reports Ops consoles.
+ * Business Management Console and Analytics & Reports Console consoles.
  * Includes embedded login form for seamless authentication.
  */
 export default function BusinessMgtOpsApp() {
@@ -122,7 +122,7 @@ export default function BusinessMgtOpsApp() {
             <Briefcase className="h-8 w-8 text-primary" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-foreground">Business Mgt Ops</h1>
+            <h1 className="text-xl font-bold text-foreground">Business Management</h1>
             <p className="text-sm text-muted-foreground">Management Console</p>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function BusinessMgtOpsApp() {
             ) : (
               <div className="flex items-center gap-2">
                 <Briefcase className="h-6 w-6 text-primary" />
-                <span className="font-semibold text-sm">Business Mgt Ops</span>
+                <span className="font-semibold text-sm">Business Management</span>
               </div>
             )}
           </div>

@@ -170,7 +170,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   return (
     <CyberConsoleLayout
       logoUrl={company?.logo_url}
-      companyName={company?.name || 'Outreach & Sales Ops'}
+      companyName={company?.name || 'Outreach & Sales Console'}
       agentLabel={activeLabel}
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
@@ -203,8 +203,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
           <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
             {showWelcome ? (
               <WelcomeScreen
-                companyName={company?.name || 'Outreach & Sales Ops'}
-                title="Outreach & Sales Ops"
+                companyName={company?.name || 'Outreach & Sales Console'}
+                title="Outreach & Sales Console"
                 subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
                 actions={QUICK_ACTIONS}
                 onAction={handleQuickAction}
