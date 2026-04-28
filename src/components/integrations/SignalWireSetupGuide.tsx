@@ -116,7 +116,7 @@ export function SignalWireSetupGuide() {
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Go to <a href="https://signalwire.com/signup" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">signalwire.com/signup</a></li>
-                <li>Sign up for a free trial account (includes $5 credit)</li>
+                <li>Sign up for a free account (no credit card required to start)</li>
                 <li>Verify your email and phone number</li>
                 <li>Create a new Space (your project name)</li>
               </ol>
