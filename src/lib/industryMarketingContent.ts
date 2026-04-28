@@ -52,6 +52,29 @@ const HOUSTON = { cities: ['Houston', 'Katy', 'Sugar Land'], zips: ['77002', '77
 const ORLANDO = { cities: ['Orlando', 'Winter Park', 'Kissimmee'], zips: ['32801', '32789', '34741'], address: '210 Lake Eola Dr, Orlando, FL 32801' };
 
 export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
+  // ─── Default (shown before user picks an industry) ───────────────
+  default: make(
+    'default', 'Aura Intercept', '✨', 'Default',
+    {
+      headline: 'Smart agents. Automated service.',
+      subheadline: 'Aura answers every call, text, and chat 24/7 — books jobs, dispatches the right person, and follows up with customers automatically. Pick your industry above to see a demo built for you.',
+    },
+    [
+      { title: 'Never miss a lead', description: 'Aura answers every call, text, and chat instantly — even at 2 AM, on weekends, or when you\'re on a job.' },
+      { title: 'Books jobs while you work', description: 'Quotes, schedules, and confirms appointments on the call — no back-and-forth required.' },
+      { title: 'Built for your industry', description: 'Pick your trade above and Aura instantly tailors the demo, services, and conversations to match.' },
+    ],
+    [
+      'Hi, I need to book a service appointment.',
+      'Can you give me a quote for the work?',
+      'What time can someone come out tomorrow?',
+    ],
+    ['Service Booking', 'Instant Quotes', '24/7 Answering', 'Follow-Ups', 'Customer Reminders'],
+    { service: 'Service Call', whenOffsetHours: 24, notes: 'Aura captured the lead, qualified the need, and booked the appointment.' },
+    { source: 'chat', intent: 'inquiry', serviceInterest: 'General Service', priority: 'normal', score: 70 },
+    AUSTIN, { primary: '#214ebb', secondary: '#46a2d3' },
+  ),
+
   // ─── Essential Trades ─────────────────────────────────────────────
   hvac: make(
     'hvac', 'HVAC', '🔥', 'Essential Trades',
