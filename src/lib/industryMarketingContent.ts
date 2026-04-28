@@ -50,7 +50,6 @@ const DALLAS = { cities: ['Dallas', 'Plano', 'Frisco'], zips: ['75201', '75024',
 const PHOENIX = { cities: ['Phoenix', 'Scottsdale', 'Tempe'], zips: ['85001', '85251', '85281'], address: '4500 Camelback Rd, Phoenix, AZ 85018' };
 const HOUSTON = { cities: ['Houston', 'Katy', 'Sugar Land'], zips: ['77002', '77494', '77478'], address: '900 Bagby St, Houston, TX 77002' };
 const ORLANDO = { cities: ['Orlando', 'Winter Park', 'Kissimmee'], zips: ['32801', '32789', '34741'], address: '210 Lake Eola Dr, Orlando, FL 32801' };
-const DENVER = { cities: ['Denver', 'Aurora', 'Lakewood'], zips: ['80202', '80012', '80226'], address: '1144 15th St, Denver, CO 80202' };
 
 export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
   // ─── Essential Trades ─────────────────────────────────────────────
@@ -225,7 +224,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Diagnostic', 'Refrigerator Repair', 'Washer/Dryer Repair', 'Oven/Range Repair', 'Dishwasher Repair'],
     { service: 'Refrigerator Repair', whenOffsetHours: 22, notes: 'Whirlpool WRS325SDHZ, not cooling. Customer has receipts for warranty check.' },
     { source: 'voice', intent: 'booking', serviceInterest: 'Refrigerator Repair', priority: 'high', score: 76 },
-    DENVER, { primary: '#0891B2', secondary: '#22D3EE' },
+    AUSTIN, { primary: '#0891B2', secondary: '#22D3EE' },
   ),
   handyman_cleaning: make(
     'handyman_cleaning', 'Handyman & Cleaning', '🧹', 'Specialized Home',
@@ -311,7 +310,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Showing Booking', 'Buyer Consult', 'Listing Inquiry', 'Open House RSVP', 'Market Update'],
     { service: 'Property Showing', whenOffsetHours: 30, notes: 'Buyer pre-approved $450k. Likes 4123 Maple St and 2 others nearby.' },
     { source: 'chat', intent: 'booking', serviceInterest: 'Property Showing', priority: 'high', score: 78 },
-    DENVER, { primary: '#0F766E', secondary: '#2DD4BF' },
+    AUSTIN, { primary: '#0F766E', secondary: '#2DD4BF' },
   ),
   // ─── Wellness & Personal ──────────────────────────────────────────
   beauty_wellness: make(
@@ -363,7 +362,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Discovery Call', 'Strategy Session', 'Follow-Up', 'Onboarding Call', 'Check-In'],
     { service: 'Discovery Call', whenOffsetHours: 26, notes: '30 min intro call. Topic: Q2 marketing strategy. Zoom link auto-sent.' },
     { source: 'referral', intent: 'booking', serviceInterest: 'Strategy Session', priority: 'high', score: 80 },
-    DENVER, { primary: '#6366F1', secondary: '#A5B4FC' },
+    AUSTIN, { primary: '#6366F1', secondary: '#A5B4FC' },
   ),
   // ─── Catch-all ────────────────────────────────────────────────────
   other: make(
