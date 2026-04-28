@@ -1037,7 +1037,7 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>90-day free trial • No credit card required</p>
             <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$0 Core • $299 Boost • $599 Pro • $999 Elite</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$199 Core • $399 Boost • $599 Pro • $799 Elite</span></p>
           </div>
 
           {/* Beta Testing Announcement */}

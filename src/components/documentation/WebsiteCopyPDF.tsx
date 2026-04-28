@@ -583,7 +583,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($0 for Core, $299 for Boost, $599 for Pro, $999 for Elite) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($199 for Core, $399 for Boost, $599 for Pro, $799 for Elite) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>

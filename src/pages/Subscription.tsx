@@ -735,7 +735,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Implementation Fee: $0 Core · $299 Boost · $599 Pro · $999 Elite</span>
+                <span className="text-muted-foreground">Implementation Fee: $199 Core · $399 Boost · $599 Pro · $799 Elite</span>
               </div>
             </div>
           </CardContent>

@@ -314,7 +314,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 8,
     consoleCount: 3,
     employeeLimit: 'Up to 10 employees',
-    implementationFee: '$0',
+    implementationFee: '$199',
   },
   BOOST: {
     tier: 'BOOST',
@@ -331,7 +331,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 12,
     consoleCount: 5,
     employeeLimit: 'Up to 25 employees',
-    implementationFee: '$299',
+    implementationFee: '$399',
   },
   PRO: {
     tier: 'PRO',
@@ -365,7 +365,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 24,
     consoleCount: 7,
     employeeLimit: 'Unlimited employees',
-    implementationFee: '$999',
+    implementationFee: '$799',
   },
 };
 
