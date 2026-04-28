@@ -1169,14 +1169,14 @@ export default function Index() {
                   <span className="font-semibold text-xs text-white">Tavily</span>
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                <p className="text-[10px] text-white/90 font-medium">Included in your tier</p>
                 <p className="text-[10px] text-white/70">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-[10px] text-white/60">Optional for: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-white/60">Available on: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
             <p className="text-[10px] text-white/50 italic text-center mt-4">
-              All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+              Usage of bundled providers (SignalWire, ElevenLabs, Resend, Tavily) is included in your subscription. A2P 10DLC and Stripe transaction fees are paid directly to those providers.
             </p>
           </div>
         </div>
