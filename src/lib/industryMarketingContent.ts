@@ -225,7 +225,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Diagnostic', 'Refrigerator Repair', 'Washer/Dryer Repair', 'Oven/Range Repair', 'Dishwasher Repair'],
     { service: 'Refrigerator Repair', whenOffsetHours: 22, notes: 'Whirlpool WRS325SDHZ, not cooling. Customer has receipts for warranty check.' },
     { source: 'voice', intent: 'booking', serviceInterest: 'Refrigerator Repair', priority: 'high', score: 76 },
-    DENVER, { primary: '#0891B2', secondary: '#22D3EE' },
+    AUSTIN, { primary: '#0891B2', secondary: '#22D3EE' },
   ),
   handyman_cleaning: make(
     'handyman_cleaning', 'Handyman & Cleaning', '🧹', 'Specialized Home',
@@ -311,7 +311,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Showing Booking', 'Buyer Consult', 'Listing Inquiry', 'Open House RSVP', 'Market Update'],
     { service: 'Property Showing', whenOffsetHours: 30, notes: 'Buyer pre-approved $450k. Likes 4123 Maple St and 2 others nearby.' },
     { source: 'chat', intent: 'booking', serviceInterest: 'Property Showing', priority: 'high', score: 78 },
-    DENVER, { primary: '#0F766E', secondary: '#2DD4BF' },
+    AUSTIN, { primary: '#0F766E', secondary: '#2DD4BF' },
   ),
   // ─── Wellness & Personal ──────────────────────────────────────────
   beauty_wellness: make(
@@ -363,7 +363,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Discovery Call', 'Strategy Session', 'Follow-Up', 'Onboarding Call', 'Check-In'],
     { service: 'Discovery Call', whenOffsetHours: 26, notes: '30 min intro call. Topic: Q2 marketing strategy. Zoom link auto-sent.' },
     { source: 'referral', intent: 'booking', serviceInterest: 'Strategy Session', priority: 'high', score: 80 },
-    DENVER, { primary: '#6366F1', secondary: '#A5B4FC' },
+    AUSTIN, { primary: '#6366F1', secondary: '#A5B4FC' },
   ),
   // ─── Catch-all ────────────────────────────────────────────────────
   other: make(
