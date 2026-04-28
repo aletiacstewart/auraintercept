@@ -13,6 +13,7 @@ import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { toast } from 'sonner';
+import { useAuraCommand } from '@/hooks/useAuraCommand';
 
 const BUSINESS_WORKFLOWS: WorkflowChain[] = [
   {
@@ -44,6 +45,7 @@ const BUSINESS_WORKFLOWS: WorkflowChain[] = [
 export default function BusinessManagementConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
+  const { submitQuery } = useAuraCommand();
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
@@ -81,7 +83,10 @@ export default function BusinessManagementConsole() {
             
             <WorkflowChainButtons
               chains={BUSINESS_WORKFLOWS}
-              onTrigger={(cmd) => toast.info('Workflow queued', { description: cmd.slice(0, 80) + '...' })}
+              onTrigger={(cmd) => {
+                toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
+                submitQuery(cmd);
+              }}
             />
 
             <BusinessOpsAgentConsole />
