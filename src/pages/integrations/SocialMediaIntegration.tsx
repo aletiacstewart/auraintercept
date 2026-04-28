@@ -405,11 +405,11 @@ export default function SocialMediaIntegration() {
                       </Card>
                     </div>
 
-                    {/* Coming Soon Banner */}
-                    <Alert className="border-amber-500/30 bg-amber-500/5">
-                      <Clock className="h-4 w-4 text-amber-500" />
-                      <AlertDescription className="text-xs text-amber-700 dark:text-amber-400">
-                        <strong>⚡ Platform Auto-Post — Coming Soon:</strong> Once our platform-level API approval is complete, all companies will be able to connect with a single click — no developer app registration required. The configuration below will be used once approved.
+                    {/* Manual Bridge Active Banner */}
+                    <Alert className="border-emerald-500/30 bg-emerald-500/5">
+                      <Check className="h-4 w-4 text-emerald-500" />
+                      <AlertDescription className="text-xs text-emerald-700 dark:text-emerald-400">
+                        <strong>✓ Manual Bridge — Active by default:</strong> Aura generates your post and copies it to your clipboard with one click; you paste it into the platform's composer (deep link opens automatically). No developer setup required. Want full automation? Use "Set Up Own API" below to register your own developer app and connect via OAuth.
                       </AlertDescription>
                     </Alert>
                   </div>

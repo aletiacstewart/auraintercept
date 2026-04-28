@@ -486,21 +486,8 @@ export const WebsiteCopyPDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="Pricing Page Copy" pageNum={5} />
       
-      <Text style={styles.sectionTitle}>7-Tier Subscription Lineup</Text>
+      <Text style={styles.sectionTitle}>4-Tier Subscription Lineup</Text>
       <Text style={styles.sectionSubtitle}>Complete copy for all subscription tiers</Text>
-
-      <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Express - $197/mo</Text>
-        <Text style={styles.copyHeadline}>AI Reception for Restaurants</Text>
-        <Text style={styles.copyBody}>
-          Designed specifically for restaurants and cafes. Handle peak call volume, answer menu questions, and share ordering links instantly.{'\n\n'}
-          - Message Aura (Text/Chat){'\n'}
-          - Talk to Aura (Voice){'\n'}
-          - Smart Link Sharing{'\n'}
-          - Knowledge Base for FAQs{'\n'}
-          - Single location
-        </Text>
-      </View>
 
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Aura Core - $197/mo</Text>

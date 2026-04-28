@@ -15,7 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 // Common industry categories (similar to Google My Business)
 const INDUSTRY_OPTIONS = [
-  // Food & Hospitality (Aura Express)
+  // Food & Hospitality (Aura Core)
   'Restaurant',
   'Cafe & Coffee Shop',
   'Fine Dining',

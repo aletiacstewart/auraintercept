@@ -8,6 +8,7 @@ import { Truck, Route, MapPin, ClipboardCheck } from 'lucide-react';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
+import { useAuraCommand } from '@/hooks/useAuraCommand';
 
 const DISPATCH_WORKFLOWS: WorkflowChain[] = [
   {
@@ -38,6 +39,7 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
 
 export default function FieldOperations() {
   const { companyId, loading } = useAuth();
+  const { submitQuery } = useAuraCommand();
 
   if (loading) {
     return (
@@ -75,7 +77,10 @@ export default function FieldOperations() {
           />
           <WorkflowChainButtons
             chains={DISPATCH_WORKFLOWS}
-            onTrigger={(cmd) => toast.info('Workflow queued', { description: cmd.slice(0, 80) + '...' })}
+            onTrigger={(cmd) => {
+              toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
+              submitQuery(cmd);
+            }}
           />
           <div className="h-[calc(100vh-20rem)]">
             <FieldOpsManager companyId={companyId} />

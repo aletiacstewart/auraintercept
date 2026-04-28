@@ -955,7 +955,7 @@ const PlatformFAQPDF = () => {
             </View>
             <View style={styles.tableRowAlt}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>Starting Price</Text>
-              <Text style={[styles.tableCell, { flex: 2 }]}>${PLATFORM_STATS.startingPrice}/month (Aura Express)</Text>
+              <Text style={[styles.tableCell, { flex: 2 }]}>${PLATFORM_STATS.startingPrice}/month (Aura Core)</Text>
             </View>
             <View style={styles.tableRow}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>AI Operatives</Text>
