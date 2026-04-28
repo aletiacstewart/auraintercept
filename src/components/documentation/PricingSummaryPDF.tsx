@@ -262,7 +262,7 @@ const PricingSummaryPDF = () => (
         {[
           { category: 'Monthly Price', core: '$197', boost: '$497', pro: '$997', elite: '$1,997' },
           { category: 'Annual Price', core: '$1,970', boost: '$4,970', pro: '$9,970', elite: '$19,970' },
-          { category: 'Implementation Fee', core: '$0', boost: '$299', pro: '$599', elite: '$999' },
+          { category: 'Implementation Fee', core: '$199', boost: '$399', pro: '$599', elite: '$799' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
           { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },

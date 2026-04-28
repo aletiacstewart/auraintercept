@@ -455,7 +455,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the implementation fees?"
-          answer={`One-time implementation fees vary by tier: Core ($0), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 299}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 599}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 999}). This covers initial setup, configuration, and training.`}
+          answer={`One-time implementation fees vary by tier: Core ($0), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 399}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 599}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 799}). This covers initial setup, configuration, and training.`}
         />
         
         <FAQItem 

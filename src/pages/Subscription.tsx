@@ -258,7 +258,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
       { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
       { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
-      { name: 'Implementation Fee', starter: '$0', connect: '$299', performance: '$599', command: '$999' },
+      { name: 'Implementation Fee', starter: '$199', connect: '$399', performance: '$599', command: '$799' },
     ],
   },
 ];
