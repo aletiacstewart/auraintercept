@@ -9,7 +9,7 @@ export default function TermsOfService() {
       <main className="container max-w-4xl mx-auto px-6 py-20">
         <h1 className="text-4xl font-bold mb-8">Terms of Service for Aura Intercept LLC</h1>
         
-        <p className="text-muted-foreground mb-8">Effective Date: April 17, 2026</p>
+        <p className="text-muted-foreground mb-8">Effective Date: April 28, 2026</p>
         
         <div className="prose prose-invert max-w-none space-y-8">
           <p>
@@ -43,15 +43,13 @@ export default function TermsOfService() {
             <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
             <p>
               Aura Intercept is a multi-tenant, AI-powered customer service and appointment management platform designed 
-              for service-based businesses in the trades industry. The platform provides 10 AI operatives across 
-              seven Control Centers (Consoles): Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, 
-              Social Media & Web Presence, Analytics & Reports, and AI Operatives Hub. These automate appointment scheduling, 
+              for service-based businesses in the trades industry. The platform provides <strong className="text-foreground">24 specialized AI agents organized into 10 operatives</strong> across the platform's Consoles: Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media, Web Presence, Analytics & Reports, and the AI Operatives Hub. These automate appointment scheduling, 
               customer communications, field technician dispatch, invoicing, marketing campaigns, social media content, 
               web presence management, and business analytics. Services are delivered through multiple communication channels 
               including AI voice calls, SMS, email, and an embeddable chat widget.
             </p>
             <p className="mt-4">
-              The Service is currently hosted via the Lovable.dev platform. We reserve the right to withdraw or amend 
+              The Service is hosted on Lovable Cloud infrastructure. We reserve the right to withdraw or amend 
               this Service, and any material we provide on the Service, in our sole discretion without notice.
             </p>
           </section>
@@ -64,15 +62,23 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscription plans range from $197 to $1,997 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li>New accounts receive a 90-day free trial with full platform access.</li>
+              <li><strong className="text-foreground">One-time implementation fee</strong> applies at activation: Aura Core $199, Aura Boost $399, Aura Pro $599, Aura Elite $799. Implementation fees are non-refundable once onboarding is completed.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
-            <h3 className="text-xl font-semibold mt-4 mb-3">Usage-Based Charges</h3>
+            <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>SMS messages and voice minutes may incur additional charges based on usage.</li>
-              <li>Usage fees are billed monthly in arrears and added to your subscription invoice.</li>
-              <li>Current usage rates are available on our pricing page.</li>
+              <li>New accounts receive a <strong className="text-foreground">90-day free trial</strong> with full platform access. No credit card is required to start.</li>
+              <li>Trial usage is subject to your selected tier's monthly allowances for SMS, voice, email, and AI search.</li>
+              <li>You may cancel any time during the 90-day trial at no charge.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Bundled Usage & Overages</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>SMS messages, voice minutes, AI-generated voice, transactional email, and AI-powered web search are <strong className="text-foreground">bundled into your Platform Plan</strong> up to your tier's monthly allowance.</li>
+              <li>Usage above your monthly allowance is <strong className="text-foreground">billed separately on a single overage invoice at the end of each billing month</strong>.</li>
+              <li>Aura Intercept does not pass through SignalWire, ElevenLabs, Resend, or Tavily fees as separate line items — third-party provider costs are absorbed into your Platform Plan and overage rate.</li>
+              <li>Current allowances and overage rates are published on the pricing page and may be updated with at least 30 days' notice.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Auto-Renewal</h3>
@@ -84,9 +90,10 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Refund Policy</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Trial Period:</strong> Full refund if cancelled within 90 days.</li>
+              <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 90-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
+              <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable once onboarding has been completed.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
-              <li><strong className="text-foreground">Usage Charges:</strong> Usage charges are non-refundable.</li>
+              <li><strong className="text-foreground">Overage Charges:</strong> End-of-month overage charges are non-refundable.</li>
             </ul>
           </section>
 
@@ -170,11 +177,13 @@ export default function TermsOfService() {
             <h2 className="text-2xl font-semibold mb-4">6. Third-Party Integrations</h2>
             <p className="mb-4">Aura Intercept integrates with various third-party services:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Twilio:</strong> Voice calling and SMS messaging</li>
+              <li><strong className="text-foreground">SignalWire:</strong> Voice calling and SMS messaging</li>
               <li><strong className="text-foreground">ElevenLabs:</strong> AI voice synthesis</li>
+              <li><strong className="text-foreground">Tavily:</strong> AI-powered web search for content and research operatives</li>
               <li><strong className="text-foreground">Stripe:</strong> Payment processing</li>
               <li><strong className="text-foreground">Resend:</strong> Email delivery</li>
               <li><strong className="text-foreground">Google Calendar:</strong> Calendar synchronization</li>
+              <li><strong className="text-foreground">Lovable Cloud (Supabase):</strong> Application hosting, database, authentication, and file storage</li>
             </ul>
             <p className="mt-4">By connecting third-party accounts:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
@@ -183,6 +192,9 @@ export default function TermsOfService() {
               <li>We are not responsible for third-party service outages or data handling practices.</li>
               <li>You may disconnect integrations at any time through your settings.</li>
             </ul>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Costs for these providers are bundled into your Platform Plan; see Section 3 for details on allowances and overage billing.
+            </p>
           </section>
 
           {/* Section 7: Service Level and Availability */}
@@ -265,8 +277,8 @@ export default function TermsOfService() {
               COMPLETE, APPROPRIATE, OR FIT FOR ANY PURPOSE; (C) THE SERVICE WILL PRODUCE ANY SPECIFIC BUSINESS RESULT, 
               INCLUDING BUT NOT LIMITED TO BOOKINGS, REVENUE, LEAD CONVERSION, CUSTOMER ACQUISITION, CUSTOMER RETENTION, 
               SOCIAL MEDIA FOLLOWERS, LIKES, SHARES, COMMENTS, REACH, ENGAGEMENT, SEO RANKINGS, OR WEBSITE TRAFFIC; 
-              (D) THIRD-PARTY INTEGRATIONS (INCLUDING META, GOOGLE, TIKTOK, LINKEDIN, X, STRIPE, SIGNALWIRE, TWILIO, 
-              ELEVENLABS, RESEND, OR ANY OTHER PROVIDER) WILL REMAIN AVAILABLE, FUNCTIONAL, OR COMPATIBLE WITH THE SERVICE; 
+              (D) THIRD-PARTY INTEGRATIONS (INCLUDING META, GOOGLE, TIKTOK, LINKEDIN, X, STRIPE, SIGNALWIRE, 
+              ELEVENLABS, RESEND, TAVILY, LOVABLE CLOUD, OR ANY OTHER PROVIDER) WILL REMAIN AVAILABLE, FUNCTIONAL, OR COMPATIBLE WITH THE SERVICE; 
               OR (E) ANY DEFECT IN THE SERVICE WILL BE CORRECTED. YOU ASSUME ALL RISK OF USE.
             </p>
           </section>
@@ -289,7 +301,7 @@ export default function TermsOfService() {
               <li>Lost, reduced, suspended, banned, throttled, or shadow-banned social media accounts, followers, likes, shares, comments, reach, impressions, engagement, or any other social media metric or outcome on Meta, Facebook, Instagram, TikTok, LinkedIn, X (Twitter), YouTube, Google, or any other platform;</li>
               <li>Missed, delayed, duplicated, or miscommunicated appointments, quotes, invoices, dispatch assignments, voice calls, SMS messages, emails, chats, notifications, or reminders;</li>
               <li>Failed, delayed, dropped, or misrouted SMS, voice, email, or chat communications;</li>
-              <li>Third-party platform outages, algorithm changes, policy changes, API deprecations, account suspensions, or terminations (including but not limited to Meta, Google, TikTok, LinkedIn, X, YouTube, Stripe, SignalWire, Twilio, ElevenLabs, Resend, OpenAI, Google Gemini, Lovable, or Supabase);</li>
+              <li>Third-party platform outages, algorithm changes, policy changes, API deprecations, account suspensions, or terminations (including but not limited to Meta, Google, TikTok, LinkedIn, X, YouTube, Stripe, SignalWire, ElevenLabs, Resend, Tavily, OpenAI, Google Gemini, Lovable Cloud, or Supabase);</li>
               <li>Unauthorized access to or alteration of your data or transmissions;</li>
               <li>Actions you, your employees, or your customers took (or failed to take) based on AI-generated content, recommendations, quotes, or communications;</li>
               <li>Any content obtained from or generated through the Service.</li>
@@ -445,8 +457,8 @@ export default function TermsOfService() {
               acts of God; natural disasters; fire; flood; war; terrorism; civil unrest; pandemic or epidemic; government actions, 
               orders, or regulations; labor disputes; cyberattacks; denial-of-service attacks; internet, telecommunications, or 
               power outages; failures, outages, deprecations, or policy changes by hosting providers, AI providers, telephony 
-              providers, payment processors, email providers, or social media platforms (including without limitation Lovable, 
-              Supabase, OpenAI, Google, ElevenLabs, SignalWire, Twilio, Stripe, Resend, Meta, TikTok, LinkedIn, X, or YouTube); 
+              providers, payment processors, email providers, or social media platforms (including without limitation Lovable Cloud, 
+              Supabase, OpenAI, Google, ElevenLabs, SignalWire, Stripe, Resend, Tavily, Meta, TikTok, LinkedIn, X, or YouTube); 
               or any other event beyond our reasonable control.
             </p>
           </section>
