@@ -49,7 +49,18 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
           email_opt_in: emailOptIn,
         },
       });
-      if (error) throw error;
+      if (error) {
+        // supabase-js wraps non-2xx responses; try to read the JSON body for a friendly message
+        let friendly = error.message || 'Failed to start demo';
+        try {
+          const ctx = (error as unknown as { context?: Response }).context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) friendly = body.error;
+          }
+        } catch { /* ignore */ }
+        throw new Error(friendly);
+      }
       if (!data?.success) throw new Error(data?.error || 'Failed to start demo');
       setResult(data as DemoCredentialsResult);
       toast.success('Demo ready! Your 48-hour trial just started.');
