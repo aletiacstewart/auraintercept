@@ -26,7 +26,7 @@ const PRICING_TIERS = [
 
 export default function ForBusiness() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initial = searchParams.get('industry') || localStorage.getItem(STORAGE_KEY) || 'hvac';
+  const initial = searchParams.get('industry') || localStorage.getItem(STORAGE_KEY) || 'default';
   const [industry, setIndustry] = useState<string>(initial);
   const [demoOpen, setDemoOpen] = useState(false);
 
