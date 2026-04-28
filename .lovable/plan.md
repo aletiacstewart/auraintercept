@@ -1,34 +1,25 @@
-## Goal
-Tighten the **Demo Transparency / "What is live — and what is mocked"** grid in `IntegrationStatusPanel.tsx` so the cards are short, dense tiles (similar to the compact 4-up boxes on the homepage), instead of the tall, wordy boxes shown in the screenshot.
+## Add "Live Demo" link to PublicHeader
 
-## Changes — `src/components/marketing/IntegrationStatusPanel.tsx`
+Add a new nav button next to "Free Audit" in `src/components/layout/PublicHeader.tsx` that links to `/for-business` (the dynamic industry demo page).
 
-**Section header**
-- Heading: `text-2xl md:text-3xl` → `text-xl md:text-2xl`
-- Description copy: trim to a single short line: *"What runs end-to-end vs. what's mocked in the 48-hour demo."*
-- Remove `mb-2` on Badge → `mb-1`; section header `mb-6` → `mb-4`
+### Changes
 
-**Grid density**
-- Grid: `md:grid-cols-2 gap-3` → `sm:grid-cols-2 lg:grid-cols-3 gap-2` (3-up on desktop = much shorter)
-- Card padding: `p-3` → `p-2.5`
-- Icon box: `w-8 h-8` → `w-7 h-7`; icon `w-4 h-4` → `w-3.5 h-3.5`
-- Row gap: `gap-2.5` → `gap-2`
+**1. `src/components/layout/PublicHeader.tsx`**
+- Import a `Sparkles` (or `Zap`) icon from lucide-react.
+- Add a new `<Button variant="ghost">` immediately after the Free Audit button:
+  - Label: `t('nav.liveDemo')`
+  - Icon: `Sparkles` (small, primary accent to draw attention)
+  - onClick: `navigate('/for-business')`
+  - Same styling as Free Audit (`hidden sm:flex`, white text, hover states)
 
-**Per-card content trimming (the real height killer)**
-- Title row: keep title + LIVE/MOCK badge (badge `text-[10px]` → `text-[9px] px-1.5 py-0`)
-- Description: clamp to 2 lines via `line-clamp-2` and shrink to `text-[11px] leading-snug`
-- "Real version needs" line: shrink to `text-[10px]`, `line-clamp-1`, keep Info icon at `w-2.5 h-2.5`
-- Remove `mb-1` between title row and description → `mb-0.5`
+**2. `src/locales/en/common.json`**
+- Add `"liveDemo": "Live Demo"` under the `nav` block.
 
-**Footer**
-- Disclaimer: `text-[11px] mt-4` → `text-[10px] mt-3`
+**3. `src/locales/es/common.json`**
+- Add `"liveDemo": "Demo en vivo"` under the `nav` block.
 
-## Result
-- 3-column grid on desktop instead of 2 → ~33% less vertical space
-- Each tile shorter (smaller icon, tighter padding, clamped text)
-- Matches the compact density of the homepage 4-up stat tiles
+### Result
+The header will show, on small screens and up:
+`Home · Free Audit · Live Demo · Customer Portal · Sign In · Start Free Trial`
 
-## Out of scope
-- No changes to `DEMO_FEATURE_STATUS` data
-- No color/theme token changes
-- Other sections on `/for-business` already compacted in prior pass
+Live Demo routes to `/for-business`, which is the dynamic industry demo page where users can pick their industry and launch the 48-hour demo.
