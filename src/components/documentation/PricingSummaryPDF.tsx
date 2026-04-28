@@ -238,7 +238,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Implementation Fees</Text>
         <Text style={styles.noticeText}>
-          Core: $0 | Boost: $299 | Pro: $599 | Elite: $999. Annual billing = 10x monthly rate.
+          Core: $199 | Boost: $399 | Pro: $599 | Elite: $799. Annual billing = 10x monthly rate.
         </Text>
       </View>
       <View style={styles.footer}>
@@ -332,7 +332,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>$0 implementation fee</FeatureItem>
+        <FeatureItem>$199 implementation fee</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -578,7 +578,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$0', includes: 'Self-service onboarding' },
+          { tier: 'Aura Core', fee: '$199', includes: 'Guided setup' },
           { tier: 'Aura Boost', fee: '$299', includes: 'Onboarding, setup, training' },
           { tier: 'Aura Pro', fee: '$599', includes: 'Onboarding, setup, training, white-label' },
           { tier: 'Aura Elite', fee: '$999', includes: 'Enterprise onboarding, custom setup' },
