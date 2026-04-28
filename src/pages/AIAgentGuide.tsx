@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 const QUICK_REFERENCE_DATA = [
   { 
-    agent: 'Scheduling Agent', 
+    agent: 'Booking Agent', 
     requires: ['AI Receptionist'], 
     tier: 'Multi-Track', 
     cost: '$897', 
@@ -43,7 +43,7 @@ const QUICK_REFERENCE_DATA = [
     notes: 'Full analytics suite' 
   },
   { 
-    agent: 'Social Feed Queue', 
+    agent: 'Social Scheduler Agent', 
     requires: ['Creative Content'], 
     tier: 'Command', 
     cost: '$697', 

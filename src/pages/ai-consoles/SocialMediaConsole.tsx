@@ -24,7 +24,7 @@ export default function SocialMediaConsole() {
           <div className="space-y-6">
             <PageHeader
               icon={Share2}
-              title="Social Media Ops"
+              title="Social Media Console"
               description="AI-powered social media content creation, scheduling, and analytics"
               featureColor="platform"
               showAuraBar

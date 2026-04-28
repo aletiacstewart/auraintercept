@@ -24,7 +24,7 @@ export default function AnalyticsConsole() {
           <div className="space-y-6">
             <PageHeader
               icon={BarChart3}
-              title="Analytics & Reports Ops"
+              title="Analytics & Reports Console"
               description="AI-powered analytics, reporting, and business insights."
               featureColor="platform"
               showAuraBar

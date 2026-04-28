@@ -106,7 +106,7 @@ const agentCategories = [{
   }]
 }, {
   id: 'marketing',
-  name: 'Outreach & Sales Ops',
+  name: 'Outreach & Sales Console',
   icon: Megaphone,
   color: 'from-orange-500 to-amber-500',
   neonRgb: '249,115,22',
@@ -129,12 +129,12 @@ const agentCategories = [{
   }]
 }, {
   id: 'social_media',
-  name: 'Social Media Ops',
+  name: 'Social Media Console',
   icon: Share2,
   color: 'from-pink-500 to-rose-500',
   neonRgb: '236,72,153',
   agents: [{
-    name: 'Social Feed Queue',
+    name: 'Social Scheduler Agent',
     description: 'Cross-platform scheduling, optimal timing, and auto-publishing',
     icon: Calendar
   }, {
@@ -177,7 +177,7 @@ const agentConsoles = [{
   tier: 'performance',
   features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
 }, {
-  name: 'Business Mgt Ops Console',
+  name: 'Business Management Console',
   description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
   icon: Briefcase,
   gradient: 'from-orange-500 to-amber-500',
@@ -1169,14 +1169,14 @@ export default function Index() {
                   <span className="font-semibold text-xs text-white">Tavily</span>
                 </div>
                 <p className="text-[10px] text-white/70 mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                <p className="text-[10px] text-white/90 font-medium">Included in your tier</p>
                 <p className="text-[10px] text-white/70">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-[10px] text-white/60">Optional for: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-white/60">Available on: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
             <p className="text-[10px] text-white/50 italic text-center mt-4">
-              All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+              Usage of bundled providers (SignalWire, ElevenLabs, Resend, Tavily) is included in your subscription. A2P 10DLC and Stripe transaction fees are paid directly to those providers.
             </p>
           </div>
         </div>

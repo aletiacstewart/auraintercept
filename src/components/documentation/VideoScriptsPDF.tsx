@@ -455,7 +455,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:25-0:45</Text>
-          <Text style={styles.timestampContent}>[Features] "AI Receptionist answers calls naturally. Scheduling Agent books appointments instantly. Dispatch Agent optimizes your routes. Review Agent collects 5-star feedback. All working together, all the time."</Text>
+          <Text style={styles.timestampContent}>[Features] "AI Receptionist answers calls naturally. Booking Agent books appointments instantly. Dispatch Agent optimizes your routes. Review Agent collects 5-star feedback. All working together, all the time."</Text>
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:45-0:55</Text>

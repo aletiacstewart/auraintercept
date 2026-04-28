@@ -32,8 +32,8 @@ export default function BusinessMgtOpsInstall() {
         <div className="space-y-6">
           <PageHeader
             icon={Briefcase}
-            title="Business Mgt Ops App Install"
-            description="Install the Business Mgt Ops Console app on your device for quick access"
+            title="Business Management App Install"
+            description="Install the Business Management Console app on your device for quick access"
             featureColor="platform"
             badge={
               <Badge variant={isOnline ? 'default' : 'secondary'} className="gap-1">
@@ -54,7 +54,7 @@ export default function BusinessMgtOpsInstall() {
               Web Backup Access
             </CardTitle>
             <CardDescription>
-              Access the Business Mgt Ops Console directly from your browser
+              Access the Business Management Console directly from your browser
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">

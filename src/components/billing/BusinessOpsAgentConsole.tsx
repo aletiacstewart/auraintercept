@@ -236,11 +236,11 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   return (
     <CyberConsoleLayout
       logoUrl={company?.logo_url}
-      companyName={company?.name || 'Business Mgt Ops Console'}
+      companyName={company?.name || 'Business Management Console'}
       agentLabel={activeLabel}
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
-      subtitle="Business Mgt Ops — Cyber-Sentry Edition"
+      subtitle="Business Management — Cyber-Sentry Edition"
       companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
@@ -289,8 +289,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
             <WelcomeScreen
-              companyName={company?.name || 'Business Mgt Ops Console'}
-              title="Business Mgt Ops Console"
+              companyName={company?.name || 'Business Management Console'}
+              title="Business Management Console"
               subtitle="I can help you with quotes, invoices, leads, and business insights. How can I assist you today?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}

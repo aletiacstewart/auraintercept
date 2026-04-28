@@ -97,7 +97,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
-      'Social Feed Queue Agent + Social Analytics Agent',
+      'Social Scheduler Agent + Social Analytics Agent',
       'White-Label Branding included',
       '50 Employee Accounts',
       'Full API Access + Priority Support',
@@ -324,7 +324,7 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'marketing_sales',
-    name: 'Outreach & Sales Ops',
+    name: 'Outreach & Sales Console',
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing — all in one Outreach Agent.',
     tier: 'aura_core',
     agentCount: 1,
@@ -333,7 +333,7 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'social_media',
-    name: 'Social Media Ops',
+    name: 'Social Media Console',
     description: 'AI-powered creative studio for social media content creation across 6 platforms, AI image/video generation, and brand-consistent multi-channel content.',
     tier: 'aura_boost',
     agentCount: 1,

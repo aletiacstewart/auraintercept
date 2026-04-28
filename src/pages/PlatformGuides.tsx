@@ -54,17 +54,15 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Integrations → Social Media': '/dashboard/settings/integrations',
   'Field Operations': '/dashboard/ai-consoles/field-operations',
   'Field Operations Console': '/dashboard/ai-consoles/field-operations',
-  'Business Ops Hub': '/dashboard/ai-consoles/business-mgt-ops',
+  'Business Management Console': '/dashboard/ai-consoles/business-mgt-ops',
   'Business Ops Console': '/dashboard/ai-consoles/business-mgt-ops',
-  'Business Mgt Ops Console': '/dashboard/ai-consoles/business-mgt-ops',
   'Business Operations Console': '/dashboard/ai-consoles/business-mgt-ops',
-  'Outreach & Sales Ops': '/dashboard/ai-consoles/outreach-sales',
+  'Outreach & Sales Console': '/dashboard/ai-consoles/outreach-sales',
   'Outreach & Sales Ops Console': '/dashboard/ai-consoles/outreach-sales',
   'Marketing Console': '/dashboard/ai-consoles/outreach-sales',
-  'Social Media Ops': '/dashboard/ai-consoles/social-media',
   'Social Media Console': '/dashboard/ai-consoles/social-media',
   'Analytics & Reports': '/dashboard/ai-consoles/analytics-reports',
-  'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics-reports',
+  'Analytics & Reports Console': '/dashboard/ai-consoles/analytics-reports',
   'Analytics Console': '/dashboard/ai-consoles/analytics-reports',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
   'Customer Portal': '/dashboard/ai-consoles/customer-portal',
@@ -131,7 +129,7 @@ const guideCategories = [
         steps: [
           'Aura Core ($197/mo): 8 AI Agents — Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing',
           'Aura Boost ($497/mo): 12 AI Agents — All Core + Dispatch, Route, ETA, Check-In',
-          'Aura Pro ($997/mo): 16 AI Agents — All Boost + Campaign, Outreach, Social Feed Queue, Social Analytics',
+          'Aura Pro ($997/mo): 16 AI Agents — All Boost + Campaign, Outreach, Social Scheduler Agent, Social Analytics',
           'Aura Elite ($1,997/mo): All 24 AI Agents + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
           'White-Label Branding available from Pro tier and above',
@@ -198,7 +196,7 @@ const guideCategories = [
           '1. Customer Portal Stack (Core): AI Receptionist, Booking, Follow-Up, Review',
           '2. Creative & Web Stack (Core): Creative Content, Web Presence, Lead, Marketing',
           '3. Field Ops Stack (Boost): Dispatch, Route, ETA, Check-In',
-          '4. Outreach & Social Stack (Pro): Campaign, Outreach, Social Feed Queue, Social Analytics',
+          '4. Outreach & Social Stack (Pro): Campaign, Outreach, Social Scheduler Agent, Social Analytics',
           '5. Business Ops Stack (Elite): Admin, Quoting, Invoice, Inventory',
           '6. Analytics Stack (Elite): Insights, Performance, Revenue, Forecast',
           'Agents unlock progressively as you upgrade tiers',
@@ -221,7 +219,7 @@ const guideCategories = [
         tips: ['AI Receptionist is required for all other customer-facing agents', 'Customize greeting for your brand voice']
       },
       {
-        title: 'Scheduling Agent',
+        title: 'Booking Agent',
         duration: '10 min',
         steps: [
           'Enable in AI Agents Hub (requires Core+ tier)',
@@ -309,7 +307,7 @@ const guideCategories = [
         duration: '12 min',
         steps: [
           'Creative Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
-          'Social Feed Queue: Queues and publishes at optimal times',
+          'Social Scheduler Agent: Queues and publishes at optimal times',
           'Social Analytics Agent: Tracks engagement across platforms',
           'All three require Pro+ tier',
           'Uses 3-step Content Wizard: Topic → Generate → Schedule',
@@ -420,7 +418,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'AI Receptionist (triage) is the root dependency for customer-facing agents',
-          'Scheduling Agent requires AI Receptionist',
+          'Booking Agent requires AI Receptionist',
           'Follow-up Agent requires AI Receptionist',
           'Review Agent requires Follow-up Agent',
           'Dispatch Agent is root for field operations',
@@ -473,7 +471,7 @@ const guideCategories = [
         title: 'Business Operations Console',
         duration: '10 min',
         steps: [
-          'Navigate to Business Mgt Ops Console from sidebar',
+          'Navigate to Business Management Console from sidebar',
           'Tabs: Aura Live, Quote, Invoice, Lead, Appts, Inventory, Companies, Employees, Customers',
           'Aura Live: Real-time activity monitoring',
           'Quote/Invoice: AI-powered document generation',
@@ -505,7 +503,7 @@ const guideCategories = [
           'Home: AI Chat with Creative Content agent for guidance',
           'Create Content: MultiChannelGenerator with AI Suggest topics, Industry Templates, and Manual Bridge posting',
           'My Posts: SocialFeedQueue showing all drafts and published content',
-          'Agents: Creative Content, Social Feed Queue, Social Analytics',
+          'Agents: Creative Content, Social Scheduler Agent, Social Analytics',
           'Supports: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS'
         ],
         tips: ['Use AI Suggest for topic inspiration', 'Manual Bridge lets you post without API setup']
@@ -931,7 +929,7 @@ const guideCategories = [
         title: 'Business Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Business Ops Hub from sidebar',
+          'Navigate to Business Management Console from sidebar',
           'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
@@ -1119,7 +1117,7 @@ const guideCategories = [
   },
   {
     id: 'social-media',
-    title: 'Social Media Ops',
+    title: 'Social Media Console',
     icon: Globe,
     featureColor: 'feature-marketing',
     guides: [
@@ -1190,7 +1188,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports Ops from sidebar (Elite tier)',
+          'Navigate to Analytics & Reports Console from sidebar (Elite tier)',
           'Quick Action Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Social, Reminders, Export',
           'Form-based interfaces for structured reporting',
           'AI Insights Agent for natural language queries',
@@ -1329,7 +1327,7 @@ const guideCategories = [
           'Mark days as closed if applicable',
           'Add holiday closures in advance',
           'Configure after-hours messaging',
-          'Scheduling Agent respects these hours',
+          'Booking Agent respects these hours',
           'Customer Portal shows current status'
         ],
         tips: ['Update hours before holidays', 'Set emergency contact for after-hours']

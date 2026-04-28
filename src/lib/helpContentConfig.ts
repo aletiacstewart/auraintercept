@@ -167,7 +167,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
   {
     id: 'marketing_sales',
-    title: 'Outreach & Sales Ops',
+    title: 'Outreach & Sales Console',
     icon: Megaphone,
     description: 'AI-powered marketing automation — all in one Outreach Agent covering campaign management, lead nurturing, customer segmentation, and promotional tools.',
     requiredTier: 'starter',
@@ -198,7 +198,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
   {
     id: 'social_media',
-    title: 'Social Media Ops',
+    title: 'Social Media Console',
     icon: Share2,
     description: 'AI-powered creative studio powered by the Creative Content Agent — generates platform-optimized posts, AI images/videos, and multi-channel content for 6 platforms.',
     requiredTier: 'connect',
@@ -413,7 +413,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
-      'Social Feed Queue + Social Analytics',
+      'Social Scheduler Agent + Social Analytics',
       'White-Label Branding included',
       '50 Employee Accounts',
     ],

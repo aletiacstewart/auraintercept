@@ -267,10 +267,10 @@ const companyGuideCategories = [
         tips: ['Entry point for all customer interactions']
       },
       {
-        title: 'Scheduling Agent Setup',
+        title: 'Booking Agent Setup',
         duration: '10 min',
         steps: [
-          'Enable the Scheduling Agent',
+          'Enable the Booking Agent',
           'Ensure business hours are configured',
           'Set up service duration defaults',
           'Configure employee availability',
@@ -323,10 +323,10 @@ const companyGuideCategories = [
         tips: ['Use map view for visual dispatch']
       },
       {
-        title: 'Business Management Ops Console',
+        title: 'Business Management Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Business Management Ops',
+          'Access via AI Consoles → Business Management Console',
           'Create quotes and invoices with AI help',
           'Look up customer billing information',
           'Track outstanding payments',
@@ -347,10 +347,10 @@ const companyGuideCategories = [
         tips: ['Use AI to generate campaign content']
       },
       {
-        title: 'Analytics & Reports Ops Console',
+        title: 'Analytics & Reports Console',
         duration: '12 min',
         steps: [
-          'Access via AI Consoles → Analytics & Reports Ops',
+          'Access via AI Consoles → Analytics & Reports Console',
           'View performance dashboards and KPIs',
           'Generate revenue reports and forecasts',
           'Track customer trends and insights',

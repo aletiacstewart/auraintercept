@@ -40,7 +40,7 @@ export default function BusinessOperations() {
               <ShieldAlert className="h-5 w-5" />
               <AlertTitle>Access Denied</AlertTitle>
               <AlertDescription>
-                You don't have permission to access the Business Mgt Ops. 
+                You don't have permission to access the Business Management. 
                 This feature is available to Company and Platform Administrators only.
               </AlertDescription>
             </Alert>
@@ -56,7 +56,7 @@ export default function BusinessOperations() {
         <div className="space-y-6">
           <PageHeader
             icon={Briefcase}
-            title="Business Mgt Ops Overview"
+            title="Business Management Overview"
             description="Monitor financial metrics, manage sales, appointments, inventory, and people in one place"
             featureColor="analytics"
             showAuraBar

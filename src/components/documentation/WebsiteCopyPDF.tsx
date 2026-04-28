@@ -387,7 +387,7 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>Turn happy customers into 5-star reviews. Automated requests timed perfectly after every job.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Scheduling Agent</Text>
+            <Text style={styles.agentName}>Booking Agent</Text>
             <Text style={styles.agentDesc}>Goodbye, calendar chaos. AI books appointments based on availability, location, and job requirements.</Text>
           </View>
           <View style={styles.agentCard}>
@@ -433,7 +433,7 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>AI-generated posts for every platform. On-brand content created in seconds, not hours.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Social Feed Queue</Text>
+            <Text style={styles.agentName}>Social Scheduler Agent</Text>
             <Text style={styles.agentDesc}>Post at the perfect time. Queue content across all platforms with a single click.</Text>
           </View>
           <View style={styles.agentCard}>
@@ -531,7 +531,7 @@ export const WebsiteCopyPDF: React.FC = () => (
           - 16 Smart AI Agents{'\n'}
           - 5 Control Centers{'\n'}
           - Campaign & Outreach Agents{'\n'}
-          - Social Feed Queue & Analytics{'\n'}
+          - Social Scheduler Agent & Analytics{'\n'}
           - White-Label Branding{'\n'}
           - Up to 50 employees
         </Text>
@@ -578,12 +578,12 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Can I try before I commit?</Text>
-        <Text style={styles.faqAnswer}><Text style={styles.faqAnswer}>Absolutely. We offer a 90-day free trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text> No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
+        <Text style={styles.faqAnswer}>Absolutely. We offer a 90-day free trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
       </View>
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}><Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($0 for Core, $299 for Boost, $599 for Pro, $999 for Elite) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text> that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time implementation fee ($0 for Core, $299 for Boost, $599 for Pro, $999 for Elite) that covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>

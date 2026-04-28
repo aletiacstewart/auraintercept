@@ -24,7 +24,7 @@ const stats = [
 ];
 
 const agents = [
-  { name: "Scheduling Agent", desc: "Handles booking, rescheduling & cancellations", icon: Calendar, status: "active", confidence: 96 },
+  { name: "Booking Agent", desc: "Handles booking, rescheduling & cancellations", icon: Calendar, status: "active", confidence: 96 },
   { name: "Support Agent", desc: "Customer inquiries & ticket resolution", icon: Headphones, status: "active", confidence: 94 },
   { name: "Dispatch Agent", desc: "Smart technician routing & assignment", icon: Wrench, status: "active", confidence: 91 },
   { name: "Billing Agent", desc: "Invoicing, payments & estimates", icon: FileText, status: "learning", confidence: 87 },

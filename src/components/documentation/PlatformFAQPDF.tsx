@@ -470,7 +470,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What happens when my trial ends?"
-          answer="You'll receive email reminders at 7 days, 3 days, and 1 day before trial expiration. After the trial, your subscription begins automatically if payment is configured. Without payment, access is paused until you subscribe."
+          answer="You'll receive email reminders at 30 days, 7 days, and 1 day before trial expiration. After the trial, your subscription begins automatically if payment is configured. Without payment, access is paused until you subscribe."
         />
 
         <View style={styles.footer}>
@@ -535,8 +535,8 @@ const PlatformFAQPDF = () => {
         />
         
         <FAQItem 
-          question="What can the Scheduling Agent do?"
-          answer="The Scheduling Agent automates appointment booking by checking technician availability, confirming dates/times with customers, syncing with Google Calendar, and sending confirmation messages. It handles rescheduling requests and cancellations automatically."
+          question="What can the Booking Agent do?"
+          answer="The Booking Agent automates appointment booking by checking technician availability, confirming dates/times with customers, syncing with Google Calendar, and sending confirmation messages. It handles rescheduling requests and cancellations automatically."
         />
 
         <View style={styles.footer}>
@@ -726,7 +726,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Can I sync with Google Calendar?"
-          answer="Yes! Google Calendar integration provides two-way sync for appointments. Enable it from Settings > Integrations. The Scheduling Agent automatically creates/updates calendar events when appointments are booked, modified, or cancelled. Free to use with a Google account."
+          answer="Yes! Google Calendar integration provides two-way sync for appointments. Enable it from Settings > Integrations. The Booking Agent automatically creates/updates calendar events when appointments are booked, modified, or cancelled. Free to use with a Google account."
         />
         
         <FAQItem 

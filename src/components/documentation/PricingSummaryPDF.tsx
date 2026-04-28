@@ -396,7 +396,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Everything in Boost (12 agents), plus:</FeatureItem>
         <FeatureItem>Campaign Agent - Automated campaign creation</FeatureItem>
         <FeatureItem>Outreach Agent - Sales outreach automation</FeatureItem>
-        <FeatureItem>Social Feed Queue - Social media scheduling</FeatureItem>
+        <FeatureItem>Social Scheduler Agent - Social media scheduling</FeatureItem>
         <FeatureItem>Social Analytics - Social media performance tracking</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Consoles (5)</Text>

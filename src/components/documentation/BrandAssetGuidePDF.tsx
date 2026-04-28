@@ -646,7 +646,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.iconDesc}>Filter/funnel icon. Represents sorting inquiries.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.warning }]}>
-            <Text style={styles.iconName}>Scheduling Agent</Text>
+            <Text style={styles.iconName}>Booking Agent</Text>
             <Text style={styles.iconDesc}>Calendar + checkmark. Represents bookings.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.primary }]}>
@@ -696,7 +696,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.iconDesc}>Pen + hashtag. Represents content creation.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.secondary }]}>
-            <Text style={styles.iconName}>Social Feed Queue</Text>
+            <Text style={styles.iconName}>Social Scheduler Agent</Text>
             <Text style={styles.iconDesc}>Calendar + share. Represents posting.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.accent }]}>

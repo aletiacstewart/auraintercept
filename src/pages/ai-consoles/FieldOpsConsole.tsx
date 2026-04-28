@@ -56,7 +56,7 @@ export default function FieldOpsConsole() {
           <div className="space-y-6 animate-fade-in">
             <PageHeader
               icon={HardHat}
-              title="Technician-Field Ops"
+              title="Field Operations Console"
               description="Your intelligent field operations assistant"
               featureColor="fieldops"
               showAuraBar

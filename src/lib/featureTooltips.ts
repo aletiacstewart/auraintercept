@@ -55,15 +55,15 @@ export const FEATURE_TOOLTIPS = {
       tooltip: 'Central hub for quotes, invoices, leads, appointments, inventory, and employee management.',
     },
     marketingSales: {
-      label: 'Outreach & Sales Ops',
+      label: 'Outreach & Sales Console',
       tooltip: 'Marketing automation with campaigns, promo codes, customer segments, referrals, and win-back programs.',
     },
     socialMedia: {
-      label: 'Social Media Ops',
+      label: 'Social Media Console',
       tooltip: 'AI-powered content creation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
     },
     analyticsReports: {
-      label: 'Analytics & Reports Ops',
+      label: 'Analytics & Reports Console',
       tooltip: 'Business intelligence with performance metrics, revenue analysis, forecasting, and multi-format exports.',
     },
   },
@@ -75,7 +75,7 @@ export const FEATURE_TOOLTIPS = {
       tooltip: 'Handles initial customer contact, routes inquiries, and provides business information 24/7.',
     },
     scheduling: {
-      label: 'Scheduling Agent',
+      label: 'Booking Agent',
       tooltip: 'Manages online appointment booking with smart time slot suggestions and conflict detection.',
     },
     followup: {

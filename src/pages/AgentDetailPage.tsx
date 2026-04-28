@@ -69,7 +69,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   booking: {
-    name: 'Scheduling Agent',
+    name: 'Booking Agent',
     description: 'Handles appointment scheduling, rescheduling, and cancellations with intelligent slot management.',
     category: 'customer_engagement',
     phase: 2,
@@ -388,7 +388,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   social_scheduler: {
-    name: 'Social Feed Queue',
+    name: 'Social Scheduler Agent',
     description: "Manages the content calendar and queue across 6 platforms. Sets posts to 'Ready to Post' status so your team can use the Manual Bridge or auto-publish via configured API credentials.",
     category: 'social_media',
     phase: 2,

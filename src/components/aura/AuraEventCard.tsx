@@ -29,7 +29,7 @@ interface AuraEventCardProps {
 }
 
 const AGENT_CONFIG: Record<string, { icon: typeof Calendar; label: string; color: string }> = {
-  booking: { icon: Calendar, label: 'Scheduling Agent', color: 'text-feature-appointments' },
+  booking: { icon: Calendar, label: 'Booking Agent', color: 'text-feature-appointments' },
   dispatch: { icon: Truck, label: 'Dispatch Agent', color: 'text-feature-fieldops' },
   route: { icon: Route, label: 'Route Agent', color: 'text-feature-fieldops' },
   invoice: { icon: Receipt, label: 'Billing Agent', color: 'text-feature-invoices' },
@@ -50,7 +50,7 @@ function getHumanizedMessage(event: AuraEventCardProps['event']): string {
   // Booking events
   if (source_agent === 'booking' || event_type.includes('booking') || event_type.includes('appointment')) {
     if (amount) {
-      return `Aura just saved you time! Scheduling Agent booked a $${amount} ${service} for ${customerName}.`;
+      return `Aura just saved you time! Booking Agent booked a $${amount} ${service} for ${customerName}.`;
     }
     return `New appointment scheduled for ${customerName} - ${service}.`;
   }

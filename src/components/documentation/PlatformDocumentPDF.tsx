@@ -482,7 +482,7 @@ const agents = {
     { name: 'Review Agent', desc: 'Collects customer feedback and drives reviews to Google, Yelp, and Facebook automatically.' },
   ],
   fieldOperations: [
-    { name: 'Scheduling Agent', desc: 'Natural language appointment scheduling with real-time availability checks and instant confirmations.' },
+    { name: 'Booking Agent', desc: 'Natural language appointment scheduling with real-time availability checks and instant confirmations.' },
     { name: 'Dispatch Agent', desc: 'Smart job assignment based on skills, location, and availability. Optimizes technician utilization.' },
     { name: 'Route Agent', desc: 'Real-time route optimization saves fuel and increases daily job capacity by 20%.' },
     { name: 'ETA Agent', desc: 'Accurate arrival predictions with automatic customer notifications. Improves satisfaction scores.' },
@@ -507,7 +507,7 @@ const agents = {
   // Social Media agents are premium add-ons (not included in core 19)
   socialMediaAddons: [
     { name: 'Creative Content Agent', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, GMB, and SMS.' },
-    { name: 'Social Feed Queue', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
+    { name: 'Social Scheduler Agent', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
     { name: 'Social Analytics Agent', desc: 'Performance tracking and engagement insights for continuous improvement.' },
   ],
 };
@@ -626,7 +626,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.paragraph}>
         Unlike generic CRMs or answering services, Aura Intercept uses 24 Smart AI Agents that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
-        classifies the urgency, Scheduling Agent books the appointment, Dispatch Agent assigns the 
+        classifies the urgency, Booking Agent books the appointment, Dispatch Agent assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
       </Text>
     </Page>
