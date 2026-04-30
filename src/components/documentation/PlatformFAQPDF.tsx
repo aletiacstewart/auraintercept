@@ -771,7 +771,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What information should I add to the Knowledge Base?"
-          answer="Essential information includes: Company description and history, complete service catalog with pricing, FAQ answers to common customer questions, business hours and holiday schedule, service areas (cities, zip codes), staff bios, policies (cancellation, warranty), and any unique selling points."
+          answer="Essential information includes: Company description and history, complete service catalog with pricing, FAQ answers to common customer questions, business hours and holiday schedule, service areas (cities, zip codes), staff bios, policies (cancellation, refund, terms), and any unique selling points."
         />
         
         <FAQItem 
