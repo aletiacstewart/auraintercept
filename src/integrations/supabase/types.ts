@@ -7002,6 +7002,17 @@ export type Database = {
         Returns: boolean
       }
       is_customer: { Args: { _user_id: string }; Returns: boolean }
+      list_companies_admin: {
+        Args: never
+        Returns: {
+          id: string
+          is_demo: boolean
+          logo_url: string
+          name: string
+          primary_color: string
+          slug: string
+        }[]
+      }
       list_companies_public: {
         Args: never
         Returns: {

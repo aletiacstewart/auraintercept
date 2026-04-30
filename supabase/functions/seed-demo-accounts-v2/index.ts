@@ -116,6 +116,7 @@ async function seedTier(admin: ReturnType<typeof createClient>, tier: TierDef) {
     name: tier.label,
     slug,
     subscription_tier: tier.internalTier,
+    is_demo: true,
     primary_color: tier.primary,
     secondary_color: tier.secondary,
     contact_email: `${tier.key}company@demo.com`,
