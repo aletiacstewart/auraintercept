@@ -863,7 +863,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How do I get support?"
-          answer="Support options include: 1) In-app Help Center with searchable guides, 2) Platform Guides section with step-by-step instructions, 3) Email support at support@auraintercept.com, 4) Live chat during business hours, 5) Priority phone support for Command tier. Average response time is under 24 hours."
+          answer="Support options include: 1) In-app Help Center with searchable guides, 2) Platform Guides section with step-by-step instructions, 3) Email support at ai@auraintercept.ai, 4) Live chat during business hours, 5) Priority support for Aura Pro and Aura Elite tiers. Average response time is under 24 hours."
         />
         
         <FAQItem 
@@ -917,7 +917,7 @@ const PlatformFAQPDF = () => {
           <Text style={{ fontSize: 9, lineHeight: 1.5 }}>
             If these solutions don't resolve your issue, contact support with: your company name, 
             description of the problem, steps to reproduce, and any error messages. Screenshots 
-            help us diagnose issues faster. Email: support@auraintercept.com
+            help us diagnose issues faster. Email: ai@auraintercept.ai
           </Text>
         </View>
 
@@ -951,7 +951,7 @@ const PlatformFAQPDF = () => {
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>Support Email</Text>
-              <Text style={[styles.tableCell, { flex: 2 }]}>support@auraintercept.com</Text>
+              <Text style={[styles.tableCell, { flex: 2 }]}>ai@auraintercept.ai</Text>
             </View>
             <View style={styles.tableRowAlt}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>Starting Price</Text>
