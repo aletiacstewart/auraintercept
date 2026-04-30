@@ -844,7 +844,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="text-card-foreground/70 space-y-2">
-                          <p>The Analytics & Reports console (Command tier) includes:</p>
+                          <p>The Analytics & Reports console (Aura Elite tier) includes:</p>
                           <ul className="list-disc ml-5 space-y-1">
                             <li><strong className="text-card-foreground">Performance:</strong> Team and service performance metrics</li>
                             <li><strong className="text-card-foreground">Revenue:</strong> Income trends and projections</li>

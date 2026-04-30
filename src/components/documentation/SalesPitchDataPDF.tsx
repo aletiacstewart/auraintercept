@@ -725,7 +725,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
         </View>
         <Text style={{ fontSize: 10, color: colors.dark, lineHeight: 1.5 }}>
-          "Mike was a solo HVAC tech missing calls while on jobs. After implementing Aura's Performance tier, he recovered 23 leads in month one. The AI scheduled appointments, sent confirmations, and even optimized his routes. He's since hired two technicians and credits Aura with enabling his growth."
+          "Mike was a solo HVAC tech missing calls while on jobs. After implementing Aura's Aura Pro tier, he recovered 23 leads in month one. The AI scheduled appointments, sent confirmations, and even optimized his routes. He's since hired two technicians and credits Aura with enabling his growth."
         </Text>
       </View>
 
@@ -751,7 +751,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
         </View>
         <Text style={{ fontSize: 10, color: colors.dark, lineHeight: 1.5 }}>
-          "ProPlumb was struggling to coordinate dispatching across 3 locations and 12 technicians. The Command tier unified their operations with AI-powered dispatch, eliminating scheduling conflicts and reducing drive time by 45%. Their dispatchers now focus on customer relationships instead of logistics."
+          "ProPlumb was struggling to coordinate dispatching across 3 locations and 12 technicians. The Aura Elite tier unified their operations with AI-powered dispatch, eliminating scheduling conflicts and reducing drive time by 45%. Their dispatchers now focus on customer relationships instead of logistics."
         </Text>
       </View>
 

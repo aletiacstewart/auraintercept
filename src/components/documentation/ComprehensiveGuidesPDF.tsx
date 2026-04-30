@@ -345,7 +345,7 @@ const guideCategories = [
           'Performance Agent: Tracks KPIs and operational metrics',
           'Revenue Agent: Analyzes financial trends and forecasts',
           'Forecast Agent: Predicts demand and capacity needs',
-          'All analytics agents require Command tier'
+          'All analytics agents require Aura Elite tier'
         ],
         tips: ['Use form-based interfaces for structured reports']
       },
@@ -546,7 +546,7 @@ const guideCategories = [
           'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
-          'Inventory tab requires Command tier'
+          'Inventory tab requires Aura Elite tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard']
       },
@@ -578,7 +578,7 @@ const guideCategories = [
         title: 'Inventory Tracking',
         duration: '10 min',
         steps: [
-          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Navigate to Knowledge Base → Inventory (Aura Elite tier)',
           'Add inventory items with SKU codes',
           'Set minimum quantity thresholds',
           'Configure low-stock alert notifications',
@@ -607,7 +607,7 @@ const guideCategories = [
         title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Outreach & Sales Ops (Command tier)',
+          'Navigate to Outreach & Sales Ops (Aura Elite tier)',
           'Quick Action Tabs: Campaign, Leads, Marketing',
           'Create and manage marketing campaigns',
           'Configure promo codes and discounts',
@@ -740,7 +740,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '10 min',
         steps: [
-          'Navigate to Analytics & Reports Console (Command tier)',
+          'Navigate to Analytics & Reports Console (Aura Elite tier)',
           'Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Export',
           'Form-based interfaces for structured reporting',
           'AI Insights Agent for natural language queries',
@@ -854,7 +854,7 @@ const guideCategories = [
         title: 'Inventory Management',
         duration: '12 min',
         steps: [
-          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Navigate to Knowledge Base → Inventory (Aura Elite tier)',
           'Add parts and supplies with SKU codes',
           'Set stock quantities and minimum levels',
           'Configure low-stock alert thresholds',

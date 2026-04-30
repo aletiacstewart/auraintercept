@@ -352,7 +352,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How long does implementation take?"
-          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Connect tiers can be live within 3-5 business days. Performance and Command tiers with field operations may take 2-3 weeks for full configuration and technician training."
+          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Aura Boost tiers can be live within 3-5 business days. Performance and Aura Elite tiers with field operations may take 2-3 weeks for full configuration and technician training."
         />
         
         <FAQItem 
@@ -663,12 +663,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What reports can I generate?"
-          answer={`The Analytics & Reports console includes ${PLATFORM_STATS.analyticsTabs} specialized tabs: Performance (KPIs), Revenue (financial trends), Insights (natural language queries), Forecast (demand prediction), KPIs (metrics), Social (engagement), Reminders (communication stats), and Export (PDF/CSV reports). Available on Command tier.`}
+          answer={`The Analytics & Reports console includes ${PLATFORM_STATS.analyticsTabs} specialized tabs: Performance (KPIs), Revenue (financial trends), Insights (natural language queries), Forecast (demand prediction), KPIs (metrics), Social (engagement), Reminders (communication stats), and Export (PDF/CSV reports). Available on Aura Elite tier.`}
         />
 
         <FAQItem 
           question="What is the Business Operations console?"
-          answer="Business Operations is a comprehensive management console with: Quote generation, Invoice creation, Lead management, Appointment scheduling, Inventory tracking, Company settings, Employee management, and Customer database. Available on Command tier only."
+          answer="Business Operations is a comprehensive management console with: Quote generation, Invoice creation, Lead management, Appointment scheduling, Inventory tracking, Company settings, Employee management, and Customer database. Available on Aura Elite tier only."
         />
 
         <FAQItem 
