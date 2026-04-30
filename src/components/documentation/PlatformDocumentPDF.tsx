@@ -1219,11 +1219,12 @@ const PlatformDocumentPDF = () => (
       <View style={styles.highlightBox}>
         <Text style={styles.highlightTitle}>Only Platform With:</Text>
         <Text style={styles.highlightText}>
-          - 22 purpose-built AI agents that work together{"\n"}
+          - 24 Smart AI Agents organized as 10 Operatives that work together{"\n"}
           - True voice AI (not just IVR or voicemail){"\n"}
           - Full social media content creation (6 platforms){"\n"}
-          - White-label ready from Day 1{"\n"}
-          - Built specifically for service businesses
+          - White-label ready from Day 1 (Aura Pro and Elite){"\n"}
+          - Built specifically for service businesses{"\n"}
+          - SignalWire, ElevenLabs, Resend, and Tavily bundled — no extra usage fees
         </Text>
       </View>
     </Page>
@@ -1261,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Our platform costs $897. You'd make 6x your investment."
+          that's $6,000/month in lost revenue. Aura Core starts at $197/month — and there's a 90-day free trial with no credit card required."
         </Text>
       </View>
 
