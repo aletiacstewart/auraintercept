@@ -46,7 +46,7 @@ export const HOW_TO_USE: Record<string, Content> = {
       'Save — the AI starts quoting it immediately.',
     ],
     example:
-      'Add "Mini-Split Installation — $2,400, 4 hrs". A customer chats with the website that night asking about ductless options. The AI replies with the price, books a free estimate, and adds the lead to your CRM.',
+      'Add "Mini-Split Installation — $2,400, 4 hrs". A customer chats with the website that night asking about ductless options. The AI replies with the price, books a free estimate, and saves the lead in your dashboard.',
   },
 
   faqsTab: {
@@ -85,16 +85,16 @@ export const HOW_TO_USE: Record<string, Content> = {
   documentsTab: {
     title: 'Documents',
     runsAutomatically: [
-      'AI uses uploaded PDFs (warranties, service agreements, brochures) as reference material.',
+      'AI uses uploaded PDFs (service agreements, brochures, policy docs) as reference material.',
       'Quotes specific terms from documents when customers ask detailed questions.',
     ],
-    whenYouStepIn: ['Uploading a new contract template, warranty doc, or pricing sheet.'],
+    whenYouStepIn: ['Uploading a new contract template, policy doc, or pricing sheet.'],
     steps: [
       'Click "Upload" and drop in PDFs, Word docs, or images.',
       'AI indexes them automatically.',
     ],
     example:
-      'Upload your 5-year warranty PDF. A customer asks "what does my warranty actually cover?" — the AI cites the exact clause and offers to email the doc.',
+      'Upload your service agreement PDF. A customer asks "what is included in the standard plan?" — the AI cites the exact clause and offers to email the doc.',
   },
 
   smartLinksTab: {
