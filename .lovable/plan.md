@@ -1,81 +1,87 @@
-# Hide Demo Accounts From Real Users
+## Goal
 
-## The actual problem
+Bring every customer-facing knowledge artifact to a single, current source of truth so the PDFs you download into Aura's knowledge base are accurate. Standard everywhere:
 
-A signed-up customer or employee should never see the seeded demo companies (Demo Core / Boost / Pro / Elite) or the trial-seeded `[DEMO] Charles' HVAC` in any list. Right now they leak in three places:
+- **4 Tiers**: Core $197 / Boost $497 / Pro $997 / Elite $1,997 (90-day free trial, no card)
+- **24 Smart AI Agents = 10 Operatives** across **7 Control Centers + AI Operatives Hub**
+- **3rd-party services bundled** (SignalWire, ElevenLabs, Resend, Tavily) — no extra fees
+- **No CRM, no Warranty, no multi-location, no Twilio**
+- **Contact email**: `ai@auraintercept.ai` (not `support@auraintercept.com`)
+- **Universal `technician` role**, plain-English agent labels (Front Desk, On The Way, Billing, etc.)
 
-1. **DB rows aren't flagged.** Only `[DEMO] Charles' HVAC` has `is_demo=true`. The four tier-demo companies (`Demo Core`, `Demo Boost`, `Demo Pro`, `Demo Elite`) have `is_demo=false` even though `seed-demo-accounts-v2` created them. Aura Intercept is the only real company.
-2. **The public RPC `list_companies_public` returns every company unfiltered** — used by the Customer Portal Console "Select a Company" picker, the public `/portal` directory and the embedded chat widget company picker.
-3. **The seeder doesn't set `is_demo=true`** on insert/update, so re-seeding re-creates the leak.
+## Scope (every item below will be reviewed and corrected)
 
-## Fix (3 parts, one migration + one edge-function tweak + one front-end guard)
+### 1. Master config (drives PDFs + Help)
+- `src/lib/documentationConfig.ts` — verify all 4 tiers, agent lists, console names, features, integrations, FAQ data
+- `src/lib/helpContentConfig.ts` — fix legacy tier keys (`'starter'`, `'command'`) and console/agent mappings
+- `src/lib/howToUseContent.ts` — remove CRM/warranty examples, refresh agent count phrasing
+- `src/lib/industryMarketingContent.ts` — verify industry list (incl. SaaS/DaaS) and tier references
 
-### 1. Migration — backfill the flag and filter the RPCs
+### 2. PDF generators (`src/components/documentation/`)
+Review and update each:
+- `AIAgentGuidesPDF.tsx`
+- `PlatformDocumentPDF.tsx`
+- `ComprehensiveGuidesPDF.tsx`
+- `CompanyGuidesPDF.tsx`
+- `CompanyOnboardingPDF.tsx`
+- `PricingSummaryPDF.tsx`
+- `SalesPitchDataPDF.tsx`
+- `SocialMediaContentPackPDF.tsx`
+- `VideoScriptsPDF.tsx`
+- `BrandAssetGuidePDF.tsx`
+- `WebsiteCopyPDF.tsx`
+- `IndustryMarketingKitPDF.tsx`
+- `PlatformFAQPDF.tsx` — replace `support@auraintercept.com` (3 places), remove "Command tier" wording
+- Fix the duplicated `<li><li>4-Tier Subscription Access</li></li>` in `ExportDocumentation.tsx`
 
-```sql
--- Backfill: any company created by the demo seeder is a demo
-UPDATE public.companies
-SET is_demo = true
-WHERE slug IN ('demo-core','demo-boost','demo-pro','demo-elite')
-   OR name ILIKE '[DEMO]%'
-   OR name ILIKE 'Demo %';
+### 3. Pages
+- `src/pages/ExportDocumentation.tsx` — descriptions, bullet lists, broken HTML
+- `src/pages/PlatformGuides.tsx` — guide titles, links to consoles, agent names
+- `src/pages/Help.tsx` — tier descriptions, FAQ answers, support contact
+- `src/pages/Architecture.tsx` — flowcharts, "7 Control Centers + AI Operatives Hub" wording, links
+- `src/pages/AIAgentGuide.tsx` — agent listing
+- `src/pages/AIAgentFlowDemo.tsx` — narration scripts (24 agents / 7 consoles already correct, verify links)
+- `src/pages/VideoPromptsPage.tsx` — every script's audio narration, tier references, agent names
+- `src/pages/DemoAccountSeeder.tsx` — verify the 12 demo accounts (4 tiers × admin/employee/customer), `aidemo*!` password, descriptions
+- `src/pages/IntegrationDocs.tsx` — confirm SignalWire/ElevenLabs/Resend/Tavily are described as bundled
 
--- Public listing now hides demos
-CREATE OR REPLACE FUNCTION public.list_companies_public()
-RETURNS TABLE(id uuid, name text, slug text, logo_url text, primary_color text)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public'
-AS $$
-  SELECT c.id, c.name, c.slug, c.logo_url, c.primary_color
-  FROM companies c
-  WHERE COALESCE(c.is_demo, false) = false
-  ORDER BY c.name;
-$$;
+### 4. Cross-link integrity
+- Verify every "Learn more" / "View guide" / sidebar link in Help, PlatformGuides, ExportDocumentation, and the dashboard onboarding hub points to a real route
+- Add missing links between related guides (e.g., Help → matching Platform Guide → matching PDF)
 
--- Public per-company lookup also blocks demo slugs to non-demo viewers
-CREATE OR REPLACE FUNCTION public.get_company_public_info(p_slug text)
-RETURNS TABLE(...same columns...)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public'
-AS $$
-  SELECT c.id, c.name, c.slug, c.logo_url, c.primary_color, c.secondary_color,
-         c.service_area_cities, c.service_area_zip_codes, c.service_categories,
-         c.public_app_url, c.phone, c.contact_phone, c.business_phone
-  FROM companies c
-  WHERE c.slug = p_slug
-    AND COALESCE(c.is_demo, false) = false;
-$$;
+## Standardization rules applied everywhere
+1. Replace `support@auraintercept.com` → `ai@auraintercept.ai`
+2. Remove "Twilio", "Express/Flow/Halo", "Command/Growth/Starter" tier names → use Core/Boost/Pro/Elite
+3. Remove CRM, Warranty, multi-location references
+4. Use "24 Smart AI Agents organized as 10 Operatives across 7 Control Centers + AI Operatives Hub"
+5. Note 3rd-party usage is bundled in tier (no carrier/usage fees)
+6. Trial = 90 days, no credit card required
 
--- Admin-only helper for screens that legitimately need to see demos
-CREATE OR REPLACE FUNCTION public.list_companies_admin()
-RETURNS TABLE(id uuid, name text, slug text, logo_url text,
-              primary_color text, is_demo boolean)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public'
-AS $$
-  SELECT c.id, c.name, c.slug, c.logo_url, c.primary_color, c.is_demo
-  FROM companies c
-  WHERE public.has_role(auth.uid(), 'platform_admin')
-  ORDER BY c.is_demo, c.name;
-$$;
+## Deliverable for you
+
+After updates, the **Export Documentation** page (`/dashboard/export-docs`) will produce these clean PDFs ready to upload to Aura's knowledge base:
+
+```text
+1.  AI Agent & Console Guide
+2.  Business / Platform Documentation
+3.  Comprehensive Platform Guides
+4.  Company Operating Guide
+5.  Company Onboarding Guide
+6.  Pricing Summary
+7.  Sales Pitch Data
+8.  Social Media Content Pack
+9.  Video Scripts
+10. Brand Asset Guide
+11. Website Copy
+12. Industry Marketing Kit
+13. Platform FAQ
 ```
 
-### 2. Edge function — `seed-demo-accounts-v2` adds `is_demo: true`
+## Out of scope (won't touch)
+- Database FAQ rows (already updated previously)
+- Marketing pages outside the guide/help/docs surface
+- Edge functions / backend logic
+- Visual redesign — content & link corrections only
 
-Add `is_demo: true` to `companyPayload` in `seedTier()` so future re-seeds stay flagged.
-
-### 3. Front-end — Customer Portal Console picker
-
-`src/components/ai/CompanySelector.tsx` is shown to platform admins (Admin Preview screenshot) AND embedded widgets. Switch it to:
-- Call `list_companies_admin` when the viewer is a `platform_admin`, with a "DEMO" pill on flagged rows.
-- Call `list_companies_public` (now demo-free) for everyone else.
-
-Also harden `CustomerCompanyPortal.tsx` so direct visits to `/c/demo-core` etc. return "company not found" for non-admins (the RPC change already enforces this, but show a clean 404).
-
-## What this does NOT change
-
-- Nothing about how demo accounts log in. The 12 demo logins keep working, land on their company, and see their own seeded data — they just stop being visible to anyone outside.
-- No RLS rewrite on `companies` itself. Demo rows still exist; they're just filtered out of public-facing functions. RLS for member-scoped reads (own-company) is unchanged.
-- Aura Intercept stays visible (it's your real company, `is_demo=false`).
-
-## Out of scope (flag if you want it next)
-
-- Hiding demo companies from internal admin dashboards (e.g. PlatformAdminDashboard counts). I'd recommend keeping them visible there but tagged, so you can audit/reseed.
-- Changing the customer-facing `/portal` listing styling.
+## Approach
+Single sweeping pass: update master configs first (so PDFs that read from them inherit the fixes), then walk each PDF generator and page individually for hard-coded strings, then re-verify links. After completion you can hit `/dashboard/export-docs` and download all 13 PDFs in one session.
