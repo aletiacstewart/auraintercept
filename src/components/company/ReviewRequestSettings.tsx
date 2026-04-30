@@ -238,6 +238,23 @@ export function ReviewRequestSettings() {
               </div>
             </div>
           </div>
+
+          {/* Save button for toggle, delay, and platform URLs */}
+          <div className="flex justify-end pt-2">
+            <Button onClick={handleSave} disabled={saveMutation.isPending}>
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Settings
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
