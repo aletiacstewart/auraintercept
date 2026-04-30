@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Bot, Send, Loader2 } from 'lucide-react';
+import { Bot, Send, Loader2, Mic, MicOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { cn } from '@/lib/utils';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -41,6 +43,29 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   });
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Browser speech-to-text — appends final transcripts to the input field
+  const voice = useVoiceInput({
+    continuous: false,
+    onTranscript: (text, isFinal) => {
+      if (!isFinal) return;
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      setInput(prev => (prev ? prev + ' ' : '') + trimmed);
+    },
+    onError: (msg) => {
+      toast({
+        title: 'Microphone unavailable',
+        description: msg,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleMicToggle = () => {
+    if (!termsAgreed) return;
+    voice.toggle();
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -218,14 +243,46 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={termsAgreed ? "Ask Aura anything..." : "Agree to terms above to chat..."}
+          placeholder={
+            !termsAgreed
+              ? "Agree to terms above to chat..."
+              : voice.isListening
+              ? "Listening… speak now"
+              : "Ask Aura anything..."
+          }
           className="flex-1 bg-white border-border text-[hsl(220,60%,25%)]"
           disabled={isLoading || !termsAgreed}
           autoFocus={termsAgreed}
         />
-        <Button 
-          type="submit" 
-          size="icon" 
+        {voice.isSupported && (
+          <Button
+            type="button"
+            size="icon"
+            variant="outline"
+            onClick={handleMicToggle}
+            disabled={isLoading || !termsAgreed}
+            aria-label={voice.isListening ? 'Stop voice input' : 'Start voice input'}
+            aria-pressed={voice.isListening}
+            className={cn(
+              'shrink-0 transition-all duration-200',
+              voice.isListening && 'animate-pulse'
+            )}
+            style={
+              voice.isListening
+                ? {
+                    color: 'hsl(189,100%,65%)',
+                    borderColor: 'hsl(189,100%,55%)',
+                    boxShadow: '0 0 14px hsl(189,100%,55%/0.55)',
+                  }
+                : undefined
+            }
+          >
+            {voice.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </Button>
+        )}
+        <Button
+          type="submit"
+          size="icon"
           disabled={isLoading || !input.trim() || !termsAgreed}
           className="shrink-0"
         >
