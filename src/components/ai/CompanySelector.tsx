@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Building2, Search, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { useUserRole } from '@/hooks/useUserRole';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Company {
   id: string;
@@ -29,7 +29,8 @@ export const CompanySelector: React.FC<CompanySelectorProps> = ({
   subtitle = "Choose a company to interact with their AI assistant"
 }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
-  const { isPlatformAdmin } = useUserRole();
+  const { userRole } = useAuth();
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   const { data: companies, isLoading } = useQuery({
     queryKey: ['available-companies', isPlatformAdmin ? 'admin' : 'public'],
