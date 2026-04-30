@@ -6,12 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Building2, Search, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface Company {
   id: string;
   name: string;
   logo_url: string | null;
   primary_color: string | null;
+  is_demo?: boolean;
 }
 
 interface CompanySelectorProps {
@@ -26,12 +29,19 @@ export const CompanySelector: React.FC<CompanySelectorProps> = ({
   subtitle = "Choose a company to interact with their AI assistant"
 }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
+  const { isPlatformAdmin } = useUserRole();
 
   const { data: companies, isLoading } = useQuery({
-    queryKey: ['available-companies'],
+    queryKey: ['available-companies', isPlatformAdmin ? 'admin' : 'public'],
     queryFn: async () => {
+      // Platform admins see every company (including demos, tagged).
+      // Everyone else only sees real (non-demo) companies.
+      if (isPlatformAdmin) {
+        const { data, error } = await supabase.rpc('list_companies_admin');
+        if (error) throw error;
+        return (data as unknown as Company[]) ?? [];
+      }
       const { data, error } = await supabase.rpc('list_companies_public');
-      
       if (error) throw error;
       return (data as unknown as Company[]) ?? [];
     },
@@ -119,7 +129,14 @@ export const CompanySelector: React.FC<CompanySelectorProps> = ({
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium truncate">{company.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium truncate">{company.name}</h3>
+                    {company.is_demo && (
+                      <Badge variant="outline" className="text-[10px] uppercase tracking-wide border-amber-500/50 text-amber-500">
+                        Demo
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground">Click to start chatting</p>
                 </div>
                 
