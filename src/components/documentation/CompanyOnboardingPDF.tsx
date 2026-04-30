@@ -626,13 +626,13 @@ const AuditQuestionsPages = () => {
 // Integration Requirements Page
 const IntegrationRequirementsPage = () => {
   const integrations = [
-    { name: 'SignalWire', purpose: 'Voice & SMS Communications', tiers: 'Express, Flow, Halo, Core, Boost, Command' },
-    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', tiers: 'Express, Flow, Halo, Core, Boost, Command' },
-    { name: 'Resend', purpose: 'Email Delivery', tiers: 'Flow, Core, Boost, Command (Required)' },
-    { name: 'Stripe', purpose: 'Payment Processing', tiers: 'Boost, Command (Required)' },
-    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Flow, Halo, Boost, Command (Required)' },
-    { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'All tiers with Social Media Ops' },
-    { name: 'Tavily', purpose: 'AI Content Research', tiers: 'All tiers (Optional)' },
+    { name: 'SignalWire', purpose: 'Voice & SMS Communications (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Resend', purpose: 'Email Delivery (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Tavily', purpose: 'AI Content Research (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Stripe', purpose: 'Payment Processing (your own account)', tiers: 'All tiers (Optional)' },
+    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Boost, Pro, Elite (Optional)' },
+    { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'Pro, Elite' },
   ];
 
   return (
@@ -806,7 +806,7 @@ const EmployeeInfoPage = () => (
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Employee Limits by Tier')}</Text>
       <Text style={styles.infoBoxText}>
-        {sanitizePdfText('Express/Flow/Core: 2 employees | Halo: 3 employees | Core: 5 employees | Boost: 10 employees | Command: 25 employees')}
+        {sanitizePdfText('Aura Core: 10 employees | Aura Boost: 25 employees | Aura Pro: 50 employees | Aura Elite: Unlimited employees')}
       </Text>
     </View>
   </Page>

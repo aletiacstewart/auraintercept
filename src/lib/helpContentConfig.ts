@@ -437,7 +437,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
 // Get tier by agent type - 4-TIER MAPPING (matches subscriptionAgentConfig.ts)
 export function getTierForAgent(agentType: string): SubscriptionTier | null {
   const agentTierMap: Record<string, SubscriptionTier> = {
-    // Starter tier (8 agents)
+    // Aura Core tier (8 agents)
     triage: 'starter',
     booking: 'starter',
     followup: 'starter',
@@ -449,19 +449,19 @@ export function getTierForAgent(agentType: string): SubscriptionTier | null {
     // Consolidated operative aliases
     customer_journey: 'starter',
     creative: 'starter',
-    // Connect tier (+4 = 12 agents)
+    // Aura Boost tier (+4 = 12 agents)
     dispatch: 'connect',
     route: 'connect',
     eta: 'connect',
     checkin: 'connect',
     field_navigation: 'connect',
-    // Performance tier (+4 = 16 agents)
+    // Aura Pro tier (+4 = 16 agents)
     campaign: 'performance',
     outreach: 'performance',
     social_scheduler: 'performance',
     social_analytics: 'performance',
     social_content: 'performance',
-    // Command tier (+8 = 24 agents)
+    // Aura Elite tier (+8 = 24 agents)
     admin: 'command',
     quoting: 'command',
     invoice: 'command',

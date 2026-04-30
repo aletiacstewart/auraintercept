@@ -17,58 +17,59 @@ const QUICK_REFERENCE_DATA = [
   { 
     agent: 'Booking Agent', 
     requires: ['AI Receptionist'], 
-    tier: 'Multi-Track', 
-    cost: '$897', 
+    tier: 'Aura Core', 
+    cost: '$197/mo', 
     notes: 'Enables online booking' 
   },
   { 
     agent: 'ETA Agent', 
     requires: ['Dispatch Agent', 'Route Agent'], 
-    tier: 'Multi-Track', 
-    cost: '$897', 
+    tier: 'Aura Boost', 
+    cost: '$497/mo', 
     notes: 'Full field ops chain' 
   },
   { 
     agent: 'Invoice Agent', 
     requires: ['Quoting Agent'], 
-    tier: 'Multi-Track', 
-    cost: '$897', 
+    tier: 'Aura Elite', 
+    cost: '$1,997/mo', 
     notes: 'Billing automation' 
   },
   { 
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
-    tier: 'Command', 
-    cost: '$697', 
+    tier: 'Aura Elite', 
+    cost: '$1,997/mo', 
     notes: 'Full analytics suite' 
   },
   { 
     agent: 'Social Scheduler Agent', 
     requires: ['Creative Content'], 
-    tier: 'Command', 
-    cost: '$697', 
+    tier: 'Aura Pro', 
+    cost: '$997/mo', 
     notes: 'Social media automation' 
   },
   { 
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
-    tier: 'Command', 
-    cost: '$697', 
+    tier: 'Aura Elite', 
+    cost: '$1,997/mo', 
     notes: 'KPI tracking' 
   },
   { 
     agent: 'Social Analytics', 
     requires: ['Creative Content'], 
-    tier: 'Command', 
-    cost: '$697', 
+    tier: 'Aura Pro', 
+    cost: '$997/mo', 
     notes: 'Engagement metrics' 
   },
 ];
 
 const TIER_BADGE_COLORS: Record<string, string> = {
-  'Single-Point': 'bg-amber-600',
-  'Multi-Track': 'bg-sky-600',
-  'Command': 'bg-violet-600',
+  'Aura Core': 'bg-emerald-600',
+  'Aura Boost': 'bg-sky-600',
+  'Aura Pro': 'bg-violet-600',
+  'Aura Elite': 'bg-amber-600',
 };
 
 const AIAgentGuide: React.FC = () => {
@@ -86,7 +87,7 @@ const AIAgentGuide: React.FC = () => {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/dashboard/ai-agents-hub')}
+                onClick={() => navigate('/dashboard/ai-agents')}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 AI Agents Hub

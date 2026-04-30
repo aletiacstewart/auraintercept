@@ -352,7 +352,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How long does implementation take?"
-          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Connect tiers can be live within 3-5 business days. Performance and Command tiers with field operations may take 2-3 weeks for full configuration and technician training."
+          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Aura Boost tiers can be live within 3-5 business days. Performance and Aura Elite tiers with field operations may take 2-3 weeks for full configuration and technician training."
         />
         
         <FAQItem 
@@ -663,12 +663,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What reports can I generate?"
-          answer={`The Analytics & Reports console includes ${PLATFORM_STATS.analyticsTabs} specialized tabs: Performance (KPIs), Revenue (financial trends), Insights (natural language queries), Forecast (demand prediction), KPIs (metrics), Social (engagement), Reminders (communication stats), and Export (PDF/CSV reports). Available on Command tier.`}
+          answer={`The Analytics & Reports console includes ${PLATFORM_STATS.analyticsTabs} specialized tabs: Performance (KPIs), Revenue (financial trends), Insights (natural language queries), Forecast (demand prediction), KPIs (metrics), Social (engagement), Reminders (communication stats), and Export (PDF/CSV reports). Available on Aura Elite tier.`}
         />
 
         <FAQItem 
           question="What is the Business Operations console?"
-          answer="Business Operations is a comprehensive management console with: Quote generation, Invoice creation, Lead management, Appointment scheduling, Inventory tracking, Company settings, Employee management, and Customer database. Available on Command tier only."
+          answer="Business Operations is a comprehensive management console with: Quote generation, Invoice creation, Lead management, Appointment scheduling, Inventory tracking, Company settings, Employee management, and Customer database. Available on Aura Elite tier only."
         />
 
         <FAQItem 
@@ -771,7 +771,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What information should I add to the Knowledge Base?"
-          answer="Essential information includes: Company description and history, complete service catalog with pricing, FAQ answers to common customer questions, business hours and holiday schedule, service areas (cities, zip codes), staff bios, policies (cancellation, warranty), and any unique selling points."
+          answer="Essential information includes: Company description and history, complete service catalog with pricing, FAQ answers to common customer questions, business hours and holiday schedule, service areas (cities, zip codes), staff bios, policies (cancellation, refund, terms), and any unique selling points."
         />
         
         <FAQItem 
@@ -863,7 +863,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How do I get support?"
-          answer="Support options include: 1) In-app Help Center with searchable guides, 2) Platform Guides section with step-by-step instructions, 3) Email support at support@auraintercept.com, 4) Live chat during business hours, 5) Priority phone support for Command tier. Average response time is under 24 hours."
+          answer="Support options include: 1) In-app Help Center with searchable guides, 2) Platform Guides section with step-by-step instructions, 3) Email support at ai@auraintercept.ai, 4) Live chat during business hours, 5) Priority support for Aura Pro and Aura Elite tiers. Average response time is under 24 hours."
         />
         
         <FAQItem 
@@ -917,7 +917,7 @@ const PlatformFAQPDF = () => {
           <Text style={{ fontSize: 9, lineHeight: 1.5 }}>
             If these solutions don't resolve your issue, contact support with: your company name, 
             description of the problem, steps to reproduce, and any error messages. Screenshots 
-            help us diagnose issues faster. Email: support@auraintercept.com
+            help us diagnose issues faster. Email: ai@auraintercept.ai
           </Text>
         </View>
 
@@ -951,7 +951,7 @@ const PlatformFAQPDF = () => {
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>Support Email</Text>
-              <Text style={[styles.tableCell, { flex: 2 }]}>support@auraintercept.com</Text>
+              <Text style={[styles.tableCell, { flex: 2 }]}>ai@auraintercept.ai</Text>
             </View>
             <View style={styles.tableRowAlt}>
               <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>Starting Price</Text>
