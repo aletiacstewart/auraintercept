@@ -87,7 +87,7 @@ const AIAgentGuide: React.FC = () => {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/dashboard/ai-agents-hub')}
+                onClick={() => navigate('/dashboard/ai-agents')}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 AI Agents Hub
