@@ -8,12 +8,20 @@
     "thinking": "Pensando…"
   },
   "suggestions": {
+    "sectionTitle": "Acciones rápidas",
+    "sectionHint": "Atajos de un toque. Aura ejecuta la tarea y abre la pantalla correcta.",
     "bookEmergency": "Agenda el trabajo urgente de hoy",
+    "bookEmergencyDesc": "Abre el formulario de reserva pre-llenado para hoy y marcado como urgente.",
     "overdueInvoices": "Mostrar facturas vencidas y cobrarlas",
+    "overdueInvoicesDesc": "Va a Facturas filtradas como vencidas y ofrece enviar recordatorios.",
     "generatePosts": "Genera publicaciones para mantenimiento de primavera",
+    "generatePostsDesc": "Abre Content Engine con una campaña de mantenimiento estacional lista.",
     "checkDispatch": "Revisa el despacho de hoy",
+    "checkDispatchDesc": "Abre el tablero de Operaciones de Campo con los trabajos y técnicos de hoy.",
     "createQuote": "Crear una cotización para un nuevo cliente",
-    "weekRevenue": "Mostrar los ingresos de esta semana"
+    "createQuoteDesc": "Abre el generador de cotizaciones para presupuestar un nuevo cliente potencial.",
+    "weekRevenue": "Mostrar los ingresos de esta semana",
+    "weekRevenueDesc": "Abre el análisis de ingresos filtrado a esta semana con gráficas y totales."
   },
   "chat": {
     "title": "Agente IA",

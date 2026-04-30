@@ -8,12 +8,20 @@
     "thinking": "Thinking…"
   },
   "suggestions": {
+    "sectionTitle": "Quick actions",
+    "sectionHint": "One-tap shortcuts. Aura runs the task and opens the right screen.",
     "bookEmergency": "Book today's emergency job",
+    "bookEmergencyDesc": "Opens the booking flow pre-filled for today and flagged as urgent.",
     "overdueInvoices": "Show overdue invoices & chase them",
+    "overdueInvoicesDesc": "Jumps to Invoices filtered to overdue and offers to send reminders.",
     "generatePosts": "Generate social posts for spring tune-ups",
+    "generatePostsDesc": "Opens Content Engine with a seasonal tune-up campaign drafted.",
     "checkDispatch": "Check today's dispatch schedule",
+    "checkDispatchDesc": "Opens the Field Ops board for today's jobs and technician assignments.",
     "createQuote": "Create a quote for a new lead",
-    "weekRevenue": "Show me this week's revenue"
+    "createQuoteDesc": "Opens the Quote builder so you can price a new lead in seconds.",
+    "weekRevenue": "Show me this week's revenue",
+    "weekRevenueDesc": "Opens Revenue Analysis scoped to this week with charts and totals."
   },
   "chat": {
     "title": "AI Agent",
