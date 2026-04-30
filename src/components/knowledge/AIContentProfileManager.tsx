@@ -77,6 +77,8 @@ const INDUSTRY_OPTIONS = [
   'Marketing & Advertising',
   'IT Services',
   'Web Design & Development',
+  'SaaS (Software as a Service)',
+  'DaaS (Data as a Service)',
   // Health & Medical
   'Medical Practice',
   'Dental Practice',
