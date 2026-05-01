@@ -23,6 +23,8 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useDashboardViewMode } from '@/hooks/useDashboardViewMode';
 import { DashboardViewToggle } from './DashboardViewToggle';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { Badge } from '@/components/ui/badge';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -30,6 +32,7 @@ export function CompanyAdminDashboard() {
   const navigate = useNavigate();
   const { isSimple } = useDashboardViewMode();
   const [snapshotOpen, setSnapshotOpen] = useState(false);
+  const { pack } = useIndustryPack();
 
   // Platform admin sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
@@ -226,11 +229,16 @@ export function CompanyAdminDashboard() {
         <PageHeader
           icon={LayoutDashboard}
           title={isLoading ? 'Loading...' : (company?.name || 'Company Dashboard')}
-          description={`Company Dashboard ${companyId ? `• ID: ${companyId.slice(0, 8)}...` : ''}`}
+          description={`${pack.label} Dashboard ${companyId ? `• ID: ${companyId.slice(0, 8)}...` : ''}`}
           featureColor="overview"
           
           action={
             <div className="flex items-center gap-3 flex-wrap">
+              {pack.industry_id !== 'generic' && (
+                <Badge variant="outline" className="border-primary/40 text-primary">
+                  {pack.label}
+                </Badge>
+              )}
               <DashboardViewToggle />
               {company?.registration_code && (
                 <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5">

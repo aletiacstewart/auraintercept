@@ -192,6 +192,7 @@ export function FastStartWizard() {
           address: data.address || kb?.company_info?.address || undefined,
           email: kb?.company_info?.email || undefined,
           ai_agent_prompt: promptParts.join('\n\n') || undefined,
+          industry_vertical: data.businessType || undefined,
         })
         .eq('id', companyId)
         .select('slug')
