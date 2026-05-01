@@ -3673,6 +3673,41 @@ serve(async (req) => {
       basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
     }
 
+    // === INDUSTRY INTAKE FIELDS ===
+    // If the pack defines form_schemas + job_templates, surface the fields the
+    // booking flow expects to collect. The AI can then ask for them
+    // conversationally and pass them via the create_appointment.intake_data
+    // parameter.
+    try {
+      const packForBooking: any = industryPack as any;
+      const formSchemas: Record<string, any> | null =
+        packForBooking?.form_schemas && typeof packForBooking.form_schemas === 'object'
+          ? packForBooking.form_schemas
+          : null;
+      const jobTemplates: any[] = Array.isArray(packForBooking?.job_templates) ? packForBooking.job_templates : [];
+      if (formSchemas && jobTemplates.length) {
+        const lines: string[] = [];
+        for (const tpl of jobTemplates) {
+          const formId = tpl?.form_id;
+          if (!formId) continue;
+          const schema = formSchemas[formId];
+          if (!schema || !Array.isArray(schema.fields) || schema.fields.length === 0) continue;
+          const required = schema.fields.filter((f: any) => f?.required).map((f: any) => `${f.label || f.name} (${f.name})`);
+          const optional = schema.fields.filter((f: any) => !f?.required).map((f: any) => `${f.label || f.name} (${f.name})`);
+          const tplLabel = tpl?.label || tpl?.id || formId;
+          const parts: string[] = [];
+          if (required.length) parts.push(`required: ${required.join(', ')}`);
+          if (optional.length) parts.push(`optional: ${optional.join(', ')}`);
+          lines.push(`- ${tplLabel} → ${parts.join(' | ')}`);
+        }
+        if (lines.length) {
+          basePrompt = `${basePrompt}\n\nINDUSTRY INTAKE FIELDS — when booking these services, collect the listed details and pass them as create_appointment.intake_data (an object keyed by field name). Ask conversationally; do not list field names verbatim to the customer.\n${lines.join('\n')}`;
+        }
+      }
+    } catch (e) {
+      console.warn('[AI Agent] Failed to inject intake fields into prompt:', e);
+    }
+
     // For phone channel: append caller-provided system prompt with phone-specific rules
     const isPhoneChannel = channel === 'phone';
     if (incomingSystemPrompt && isInternalRequest) {
