@@ -1,42 +1,64 @@
-## Pricing Comparison Table — Specialist Operatives + Cleanup
+## Goal
 
-Update `src/components/landing/PricingComparisonTable.tsx` to (a) surface the 4 new industry specialist operatives shipped in Phase 2, and (b) remove the White-Label Branding row.
+Make the 4 Specialist Operatives (Diagnostic, Permit & Code, Site Survey & Quote, Insurance Claim) first-class citizens inside the AI Operatives Hub on every dashboard:
 
-### What changes
+1. Render them as their own section ("Specialist Operatives") below Core and Advanced agents.
+2. Show all 4, with industry-irrelevant ones clearly visible but locked.
+3. On the **platform admin dashboard**, surface every operative as Active so you can see how they behave end-to-end.
+4. Keep tier-gating for company users (Pro/Elite required); platform_admin and trial users see them unlocked.
 
-**1. Remove White-Label Branding row** (line 139)
-- Delete the row from the "Platform Limits & Features" section.
-- Sweep other surfaces that still mention it on the pricing/landing pages so we don't show conflicting info:
-  - `src/pages/Subscription.tsx`
-  - `src/pages/Index.tsx`
-  - `src/components/smartwebsite/VisitorLimitModal.tsx`
-  - `src/lib/documentationConfig.ts`, `src/lib/helpContentConfig.ts`
-  - PDF generators (`PlatformDocumentPDF`, `SalesPitchDataPDF`, `WebsiteCopyPDF`)
-- `useSubscription.ts` flag stays (internal capability), but no UI surfaces will advertise it.
+## What changes
 
-**2. Add new "Specialist Operatives (Industry-Specific)" section**
-Inserted after the existing "Smart AI Agents" section. These are auto-activated only when a company picks a matching industry vertical at signup. Tier minimum is **Pro** (per Phase 2 gating).
+### 1. `src/hooks/useAIAgentOrchestrator.ts`
+- Add the 4 specialists to `DEFAULT_AGENTS` under a new category `industry_specialist`:
+  - `diagnostic`, `permit_code`, `site_survey`, `insurance_claim` (phase 3 each).
+- For `platform_admin` callers, after `fetchAgents` merges DB rows, force-set `is_enabled: true` on every agent (in-memory only — doesn't write to the company's DB rows). This guarantees the platform admin's view of the dashboard always shows every operative active without polluting tenant data.
 
-| Specialist | Core | Boost | Pro | Elite | Industries that unlock it |
-|---|---|---|---|---|---|
-| Diagnostic Agent | x | x | check | check | Appliance Repair, Auto Care, Pool/Spa, Solar |
-| Permit & Code Agent | x | x | check | check | Electrical, Roofing, Solar, Construction, Security, Fencing |
-| Site Survey & Quote Agent | x | x | check | check | Roofing, Solar, Landscape, Construction, Security, Fencing |
-| Insurance Claim Agent | x | x | check | check | Roofing, Auto Care |
+### 2. `src/pages/AIAgentsHub.tsx`
+- Add `industry_specialist` to `CATEGORY_INFO` (label "Specialist Operatives", icon `Stethoscope` or `Sparkles`, uses `--feature-analytics` color).
+- Pull the company's `extra_operatives` via `useIndustryPack()` to know which specialists the current industry actually wires up.
+- New `SPECIALIST_AGENT_TYPES` set: split filtered agents into three buckets — Core, Advanced, **Specialist**.
+- Render a third section "Specialist Operatives (Industry-Specific)" with a subtitle: "Auto-activated based on your industry. Requires Aura Pro or Elite."
+- Per specialist card lock logic:
+  - Locked if `!isAvailableInTier` (tier < performance and not in trial) → existing amber lock UI with "Upgrade to Aura Pro".
+  - Locked if `isAvailableInTier` but `!pack.extra_operatives.includes(agent.type)` → new "Not in your industry" lock state (greyed, tooltip lists which industries trigger it).
+  - Unlocked otherwise; toggle works normally.
+- Add specialists to `AGENT_NAMES` and `AGENT_ROI_HINTS` (short value props).
 
-Section will include a one-line intro under the title:
-> "Auto-activated based on the industry you select at signup. Available on Pro and Elite plans."
+### 3. `src/lib/subscriptionAgentConfig.ts`
+- Add `INDUSTRY_SPECIALIST_OPERATIVES` to the `command` (Elite) tier and to `performance` (Pro) tier inside `TIER_AGENT_CONFIG.agents` so `canAccessAgent` returns true for Pro/Elite without special-casing.
+- Add a helper `getSpecialistRequiredTier()` returning `'performance'`.
+- Add a `CATEGORY` mapping so `industry_specialist` is recognized as a valid category.
 
-### Technical details
+### 4. `src/pages/AIAgentsHub.tsx` — platform admin "all active" treatment
+- When `userRole === 'platform_admin'`:
+  - Skip the auto-activation effect (the orchestrator hook already returns them as enabled in-memory).
+  - In the Quick Stats grid + counts, show `totalCount/totalCount Operatives Active`.
+  - Hide tier-locked styling on cards (treat all as available).
 
-- Append a new `FeatureSection` to the `sections` array in `PricingComparisonTable.tsx` between the existing "Smart AI Agents" and "Control Centers" entries.
-- Update the section title `'Smart AI Agents (8 / 12 / 16 / 24)'` is unchanged — specialists are *additive* on top of the base 8/12/16/24 and only count when the industry uses them, so totals stay accurate.
-- For the intro line, render it as a small muted-text row beneath the section header (extend the section renderer with an optional `subtitle` field, or hardcode a row with `name` styled as helper text). Lean toward adding `subtitle?: string` to `FeatureSection` for cleanliness.
-- Remove the white-label row only — keep the rest of "Platform Limits & Features" intact.
-- For the doc/PDF/help-config sweeps, replace the white-label bullet with nothing (just remove); do not substitute language.
+### 5. Edge function alignment
+- `supabase/functions/ai-agent-chat/index.ts` already references the specialists. Update its `TIER_AGENTS` map to include the 4 specialists in `performance` and `command` so server-side tier checks match the client.
 
-### Out of scope
+### 6. Industry Widget Grid (already done in prior phase) — no changes needed.
 
-- No DB or edge-function changes (Phase 2 already shipped specialist gating + prompts).
-- No tier-pricing or agent-count changes.
-- `useSubscription` capability flag remains untouched.
+## Out of scope
+
+- No DB migration. We do **not** auto-insert `ai_agent_configs` rows for specialists on every company; they're rendered from `DEFAULT_AGENTS` and stay disabled in DB until a user toggles them on (or industry pack opts them in via existing logic).
+- No changes to the pricing comparison table (already updated last turn).
+- No changes to the consumer-facing AI Operative Hub layout beyond the new section.
+
+## Visual outcome
+
+```text
+AI Operatives Hub
+├── Core Agents (Recommended)         [4 cards]
+├── Advanced Agents (6) ▸             [6 cards, expandable]
+└── Specialist Operatives (4) ▸       [4 cards — NEW]
+        Auto-activated by industry. Pro/Elite tier.
+        ├── Diagnostic         [Active on platform admin / Locked per industry]
+        ├── Permit & Code      [Active / Locked]
+        ├── Site Survey & Quote[Active / Locked]
+        └── Insurance Claim    [Active / Locked]
+```
+
+Platform admin dashboard: all 14 operatives show **Active** with full controls. Company users see the same 14 cards but with proper tier + industry locks.
