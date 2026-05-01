@@ -3423,14 +3423,49 @@ serve(async (req) => {
     // Determine allowed agents based on tier (trial gets full access)
     const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
 
+    // === INDUSTRY TEMPLATE PACK ===
+    // Fetch the company's industry pack (drives prompt deltas + specialist agent gating)
+    let industryPack: any = null;
+    if (companyTierData?.industry_vertical) {
+      const { data: packRow } = await supabase
+        .from('industry_template_packs')
+        .select('industry_id, label, agent_prompt_deltas, extra_operatives, min_tier_per_extra, terminology')
+        .eq('industry_id', companyTierData.industry_vertical)
+        .eq('is_active', true)
+        .maybeSingle();
+      industryPack = packRow;
+    }
+    const packExtraOperatives: string[] = Array.isArray(industryPack?.extra_operatives) ? industryPack.extra_operatives : [];
+    const packMinTiers: Record<string, string> = (industryPack?.min_tier_per_extra && typeof industryPack.min_tier_per_extra === 'object') ? industryPack.min_tier_per_extra : {};
+
+    // Tier ordering for comparison (lowest → highest)
+    const TIER_ORDER: Record<string, number> = { free: 0, starter: 1, connect: 2, performance: 3, command: 4 };
+    const meetsTier = (current: string, required: string) =>
+      (TIER_ORDER[current] ?? 0) >= (TIER_ORDER[required] ?? 0);
+
+    // Specialist agents are allowed when:
+    //  (a) the agent is in INDUSTRY_SPECIALIST_OPERATIVES,
+    //  (b) the company's industry pack opts in via extra_operatives,
+    //  (c) the company meets the per-pack minimum tier (defaults to performance), OR is in trial.
+    const isSpecialist = INDUSTRY_SPECIALIST_OPERATIVES.includes(normalizedAgentType);
+    const specialistAllowed =
+      isSpecialist &&
+      packExtraOperatives.includes(normalizedAgentType) &&
+      (inTrial || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
+
     // Validate agent access using normalized agent type
-    if (!allowedAgents.includes(normalizedAgentType)) {
+    if (!allowedAgents.includes(normalizedAgentType) && !specialistAllowed) {
       const requiredTier = getRequiredTierForAgent(agentType);
+      const reason = isSpecialist
+        ? (packExtraOperatives.includes(normalizedAgentType)
+            ? `requires ${packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'} tier`
+            : `not enabled for the ${industryPack?.label || 'current'} industry pack`)
+        : `requires the ${requiredTier} subscription tier`;
       console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) requires ${requiredTier}, company has ${subscriptionTier}`);
       return new Response(JSON.stringify({ 
         error: 'agent_locked',
-        message: `The ${agentType} agent requires the ${requiredTier} subscription tier.`,
-        required_tier: requiredTier,
+        message: `The ${agentType} agent ${reason}.`,
+        required_tier: requiredTier || (packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || null),
         current_tier: subscriptionTier
       }), {
         status: 403,
