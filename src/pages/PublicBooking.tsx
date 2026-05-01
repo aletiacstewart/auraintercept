@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,8 +34,70 @@ export default function PublicBooking() {
   const { companySlug } = useParams<{ companySlug: string }>();
   const [searchParams] = useSearchParams();
   const isEmbed = searchParams.get('embed') === '1';
+  const themeParam = searchParams.get('theme');
+  const primaryParam = searchParams.get('primary');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const embedRootRef = useRef<HTMLDivElement | null>(null);
+
+  // Apply theme + primary color overrides when embedded on third-party sites.
+  useEffect(() => {
+    if (!isEmbed) return;
+    if (themeParam === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (themeParam === 'light') {
+      document.documentElement.classList.remove('dark');
+    }
+    if (primaryParam && /^#?[0-9a-fA-F]{6}$/.test(primaryParam)) {
+      // Caller passed a hex; convert to HSL tokens used by the design system.
+      const hex = primaryParam.replace('#', '');
+      const r = parseInt(hex.slice(0, 2), 16) / 255;
+      const g = parseInt(hex.slice(2, 4), 16) / 255;
+      const b = parseInt(hex.slice(4, 6), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h = 0, s = 0; const l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h *= 60;
+      }
+      document.documentElement.style.setProperty(
+        '--primary',
+        `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`,
+      );
+    }
+  }, [isEmbed, themeParam, primaryParam]);
+
+  // Report height to parent so the loader script can auto-resize the iframe.
+  useEffect(() => {
+    if (!isEmbed) return;
+    const root = embedRootRef.current;
+    if (!root || typeof ResizeObserver === 'undefined') return;
+    const post = () => {
+      try {
+        window.parent?.postMessage(
+          {
+            source: 'aura-booking',
+            type: 'resize',
+            slug: companySlug ?? null,
+            height: root.scrollHeight,
+          },
+          '*',
+        );
+      } catch {
+        /* noop */
+      }
+    };
+    post();
+    const ro = new ResizeObserver(post);
+    ro.observe(root);
+    return () => ro.disconnect();
+  }, [isEmbed, companySlug, submitted, submitting]);
 
   const { data: company, isLoading: companyLoading } = useQuery({
     queryKey: ['public-booking-company', companySlug],
@@ -138,7 +200,7 @@ export default function PublicBooking() {
   // Chromeless layout for iframe embeds
   if (isEmbed) {
     return (
-      <div className="min-h-screen bg-transparent p-3">
+      <div ref={embedRootRef} className="bg-transparent p-3">
         {submitted ? (
           <Card>
             <CardContent className="p-6 text-center space-y-3">
