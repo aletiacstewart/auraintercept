@@ -39,6 +39,20 @@ Only when:
 Otherwise the renderer returns `null` so generic verticals see the legacy
 booking form unchanged.
 
+## AI integration (Phase D)
+
+- `ai-agent-chat` injects an `INDUSTRY INTAKE FIELDS` section into the system
+  prompt for the booking-capable agents, enumerating `(label, name, required)`
+  per `job_templates[].form_id`. The agent collects the values
+  conversationally and passes them via `create_appointment.intake_data`
+  (object). Persisted on the appointments row.
+- `voice-booking-agent` accepts `intake_data` (object or JSON string) on
+  `create_appointment` / `book_appointment` and persists it.
+- Public unauthenticated booking widgets read the schema via the
+  `get_public_industry_pack(p_company_id uuid)` RPC, which returns
+  `industry_id, label, job_templates, form_schemas, terminology` only — no
+  prompt deltas or tier gating data.
+
 ## Files
 
 - `src/lib/industryFormSchemas.ts` — types + `resolveFormSchema`,

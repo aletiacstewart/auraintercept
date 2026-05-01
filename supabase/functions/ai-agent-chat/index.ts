@@ -1189,6 +1189,11 @@ const AGENT_TOOLS: Record<string, any[]> = {
             datetime: { type: 'string', description: 'Appointment date and time' },
             duration_minutes: { type: 'number', description: 'Duration in minutes' },
             notes: { type: 'string', description: 'Additional notes about the appointment' },
+            intake_data: {
+              type: 'object',
+              description: 'Optional industry-specific intake fields (e.g. MLS number, system age, pet info). Keys must match the field names listed in INDUSTRY INTAKE FIELDS in your system prompt. Omit if none apply.',
+              additionalProperties: true,
+            },
           },
           required: ['customer_name', 'customer_phone', 'customer_address', 'service_type', 'datetime'],
         },
@@ -1437,6 +1442,11 @@ const AGENT_TOOLS: Record<string, any[]> = {
             datetime: { type: 'string', description: 'ISO datetime string for the dispatch visit' },
             duration_minutes: { type: 'number' },
             notes: { type: 'string' },
+            intake_data: {
+              type: 'object',
+              description: 'Optional industry-specific intake fields. See INDUSTRY INTAKE FIELDS in your system prompt for valid keys.',
+              additionalProperties: true,
+            },
           },
           required: ['customer_name', 'service_type', 'datetime'],
         },
@@ -2817,6 +2827,11 @@ const AGENT_TOOLS: Record<string, any[]> = {
             datetime: { type: 'string' },
             duration_minutes: { type: 'number' },
             notes: { type: 'string' },
+            intake_data: {
+              type: 'object',
+              description: 'Optional industry-specific intake fields. See INDUSTRY INTAKE FIELDS in your system prompt for valid keys.',
+              additionalProperties: true,
+            },
           },
           required: ['customer_name', 'service_type', 'datetime'],
         },
@@ -3671,6 +3686,41 @@ serve(async (req) => {
     }
     if (industryDelta) {
       basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
+    }
+
+    // === INDUSTRY INTAKE FIELDS ===
+    // If the pack defines form_schemas + job_templates, surface the fields the
+    // booking flow expects to collect. The AI can then ask for them
+    // conversationally and pass them via the create_appointment.intake_data
+    // parameter.
+    try {
+      const packForBooking: any = industryPack as any;
+      const formSchemas: Record<string, any> | null =
+        packForBooking?.form_schemas && typeof packForBooking.form_schemas === 'object'
+          ? packForBooking.form_schemas
+          : null;
+      const jobTemplates: any[] = Array.isArray(packForBooking?.job_templates) ? packForBooking.job_templates : [];
+      if (formSchemas && jobTemplates.length) {
+        const lines: string[] = [];
+        for (const tpl of jobTemplates) {
+          const formId = tpl?.form_id;
+          if (!formId) continue;
+          const schema = formSchemas[formId];
+          if (!schema || !Array.isArray(schema.fields) || schema.fields.length === 0) continue;
+          const required = schema.fields.filter((f: any) => f?.required).map((f: any) => `${f.label || f.name} (${f.name})`);
+          const optional = schema.fields.filter((f: any) => !f?.required).map((f: any) => `${f.label || f.name} (${f.name})`);
+          const tplLabel = tpl?.label || tpl?.id || formId;
+          const parts: string[] = [];
+          if (required.length) parts.push(`required: ${required.join(', ')}`);
+          if (optional.length) parts.push(`optional: ${optional.join(', ')}`);
+          lines.push(`- ${tplLabel} → ${parts.join(' | ')}`);
+        }
+        if (lines.length) {
+          basePrompt = `${basePrompt}\n\nINDUSTRY INTAKE FIELDS — when booking these services, collect the listed details and pass them as create_appointment.intake_data (an object keyed by field name). Ask conversationally; do not list field names verbatim to the customer.\n${lines.join('\n')}`;
+        }
+      }
+    } catch (e) {
+      console.warn('[AI Agent] Failed to inject intake fields into prompt:', e);
     }
 
     // For phone channel: append caller-provided system prompt with phone-specific rules
@@ -4909,6 +4959,10 @@ async function executeAgentTool(
           employee_id: employeeId,
           customer_user_id: userId || null,
           delivery_type: deliveryType,
+          intake_data:
+            args.intake_data && typeof args.intake_data === 'object' && !Array.isArray(args.intake_data)
+              ? args.intake_data
+              : null,
         })
         .select()
         .single();

@@ -232,6 +232,23 @@ serve(async (req) => {
         const datetime = (toolParams.datetime || toolParams.date || "") as string;
         const durationMinutes = Number(toolParams.duration_minutes || toolParams.duration || 60);
 
+        // Industry-specific intake fields. ElevenLabs may pass JSON as object or
+        // string depending on tool config — accept both.
+        let intakeData: Record<string, unknown> | null = null;
+        const rawIntake = (toolParams.intake_data ?? toolParams.intakeData) as unknown;
+        if (rawIntake && typeof rawIntake === 'object' && !Array.isArray(rawIntake)) {
+          intakeData = rawIntake as Record<string, unknown>;
+        } else if (typeof rawIntake === 'string' && rawIntake.trim().startsWith('{')) {
+          try {
+            const parsed = JSON.parse(rawIntake);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              intakeData = parsed;
+            }
+          } catch {
+            console.warn('[voice-booking-agent] Could not parse intake_data string');
+          }
+        }
+
         if (!customerPhone || customerPhone.trim().length < 7) {
           return new Response(JSON.stringify({
             success: false,
@@ -261,6 +278,7 @@ serve(async (req) => {
             duration_minutes: durationMinutes,
             status: "pending",
             notes: "Booked via voice agent",
+            intake_data: intakeData,
           })
           .select()
           .single();
