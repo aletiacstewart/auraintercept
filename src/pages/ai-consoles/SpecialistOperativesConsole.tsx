@@ -220,11 +220,11 @@ export default function SpecialistOperativesConsole() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { userRole } = useAuth();
-  const { tier } = useSubscription();
+  const { subscriptionTier } = useSubscription();
   const { pack } = useIndustryPack();
 
   const isPlatformAdmin = userRole === 'platform_admin';
-  const tierUnlocked = isPlatformAdmin || tierAllowsSpecialists(tier);
+  const tierUnlocked = isPlatformAdmin || tierAllowsSpecialists(subscriptionTier);
 
   const industrySpecialists = useMemo(
     () => new Set(pack?.extra_operatives ?? []),
