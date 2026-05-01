@@ -186,6 +186,7 @@ const AGENT_NAMES: Record<string, string> = {
 export default function AIAgentsHub() {
   const { agents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
   const { userRole, user } = useAuth();
+  const { pack: industryPack } = useIndustryPack(companyId);
   const { 
     subscriptionTier, 
     canAccessAgent, 
@@ -206,6 +207,7 @@ export default function AIAgentsHub() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [autoActivationDone, setAutoActivationDone] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showSpecialists, setShowSpecialists] = useState(true);
 
   // Fetch employee's job assignments
   const { data: userJobAssignments } = useQuery({
@@ -307,8 +309,14 @@ export default function AIAgentsHub() {
     : accessibleAgents.filter(a => a.category === activeCategory);
 
   // Split agents into Core and Advanced
-  const coreAgents = filteredAgents.filter(a => CORE_AGENT_TYPES.has(a.type));
-  const advancedAgents = filteredAgents.filter(a => !CORE_AGENT_TYPES.has(a.type));
+  const specialistAgents = filteredAgents.filter(a => isSpecialistOperative(a.type));
+  const nonSpecialistAgents = filteredAgents.filter(a => !isSpecialistOperative(a.type));
+  const coreAgents = nonSpecialistAgents.filter(a => CORE_AGENT_TYPES.has(a.type));
+  const advancedAgents = nonSpecialistAgents.filter(a => !CORE_AGENT_TYPES.has(a.type));
+
+  // Industry-pack opted-in specialists for the current company
+  const industrySpecialists = new Set(industryPack?.extra_operatives ?? []);
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   const handleEnableRecommended = async () => {
     if (!companyId) return;
