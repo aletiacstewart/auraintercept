@@ -17,13 +17,17 @@ import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPortalCopy } from '@/lib/industryPortalCopy';
 
 export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [showPreview, setShowPreview] = useState(false);
-  
+  const { pack } = useIndustryPack();
+  const copy = getPortalCopy(pack);
+
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
   return (
@@ -44,8 +48,8 @@ export default function CustomerPortalConsole() {
 
             <PageHeader
               icon={HeadphonesIcon}
-              title="Customer Portal Console"
-              description="AI-powered customer service portal"
+              title={copy.title}
+              description={copy.description}
               featureColor="customers"
               showAuraBar
               badge={
@@ -108,7 +112,7 @@ export default function CustomerPortalConsole() {
                 <div className="mt-6">
                   <SpecialistOperativesLauncher
                     show={['diagnostic', 'site_survey', 'insurance_claim']}
-                    subtitle="Customer-facing specialists for self-diagnosis, surveys, and claims."
+                    subtitle={copy.specialistSubtitle}
                   />
                 </div>
               </div>
