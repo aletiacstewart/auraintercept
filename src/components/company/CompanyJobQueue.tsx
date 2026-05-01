@@ -45,6 +45,7 @@ interface JobAssignment {
     datetime: string;
     duration_minutes: number;
     notes: string | null;
+    intake_data?: unknown;
   } | null;
   employee: {
     id: string;
