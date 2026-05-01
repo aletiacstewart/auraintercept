@@ -218,7 +218,7 @@ const guideCategories = [
         steps: [
           'Aura Core ($197/mo): 8 Smart AI Agents + 3 Consoles, 10 employees',
           'Aura Boost ($497/mo): 12 Smart AI Agents + 5 Consoles, 25 employees',
-          'Aura Pro ($997/mo): 16 Smart AI Agents + 5 Consoles, 50 employees, White-Label',
+          'Aura Pro ($997/mo): 16 Smart AI Agents + 5 Consoles, 50 employees, Industry Specialists',
           'Aura Elite ($1,997/mo): All 24 Smart AI Agents + 7 Consoles + AI Operatives Hub, Unlimited employees',
           'All tiers include API Access and Embeddable Chat Widget'
         ],

@@ -409,12 +409,12 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   performance: {
     title: 'Aura Pro',
-    description: '16 AI Agents with social media, campaigns & white-label branding.',
+    description: '16 AI Agents with social media, campaigns, and industry specialist agents.',
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
       'Social Scheduler Agent + Social Analytics',
-      'White-Label Branding included',
+      'Industry Specialist Agents included',
       '50 Employee Accounts',
     ],
   },
@@ -428,7 +428,6 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'AI Operatives Hub (Management Interface)',
       'Unlimited Employee Accounts',
       'Enterprise Access Control',
-      'Full White-Label Branding',
       'Dedicated Onboarding + Priority Support',
     ],
   },

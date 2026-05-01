@@ -342,7 +342,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       'Everything in Boost, plus:',
       'Marketing: campaigns, outreach & social queue',
       'Reports: agent performance + revenue insights',
-      'White-label branding',
+      'Industry Specialist Agents',
       'Up to 50 employees',
     ],
     agentCount: 16,

@@ -33,7 +33,12 @@ const featureDescriptions: Record<string, string> = {
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Revenue analytics, profitability reports, and financial trend analysis.',
   'Forecast Agent': 'Demand prediction, seasonal trends, and capacity planning for your business.',
-  
+
+  'Diagnostic Agent': 'Industry specialist. Helps customers describe symptoms (appliance, vehicle, pool, solar) and suggests likely causes or parts before dispatching a tech. Auto-activates for Appliance Repair, Auto Care, Pool/Spa, and Solar.',
+  'Permit & Code Agent': 'Industry specialist. Determines whether a job requires a permit, what local code applies, and outlines the pull steps. Auto-activates for Electrical, Roofing, Solar, Construction, Security, and Fencing.',
+  'Site Survey & Quote Agent': 'Industry specialist. Walks customers through pre-install survey requirements (measurements, photos, access, utilities) and produces a takeoff-ready scope. Auto-activates for Roofing, Solar, Landscape, Construction, Security, and Fencing.',
+  'Insurance Claim Agent': 'Industry specialist. Helps document damage with photos, dates, and cause-of-loss, then produces claim-ready summaries for the carrier. Auto-activates for Roofing and Auto Care.',
+
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Social Media Console': 'Unified control center to create, schedule, approve, and post social content across 6 platforms.',
@@ -62,6 +67,7 @@ interface FeatureRow {
 
 interface FeatureSection {
   title: string;
+  subtitle?: string;
   features: FeatureRow[];
 }
 
@@ -104,6 +110,16 @@ const sections: FeatureSection[] = [
     ],
   },
   {
+    title: 'Specialist Operatives (Industry-Specific)',
+    subtitle: 'Auto-activated based on the industry you select at signup. Available on Pro and Elite plans.',
+    features: [
+      { name: 'Diagnostic Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Permit & Code Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Site Survey & Quote Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Insurance Claim Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+    ],
+  },
+  {
     title: 'Control Centers (3 / 5 / 5 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
@@ -136,7 +152,6 @@ const sections: FeatureSection[] = [
       { name: 'Appointments', starter: 'Unlimited', connect: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', starter: '10 included', connect: '25 included', performance: '50 included', command: 'Unlimited' },
       { name: 'Additional Employees', starter: '$25/10 employees', connect: '$25/10 employees', performance: '$25/10 employees', command: 'Included' },
-      { name: 'White-Label Branding', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Smart Link Sharing', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
     ],
@@ -337,6 +352,14 @@ export const PricingComparisonTable = () => {
                     </td>
                   )}
                 </tr>
+
+                {section.subtitle && (
+                  <tr className="bg-slate-800/40">
+                    <td colSpan={5} className="py-1.5 px-4 text-xs text-slate-300/80 italic">
+                      {section.subtitle}
+                    </td>
+                  </tr>
+                )}
 
                 {/* Section Rows */}
                 {section.features.map((feature) => {

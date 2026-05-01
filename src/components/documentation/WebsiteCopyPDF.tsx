@@ -527,12 +527,12 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Aura Pro - $997/mo</Text>
         <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
-          Scale your brand with campaigns, social media, and white-label branding for growing companies.{'\n\n'}
+          Scale your brand with campaigns, social media, and industry-specific specialist agents for growing companies.{'\n\n'}
           - 16 Smart AI Agents{'\n'}
           - 5 Control Centers{'\n'}
           - Campaign & Outreach Agents{'\n'}
           - Social Scheduler Agent & Analytics{'\n'}
-          - White-Label Branding{'\n'}
+          - Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim){'\n'}
           - Up to 50 employees
         </Text>
       </View>

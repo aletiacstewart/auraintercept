@@ -223,7 +223,7 @@ const PricingSummaryPDF = () => (
           { feature: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
           { feature: 'Online Booking', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
           { feature: 'Field Operations', core: '-', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
-          { feature: 'White-Label', core: '-', boost: '-', pro: 'Yes', elite: 'Yes' },
+          { feature: 'Industry Specialist Agents', core: '-', boost: '-', pro: 'Yes', elite: 'Yes' },
           { feature: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
@@ -402,7 +402,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Consoles (5)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Same 5 consoles as Boost</FeatureItem>
-        <FeatureItem>White-label branding included</FeatureItem>
+        <FeatureItem>Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim)</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
@@ -450,7 +450,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
-        <FeatureItem>White-label branding</FeatureItem>
+        <FeatureItem>All Industry Specialist Agents included</FeatureItem>
         <FeatureItem>$999 implementation fee</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
@@ -580,7 +580,7 @@ const PricingSummaryPDF = () => (
         {[
           { tier: 'Aura Core', fee: '$199', includes: 'Guided setup' },
           { tier: 'Aura Boost', fee: '$299', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Pro', fee: '$599', includes: 'Onboarding, setup, training, white-label' },
+          { tier: 'Aura Pro', fee: '$599', includes: 'Onboarding, setup, training, industry tuning' },
           { tier: 'Aura Elite', fee: '$999', includes: 'Enterprise onboarding, custom setup' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
