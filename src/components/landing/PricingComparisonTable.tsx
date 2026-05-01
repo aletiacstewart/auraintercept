@@ -234,7 +234,7 @@ const renderValue = (
   if (isPricing) textClass = style.price;
   else if (isSavings) textClass = style.savings;
   else if (isAddon) textClass = 'text-amber-400 text-xs';
-  else if (isOptional) textClass = 'text-white/70 text-xs';
+  else if (isOptional) textClass = 'text-white text-xs';
   else if (isLimited) textClass = 'text-yellow-400/80 text-xs';
 
   return (

@@ -565,13 +565,13 @@ export default function Index() {
                     </div>
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 10, background: `${neon.color}44`, opacity: 0.3 }} />
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
-                  <div style={{ fontSize: 11, color: "rgba(200,220,240,0.5)", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
-                    {c.features.map((f) => (
-                      <span key={f} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>{f}</span>
-                    ))}
-                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: neon.color, marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
+                   <div style={{ fontSize: 11, color: "#FFFFFF", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
+                   <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                     {c.features.map((f) => (
+                       <span key={f} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: "#FFFFFF" }}>{f}</span>
+                     ))}
+                   </div>
                 </div>
               );
             })}
@@ -642,8 +642,8 @@ export default function Index() {
                     </div>
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 12, background: `${o.color}33`, opacity: 0.35 }} />
                   </div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "rgba(255,255,255,0.95)", marginBottom: 10, letterSpacing: -0.3 }}>{o.title}</div>
-                  <p style={{ fontSize: 13, color: "rgba(210,225,240,0.65)", lineHeight: 1.65, marginBottom: 16 }}>{o.desc}</p>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: o.color, marginBottom: 10, letterSpacing: -0.3 }}>{o.title}</div>
+                  <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.65, marginBottom: 16 }}>{o.desc}</p>
                   <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase" as const, color: `rgb(${o.neon})`, fontWeight: 700, opacity: 0.8 }}>
                     Powered by: {o.proof}
                   </div>
@@ -703,7 +703,7 @@ export default function Index() {
                     <span className="absolute inset-0 rounded-md animate-ping opacity-40" style={{ background: `rgba(${category.neonRgb},0.5)` }} />
                     <category.icon className="w-3.5 h-3.5 text-white relative z-10" />
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{category.name}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{category.name}</span>
                   <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: `rgba(${category.neonRgb},0.15)`, color: `rgb(${category.neonRgb})`, border: `1px solid rgba(${category.neonRgb},0.3)`, letterSpacing: 0.5 }}>{category.agents.length} Agents</span>
                   <div style={{ flex: 1, height: 1, background: `rgba(${category.neonRgb},0.15)` }} />
                 </div>
@@ -718,9 +718,9 @@ export default function Index() {
                           <span className="absolute inset-0 rounded animate-ping opacity-30" style={{ background: `rgba(${category.neonRgb},0.6)` }} />
                           <agent.icon className="w-3 h-3 text-white relative z-10" />
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{agent.name}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{agent.name}</span>
                       </div>
-                      <p style={{ fontSize: 10, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{agent.description}</p>
+                      <p style={{ fontSize: 10, color: "#FFFFFF", lineHeight: 1.5 }}>{agent.description}</p>
                     </div>
                   ))}
                 </div>
@@ -756,8 +756,8 @@ export default function Index() {
                   </div>
                   <span className="absolute inset-0 rounded-lg animate-ping opacity-30" style={{ background: `rgba(${channel.neonRgb},0.6)` }} />
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{channel.title}</div>
-                <p style={{ fontSize: 12, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{channel.description}</p>
+                <div style={{ fontSize: 14, fontWeight: 700, color: `rgb(${channel.neonRgb})`, marginBottom: 6 }}>{channel.title}</div>
+                <p style={{ fontSize: 12, color: "#FFFFFF", lineHeight: 1.6 }}>{channel.description}</p>
               </div>
             ))}
           </div>
@@ -789,9 +789,9 @@ export default function Index() {
                     </div>
                     <span className="absolute inset-0 rounded-md animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{feature.title}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#00E5FF" }}>{feature.title}</span>
                 </div>
-                <p style={{ fontSize: 9, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{feature.description}</p>
+                <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.5 }}>{feature.description}</p>
               </div>
             ))}
           </div>
@@ -901,21 +901,21 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-teal-500/20 text-teal-400 border-teal-500/30 text-[10px]">Entry Level</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">Core booking & web presence</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for solo operators, restaurants, single-location service businesses.</p>
+                <h3 className="text-lg font-bold mb-1 text-teal-400">Aura Core</h3>
+                <p className="text-[10px] text-white mb-1">Core booking & web presence</p>
+                <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-teal-400">$197</span>
-                  <span className="text-card-foreground/60 text-sm">/month</span>
+                  <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">8 Smart AI Agents handling booking, follow-up, creative content & web presence.</p>
+                <p className="text-xs text-white mb-4">8 Smart AI Agents handling booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">8 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">3 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Triage + Booking + Follow-Up + Review</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">Creative Content + Web Presence</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs">10 Employee Accounts</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">3 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Triage + Booking + Follow-Up + Review</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Creative Content + Web Presence</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">10 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
@@ -932,21 +932,21 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">Most Popular</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Boost</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">Field service automation</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
+                <h3 className="text-lg font-bold mb-1 text-sky-400">Aura Boost</h3>
+                <p className="text-[10px] text-white mb-1">Field service automation</p>
+                <p className="text-[10px] text-white italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-sky-400">$497</span>
-                  <span className="text-card-foreground/60 text-sm">/month</span>
+                  <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">12 Smart AI Agents with dispatch, routing & field operations.</p>
+                <p className="text-xs text-white mb-4">12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">12 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">5 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Dispatch + Route + ETA + Check-In</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">Field Operations + Social Media Console</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs">25 Employee Accounts</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media Console</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   <Zap className="w-3 h-3 mr-1" />Start Free Trial
@@ -963,21 +963,21 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-violet-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-purple-500/20 text-purple-400 border-purple-500/30 text-[10px]">Growth</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Pro</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">Full business management</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
+                <h3 className="text-lg font-bold mb-1 text-purple-400">Aura Pro</h3>
+                <p className="text-[10px] text-white mb-1">Full business management</p>
+                <p className="text-[10px] text-white italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-purple-400">$997</span>
-                  <span className="text-card-foreground/60 text-sm">/month</span>
+                  <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">16 Smart AI Agents with social media, campaigns & white-label.</p>
+                <p className="text-xs text-white mb-4">16 Smart AI Agents with social media, campaigns & white-label.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">16 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">5 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">Campaign + Outreach + Social</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Campaign + Outreach + Social</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-purple-400">White-Label Branding</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs">50 Employee Accounts</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
@@ -994,20 +994,20 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
-                <h3 className="text-lg font-bold mb-1">Aura Elite</h3>
+                <h3 className="text-lg font-bold mb-1 text-amber-400">Aura Elite</h3>
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
-                <p className="text-[10px] text-card-foreground/50 italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
+                <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-amber-400">$1,997</span>
-                  <span className="text-card-foreground/60 text-sm">/month</span>
+                  <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$19,970/year (Save ~20%)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">All 24 Smart AI Agents with full-suite automation.</p>
+                <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">24 Smart AI Agents (Full Suite)</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">7 Control Centers + AI Hub</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">White-Label Branding</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs">Unlimited Employees</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers + AI Hub</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">White-Label Branding</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Unlimited Employees</span></div>
                 </div>
                 <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
@@ -1049,10 +1049,10 @@ export default function Index() {
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
                     <Zap className="w-3 h-3" /> Beta
                   </span>
-                  <h3 className="text-lg font-bold text-foreground">We're in Beta!</h3>
+                  <h3 className="text-lg font-bold text-primary">We're in Beta!</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  We are currently in <span className="font-semibold text-foreground">Beta</span>. All users who join during the beta period receive{' '}
+                <p className="text-sm text-white leading-relaxed">
+                  We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive{' '}
                   <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
@@ -1062,8 +1062,8 @@ export default function Index() {
                     <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                     <div className="space-y-1">
                       <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks). <span className="font-medium text-foreground">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
+                      <p className="text-xs text-white leading-relaxed">
+                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks). <span className="font-medium text-white">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
                       </p>
                     </div>
                   </div>
@@ -1075,11 +1075,11 @@ export default function Index() {
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2">3rd Party Integration Costs + Usage Fees</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="text-xl font-bold mb-2 text-white">3rd Party Integration Costs + Usage Fees</h3>
+              <p className="text-sm text-white">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
               </p>
-              <p className="text-xs text-muted-foreground/70 italic mt-1">
+              <p className="text-xs text-white italic mt-1">
                 All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
               </p>
             </div>
@@ -1089,93 +1089,93 @@ export default function Index() {
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="font-semibold text-xs text-white">Google Calendar</span>
+                  <span className="font-semibold text-xs text-cyan-400">Google Calendar</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
-                <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Calendar Sync</p>
+                <p className="text-[10px] text-white font-medium">Free - Unlimited</p>
+                <p className="text-[10px] text-white">Required for: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Mail className="w-3.5 h-3.5 text-channel-email" />
-                  <span className="font-semibold text-xs text-white">Resend</span>
+                  <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Email Notifications</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
-                <p className="text-[10px] text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Email Notifications</p>
+                <p className="text-[10px] text-white font-medium">Free: 3,000 emails/mo</p>
+                <p className="text-[10px] text-white">Then $20/mo for 50k emails ($0.0004/email over)</p>
+                <p className="text-[10px] text-white">Required for: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Mic className="w-3.5 h-3.5 text-purple-400" />
-                  <span className="font-semibold text-xs text-white">ElevenLabs</span>
+                  <span className="font-semibold text-xs text-purple-400">ElevenLabs</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">AI Voice Synthesis (Voice features only)</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
-                <p className="text-[10px] text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">AI Voice Synthesis (Voice features only)</p>
+                <p className="text-[10px] text-white font-medium">Free: 10,000 chars/mo</p>
+                <p className="text-[10px] text-white">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
+                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Phone className="w-3.5 h-3.5 text-green-400" />
-                  <span className="font-semibold text-xs text-white">SignalWire</span>
+                  <span className="font-semibold text-xs text-green-400">SignalWire</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (40% cheaper SMS)</p>
-                <p className="text-[10px] text-white/70">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
+                <p className="text-[10px] text-white font-medium">Pay-as-you-go (40% cheaper SMS)</p>
+                <p className="text-[10px] text-white">$2/number • $0.004/SMS • $0.01/min calls</p>
+                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Shield className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="font-semibold text-xs text-white">A2P 10DLC Compliance</span>
+                  <span className="font-semibold text-xs text-cyan-400">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">US SMS Carrier Registration (SignalWire)</p>
-                <p className="text-[10px] text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
-                <p className="text-[10px] text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
-                <p className="text-[10px] text-white/60">Required for: All SMS features • Prevents carrier filtering</p>
+                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration (SignalWire)</p>
+                <p className="text-[10px] text-white font-medium">One-time: $4 Brand + $15 Campaign</p>
+                <p className="text-[10px] text-white">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
+                <p className="text-[10px] text-white">Required for: All SMS features • Prevents carrier filtering</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <DollarSign className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="font-semibold text-xs text-white">Stripe (Your Account)</span>
+                  <span className="font-semibold text-xs text-amber-400">Stripe (Your Account)</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
-                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Elite (Invoicing)</p>
+                <p className="text-[10px] text-white mb-1">Invoice Payments</p>
+                <p className="text-[10px] text-white font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-[10px] text-white">2.9% + $0.30 per successful transaction</p>
+                <p className="text-[10px] text-white">Required for: Elite (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Send className="w-3.5 h-3.5 text-pink-400" />
-                  <span className="font-semibold text-xs text-white">Social Media Accounts</span>
+                  <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
-                <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white/60">Required for: Pro, Elite • Optional for: Boost</p>
+                <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
+                <p className="text-[10px] text-white font-medium">Free - Your Business Pages</p>
+                <p className="text-[10px] text-white">OAuth connection to your existing accounts</p>
+                <p className="text-[10px] text-white">Required for: Pro, Elite • Optional for: Boost</p>
               </div>
 
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Search className="w-3.5 h-3.5 text-orange-400" />
-                  <span className="font-semibold text-xs text-white">Tavily</span>
+                  <span className="font-semibold text-xs text-orange-400">Tavily</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-white/90 font-medium">Included in your tier</p>
-                <p className="text-[10px] text-white/70">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-[10px] text-white/60">Available on: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-white mb-1">AI Research Engine</p>
+                <p className="text-[10px] text-white font-medium">Included in your tier</p>
+                <p className="text-[10px] text-white">Real-time industry trends, statistics & expert insights</p>
+                <p className="text-[10px] text-white">Available on: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
-            <p className="text-[10px] text-white/50 italic text-center mt-4">
+            <p className="text-[10px] text-white italic text-center mt-4">
               Usage of bundled providers (SignalWire, ElevenLabs, Resend, Tavily) is included in your subscription. A2P 10DLC and Stripe transaction fees are paid directly to those providers.
             </p>
           </div>
