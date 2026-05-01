@@ -55,6 +55,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
 import { formatDistanceToNow } from 'date-fns';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { INDUSTRY_SPECIALIST_OPERATIVES, SPECIALIST_LABELS, SPECIALIST_DESCRIPTIONS, isSpecialistOperative } from '@/lib/subscriptionAgentConfig';
+import { Stethoscope } from 'lucide-react';
 
 const CATEGORY_INFO: Record<string, { 
   label: string; 
@@ -104,6 +107,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-feature-analytics',
     cssVar: '--feature-analytics'
   },
+  industry_specialist: {
+    label: 'Specialist Operatives',
+    icon: Stethoscope,
+    colorClass: 'text-feature-analytics',
+    cssVar: '--feature-analytics',
+  },
 };
 
 // Core agents that should always be visible & recommended first
@@ -121,6 +130,10 @@ const AGENT_ROI_HINTS: Record<string, string> = {
   field_navigation: 'Reduces drive time by ~15%',
   analytics_intelligence: 'Surfaces insights you would miss',
   admin: 'Automates routine admin tasks',
+  diagnostic: 'Photo + symptom triage',
+  permit_code: 'Local code & permit guidance',
+  site_survey: 'Pre-install measurements & takeoff',
+  insurance_claim: 'Claim-ready damage reports',
 };
 
 const PHASE_LABELS: Record<number, string> = {
@@ -163,6 +176,11 @@ const AGENT_NAMES: Record<string, string> = {
   web_presence: 'Web Presence Agent',
   // Analytics & Reports (1)
   analytics_intelligence: 'Analytics Intelligence Agent',
+  // Industry Specialists (4)
+  diagnostic: 'Diagnostic Specialist',
+  permit_code: 'Permit & Code Specialist',
+  site_survey: 'Site Survey & Quote Specialist',
+  insurance_claim: 'Insurance Claim Specialist',
 };
 
 export default function AIAgentsHub() {
