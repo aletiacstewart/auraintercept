@@ -601,6 +601,73 @@ export default function SmartWebsite() {
         </section>
       )}
 
+      {/* Booking Widget Section (inline mode) */}
+      {bookingEnabled && bookingMode === 'inline' && (
+        <section id="book" className="py-16 px-4">
+          <div className="container mx-auto max-w-xl">
+            <h2 className="text-3xl font-bold text-center mb-2">Request an appointment</h2>
+            <p className="text-center text-muted-foreground mb-8">
+              Tell us what you need and we'll reach out to confirm.
+            </p>
+            <Card className="p-4 sm:p-6">
+              {bookingSubmitted ? (
+                <div className="text-center space-y-2 py-6">
+                  <h3 className="text-lg font-semibold">Request received</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Thanks! {website.company_name} will reach out shortly to confirm.
+                  </p>
+                </div>
+              ) : (
+                <BookingForm
+                  services={(services || []).map((s) => ({
+                    id: s.id,
+                    name: s.name,
+                    description: s.description,
+                    duration_minutes: s.duration_minutes ?? 60,
+                    price: s.price,
+                  }))}
+                  onSubmit={handleBookingSubmit}
+                  isLoading={bookingSubmitting}
+                  companyId={website.company_id}
+                  isPublic
+                />
+              )}
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {/* Booking Widget Modal (modal mode) */}
+      {bookingEnabled && bookingMode === 'modal' && (
+        <Dialog open={bookingOpen} onOpenChange={(o) => { setBookingOpen(o); if (!o) setBookingSubmitted(false); }}>
+          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-semibold mb-2">Request an appointment</h2>
+            {bookingSubmitted ? (
+              <div className="text-center space-y-2 py-6">
+                <h3 className="text-lg font-semibold">Request received</h3>
+                <p className="text-sm text-muted-foreground">
+                  Thanks! {website.company_name} will reach out shortly to confirm.
+                </p>
+              </div>
+            ) : (
+              <BookingForm
+                services={(services || []).map((s) => ({
+                  id: s.id,
+                  name: s.name,
+                  description: s.description,
+                  duration_minutes: s.duration_minutes ?? 60,
+                  price: s.price,
+                }))}
+                onSubmit={handleBookingSubmit}
+                isLoading={bookingSubmitting}
+                companyId={website.company_id}
+                isPublic
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Contact Section */}
       {website.show_contact && (
         <section className="py-16 px-4 bg-muted/30">
