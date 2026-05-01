@@ -2965,6 +2965,72 @@ export type Database = {
           },
         ]
       }
+      industry_template_packs: {
+        Row: {
+          agent_prompt_deltas: Json
+          appointment_rules: Json
+          checklist_library: Json
+          cluster: string
+          created_at: string
+          dashboard_widgets: Json
+          description: string | null
+          extra_operatives: Json
+          form_schemas: Json
+          icon: string | null
+          id: string
+          industry_id: string
+          is_active: boolean
+          job_templates: Json
+          kb_seed_documents: Json
+          label: string
+          min_tier_per_extra: Json
+          terminology: Json
+          updated_at: string
+        }
+        Insert: {
+          agent_prompt_deltas?: Json
+          appointment_rules?: Json
+          checklist_library?: Json
+          cluster: string
+          created_at?: string
+          dashboard_widgets?: Json
+          description?: string | null
+          extra_operatives?: Json
+          form_schemas?: Json
+          icon?: string | null
+          id?: string
+          industry_id: string
+          is_active?: boolean
+          job_templates?: Json
+          kb_seed_documents?: Json
+          label: string
+          min_tier_per_extra?: Json
+          terminology?: Json
+          updated_at?: string
+        }
+        Update: {
+          agent_prompt_deltas?: Json
+          appointment_rules?: Json
+          checklist_library?: Json
+          cluster?: string
+          created_at?: string
+          dashboard_widgets?: Json
+          description?: string | null
+          extra_operatives?: Json
+          form_schemas?: Json
+          icon?: string | null
+          id?: string
+          industry_id?: string
+          is_active?: boolean
+          job_templates?: Json
+          kb_seed_documents?: Json
+          label?: string
+          min_tier_per_extra?: Json
+          terminology?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       inventory_items: {
         Row: {
           barcode: string | null
@@ -6803,6 +6869,36 @@ export type Database = {
           has_voice_chat: boolean
           twilio_phone_number: string
         }[]
+      }
+      get_company_industry_pack: {
+        Args: { p_company_id: string }
+        Returns: {
+          agent_prompt_deltas: Json
+          appointment_rules: Json
+          checklist_library: Json
+          cluster: string
+          created_at: string
+          dashboard_widgets: Json
+          description: string | null
+          extra_operatives: Json
+          form_schemas: Json
+          icon: string | null
+          id: string
+          industry_id: string
+          is_active: boolean
+          job_templates: Json
+          kb_seed_documents: Json
+          label: string
+          min_tier_per_extra: Json
+          terminology: Json
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "industry_template_packs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       get_company_public_info: {
         Args: { p_slug: string }
