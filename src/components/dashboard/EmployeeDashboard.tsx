@@ -217,7 +217,15 @@ export function EmployeeDashboard() {
         {statCards.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-white">{stat.title}</CardTitle>
+              <CardTitle className={`text-sm font-medium ${
+                stat.gradient.includes('yellow') ? 'text-yellow-400' :
+                stat.gradient.includes('green') ? 'text-green-400' :
+                stat.gradient.includes('blue') ? 'text-blue-400' :
+                stat.gradient.includes('orange') ? 'text-orange-400' :
+                stat.gradient.includes('cyan') ? 'text-cyan-400' :
+                stat.gradient.includes('secondary') ? 'text-secondary' :
+                'text-primary'
+              }`}>{stat.title}</CardTitle>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
                 <stat.icon className="w-5 h-5 text-primary-foreground" />
               </div>
