@@ -7151,6 +7151,36 @@ export type Database = {
         Args: { p_appointment_id: string }
         Returns: string
       }
+      search_intake_data: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          customer_name: string
+          datetime: string
+          id: string
+          intake_data: Json
+          match_field: string
+          match_value: string
+          service_type: string
+          status: string
+        }[]
+      }
+      search_lead_intake_data: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          created_at: string
+          id: string
+          intake_data: Json
+          match_field: string
+          match_value: string
+          name: string
+          service_interest: string
+          status: string
+        }[]
+      }
+      seed_industry_pack_kb_for_company: {
+        Args: { p_company_id: string }
+        Returns: undefined
+      }
       validate_registration_code: {
         Args: { p_code: string; p_company_id?: string }
         Returns: {
