@@ -14,6 +14,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 
 const FIELD_OPS_WORKFLOWS: WorkflowChain[] = [
   {
@@ -90,6 +91,11 @@ export default function FieldOpsConsole() {
             />
 
             <FieldOpsAgentConsole />
+
+            <SpecialistOperativesLauncher
+              show={['permit_code', 'site_survey', 'diagnostic']}
+              subtitle="Field-side specialists for permits, surveys, and diagnostics."
+            />
           </div>
         </FeatureGate>
       </PageContainer>
