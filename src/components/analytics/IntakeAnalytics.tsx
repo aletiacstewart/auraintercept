@@ -253,6 +253,38 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
 
   return (
     <div className="space-y-4">
+      {/* Per-vertical analytics presets */}
+      {presets.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              Suggested views{pack?.label ? ` for ${pack.label}` : ''}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              One-click shortcuts curated for your industry. Click any chip to
+              jump straight to the matching chart.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex flex-wrap gap-2">
+              {presets.map((p) => (
+                <Button
+                  key={p.id}
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  onClick={() => applyPreset(p)}
+                  title={p.description ?? p.label}
+                >
+                  {p.label}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Controls */}
       <Card>
         <CardContent className="pt-6">
