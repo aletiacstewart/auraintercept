@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,6 +48,7 @@ const CHART_COLORS = [
 
 type Source = 'appointments' | 'leads';
 type Range = '30d' | '90d' | 'all';
+type View = 'distribution' | 'trend' | 'completeness';
 
 interface DistributionRow { bucket: string; count: number }
 interface TimeseriesRow { period: string; count: number; distinct_values: number }
@@ -79,6 +80,33 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
   const [fieldName, setFieldName] = useState<string>(initialField);
 
   const activeField = fields.find((f) => f.name === fieldName) ?? null;
+
+  // Deep-link "view" param drives auto-focus on a specific card.
+  const requestedView = searchParams.get('view') as View | null;
+  const distRef = useRef<HTMLDivElement>(null);
+  const trendRef = useRef<HTMLDivElement>(null);
+  const completenessRef = useRef<HTMLDivElement>(null);
+  const [highlightView, setHighlightView] = useState<View | null>(null);
+
+  useEffect(() => {
+    if (!requestedView) return;
+    const ref =
+      requestedView === 'trend'
+        ? trendRef
+        : requestedView === 'completeness'
+          ? completenessRef
+          : distRef;
+    // Wait one frame so the cards have laid out.
+    const id = window.setTimeout(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightView(requestedView);
+      window.setTimeout(() => setHighlightView(null), 2200);
+    }, 80);
+    return () => window.clearTimeout(id);
+  }, [requestedView]);
+
+  const ringFor = (view: View) =>
+    highlightView === view ? 'ring-2 ring-primary/40 transition-shadow' : '';
 
   const updateParams = (next: Partial<{ source: Source; field: string }>) => {
     const params = new URLSearchParams(searchParams);
@@ -249,7 +277,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Distribution */}
-        <Card>
+        <Card ref={distRef as never} className={ringFor('distribution')}>
           <CardHeader>
             <CardTitle className="text-base">
               {activeField?.label ?? 'Field'} distribution
@@ -273,7 +301,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
         </Card>
 
         {/* Timeseries */}
-        <Card>
+        <Card ref={trendRef as never} className={ringFor('trend')}>
           <CardHeader>
             <CardTitle className="text-base">Capture trend (12 mo)</CardTitle>
             <CardDescription>
@@ -320,7 +348,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
       </div>
 
       {/* Completeness */}
-      <Card>
+      <Card ref={completenessRef as never} className={ringFor('completeness')}>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-primary" />
