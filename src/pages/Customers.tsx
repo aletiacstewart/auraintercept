@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
+import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
 
 import { 
   Search, 
@@ -224,6 +225,7 @@ export default function Customers() {
               className="pl-10"
             />
           </div>
+          <IntakeDataSearch scope="appointments" className="w-full max-w-sm" />
           <Button onClick={() => setAddCustomerOpen(true)}>
             <UserPlus className="h-4 w-4 mr-2" />
             New Customer
