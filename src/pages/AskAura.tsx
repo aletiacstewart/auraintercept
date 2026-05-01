@@ -8,12 +8,21 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+import { Link } from 'react-router-dom';
 import { AuraCommandModal } from '@/components/aura/AuraCommandModal';
 import { AuraTabs } from '@/components/aura/AuraTabs';
 import { AuraSummary } from '@/components/aura/AuraSummary';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
-import { parseAuraQuery, getTabFromIntent } from '@/lib/auraQueryParser';
+import {
+  parseAuraQuery,
+  getTabFromIntent,
+  buildIntakeAnalyticsHref,
+  type IntakeAnalyticsTarget,
+} from '@/lib/auraQueryParser';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { Button } from '@/components/ui/button';
+import { ClipboardList } from 'lucide-react';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { Cpu, ShieldAlert } from 'lucide-react';
 
@@ -23,6 +32,8 @@ export default function AskAura() {
   
   const [activeTab, setActiveTab] = useState('revenue');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [intakeTarget, setIntakeTarget] = useState<IntakeAnalyticsTarget | null>(null);
+  const { pack } = useIndustryPack(companyId || undefined);
   
   // Get query from URL if present
   const urlQuery = searchParams.get('q') || '';
@@ -50,8 +61,9 @@ export default function AskAura() {
   useEffect(() => {
     if (urlQuery && messages.length === 0 && companyId) {
       // Parse the query to determine intent
-      const parsed = parseAuraQuery(urlQuery);
+      const parsed = parseAuraQuery(urlQuery, pack);
       setActiveTab(getTabFromIntent(parsed.intent));
+      setIntakeTarget(parsed.intake ?? null);
       
       // Send the message
       sendMessage(urlQuery);
@@ -59,7 +71,7 @@ export default function AskAura() {
       // Clear the URL param
       setSearchParams({});
     }
-  }, [urlQuery, messages.length, companyId, sendMessage, setSearchParams]);
+  }, [urlQuery, messages.length, companyId, sendMessage, setSearchParams, pack]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -70,9 +82,9 @@ export default function AskAura() {
     if (!query.trim() || isLoading || !companyId) return;
     
     // Parse query and update tab
-    const parsed = parseAuraQuery(query);
+    const parsed = parseAuraQuery(query, pack);
     setActiveTab(getTabFromIntent(parsed.intent));
-    
+    setIntakeTarget(parsed.intake ?? null);
     
     await sendMessage(query);
   };
@@ -153,6 +165,32 @@ export default function AskAura() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
+            </Card>
+          )}
+
+          {/* Deep-link CTA into Intake analytics when query is intake-shaped */}
+          {intakeTarget && (
+            <Card className="bg-card border-border p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-md bg-primary/10 p-2">
+                  <ClipboardList className="h-4 w-4 text-primary" />
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium text-foreground">
+                    Open in Intake analytics
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {intakeTarget.field
+                      ? `${intakeTarget.field} · ${intakeTarget.view} · ${intakeTarget.source}`
+                      : `${intakeTarget.view} · ${intakeTarget.source}`}
+                  </div>
+                </div>
+              </div>
+              <Button asChild size="sm" variant="secondary">
+                <Link to={buildIntakeAnalyticsHref(intakeTarget)}>
+                  View report
+                </Link>
+              </Button>
             </Card>
           )}
 
