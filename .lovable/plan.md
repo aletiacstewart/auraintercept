@@ -1,49 +1,71 @@
-# Fix Industry Widget 404s (All Industries)
+# Industry-Aware Dashboards & Consoles
 
-## Root Cause
+## The Problem
 
-`src/components/dashboard/IndustryWidgetGrid.tsx` defines CTA routes for every widget, but most of them point at unprefixed paths (`/field-ops`, `/leads`, `/customers`, `/quotes`, `/inventory`, `/analytics`, `/dashboard/call-history`, `/dashboard/settings`) that **do not exist** in `src/App.tsx`. The router only registers them under `/dashboard/...` (e.g. `/dashboard/leads`, `/dashboard/calls`, `/dashboard/dispatch-field-ops`). So clicking any of those widgets produces a 404 / NotFound render.
+The Real Estate Elite demo loads the correct `industry_template_pack` (cluster `booking`, terminology `job→Showing`, `customer→Buyer/Seller`, widgets `showings_calendar / lead_scoring / listing_tracker / review_pulse / missed_calls`), but three surfaces ignore the pack and show hardcoded HVAC/trades copy:
 
-This is what's hitting Real Estate Demo Elite — its widgets (`showings_calendar`, `lead_scoring`, `listing_tracker`, `review_pulse`, `missed_calls`) route to `/leads`, `/customers`, `/dashboard/call-history`, etc. — none of which exist.
+1. **Aura Command Center hero** (`src/components/dashboard/AuraCommandCenter.tsx` + `src/locales/en/aura.json`) — hardcoded "Book today's emergency job", "spring tune-ups", "Check today's dispatch schedule", "overdue invoices".
+2. **Business Management Console workflows** (`src/pages/ai-consoles/BusinessManagementConsole.tsx`) — hardcoded "Lead → Invoice", "Quote → Job", "Invoice Follow-Up" with technician language.
+3. **Sidebar labels** (`src/components/dashboard/DashboardLayout.tsx`) — fixed "Technician View", "Dispatch View" regardless of cluster. For booking-cluster industries (real estate, salons, fitness, professional services) these labels are misleading.
 
-The bug affects **every industry pack**, not just Real Estate — Real Estate just happens to be the one being tested.
+The `IndustryWidgetGrid` component already pulls from the pack correctly — we just need to extend the same pattern to the surfaces above.
 
-## Fix
+## What Will Change
 
-Single-file change: rewrite the `cta.route` values in `WIDGET_REGISTRY` (`src/components/dashboard/IndustryWidgetGrid.tsx`) to the real registered routes.
+### 1. New industry quick-actions registry
+Create `src/lib/industryQuickActions.ts` exporting a map keyed by `cluster` (and overrideable per `industry_id`) returning 6 quick actions, each with: `key`, `icon`, `label`, `description`, `route`, `auraCommand`.
 
-### Route Mapping
+Examples:
+- **trades** (HVAC/plumbing/electrical/roofing): keep current emergency/dispatch/tune-ups set.
+- **booking** (real_estate, salon, fitness, professional): "Book a showing today", "Show new leads to follow up", "Generate listing social posts", "Today's appointment calendar", "Send a quote/proposal", "This week's revenue".
+- **outdoor** (landscape, pool_spa, pest_control): "Today's recurring routes", "Weather-impacted stops", "Generate seasonal campaign", "Open route map", "Quote a new property", "Week revenue".
+- **repair** (auto_care, appliance_repair, mobile_mechanic): "Today's repair queue", "Parts orders pending", "Generate repair tip post", "Open dispatch", "Quote a new ticket", "Week revenue".
 
-| Old (404)                  | New (correct)                             |
-|----------------------------|-------------------------------------------|
-| `/field-ops`               | `/dashboard/dispatch-field-ops`           |
-| `/inventory`               | `/dashboard/inventory`                    |
-| `/quotes`                  | `/dashboard/quotes`                       |
-| `/analytics`               | `/dashboard/analytics`                    |
-| `/customers`               | `/dashboard/customers`                    |
-| `/leads`                   | `/dashboard/leads`                        |
-| `/dashboard/call-history`  | `/dashboard/calls`                        |
-| `/dashboard/settings`      | `/dashboard/quick-setup`                  |
-| `/dashboard/appointments`  | `/dashboard/appointments` (already valid) |
-| `/dashboard/employees`     | `/dashboard/employees` (already valid)    |
-| `/dashboard/integrations/calendar` | already valid                     |
-| `/dashboard`               | already valid                             |
+Per-industry overrides for real_estate, auto_care, salon, etc. so wording matches terminology (Showing vs Job, Buyer vs Customer).
 
-### Real Estate widgets (verified post-fix)
-- `showings_calendar` → `/dashboard/appointments`
-- `lead_scoring` → `/dashboard/leads`
-- `listing_tracker` → `/dashboard/customers`
-- `review_pulse` → `/dashboard` (Reviews live on the main dashboard)
-- `missed_calls` → `/dashboard/calls`
+### 2. Wire AuraCommandCenter to the pack
+- Call `useIndustryPack()` in `AuraCommandCenter.tsx`.
+- Resolve quick actions via `getIndustryQuickActions(pack)` → render labels/descriptions directly (no i18n key lookup), keep i18n strings only for `command.heading`, `command.placeholder`, `suggestions.sectionTitle`, `suggestions.sectionHint`.
+- Remove the now-unused `bookEmergency*`, `generatePosts*`, etc. keys from `aura.json` (en + es).
 
-### Sweep all clusters
+### 3. Industry-aware Business Management workflows
+- In `BusinessManagementConsole.tsx`, replace the hardcoded `BUSINESS_WORKFLOWS` constant with a `useMemo` that calls a new helper `getBusinessWorkflows(pack)`.
+- Define cluster-specific workflow chains in `src/lib/industryWorkflows.ts`:
+  - **booking**: "Lead → Showing → Offer", "Listing → Marketing → Open House", "Invoice/Commission Follow-Up".
+  - **trades**: current set (Lead→Invoice, Quote→Job, Invoice Follow-Up).
+  - **outdoor**: "Route → Service → Invoice", "Quote → Recurring Plan", "Seasonal Campaign".
+  - **repair**: "Intake → Diagnose → Quote", "Parts Order → Repair → Invoice", "Customer Update Loop".
+- Use pack `terminology` for substitutions (`{{job}}`, `{{customer}}`, `{{appointment}}`).
 
-I'll update every widget's `cta.route` in the registry to use a route that exists in `App.tsx`, so Trades, Outdoor, Repair, and Booking-First packs are all fixed in the same pass.
+### 4. Cluster-aware sidebar labels
+- In `DashboardLayout.tsx`, call `useIndustryPack()` and remap labels based on `pack.cluster` + `pack.terminology`:
+  - **trades / outdoor / repair** → "Technician View" / "Dispatch View" (current).
+  - **booking** → "Agent View" / "Schedule View" (real estate: "Agent View"/"Listings Map"; salon: "Stylist View"/"Chair Schedule").
+- Centralize the mapping in `src/lib/industryNavLabels.ts` so we can tune per-industry without editing the layout.
 
-## Files Changed
+### 5. Verification
+- Sign in as `realestate-elite@aidemo.test` (Real Estate Elite demo) — hero should now show "Book a showing today / new lead follow-ups / generate listing posts / today's calendar / send proposal / week revenue", Business Mgmt Console should show "Lead → Showing → Offer", sidebar should read "Agent View".
+- Sign in as `hvac-elite@aidemo.test` — surfaces unchanged from today.
+- Smoke-test plumbing-pro, landscape-boost, auto-care-elite, salon-pro to confirm cluster fallbacks render and routes still resolve.
 
-- `src/components/dashboard/IndustryWidgetGrid.tsx` — replace CTA route strings only (no UI / logic changes).
+## Technical Details
 
-## Verification
+**Files to create**
+- `src/lib/industryQuickActions.ts` — cluster + industry override map, `getIndustryQuickActions(pack)` resolver.
+- `src/lib/industryWorkflows.ts` — cluster + industry override map, `getBusinessWorkflows(pack)` resolver.
+- `src/lib/industryNavLabels.ts` — `getNavLabels(pack)` returning `{ techView, dispatchView }`.
 
-After the change I'll grep the file to confirm every `route:` value matches a `<Route path="...">` in `src/App.tsx`, so no industry pack widget can produce a 404.
+**Files to edit**
+- `src/components/dashboard/AuraCommandCenter.tsx` — consume `useIndustryPack`, render from resolver.
+- `src/pages/ai-consoles/BusinessManagementConsole.tsx` — consume `useIndustryPack`, build workflows via `useMemo`.
+- `src/components/dashboard/DashboardLayout.tsx` — consume `useIndustryPack`, swap "Technician View" / "Dispatch View" labels.
+- `src/locales/en/aura.json`, `src/locales/es/aura.json` — drop the dead `suggestions.book*/overdue*/generate*/check*/createQuote/weekRevenue` keys.
+
+**Out of scope (kept as-is)**
+- `IndustryWidgetGrid.tsx` already industry-aware — no change.
+- `ai-agent-chat` industry deltas already in place via `industry-pack-prompt-delta-aliases` memory — no change.
+- Console headers, page titles, terminology in other CRUD pages — can follow as a phase 2 once this hero/workflow/sidebar pass is approved.
+
+## Result
+
+Real Estate Elite (and every other booking-cluster company) gets a dashboard that talks about showings, listings, buyers, and proposals instead of emergency HVAC jobs and overdue invoices, while trades-cluster companies see no regression. The pattern is data-driven via `industry_template_packs`, so adding more industries later only requires DB rows + optional override entries — no component edits.
