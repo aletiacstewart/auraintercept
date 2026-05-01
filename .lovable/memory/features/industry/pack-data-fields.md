@@ -96,3 +96,26 @@ Field-type → chart mapping lives in `chartKindForField`:
 `select|checkbox → donut`, `number → histogram`, `date → timeseries`,
 `text → table`. The Intake tab also accepts `?source=` and `?field=` query
 params so deep links from Aura / external pages preselect the chart.
+
+## Embedded booking widget (Phase G)
+
+`smart_websites.show_booking_widget` (default `true`) +
+`smart_websites.booking_widget_mode` (`inline | modal | hero_cta`) drive how the
+public booking flow surfaces on the published Smart Website
+(`src/pages/SmartWebsite.tsx`):
+
+- `inline` — renders a `<section id="book">` with `<BookingForm isPublic>` and
+  the hero CTA scrolls to it.
+- `modal` — hero CTA opens a `Dialog` containing `<BookingForm isPublic>`.
+- `hero_cta` — hero CTA links out to `/book/:companySlug`.
+
+The CTA only triggers the embedded form when no custom `cta_button_url` is set;
+otherwise the manual URL wins. Submissions go through
+`submit_public_booking` (creates a lead with `intake_data`).
+
+`PublicBooking.tsx` accepts `?embed=1` to render a chromeless layout suitable
+for iframe embedding on external sites. The Smart Website manager exposes a
+copyable iframe snippet at `https://auraintercept.ai/book/{slug}?embed=1`.
+
+`get_website_public_data(text)` was extended to return
+`show_booking_widget`, `booking_widget_mode`, and `company_slug`.

@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { BookingForm, BookingData } from '@/components/ai/BookingForm';
+import { toast } from 'sonner';
 interface WebsiteData {
   id: string;
   company_id: string;
@@ -48,6 +50,10 @@ interface WebsiteData {
   background_image_url: string | null;
   logo_transparency_mode: 'none' | 'multiply' | 'contrast' | null;
   show_gallery: boolean | null;
+  // Booking widget (Phase G)
+  show_booking_widget: boolean | null;
+  booking_widget_mode: 'inline' | 'modal' | 'hero_cta' | null;
+  company_slug: string | null;
 }
 
 interface Service {
@@ -83,6 +89,9 @@ export default function SmartWebsite() {
   const [isNightMode, setIsNightMode] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingSubmitting, setBookingSubmitting] = useState(false);
+  const [bookingSubmitted, setBookingSubmitted] = useState(false);
   
   // Generate/retrieve visitor fingerprint for tracking
   const visitorFingerprint = useMemo(() => generateVisitorFingerprint(), []);
@@ -121,7 +130,7 @@ export default function SmartWebsite() {
       if (error) throw error;
       return data as Service[];
     },
-    enabled: !!website?.company_id && website.show_services,
+    enabled: !!website?.company_id && (website.show_services || website.show_booking_widget !== false),
   });
 
   // Fetch business hours (office hours for public website)
@@ -251,6 +260,68 @@ export default function SmartWebsite() {
   const displayCtaText = activeHoliday?.custom_cta_text || website.cta_text || 'Book Now';
   const displayCtaUrl = activeHoliday?.custom_cta_url || website.cta_url;
 
+  // Phase G: embedded booking widget
+  const bookingMode = website.booking_widget_mode || 'inline';
+  const bookingEnabled = website.show_booking_widget !== false;
+  const ctaTriggersBooking =
+    bookingEnabled && !displayCtaUrl && (bookingMode === 'inline' || bookingMode === 'modal');
+
+  const handleHeroCta = () => {
+    supabase.rpc('increment_site_metric', {
+      p_website_id: website.id,
+      p_metric: 'booking_clicks',
+    });
+    if (displayCtaUrl) {
+      window.location.href = displayCtaUrl;
+      return;
+    }
+    if (bookingMode === 'modal') {
+      setBookingOpen(true);
+      return;
+    }
+    if (bookingMode === 'inline') {
+      const el = document.getElementById('book');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (website.company_slug) {
+      window.location.href = `/book/${website.company_slug}`;
+    }
+  };
+
+  const handleBookingSubmit = async (booking: BookingData) => {
+    if (!website?.company_id) return;
+    setBookingSubmitting(true);
+    try {
+      const [hh, mm] = booking.time.split(':').map((n) => parseInt(n, 10));
+      const dt = new Date(booking.date);
+      dt.setHours(hh, mm, 0, 0);
+      const serviceNames = (services || [])
+        .filter((s) => booking.selectedServices.includes(s.id))
+        .map((s) => s.name)
+        .join(', ');
+      const { error } = await supabase.rpc('submit_public_booking', {
+        p_company_id: website.company_id,
+        p_name: booking.customerName,
+        p_phone: booking.customerPhone,
+        p_email: null,
+        p_address: booking.customerAddress,
+        p_service_interest: serviceNames || null,
+        p_preferred_datetime: dt.toISOString(),
+        p_notes: booking.notes ?? null,
+        p_intake_data: (booking.intakeData ?? {}) as never,
+      });
+      if (error) throw error;
+      setBookingSubmitted(true);
+      toast.success('Booking request sent');
+    } catch (err) {
+      console.error('Embedded booking submission failed', err);
+      toast.error('Could not submit your request. Please try again.');
+    } finally {
+      setBookingSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -367,15 +438,7 @@ export default function SmartWebsite() {
               size="lg" 
               className="text-lg px-8"
               style={{ backgroundColor: primaryColor }}
-              onClick={() => {
-                supabase.rpc('increment_site_metric', {
-                  p_website_id: website.id,
-                  p_metric: 'booking_clicks'
-                });
-                if (displayCtaUrl) {
-                  window.location.href = displayCtaUrl;
-                }
-              }}
+              onClick={handleHeroCta}
             >
               {displayCtaText}
             </Button>
@@ -536,6 +599,73 @@ export default function SmartWebsite() {
             </Card>
           </div>
         </section>
+      )}
+
+      {/* Booking Widget Section (inline mode) */}
+      {bookingEnabled && bookingMode === 'inline' && (
+        <section id="book" className="py-16 px-4">
+          <div className="container mx-auto max-w-xl">
+            <h2 className="text-3xl font-bold text-center mb-2">Request an appointment</h2>
+            <p className="text-center text-muted-foreground mb-8">
+              Tell us what you need and we'll reach out to confirm.
+            </p>
+            <Card className="p-4 sm:p-6">
+              {bookingSubmitted ? (
+                <div className="text-center space-y-2 py-6">
+                  <h3 className="text-lg font-semibold">Request received</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Thanks! {website.company_name} will reach out shortly to confirm.
+                  </p>
+                </div>
+              ) : (
+                <BookingForm
+                  services={(services || []).map((s) => ({
+                    id: s.id,
+                    name: s.name,
+                    description: s.description,
+                    duration_minutes: s.duration_minutes ?? 60,
+                    price: s.price,
+                  }))}
+                  onSubmit={handleBookingSubmit}
+                  isLoading={bookingSubmitting}
+                  companyId={website.company_id}
+                  isPublic
+                />
+              )}
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {/* Booking Widget Modal (modal mode) */}
+      {bookingEnabled && bookingMode === 'modal' && (
+        <Dialog open={bookingOpen} onOpenChange={(o) => { setBookingOpen(o); if (!o) setBookingSubmitted(false); }}>
+          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-semibold mb-2">Request an appointment</h2>
+            {bookingSubmitted ? (
+              <div className="text-center space-y-2 py-6">
+                <h3 className="text-lg font-semibold">Request received</h3>
+                <p className="text-sm text-muted-foreground">
+                  Thanks! {website.company_name} will reach out shortly to confirm.
+                </p>
+              </div>
+            ) : (
+              <BookingForm
+                services={(services || []).map((s) => ({
+                  id: s.id,
+                  name: s.name,
+                  description: s.description,
+                  duration_minutes: s.duration_minutes ?? 60,
+                  price: s.price,
+                }))}
+                onSubmit={handleBookingSubmit}
+                isLoading={bookingSubmitting}
+                companyId={website.company_id}
+                isPublic
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Contact Section */}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,6 +32,8 @@ interface PublicService {
  */
 export default function PublicBooking() {
   const { companySlug } = useParams<{ companySlug: string }>();
+  const [searchParams] = useSearchParams();
+  const isEmbed = searchParams.get('embed') === '1';
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -129,6 +131,37 @@ export default function PublicBooking() {
             </p>
           </CardContent>
         </Card>
+      </div>
+    );
+  }
+
+  // Chromeless layout for iframe embeds
+  if (isEmbed) {
+    return (
+      <div className="min-h-screen bg-transparent p-3">
+        {submitted ? (
+          <Card>
+            <CardContent className="p-6 text-center space-y-3">
+              <CheckCircle2 className="h-10 w-10 text-primary mx-auto" />
+              <h2 className="text-lg font-semibold">Request received</h2>
+              <p className="text-sm text-muted-foreground">
+                Thanks! {company.name} will reach out shortly to confirm your appointment.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="p-4">
+              <BookingForm
+                services={services}
+                onSubmit={handleSubmit}
+                isLoading={submitting}
+                companyId={company.id}
+                isPublic
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }

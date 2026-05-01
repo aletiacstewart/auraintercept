@@ -108,6 +108,9 @@ interface ExtendedWebsiteData {
   show_console_billing?: boolean;
   show_console_emergency?: boolean;
   show_console_feedback?: boolean;
+  // Booking widget (Phase G)
+  show_booking_widget?: boolean;
+  booking_widget_mode?: 'inline' | 'modal' | 'hero_cta';
 }
 
 export default function SmartWebsiteManager() {
@@ -886,6 +889,82 @@ export default function SmartWebsiteManager() {
                     checked={website.show_blog ?? false}
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_blog: checked })}
                   />
+                </div>
+                {/* Booking widget (Phase G) */}
+                <div className="rounded-md border bg-muted/30 p-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-medium text-card-foreground">Booking widget</p>
+                        <HelpTooltip
+                          term=""
+                          tooltip="Embeds the public booking form (with industry-specific intake fields) directly into your Smart Website. Submissions land in Leads with intake_data populated."
+                          showIcon={true}
+                        />
+                      </div>
+                      <p className="text-sm text-card-foreground/70">
+                        Show the booking form on your published site
+                      </p>
+                    </div>
+                    <Switch
+                      checked={website.show_booking_widget ?? true}
+                      onCheckedChange={(checked) =>
+                        updateWebsite.mutate({ show_booking_widget: checked })
+                      }
+                    />
+                  </div>
+
+                  {(website.show_booking_widget ?? true) && (
+                    <>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Display mode</Label>
+                        <Select
+                          value={website.booking_widget_mode || 'inline'}
+                          onValueChange={(v) =>
+                            updateWebsite.mutate({ booking_widget_mode: v })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="inline">Inline section (CTA scrolls to form)</SelectItem>
+                            <SelectItem value="modal">Modal (CTA opens dialog)</SelectItem>
+                            <SelectItem value="hero_cta">Hero CTA only (links to /book/{company?.slug || 'your-slug'})</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-[11px] text-muted-foreground">
+                          The hero CTA only triggers booking when no custom CTA URL is set above.
+                        </p>
+                      </div>
+
+                      {company?.slug && (
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Embed on any website</Label>
+                          <Textarea
+                            readOnly
+                            rows={3}
+                            className="font-mono text-xs"
+                            value={`<iframe src="https://auraintercept.ai/book/${company.slug}?embed=1" style="width:100%;min-height:720px;border:0" title="Book ${company?.name || ''}"></iframe>`}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                `<iframe src="https://auraintercept.ai/book/${company.slug}?embed=1" style="width:100%;min-height:720px;border:0" title="Book ${company?.name || ''}"></iframe>`
+                              );
+                              toast.success('Embed snippet copied');
+                            }}
+                          >
+                            <Copy className="w-3 h-3 mr-1.5" />
+                            Copy snippet
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div>

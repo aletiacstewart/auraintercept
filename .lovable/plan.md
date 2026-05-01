@@ -82,3 +82,25 @@ Edited
 5. Confirm RPCs reject cross-company access by querying as a different company's user.
 
 After approval I'll add the migration, RPCs, the new tab, the Aura intent, and update the memory files.
+
+---
+
+# Phase G — Embedded booking widget on Smart Website (DONE)
+
+## What shipped
+
+- DB: `smart_websites.show_booking_widget` (bool, default true) +
+  `smart_websites.booking_widget_mode` (`inline | modal | hero_cta`, check
+  constraint). `get_website_public_data(text)` recreated to return the new
+  fields plus `company_slug`.
+- `src/pages/SmartWebsite.tsx`: hero CTA respects custom `cta_url`; otherwise
+  scrolls to inline `<section id="book">` or opens a modal `Dialog` containing
+  `<BookingForm isPublic companyId={...}>`. Services query no longer gated by
+  `show_services` when the booking widget is on.
+- `src/pages/PublicBooking.tsx`: `?embed=1` renders a chromeless layout for
+  iframe embeds.
+- `src/pages/SmartWebsiteManager.tsx`: new "Booking widget" block (toggle +
+  mode select + copyable iframe snippet pointing at
+  `https://auraintercept.ai/book/{slug}?embed=1`).
+- Memory: `mem://features/industry/pack-data-fields.md` updated with the
+  Phase G section.

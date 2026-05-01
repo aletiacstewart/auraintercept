@@ -5216,6 +5216,7 @@ export type Database = {
           about_subheader: string | null
           background_image_url: string | null
           background_style: string
+          booking_widget_mode: string
           company_id: string
           contact_address: string | null
           contact_email: string | null
@@ -5252,6 +5253,7 @@ export type Database = {
           night_subheadline: string | null
           show_about_section: boolean
           show_blog: boolean | null
+          show_booking_widget: boolean
           show_chat_widget: boolean
           show_console_appointments: boolean | null
           show_console_billing: boolean | null
@@ -5277,6 +5279,7 @@ export type Database = {
           about_subheader?: string | null
           background_image_url?: string | null
           background_style?: string
+          booking_widget_mode?: string
           company_id: string
           contact_address?: string | null
           contact_email?: string | null
@@ -5313,6 +5316,7 @@ export type Database = {
           night_subheadline?: string | null
           show_about_section?: boolean
           show_blog?: boolean | null
+          show_booking_widget?: boolean
           show_chat_widget?: boolean
           show_console_appointments?: boolean | null
           show_console_billing?: boolean | null
@@ -5338,6 +5342,7 @@ export type Database = {
           about_subheader?: string | null
           background_image_url?: string | null
           background_style?: string
+          booking_widget_mode?: string
           company_id?: string
           contact_address?: string | null
           contact_email?: string | null
@@ -5374,6 +5379,7 @@ export type Database = {
           night_subheadline?: string | null
           show_about_section?: boolean
           show_blog?: boolean | null
+          show_booking_widget?: boolean
           show_chat_widget?: boolean
           show_console_appointments?: boolean | null
           show_console_billing?: boolean | null
@@ -7037,9 +7043,11 @@ export type Database = {
           about_subheader: string
           background_image_url: string
           background_style: string
+          booking_widget_mode: string
           company_id: string
           company_logo_url: string
           company_name: string
+          company_slug: string
           cta_text: string
           cta_url: string
           gallery_images: string[]
@@ -7058,6 +7066,7 @@ export type Database = {
           primary_color: string
           show_about_section: boolean
           show_blog: boolean
+          show_booking_widget: boolean
           show_chat_widget: boolean
           show_contact: boolean
           show_gallery: boolean
