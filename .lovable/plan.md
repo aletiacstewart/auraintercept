@@ -1,5 +1,11 @@
 # Phases J → I — Intake analytics NL queries, then pack authoring UI
 
+> **Status (post-Phase L):** J ✅, I ✅, K ✅ (drop-in `<script>` loader at
+> `/embed/booking.js` + auto-resize via `postMessage`), L ✅ (voice + SMS +
+> chat agents now inject pack `agent_prompt_deltas` and `terminology` into
+> their runtime system prompts via shared helper `_shared/industry-pack.ts`).
+> Remaining initiative item: **M — per-vertical analytics presets**.
+
 Two sequential phases. J ships first (small, immediate win on top of Phase F);
 I follows (high leverage — unblocks non-engineer pack editing).
 
