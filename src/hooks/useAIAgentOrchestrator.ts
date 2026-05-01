@@ -82,7 +82,7 @@ function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo
 }
 
 export function useAIAgentOrchestrator() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { toast } = useToast();
   const [agents, setAgents] = useState<AgentInfo[]>(DEFAULT_AGENTS);
   const [groupedAgents, setGroupedAgents] = useState<Record<string, AgentInfo[]>>(groupAgentsByCategory(DEFAULT_AGENTS));
@@ -139,9 +139,15 @@ export function useAIAgentOrchestrator() {
         }
         return defaultAgent;
       });
-      
-      setAgents(mergedAgents);
-      setGroupedAgents(groupAgentsByCategory(mergedAgents));
+
+      // Platform admins see every operative as Active in-memory (no DB write),
+      // so the platform admin dashboard can preview behavior end-to-end.
+      const finalAgents = userRole === 'platform_admin'
+        ? mergedAgents.map(a => ({ ...a, is_enabled: true }))
+        : mergedAgents;
+
+      setAgents(finalAgents);
+      setGroupedAgents(groupAgentsByCategory(finalAgents));
     } catch (error) {
       console.error('Error fetching agents:', error);
       setAgents(DEFAULT_AGENTS);
@@ -149,7 +155,7 @@ export function useAIAgentOrchestrator() {
     } finally {
       setLoading(false);
     }
-  }, [companyId]);
+  }, [companyId, userRole]);
 
   useEffect(() => {
     if (companyId) {
