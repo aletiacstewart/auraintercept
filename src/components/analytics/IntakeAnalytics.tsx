@@ -277,7 +277,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Distribution */}
-        <Card ref={distRef as never} className={ringFor('distribution')}>
+        <Card ref={distRef} className={ringFor('distribution')}>
           <CardHeader>
             <CardTitle className="text-base">
               {activeField?.label ?? 'Field'} distribution
@@ -301,7 +301,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
         </Card>
 
         {/* Timeseries */}
-        <Card ref={trendRef as never} className={ringFor('trend')}>
+        <Card ref={trendRef} className={ringFor('trend')}>
           <CardHeader>
             <CardTitle className="text-base">Capture trend (12 mo)</CardTitle>
             <CardDescription>
@@ -348,7 +348,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
       </div>
 
       {/* Completeness */}
-      <Card ref={completenessRef as never} className={ringFor('completeness')}>
+      <Card ref={completenessRef} className={ringFor('completeness')}>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-primary" />
