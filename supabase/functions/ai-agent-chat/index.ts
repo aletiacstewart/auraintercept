@@ -3623,6 +3623,24 @@ serve(async (req) => {
     // Build the system prompt with handoff context
     let basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
     
+    // === INDUSTRY PROMPT DELTA ===
+    // Append the industry-specific delta for this agent (and the universal delta if present).
+    // Specialists fall back to a generic specialist primer when no delta is configured.
+    const promptDeltas: Record<string, string> = (industryPack?.agent_prompt_deltas && typeof industryPack.agent_prompt_deltas === 'object') ? industryPack.agent_prompt_deltas : {};
+    const SPECIALIST_BASE_PROMPTS: Record<string, string> = {
+      diagnostic: 'You are a Diagnostic specialist. Given symptoms, photos, brand, and model, suggest the most likely cause and recommended fix or parts list. Always recommend a tech visit if uncertain.',
+      permit_code: 'You are a Permit & Code specialist. Help determine whether a job requires a permit, what local code applies, and outline the permit-pull steps.',
+      site_survey: 'You are a Site Survey & Quote specialist. Walk customers through pre-install survey requirements (measurements, photos, access, utilities) and produce a takeoff-ready scope.',
+      insurance_claim: 'You are an Insurance Claim specialist. Help document damage with photos, dates, cause-of-loss, and produce claim-ready summaries for the carrier.',
+    };
+    if (isSpecialist && SPECIALIST_BASE_PROMPTS[normalizedAgentType] && (!AGENT_PROMPTS[normalizedAgentType] && !AGENT_PROMPTS[agentType])) {
+      basePrompt = SPECIALIST_BASE_PROMPTS[normalizedAgentType];
+    }
+    const industryDelta = promptDeltas[normalizedAgentType] || promptDeltas[agentType] || '';
+    if (industryDelta) {
+      basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
+    }
+
     // For phone channel: append caller-provided system prompt with phone-specific rules
     const isPhoneChannel = channel === 'phone';
     if (incomingSystemPrompt && isInternalRequest) {
