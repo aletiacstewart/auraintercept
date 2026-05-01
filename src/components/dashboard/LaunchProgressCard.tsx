@@ -61,7 +61,7 @@ export function LaunchProgressCard() {
             <Rocket className="h-4 w-4 text-primary" />
             Launch Progress
           </CardTitle>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 text-sm text-white">
             <Calendar className="h-3.5 w-3.5" />
             <span>Day {currentDay} of 14</span>
           </div>
@@ -71,7 +71,7 @@ export function LaunchProgressCard() {
         {/* Progress Bar */}
         <div className="space-y-1.5">
           <Progress value={progress} className="h-2" />
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex justify-between text-xs text-white">
             <span>{Math.round(progress)}% complete</span>
             <span>{completedMilestones}/{totalMilestones} milestones</span>
           </div>
@@ -94,7 +94,7 @@ export function LaunchProgressCard() {
           
           <div className="text-sm">
             {daysRemaining > 0 ? (
-              <span className="text-muted-foreground">
+              <span className="text-white">
                 {daysRemaining} {daysRemaining === 1 ? 'day' : 'days'} to go-live
               </span>
             ) : (

@@ -96,7 +96,7 @@ export default function Dashboard() {
       default:
         return (
           <div className="flex items-center justify-center h-full">
-            <p className="text-muted-foreground">Loading your dashboard...</p>
+            <p className="text-white">Loading your dashboard...</p>
           </div>
         );
     }

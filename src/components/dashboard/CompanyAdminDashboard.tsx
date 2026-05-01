@@ -211,7 +211,7 @@ export function CompanyAdminDashboard() {
     { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory', requiredTier: 'multi_track' as SubscriptionTier },
     { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns', requiredTier: 'command' as SubscriptionTier },
     { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/calculators' },
-    { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/3rd-party-overview' },
+    { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-white', href: '/dashboard/3rd-party-overview' },
   ];
 
   const quickActions = allQuickActions.filter(action => hasTierAccess(action.requiredTier));
@@ -234,7 +234,7 @@ export function CompanyAdminDashboard() {
               <DashboardViewToggle />
               {company?.registration_code && (
                 <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5">
-                  <span className="text-xs text-muted-foreground">Registration Code:</span>
+                  <span className="text-xs text-white">Registration Code:</span>
                   <code className="text-sm font-mono font-bold text-foreground">{company.registration_code}</code>
                   <Button 
                     variant="ghost" 
@@ -253,7 +253,7 @@ export function CompanyAdminDashboard() {
                   className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
                   onClick={() => navigate('/dashboard/ai-agents')}
                 >
-                  <span className="text-xs text-muted-foreground">Intelligence Network:</span>
+                  <span className="text-xs text-white">Intelligence Network:</span>
                   <span className="text-sm font-medium text-secondary">Active</span>
                   <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                   <ExternalLink className="h-3 w-3 text-secondary" />
@@ -336,7 +336,7 @@ export function CompanyAdminDashboard() {
                 <Activity className="h-4 w-4 text-primary" />
                 Business Snapshot
               </span>
-              <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform', snapshotOpen && 'rotate-180')} />
+              <ChevronDown className={cn('h-4 w-4 text-white transition-transform', snapshotOpen && 'rotate-180')} />
             </Button>
           </CollapsibleTrigger>
 
@@ -351,7 +351,7 @@ export function CompanyAdminDashboard() {
                 >
                   <div className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-lg ${stat.colorClass.replace('text-', 'bg-').replace('/15', '/60')}`} />
                   <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-                    <CardTitle className="text-xs font-medium text-card-foreground/90 tracking-wide">
+                    <CardTitle className="text-xs font-medium text-white tracking-wide">
                       {stat.title}
                     </CardTitle>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
@@ -366,7 +366,7 @@ export function CompanyAdminDashboard() {
                         {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                       </div>
                     )}
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{stat.description}</p>
+                    <p className="text-[10px] text-white mt-0.5">{stat.description}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -389,7 +389,7 @@ export function CompanyAdminDashboard() {
                         <Button
                           key={action.label}
                           variant="outline"
-                          className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-card-foreground/80 transition-all duration-200"
+                          className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 whitespace-normal bg-muted/50 border-border hover:border-primary/40 hover:bg-accent text-white transition-all duration-200"
                           onClick={() => navigate(action.href)}
                         >
                           <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
@@ -419,7 +419,7 @@ export function CompanyAdminDashboard() {
                         { label: 'Customer Satisfaction', value: stats?.satisfactionRate ?? 0, colorVar: 'hsl(var(--warning))' },
                       ].map(metric => (
                         <div key={metric.label} className="space-y-1.5">
-                          <div className="flex items-center justify-between text-sm text-card-foreground/80">
+                          <div className="flex items-center justify-between text-sm text-white">
                             <span>{metric.label}</span>
                             <span className="font-medium text-card-foreground">{metric.value}%</span>
                           </div>

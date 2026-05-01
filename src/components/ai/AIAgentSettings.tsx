@@ -137,7 +137,7 @@ function ScriptField({
         rows={3}
         className="resize-none"
       />
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-white">
         Tokens: {tokens.map((token) => (
           <code key={token} className="bg-muted px-1 rounded mr-1">{token}</code>
         ))}
@@ -571,15 +571,15 @@ export const AIAgentSettings = () => {
                       {ELEVENLABS_VOICES.map((voice) => (
                         <SelectItem key={voice.id} value={voice.id}>
                           <div className="flex items-center gap-2">
-                            <Volume2 className="w-3 h-3 text-muted-foreground" />
+                            <Volume2 className="w-3 h-3 text-white" />
                             <span>{voice.name}</span>
-                            <span className="text-muted-foreground text-xs">({voice.description})</span>
+                            <span className="text-white text-xs">({voice.description})</span>
                           </div>
                         </SelectItem>
                       ))}
                       <SelectItem value="custom">
                         <div className="flex items-center gap-2">
-                          <Mic className="w-3 h-3 text-muted-foreground" />
+                          <Mic className="w-3 h-3 text-white" />
                           <span>Custom Voice ID</span>
                         </div>
                       </SelectItem>
@@ -608,7 +608,7 @@ export const AIAgentSettings = () => {
                       value={customVoiceId}
                       onChange={(e) => setCustomVoiceId(e.target.value)}
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-white">
                       Find more voices at{' '}
                       <a
                         href="https://elevenlabs.io/voice-library"
@@ -626,7 +626,7 @@ export const AIAgentSettings = () => {
               {/* Voice Settings Sliders */}
               <div className="pt-4 border-t space-y-5">
                 <div className="flex items-center gap-2 text-sm font-medium">
-                  <Gauge className="h-4 w-4 text-muted-foreground" />
+                  <Gauge className="h-4 w-4 text-white" />
                   Voice Fine-Tuning
                 </div>
 
@@ -634,7 +634,7 @@ export const AIAgentSettings = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm">Stability</Label>
-                    <span className="text-xs text-muted-foreground">{Math.round(voiceStability * 100)}%</span>
+                    <span className="text-xs text-white">{Math.round(voiceStability * 100)}%</span>
                   </div>
                   <Slider
                     value={[voiceStability]}
@@ -644,7 +644,7 @@ export const AIAgentSettings = () => {
                     step={0.05}
                     className="w-full"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white">
                     Lower = more expressive & variable. Higher = more consistent.
                   </p>
                 </div>
@@ -653,7 +653,7 @@ export const AIAgentSettings = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm">Clarity + Similarity</Label>
-                    <span className="text-xs text-muted-foreground">{Math.round(voiceSimilarity * 100)}%</span>
+                    <span className="text-xs text-white">{Math.round(voiceSimilarity * 100)}%</span>
                   </div>
                   <Slider
                     value={[voiceSimilarity]}
@@ -663,7 +663,7 @@ export const AIAgentSettings = () => {
                     step={0.05}
                     className="w-full"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white">
                     How closely the AI matches the original voice characteristics.
                   </p>
                 </div>
@@ -673,9 +673,9 @@ export const AIAgentSettings = () => {
                   <div className="flex items-center justify-between">
                     <Label className="text-sm flex items-center gap-1">
                       Style Exaggeration
-                      <Sparkles className="h-3 w-3 text-muted-foreground" />
+                      <Sparkles className="h-3 w-3 text-white" />
                     </Label>
-                    <span className="text-xs text-muted-foreground">{Math.round(voiceStyle * 100)}%</span>
+                    <span className="text-xs text-white">{Math.round(voiceStyle * 100)}%</span>
                   </div>
                   <Slider
                     value={[voiceStyle]}
@@ -685,7 +685,7 @@ export const AIAgentSettings = () => {
                     step={0.05}
                     className="w-full"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white">
                     Higher values amplify the voice's unique style.
                   </p>
                 </div>
@@ -694,7 +694,7 @@ export const AIAgentSettings = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm">Speaking Speed</Label>
-                    <span className="text-xs text-muted-foreground">{voiceSpeed.toFixed(2)}x</span>
+                    <span className="text-xs text-white">{voiceSpeed.toFixed(2)}x</span>
                   </div>
                   <Slider
                     value={[voiceSpeed]}
@@ -704,7 +704,7 @@ export const AIAgentSettings = () => {
                     step={0.05}
                     className="w-full"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white">
                     Adjust speech rate. 1.0x is normal speed.
                   </p>
                 </div>
@@ -731,7 +731,7 @@ export const AIAgentSettings = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="voice-greeting" className="flex items-center gap-2">
-                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                <Volume2 className="h-4 w-4 text-white" />
                 Voice Greeting
               </Label>
               {hasElevenLabs && (
@@ -759,7 +759,7 @@ export const AIAgentSettings = () => {
               rows={3}
               className="resize-none"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-white">
               This is what the AI agent will say when someone calls your business. Keep it friendly and concise.
             </p>
           </div>
@@ -767,7 +767,7 @@ export const AIAgentSettings = () => {
           {/* Agent System Prompt */}
           <div className="space-y-2">
             <Label htmlFor="agent-prompt" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              <MessageSquare className="h-4 w-4 text-white" />
               AI Agent Personality & Instructions
             </Label>
             <Textarea
@@ -778,7 +778,7 @@ export const AIAgentSettings = () => {
               rows={5}
               className="resize-none"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-white">
               This guides how your AI agent responds. Include your business tone, special instructions, and any restrictions.
             </p>
           </div>
@@ -801,7 +801,7 @@ export const AIAgentSettings = () => {
           {/* Missed Call SMS */}
           <ScriptField
             id="missed-call-sms"
-            icon={<MessageCircle className="h-4 w-4 text-muted-foreground" />}
+            icon={<MessageCircle className="h-4 w-4 text-white" />}
             label="Missed Call SMS"
             value={missedCallSmsTemplate}
             onChange={setMissedCallSmsTemplate}
@@ -815,7 +815,7 @@ export const AIAgentSettings = () => {
           {/* Missed Call Callback Script */}
           <ScriptField
             id="missed-call-callback"
-            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            icon={<Phone className="h-4 w-4 text-white" />}
             label="Missed Call Callback Script"
             value={missedCallCallbackScript}
             onChange={setMissedCallCallbackScript}
@@ -829,7 +829,7 @@ export const AIAgentSettings = () => {
           {/* Appointment Reminder Script */}
           <ScriptField
             id="reminder-script"
-            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            icon={<Phone className="h-4 w-4 text-white" />}
             label="Appointment Reminder Script"
             value={reminderCallScript}
             onChange={setReminderCallScript}
@@ -843,7 +843,7 @@ export const AIAgentSettings = () => {
           {/* Follow-up Call Script */}
           <ScriptField
             id="followup-script"
-            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            icon={<Phone className="h-4 w-4 text-white" />}
             label="Follow-up Call Script"
             value={followupCallScript}
             onChange={setFollowupCallScript}
@@ -857,7 +857,7 @@ export const AIAgentSettings = () => {
           {/* Default Outbound Script */}
           <ScriptField
             id="default-outbound"
-            icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+            icon={<Phone className="h-4 w-4 text-white" />}
             label="Default Outbound Script"
             value={defaultOutboundScript}
             onChange={setDefaultOutboundScript}

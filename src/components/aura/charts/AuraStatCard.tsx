@@ -44,7 +44,7 @@ export function AuraStatCard({
       <CardContent className={sizeClasses[size]}>
         <div className="flex items-start justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-sm font-medium text-white">{title}</p>
             <p className={cn('font-bold text-card-foreground', valueSizes[size])}>
               {typeof value === 'number' ? value.toLocaleString() : value}
             </p>
@@ -56,7 +56,7 @@ export function AuraStatCard({
                     'flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium',
                     isPositive && 'bg-secondary/20 text-secondary',
                     isNegative && 'bg-destructive/20 text-destructive',
-                    isNeutral && 'bg-muted text-muted-foreground'
+                    isNeutral && 'bg-muted text-white'
                   )}
                 >
                   {isPositive && <TrendingUp className="h-3 w-3" />}
@@ -67,12 +67,12 @@ export function AuraStatCard({
                     {change.toFixed(1)}%
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">{changeLabel}</span>
+                <span className="text-xs text-white">{changeLabel}</span>
               </div>
             )}
             
             {description && (
-              <p className="text-sm text-muted-foreground mt-2">{description}</p>
+              <p className="text-sm text-white mt-2">{description}</p>
             )}
           </div>
           

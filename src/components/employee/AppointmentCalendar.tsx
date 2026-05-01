@@ -485,7 +485,7 @@ export function AppointmentCalendar() {
       case 'no-show':
         return 'bg-orange-500/10 text-orange-600 border-orange-500/30';
       default:
-        return 'bg-muted text-muted-foreground';
+        return 'bg-muted text-white';
     }
   };
 
@@ -545,7 +545,7 @@ export function AppointmentCalendar() {
             </div>
           ))}
           {dayAppointments.length > 2 && (
-            <div className="text-[7px] text-muted-foreground text-center">
+            <div className="text-[7px] text-white text-center">
               +{dayAppointments.length - 2} more
             </div>
           )}
@@ -563,7 +563,7 @@ export function AppointmentCalendar() {
             <CalendarIcon className="w-5 h-5" />
             Calendar
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription className="text-white">
             Select a date to view appointments
           </CardDescription>
         </CardHeader>
@@ -578,7 +578,7 @@ export function AppointmentCalendar() {
             classNames={{
               cell: "h-auto w-12 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
               day: cn("h-auto min-h-[50px] w-12 p-1 font-normal aria-selected:opacity-100 flex flex-col items-center justify-start hover:bg-accent/50 rounded-md"),
-              head_cell: "text-muted-foreground rounded-md w-12 font-normal text-[0.8rem]",
+              head_cell: "text-white rounded-md w-12 font-normal text-[0.8rem]",
             }}
             components={{
               DayContent: ({ date }) => renderDayContent(date),
@@ -603,7 +603,7 @@ export function AppointmentCalendar() {
               <CardTitle>
                 {format(selectedDate, 'EEEE, MMMM d, yyyy')}
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-white">
                 {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
               </CardDescription>
             </div>
@@ -616,7 +616,7 @@ export function AppointmentCalendar() {
                       <Cloud className="w-3 h-3" />
                       <span>{syncSummary.synced} synced</span>
                     </div>
-                    <div className="flex items-center gap-1 text-muted-foreground">
+                    <div className="flex items-center gap-1 text-white">
                       <CloudOff className="w-3 h-3" />
                       <span>{syncSummary.notSynced} not synced</span>
                     </div>
@@ -682,9 +682,9 @@ export function AppointmentCalendar() {
                       </div>
                       <div>
                         <p className="font-medium">{appointment.customer_name}</p>
-                        <p className="text-sm text-muted-foreground">{appointment.service_type}</p>
+                        <p className="text-sm text-white">{appointment.service_type}</p>
                         {appointment.customer_address && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                          <p className="text-xs text-white flex items-center gap-1 mt-1">
                             <MapPin className="w-3 h-3" />
                             {appointment.customer_address}
                           </p>
@@ -750,7 +750,7 @@ export function AppointmentCalendar() {
                   {/* Show customer notes preview */}
                   {appointment.notes && (
                     <div className="mt-2 pt-2 border-t border-border/50">
-                      <p className="text-xs text-muted-foreground flex items-start gap-1">
+                      <p className="text-xs text-white flex items-start gap-1">
                         <MessageSquare className="w-3 h-3 mt-0.5 flex-shrink-0" />
                         <span className="line-clamp-2">{appointment.notes}</span>
                       </p>
@@ -761,9 +761,9 @@ export function AppointmentCalendar() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <CalendarIcon className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+              <CalendarIcon className="w-12 h-12 mx-auto text-white/40 mb-3" />
               <p className="text-foreground">No appointments on this day</p>
-              <p className="text-sm text-muted-foreground">Select another date or enjoy your day off!</p>
+              <p className="text-sm text-white">Select another date or enjoy your day off!</p>
             </div>
           )}
         </CardContent>
@@ -806,27 +806,27 @@ export function AppointmentCalendar() {
 
               <div className="grid gap-3">
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <Clock className="w-4 h-4 text-white" />
                   <span>
                     {format(parseUTCDateTime(selectedAppointment.datetime), 'h:mm a')} - {selectedAppointment.duration_minutes} minutes
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3 text-sm text-foreground">
-                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  <FileText className="w-4 h-4 text-white" />
                   <span>{selectedAppointment.service_type}</span>
                 </div>
 
                 {selectedAppointment.customer_address && (
                   <div className="flex items-start gap-3 text-sm text-foreground">
-                    <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                    <MapPin className="w-4 h-4 text-white mt-0.5" />
                     <span>{selectedAppointment.customer_address}</span>
                   </div>
                 )}
 
                 {selectedAppointment.customer_phone && (
                   <div className="flex items-center gap-3 text-sm text-foreground">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <Phone className="w-4 h-4 text-white" />
                     <a href={`tel:${selectedAppointment.customer_phone}`} className="text-primary hover:underline">
                       {selectedAppointment.customer_phone}
                     </a>
@@ -835,7 +835,7 @@ export function AppointmentCalendar() {
 
                 {selectedAppointment.customer_email && (
                   <div className="flex items-center gap-3 text-sm text-foreground">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <Mail className="w-4 h-4 text-white" />
                     <a href={`mailto:${selectedAppointment.customer_email}`} className="text-primary hover:underline">
                       {selectedAppointment.customer_email}
                     </a>
@@ -844,7 +844,7 @@ export function AppointmentCalendar() {
 
                 {selectedAppointment.notes && (
                   <div className="pt-2">
-                    <p className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                    <p className="text-sm font-medium text-white mb-1 flex items-center gap-1">
                       <MessageSquare className="w-4 h-4" />
                       Customer Notes
                     </p>
@@ -856,10 +856,10 @@ export function AppointmentCalendar() {
               {/* Assigned Technician Info */}
               {selectedAppointment.job_employee_name && (
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <User className="w-4 h-4 text-muted-foreground" />
+                  <User className="w-4 h-4 text-white" />
                   <div className="flex-1">
                     <p className="text-sm font-medium">Assigned Technician</p>
-                    <p className="text-sm text-muted-foreground">{selectedAppointment.job_employee_name}</p>
+                    <p className="text-sm text-white">{selectedAppointment.job_employee_name}</p>
                   </div>
                   {isAdmin && selectedAppointment.status === 'scheduled' && (
                     <Button

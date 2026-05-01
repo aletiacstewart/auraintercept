@@ -297,7 +297,7 @@ export function PlatformAdminDashboard() {
               <Activity className="h-4 w-4 text-primary" />
               Platform Snapshot
             </span>
-            <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform', snapshotOpen && 'rotate-180')} />
+            <ChevronDown className={cn('h-4 w-4 text-white transition-transform', snapshotOpen && 'rotate-180')} />
           </Button>
         </CollapsibleTrigger>
 
@@ -322,7 +322,7 @@ export function PlatformAdminDashboard() {
                       {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                     </div>
                   )}
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.description}</p>
+                  <p className="text-[10px] text-white mt-0.5">{stat.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -336,7 +336,7 @@ export function PlatformAdminDashboard() {
                   <Activity className="w-5 h-5 text-primary" />
                   Platform Activity
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">Recent activity across all tenants</CardDescription>
+                <CardDescription className="text-white">Recent activity across all tenants</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -369,7 +369,7 @@ export function PlatformAdminDashboard() {
                   <TrendingUp className="w-5 h-5 text-secondary" />
                   Growth Metrics
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">Platform performance overview</CardDescription>
+                <CardDescription className="text-white">Platform performance overview</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -401,7 +401,7 @@ export function PlatformAdminDashboard() {
                 <Building2 className="w-5 h-5 text-primary" />
                 Company Breakdown
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-white">
                 Per-company metrics and performance
               </CardDescription>
             </CardHeader>
@@ -436,7 +436,7 @@ export function PlatformAdminDashboard() {
                             <TableCell className="font-medium text-foreground">
                               <div className="flex items-center gap-2 group">
                                 {company.name}
-                                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <ExternalLink className="w-3.5 h-3.5 text-white group-hover:text-primary transition-colors" />
                               </div>
                             </TableCell>
                             <TableCell className="text-center">
