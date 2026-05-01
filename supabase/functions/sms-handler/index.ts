@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -122,8 +123,17 @@ Deno.serve(async (req) => {
       .eq('id', company_id)
       .single();
 
+    // Load industry pack so terminology + SMS-agent delta are baked in.
+    const pack = await loadIndustryPackForCompany(supabase, company_id);
+
     // Generate AI reply using Lovable AI
-    const aiReply = await generateAIReply(supabaseUrl, supabaseKey, body, company?.name || 'our company', company?.ai_agent_prompt || '', company?.brand_tone || 'professional');
+    const aiReply = await generateAIReply(
+      supabaseUrl, supabaseKey, body,
+      company?.name || 'our company',
+      company?.ai_agent_prompt || '',
+      company?.brand_tone || 'professional',
+      pack,
+    );
 
     // Send reply via SignalWire
     await sendSmsReply(signalwire_space_url, signalwire_project_id, signalwire_api_token, normalizedTo, normalizedFrom, aiReply);
@@ -200,10 +210,12 @@ async function logSms(
 async function generateAIReply(
   supabaseUrl: string, supabaseKey: string,
   customerMessage: string, companyName: string,
-  agentPrompt: string, brandTone: string
+  agentPrompt: string, brandTone: string,
+  pack: Awaited<ReturnType<typeof loadIndustryPackForCompany>> = null,
 ): Promise<string> {
   try {
-    const systemPrompt = agentPrompt || `You are a helpful SMS assistant for ${companyName}. Keep responses concise (under 160 characters when possible). Be ${brandTone}. Do not use markdown formatting.`;
+    const baseSystemPrompt = agentPrompt || `You are a helpful SMS assistant for ${companyName}. Keep responses concise (under 160 characters when possible). Be ${brandTone}. Do not use markdown formatting.`;
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, pack, 'sms');
 
     const response = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
       method: 'POST',

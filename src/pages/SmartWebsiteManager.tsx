@@ -941,26 +941,60 @@ export default function SmartWebsiteManager() {
                       {company?.slug && (
                         <div className="space-y-1.5">
                           <Label className="text-xs">Embed on any website</Label>
-                          <Textarea
-                            readOnly
-                            rows={3}
-                            className="font-mono text-xs"
-                            value={`<iframe src="https://auraintercept.ai/book/${company.slug}?embed=1" style="width:100%;min-height:720px;border:0" title="Book ${company?.name || ''}"></iframe>`}
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                `<iframe src="https://auraintercept.ai/book/${company.slug}?embed=1" style="width:100%;min-height:720px;border:0" title="Book ${company?.name || ''}"></iframe>`
-                              );
-                              toast.success('Embed snippet copied');
-                            }}
-                          >
-                            <Copy className="w-3 h-3 mr-1.5" />
-                            Copy snippet
-                          </Button>
+                          <p className="text-[11px] text-muted-foreground">
+                            Drop-in script auto-mounts the booking form and resizes itself. Recommended.
+                          </p>
+                          {(() => {
+                            const loaderSnippet = `<div data-aura-booking="${company.slug}"></div>\n<script async src="https://auraintercept.ai/embed/booking.js"></script>`;
+                            const iframeSnippet = `<iframe src="https://auraintercept.ai/book/${company.slug}?embed=1" style="width:100%;min-height:720px;border:0" title="Book ${company?.name || ''}"></iframe>`;
+                            return (
+                              <>
+                                <Textarea
+                                  readOnly
+                                  rows={2}
+                                  className="font-mono text-xs"
+                                  value={loaderSnippet}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(loaderSnippet);
+                                    toast.success('Loader snippet copied');
+                                  }}
+                                >
+                                  <Copy className="w-3 h-3 mr-1.5" />
+                                  Copy loader snippet
+                                </Button>
+                                <details className="pt-2">
+                                  <summary className="text-[11px] text-muted-foreground cursor-pointer">
+                                    Prefer a plain iframe? (no auto-resize)
+                                  </summary>
+                                  <div className="space-y-1.5 mt-2">
+                                    <Textarea
+                                      readOnly
+                                      rows={3}
+                                      className="font-mono text-xs"
+                                      value={iframeSnippet}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(iframeSnippet);
+                                        toast.success('Iframe snippet copied');
+                                      }}
+                                    >
+                                      <Copy className="w-3 h-3 mr-1.5" />
+                                      Copy iframe snippet
+                                    </Button>
+                                  </div>
+                                </details>
+                              </>
+                            );
+                          })()}
                         </div>
                       )}
                     </>
