@@ -47,8 +47,6 @@ export const DynamicIntakeFields: React.FC<DynamicIntakeFieldsProps> = ({
   multiStep = true,
   showInlineErrors = true,
 }) => {
-  if (!schema || !schema.fields?.length) return null;
-
   const set = (name: string, v: unknown) =>
     onChange({ ...(value || {}), [name]: v });
 
@@ -65,9 +63,12 @@ export const DynamicIntakeFields: React.FC<DynamicIntakeFieldsProps> = ({
   );
 
   const visibleFields = useMemo(
-    () => schema.fields.filter((f) => isFieldVisible(f, value || {})),
+    () =>
+      (schema?.fields || []).filter((f) => isFieldVisible(f, value || {})),
     [schema, value],
   );
+
+  if (!schema || !schema.fields?.length) return null;
 
   const fieldsForStep: IntakeFieldDef[] = useWizard
     ? visibleFields.filter((f) => {
