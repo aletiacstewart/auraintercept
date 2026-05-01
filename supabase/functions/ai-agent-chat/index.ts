@@ -3355,6 +3355,16 @@ serve(async (req) => {
       ],
     };
 
+    // INDUSTRY SPECIALIST OPERATIVES — Pro/Elite tier, gated AND opted-in via industry pack
+    // Allowed only when the company's industry_template_pack lists them in extra_operatives
+    const INDUSTRY_SPECIALIST_OPERATIVES = ['diagnostic', 'permit_code', 'site_survey', 'insurance_claim'];
+    const SPECIALIST_MIN_TIER: Record<string, string> = {
+      diagnostic: 'performance',
+      permit_code: 'performance',
+      site_survey: 'performance',
+      insurance_claim: 'performance',
+    };
+
     // Legacy tier name → canonical tier mapping
     const LEGACY_TIER_MAP: Record<string, string> = {
       scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter', aura_core: 'starter',
@@ -3390,7 +3400,7 @@ serve(async (req) => {
     // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
       .from('companies')
-      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name')
+      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name, industry_vertical')
       .eq('id', companyId)
       .single();
 
@@ -3413,14 +3423,49 @@ serve(async (req) => {
     // Determine allowed agents based on tier (trial gets full access)
     const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
 
+    // === INDUSTRY TEMPLATE PACK ===
+    // Fetch the company's industry pack (drives prompt deltas + specialist agent gating)
+    let industryPack: any = null;
+    if (companyTierData?.industry_vertical) {
+      const { data: packRow } = await supabase
+        .from('industry_template_packs')
+        .select('industry_id, label, agent_prompt_deltas, extra_operatives, min_tier_per_extra, terminology')
+        .eq('industry_id', companyTierData.industry_vertical)
+        .eq('is_active', true)
+        .maybeSingle();
+      industryPack = packRow;
+    }
+    const packExtraOperatives: string[] = Array.isArray(industryPack?.extra_operatives) ? industryPack.extra_operatives : [];
+    const packMinTiers: Record<string, string> = (industryPack?.min_tier_per_extra && typeof industryPack.min_tier_per_extra === 'object') ? industryPack.min_tier_per_extra : {};
+
+    // Tier ordering for comparison (lowest → highest)
+    const TIER_ORDER: Record<string, number> = { free: 0, starter: 1, connect: 2, performance: 3, command: 4 };
+    const meetsTier = (current: string, required: string) =>
+      (TIER_ORDER[current] ?? 0) >= (TIER_ORDER[required] ?? 0);
+
+    // Specialist agents are allowed when:
+    //  (a) the agent is in INDUSTRY_SPECIALIST_OPERATIVES,
+    //  (b) the company's industry pack opts in via extra_operatives,
+    //  (c) the company meets the per-pack minimum tier (defaults to performance), OR is in trial.
+    const isSpecialist = INDUSTRY_SPECIALIST_OPERATIVES.includes(normalizedAgentType);
+    const specialistAllowed =
+      isSpecialist &&
+      packExtraOperatives.includes(normalizedAgentType) &&
+      (inTrial || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
+
     // Validate agent access using normalized agent type
-    if (!allowedAgents.includes(normalizedAgentType)) {
+    if (!allowedAgents.includes(normalizedAgentType) && !specialistAllowed) {
       const requiredTier = getRequiredTierForAgent(agentType);
+      const reason = isSpecialist
+        ? (packExtraOperatives.includes(normalizedAgentType)
+            ? `requires ${packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'} tier`
+            : `not enabled for the ${industryPack?.label || 'current'} industry pack`)
+        : `requires the ${requiredTier} subscription tier`;
       console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) requires ${requiredTier}, company has ${subscriptionTier}`);
       return new Response(JSON.stringify({ 
         error: 'agent_locked',
-        message: `The ${agentType} agent requires the ${requiredTier} subscription tier.`,
-        required_tier: requiredTier,
+        message: `The ${agentType} agent ${reason}.`,
+        required_tier: requiredTier || (packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || null),
         current_tier: subscriptionTier
       }), {
         status: 403,
@@ -3578,6 +3623,24 @@ serve(async (req) => {
     // Build the system prompt with handoff context
     let basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
     
+    // === INDUSTRY PROMPT DELTA ===
+    // Append the industry-specific delta for this agent (and the universal delta if present).
+    // Specialists fall back to a generic specialist primer when no delta is configured.
+    const promptDeltas: Record<string, string> = (industryPack?.agent_prompt_deltas && typeof industryPack.agent_prompt_deltas === 'object') ? industryPack.agent_prompt_deltas : {};
+    const SPECIALIST_BASE_PROMPTS: Record<string, string> = {
+      diagnostic: 'You are a Diagnostic specialist. Given symptoms, photos, brand, and model, suggest the most likely cause and recommended fix or parts list. Always recommend a tech visit if uncertain.',
+      permit_code: 'You are a Permit & Code specialist. Help determine whether a job requires a permit, what local code applies, and outline the permit-pull steps.',
+      site_survey: 'You are a Site Survey & Quote specialist. Walk customers through pre-install survey requirements (measurements, photos, access, utilities) and produce a takeoff-ready scope.',
+      insurance_claim: 'You are an Insurance Claim specialist. Help document damage with photos, dates, cause-of-loss, and produce claim-ready summaries for the carrier.',
+    };
+    if (isSpecialist && SPECIALIST_BASE_PROMPTS[normalizedAgentType] && (!AGENT_PROMPTS[normalizedAgentType] && !AGENT_PROMPTS[agentType])) {
+      basePrompt = SPECIALIST_BASE_PROMPTS[normalizedAgentType];
+    }
+    const industryDelta = promptDeltas[normalizedAgentType] || promptDeltas[agentType] || '';
+    if (industryDelta) {
+      basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
+    }
+
     // For phone channel: append caller-provided system prompt with phone-specific rules
     const isPhoneChannel = channel === 'phone';
     if (incomingSystemPrompt && isInternalRequest) {

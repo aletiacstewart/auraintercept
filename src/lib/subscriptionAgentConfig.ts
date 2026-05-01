@@ -309,3 +309,29 @@ export const LEGACY_AGENT_MAP: Record<string, string> = {
 export function normalizeAgentName(agentType: string): string {
   return LEGACY_AGENT_MAP[agentType] ?? agentType;
 }
+
+// === INDUSTRY SPECIALIST OPERATIVES ===
+// 4 specialist agents enabled per-industry via industry_template_packs.extra_operatives.
+// Always require Performance ($997) tier minimum (or trial). They never appear in TIER_AGENT_CONFIG
+// because they are opted-in by industry pack rather than by tier alone.
+export const INDUSTRY_SPECIALIST_OPERATIVES = ['diagnostic', 'permit_code', 'site_survey', 'insurance_claim'] as const;
+
+export type IndustrySpecialistOperative = typeof INDUSTRY_SPECIALIST_OPERATIVES[number];
+
+export const SPECIALIST_LABELS: Record<IndustrySpecialistOperative, string> = {
+  diagnostic: 'Diagnostic',
+  permit_code: 'Permit & Code',
+  site_survey: 'Site Survey & Quote',
+  insurance_claim: 'Insurance Claim',
+};
+
+export const SPECIALIST_DESCRIPTIONS: Record<IndustrySpecialistOperative, string> = {
+  diagnostic: 'Photo + symptom analysis with likely-fix suggestions and parts recommendations.',
+  permit_code: 'Local code lookups, permit determinations, and pull-process guidance.',
+  site_survey: 'Pre-install survey workflow, measurements, and takeoff math.',
+  insurance_claim: 'Damage documentation and claim-ready reports for carriers.',
+};
+
+export function isSpecialistOperative(agentType: string): agentType is IndustrySpecialistOperative {
+  return (INDUSTRY_SPECIALIST_OPERATIVES as readonly string[]).includes(agentType);
+}
