@@ -16,8 +16,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 208 30% 15%;
 
-    /* Primary: Royal Blue #214ebb */
-    --primary: 223 73% 43%;
+    /* Primary: Neon Cyan */
+    --primary: 189 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary: Sky Blue #46a2d3 */
@@ -36,7 +36,7 @@
 
     --border: 210 20% 90%;
     --input: 210 20% 90%;
-    --ring: 223 73% 43%;
+    --ring: 189 100% 50%;
 
     --radius: 0.75rem;
 
@@ -50,11 +50,11 @@
     --sidebar-border: 208 30% 28%;
     --sidebar-ring: 199 60% 55%;
 
-    /* Custom gradients - Royal Blue → Sky Blue */
-    --gradient-primary: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
+    /* Custom gradients - Neon Cyan → Sky Blue */
+    --gradient-primary: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(210, 20%, 96%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
-    --gradient-button: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
 
     /* Channel Colors - Aura Communication Channels (Brighter for readability) */
     --channel-voice: 348 83% 70%;
@@ -84,7 +84,7 @@
     --shadow-sm: 0 1px 2px 0 hsl(208 30% 24% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(208 30% 24% / 0.1), 0 2px 4px -2px hsl(208 30% 24% / 0.1);
     --shadow-lg: 0 10px 15px -3px hsl(208 30% 24% / 0.1), 0 4px 6px -4px hsl(208 30% 24% / 0.1);
-    --shadow-glow: 0 0 20px hsl(223 73% 43% / 0.3);
+    --shadow-glow: 0 0 20px hsl(189 100% 50% / 0.3);
     --shadow-glow-accent: 0 0 20px hsl(199 60% 55% / 0.3);
   }
 
