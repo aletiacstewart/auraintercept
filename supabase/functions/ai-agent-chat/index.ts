@@ -3355,6 +3355,16 @@ serve(async (req) => {
       ],
     };
 
+    // INDUSTRY SPECIALIST OPERATIVES — Pro/Elite tier, gated AND opted-in via industry pack
+    // Allowed only when the company's industry_template_pack lists them in extra_operatives
+    const INDUSTRY_SPECIALIST_OPERATIVES = ['diagnostic', 'permit_code', 'site_survey', 'insurance_claim'];
+    const SPECIALIST_MIN_TIER: Record<string, string> = {
+      diagnostic: 'performance',
+      permit_code: 'performance',
+      site_survey: 'performance',
+      insurance_claim: 'performance',
+    };
+
     // Legacy tier name → canonical tier mapping
     const LEGACY_TIER_MAP: Record<string, string> = {
       scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter', aura_core: 'starter',
