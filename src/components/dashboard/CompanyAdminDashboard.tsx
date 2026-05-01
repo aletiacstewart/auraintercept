@@ -25,6 +25,7 @@ import { useDashboardViewMode } from '@/hooks/useDashboardViewMode';
 import { DashboardViewToggle } from './DashboardViewToggle';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { Badge } from '@/components/ui/badge';
+import { IndustryWidgetGrid } from './IndustryWidgetGrid';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -278,6 +279,9 @@ export function CompanyAdminDashboard() {
             <DashboardOnboardingHub companyId={companyId || undefined} />
           </>
         )}
+
+        {/* Industry-tailored widgets driven by the company's template pack */}
+        <IndustryWidgetGrid />
 
         {/* Company guide download + logo — Pro mode only (clutter for daily users) */}
         {!isSimple && (
