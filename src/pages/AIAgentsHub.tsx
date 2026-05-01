@@ -234,6 +234,12 @@ export default function AIAgentsHub() {
   // Auto-activate agents based on subscription tier
   useEffect(() => {
     if (!companyId || !canManageAgents || autoActivationDone || loading) return;
+    // Platform admins see all agents enabled in-memory via the orchestrator;
+    // we don't auto-write to ai_agent_configs for them.
+    if (userRole === 'platform_admin') {
+      setAutoActivationDone(true);
+      return;
+    }
     
     const autoActivateAgents = async () => {
       const availableAgents = getAvailableAgents();
@@ -258,7 +264,7 @@ export default function AIAgentsHub() {
     } else {
       setAutoActivationDone(true);
     }
-  }, [companyId, canManageAgents, loading, subscriptionTier, inTrial]);
+  }, [companyId, canManageAgents, loading, subscriptionTier, inTrial, userRole]);
 
   // Agents hidden from non-platform-admin roles
   const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign'];
