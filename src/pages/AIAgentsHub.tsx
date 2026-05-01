@@ -853,7 +853,13 @@ function AgentCard({
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-sm">{!isAvailableInTier ? `Upgrade to ${tierInfo?.label || 'a higher plan'}` : 'Only admins can toggle agents'}</p>
+                <p className="text-sm">
+                  {industryLockReason
+                    ? industryLockReason
+                    : !isAvailableInTier
+                      ? `Upgrade to ${tierInfo?.label || 'a higher plan'}`
+                      : 'Only admins can toggle agents'}
+                </p>
               </TooltipContent>
             </Tooltip>
           )}
@@ -875,7 +881,7 @@ function AgentCard({
             </Badge>
           ) : (
             <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] px-1.5 py-0 h-4">
-              <Lock className="h-2 w-2 mr-0.5" />{tierInfo?.label}
+              <Lock className="h-2 w-2 mr-0.5" />{industryLockReason ? 'Industry' : tierInfo?.label}
             </Badge>
           )}
           {agent.is_enabled && latestEvent && <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />}
