@@ -130,7 +130,7 @@ export default function SmartWebsite() {
       if (error) throw error;
       return data as Service[];
     },
-    enabled: !!website?.company_id && website.show_services,
+    enabled: !!website?.company_id && (website.show_services || website.show_booking_widget !== false),
   });
 
   // Fetch business hours (office hours for public website)
