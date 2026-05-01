@@ -565,13 +565,13 @@ export default function Index() {
                     </div>
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 10, background: `${neon.color}44`, opacity: 0.3 }} />
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
-                  <div style={{ fontSize: 11, color: "rgba(200,220,240,0.5)", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
-                    {c.features.map((f) => (
-                      <span key={f} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>{f}</span>
-                    ))}
-                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: neon.color, marginBottom: 6 }}>{c.name.replace(' Console', '')}</div>
+                   <div style={{ fontSize: 11, color: "#FFFFFF", lineHeight: 1.5, marginBottom: 10 }}>{c.description}</div>
+                   <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
+                     {c.features.map((f) => (
+                       <span key={f} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "rgba(255,255,255,0.06)", color: "#FFFFFF" }}>{f}</span>
+                     ))}
+                   </div>
                 </div>
               );
             })}
@@ -642,8 +642,8 @@ export default function Index() {
                     </div>
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 12, background: `${o.color}33`, opacity: 0.35 }} />
                   </div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "rgba(255,255,255,0.95)", marginBottom: 10, letterSpacing: -0.3 }}>{o.title}</div>
-                  <p style={{ fontSize: 13, color: "rgba(210,225,240,0.65)", lineHeight: 1.65, marginBottom: 16 }}>{o.desc}</p>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: o.color, marginBottom: 10, letterSpacing: -0.3 }}>{o.title}</div>
+                  <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.65, marginBottom: 16 }}>{o.desc}</p>
                   <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase" as const, color: `rgb(${o.neon})`, fontWeight: 700, opacity: 0.8 }}>
                     Powered by: {o.proof}
                   </div>
@@ -703,7 +703,7 @@ export default function Index() {
                     <span className="absolute inset-0 rounded-md animate-ping opacity-40" style={{ background: `rgba(${category.neonRgb},0.5)` }} />
                     <category.icon className="w-3.5 h-3.5 text-white relative z-10" />
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{category.name}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{category.name}</span>
                   <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: `rgba(${category.neonRgb},0.15)`, color: `rgb(${category.neonRgb})`, border: `1px solid rgba(${category.neonRgb},0.3)`, letterSpacing: 0.5 }}>{category.agents.length} Agents</span>
                   <div style={{ flex: 1, height: 1, background: `rgba(${category.neonRgb},0.15)` }} />
                 </div>
@@ -718,9 +718,9 @@ export default function Index() {
                           <span className="absolute inset-0 rounded animate-ping opacity-30" style={{ background: `rgba(${category.neonRgb},0.6)` }} />
                           <agent.icon className="w-3 h-3 text-white relative z-10" />
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{agent.name}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{agent.name}</span>
                       </div>
-                      <p style={{ fontSize: 10, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{agent.description}</p>
+                      <p style={{ fontSize: 10, color: "#FFFFFF", lineHeight: 1.5 }}>{agent.description}</p>
                     </div>
                   ))}
                 </div>
@@ -756,8 +756,8 @@ export default function Index() {
                   </div>
                   <span className="absolute inset-0 rounded-lg animate-ping opacity-30" style={{ background: `rgba(${channel.neonRgb},0.6)` }} />
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.92)", marginBottom: 6 }}>{channel.title}</div>
-                <p style={{ fontSize: 12, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{channel.description}</p>
+                <div style={{ fontSize: 14, fontWeight: 700, color: `rgb(${channel.neonRgb})`, marginBottom: 6 }}>{channel.title}</div>
+                <p style={{ fontSize: 12, color: "#FFFFFF", lineHeight: 1.6 }}>{channel.description}</p>
               </div>
             ))}
           </div>
@@ -789,9 +789,9 @@ export default function Index() {
                     </div>
                     <span className="absolute inset-0 rounded-md animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{feature.title}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#00E5FF" }}>{feature.title}</span>
                 </div>
-                <p style={{ fontSize: 9, color: "rgba(200,220,240,0.5)", lineHeight: 1.5 }}>{feature.description}</p>
+                <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.5 }}>{feature.description}</p>
               </div>
             ))}
           </div>
