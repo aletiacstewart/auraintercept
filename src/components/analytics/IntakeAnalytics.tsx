@@ -8,6 +8,11 @@ import {
   pickDefaultIntakeField,
   chartKindForField,
 } from '@/lib/intakeAnalytics';
+import {
+  getAnalyticsPresetsForPack,
+  pickInitialPreset,
+  type IndustryAnalyticsPreset,
+} from '@/lib/industryAnalyticsPresets';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -76,8 +81,36 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
   const [range, setRange] = useState<Range>('90d');
 
   const fields = useMemo(() => getReportableIntakeFields(pack), [pack]);
-  const initialField = searchParams.get('field') ?? pickDefaultIntakeField(fields)?.name ?? '';
+  const presets = useMemo(
+    () => getAnalyticsPresetsForPack(pack, fields),
+    [pack, fields],
+  );
+  const initialPreset = useMemo(() => pickInitialPreset(presets), [presets]);
+  const initialField =
+    searchParams.get('field') ??
+    initialPreset?.field ??
+    pickDefaultIntakeField(fields)?.name ??
+    '';
   const [fieldName, setFieldName] = useState<string>(initialField);
+
+  // If the URL didn't dictate a source/view but the chosen preset does,
+  // honor the preset's defaults on first mount only.
+  useEffect(() => {
+    if (!initialPreset) return;
+    const params = new URLSearchParams(searchParams);
+    let changed = false;
+    if (!searchParams.get('source') && initialPreset.source) {
+      params.set('source', initialPreset.source);
+      setSource(initialPreset.source);
+      changed = true;
+    }
+    if (!searchParams.get('view') && initialPreset.view) {
+      params.set('view', initialPreset.view);
+      changed = true;
+    }
+    if (changed) setSearchParams(params, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPreset?.id]);
 
   const activeField = fields.find((f) => f.name === fieldName) ?? null;
 
@@ -113,6 +146,28 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
     if (next.source) params.set('source', next.source);
     if (next.field) params.set('field', next.field);
     setSearchParams(params, { replace: true });
+  };
+
+  const applyPreset = (preset: IndustryAnalyticsPreset) => {
+    setSource(preset.source);
+    if (preset.field) setFieldName(preset.field);
+    const params = new URLSearchParams(searchParams);
+    params.set('source', preset.source);
+    if (preset.field) params.set('field', preset.field);
+    params.set('view', preset.view);
+    setSearchParams(params, { replace: true });
+    // Mirror the existing deep-link auto-scroll/highlight behaviour.
+    const ref =
+      preset.view === 'trend'
+        ? trendRef
+        : preset.view === 'completeness'
+          ? completenessRef
+          : distRef;
+    window.setTimeout(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightView(preset.view);
+      window.setTimeout(() => setHighlightView(null), 2200);
+    }, 80);
   };
 
   const distributionQuery = useQuery({
@@ -198,6 +253,38 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
 
   return (
     <div className="space-y-4">
+      {/* Per-vertical analytics presets */}
+      {presets.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              Suggested views{pack?.label ? ` for ${pack.label}` : ''}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              One-click shortcuts curated for your industry. Click any chip to
+              jump straight to the matching chart.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex flex-wrap gap-2">
+              {presets.map((p) => (
+                <Button
+                  key={p.id}
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  onClick={() => applyPreset(p)}
+                  title={p.description ?? p.label}
+                >
+                  {p.label}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Controls */}
       <Card>
         <CardContent className="pt-6">

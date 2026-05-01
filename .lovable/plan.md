@@ -4,7 +4,12 @@
 > `/embed/booking.js` + auto-resize via `postMessage`), L ✅ (voice + SMS +
 > chat agents now inject pack `agent_prompt_deltas` and `terminology` into
 > their runtime system prompts via shared helper `_shared/industry-pack.ts`).
-> Remaining initiative item: **M — per-vertical analytics presets**.
+> Phase M ✅ — `src/lib/industryAnalyticsPresets.ts` defines per-industry
+> shortcut chips (HVAC system age / Real Estate pre-approval funnel / etc.),
+> rendered as a "Suggested views for {industry}" row at the top of the
+> Intake analytics tab. Presets auto-filter against fields actually present
+> in the active pack and auto-apply on first mount when no `?field=` is in
+> the URL. Industry pack initiative complete.
 
 Two sequential phases. J ships first (small, immediate win on top of Phase F);
 I follows (high leverage — unblocks non-engineer pack editing).

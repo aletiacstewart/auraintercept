@@ -1,4 +1,15 @@
 
+## Per-vertical analytics presets (Phase M)
+
+`src/lib/industryAnalyticsPresets.ts` maps each `industry_id` to a curated
+list of `{ source, field, view, label }` shortcuts (HVAC system age, Real
+Estate pre-approval funnel, Roofing leak trend, etc.). `IntakeAnalytics.tsx`
+renders these as chips at the top of the tab and auto-applies the first
+matching preset on mount when no `?field=` is in the URL. Presets whose
+`field` isn't present in the active pack's `form_schemas` are filtered out
+so the UI never offers a broken shortcut. A universal completeness preset
+is appended to every vertical.
+
 ## Runtime prompt injection (Phase L)
 
 Voice (`voice-handler` SWML), SMS (`sms-handler`), and chat/booking
