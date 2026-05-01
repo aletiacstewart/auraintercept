@@ -108,6 +108,9 @@ interface ExtendedWebsiteData {
   show_console_billing?: boolean;
   show_console_emergency?: boolean;
   show_console_feedback?: boolean;
+  // Booking widget (Phase G)
+  show_booking_widget?: boolean;
+  booking_widget_mode?: 'inline' | 'modal' | 'hero_cta';
 }
 
 export default function SmartWebsiteManager() {
