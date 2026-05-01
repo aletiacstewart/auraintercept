@@ -1318,6 +1318,24 @@
   color: #FFFFFF !important;
 }
 
+/* Dark/royal blue text on dashboard and console surfaces should render as cyan. */
+.dashboard-main .text-blue-200,
+.dashboard-main .text-blue-300,
+.dashboard-main .text-blue-400,
+.dashboard-main .text-blue-500,
+.dashboard-main .text-blue-600,
+.dashboard-main .text-blue-700,
+.dashboard-main .text-sky-300,
+.dashboard-main .text-sky-400,
+.dashboard-main .text-sky-500,
+.dashboard-main .text-sky-600,
+.dashboard-main .text-indigo-300,
+.dashboard-main .text-indigo-400,
+.dashboard-main .text-indigo-500,
+.dashboard-main .text-indigo-600 {
+  color: hsl(var(--primary)) !important;
+}
+
 /* Placeholder text in dashboard inputs stays subtly dimmer for usability */
 .dashboard-main .placeholder\:text-muted-foreground::placeholder,
 .dashboard-main input::placeholder,
