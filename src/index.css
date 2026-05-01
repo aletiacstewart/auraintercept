@@ -1278,3 +1278,49 @@
   .bg-feature-overview { background-color: hsl(var(--feature-overview)); }
   .bg-feature-integrations { background-color: hsl(var(--feature-integrations)); }
 }
+/* ============================================================
+   DASHBOARD/CONSOLE TEXT CONTRAST OVERRIDE
+   ============================================================
+   On dark dashboard/console surfaces, force commonly muted utility
+   text classes to render pure white. The sidebar lives in <aside>
+   (sibling of <main.dashboard-main>) so it is unaffected.
+
+   Excluded: Tailwind border-/bg- variants and explicit feature
+   color tokens (text-feature-*, text-cyan-*, etc.).
+   ============================================================ */
+.dashboard-main .text-muted-foreground,
+.dashboard-main .text-foreground\/70,
+.dashboard-main .text-foreground\/60,
+.dashboard-main .text-foreground\/50,
+.dashboard-main .text-foreground\/40,
+.dashboard-main .text-card-foreground\/70,
+.dashboard-main .text-card-foreground\/60,
+.dashboard-main .text-card-foreground\/50,
+.dashboard-main .text-card-foreground\/40,
+.dashboard-main .text-white\/80,
+.dashboard-main .text-white\/70,
+.dashboard-main .text-white\/60,
+.dashboard-main .text-white\/50,
+.dashboard-main .text-white\/40,
+.dashboard-main .text-white\/30,
+.dashboard-main .text-slate-300,
+.dashboard-main .text-slate-400,
+.dashboard-main .text-slate-500,
+.dashboard-main .text-gray-300,
+.dashboard-main .text-gray-400,
+.dashboard-main .text-gray-500,
+.dashboard-main .text-zinc-300,
+.dashboard-main .text-zinc-400,
+.dashboard-main .text-zinc-500,
+.dashboard-main .text-neutral-300,
+.dashboard-main .text-neutral-400,
+.dashboard-main .text-neutral-500 {
+  color: #FFFFFF !important;
+}
+
+/* Placeholder text in dashboard inputs stays subtly dimmer for usability */
+.dashboard-main .placeholder\:text-muted-foreground::placeholder,
+.dashboard-main input::placeholder,
+.dashboard-main textarea::placeholder {
+  color: rgba(255,255,255,0.55) !important;
+}
