@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { BookingForm, BookingData } from '@/components/ai/BookingForm';
+import { toast } from 'sonner';
 interface WebsiteData {
   id: string;
   company_id: string;
@@ -48,6 +50,10 @@ interface WebsiteData {
   background_image_url: string | null;
   logo_transparency_mode: 'none' | 'multiply' | 'contrast' | null;
   show_gallery: boolean | null;
+  // Booking widget (Phase G)
+  show_booking_widget: boolean | null;
+  booking_widget_mode: 'inline' | 'modal' | 'hero_cta' | null;
+  company_slug: string | null;
 }
 
 interface Service {
