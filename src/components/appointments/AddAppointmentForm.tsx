@@ -195,13 +195,13 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Service Selection */}
           <div className="space-y-2">
-            <Label className="text-foreground/70">Service Type *</Label>
+            <Label className="text-foreground/70">{serviceLabel}</Label>
             <Select value={selectedService} onValueChange={setSelectedService}>
               <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
-                {services.map((service) => (
+                {effectiveServices.map((service) => (
                   <SelectItem key={service.id} value={service.name}>
                     {service.name} ({service.duration_minutes} min)
                   </SelectItem>
