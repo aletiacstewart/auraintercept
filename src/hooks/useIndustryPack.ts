@@ -83,4 +83,44 @@ export function useIndustryPack(companyIdOverride?: string | null) {
   return { pack, loading };
 }
 
+/**
+ * Unauthenticated variant for public booking widgets / smart website embeds.
+ * Calls the SECURITY DEFINER RPC `get_public_industry_pack` which returns
+ * only the safe subset (industry_id, label, job_templates, form_schemas,
+ * terminology) — no prompt deltas or tier gating data.
+ */
+export function usePublicIndustryPack(companyId: string | null | undefined) {
+  const [pack, setPack] = useState<IndustryPack>(DEFAULT_PACK);
+  const [loading, setLoading] = useState<boolean>(!!companyId);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!companyId) {
+      setPack(DEFAULT_PACK);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    (async () => {
+      const { data, error } = await supabase
+        .rpc('get_public_industry_pack', { p_company_id: companyId });
+      if (cancelled) return;
+      if (error || !data) {
+        setPack(DEFAULT_PACK);
+      } else {
+        const row = Array.isArray(data) ? data[0] : data;
+        if (row && row.industry_id) {
+          setPack({ ...DEFAULT_PACK, ...(row as Partial<IndustryPack>) } as IndustryPack);
+        } else {
+          setPack(DEFAULT_PACK);
+        }
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [companyId]);
+
+  return { pack, loading };
+}
+
 export const GENERIC_INDUSTRY_PACK = DEFAULT_PACK;
