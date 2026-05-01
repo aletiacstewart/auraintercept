@@ -3636,7 +3636,23 @@ serve(async (req) => {
     if (isSpecialist && SPECIALIST_BASE_PROMPTS[normalizedAgentType] && (!AGENT_PROMPTS[normalizedAgentType] && !AGENT_PROMPTS[agentType])) {
       basePrompt = SPECIALIST_BASE_PROMPTS[normalizedAgentType];
     }
-    const industryDelta = promptDeltas[normalizedAgentType] || promptDeltas[agentType] || '';
+    // Map canonical agent names to the short keys used in industry pack deltas.
+    // E.g. "field_navigation" should pick up the pack's "route" delta for
+    // recurring-route verticals (landscape, pest_control, pool_spa).
+    const DELTA_KEY_ALIASES: Record<string, string[]> = {
+      field_navigation: ['route', 'recurring_route'],
+      lead: ['triage', 'intake'],
+      admin: ['triage'],
+      customer_journey: ['triage'],
+      outreach: ['triage'],
+    };
+    const aliasKeys = DELTA_KEY_ALIASES[normalizedAgentType] || DELTA_KEY_ALIASES[agentType] || [];
+    let industryDelta = promptDeltas[normalizedAgentType] || promptDeltas[agentType] || '';
+    if (!industryDelta) {
+      for (const k of aliasKeys) {
+        if (promptDeltas[k]) { industryDelta = promptDeltas[k]; break; }
+      }
+    }
     if (industryDelta) {
       basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
     }
