@@ -1,5 +1,5 @@
 import {
-  Route, MapPin, Wrench, Map, ClipboardList, Phone, Home, Scissors,
+  Route, Wrench, Map, ClipboardList, Phone, Home, Scissors,
   Sparkles, Hammer, AlertCircle, Calendar, Camera, Sun, Bug,
   Waves, Shield, Utensils, Briefcase, type LucideIcon,
 } from 'lucide-react';
