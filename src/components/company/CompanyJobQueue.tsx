@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, formatDistanceToNow } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
+import { IntakeSummary } from '@/components/forms/IntakeSummary';
 import {
   CheckCircle,
   XCircle,
@@ -45,6 +46,7 @@ interface JobAssignment {
     datetime: string;
     duration_minutes: number;
     notes: string | null;
+    intake_data?: unknown;
   } | null;
   employee: {
     id: string;
@@ -85,7 +87,8 @@ export function CompanyJobQueue() {
             service_type,
             datetime,
             duration_minutes,
-            notes
+            notes,
+            intake_data
           ),
           employee:employee_id (
             id,
@@ -124,7 +127,8 @@ export function CompanyJobQueue() {
             service_type,
             datetime,
             duration_minutes,
-            notes
+            notes,
+            intake_data
           ),
           employee:employee_id (
             id,
@@ -369,6 +373,14 @@ const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref)
             </span>
           )}
         </div>
+
+        {job.appointments?.intake_data ? (
+          <IntakeSummary
+            intakeData={job.appointments.intake_data as Record<string, unknown> | null | undefined}
+            serviceType={job.appointments.service_type}
+            variant="compact"
+          />
+        ) : null}
 
         {/* Assigned Employee */}
         <div className="flex items-center gap-2 text-xs">

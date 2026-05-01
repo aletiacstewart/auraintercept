@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { X, UserPlus, Send, Mail, MessageSquare, Phone } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
+import {
+  validateIntake,
+  type IntakeFormSchema,
+} from '@/lib/industryFormSchemas';
 
 interface LeadFormProps {
   companyId: string;
@@ -19,6 +25,22 @@ interface LeadFormProps {
 
 export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack(companyId);
+
+  // For lead capture we prefer an explicit `lead_intake` schema if the pack
+  // defines one; otherwise fall back to the first available form schema so
+  // the vertical can still surface its highest-value qualification fields
+  // (e.g. real estate price range, restaurant party size).
+  const intakeSchema = useMemo<IntakeFormSchema | null>(() => {
+    const schemas = (pack?.form_schemas || {}) as Record<string, IntakeFormSchema>;
+    if (schemas.lead_intake?.fields?.length) return schemas.lead_intake;
+    const first = Object.values(schemas).find(
+      (s) => Array.isArray(s?.fields) && s.fields.length > 0,
+    );
+    return first ?? null;
+  }, [pack?.form_schemas]);
+
+  const [intakeData, setIntakeData] = useState<Record<string, unknown>>({});
   
   const [formData, setFormData] = useState({
     name: '',
@@ -37,10 +59,35 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
     utmCampaign: '',
   });
 
-  // Create lead as a potential appointment/customer
+  // Create the lead in the canonical `leads` table (drives lead scoring +
+  // industry-aware intake), then mirror to a campaign recipient row for the
+  // existing outreach flow.
   const createLead = useMutation({
     mutationFn: async () => {
-      // Create as a campaign recipient for tracking
+      // 1) Insert canonical lead row.
+      const { data: leadRow, error: leadError } = await supabase
+        .from('leads')
+        .insert({
+          company_id: companyId,
+          name: formData.name,
+          email: formData.email || null,
+          phone: formData.phone || null,
+          address: formData.address || null,
+          source: formData.source,
+          service_interest: formData.serviceInterest || null,
+          notes: formData.notes || null,
+          campaign_source: formData.campaignSource || null,
+          utm_source: formData.utmSource || null,
+          utm_medium: formData.utmMedium || null,
+          utm_campaign: formData.utmCampaign || null,
+          intake_data: intakeData as never,
+        })
+        .select()
+        .single();
+      if (leadError) throw leadError;
+
+      // 2) Mirror to campaign_recipients so existing outreach flows still pick
+      //    this lead up (kept for backward compatibility).
       const { data: campaign, error: campaignError } = await supabase
         .from('marketing_campaigns')
         .select('id')
@@ -68,8 +115,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
         campaignId = newCampaign.id;
       }
 
-      // Add lead as recipient
-      const { data, error } = await supabase
+      await supabase
         .from('campaign_recipients')
         .insert({
           campaign_id: campaignId,
@@ -79,15 +125,13 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           customer_phone: formData.phone || null,
           channel: formData.email ? 'email' : 'sms',
           status: 'pending',
-        })
-        .select()
-        .single();
+        });
 
-      if (error) throw error;
-      return data;
+      return leadRow;
     },
     onSuccess: () => {
       toast.success('Lead added successfully!');
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
       queryClient.invalidateQueries({ queryKey: ['campaign-recipients'] });
       onSuccess?.({ name: formData.name, source: formData.source });
       onCancel();
@@ -105,6 +149,11 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
     }
     if (!formData.email && !formData.phone) {
       toast.error('Please enter email or phone');
+      return;
+    }
+    const intakeErrors = validateIntake(intakeSchema, intakeData);
+    if (intakeErrors.length > 0) {
+      toast.error(`Please fill in: ${intakeErrors.join(', ')}`);
       return;
     }
     createLead.mutate();
@@ -215,6 +264,14 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
               rows={2}
             />
           </div>
+
+          {/* Industry-specific qualification fields (no-op when pack has no schemas) */}
+          <DynamicIntakeFields
+            schema={intakeSchema}
+            value={intakeData}
+            onChange={setIntakeData}
+            title="Qualification"
+          />
 
           {/* UTM/Attribution Fields - CRM Compatibility */}
           <div className="space-y-2 border-t border-border pt-3">

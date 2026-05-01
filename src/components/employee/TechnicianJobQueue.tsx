@@ -33,6 +33,7 @@ import {
   Camera,
 } from 'lucide-react';
 import { JobPhotoUpload } from './JobPhotoUpload';
+import { IntakeSummary } from '@/components/forms/IntakeSummary';
 
 interface JobAssignment {
   id: string;
@@ -60,6 +61,7 @@ interface JobAssignment {
     datetime: string;
     duration_minutes: number;
     notes: string | null;
+    intake_data?: unknown;
   } | null;
 }
 
@@ -102,7 +104,8 @@ export function TechnicianJobQueue() {
             service_type,
             datetime,
             duration_minutes,
-            notes
+            notes,
+            intake_data
           )
         `)
         .eq('employee_id', user.id)
@@ -687,6 +690,14 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
           <p className="text-sm whitespace-pre-wrap">{appointment.notes}</p>
         </div>
       )}
+
+      {/* Industry-pack intake summary (no-op when nothing was captured) */}
+      <div className="mb-3">
+        <IntakeSummary
+          intakeData={appointment.intake_data as Record<string, unknown> | null | undefined}
+          serviceType={appointment.service_type}
+        />
+      </div>
 
       {/* Photo Upload Section - Show for arrived and in_progress jobs, or when linked directly */}
       {(isActive && ['arrived', 'in_progress'].includes(job.status)) || (showPhotoSection && ['arrived', 'in_progress'].includes(job.status)) ? (
