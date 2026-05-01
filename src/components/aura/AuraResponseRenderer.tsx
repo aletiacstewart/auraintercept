@@ -46,6 +46,7 @@ export function AuraResponseRenderer({
   summary,
   isLoading = false,
   data,
+  intake,
 }: AuraResponseRendererProps) {
   const visualizationType = getSuggestedVisualization(intent);
 
