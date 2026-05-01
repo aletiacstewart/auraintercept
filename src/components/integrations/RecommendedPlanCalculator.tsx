@@ -317,7 +317,7 @@ export function RecommendedPlanCalculator() {
                     </div>
                   )}
                   {recommendedPlan.channels.voice && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm">
+                    <div className="flex items-center gap-1 px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/30 text-cyan-400 dark:text-cyan-300 text-sm">
                       <Phone className="w-3.5 h-3.5" />
                       Voice
                     </div>
@@ -408,7 +408,7 @@ export function RecommendedPlanCalculator() {
                   <div className="flex items-center gap-1 mb-3">
                     {plan.channels.email && <Mail className="w-3.5 h-3.5 text-emerald-500" />}
                     {plan.channels.sms && <MessageSquare className="w-3.5 h-3.5 text-red-500" />}
-                    {plan.channels.voice && <Phone className="w-3.5 h-3.5 text-blue-500" />}
+                    {plan.channels.voice && <Phone className="w-3.5 h-3.5 text-cyan-400" />}
                   </div>
 
                   <div className="space-y-2 text-sm">

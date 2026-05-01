@@ -79,7 +79,7 @@ const issueTypeConfig: Record<IssueType, { icon: typeof Bug; label: string; colo
   frontend_error: { icon: AlertTriangle, label: 'Frontend Error', color: 'text-red-500' },
   ai_agent_error: { icon: Bot, label: 'AI Agent Error', color: 'text-purple-500' },
   api_error: { icon: Globe, label: 'API Error', color: 'text-orange-500' },
-  user_reported: { icon: Bug, label: 'Bug Report', color: 'text-blue-500' },
+  user_reported: { icon: Bug, label: 'Bug Report', color: 'text-cyan-400' },
   feature_request: { icon: Lightbulb, label: 'Feature Request', color: 'text-yellow-500' },
 };
 
@@ -92,7 +92,7 @@ const severityConfig: Record<IssueSeverity, { label: string; variant: 'destructi
 
 const statusConfig: Record<IssueStatus, { icon: typeof Clock; label: string; color: string }> = {
   new: { icon: AlertTriangle, label: 'New', color: 'text-red-500' },
-  acknowledged: { icon: Eye, label: 'Acknowledged', color: 'text-blue-500' },
+  acknowledged: { icon: Eye, label: 'Acknowledged', color: 'text-cyan-400' },
   in_progress: { icon: Clock, label: 'In Progress', color: 'text-yellow-500' },
   resolved: { icon: CheckCircle2, label: 'Resolved', color: 'text-green-500' },
   wont_fix: { icon: XCircle, label: "Won't Fix", color: 'text-muted-foreground' },

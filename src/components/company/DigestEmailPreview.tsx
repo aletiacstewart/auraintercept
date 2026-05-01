@@ -107,7 +107,7 @@ export function DigestEmailPreview({
     switch (type) {
       case 'weekly': return 'from-blue-500 to-purple-500';
       case 'monthly': return 'from-blue-500 to-green-500';
-      case 'quarterly': return 'from-indigo-500 to-purple-600';
+      case 'quarterly': return 'from-cyan-500 to-purple-600';
     }
   };
 

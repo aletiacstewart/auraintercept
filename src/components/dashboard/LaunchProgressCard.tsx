@@ -7,7 +7,7 @@ import { useLaunchProgress } from "@/hooks/useLaunchProgress";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PHASE_CONFIG: Record<string, { label: string; color: string }> = {
-  setup: { label: 'Setup', color: 'text-blue-500' },
+  setup: { label: 'Setup', color: 'text-cyan-400' },
   testing: { label: 'Testing', color: 'text-amber-500' },
   soft_launch: { label: 'Soft Launch', color: 'text-purple-500' },
   live: { label: 'Live', color: 'text-green-500' }

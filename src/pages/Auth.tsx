@@ -619,7 +619,7 @@ export default function Auth() {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
                     <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <Calendar className="w-4 h-4 text-cyan-400" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm text-card-foreground">Job Queue & Calendar</h4>
@@ -886,7 +886,7 @@ export default function Auth() {
                           { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
                           { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Included in tier', note: 'Boost+', color: 'text-green-400' },
                           { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Included in tier', note: 'Boost+', color: 'text-purple-400' },
-                          { icon: <Mail className="w-2.5 h-2.5 text-blue-400" />, name: 'Resend', cost: 'Included in tier', note: 'All tiers', color: 'text-blue-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend', cost: 'Included in tier', note: 'All tiers', color: 'text-cyan-400' },
                           { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'All tiers', color: 'text-cyan-400' },
                           { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Elite', color: 'text-amber-400' },
                           { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Pro+', color: 'text-pink-400' },
@@ -932,7 +932,7 @@ export default function Auth() {
                                   <p>• API key + voice selection</p>
                                 </div>
                                 <div>
-                                  <p className="font-semibold text-blue-400 mb-0.5">Resend</p>
+                                  <p className="font-semibold text-cyan-400 mb-0.5">Resend</p>
                                   <p>• Verified sending domain</p>
                                   <p>• API key</p>
                                 </div>
@@ -1225,9 +1225,9 @@ export default function Auth() {
                           {mode === 'company' && (
                             <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
                               <div className="flex items-start gap-2">
-                                <Calendar className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-blue-300">
-                                  <span className="font-medium text-blue-200">Google Calendar Integration:</span>{' '}
+                                <Calendar className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-cyan-300">
+                                  <span className="font-medium text-cyan-200">Google Calendar Integration:</span>{' '}
                                   Use the same email as your Google account to enable calendar sync.
                                 </p>
                               </div>
@@ -1368,11 +1368,11 @@ export default function Auth() {
             <div className="mt-8 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
               <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 flex flex-col items-center text-center">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
-                  <Headphones className="w-5 h-5 text-blue-400" />
+                  <Headphones className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h4 className="font-semibold text-blue-400 text-sm mb-2">Concierge Onboarding</h4>
+                <h4 className="font-semibold text-cyan-400 text-sm mb-2">Concierge Onboarding</h4>
                  <p className="text-xs text-foreground">
-                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-blue-300">one-time fee of $297</span>. Assistance from primary owner or manager required for company details.
+                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $297</span>. Assistance from primary owner or manager required for company details.
                  </p>
               </div>
 

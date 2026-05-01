@@ -69,15 +69,15 @@ const FIELD_OPS_AGENT_CONFIG: Record<string, { icon: LucideIcon; description: st
 };
 
 const FIELD_OPS_AGENTS = [
-  { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'directions', name: 'Get Directions', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'enroute', name: 'En Route', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'eta', name: 'Update ETA', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'arrive_start', name: 'Arrive & Start', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'complete', name: 'Complete Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-cyan-400' },
+  { id: 'directions', name: 'Get Directions', color: 'bg-blue-100', textColor: 'text-cyan-400' },
+  { id: 'enroute', name: 'En Route', color: 'bg-blue-100', textColor: 'text-cyan-400' },
+  { id: 'eta', name: 'Update ETA', color: 'bg-blue-100', textColor: 'text-cyan-400' },
+  { id: 'arrive_start', name: 'Arrive & Start', color: 'bg-blue-100', textColor: 'text-cyan-400' },
+  { id: 'complete', name: 'Complete Job', color: 'bg-blue-100', textColor: 'text-cyan-400' },
   { id: 'quote', name: 'Generate Quote', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
   { id: 'invoice', name: 'Generate Invoice', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-cyan-400' },
 ];
 
 // Tabs for the console - include all quick action icons
@@ -1224,7 +1224,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                         </p>
                         {address ? (
                           <p className="text-xs flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3 text-blue-600 shrink-0" />
+                            <MapPin className="h-3 w-3 text-cyan-400 shrink-0" />
                             <span className="truncate">{address}</span>
                           </p>
                         ) : (

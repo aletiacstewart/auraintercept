@@ -212,7 +212,7 @@ export function ReminderAnalytics() {
           title="SMS Sent"
           value={smsSent}
           subtitle={`${smsCount} total attempts`}
-          icon={<MessageSquare className="h-5 w-5 text-blue-600" />}
+          icon={<MessageSquare className="h-5 w-5 text-cyan-400" />}
         />
         <MetricCard
           title="Emails Sent"

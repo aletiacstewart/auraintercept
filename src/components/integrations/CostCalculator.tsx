@@ -756,7 +756,7 @@ export function CostCalculator() {
 
               <div className="p-4 rounded-lg border bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-900/50">
                 <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-5 h-5 text-blue-600" />
+                  <Zap className="w-5 h-5 text-cyan-400" />
                   <span className="font-semibold">Maximum Reach Strategy</span>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -825,7 +825,7 @@ export function CostCalculator() {
                             <div className="flex gap-1">
                               {estimate.channels_email && <Mail className="w-3 h-3 text-emerald-500" />}
                               {estimate.channels_sms && <MessageSquare className="w-3 h-3 text-red-500" />}
-                              {estimate.channels_voice && <Phone className="w-3 h-3 text-blue-500" />}
+                              {estimate.channels_voice && <Phone className="w-3 h-3 text-cyan-400" />}
                             </div>
                           </div>
                           <Button

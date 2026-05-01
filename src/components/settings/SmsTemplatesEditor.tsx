@@ -57,7 +57,7 @@ const TEMPLATE_INFO = {
     label: 'Reminder',
     description: 'Sent before upcoming appointments',
     icon: Bell,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
   },
 };
 

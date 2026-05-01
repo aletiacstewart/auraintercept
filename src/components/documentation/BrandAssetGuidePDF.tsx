@@ -3,7 +3,7 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
-  primary: '#214ebb',
+  primary: '#00E5FF',
   secondary: '#6366f1',
   accent: '#06b6d4',
   dark: '#1e293b',
@@ -404,9 +404,9 @@ export const BrandAssetGuidePDF: React.FC = () => (
       <View style={styles.colorCard}>
         <Text style={styles.colorCardTitle}>Primary Colors</Text>
         <ColorSwatch 
-          color="#214ebb" 
+          color="#00E5FF" 
           name="Aura Blue" 
-          hex="#214ebb" 
+          hex="#00E5FF" 
           usage="Primary brand color. Use for headers, CTAs, and key UI elements."
         />
         <ColorSwatch 
@@ -449,7 +449,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         <Text style={styles.guidelinesTitle}>COLOR USAGE GUIDELINES</Text>
         <Text style={styles.guidelinesText}>
           - Always maintain a 4.5:1 contrast ratio for text accessibility{'\n'}
-          - Use Aura Blue (#214ebb) as the dominant brand color (60-70%){'\n'}
+          - Use Aura Blue (#00E5FF) as the dominant brand color (60-70%){'\n'}
           - Indigo and Cyan should be used sparingly (20-30%){'\n'}
           - Never use more than 3 colors in a single composition{'\n'}
           - For gradients, always go from Aura Blue to Indigo (left-to-right or top-to-bottom)
@@ -788,7 +788,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <View style={styles.mockupSpecs}>
               <View style={styles.specRow}>
                 <Text style={styles.specLabel}>Light Background</Text>
-                <Text style={styles.specValue}>Aura Blue (#214ebb)</Text>
+                <Text style={styles.specValue}>Aura Blue (#00E5FF)</Text>
               </View>
               <View style={styles.specRow}>
                 <Text style={styles.specLabel}>Dark Background</Text>

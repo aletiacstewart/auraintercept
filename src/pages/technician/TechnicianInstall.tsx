@@ -167,7 +167,7 @@ const TechnicianInstall = () => {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex flex-col sm:flex-row items-center gap-4">
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center">
                       <Smartphone className="h-8 w-8 text-white" />
                     </div>
                     <div className="flex-1 text-center sm:text-left">

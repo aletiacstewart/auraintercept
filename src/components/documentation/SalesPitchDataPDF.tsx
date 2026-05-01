@@ -2,7 +2,7 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 const colors = {
-  primary: '#214ebb',
+  primary: '#00E5FF',
   secondary: '#6366f1',
   accent: '#06b6d4',
   dark: '#1e293b',

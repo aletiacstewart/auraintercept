@@ -184,7 +184,7 @@ export function DigestDeliveryStats() {
           <h4 className="text-sm font-medium mb-3">By Report Type</h4>
           <div className="grid grid-cols-3 gap-3">
             <div className="flex items-center gap-3 p-3 border border-border rounded-lg">
-              <Calendar className="h-5 w-5 text-blue-500" />
+              <Calendar className="h-5 w-5 text-cyan-400" />
               <div>
                 <div className="font-semibold">{stats.byType.weekly.sent + stats.byType.weekly.failed + stats.byType.weekly.bounced + stats.byType.weekly.complained}</div>
                 <div className="text-xs text-muted-foreground">Weekly</div>
@@ -204,7 +204,7 @@ export function DigestDeliveryStats() {
               )}
             </div>
             <div className="flex items-center gap-3 p-3 border border-border rounded-lg">
-              <TrendingUp className="h-5 w-5 text-indigo-500" />
+              <TrendingUp className="h-5 w-5 text-cyan-400" />
               <div>
                 <div className="font-semibold">{stats.byType.quarterly.sent + stats.byType.quarterly.failed + stats.byType.quarterly.bounced + stats.byType.quarterly.complained}</div>
                 <div className="text-xs text-muted-foreground">Quarterly</div>

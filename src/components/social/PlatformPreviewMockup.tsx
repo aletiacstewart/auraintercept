@@ -121,7 +121,7 @@ export const PlatformPreviewMockup: React.FC<PlatformPreviewMockupProps> = ({
           </div>
         ) : (
           <div className="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-            <Facebook className="h-12 w-12 text-blue-300" />
+            <Facebook className="h-12 w-12 text-cyan-300" />
           </div>
         )}
         
@@ -177,7 +177,7 @@ export const PlatformPreviewMockup: React.FC<PlatformPreviewMockupProps> = ({
           </div>
         ) : (
           <div className="aspect-video bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center">
-            <Linkedin className="h-12 w-12 text-sky-300" />
+            <Linkedin className="h-12 w-12 text-cyan-300" />
           </div>
         )}
         

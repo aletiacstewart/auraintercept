@@ -467,7 +467,7 @@ export function SmartWebsiteHoursEditor() {
           <CollapsibleTrigger className="w-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-blue-500" />
+                <Truck className="h-4 w-4 text-cyan-400" />
                 <Label className="font-semibold text-card-foreground">Field Service Hours</Label>
                 <ChevronDown className="h-4 w-4 text-card-foreground/50" />
               </div>

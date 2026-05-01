@@ -266,7 +266,7 @@ export function SmartWebsiteContactEditor() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-blue-500" />
+                <User className="h-4 w-4 text-cyan-400" />
                 <Label className="font-semibold text-card-foreground">Additional Contact #1</Label>
               </div>
               <Button

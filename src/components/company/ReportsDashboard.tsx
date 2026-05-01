@@ -311,9 +311,9 @@ export function ReportsDashboard() {
 
   const getReportIcon = (type: string) => {
     switch (type) {
-      case 'weekly': return <Calendar className="h-5 w-5 text-blue-500" />;
+      case 'weekly': return <Calendar className="h-5 w-5 text-cyan-400" />;
       case 'monthly': return <FileText className="h-5 w-5 text-purple-500" />;
-      case 'quarterly': return <TrendingUp className="h-5 w-5 text-indigo-500" />;
+      case 'quarterly': return <TrendingUp className="h-5 w-5 text-cyan-400" />;
       default: return <FileText className="h-5 w-5" />;
     }
   };

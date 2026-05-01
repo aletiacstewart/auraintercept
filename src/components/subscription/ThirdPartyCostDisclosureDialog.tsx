@@ -35,7 +35,7 @@ const COST_ITEMS: CostItem[] = [
   },
   {
     id: 'signalwire',
-    icon: <Phone className="h-4 w-4 text-blue-500" />,
+    icon: <Phone className="h-4 w-4 text-cyan-400" />,
     name: 'SignalWire',
     purpose: 'SMS & Voice Calls (Talk to Aura + Message Aura)',
     estimatedCost: '~$2/number + $20–80/mo usage',
@@ -62,7 +62,7 @@ const COST_ITEMS: CostItem[] = [
   },
   {
     id: 'stripe',
-    icon: <CreditCard className="h-4 w-4 text-indigo-500" />,
+    icon: <CreditCard className="h-4 w-4 text-cyan-400" />,
     name: 'Stripe',
     purpose: 'Invoice Payments (Elite tier)',
     estimatedCost: '2.9% + $0.30 per transaction',

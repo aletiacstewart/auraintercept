@@ -477,7 +477,7 @@ export function AppointmentCalendar() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return 'bg-blue-500/10 text-blue-600 border-blue-500/30';
+        return 'bg-blue-500/10 text-cyan-400 border-blue-500/30';
       case 'completed':
         return 'bg-green-500/10 text-green-600 border-green-500/30';
       case 'cancelled':

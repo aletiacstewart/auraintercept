@@ -45,7 +45,7 @@ interface ChannelConfig {
 }
 
 const CHANNELS: ChannelConfig[] = [
-  { id: 'website', label: 'Website', icon: Globe, color: 'text-blue-400', description: 'Headlines, copy, CTAs' },
+  { id: 'website', label: 'Website', icon: Globe, color: 'text-cyan-400', description: 'Headlines, copy, CTAs' },
   { id: 'social', label: 'Social Media', icon: Share2, color: 'text-pink-400', description: '6 platform variations' },
   { id: 'campaign', label: 'Email Campaign', icon: Mail, color: 'text-amber-400', description: 'Subject, body, CTA' },
   { id: 'blog', label: 'Blog Post', icon: FileText, color: 'text-green-400', description: 'SEO-optimized article' },

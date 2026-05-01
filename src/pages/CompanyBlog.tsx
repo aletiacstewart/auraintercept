@@ -145,7 +145,7 @@ export default function CompanyBlog() {
     );
   }
 
-  const primaryColor = website.primary_color || '#214ebb';
+  const primaryColor = website.primary_color || '#00E5FF';
 
   return (
     <div className="min-h-screen bg-background">

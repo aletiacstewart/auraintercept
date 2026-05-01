@@ -138,7 +138,7 @@ export default function DesignPreview() {
               fontWeight: 900,
               letterSpacing: 2,
               margin: "0 0 16px",
-              background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)",
+              background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #00E5FF 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -168,7 +168,7 @@ export default function DesignPreview() {
                 fontWeight: 700,
                 cursor: "pointer",
                 border: "none",
-                background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)",
+                background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)",
                 backgroundSize: "300% 300%",
                 color: "white",
                 animation: "border-shine 4s ease infinite",
@@ -294,7 +294,7 @@ export default function DesignPreview() {
                   <div style={{ flex: 1, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
                     <div style={{
                       width: `${a.confidence}%`, height: "100%", borderRadius: 2,
-                      background: `linear-gradient(90deg, #00E5FF, #214ebb)`,
+                      background: `linear-gradient(90deg, #00E5FF, #00E5FF)`,
                       boxShadow: "0 0 8px rgba(0,229,255,0.4)",
                     }} />
                   </div>
@@ -426,7 +426,7 @@ export default function DesignPreview() {
             fontWeight: 700,
             cursor: "pointer",
             border: "none",
-            background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)",
+            background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)",
             backgroundSize: "300% 300%",
             color: "white",
             animation: "border-shine 4s ease infinite",
@@ -511,7 +511,7 @@ export default function DesignPreview() {
           {[
             { name: "Background", color: "hsl(210,40%,4%)" },
             { name: "Cyan Neon", color: "#00E5FF" },
-            { name: "Royal Blue", color: "#214ebb" },
+            { name: "Royal Blue", color: "#00E5FF" },
             { name: "Sky Blue", color: "#46a2d3" },
             { name: "Green Neon", color: "#00E676" },
             { name: "Purple Neon", color: "#B388FF" },

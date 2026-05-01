@@ -85,18 +85,18 @@ export function DigestDeliveryHistory() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'weekly': return <Calendar className="h-4 w-4 text-blue-500" />;
+      case 'weekly': return <Calendar className="h-4 w-4 text-cyan-400" />;
       case 'monthly': return <FileText className="h-4 w-4 text-purple-500" />;
-      case 'quarterly': return <TrendingUp className="h-4 w-4 text-indigo-500" />;
+      case 'quarterly': return <TrendingUp className="h-4 w-4 text-cyan-400" />;
       default: return <FileText className="h-4 w-4" />;
     }
   };
 
   const getTypeBadge = (type: string) => {
     const colors: Record<string, string> = {
-      weekly: 'bg-blue-500/20 text-blue-700 border-blue-500/30',
+      weekly: 'bg-blue-500/20 text-cyan-400 border-blue-500/30',
       monthly: 'bg-purple-500/20 text-purple-700 border-purple-500/30',
-      quarterly: 'bg-indigo-500/20 text-indigo-700 border-indigo-500/30',
+      quarterly: 'bg-cyan-500/20 text-indigo-700 border-cyan-500/30',
     };
     return (
       <Badge variant="outline" className={`capitalize ${colors[type] || ''}`}>

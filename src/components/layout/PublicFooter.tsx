@@ -75,7 +75,7 @@ export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
       {showChat && (
         <FloatingChatWidget
           websiteId="aura-intercept-footer"
-          primaryColor="#214ebb"
+          primaryColor="#00E5FF"
         />
       )}
     </>

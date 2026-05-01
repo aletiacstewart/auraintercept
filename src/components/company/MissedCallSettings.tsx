@@ -315,7 +315,7 @@ export function MissedCallSettings() {
 
             {localSettings.phone_number_setup_type === 'conditional_forwarding' && (
               <Alert className="border-blue-500/50 bg-blue-500/10">
-                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertCircle className="h-4 w-4 text-cyan-400" />
                 <AlertDescription className="text-xs">
                   <strong>Auto-configured to AI Direct.</strong> Your carrier already rings your phone before forwarding — the AI picks up immediately when the call arrives here.
                 </AlertDescription>
@@ -324,7 +324,7 @@ export function MissedCallSettings() {
 
             {localSettings.phone_number_setup_type === 'unconditional_forwarding' && (
               <Alert className="border-blue-500/50 bg-blue-500/10">
-                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertCircle className="h-4 w-4 text-cyan-400" />
                 <AlertDescription className="text-xs">
                   <strong>Auto-configured to AI Direct.</strong> All calls forward to the AI immediately since your carrier sends everything here.
                 </AlertDescription>

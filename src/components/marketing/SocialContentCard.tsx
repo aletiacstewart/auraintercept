@@ -201,7 +201,7 @@ export function SocialContentCard({
               )}
               {/* LinkedIn Visibility Badge */}
               {draft.platform === 'linkedin' && draft.api_metadata?.visibility && (
-                <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
+                <Badge variant="outline" className="text-xs bg-blue-100 text-cyan-400 border-blue-200">
                   {draft.api_metadata.visibility}
                 </Badge>
               )}

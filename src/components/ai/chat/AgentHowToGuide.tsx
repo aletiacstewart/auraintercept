@@ -66,12 +66,12 @@ interface AgentGuide {
 
 const COLOR_CLASSES: Record<string, { bg: string; icon: string; activeBg: string; activeBorder: string; step: string }> = {
   cyan:    { bg: 'bg-cyan-500/10',    icon: 'text-cyan-500',    activeBg: 'bg-cyan-500/5',    activeBorder: 'border-cyan-500/50',    step: 'bg-cyan-500/20 text-cyan-600' },
-  blue:    { bg: 'bg-blue-500/10',    icon: 'text-blue-500',    activeBg: 'bg-blue-500/5',    activeBorder: 'border-blue-500/50',    step: 'bg-blue-500/20 text-blue-600' },
+  blue:    { bg: 'bg-blue-500/10',    icon: 'text-cyan-400',    activeBg: 'bg-blue-500/5',    activeBorder: 'border-blue-500/50',    step: 'bg-blue-500/20 text-cyan-400' },
   green:   { bg: 'bg-green-500/10',   icon: 'text-green-600',   activeBg: 'bg-green-500/5',   activeBorder: 'border-green-500/50',   step: 'bg-green-500/20 text-green-700' },
   violet:  { bg: 'bg-violet-500/10',  icon: 'text-violet-600',  activeBg: 'bg-violet-500/5',  activeBorder: 'border-violet-500/50',  step: 'bg-violet-500/20 text-violet-700' },
   amber:   { bg: 'bg-amber-500/10',   icon: 'text-amber-600',   activeBg: 'bg-amber-500/5',   activeBorder: 'border-amber-500/50',   step: 'bg-amber-500/20 text-amber-700' },
   orange:  { bg: 'bg-orange-500/10',  icon: 'text-orange-600',  activeBg: 'bg-orange-500/5',  activeBorder: 'border-orange-500/50',  step: 'bg-orange-500/20 text-orange-700' },
-  indigo:  { bg: 'bg-indigo-500/10',  icon: 'text-indigo-600',  activeBg: 'bg-indigo-500/5',  activeBorder: 'border-indigo-500/50',  step: 'bg-indigo-500/20 text-indigo-700' },
+  indigo:  { bg: 'bg-cyan-500/10',  icon: 'text-cyan-400',  activeBg: 'bg-cyan-500/5',  activeBorder: 'border-cyan-500/50',  step: 'bg-cyan-500/20 text-indigo-700' },
   teal:    { bg: 'bg-teal-500/10',    icon: 'text-teal-600',    activeBg: 'bg-teal-500/5',    activeBorder: 'border-teal-500/50',    step: 'bg-teal-500/20 text-teal-700' },
   rose:    { bg: 'bg-rose-500/10',    icon: 'text-rose-600',    activeBg: 'bg-rose-500/5',    activeBorder: 'border-rose-500/50',    step: 'bg-rose-500/20 text-rose-700' },
   red:     { bg: 'bg-red-500/10',     icon: 'text-red-600',     activeBg: 'bg-red-500/5',     activeBorder: 'border-red-500/50',     step: 'bg-red-500/20 text-red-700' },

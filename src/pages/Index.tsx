@@ -16,7 +16,7 @@ const agentCategories = [{
   id: 'customer',
   name: 'Customer Portal',
   icon: Users,
-  color: 'from-cyan-500 to-blue-500',
+  color: 'from-cyan-500 to-cyan-500',
   neonRgb: '0,229,255',
   agents: [{
     name: 'AI Receptionist',
@@ -85,7 +85,7 @@ const agentCategories = [{
   id: 'analytics',
   name: 'Analytics & Reports',
   icon: BarChart3,
-  color: 'from-cyan-500 to-indigo-500',
+  color: 'from-cyan-500 to-cyan-500',
   neonRgb: '99,102,241',
   agents: [{
     name: 'Insights Agent',
@@ -162,7 +162,7 @@ const agentConsoles = [{
   name: 'Customer Portal Console',
   description: 'AI-powered customer interactions with booking, appointments, quotes, and 24/7 support.',
   icon: HeadphonesIcon,
-  gradient: 'from-cyan-500 to-blue-500',
+  gradient: 'from-cyan-500 to-cyan-500',
   iconBg: 'bg-cyan-500/10',
   iconColor: 'text-cyan-500',
   tier: 'connect',
@@ -198,9 +198,9 @@ const agentConsoles = [{
   name: 'Analytics & Reports Console',
   description: 'Deep KPI dashboards, revenue trends, AI-driven insights, and performance reports.',
   icon: BarChart3,
-  gradient: 'from-indigo-500 to-violet-500',
-  iconBg: 'bg-indigo-500/10',
-  iconColor: 'text-indigo-500',
+  gradient: 'from-cyan-500 to-violet-500',
+  iconBg: 'bg-cyan-500/10',
+  iconColor: 'text-cyan-400',
   tier: 'command',
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
@@ -483,7 +483,7 @@ export default function Index() {
 
         {/* TOP — Title + Tagline above the hero logo */}
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "52px 24px 0", textAlign: "center" }}>
-          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #214ebb 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #00E5FF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
           <p style={{ fontSize: 16, color: "rgba(200,230,255,0.85)", maxWidth: 500, margin: "0 auto", lineHeight: 1.6, textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>
@@ -499,7 +499,7 @@ export default function Index() {
           <div style={{ marginBottom: 28 }}>
             <button
               onClick={() => navigate('/auth?mode=company')}
-              style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
+              style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
             >
               Deploy Your AI Workforce
             </button>
@@ -828,7 +828,7 @@ export default function Index() {
             ))}
           </div>
           <div className="text-center mt-10">
-            <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #214ebb, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
+            <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
               <Building2 className="inline w-4 h-4 mr-2" />START YOUR FREE TRIAL →
             </button>
           </div>
@@ -855,7 +855,7 @@ export default function Index() {
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; }}
                 >
                   <div style={{ position: "relative", width: 52, height: 52, margin: "0 auto 16px" }}>
-                    <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #214ebb)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
+                    <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #00E5FF)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
                       <item.icon size={24} style={{ color: "white", position: "relative", zIndex: 1 }} />
                     </div>
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 16, background: "rgba(0,229,255,0.4)", opacity: 0.25 }} />
@@ -929,32 +929,32 @@ export default function Index() {
 
             {/* Aura Boost */}
             <Card className="relative overflow-hidden border-sky-400/50 shadow-glow dark-card-surface">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-500" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600" />
               <CardContent className="p-5">
-                <Badge className="mb-2 bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">Most Popular</Badge>
-                <h3 className="text-lg font-bold mb-1 text-sky-400">Aura Boost</h3>
+                <Badge className="mb-2 bg-sky-500/20 text-cyan-400 border-sky-500/30 text-[10px]">Most Popular</Badge>
+                <h3 className="text-lg font-bold mb-1 text-cyan-400">Aura Boost</h3>
                 <p className="text-[10px] text-white mb-1">Field service automation</p>
                 <p className="text-[10px] text-white italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-sky-400">$497</span>
+                  <span className="text-3xl font-bold text-cyan-400">$497</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media Console</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media Console</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
-                <Button size="sm" className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white" onClick={() => navigate('/auth?mode=company')}>
+                <Button size="sm" className="w-full bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white" onClick={() => navigate('/auth?mode=company')}>
                   <Zap className="w-3 h-3 mr-1" />Start Free Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-sky-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
 

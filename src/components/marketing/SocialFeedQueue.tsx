@@ -264,7 +264,7 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
               </TabsTrigger>
               <TabsTrigger 
                 value="scheduled" 
-                className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400 data-[state=active]:border data-[state=active]:border-blue-500/40"
+                className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-cyan-400 data-[state=active]:border data-[state=active]:border-blue-500/40"
               >
                 <Clock className="h-4 w-4 mr-1.5" />
                 Scheduled

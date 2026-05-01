@@ -19,7 +19,7 @@ export function SmartWebsiteVoiceButton({
   companyId,
   companyName,
   visitorFingerprint,
-  primaryColor = '#214ebb',
+  primaryColor = '#00E5FF',
 }: SmartWebsiteVoiceButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transcript, setTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);

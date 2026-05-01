@@ -233,7 +233,7 @@ export default function Help() {
                   {/* Example Prompts */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                      <MessageCircle className="w-5 h-5 text-blue-500" />
+                      <MessageCircle className="w-5 h-5 text-cyan-400" />
                       Example Prompts
                     </h3>
                     <div className="ml-7 space-y-2">
@@ -332,7 +332,7 @@ export default function Help() {
                     </h3>
                     <div className="ml-7 grid gap-2">
                       {[
-                        { say: '"Next" or "Tab"', action: 'Move to next input field', icon: ArrowRight, color: 'text-blue-500' },
+                        { say: '"Next" or "Tab"', action: 'Move to next input field', icon: ArrowRight, color: 'text-cyan-400' },
                         { say: '"Back" or "Previous"', action: 'Move to previous field', icon: ArrowLeft, color: 'text-purple-500' },
                         { say: '"Clear" or "Erase"', action: 'Clear current field', icon: Trash2, color: 'text-orange-500' },
                         { say: '"Save Job" or "Submit"', action: 'Submit the current form', icon: Check, color: 'text-green-500' },
@@ -354,7 +354,7 @@ export default function Help() {
                   {/* Dictation Mode */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                      <MessageCircle className="w-5 h-5 text-blue-500" />
+                      <MessageCircle className="w-5 h-5 text-cyan-400" />
                       Dictation Mode
                     </h3>
                     <div className="ml-7 space-y-2 text-sm text-card-foreground/80">
@@ -508,7 +508,7 @@ export default function Help() {
                   {/* Inviting Team */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                      <UserPlus className="w-5 h-5 text-blue-500" />
+                      <UserPlus className="w-5 h-5 text-cyan-400" />
                       Inviting Your Team
                     </h3>
                     <div className="ml-7 space-y-3">

@@ -21,10 +21,10 @@ const IntegrationDocs = () => {
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                <Code className="w-4 h-4 text-blue-400" />
+                <Code className="w-4 h-4 text-cyan-400" />
               </div>
               <div className="space-y-2">
-                <h4 className="font-semibold text-blue-300">AI Chat Widget (Text-Based) - All Tiers</h4>
+                <h4 className="font-semibold text-cyan-300">AI Chat Widget (Text-Based) - All Tiers</h4>
                 <p className="text-sm text-muted-foreground">
                   This guide covers the <strong>AI Chat Widget</strong> which provides <strong>text-based conversations</strong> using keyboard input.
                   The Chat Widget works on <strong>ALL tiers from Aura Core to Aura Elite</strong> with <strong>no external dependencies</strong> - no ElevenLabs or SignalWire required.

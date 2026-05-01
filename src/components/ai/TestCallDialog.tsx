@@ -25,7 +25,7 @@ type CallStatus = 'idle' | 'initiated' | 'ringing' | 'in-progress' | 'completed'
 
 const STATUS_CONFIG: Record<CallStatus, { label: string; icon: React.ReactNode; color: string }> = {
   idle: { label: 'Ready', icon: <Phone className="w-4 h-4" />, color: 'bg-muted text-muted-foreground' },
-  initiated: { label: 'Initiating...', icon: <Loader2 className="w-4 h-4 animate-spin" />, color: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  initiated: { label: 'Initiating...', icon: <Loader2 className="w-4 h-4 animate-spin" />, color: 'bg-blue-500/10 text-cyan-400 border-blue-500/20' },
   ringing: { label: 'Ringing...', icon: <PhoneIncoming className="w-4 h-4 animate-pulse" />, color: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' },
   'in-progress': { label: 'Connected', icon: <Phone className="w-4 h-4" />, color: 'bg-green-500/10 text-green-600 border-green-500/20' },
   completed: { label: 'Completed', icon: <CheckCircle2 className="w-4 h-4" />, color: 'bg-green-500/10 text-green-600 border-green-500/20' },

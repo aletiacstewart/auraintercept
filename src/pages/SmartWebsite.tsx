@@ -232,7 +232,7 @@ export default function SmartWebsite() {
     );
   }
 
-  const primaryColor = website.primary_color || '#214ebb';
+  const primaryColor = website.primary_color || '#00E5FF';
 
   // Determine display content based on holiday, night mode, or default
   // Priority: Holiday > Night Mode > Default

@@ -360,7 +360,7 @@ export default function CustomerDashboard() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-blue-100">
-                    <Calendar className="w-5 h-5 text-blue-700" />
+                    <Calendar className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">{upcomingAppointments.length}</p>

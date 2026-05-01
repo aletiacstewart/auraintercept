@@ -190,7 +190,7 @@ const renderValue = (
     connect: {
       base: 'py-2 px-2 text-center bg-sky-600/20 border-x border-sky-400/30',
       check: 'text-emerald-400',
-      price: 'text-sky-300 font-semibold',
+      price: 'text-cyan-300 font-semibold',
       savings: 'text-emerald-400 text-xs',
     },
     performance: {
@@ -254,7 +254,7 @@ const FeatureNameCell = ({ name, rowIndex }: { name: string; rowIndex: number })
       <td className={baseClass}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="cursor-help border-b border-dotted border-white/40 hover:border-sky-400 hover:text-sky-300 transition-colors">
+            <span className="cursor-help border-b border-dotted border-white/40 hover:border-sky-400 hover:text-cyan-300 transition-colors">
               {name}
             </span>
           </TooltipTrigger>
@@ -293,8 +293,8 @@ export const PricingComparisonTable = () => {
               <div className="text-[10px] font-normal text-teal-300/70">$197/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
-              <div className="text-sky-300">Aura Boost</div>
-              <div className="text-[10px] font-normal text-sky-300/70">$497/mo · 12 agents</div>
+              <div className="text-cyan-300">Aura Boost</div>
+              <div className="text-[10px] font-normal text-cyan-300/70">$497/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Pro</div>
@@ -325,14 +325,14 @@ export const PricingComparisonTable = () => {
                 <tr className="bg-slate-700/60">
                   {hasNumbers && numbers.length === 4 ? (
                     <>
-                      <td className="py-1.5 px-4 font-semibold text-sky-300">{titleText}</td>
+                      <td className="py-1.5 px-4 font-semibold text-cyan-300">{titleText}</td>
                       <td className="py-1.5 px-2 text-center font-semibold text-teal-300/80 text-xs">{numbers[0]}</td>
-                      <td className="py-1.5 px-2 text-center font-semibold text-sky-300/80 text-xs">{numbers[1]}</td>
+                      <td className="py-1.5 px-2 text-center font-semibold text-cyan-300/80 text-xs">{numbers[1]}</td>
                       <td className="py-1.5 px-2 text-center font-semibold text-purple-300/80 text-xs">{numbers[2]}</td>
                       <td className="py-1.5 px-2 text-center font-semibold text-amber-300/80 text-xs">{numbers[3]}</td>
                     </>
                   ) : (
-                    <td colSpan={5} className="py-1.5 px-4 font-semibold text-sky-300">
+                    <td colSpan={5} className="py-1.5 px-4 font-semibold text-cyan-300">
                       {section.title}
                     </td>
                   )}

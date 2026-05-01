@@ -54,7 +54,7 @@ const PLATFORM_CONFIG: Record<Platform, {
   facebook: {
     label: 'Facebook',
     icon: Facebook,
-    color: 'text-blue-600',
+    color: 'text-cyan-400',
     bgColor: 'bg-blue-600',
     deepLink: () => 'https://www.facebook.com',
     instructions: 'Paste your copied content into the "What\'s on your mind?" box on Facebook.',

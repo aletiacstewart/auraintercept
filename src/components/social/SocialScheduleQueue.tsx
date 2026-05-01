@@ -411,7 +411,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       {getStatusBadge(post.status)}
-                      <Badge variant="outline" className={`text-xs ${post.batch_id ? 'border-pink-500/30 bg-pink-500/10 text-pink-600' : 'border-blue-500/30 bg-blue-500/10 text-blue-600'}`}>
+                      <Badge variant="outline" className={`text-xs ${post.batch_id ? 'border-pink-500/30 bg-pink-500/10 text-pink-600' : 'border-blue-500/30 bg-blue-500/10 text-cyan-400'}`}>
                         {post.batch_id ? 'Batch' : 'Single'}
                       </Badge>
                       {post.ai_research_used && (

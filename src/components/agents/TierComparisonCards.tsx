@@ -162,8 +162,8 @@ const TierComparisonCards: React.FC = () => {
 
         <TierCard
           tier="connect"
-          icon={<Zap className="h-5 w-5 text-sky-400" />}
-          color="text-sky-400"
+          icon={<Zap className="h-5 w-5 text-cyan-400" />}
+          color="text-cyan-400"
           bgColor="bg-sky-950/30"
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Aura Core', priceDiff: 300 }}

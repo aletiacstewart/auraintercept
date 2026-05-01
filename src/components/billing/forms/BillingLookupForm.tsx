@@ -53,7 +53,7 @@ export function BillingLookupForm({ companyId, onCancel, onSelectInvoice }: Bill
       case 'paid':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Paid</Badge>;
       case 'sent':
-        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Sent</Badge>;
+        return <Badge className="bg-blue-100 text-cyan-400 hover:bg-blue-100">Sent</Badge>;
       case 'overdue':
         return <Badge variant="destructive">Overdue</Badge>;
       case 'draft':

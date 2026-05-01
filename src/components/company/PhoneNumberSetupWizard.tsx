@@ -382,7 +382,7 @@ export function PhoneNumberSetupWizard({ signalWireNumber, onSelect, selectedOpt
               </div>
             </div>
             <Alert className="border-blue-500/50 bg-blue-500/10">
-              <Shield className="h-4 w-4 text-blue-500" />
+              <Shield className="h-4 w-4 text-cyan-400" />
               <AlertDescription className="text-xs">
                 <strong>Keep your carrier active</strong> until the port completes. Canceling early may cause the number to be lost.
               </AlertDescription>
@@ -485,7 +485,7 @@ export function PhoneNumberSetupWizard({ signalWireNumber, onSelect, selectedOpt
               ))}
             </div>
             <Alert className="border-blue-500/50 bg-blue-500/10">
-              <Info className="h-4 w-4 text-blue-500" />
+              <Info className="h-4 w-4 text-cyan-400" />
               <AlertDescription className="text-xs">
                 <strong>Tip:</strong> Update Google Business Profile first — it's the most impactful for local search and call volume.
               </AlertDescription>

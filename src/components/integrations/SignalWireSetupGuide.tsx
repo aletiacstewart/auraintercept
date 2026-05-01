@@ -32,7 +32,7 @@ export function SignalWireSetupGuide() {
     <Card className="guide-card guide-card-voice">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Phone className="w-5 h-5 text-blue-500" />
+          <Phone className="w-5 h-5 text-cyan-400" />
           <CardTitle className="text-lg">SignalWire Setup Guide</CardTitle>
           <Badge variant="secondary">Voice & SMS</Badge>
         </div>
@@ -66,7 +66,7 @@ export function SignalWireSetupGuide() {
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <Info className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-foreground">Application-to-Person 10-Digit Long Code</p>
                     <p className="text-foreground/70 mt-1">
@@ -143,26 +143,26 @@ export function SignalWireSetupGuide() {
               <p>Find your credentials in the SignalWire Dashboard:</p>
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-500" />
+                  <Shield className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">Space URL</span>
                 </div>
                 <p className="text-xs text-foreground/70">Found at the top of your dashboard (e.g., yourspace.signalwire.com)</p>
                 
                 <div className="flex items-center gap-2 mt-3">
-                  <Shield className="w-4 h-4 text-blue-500" />
+                  <Shield className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">Project ID</span>
                 </div>
                 <p className="text-xs text-foreground/70">Go to API → API Credentials. Your Project ID is displayed here.</p>
                 
                 <div className="flex items-center gap-2 mt-3">
-                  <Shield className="w-4 h-4 text-blue-500" />
+                  <Shield className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">API Token</span>
                 </div>
                 <p className="text-xs text-foreground/70">Create a new API Token in API → API Credentials. Keep this secret!</p>
               </div>
               
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                <p className="text-blue-600 dark:text-blue-400 text-xs">
+                <p className="text-cyan-400 dark:text-cyan-400 text-xs">
                   <strong>🔒 Security Tip:</strong> You can create multiple API tokens with different permissions for enhanced security.
                 </p>
               </div>
@@ -193,7 +193,7 @@ export function SignalWireSetupGuide() {
               {/* Brand Registration */}
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2">
-                  <Building className="w-4 h-4 text-blue-500" />
+                  <Building className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">Step 1: Register Your Brand</span>
                 </div>
                 <ol className="list-decimal list-inside space-y-1 text-foreground/70 ml-4">
@@ -314,8 +314,8 @@ export function SignalWireSetupGuide() {
               
               {/* Step-by-step navigation */}
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 space-y-2">
-                <p className="text-blue-600 dark:text-blue-400 text-xs font-medium">📍 How to configure in SignalWire Dashboard:</p>
-                <ol className="text-blue-600 dark:text-blue-400 text-xs list-decimal list-inside space-y-1">
+                <p className="text-cyan-400 dark:text-cyan-400 text-xs font-medium">📍 How to configure in SignalWire Dashboard:</p>
+                <ol className="text-cyan-400 dark:text-cyan-400 text-xs list-decimal list-inside space-y-1">
                   <li>Go to <strong>Phone Numbers</strong> and click your number</li>
                   <li>Click the <strong>"Edit Settings"</strong> button</li>
                 </ol>
@@ -349,7 +349,7 @@ export function SignalWireSetupGuide() {
               {/* SMS Section */}
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-foreground flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-blue-500" />
+                  <MessageSquare className="w-4 h-4 text-cyan-400" />
                   Messaging Section (for inbound SMS):
                 </p>
                 <div className="bg-muted p-3 rounded-lg space-y-2 ml-6">

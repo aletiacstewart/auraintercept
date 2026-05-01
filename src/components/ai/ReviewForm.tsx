@@ -34,8 +34,8 @@ export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [], in
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
 
   const platformOptions = [
-    { id: 'google', label: 'Google', color: 'text-blue-600', bgColor: 'bg-blue-50 border-blue-200', icon: '🔵' },
-    { id: 'facebook', label: 'Facebook', color: 'text-indigo-600', bgColor: 'bg-indigo-50 border-indigo-200', icon: '📘' },
+    { id: 'google', label: 'Google', color: 'text-cyan-400', bgColor: 'bg-blue-50 border-blue-200', icon: '🔵' },
+    { id: 'facebook', label: 'Facebook', color: 'text-cyan-400', bgColor: 'bg-indigo-50 border-indigo-200', icon: '📘' },
     { id: 'yelp', label: 'Yelp', color: 'text-red-600', bgColor: 'bg-red-50 border-red-200', icon: '⭐' },
   ];
 

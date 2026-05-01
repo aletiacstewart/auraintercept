@@ -445,7 +445,7 @@ export function TechnicianJobQueue() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-blue-500" />
+              <CheckCircle className="h-5 w-5 text-cyan-400" />
               Upcoming Jobs
               <Badge variant="secondary">{acceptedJobs.length}</Badge>
             </CardTitle>
@@ -631,7 +631,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
             )}
             {job.arrived_at && (
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-indigo-500" />
+                <MapPin className="w-4 h-4 text-cyan-400" />
                 <div>
                   <p className="text-xs text-white">Arrived</p>
                   <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
@@ -680,7 +680,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
       {/* Customer Notes from AI Receptionist/Booking Agent */}
       {appointment.notes && (
         <div className="bg-blue-500/5 border border-blue-500/20 p-3 rounded-lg mb-3">
-          <p className="text-xs font-medium text-blue-600 uppercase tracking-wide flex items-center gap-1 mb-1">
+          <p className="text-xs font-medium text-cyan-400 uppercase tracking-wide flex items-center gap-1 mb-1">
             <MessageSquare className="w-3 h-3" />
             Customer Notes
           </p>

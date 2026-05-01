@@ -137,8 +137,8 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
         };
       case 'accepted':
         return { 
-          badge: <Badge className="bg-blue-100 text-blue-700">Technician Assigned</Badge>,
-          icon: <User className="h-5 w-5 text-blue-600" />,
+          badge: <Badge className="bg-blue-100 text-cyan-400">Technician Assigned</Badge>,
+          icon: <User className="h-5 w-5 text-cyan-400" />,
           message: 'A technician has been assigned to your appointment'
         };
       case 'en_route':

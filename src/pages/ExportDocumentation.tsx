@@ -541,7 +541,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
             <Card className="border-blue-500/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-blue-500" />
+                  <Palette className="h-5 w-5 text-cyan-400" />
                   Brand Asset Guide
                 </CardTitle>
                 <CardDescription>Complete visual identity with colors, typography, and icon concepts</CardDescription>

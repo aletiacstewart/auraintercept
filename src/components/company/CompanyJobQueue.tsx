@@ -262,7 +262,7 @@ export function CompanyJobQueue() {
         {acceptedJobs.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-500" />
+              <CheckCircle className="h-4 w-4 text-cyan-400" />
               Upcoming Jobs ({acceptedJobs.length})
             </h3>
             <div className="space-y-2">
