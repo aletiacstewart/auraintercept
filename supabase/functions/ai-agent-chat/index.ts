@@ -4959,6 +4959,10 @@ async function executeAgentTool(
           employee_id: employeeId,
           customer_user_id: userId || null,
           delivery_type: deliveryType,
+          intake_data:
+            args.intake_data && typeof args.intake_data === 'object' && !Array.isArray(args.intake_data)
+              ? args.intake_data
+              : null,
         })
         .select()
         .single();
