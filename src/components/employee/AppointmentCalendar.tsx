@@ -52,7 +52,7 @@ interface Appointment {
   duration_minutes: number;
   status: string;
   notes: string | null;
-  intake_data?: Record<string, unknown> | null;
+  intake_data?: unknown;
   job_status?: string;
   job_id?: string;
   job_employee_id?: string | null;
