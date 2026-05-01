@@ -21,6 +21,7 @@ export default function Analytics() {
   // If platform admin with a company query param, show company analytics
   const showCompanyView = selectedCompanyId && userRole === 'platform_admin';
   const effectiveCompanyId = showCompanyView ? selectedCompanyId : companyId;
+  const initialTab = searchParams.get('tab') || 'overview';
 
   return (
     <DashboardLayout>
@@ -49,7 +50,7 @@ export default function Analytics() {
             </Tabs>
           ) : effectiveCompanyId ? (
             // Company view with all analytics tabs
-            <Tabs defaultValue="overview" className="space-y-4">
+            <Tabs defaultValue={initialTab} className="space-y-4">
               <TabsList className="flex-wrap">
                 <TabsTrigger value="overview" className="flex items-center gap-1.5">
                   <BarChart3 className="h-3.5 w-3.5" />
