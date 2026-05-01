@@ -90,7 +90,7 @@ export const CompetitiveDifferentiation = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             This Is <span className="gradient-text">Not a Chatbot</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-white max-w-2xl mx-auto">
             See how Aura Intercept's 24 Smart AI Agents compare to what you're using now.
           </p>
         </div>
@@ -106,8 +106,8 @@ export const CompetitiveDifferentiation = () => {
                     {category.icon}
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">{category.title}</h3>
-                    <p className="text-xs text-muted-foreground">{category.subtitle}</p>
+                    <h3 className={`font-bold text-lg ${category.iconBg.split(' ').find(c => c.startsWith('text-')) ?? 'text-white'}`}>{category.title}</h3>
+                    <p className="text-xs text-white">{category.subtitle}</p>
                   </div>
                 </div>
 
@@ -115,8 +115,8 @@ export const CompetitiveDifferentiation = () => {
                 <div className="space-y-0">
                   {/* Header Row */}
                   <div className="grid grid-cols-3 gap-2 pb-2 border-b border-border/50 mb-2">
-                    <div className="text-xs font-medium text-muted-foreground">Feature</div>
-                    <div className="text-xs font-medium text-center text-muted-foreground">Traditional</div>
+                    <div className="text-xs font-medium text-white">Feature</div>
+                    <div className="text-xs font-medium text-center text-white">Traditional</div>
                     <div className="text-xs font-medium text-center text-secondary">Aura</div>
                   </div>
 
@@ -126,7 +126,7 @@ export const CompetitiveDifferentiation = () => {
                       key={row.feature} 
                       className={`grid grid-cols-3 gap-2 py-2 ${idx % 2 === 0 ? 'bg-muted/20' : ''} rounded px-1`}
                     >
-                      <div className="text-xs text-foreground/80">{row.feature}</div>
+                      <div className="text-xs text-white">{row.feature}</div>
                       <div className="flex justify-center">{renderValue(row.traditional, false)}</div>
                       <div className="flex justify-center">{renderValue(row.aura, true)}</div>
                     </div>
@@ -141,23 +141,23 @@ export const CompetitiveDifferentiation = () => {
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
           <div className="text-center p-4 rounded-lg bg-muted/30">
             <Phone className="w-6 h-6 text-red-400 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-foreground">62%</p>
-            <p className="text-xs text-muted-foreground">Calls go unanswered</p>
+            <p className="text-2xl font-bold text-red-400">62%</p>
+            <p className="text-xs text-white">Calls go unanswered</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-muted/30">
             <Clock className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-foreground">78%</p>
-            <p className="text-xs text-muted-foreground">Call competitor in 5 min</p>
+            <p className="text-2xl font-bold text-amber-400">78%</p>
+            <p className="text-xs text-white">Call competitor in 5 min</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-muted/30">
             <TrendingUp className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-foreground">$4,200</p>
-            <p className="text-xs text-muted-foreground">Avg. customer lifetime value</p>
+            <p className="text-2xl font-bold text-emerald-400">$4,200</p>
+            <p className="text-xs text-white">Avg. customer lifetime value</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-muted/30">
             <Zap className="w-6 h-6 text-secondary mx-auto mb-2" />
-            <p className="text-2xl font-bold text-foreground">0 sec</p>
-            <p className="text-xs text-muted-foreground">Aura response time</p>
+            <p className="text-2xl font-bold text-secondary">0 sec</p>
+            <p className="text-xs text-white">Aura response time</p>
           </div>
         </div>
       </div>
