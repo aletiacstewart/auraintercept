@@ -59,6 +59,13 @@ booking form unchanged.
   `validateIntake`, `summarizeIntake`, `getJobTemplate`.
 - `src/components/forms/DynamicIntakeFields.tsx` — controlled renderer.
 - `src/components/appointments/AddAppointmentForm.tsx` — wired.
+- `src/components/ai/BookingForm.tsx` — wired. Accepts `companyId` +
+  `isPublic`. Resolves intake schema from the FIRST selected service via
+  `useIndustryPack` (auth) or `usePublicIndustryPack` (unauth RPC) and
+  blocks submit on missing required intake fields. Returns
+  `BookingData.intakeData`.
+- `src/hooks/useIndustryPack.ts` — exports `usePublicIndustryPack` for
+  unauthenticated widgets calling `get_public_industry_pack`.
 
 ## Known gap
 

@@ -11,6 +11,9 @@ import { CalendarIcon, Clock, User, Phone, MapPin, Loader2, Send } from 'lucide-
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { CommunicationPreferencesCheckboxes, CommunicationPreferences } from '@/components/customer/CommunicationPreferencesCheckboxes';
+import { useIndustryPack, usePublicIndustryPack } from '@/hooks/useIndustryPack';
+import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
+import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 
 interface Service {
   id: string;
@@ -24,6 +27,10 @@ interface BookingFormProps {
   services: Service[];
   onSubmit: (booking: BookingData) => void;
   isLoading?: boolean;
+  /** Company id used to resolve the industry pack for dynamic intake fields. */
+  companyId?: string | null;
+  /** When true, fetch the pack via the unauthenticated public RPC. */
+  isPublic?: boolean;
 }
 
 export interface BookingData {
@@ -37,6 +44,7 @@ export interface BookingData {
   smsOptIn: boolean;
   emailOptIn: boolean;
   callOptIn: boolean;
+  intakeData?: Record<string, unknown>;
 }
 
 // Generate time slots from 8 AM to 6 PM
@@ -54,7 +62,9 @@ const TIME_SLOTS = Array.from({ length: 21 }, (_, i) => {
 export const BookingForm: React.FC<BookingFormProps> = ({ 
   services, 
   onSubmit, 
-  isLoading = false 
+  isLoading = false,
+  companyId,
+  isPublic = false,
 }) => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -68,6 +78,18 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     emailOptIn: true,
     callOptIn: true,
   });
+  const [intakeData, setIntakeData] = useState<Record<string, unknown>>({});
+
+  // Resolve the industry pack (auth or public) — hooks must run unconditionally.
+  const authPack = useIndustryPack(isPublic ? null : companyId ?? undefined);
+  const publicPack = usePublicIndustryPack(isPublic ? companyId ?? null : null);
+  const pack = isPublic ? publicPack.pack : authPack.pack;
+
+  // Build the intake schema from the FIRST selected service (single-service intake).
+  const primaryServiceName = selectedServices.length > 0
+    ? services.find((s) => s.id === selectedServices[0])?.name ?? ''
+    : '';
+  const intakeSchema = resolveFormSchema(pack, primaryServiceName);
 
   const handleServiceToggle = (serviceId: string) => {
     setSelectedServices(prev => 
@@ -82,7 +104,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     if (!date || !time || !customerName || !customerPhone || !customerAddress || selectedServices.length === 0) {
       return;
     }
-    
+    const missing = validateIntake(intakeSchema, intakeData);
+    if (missing.length > 0) {
+      // Block submission silently; required indicators surface via DynamicIntakeFields.
+      return;
+    }
+
     onSubmit({
       selectedServices,
       date,
@@ -94,10 +121,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       smsOptIn: communicationPrefs.smsOptIn,
       emailOptIn: communicationPrefs.emailOptIn,
       callOptIn: communicationPrefs.callOptIn,
+      intakeData: intakeSchema ? intakeData : undefined,
     });
   };
 
-  const isValid = date && time && customerName && customerPhone && customerAddress && selectedServices.length > 0;
+  const intakeMissing = intakeSchema ? validateIntake(intakeSchema, intakeData).length > 0 : false;
+  const isValid = date && time && customerName && customerPhone && customerAddress && selectedServices.length > 0 && !intakeMissing;
 
   const selectedServiceNames = services
     .filter(s => selectedServices.includes(s.id))
@@ -247,6 +276,20 @@ export const BookingForm: React.FC<BookingFormProps> = ({
               className="resize-none text-xs"
             />
           </div>
+
+          {/* Industry-specific intake fields (renders null if no schema) */}
+          {intakeSchema && (
+            <div className="space-y-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+              <Label className="text-xs font-semibold text-primary">
+                {intakeSchema.title || 'Service Details'}
+              </Label>
+              <DynamicIntakeFields
+                schema={intakeSchema}
+                value={intakeData}
+                onChange={setIntakeData}
+              />
+            </div>
+          )}
 
           {/* Communication Preferences */}
           <CommunicationPreferencesCheckboxes

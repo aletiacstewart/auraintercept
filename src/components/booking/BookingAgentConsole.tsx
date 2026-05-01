@@ -287,6 +287,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           duration_minutes: totalDuration,
           notes: bookingData.notes || null,
           status: 'scheduled',
+          intake_data: (bookingData.intakeData ?? {}) as never,
         })
         .select()
         .single();
@@ -598,6 +599,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
             services={services}
             onSubmit={handleBookingSubmit}
             isLoading={isSubmittingBooking}
+            companyId={effectiveCompanyId || null}
           />
         </div>
       ) : showFeedbackForm ? (
