@@ -307,7 +307,7 @@ export function PlatformAdminDashboard() {
             {statCards.map((stat) => (
               <Card key={stat.title} className="relative overflow-hidden border-border/50">
                 <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-                  <CardTitle className="text-xs font-medium text-foreground">
+                  <CardTitle className={`text-xs font-medium ${stat.colorClass}`}>
                     {stat.title}
                   </CardTitle>
                   <div className={`w-8 h-8 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
