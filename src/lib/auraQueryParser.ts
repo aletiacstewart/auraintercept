@@ -1,12 +1,25 @@
+import type { IndustryPack } from '@/hooks/useIndustryPack';
+import { getReportableIntakeFields } from '@/lib/intakeAnalytics';
+
 // Intent types for Aura query parsing
-export type AuraIntent = 
+export type AuraIntent =
   | 'forecast'
   | 'revenue'
   | 'performance'
   | 'customer_insights'
   | 'kpi'
   | 'comparison'
+  | 'intake_analytics'
   | 'general';
+
+export type IntakeAnalyticsView = 'distribution' | 'trend' | 'completeness';
+export type IntakeAnalyticsSource = 'appointments' | 'leads';
+
+export interface IntakeAnalyticsTarget {
+  source: IntakeAnalyticsSource;
+  field?: string;
+  view: IntakeAnalyticsView;
+}
 
 export interface ParsedQuery {
   intent: AuraIntent;
@@ -14,6 +27,8 @@ export interface ParsedQuery {
   metric?: string;
   comparison?: boolean;
   originalQuery: string;
+  /** Populated when intent === 'intake_analytics'. */
+  intake?: IntakeAnalyticsTarget;
 }
 
 // Pattern definitions for intent detection
@@ -71,6 +86,14 @@ const intentPatterns: Record<AuraIntent, RegExp[]> = {
     /year\s+over\s+year/i,
     /month\s+over\s+month/i,
   ],
+  intake_analytics: [
+    /\bintake\b/i,
+    /\bfield\s+(distribution|completeness|fill|usage)/i,
+    /\b(distribution|completeness)\b.*\bfield/i,
+    /which\s+(intake\s+)?fields?\s+(are|is)\s+(blank|empty|missing)/i,
+    /\bblank\s+(most\s+)?often\b/i,
+    /\bfill\s+rate\b/i,
+  ],
   general: [],
 };
 
@@ -91,23 +114,35 @@ const timeframePatterns: { pattern: RegExp; value: string }[] = [
 ];
 
 /**
- * Parse a natural language query and extract intent and parameters
+ * Parse a natural language query and extract intent and parameters.
+ * Pass `pack` when available so phrases mentioning a vertical-specific
+ * field label (e.g. "system age") can promote the query to the
+ * `intake_analytics` intent and pre-select the matching field.
  */
-export function parseAuraQuery(query: string): ParsedQuery {
+export function parseAuraQuery(
+  query: string,
+  pack?: IndustryPack | null,
+): ParsedQuery {
   const normalizedQuery = query.toLowerCase().trim();
-  
+
   // Detect intent
   let detectedIntent: AuraIntent = 'general';
   let maxMatches = 0;
 
   for (const [intent, patterns] of Object.entries(intentPatterns)) {
     if (intent === 'general') continue;
-    
-    const matches = patterns.filter(pattern => pattern.test(normalizedQuery)).length;
+    const matches = patterns.filter((pattern) => pattern.test(normalizedQuery)).length;
     if (matches > maxMatches) {
       maxMatches = matches;
       detectedIntent = intent as AuraIntent;
     }
+  }
+
+  // Promote to intake_analytics if any pack-defined field label appears
+  // verbatim in the query — even when no generic intake keyword fires.
+  const intakeTarget = extractIntakeTarget(normalizedQuery, pack);
+  if (intakeTarget && (detectedIntent === 'general' || intakeTarget.field)) {
+    detectedIntent = 'intake_analytics';
   }
 
   // Detect timeframe
@@ -120,14 +155,90 @@ export function parseAuraQuery(query: string): ParsedQuery {
   }
 
   // Detect if it's a comparison query
-  const isComparison = intentPatterns.comparison.some(pattern => pattern.test(normalizedQuery));
+  const isComparison = intentPatterns.comparison.some((pattern) =>
+    pattern.test(normalizedQuery),
+  );
 
   return {
     intent: detectedIntent,
     timeframe,
     comparison: isComparison,
     originalQuery: query,
+    intake: detectedIntent === 'intake_analytics' ? intakeTarget ?? defaultIntakeTarget(normalizedQuery) : undefined,
   };
+}
+
+/**
+ * Resolve `{source, field, view}` from a free-text query against the active
+ * industry pack. Returns null when the query has no intake-analytics signal
+ * AND no field label matches.
+ */
+export function extractIntakeTarget(
+  normalizedQuery: string,
+  pack?: IndustryPack | null,
+): IntakeAnalyticsTarget | null {
+  const view = detectIntakeView(normalizedQuery);
+  const source = detectIntakeSource(normalizedQuery);
+  const field = matchPackField(normalizedQuery, pack);
+
+  // Need at least one signal beyond "general".
+  const hasIntakeSignal = intentPatterns.intake_analytics.some((p) =>
+    p.test(normalizedQuery),
+  );
+  if (!hasIntakeSignal && !field) return null;
+
+  return { source, field, view };
+}
+
+function defaultIntakeTarget(normalizedQuery: string): IntakeAnalyticsTarget {
+  return {
+    source: detectIntakeSource(normalizedQuery),
+    view: detectIntakeView(normalizedQuery),
+  };
+}
+
+function detectIntakeView(q: string): IntakeAnalyticsView {
+  if (/(completeness|complete\b|blank|empty|missing|fill\s+rate)/i.test(q)) {
+    return 'completeness';
+  }
+  if (/(trend|over\s+time|monthly|history|by\s+month)/i.test(q)) {
+    return 'trend';
+  }
+  return 'distribution';
+}
+
+function detectIntakeSource(q: string): IntakeAnalyticsSource {
+  return /\blead/i.test(q) ? 'leads' : 'appointments';
+}
+
+/**
+ * Fuzzy-match a pack field by checking the query for the field's label,
+ * label-without-spaces, or its raw `name` token.
+ */
+function matchPackField(q: string, pack?: IndustryPack | null): string | undefined {
+  if (!pack) return undefined;
+  const fields = getReportableIntakeFields(pack);
+  if (fields.length === 0) return undefined;
+
+  // Prefer the longest matching label so "system age" beats "age".
+  const candidates = fields
+    .map((f) => ({
+      name: f.name,
+      tokens: [
+        f.label.toLowerCase(),
+        f.label.toLowerCase().replace(/\s+/g, ''),
+        f.name.toLowerCase().replace(/_/g, ' '),
+        f.name.toLowerCase(),
+      ].filter(Boolean),
+    }))
+    .sort((a, b) => Math.max(...b.tokens.map((t) => t.length)) - Math.max(...a.tokens.map((t) => t.length)));
+
+  for (const c of candidates) {
+    if (c.tokens.some((t) => t.length >= 3 && q.includes(t))) {
+      return c.name;
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -147,6 +258,8 @@ export function getSuggestedVisualization(intent: AuraIntent): 'chart' | 'stat' 
       return 'stat';
     case 'comparison':
       return 'comparison';
+    case 'intake_analytics':
+      return 'chart';
     default:
       return 'stat';
   }
@@ -164,10 +277,25 @@ export function getTabFromIntent(intent: AuraIntent): string {
       return 'performance';
     case 'customer_insights':
       return 'insights';
+    case 'intake_analytics':
+      return 'intake';
     case 'kpi':
     case 'comparison':
     case 'general':
     default:
       return 'analytics';
   }
+}
+
+/**
+ * Build the deep-link target for the Intake analytics tab. Pure helper so
+ * UI components don't reimplement query-string assembly.
+ */
+export function buildIntakeAnalyticsHref(target: IntakeAnalyticsTarget): string {
+  const params = new URLSearchParams();
+  params.set('tab', 'intake');
+  params.set('source', target.source);
+  if (target.field) params.set('field', target.field);
+  params.set('view', target.view);
+  return `/dashboard/analytics?${params.toString()}`;
 }

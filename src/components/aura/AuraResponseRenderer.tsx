@@ -1,8 +1,16 @@
 import { AuraSummary } from './AuraSummary';
 import { AuraStatCard } from './charts/AuraStatCard';
 import { AuraLineChart } from './charts/AuraLineChart';
-import { AuraIntent, getSuggestedVisualization } from '@/lib/auraQueryParser';
-import { DollarSign, TrendingUp, Users, Target, BarChart3 } from 'lucide-react';
+import {
+  AuraIntent,
+  getSuggestedVisualization,
+  buildIntakeAnalyticsHref,
+  type IntakeAnalyticsTarget,
+} from '@/lib/auraQueryParser';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { DollarSign, TrendingUp, Users, Target, BarChart3, ClipboardList } from 'lucide-react';
 
 interface AuraResponseRendererProps {
   intent: AuraIntent;
@@ -21,6 +29,8 @@ interface AuraResponseRendererProps {
     }>;
     chartTitle?: string;
   };
+  /** When provided, renders a deep-link CTA into the Intake analytics tab. */
+  intake?: IntakeAnalyticsTarget;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -36,6 +46,7 @@ export function AuraResponseRenderer({
   summary,
   isLoading = false,
   data,
+  intake,
 }: AuraResponseRendererProps) {
   const visualizationType = getSuggestedVisualization(intent);
 
@@ -51,6 +62,30 @@ export function AuraResponseRenderer({
     <div className="space-y-6">
       {/* AI Summary */}
       <AuraSummary content={summary} />
+
+      {/* Intake analytics deep-link */}
+      {intake && (
+        <Card className="bg-card border-border p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="rounded-md bg-primary/10 p-2">
+              <ClipboardList className="h-4 w-4 text-primary" />
+            </div>
+            <div className="text-sm">
+              <div className="font-medium text-foreground">
+                Open in Intake analytics
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {intake.field
+                  ? `${intake.field} · ${intake.view} · ${intake.source}`
+                  : `${intake.view} · ${intake.source}`}
+              </div>
+            </div>
+          </div>
+          <Button asChild size="sm" variant="secondary">
+            <Link to={buildIntakeAnalyticsHref(intake)}>View report</Link>
+          </Button>
+        </Card>
+      )}
 
       {/* Stats Grid */}
       {data?.stats && data.stats.length > 0 && (
