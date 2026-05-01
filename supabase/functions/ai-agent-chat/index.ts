@@ -1189,6 +1189,11 @@ const AGENT_TOOLS: Record<string, any[]> = {
             datetime: { type: 'string', description: 'Appointment date and time' },
             duration_minutes: { type: 'number', description: 'Duration in minutes' },
             notes: { type: 'string', description: 'Additional notes about the appointment' },
+            intake_data: {
+              type: 'object',
+              description: 'Optional industry-specific intake fields (e.g. MLS number, system age, pet info). Keys must match the field names listed in INDUSTRY INTAKE FIELDS in your system prompt. Omit if none apply.',
+              additionalProperties: true,
+            },
           },
           required: ['customer_name', 'customer_phone', 'customer_address', 'service_type', 'datetime'],
         },
