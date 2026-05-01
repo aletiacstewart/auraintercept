@@ -89,11 +89,11 @@ export function PageHeader({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="text-lg font-bold text-foreground">{title}</h1>
+              <h1 className={cn("text-lg font-bold", colorClasses.text)}>{title}</h1>
               {badge}
               <VoiceStatusIndicator size="sm" />
             </div>
-            <p className="text-xs text-muted-foreground">{description}</p>
+            <p className="text-xs text-white">{description}</p>
           </div>
         </div>
         {action}
