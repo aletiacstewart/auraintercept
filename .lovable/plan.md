@@ -1,126 +1,184 @@
-# Phase F — Reporting & Analytics on intake_data
+# Phases J → I — Intake analytics NL queries, then pack authoring UI
 
-Goal: turn the per-industry `intake_data` JSONB now flowing into `appointments` and `leads` into actionable insight. Operators should be able to see distributions (e.g. HVAC system age, Real Estate pre-approval rate, Salon allergy frequency) directly in the Analytics console, scoped to their company and to whichever fields their industry pack actually defines.
+Two sequential phases. J ships first (small, immediate win on top of Phase F);
+I follows (high leverage — unblocks non-engineer pack editing).
 
-Out of scope: cross-company benchmarking, exporting to BI tools, conditional/branching field upgrades, public widget embedding (those are separate phases).
+---
 
-## What gets built
+## Phase J — Aura NL queries over intake analytics
 
-### 1. Schema-aware field discovery
+Extend the existing Aura command parser so admins can ask questions like
+"show HVAC system age distribution" or "which intake fields are blank
+most often" and land directly on the right card in the Intake analytics tab.
 
-A small helper resolves which intake fields are reportable for the current company.
+### Behavior
 
-- `src/lib/intakeAnalytics.ts` (new) — given the resolved industry pack, walks `form_schemas[*].fields[*]` and returns a deduped list of `{ name, label, type, options?, sourceFormIds[] }`. Skips `textarea` (free text) for charting.
-- Field types map to chart types:
-  - `select`, `checkbox` → bar / donut (categorical)
-  - `number` → histogram with bucketed ranges
-  - `date` → time-series line (by month)
-  - `text` → top-N value table only
+- New intent `intake_analytics` recognized by phrases mentioning
+  `intake`, `field`, `distribution`, `completeness`, `blank`, plus any
+  pack-defined field label (e.g. "system age", "pre-approval").
+- Parser returns a structured payload `{ source, field, view }` where:
+  - `source` ∈ `appointments | leads` (defaults to `appointments`).
+  - `field` resolved by fuzzy-matching the query against the active
+    pack's `getReportableIntakeFields()` labels.
+  - `view` ∈ `distribution | trend | completeness`.
+- Aura response renderer adds a "Open Intake analytics" CTA that
+  navigates to `/dashboard/analytics?tab=intake&source=…&field=…&view=…`.
+- `IntakeAnalytics.tsx` (already reads `source` + `field` query params)
+  gains support for `view` and auto-scrolls/focuses the matching card.
 
-### 2. Database RPCs (SECURITY DEFINER, company-scoped)
+### Technical details
 
-All scoped via `get_user_company_id(auth.uid())`; platform admins get full scope. New migration adds:
+- `src/lib/auraQueryParser.ts`:
+  - Add `'intake_analytics'` to `AuraIntent` union.
+  - Add regex patterns + new `extractIntakeTarget(query, pack)` helper
+    that imports `getReportableIntakeFields` (no DB call — pack already
+    in memo).
+  - Extend `ParsedQuery` with optional `intake?: { source, field, view }`.
+  - Update `getTabFromIntent` to map → `'intake'`.
+- `src/pages/AskAura.tsx`: when intent === `intake_analytics`, render
+  the deep-link CTA via `Link` to the analytics route with query string.
+- `src/components/aura/AuraResponseRenderer.tsx`: surface the intake
+  CTA card when payload.intake is present.
+- `src/components/analytics/IntakeAnalytics.tsx`: read `view` param,
+  auto-scroll to that card via `ref.current?.scrollIntoView` and apply a
+  brief `ring-2 ring-primary/40` highlight.
+- `src/pages/Analytics.tsx`: read `tab` query param so deep-link selects
+  the Intake tab on mount.
 
-- `intake_field_distribution(p_source text, p_field text, p_since timestamptz default null) → (bucket text, count int)`
-  - `p_source` ∈ `'appointments' | 'leads'`.
-  - For categorical fields: `select intake_data->>p_field as bucket, count(*)`.
-  - For numeric fields: caller passes the field; the RPC casts to numeric, NULL-skips, and returns 6 width-bucketed ranges via `width_bucket`.
-  - Returns empty set if caller has no company.
-- `intake_field_timeseries(p_source text, p_field text, p_interval text default 'month') → (period date, count int, distinct_values int)`
-  - For tracking volume/diversity of a captured field over time.
-- `intake_field_completeness(p_source text) → (field text, total int, filled int, pct numeric)`
-  - One row per known key seen in `intake_data` for the company — surfaces which questions agents are actually getting answers for.
+### Files
 
-GIN indexes from Phase E already cover the lookups; no new indexes needed.
+New: none.
 
-### 3. New analytics tab
-
-- `src/components/analytics/IntakeAnalytics.tsx` (new) mounted as a tab on `Analytics.tsx` (and on `pages/ai-consoles/AnalyticsConsole.tsx` for the Aura-driven view).
-- Layout:
-  - Header: source toggle (Appointments / Leads), date range chips (30d / 90d / All).
-  - Field picker: dropdown driven by `intakeAnalytics.ts`. Defaults to the first categorical field; greyed-out + tooltip when the company has no industry pack.
-  - Three cards:
-    1. **Distribution** — bar/donut/histogram driven by `intake_field_distribution`.
-    2. **Trend** — line chart from `intake_field_timeseries`.
-    3. **Completeness** — table from `intake_field_completeness`, sorted by lowest fill rate (these are the questions Aura is dropping).
-  - Empty state: links straight to `/dashboard/agents` with a hint to enable the booking agent and reminds the user that data accrues as appointments/leads are captured.
-- Reuses existing `recharts` primitives already in `src/components/analytics/*` (see `RevenueAnalytics.tsx`, `PerformanceAnalytics.tsx` for the chart wrapper conventions). Theme tokens only — no hex.
-
-### 4. Aura natural-language hook
-
-`src/lib/auraQueryParser.ts` learns three intents so admins can say "show me HVAC system age distribution" or "which intake fields are blank most often":
-
-- Map verb + noun → `IntakeAnalytics` tab + preselected field.
-- Wire through `useAuraCommand` so the existing Cyber-Sentry command bar can deep-link to the tab with `?source=appointments&field=system_age`.
-- `IntakeAnalytics` reads those query params on mount.
-
-### 5. Memory + docs
-
-- Update `mem://features/industry/pack-data-fields.md` with a "Reporting" section documenting the three RPCs and the categorical-vs-numeric mapping.
-- Update `mem://features/analytics/comprehensive-dashboard-suite.md` to list the new tab.
-
-## Files
-
-New
-- `supabase/migrations/<ts>_intake_analytics_rpcs.sql`
-- `src/lib/intakeAnalytics.ts`
+Edited:
+- `src/lib/auraQueryParser.ts`
+- `src/pages/AskAura.tsx`
+- `src/components/aura/AuraResponseRenderer.tsx`
 - `src/components/analytics/IntakeAnalytics.tsx`
+- `src/pages/Analytics.tsx`
+- `.lovable/memory/features/industry/pack-data-fields.md` (new "Aura NL"
+  subsection)
 
-Edited
-- `src/pages/Analytics.tsx` — add tab.
-- `src/pages/ai-consoles/AnalyticsConsole.tsx` — add tab + Aura intent hook.
-- `src/lib/auraQueryParser.ts` — recognize intake-analytics intents.
-- `src/integrations/supabase/types.ts` — auto-regen after migration.
-- `.lovable/memory/features/industry/pack-data-fields.md`
+### QA
 
-## QA
-
-1. Switch demo company to HVAC, create 3 appointments with different `system_age` and `unit_type` values, open Analytics → Intake tab → confirm distribution + completeness reflect the data.
-2. Switch to Real Estate, repeat with `buyer_pre_approved`. Confirm donut renders.
-3. Generic / no industry pack → tab shows "No industry intake fields configured" empty state and the field picker is disabled.
-4. Run "Aura, show me intake completeness" → routes to the Completeness card.
-5. Confirm RPCs reject cross-company access by querying as a different company's user.
-
-After approval I'll add the migration, RPCs, the new tab, the Aura intent, and update the memory files.
+1. Active HVAC pack → "show me hvac system age distribution" routes to
+   Intake tab with the bar chart card focused on `system_age`.
+2. "which intake fields are blank most often" → Completeness card
+   focused, sorted by lowest fill %.
+3. Generic / no pack → fallback to `general` intent (no broken link).
+4. Source disambiguation: "lead intake completeness" → `source=leads`.
 
 ---
 
-# Phase G — Embedded booking widget on Smart Website (DONE)
+## Phase I — Industry pack authoring UI (platform admin)
 
-## What shipped
+Replace SQL-only pack editing with an admin screen that lets a platform
+admin manage `industry_template_packs` rows in-place: terminology,
+job templates, form schemas (including the Phase H `show_if` / `pattern`
+/ `step` extensions), and prompt deltas.
 
-- DB: `smart_websites.show_booking_widget` (bool, default true) +
-  `smart_websites.booking_widget_mode` (`inline | modal | hero_cta`, check
-  constraint). `get_website_public_data(text)` recreated to return the new
-  fields plus `company_slug`.
-- `src/pages/SmartWebsite.tsx`: hero CTA respects custom `cta_url`; otherwise
-  scrolls to inline `<section id="book">` or opens a modal `Dialog` containing
-  `<BookingForm isPublic companyId={...}>`. Services query no longer gated by
-  `show_services` when the booking widget is on.
-- `src/pages/PublicBooking.tsx`: `?embed=1` renders a chromeless layout for
-  iframe embeds.
-- `src/pages/SmartWebsiteManager.tsx`: new "Booking widget" block (toggle +
-  mode select + copyable iframe snippet pointing at
-  `https://auraintercept.ai/book/{slug}?embed=1`).
-- Memory: `mem://features/industry/pack-data-fields.md` updated with the
-  Phase G section.
+### Behavior
+
+- New page `/dashboard/admin/industry-packs` (gated to `platform_admin`
+  via existing `RequireRole` guard — same pattern as `/audit` exclusion
+  in `power-user-pages-restricted-v1` memory).
+- List view: table of all packs (id, vertical key, label, # templates,
+  # schemas, # extra operatives, last updated). Search + filter by
+  cluster.
+- Editor (drawer or `/admin/industry-packs/:id` route):
+  - **Terminology** tab — key/value editor (e.g. `service → "tune-up"`).
+  - **Job templates** tab — repeatable rows: id, label, form_id select,
+    duration_minutes.
+  - **Form schemas** tab — accordion per form_id; each accordion exposes:
+    - Steps editor (id + label + description).
+    - Field repeater with: name, label, type select, required, options
+      (chips, for select), placeholder, helper, step select, pattern,
+      patternMessage, min, max, and a `show_if` rule builder
+      (field/op/value selector that auto-populates from existing field
+      names in the same schema).
+    - Live preview pane that mounts `<DynamicIntakeFields>` against the
+      in-memory schema with sample data so the admin sees branching
+      and validation working.
+  - **Prompt deltas** tab — JSON-aware textarea for `prompt_deltas` and
+    `kb_seed` keyed by agent id, with schema hint chips.
+  - **Extra operatives** tab — multi-select against the canonical
+    operative list from `subscriptionAgentConfig`.
+- Save action validates the JSON against a zod schema (re-using the
+  Phase H typings) and writes the row via `supabase.from('industry_template_packs').update`.
+- "Duplicate pack" + "Export JSON" + "Import JSON" buttons for
+  cross-environment reuse.
+
+### Technical details
+
+- Routing: add to `src/App.tsx` inside the `RequireRole roles={['platform_admin']}` block.
+- Data layer: new hook `src/hooks/useIndustryPackAdmin.ts`
+  - `useAllPacks()` — list query.
+  - `usePack(id)` — single pack with stale-time 0 (always fresh in editor).
+  - `useUpdatePack()` — optimistic mutation with toast + invalidates
+    the `useIndustryPack` cache for any company using that pack so the
+    rest of the app picks up changes without refresh.
+- Validation: `src/lib/industryPackSchema.ts` — zod schemas mirroring
+  `IntakeFormSchema`, `IntakeFieldDef`, `JobTemplate`, terminology map.
+  Reuses the Phase H union types as the source of truth.
+- Editor components (all in `src/components/admin/industry-packs/`):
+  - `PackList.tsx`
+  - `PackEditor.tsx` (tabbed shell)
+  - `TerminologyEditor.tsx`
+  - `JobTemplatesEditor.tsx`
+  - `FormSchemasEditor.tsx`
+  - `FieldRow.tsx` (single field editor row)
+  - `ShowIfRuleBuilder.tsx`
+  - `PromptDeltasEditor.tsx`
+  - `ExtraOperativesPicker.tsx`
+  - `LivePreview.tsx` (mounts `<DynamicIntakeFields>`)
+- DB: no schema migration needed — table already exists. Add an
+  `updated_by uuid` column + trigger for audit only if cheap; otherwise
+  skip and rely on `updated_at`.
+- RLS: tighten with a migration that ensures only `has_role(auth.uid(),
+  'platform_admin')` can `UPDATE`/`INSERT`/`DELETE` on
+  `industry_template_packs`. Public/company-scoped `SELECT` stays as-is
+  via existing read policy.
+- Memory:
+  - Update `mem://architecture/industry-template-pack-system` with the
+    authoring-UI route and the rule that pack edits hot-swap into
+    company sessions on next `useIndustryPack` refetch.
+  - Cross-link from `mem://features/dashboard/power-user-pages-restricted-v1`.
+
+### Files
+
+New:
+- `src/hooks/useIndustryPackAdmin.ts`
+- `src/lib/industryPackSchema.ts`
+- `src/pages/admin/IndustryPacksAdmin.tsx`
+- `src/components/admin/industry-packs/*` (9 components above)
+- `supabase/migrations/<ts>_industry_pack_admin_rls.sql`
+
+Edited:
+- `src/App.tsx` (route + guard)
+- `.lovable/memory/architecture/industry-template-pack-system.md`
+- `.lovable/memory/features/dashboard/power-user-pages-restricted-v1.md`
+- `.lovable/plan.md`
+
+### QA
+
+1. As `platform_admin`: open editor for HVAC pack → add a `show_if`
+   rule on a furnace-only field → live preview hides/shows correctly.
+2. Save → switch demo HVAC company, open booking form → branching
+   field appears with the new rule (no app reload required after
+   `queryClient.invalidateQueries(['industry-pack'])`).
+3. As `company_admin`: route is 403/redirected.
+4. Import a pack JSON exported from another env → validates via zod →
+   saved.
+5. RLS: company_admin attempts `UPDATE` via REST → denied.
+6. Bad regex in `pattern` field → zod rejects with inline error before
+   save.
+
 ---
 
-# Phase H — Conditional / branching intake fields (DONE)
+## Sequencing & rollout
 
-## What shipped
-
-- `src/lib/industryFormSchemas.ts`: extended `IntakeFieldDef` with optional
-  `show_if` (rule array), `pattern` + `patternMessage`, `min` / `max`,
-  and `step`. Added `IntakeFormSchema.steps`. New helpers: `isFieldVisible`,
-  `getSchemaSteps`, `validateIntakeFieldErrors`. `validateIntake` now also
-  enforces pattern + min/max and skips hidden fields.
-- `src/components/forms/DynamicIntakeFields.tsx`: skips hidden fields,
-  shows inline per-field errors, surfaces `helper` text, applies HTML
-  `pattern`/`min`/`max`/`minLength`/`maxLength` attrs, and renders a
-  Back/Next wizard whenever the schema has ≥2 steps. New props:
-  `multiStep` (default true), `showInlineErrors` (default true).
-- All call sites (`AddAppointmentForm`, `BookingForm`, `LeadForm`) work
-  unchanged — features only activate when packs declare them.
-- Memory: `.lovable/memory/features/industry/pack-data-fields.md` updated
-  with a Phase H section documenting the schema additions.
+- Phase J ships first (single-day scope, no migration, no auth changes).
+- Phase I follows once J is verified — bigger surface area, includes a
+  migration for tightened RLS and ~10 new components.
+- After both: only outstanding industry-pack initiative items will be
+  K (JS embed loader), L (pack-driven agent prompts), M (per-vertical
+  analytics presets).
