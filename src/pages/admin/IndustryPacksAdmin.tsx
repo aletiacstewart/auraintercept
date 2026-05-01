@@ -22,7 +22,6 @@ import {
   Plus,
   Trash2,
   Save,
-  Copy,
   Download,
   Upload,
   ChevronLeft,
@@ -1072,14 +1071,4 @@ function ExtraOperativesEditor({ draft, setDraft }: SectionProps) {
       </CardContent>
     </Card>
   );
-}
-
-/* -------------------------------------------------------------------------- */
-/* Helper: Copy-to-clipboard utility (declared but unused for now)            */
-/* -------------------------------------------------------------------------- */
-
-export function _copyToClipboard(text: string) {
-  void navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
-  // Re-exported in case future authoring tools want it.
-  Copy.displayName = Copy.displayName;
 }
