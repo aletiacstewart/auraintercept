@@ -636,14 +636,25 @@ export default function AIAgentsHub() {
                 {/* Specialist Operatives Section — industry-specific, Pro/Elite tier */}
                 {specialistAgents.length > 0 && (
                   <div className="space-y-3">
-                    <button
-                      onClick={() => setShowSpecialists(!showSpecialists)}
-                      className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                      <ChevronRight className={cn('h-4 w-4 transition-transform', showSpecialists && 'rotate-90')} />
-                      Specialist Operatives ({specialistAgents.length})
-                      <Badge variant="secondary" className="text-[10px]">Industry-Specific</Badge>
-                    </button>
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={() => setShowSpecialists(!showSpecialists)}
+                        className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                      >
+                        <ChevronRight className={cn('h-4 w-4 transition-transform', showSpecialists && 'rotate-90')} />
+                        Specialist Operatives ({specialistAgents.length})
+                        <Badge variant="secondary" className="text-[10px]">Industry-Specific</Badge>
+                      </button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/ai-consoles/specialists')}
+                        className="h-7 text-xs"
+                      >
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        Open Specialist Console
+                      </Button>
+                    </div>
                     <p className="text-xs text-muted-foreground -mt-1 ml-6">
                       Auto-activated based on your industry. Requires Aura Pro or Elite.
                     </p>
