@@ -7181,6 +7181,20 @@ export type Database = {
         Args: { p_company_id: string }
         Returns: undefined
       }
+      submit_public_booking: {
+        Args: {
+          p_address?: string
+          p_company_id: string
+          p_email?: string
+          p_intake_data?: Json
+          p_name: string
+          p_notes?: string
+          p_phone: string
+          p_preferred_datetime?: string
+          p_service_interest?: string
+        }
+        Returns: string
+      }
       validate_registration_code: {
         Args: { p_code: string; p_company_id?: string }
         Returns: {
