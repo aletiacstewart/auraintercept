@@ -15,6 +15,7 @@ import { CalendarIcon, Clock, User, Phone, Mail, MapPin, Loader2, Send, Calendar
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface AddAppointmentFormProps {
   onSuccess?: () => void;
@@ -50,6 +51,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
 }) => {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack();
   
   const [selectedService, setSelectedService] = useState<string>('');
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -80,6 +82,31 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
     },
     enabled: !!companyId,
   });
+
+  // Fall back to industry-pack job templates when the company has not
+  // configured custom services yet, so the dropdown is industry-relevant
+  // out of the box (e.g. "Buyer Showing" for real estate, "No Cooling –
+  // Emergency" for HVAC) instead of empty or generic.
+  const packServices: ServiceOption[] = React.useMemo(() => {
+    if (services.length > 0) return [];
+    const templates = (pack.job_templates || []) as Array<{
+      id?: string;
+      label?: string;
+      duration_minutes?: number;
+    }>;
+    return templates
+      .filter(t => t && t.label)
+      .map(t => ({
+        id: `pack:${t.id || t.label}`,
+        name: t.label as string,
+        duration_minutes: t.duration_minutes ?? 60,
+      }));
+  }, [services, pack.job_templates]);
+
+  const effectiveServices = services.length > 0 ? services : packServices;
+  const serviceLabel = pack.terminology?.job
+    ? `${pack.terminology.job} Type *`
+    : 'Service Type *';
 
   // Fetch technicians  
   const { data: technicians = [] } = useQuery<TechnicianOption[]>({
@@ -168,13 +195,13 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Service Selection */}
           <div className="space-y-2">
-            <Label className="text-foreground/70">Service Type *</Label>
+            <Label className="text-foreground/70">{serviceLabel}</Label>
             <Select value={selectedService} onValueChange={setSelectedService}>
               <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
-                {services.map((service) => (
+                {effectiveServices.map((service) => (
                   <SelectItem key={service.id} value={service.name}>
                     {service.name} ({service.duration_minutes} min)
                   </SelectItem>
