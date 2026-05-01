@@ -783,7 +783,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($197/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($497/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($997/mo) adds campaign, outreach, social media, and white-label branding. Elite ($1,997/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams.
+                Core ($197/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($497/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($997/mo) adds campaign, outreach, social media, and industry-specific specialist agents (Diagnostic, Permit & Code, Site Survey, Insurance Claim). Elite ($1,997/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams.
               </p>
             </div>
             <div>

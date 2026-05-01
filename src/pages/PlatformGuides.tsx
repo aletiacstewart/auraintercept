@@ -132,7 +132,7 @@ const guideCategories = [
           'Aura Pro ($997/mo): 16 AI Agents — All Boost + Campaign, Outreach, Social Scheduler Agent, Social Analytics',
           'Aura Elite ($1,997/mo): All 24 AI Agents + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
-          'White-Label Branding available from Pro tier and above',
+          'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
           'All tiers include API Access and Chat Widget'
         ],
         tips: ['Trial users get full Elite tier access', 'Annual billing = 10x monthly rate']
