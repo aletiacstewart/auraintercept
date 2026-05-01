@@ -26,6 +26,7 @@ import { DashboardViewToggle } from './DashboardViewToggle';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
+import { relabelKpi } from '@/lib/industryKpiLabels';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -197,11 +198,18 @@ export function CompanyAdminDashboard() {
     { title: 'Social Posts', value: stats?.totalSocialPosts ?? 0, icon: Share2, description: `${stats?.publishedSocialPosts ?? 0} published, ${stats?.scheduledSocialPosts ?? 0} scheduled`, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/social-content', requiredTier: 'command' as SubscriptionTier },
     { title: 'Blog Posts', value: stats?.totalBlogPosts ?? 0, icon: PenTool, description: 'Published articles', colorClass: 'bg-primary/15 text-primary', href: '/dashboard/blog', requiredTier: 'command' as SubscriptionTier },
     { title: 'Website Traffic', value: stats?.totalPageViews ?? 0, icon: Globe, description: `${stats?.totalVisitors ?? 0} visitors, ${stats?.totalChatInteractions ?? 0} chats`, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics', requiredTier: 'multi_track' as SubscriptionTier },
-  ];
+  ].map(card => ({ ...card, title: relabelKpi(pack, card.title) }));
 
   // Simple mode: show only the 5 most actionable KPIs an SMB owner cares about daily.
   // Pro mode: show every tier-allowed stat card.
-  const SIMPLE_TITLES = new Set(['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Leads']);
+  // Compare against the relabeled titles so Simple mode still works per industry.
+  const SIMPLE_TITLES = new Set([
+    relabelKpi(pack, 'Appointments'),
+    relabelKpi(pack, 'Open Quotes'),
+    relabelKpi(pack, 'Outstanding'),
+    relabelKpi(pack, 'Revenue (Month)'),
+    relabelKpi(pack, 'Leads'),
+  ]);
   const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
   const statCards = isSimple
     ? tierFilteredCards.filter(c => SIMPLE_TITLES.has(c.title)).slice(0, 5)

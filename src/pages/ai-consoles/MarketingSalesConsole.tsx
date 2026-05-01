@@ -10,11 +10,15 @@ import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getMarketingPlaybook } from '@/lib/industryMarketingPlaybooks';
 
 export default function MarketingSalesConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
-  
+  const { pack } = useIndustryPack();
+  const playbook = getMarketingPlaybook(pack);
+
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
   return (
@@ -25,10 +29,10 @@ export default function MarketingSalesConsole() {
             <PageHeader
               icon={Megaphone}
               title="Outreach & Sales Console"
-              description="AI-powered marketing automation and sales intelligence"
+              description={playbook.description}
               featureColor="platform"
               showAuraBar
-              badge={<ValueBadge label="2-3x lead conversion improvement" />}
+              badge={<ValueBadge label={playbook.tagline} />}
               action={
                 <div className="flex items-center gap-2">
                   <HowToUseModal {...HOW_TO_USE.outreachSalesConsole} />
