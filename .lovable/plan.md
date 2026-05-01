@@ -1,84 +1,84 @@
-# Phase C — Dynamic Industry Intake Forms
+# Phase F — Reporting & Analytics on intake_data
 
-Goal: when a user creates an appointment (or lead), the form auto-renders the industry-specific questions defined in `industry_template_packs.form_schemas` for the selected job template — so Real Estate captures MLS#, Salons capture allergies, HVAC captures system age, etc. — instead of every vertical seeing the same generic form.
+Goal: turn the per-industry `intake_data` JSONB now flowing into `appointments` and `leads` into actionable insight. Operators should be able to see distributions (e.g. HVAC system age, Real Estate pre-approval rate, Salon allergy frequency) directly in the Analytics console, scoped to their company and to whichever fields their industry pack actually defines.
 
-## Scope
+Out of scope: cross-company benchmarking, exporting to BI tools, conditional/branching field upgrades, public widget embedding (those are separate phases).
 
-In scope:
-1. New JSONB storage column on `appointments` (and `leads`) for intake answers.
-2. A reusable `<DynamicIntakeFields>` renderer driven by a `form_schemas` entry.
-3. Wire it into `AddAppointmentForm` and `LeadForm` so the right fields appear when an industry job template is selected.
-4. Display captured intake data on the appointment/lead detail views (read-only summary).
-5. Pass intake data into the AI agent context so Aura can reference it during follow-up.
+## What gets built
 
-Out of scope (later phase): customer-facing public booking widget rendering (will reuse the same renderer once verified internally), KB document seeding, conditional/branching fields.
+### 1. Schema-aware field discovery
 
-## Schema shape recap
+A small helper resolves which intake fields are reportable for the current company.
 
-Each pack stores `form_schemas` as:
+- `src/lib/intakeAnalytics.ts` (new) — given the resolved industry pack, walks `form_schemas[*].fields[*]` and returns a deduped list of `{ name, label, type, options?, sourceFormIds[] }`. Skips `textarea` (free text) for charting.
+- Field types map to chart types:
+  - `select`, `checkbox` → bar / donut (categorical)
+  - `number` → histogram with bucketed ranges
+  - `date` → time-series line (by month)
+  - `text` → top-N value table only
 
-```text
-{
-  "<form_id>": {
-    "fields": [
-      { "name": "mls_number", "label": "MLS #", "type": "text", "required": false },
-      { "name": "buyer_pre_approved", "label": "Pre-approved?", "type": "select",
-        "options": ["Yes","No","Cash"] }
-    ]
-  }
-}
-```
+### 2. Database RPCs (SECURITY DEFINER, company-scoped)
 
-Job templates reference a `form_id`, e.g. `{ id: "showing", label: "Buyer Showing", form_id: "showing_intake", duration_minutes: 45 }`. Supported field types: `text`, `number`, `select`, `textarea`, `date`, `checkbox`.
+All scoped via `get_user_company_id(auth.uid())`; platform admins get full scope. New migration adds:
 
-## Database changes (migration)
+- `intake_field_distribution(p_source text, p_field text, p_since timestamptz default null) → (bucket text, count int)`
+  - `p_source` ∈ `'appointments' | 'leads'`.
+  - For categorical fields: `select intake_data->>p_field as bucket, count(*)`.
+  - For numeric fields: caller passes the field; the RPC casts to numeric, NULL-skips, and returns 6 width-bucketed ranges via `width_bucket`.
+  - Returns empty set if caller has no company.
+- `intake_field_timeseries(p_source text, p_field text, p_interval text default 'month') → (period date, count int, distinct_values int)`
+  - For tracking volume/diversity of a captured field over time.
+- `intake_field_completeness(p_source text) → (field text, total int, filled int, pct numeric)`
+  - One row per known key seen in `intake_data` for the company — surfaces which questions agents are actually getting answers for.
 
-- `appointments`: add `intake_data jsonb not null default '{}'::jsonb`.
-- `leads`: add `intake_data jsonb not null default '{}'::jsonb`.
-- No RLS changes needed — existing row-level policies cover the new column.
+GIN indexes from Phase E already cover the lookups; no new indexes needed.
 
-## New files
+### 3. New analytics tab
 
-- `src/components/forms/DynamicIntakeFields.tsx` — renders fields from a schema entry, controlled component:
-  - props: `schema: { fields: FieldDef[] } | null`, `value: Record<string, unknown>`, `onChange(next)`, `disabled?`.
-  - returns `null` if schema is empty, so generic verticals see no extra UI.
-  - uses existing shadcn `Input`, `Textarea`, `Select`, `Checkbox`, `Calendar`/`Popover` primitives.
-  - validation: enforces `required` on submit via a `validateIntake(schema, value)` helper exported from the same file.
-- `src/lib/industryFormSchemas.ts` — small helpers:
-  - `resolveFormSchema(pack, serviceSelection)` — given a selected service value (which may be `pack:<jobTemplateId>` or a real DB service), returns the matching `form_schemas[form_id]` or `null`.
-  - `getJobTemplate(pack, id)` lookup.
-  - Shared `IntakeFieldDef` / `IntakeFormSchema` TypeScript types.
+- `src/components/analytics/IntakeAnalytics.tsx` (new) mounted as a tab on `Analytics.tsx` (and on `pages/ai-consoles/AnalyticsConsole.tsx` for the Aura-driven view).
+- Layout:
+  - Header: source toggle (Appointments / Leads), date range chips (30d / 90d / All).
+  - Field picker: dropdown driven by `intakeAnalytics.ts`. Defaults to the first categorical field; greyed-out + tooltip when the company has no industry pack.
+  - Three cards:
+    1. **Distribution** — bar/donut/histogram driven by `intake_field_distribution`.
+    2. **Trend** — line chart from `intake_field_timeseries`.
+    3. **Completeness** — table from `intake_field_completeness`, sorted by lowest fill rate (these are the questions Aura is dropping).
+  - Empty state: links straight to `/dashboard/agents` with a hint to enable the booking agent and reminds the user that data accrues as appointments/leads are captured.
+- Reuses existing `recharts` primitives already in `src/components/analytics/*` (see `RevenueAnalytics.tsx`, `PerformanceAnalytics.tsx` for the chart wrapper conventions). Theme tokens only — no hex.
 
-## Edited files
+### 4. Aura natural-language hook
 
-- `src/components/appointments/AddAppointmentForm.tsx`
-  - Add `intakeData` state (`Record<string, unknown>`).
-  - Use `resolveFormSchema(pack, selectedService)` to derive the active schema; render `<DynamicIntakeFields>` below the Service Type field.
-  - On submit, run `validateIntake`; include `intake_data: intakeData` in the insert payload.
-  - When the user switches services, reset `intakeData` to `{}`.
-- `src/components/marketing/forms/LeadForm.tsx`
-  - Same pattern. Lead intake forms are picked from a configurable default key (`pack.form_schemas.lead_intake` if present, else first defined schema). Falls back to no extra fields for generic.
-- `src/components/appointments/AppointmentsManager.tsx` (detail view section)
-  - Render a small "Intake details" summary list (label: value) when `appointment.intake_data` has keys.
-- `src/pages/Leads.tsx` lead detail panel — same read-only summary.
-- `src/hooks/useIndustryPack.ts` — tighten `form_schemas` typing to `Record<string, IntakeFormSchema>` (exported from `industryFormSchemas.ts`).
+`src/lib/auraQueryParser.ts` learns three intents so admins can say "show me HVAC system age distribution" or "which intake fields are blank most often":
 
-## AI context wiring
+- Map verb + noun → `IntakeAnalytics` tab + preselected field.
+- Wire through `useAuraCommand` so the existing Cyber-Sentry command bar can deep-link to the tab with `?source=appointments&field=system_age`.
+- `IntakeAnalytics` reads those query params on mount.
 
-- `supabase/functions/aura-unified/index.ts` — when fetching an appointment/lead for context, include `intake_data` in the serialized snapshot the model sees, prefixed with `Intake details:` so Aura can answer "is the buyer pre-approved?" without the user re-typing it.
-- No prompt-template changes elsewhere; existing per-industry `agent_prompt_deltas` already nudge the agent to use these fields.
+### 5. Memory + docs
+
+- Update `mem://features/industry/pack-data-fields.md` with a "Reporting" section documenting the three RPCs and the categorical-vs-numeric mapping.
+- Update `mem://features/analytics/comprehensive-dashboard-suite.md` to list the new tab.
+
+## Files
+
+New
+- `supabase/migrations/<ts>_intake_analytics_rpcs.sql`
+- `src/lib/intakeAnalytics.ts`
+- `src/components/analytics/IntakeAnalytics.tsx`
+
+Edited
+- `src/pages/Analytics.tsx` — add tab.
+- `src/pages/ai-consoles/AnalyticsConsole.tsx` — add tab + Aura intent hook.
+- `src/lib/auraQueryParser.ts` — recognize intake-analytics intents.
+- `src/integrations/supabase/types.ts` — auto-regen after migration.
+- `.lovable/memory/features/industry/pack-data-fields.md`
 
 ## QA
 
-1. Switch demo company to Real Estate → New Appointment → pick "Buyer Showing" → confirm MLS#, Pre-approved, Timeline, Working-with-agent fields render. Save. Reopen — intake summary visible.
-2. Switch to HVAC → "No Cooling – Emergency" should show system age / unit type / symptom fields.
-3. Switch to a generic / unset industry → no extra fields render, form behaves exactly as today.
-4. Required-field validation blocks submit with a toast.
-5. Existing appointments (no `intake_data`) load fine (default `{}`).
+1. Switch demo company to HVAC, create 3 appointments with different `system_age` and `unit_type` values, open Analytics → Intake tab → confirm distribution + completeness reflect the data.
+2. Switch to Real Estate, repeat with `buyer_pre_approved`. Confirm donut renders.
+3. Generic / no industry pack → tab shows "No industry intake fields configured" empty state and the field picker is disabled.
+4. Run "Aura, show me intake completeness" → routes to the Completeness card.
+5. Confirm RPCs reject cross-company access by querying as a different company's user.
 
-## Memory updates
-
-- Update `mem://features/industry/pack-data-fields.md` with the `intake_data` storage convention and the new `DynamicIntakeFields` component contract.
-- Add a Core line: "Industry intake fields render from `form_schemas[job.form_id]` and persist to `appointments.intake_data` / `leads.intake_data` JSONB."
-
-After approval I'll run the migration, add the renderer, wire both forms, surface intake on detail views, and extend the Aura context payload.
+After approval I'll add the migration, RPCs, the new tab, the Aura intent, and update the memory files.
