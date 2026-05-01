@@ -1,7 +1,7 @@
 import {
   Route, MapPin, Wrench, Map, ClipboardList, Phone, Home, Scissors,
-  Sparkles, Hammer, Truck, AlertCircle, Calendar, Camera, Sun, Bug,
-  Waves, Shield, Car, Building2, Utensils, Briefcase, type LucideIcon,
+  Sparkles, Hammer, AlertCircle, Calendar, Camera, Sun, Bug,
+  Waves, Shield, Utensils, Briefcase, type LucideIcon,
 } from 'lucide-react';
 import type { WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import type { IndustryPack } from '@/hooks/useIndustryPack';
