@@ -55,6 +55,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
 import { formatDistanceToNow } from 'date-fns';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { SPECIALIST_DESCRIPTIONS, isSpecialistOperative } from '@/lib/subscriptionAgentConfig';
+import { Stethoscope } from 'lucide-react';
 
 const CATEGORY_INFO: Record<string, { 
   label: string; 
@@ -104,6 +107,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-feature-analytics',
     cssVar: '--feature-analytics'
   },
+  industry_specialist: {
+    label: 'Specialist Operatives',
+    icon: Stethoscope,
+    colorClass: 'text-feature-analytics',
+    cssVar: '--feature-analytics',
+  },
 };
 
 // Core agents that should always be visible & recommended first
@@ -121,6 +130,10 @@ const AGENT_ROI_HINTS: Record<string, string> = {
   field_navigation: 'Reduces drive time by ~15%',
   analytics_intelligence: 'Surfaces insights you would miss',
   admin: 'Automates routine admin tasks',
+  diagnostic: 'Photo + symptom triage',
+  permit_code: 'Local code & permit guidance',
+  site_survey: 'Pre-install measurements & takeoff',
+  insurance_claim: 'Claim-ready damage reports',
 };
 
 const PHASE_LABELS: Record<number, string> = {
@@ -163,11 +176,17 @@ const AGENT_NAMES: Record<string, string> = {
   web_presence: 'Web Presence Agent',
   // Analytics & Reports (1)
   analytics_intelligence: 'Analytics Intelligence Agent',
+  // Industry Specialists (4)
+  diagnostic: 'Diagnostic Specialist',
+  permit_code: 'Permit & Code Specialist',
+  site_survey: 'Site Survey & Quote Specialist',
+  insurance_claim: 'Insurance Claim Specialist',
 };
 
 export default function AIAgentsHub() {
   const { agents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
   const { userRole, user } = useAuth();
+  const { pack: industryPack } = useIndustryPack(companyId);
   const { 
     subscriptionTier, 
     canAccessAgent, 
@@ -188,6 +207,7 @@ export default function AIAgentsHub() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [autoActivationDone, setAutoActivationDone] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showSpecialists, setShowSpecialists] = useState(true);
 
   // Fetch employee's job assignments
   const { data: userJobAssignments } = useQuery({
@@ -214,6 +234,12 @@ export default function AIAgentsHub() {
   // Auto-activate agents based on subscription tier
   useEffect(() => {
     if (!companyId || !canManageAgents || autoActivationDone || loading) return;
+    // Platform admins see all agents enabled in-memory via the orchestrator;
+    // we don't auto-write to ai_agent_configs for them.
+    if (userRole === 'platform_admin') {
+      setAutoActivationDone(true);
+      return;
+    }
     
     const autoActivateAgents = async () => {
       const availableAgents = getAvailableAgents();
@@ -238,7 +264,7 @@ export default function AIAgentsHub() {
     } else {
       setAutoActivationDone(true);
     }
-  }, [companyId, canManageAgents, loading, subscriptionTier, inTrial]);
+  }, [companyId, canManageAgents, loading, subscriptionTier, inTrial, userRole]);
 
   // Agents hidden from non-platform-admin roles
   const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign'];
@@ -289,8 +315,14 @@ export default function AIAgentsHub() {
     : accessibleAgents.filter(a => a.category === activeCategory);
 
   // Split agents into Core and Advanced
-  const coreAgents = filteredAgents.filter(a => CORE_AGENT_TYPES.has(a.type));
-  const advancedAgents = filteredAgents.filter(a => !CORE_AGENT_TYPES.has(a.type));
+  const specialistAgents = filteredAgents.filter(a => isSpecialistOperative(a.type));
+  const nonSpecialistAgents = filteredAgents.filter(a => !isSpecialistOperative(a.type));
+  const coreAgents = nonSpecialistAgents.filter(a => CORE_AGENT_TYPES.has(a.type));
+  const advancedAgents = nonSpecialistAgents.filter(a => !CORE_AGENT_TYPES.has(a.type));
+
+  // Industry-pack opted-in specialists for the current company
+  const industrySpecialists = new Set(industryPack?.extra_operatives ?? []);
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   const handleEnableRecommended = async () => {
     if (!companyId) return;
@@ -600,6 +632,55 @@ export default function AIAgentsHub() {
                     )}
                   </div>
                 )}
+
+                {/* Specialist Operatives Section — industry-specific, Pro/Elite tier */}
+                {specialistAgents.length > 0 && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowSpecialists(!showSpecialists)}
+                      className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                      <ChevronRight className={cn('h-4 w-4 transition-transform', showSpecialists && 'rotate-90')} />
+                      Specialist Operatives ({specialistAgents.length})
+                      <Badge variant="secondary" className="text-[10px]">Industry-Specific</Badge>
+                    </button>
+                    <p className="text-xs text-muted-foreground -mt-1 ml-6">
+                      Auto-activated based on your industry. Requires Aura Pro or Elite.
+                    </p>
+                    {showSpecialists && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                        {specialistAgents.map((agent) => {
+                          // Platform admins always see specialists as fully unlocked.
+                          const tierAvailable = isPlatformAdmin || canAccessAgent(agent.type);
+                          const inIndustry = isPlatformAdmin || industrySpecialists.has(agent.type);
+                          const isAvailableInTier = tierAvailable && inIndustry;
+                          const requiredTier = getAgentRequiredTier(agent.type);
+                          return (
+                            <AgentCard
+                              key={agent.type}
+                              agent={agent}
+                              onToggle={(enabled) => toggleAgent(agent.type, enabled)}
+                              onClick={() => handleAgentClick(agent.type)}
+                              canManage={canManageAgents}
+                              isAvailableInTier={isAvailableInTier}
+                              requiredTier={!tierAvailable ? requiredTier : null}
+                              missingDependencies={[]}
+                              getTierInfo={getTierInfo}
+                              latestEvent={latestEvents?.[agent.type] || null}
+                              onReviewClick={() => setActiveTab('review')}
+                              roiHint={AGENT_ROI_HINTS[agent.type]}
+                              industryLockReason={
+                                tierAvailable && !inIndustry
+                                  ? `Not part of your industry pack. ${SPECIALIST_DESCRIPTIONS[agent.type as keyof typeof SPECIALIST_DESCRIPTIONS] ?? ''}`
+                                  : undefined
+                              }
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
 
@@ -707,6 +788,7 @@ interface AgentCardProps {
   } | null;
   onReviewClick: () => void;
   roiHint?: string;
+  industryLockReason?: string;
 }
 
 function AgentCard({ 
@@ -721,6 +803,7 @@ function AgentCard({
   latestEvent,
   onReviewClick,
   roiHint,
+  industryLockReason,
 }: AgentCardProps) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
@@ -774,7 +857,13 @@ function AgentCard({
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-sm">{!isAvailableInTier ? `Upgrade to ${tierInfo?.label || 'a higher plan'}` : 'Only admins can toggle agents'}</p>
+                <p className="text-sm">
+                  {industryLockReason
+                    ? industryLockReason
+                    : !isAvailableInTier
+                      ? `Upgrade to ${tierInfo?.label || 'a higher plan'}`
+                      : 'Only admins can toggle agents'}
+                </p>
               </TooltipContent>
             </Tooltip>
           )}
@@ -796,7 +885,7 @@ function AgentCard({
             </Badge>
           ) : (
             <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] px-1.5 py-0 h-4">
-              <Lock className="h-2 w-2 mr-0.5" />{tierInfo?.label}
+              <Lock className="h-2 w-2 mr-0.5" />{industryLockReason ? 'Industry' : tierInfo?.label}
             </Badge>
           )}
           {agent.is_enabled && latestEvent && <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />}

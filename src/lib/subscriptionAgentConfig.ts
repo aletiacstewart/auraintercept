@@ -335,3 +335,14 @@ export const SPECIALIST_DESCRIPTIONS: Record<IndustrySpecialistOperative, string
 export function isSpecialistOperative(agentType: string): agentType is IndustrySpecialistOperative {
   return (INDUSTRY_SPECIALIST_OPERATIVES as readonly string[]).includes(agentType);
 }
+
+// Specialist operatives unlock at Performance (Aura Pro) tier and above.
+export const SPECIALIST_MIN_TIER: SubscriptionTier = 'performance';
+
+export function getSpecialistRequiredTier(): SubscriptionTier {
+  return SPECIALIST_MIN_TIER;
+}
+
+export function tierAllowsSpecialists(tier: SubscriptionTier): boolean {
+  return isTierAtLeast(tier, SPECIALIST_MIN_TIER);
+}

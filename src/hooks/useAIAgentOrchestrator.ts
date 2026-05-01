@@ -64,6 +64,11 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
   // Analytics & Reports (1 unified agent)
   { type: 'analytics_intelligence', name: 'Analytics Intelligence Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
+  // Industry Specialist Operatives (4) — auto-activated by industry pack on Pro/Elite
+  { type: 'diagnostic', name: 'Diagnostic Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'permit_code', name: 'Permit & Code Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'site_survey', name: 'Site Survey & Quote Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'insurance_claim', name: 'Insurance Claim Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
@@ -77,7 +82,7 @@ function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo
 }
 
 export function useAIAgentOrchestrator() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { toast } = useToast();
   const [agents, setAgents] = useState<AgentInfo[]>(DEFAULT_AGENTS);
   const [groupedAgents, setGroupedAgents] = useState<Record<string, AgentInfo[]>>(groupAgentsByCategory(DEFAULT_AGENTS));
@@ -134,9 +139,15 @@ export function useAIAgentOrchestrator() {
         }
         return defaultAgent;
       });
-      
-      setAgents(mergedAgents);
-      setGroupedAgents(groupAgentsByCategory(mergedAgents));
+
+      // Platform admins see every operative as Active in-memory (no DB write),
+      // so the platform admin dashboard can preview behavior end-to-end.
+      const finalAgents = userRole === 'platform_admin'
+        ? mergedAgents.map(a => ({ ...a, is_enabled: true }))
+        : mergedAgents;
+
+      setAgents(finalAgents);
+      setGroupedAgents(groupAgentsByCategory(finalAgents));
     } catch (error) {
       console.error('Error fetching agents:', error);
       setAgents(DEFAULT_AGENTS);
@@ -144,7 +155,7 @@ export function useAIAgentOrchestrator() {
     } finally {
       setLoading(false);
     }
-  }, [companyId]);
+  }, [companyId, userRole]);
 
   useEffect(() => {
     if (companyId) {

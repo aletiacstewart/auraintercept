@@ -18,6 +18,9 @@ import {
   TIER_HIERARCHY,
   TIER_FEATURE_CONFIG,
   normalizeTierName,
+  isSpecialistOperative,
+  tierAllowsSpecialists,
+  SPECIALIST_MIN_TIER,
 } from '@/lib/subscriptionAgentConfig';
 
 // 4-TIER STRUCTURE: Starter, Connect, Performance, Command
@@ -95,6 +98,9 @@ export const useSubscription = () => {
   // AI Agent access methods
   const canAccessAgent = (agentType: string): boolean => {
     if (inTrial) return true;
+    if (isSpecialistOperative(agentType)) {
+      return tierAllowsSpecialists(subscriptionTier as ConfigTier);
+    }
     return tierIncludesAgent(subscriptionTier as ConfigTier, agentType);
   };
 
@@ -114,6 +120,7 @@ export const useSubscription = () => {
   };
 
   const getAgentRequiredTier = (agentType: string): SubscriptionTier | null => {
+    if (isSpecialistOperative(agentType)) return SPECIALIST_MIN_TIER;
     return getRequiredTierForAgent(agentType) as SubscriptionTier | null;
   };
 
