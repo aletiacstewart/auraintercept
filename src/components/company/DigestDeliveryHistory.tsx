@@ -96,7 +96,7 @@ export function DigestDeliveryHistory() {
     const colors: Record<string, string> = {
       weekly: 'bg-blue-500/20 text-cyan-400 border-blue-500/30',
       monthly: 'bg-purple-500/20 text-purple-700 border-purple-500/30',
-      quarterly: 'bg-cyan-500/20 text-indigo-700 border-cyan-500/30',
+      quarterly: 'bg-cyan-500/20 text-cyan-700 border-cyan-500/30',
     };
     return (
       <Badge variant="outline" className={`capitalize ${colors[type] || ''}`}>

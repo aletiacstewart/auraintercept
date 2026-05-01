@@ -57,10 +57,10 @@ const PLATFORM_ICONS: Record<string, React.ElementType> = {
 const PLATFORM_COLORS: Record<string, string> = {
   instagram: 'bg-pink-100 text-pink-700 border-pink-200',
   google_business: 'bg-blue-100 text-cyan-400 border-blue-200',
-  facebook: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  facebook: 'bg-indigo-100 text-cyan-700 border-indigo-200',
   sms: 'bg-green-100 text-green-700 border-green-200',
   tiktok: 'bg-rose-100 text-rose-700 border-rose-200',
-  linkedin: 'bg-sky-100 text-sky-700 border-sky-200',
+  linkedin: 'bg-sky-100 text-cyan-700 border-sky-200',
 };
 
 export function SocialContentCalendar({ companyId, onClose }: SocialContentCalendarProps) {

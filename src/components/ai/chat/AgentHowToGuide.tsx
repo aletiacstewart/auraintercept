@@ -71,7 +71,7 @@ const COLOR_CLASSES: Record<string, { bg: string; icon: string; activeBg: string
   violet:  { bg: 'bg-violet-500/10',  icon: 'text-violet-600',  activeBg: 'bg-violet-500/5',  activeBorder: 'border-violet-500/50',  step: 'bg-violet-500/20 text-violet-700' },
   amber:   { bg: 'bg-amber-500/10',   icon: 'text-amber-600',   activeBg: 'bg-amber-500/5',   activeBorder: 'border-amber-500/50',   step: 'bg-amber-500/20 text-amber-700' },
   orange:  { bg: 'bg-orange-500/10',  icon: 'text-orange-600',  activeBg: 'bg-orange-500/5',  activeBorder: 'border-orange-500/50',  step: 'bg-orange-500/20 text-orange-700' },
-  indigo:  { bg: 'bg-cyan-500/10',  icon: 'text-cyan-400',  activeBg: 'bg-cyan-500/5',  activeBorder: 'border-cyan-500/50',  step: 'bg-cyan-500/20 text-indigo-700' },
+  indigo:  { bg: 'bg-cyan-500/10',  icon: 'text-cyan-400',  activeBg: 'bg-cyan-500/5',  activeBorder: 'border-cyan-500/50',  step: 'bg-cyan-500/20 text-cyan-700' },
   teal:    { bg: 'bg-teal-500/10',    icon: 'text-teal-600',    activeBg: 'bg-teal-500/5',    activeBorder: 'border-teal-500/50',    step: 'bg-teal-500/20 text-teal-700' },
   rose:    { bg: 'bg-rose-500/10',    icon: 'text-rose-600',    activeBg: 'bg-rose-500/5',    activeBorder: 'border-rose-500/50',    step: 'bg-rose-500/20 text-rose-700' },
   red:     { bg: 'bg-red-500/10',     icon: 'text-red-600',     activeBg: 'bg-red-500/5',     activeBorder: 'border-red-500/50',     step: 'bg-red-500/20 text-red-700' },

@@ -70,7 +70,7 @@ const PLATFORM_CONFIG: Record<Platform, {
   linkedin: {
     label: 'LinkedIn',
     icon: Linkedin,
-    color: 'text-sky-700',
+    color: 'text-cyan-700',
     bgColor: 'bg-blue-700',
     deepLink: (content) => `https://www.linkedin.com/sharing/share-offsite/?mini=true&summary=${encodeURIComponent(content)}`,
     instructions: 'Your content will be pre-filled. Review and click Post.',
