@@ -149,3 +149,29 @@ Helpers:
 Renderer (`DynamicIntakeFields`) shows `field.helper` under each input,
 replaced by `fieldError` (text-destructive) when validation fails. Pass
 `multiStep={false}` to force a flat layout regardless of step grouping.
+
+## Phase J — Aura NL queries over intake analytics
+
+`auraQueryParser` now recognizes the `intake_analytics` intent. Trigger
+phrases include `intake`, `field distribution`, `field completeness`,
+`fill rate`, `which fields are blank most often`, plus any verbatim
+match against a pack field's label, snake_name, or label-without-spaces.
+
+API:
+- `parseAuraQuery(query, pack?)` — pass the active pack so phrases like
+  "system age" promote to `intake_analytics` and pre-select the field.
+- Returned `ParsedQuery.intake = { source, field, view }`:
+  - `source`: `appointments` (default) or `leads` if "lead" in query.
+  - `view`: `completeness` for blank/empty/fill-rate, `trend` for
+    trend/over-time/monthly, otherwise `distribution`.
+  - `field`: matched pack field name (longest token wins).
+- `buildIntakeAnalyticsHref(target)` → `/dashboard/analytics?tab=…&source=…&field=…&view=…`.
+- `getTabFromIntent('intake_analytics')` → `'intake'`.
+
+UI:
+- `Analytics.tsx` reads `?tab=` to default the active tab.
+- `IntakeAnalytics.tsx` reads `?view=` and auto-scrolls + applies a
+  brief `ring-2 ring-primary/40` highlight to the target card
+  (Distribution / Trend / Completeness).
+- `AskAura.tsx` and `AuraResponseRenderer.tsx` render an "Open in Intake
+  analytics" CTA card when the parsed query has an `intake` target.
