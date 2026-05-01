@@ -182,3 +182,36 @@ Edited:
 - After both: only outstanding industry-pack initiative items will be
   K (JS embed loader), L (pack-driven agent prompts), M (per-vertical
   analytics presets).
+
+---
+
+# Phase J — Aura NL queries over intake analytics (DONE)
+
+- `auraQueryParser`: new `intake_analytics` intent, `extractIntakeTarget`,
+  `buildIntakeAnalyticsHref`. `parseAuraQuery(query, pack?)` is now
+  pack-aware — pack field labels promote queries.
+- `Analytics.tsx` reads `?tab=` for deep-link tab selection.
+- `IntakeAnalytics.tsx` reads `?view=` and auto-scrolls + ring-highlights
+  the matching card (Distribution / Trend / Completeness).
+- `AskAura.tsx` + `AuraResponseRenderer.tsx` show an "Open in Intake
+  analytics" CTA when the query parses to an intake target.
+
+# Phase I — Industry pack authoring UI (DONE)
+
+- `src/lib/industryPackSchema.ts` — zod schemas mirroring Phase H types
+  (`packEditableSchema`, `intakeFieldDefSchema` with regex/min/max/
+  show_if validation).
+- `src/pages/admin/IndustryPacksAdmin.tsx` — single-file admin page with
+  list view + tabbed editor (Meta / Terminology / Job templates /
+  Form schemas / Prompt deltas / Extra operatives). Form schemas tab
+  includes a live `<DynamicIntakeFields>` preview and a `show_if` rule
+  builder. Save validates via zod; on success invalidates
+  `['industry-pack']` so live company sessions hot-swap.
+- Routes mounted at `/dashboard/admin/industry-packs` and
+  `/dashboard/admin/industry-packs/:id`, both gated to `platform_admin`.
+- No migration needed — existing RLS already restricts writes to
+  platform admins.
+- Import / Export JSON buttons for cross-env pack sync.
+
+Remaining proposed phases: K (JS embed loader), L (pack-driven agent
+prompts), M (per-vertical analytics presets).
