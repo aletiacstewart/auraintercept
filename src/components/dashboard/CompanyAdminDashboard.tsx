@@ -395,7 +395,7 @@ export function CompanyAdminDashboard() {
                           <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
                             <action.icon className="w-3.5 h-3.5" />
                           </div>
-                          <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
+                          <span className={cn("font-medium text-[10px] text-center leading-tight", action.colorClass.split(' ').find(c => c.startsWith('text-')))}>{action.label}</span>
                         </Button>
                       ))}
                     </div>
