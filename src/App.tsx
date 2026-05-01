@@ -74,6 +74,7 @@ import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import VideoPromptsPage from "./pages/VideoPromptsPage";
 import CyberSentryMockup from "./pages/CyberSentryMockup";
+import IndustryPacksAdmin from "./pages/admin/IndustryPacksAdmin";
 import CyberSentryPortalMockup from "./pages/CyberSentryPortalMockup";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
