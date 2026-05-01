@@ -784,6 +784,7 @@ interface AgentCardProps {
   } | null;
   onReviewClick: () => void;
   roiHint?: string;
+  industryLockReason?: string;
 }
 
 function AgentCard({ 
@@ -798,6 +799,7 @@ function AgentCard({
   latestEvent,
   onReviewClick,
   roiHint,
+  industryLockReason,
 }: AgentCardProps) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
