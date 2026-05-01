@@ -14,6 +14,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 
 const BUSINESS_WORKFLOWS: WorkflowChain[] = [
   {
@@ -90,6 +91,11 @@ export default function BusinessManagementConsole() {
             />
 
             <BusinessOpsAgentConsole />
+
+            <SpecialistOperativesLauncher
+              show={['insurance_claim', 'permit_code']}
+              subtitle="Admin specialists for claim review and permit verification."
+            />
           </div>
         </FeatureGate>
       </PageContainer>
