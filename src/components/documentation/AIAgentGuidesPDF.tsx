@@ -782,7 +782,7 @@ const TIERS = [
     agentCount: SUBSCRIPTION_TIERS.aura_pro?.operatives ?? 16,
     agents: ['All Boost Agents', 'Campaign Agent', 'Outreach Agent', 'Social Scheduler Agent', 'Social Analytics'],
     voiceIncluded: SUBSCRIPTION_TIERS.aura_pro?.hasVoice ?? true,
-    note: SUBSCRIPTION_TIERS.aura_pro?.description ?? '16 Smart AI Agents with social media, campaigns & white-label branding.',
+    note: SUBSCRIPTION_TIERS.aura_pro?.description ?? '16 Smart AI Agents with social media, campaigns, and industry specialist agents.',
   },
   {
     name: SUBSCRIPTION_TIERS.aura_elite?.name ?? 'Aura Elite',
