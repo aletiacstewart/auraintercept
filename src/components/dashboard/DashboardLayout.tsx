@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getNavLabels } from '@/lib/industryNavLabels';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -265,6 +267,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Get subscription tier for tier-based filtering
   const { isAtLeastTier, inTrial } = useSubscription();
 
+  // Industry-aware sidebar labels: a real-estate company sees "Agent View"
+  // instead of "Technician View", a salon sees "Stylist View", etc.
+  const { pack: industryPack } = useIndustryPack();
+  const navLabels = getNavLabels(industryPack);
+
   // Platform admin always sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
 
@@ -285,7 +292,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     })
     .map(group => ({
       ...group,
-      items: group.items.filter(item => {
+      items: group.items
+        .map(item => {
+          // Apply industry-specific label overrides for the field-ops links.
+          if (item.href === '/dashboard/ai-consoles/field-ops') {
+            return { ...item, label: navLabels.techView };
+          }
+          if (item.href === '/dashboard/dispatch-field-ops') {
+            return { ...item, label: navLabels.dispatchView };
+          }
+          return item;
+        })
+        .filter(item => {
         // Check basic role permission
         if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
         
