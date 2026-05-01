@@ -1442,6 +1442,11 @@ const AGENT_TOOLS: Record<string, any[]> = {
             datetime: { type: 'string', description: 'ISO datetime string for the dispatch visit' },
             duration_minutes: { type: 'number' },
             notes: { type: 'string' },
+            intake_data: {
+              type: 'object',
+              description: 'Optional industry-specific intake fields. See INDUSTRY INTAKE FIELDS in your system prompt for valid keys.',
+              additionalProperties: true,
+            },
           },
           required: ['customer_name', 'service_type', 'datetime'],
         },
