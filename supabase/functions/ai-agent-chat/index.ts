@@ -3448,10 +3448,26 @@ serve(async (req) => {
     //  (b) the company's industry pack opts in via extra_operatives,
     //  (c) the company meets the per-pack minimum tier (defaults to performance), OR is in trial.
     const isSpecialist = INDUSTRY_SPECIALIST_OPERATIVES.includes(normalizedAgentType);
+
+    // Platform admins bypass the industry-pack gate so they can test any specialist
+    // from the Specialist Operatives Console regardless of the company's industry.
+    let isPlatformAdmin = false;
+    if (isSpecialist && userId) {
+      try {
+        const { data: adminCheck } = await supabase.rpc('has_role', {
+          _user_id: userId,
+          _role: 'platform_admin',
+        });
+        isPlatformAdmin = adminCheck === true;
+      } catch (_e) {
+        isPlatformAdmin = false;
+      }
+    }
+
     const specialistAllowed =
       isSpecialist &&
-      packExtraOperatives.includes(normalizedAgentType) &&
-      (inTrial || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
+      (isPlatformAdmin || packExtraOperatives.includes(normalizedAgentType)) &&
+      (inTrial || isPlatformAdmin || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
 
     // Validate agent access using normalized agent type
     if (!allowedAgents.includes(normalizedAgentType) && !specialistAllowed) {
