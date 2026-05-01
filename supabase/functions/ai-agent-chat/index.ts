@@ -3688,6 +3688,19 @@ serve(async (req) => {
       basePrompt = `${basePrompt}\n\nINDUSTRY CONTEXT (${industryPack?.label || companyTierData?.industry_vertical}):\n${industryDelta}`;
     }
 
+    // === PREFERRED TERMINOLOGY (verbatim word substitutions) ===
+    try {
+      const term: Record<string, string> = (industryPack?.terminology && typeof industryPack.terminology === 'object')
+        ? (industryPack.terminology as Record<string, string>)
+        : {};
+      const termPairs = Object.entries(term).filter(([k, v]) => k && v && k !== v);
+      if (termPairs.length > 0) {
+        basePrompt = `${basePrompt}\n\nPREFERRED TERMINOLOGY — use these words verbatim in customer-facing replies:\n${termPairs.map(([k, v]) => `- "${k}" → "${v}"`).join('\n')}`;
+      }
+    } catch (e) {
+      console.warn('[industry-pack] terminology injection failed:', e);
+    }
+
     // === INDUSTRY INTAKE FIELDS ===
     // If the pack defines form_schemas + job_templates, surface the fields the
     // booking flow expects to collect. The AI can then ask for them
