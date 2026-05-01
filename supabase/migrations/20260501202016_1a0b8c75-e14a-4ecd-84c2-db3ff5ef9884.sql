@@ -1,0 +1,2 @@
+ALTER TABLE public.appointments ADD COLUMN IF NOT EXISTS intake_data jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS intake_data jsonb NOT NULL DEFAULT '{}'::jsonb;

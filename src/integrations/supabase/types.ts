@@ -390,6 +390,7 @@ export type Database = {
           email_opt_out: boolean
           employee_id: string | null
           id: string
+          intake_data: Json
           last_synced_at: string | null
           meeting_link: string | null
           notes: string | null
@@ -424,6 +425,7 @@ export type Database = {
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
+          intake_data?: Json
           last_synced_at?: string | null
           meeting_link?: string | null
           notes?: string | null
@@ -458,6 +460,7 @@ export type Database = {
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
+          intake_data?: Json
           last_synced_at?: string | null
           meeting_link?: string | null
           notes?: string | null
@@ -3707,6 +3710,7 @@ export type Database = {
           email: string | null
           follow_up_at: string | null
           id: string
+          intake_data: Json
           intent: string | null
           last_activity_at: string | null
           last_synced_at: string | null
@@ -3741,6 +3745,7 @@ export type Database = {
           email?: string | null
           follow_up_at?: string | null
           id?: string
+          intake_data?: Json
           intent?: string | null
           last_activity_at?: string | null
           last_synced_at?: string | null
@@ -3775,6 +3780,7 @@ export type Database = {
           email?: string | null
           follow_up_at?: string | null
           id?: string
+          intake_data?: Json
           intent?: string | null
           last_activity_at?: string | null
           last_synced_at?: string | null

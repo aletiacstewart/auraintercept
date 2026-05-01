@@ -16,6 +16,8 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
+import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
 
 interface AddAppointmentFormProps {
   onSuccess?: () => void;
@@ -66,6 +68,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const [smsOptIn, setSmsOptIn] = useState(true);
   const [emailOptIn, setEmailOptIn] = useState(true);
   const [callOptIn, setCallOptIn] = useState(true);
+  const [intakeData, setIntakeData] = useState<Record<string, unknown>>({});
 
   // Fetch services
   const { data: services = [] } = useQuery<ServiceOption[]>({
@@ -107,6 +110,14 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const serviceLabel = pack.terminology?.job
     ? `${pack.terminology.job} Type *`
     : 'Service Type *';
+
+  // When the chosen service maps to an industry job template that defines a
+  // form_id, render those questions inline (e.g. MLS# for real estate
+  // showings, system age for HVAC service calls).
+  const intakeSchema = React.useMemo(
+    () => resolveFormSchema(pack, selectedService),
+    [pack, selectedService],
+  );
 
   // Fetch technicians  
   const { data: technicians = [] } = useQuery<TechnicianOption[]>({
@@ -155,6 +166,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           sms_opt_out: !smsOptIn,
           email_opt_out: !emailOptIn,
           call_opt_out: !callOptIn,
+          intake_data: intakeData as never,
         })
         .select()
         .single();
@@ -178,6 +190,11 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
       toast.error('Please fill in all required fields');
       return;
     }
+    const intakeErrors = validateIntake(intakeSchema, intakeData);
+    if (intakeErrors.length > 0) {
+      toast.error(`Please fill in: ${intakeErrors.join(', ')}`);
+      return;
+    }
     createAppointment.mutate();
   };
 
@@ -196,7 +213,13 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           {/* Service Selection */}
           <div className="space-y-2">
             <Label className="text-foreground/70">{serviceLabel}</Label>
-            <Select value={selectedService} onValueChange={setSelectedService}>
+            <Select
+              value={selectedService}
+              onValueChange={(v) => {
+                setSelectedService(v);
+                setIntakeData({}); // reset intake when switching services
+              }}
+            >
               <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
@@ -210,6 +233,18 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Industry-specific intake questions (no-op when not configured) */}
+          <DynamicIntakeFields
+            schema={intakeSchema}
+            value={intakeData}
+            onChange={setIntakeData}
+            title={
+              pack.terminology?.job
+                ? `${pack.terminology.job} Details`
+                : 'Job Details'
+            }
+          />
 
           {/* Date and Time Row */}
           <div className="grid grid-cols-2 gap-3">

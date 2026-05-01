@@ -1,71 +1,84 @@
-# Industry-Aware Dashboards & Consoles
+# Phase C — Dynamic Industry Intake Forms
 
-## The Problem
+Goal: when a user creates an appointment (or lead), the form auto-renders the industry-specific questions defined in `industry_template_packs.form_schemas` for the selected job template — so Real Estate captures MLS#, Salons capture allergies, HVAC captures system age, etc. — instead of every vertical seeing the same generic form.
 
-The Real Estate Elite demo loads the correct `industry_template_pack` (cluster `booking`, terminology `job→Showing`, `customer→Buyer/Seller`, widgets `showings_calendar / lead_scoring / listing_tracker / review_pulse / missed_calls`), but three surfaces ignore the pack and show hardcoded HVAC/trades copy:
+## Scope
 
-1. **Aura Command Center hero** (`src/components/dashboard/AuraCommandCenter.tsx` + `src/locales/en/aura.json`) — hardcoded "Book today's emergency job", "spring tune-ups", "Check today's dispatch schedule", "overdue invoices".
-2. **Business Management Console workflows** (`src/pages/ai-consoles/BusinessManagementConsole.tsx`) — hardcoded "Lead → Invoice", "Quote → Job", "Invoice Follow-Up" with technician language.
-3. **Sidebar labels** (`src/components/dashboard/DashboardLayout.tsx`) — fixed "Technician View", "Dispatch View" regardless of cluster. For booking-cluster industries (real estate, salons, fitness, professional services) these labels are misleading.
+In scope:
+1. New JSONB storage column on `appointments` (and `leads`) for intake answers.
+2. A reusable `<DynamicIntakeFields>` renderer driven by a `form_schemas` entry.
+3. Wire it into `AddAppointmentForm` and `LeadForm` so the right fields appear when an industry job template is selected.
+4. Display captured intake data on the appointment/lead detail views (read-only summary).
+5. Pass intake data into the AI agent context so Aura can reference it during follow-up.
 
-The `IndustryWidgetGrid` component already pulls from the pack correctly — we just need to extend the same pattern to the surfaces above.
+Out of scope (later phase): customer-facing public booking widget rendering (will reuse the same renderer once verified internally), KB document seeding, conditional/branching fields.
 
-## What Will Change
+## Schema shape recap
 
-### 1. New industry quick-actions registry
-Create `src/lib/industryQuickActions.ts` exporting a map keyed by `cluster` (and overrideable per `industry_id`) returning 6 quick actions, each with: `key`, `icon`, `label`, `description`, `route`, `auraCommand`.
+Each pack stores `form_schemas` as:
 
-Examples:
-- **trades** (HVAC/plumbing/electrical/roofing): keep current emergency/dispatch/tune-ups set.
-- **booking** (real_estate, salon, fitness, professional): "Book a showing today", "Show new leads to follow up", "Generate listing social posts", "Today's appointment calendar", "Send a quote/proposal", "This week's revenue".
-- **outdoor** (landscape, pool_spa, pest_control): "Today's recurring routes", "Weather-impacted stops", "Generate seasonal campaign", "Open route map", "Quote a new property", "Week revenue".
-- **repair** (auto_care, appliance_repair, mobile_mechanic): "Today's repair queue", "Parts orders pending", "Generate repair tip post", "Open dispatch", "Quote a new ticket", "Week revenue".
+```text
+{
+  "<form_id>": {
+    "fields": [
+      { "name": "mls_number", "label": "MLS #", "type": "text", "required": false },
+      { "name": "buyer_pre_approved", "label": "Pre-approved?", "type": "select",
+        "options": ["Yes","No","Cash"] }
+    ]
+  }
+}
+```
 
-Per-industry overrides for real_estate, auto_care, salon, etc. so wording matches terminology (Showing vs Job, Buyer vs Customer).
+Job templates reference a `form_id`, e.g. `{ id: "showing", label: "Buyer Showing", form_id: "showing_intake", duration_minutes: 45 }`. Supported field types: `text`, `number`, `select`, `textarea`, `date`, `checkbox`.
 
-### 2. Wire AuraCommandCenter to the pack
-- Call `useIndustryPack()` in `AuraCommandCenter.tsx`.
-- Resolve quick actions via `getIndustryQuickActions(pack)` → render labels/descriptions directly (no i18n key lookup), keep i18n strings only for `command.heading`, `command.placeholder`, `suggestions.sectionTitle`, `suggestions.sectionHint`.
-- Remove the now-unused `bookEmergency*`, `generatePosts*`, etc. keys from `aura.json` (en + es).
+## Database changes (migration)
 
-### 3. Industry-aware Business Management workflows
-- In `BusinessManagementConsole.tsx`, replace the hardcoded `BUSINESS_WORKFLOWS` constant with a `useMemo` that calls a new helper `getBusinessWorkflows(pack)`.
-- Define cluster-specific workflow chains in `src/lib/industryWorkflows.ts`:
-  - **booking**: "Lead → Showing → Offer", "Listing → Marketing → Open House", "Invoice/Commission Follow-Up".
-  - **trades**: current set (Lead→Invoice, Quote→Job, Invoice Follow-Up).
-  - **outdoor**: "Route → Service → Invoice", "Quote → Recurring Plan", "Seasonal Campaign".
-  - **repair**: "Intake → Diagnose → Quote", "Parts Order → Repair → Invoice", "Customer Update Loop".
-- Use pack `terminology` for substitutions (`{{job}}`, `{{customer}}`, `{{appointment}}`).
+- `appointments`: add `intake_data jsonb not null default '{}'::jsonb`.
+- `leads`: add `intake_data jsonb not null default '{}'::jsonb`.
+- No RLS changes needed — existing row-level policies cover the new column.
 
-### 4. Cluster-aware sidebar labels
-- In `DashboardLayout.tsx`, call `useIndustryPack()` and remap labels based on `pack.cluster` + `pack.terminology`:
-  - **trades / outdoor / repair** → "Technician View" / "Dispatch View" (current).
-  - **booking** → "Agent View" / "Schedule View" (real estate: "Agent View"/"Listings Map"; salon: "Stylist View"/"Chair Schedule").
-- Centralize the mapping in `src/lib/industryNavLabels.ts` so we can tune per-industry without editing the layout.
+## New files
 
-### 5. Verification
-- Sign in as `realestate-elite@aidemo.test` (Real Estate Elite demo) — hero should now show "Book a showing today / new lead follow-ups / generate listing posts / today's calendar / send proposal / week revenue", Business Mgmt Console should show "Lead → Showing → Offer", sidebar should read "Agent View".
-- Sign in as `hvac-elite@aidemo.test` — surfaces unchanged from today.
-- Smoke-test plumbing-pro, landscape-boost, auto-care-elite, salon-pro to confirm cluster fallbacks render and routes still resolve.
+- `src/components/forms/DynamicIntakeFields.tsx` — renders fields from a schema entry, controlled component:
+  - props: `schema: { fields: FieldDef[] } | null`, `value: Record<string, unknown>`, `onChange(next)`, `disabled?`.
+  - returns `null` if schema is empty, so generic verticals see no extra UI.
+  - uses existing shadcn `Input`, `Textarea`, `Select`, `Checkbox`, `Calendar`/`Popover` primitives.
+  - validation: enforces `required` on submit via a `validateIntake(schema, value)` helper exported from the same file.
+- `src/lib/industryFormSchemas.ts` — small helpers:
+  - `resolveFormSchema(pack, serviceSelection)` — given a selected service value (which may be `pack:<jobTemplateId>` or a real DB service), returns the matching `form_schemas[form_id]` or `null`.
+  - `getJobTemplate(pack, id)` lookup.
+  - Shared `IntakeFieldDef` / `IntakeFormSchema` TypeScript types.
 
-## Technical Details
+## Edited files
 
-**Files to create**
-- `src/lib/industryQuickActions.ts` — cluster + industry override map, `getIndustryQuickActions(pack)` resolver.
-- `src/lib/industryWorkflows.ts` — cluster + industry override map, `getBusinessWorkflows(pack)` resolver.
-- `src/lib/industryNavLabels.ts` — `getNavLabels(pack)` returning `{ techView, dispatchView }`.
+- `src/components/appointments/AddAppointmentForm.tsx`
+  - Add `intakeData` state (`Record<string, unknown>`).
+  - Use `resolveFormSchema(pack, selectedService)` to derive the active schema; render `<DynamicIntakeFields>` below the Service Type field.
+  - On submit, run `validateIntake`; include `intake_data: intakeData` in the insert payload.
+  - When the user switches services, reset `intakeData` to `{}`.
+- `src/components/marketing/forms/LeadForm.tsx`
+  - Same pattern. Lead intake forms are picked from a configurable default key (`pack.form_schemas.lead_intake` if present, else first defined schema). Falls back to no extra fields for generic.
+- `src/components/appointments/AppointmentsManager.tsx` (detail view section)
+  - Render a small "Intake details" summary list (label: value) when `appointment.intake_data` has keys.
+- `src/pages/Leads.tsx` lead detail panel — same read-only summary.
+- `src/hooks/useIndustryPack.ts` — tighten `form_schemas` typing to `Record<string, IntakeFormSchema>` (exported from `industryFormSchemas.ts`).
 
-**Files to edit**
-- `src/components/dashboard/AuraCommandCenter.tsx` — consume `useIndustryPack`, render from resolver.
-- `src/pages/ai-consoles/BusinessManagementConsole.tsx` — consume `useIndustryPack`, build workflows via `useMemo`.
-- `src/components/dashboard/DashboardLayout.tsx` — consume `useIndustryPack`, swap "Technician View" / "Dispatch View" labels.
-- `src/locales/en/aura.json`, `src/locales/es/aura.json` — drop the dead `suggestions.book*/overdue*/generate*/check*/createQuote/weekRevenue` keys.
+## AI context wiring
 
-**Out of scope (kept as-is)**
-- `IndustryWidgetGrid.tsx` already industry-aware — no change.
-- `ai-agent-chat` industry deltas already in place via `industry-pack-prompt-delta-aliases` memory — no change.
-- Console headers, page titles, terminology in other CRUD pages — can follow as a phase 2 once this hero/workflow/sidebar pass is approved.
+- `supabase/functions/aura-unified/index.ts` — when fetching an appointment/lead for context, include `intake_data` in the serialized snapshot the model sees, prefixed with `Intake details:` so Aura can answer "is the buyer pre-approved?" without the user re-typing it.
+- No prompt-template changes elsewhere; existing per-industry `agent_prompt_deltas` already nudge the agent to use these fields.
 
-## Result
+## QA
 
-Real Estate Elite (and every other booking-cluster company) gets a dashboard that talks about showings, listings, buyers, and proposals instead of emergency HVAC jobs and overdue invoices, while trades-cluster companies see no regression. The pattern is data-driven via `industry_template_packs`, so adding more industries later only requires DB rows + optional override entries — no component edits.
+1. Switch demo company to Real Estate → New Appointment → pick "Buyer Showing" → confirm MLS#, Pre-approved, Timeline, Working-with-agent fields render. Save. Reopen — intake summary visible.
+2. Switch to HVAC → "No Cooling – Emergency" should show system age / unit type / symptom fields.
+3. Switch to a generic / unset industry → no extra fields render, form behaves exactly as today.
+4. Required-field validation blocks submit with a toast.
+5. Existing appointments (no `intake_data`) load fine (default `{}`).
+
+## Memory updates
+
+- Update `mem://features/industry/pack-data-fields.md` with the `intake_data` storage convention and the new `DynamicIntakeFields` component contract.
+- Add a Core line: "Industry intake fields render from `form_schemas[job.form_id]` and persist to `appointments.intake_data` / `leads.intake_data` JSONB."
+
+After approval I'll run the migration, add the renderer, wire both forms, surface intake on detail views, and extend the Aura context payload.
