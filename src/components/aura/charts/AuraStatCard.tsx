@@ -44,7 +44,7 @@ export function AuraStatCard({
       <CardContent className={sizeClasses[size]}>
         <div className="flex items-start justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-white">{title}</p>
+            <p className="text-sm font-medium text-primary">{title}</p>
             <p className={cn('font-bold text-card-foreground', valueSizes[size])}>
               {typeof value === 'number' ? value.toLocaleString() : value}
             </p>
