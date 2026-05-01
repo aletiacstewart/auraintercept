@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useVoice } from '@/contexts/VoiceContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryQuickActions } from '@/lib/industryQuickActions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,29 +14,8 @@ import {
   Mic,
   MicOff,
   Send,
-  CalendarPlus,
-  FileText,
-  PenTool,
-  Truck,
-  UserPlus,
-  DollarSign,
   Sparkles,
 } from 'lucide-react';
-
-/**
- * Quick-action shortcuts shown under the Aura command input.
- * Each card sends the prompt to Aura AND navigates to the matching screen
- * so the user always lands somewhere actionable instead of just getting
- * a chat reply.
- */
-const SUGGESTED_COMMANDS = [
-  { key: 'bookEmergency',    icon: CalendarPlus, route: '/dashboard/appointments?new=1&urgent=1&when=today' },
-  { key: 'overdueInvoices',  icon: FileText,     route: '/dashboard/invoices?status=overdue' },
-  { key: 'generatePosts',    icon: PenTool,      route: '/dashboard/content-engine?topic=spring-tune-ups' },
-  { key: 'checkDispatch',    icon: Truck,        route: '/dashboard/ai-consoles/field-ops?view=today' },
-  { key: 'createQuote',      icon: UserPlus,     route: '/dashboard/quotes?new=1' },
-  { key: 'weekRevenue',      icon: DollarSign,   route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
-] as const;
 
 export function AuraCommandCenter() {
   const { companyId, user } = useAuth();
@@ -44,6 +25,10 @@ export function AuraCommandCenter() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation('aura');
+  const { pack } = useIndustryPack();
+  // Quick actions resolve from the company's industry pack so a real-estate
+  // company sees showings/listings instead of HVAC emergency calls.
+  const quickActions = getIndustryQuickActions(pack);
 
   // Auto-populate first command after Fast Start onboarding
   useEffect(() => {
@@ -127,18 +112,18 @@ export function AuraCommandCenter() {
           </p>
         </div>
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {SUGGESTED_COMMANDS.map((cmd) => (
+          {quickActions.map((cmd) => (
             <Card
               key={cmd.key}
               role="button"
               tabIndex={0}
-              aria-label={t(`suggestions.${cmd.key}`)}
+              aria-label={cmd.label}
               className="bg-card border-border hover:border-primary cursor-pointer transition-colors group"
-              onClick={() => handleCardClick(t(`suggestions.${cmd.key}`), cmd.route)}
+              onClick={() => handleCardClick(cmd.command ?? cmd.label, cmd.route)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleCardClick(t(`suggestions.${cmd.key}`), cmd.route);
+                  handleCardClick(cmd.command ?? cmd.label, cmd.route);
                 }
               }}
             >
@@ -148,10 +133,10 @@ export function AuraCommandCenter() {
                 </div>
                 <div className="min-w-0 space-y-1">
                   <p className="text-sm font-medium text-card-foreground leading-tight">
-                    {t(`suggestions.${cmd.key}`)}
+                    {cmd.label}
                   </p>
                   <p className="text-xs text-white leading-snug">
-                    {t(`suggestions.${cmd.key}Desc`)}
+                    {cmd.description}
                   </p>
                 </div>
               </CardContent>
