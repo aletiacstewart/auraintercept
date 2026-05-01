@@ -6999,6 +6999,16 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_public_industry_pack: {
+        Args: { p_company_id: string }
+        Returns: {
+          form_schemas: Json
+          industry_id: string
+          job_templates: Json
+          label: string
+          terminology: Json
+        }[]
+      }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       get_website_active_holiday: {
         Args: { p_check_date?: string; p_website_id: string }
