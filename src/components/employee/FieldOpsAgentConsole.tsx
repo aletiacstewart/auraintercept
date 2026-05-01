@@ -1138,7 +1138,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               <div className="flex items-center gap-2 mb-2">
                 <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForReschedule.status))} />
                 <span className="font-medium text-sm text-white">{selectedJobForReschedule.appointments?.customer_name}</span>
-                <Badge className="text-[9px] px-1.5 py-0" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: 'none' }}>
+                <Badge className="text-[9px] px-1.5 py-0" style={{ background: 'rgba(255,255,255,0.08)', color: '#FFFFFF', border: 'none' }}>
                   {selectedJobForReschedule.status.replace('_', ' ')}
                 </Badge>
               </div>
