@@ -1099,8 +1099,8 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                       <guide.icon className={cn('h-3.5 w-3.5', c.icon)} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-medium text-card-foreground truncate">{guide.label}</h4>
-                      <p className="text-[10px] text-card-foreground/60 truncate">{guide.description}</p>
+                      <h4 className={cn('text-xs font-medium truncate', c.icon)}>{guide.label}</h4>
+                      <p className="text-[10px] text-white truncate">{guide.description}</p>
                     </div>
                     {expandedGuide === guide.id ? (
                       <ChevronUp className={cn('h-3.5 w-3.5 shrink-0', c.icon)} />
@@ -1118,8 +1118,8 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                               {step.step}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[11px] font-medium text-card-foreground">{step.title}</p>
-                              <p className="text-[10px] text-card-foreground/60">{step.description}</p>
+                              <p className={cn('text-[11px] font-medium', c.icon)}>{step.title}</p>
+                              <p className="text-[10px] text-white">{step.description}</p>
                             </div>
                           </div>
                         ))}
@@ -1127,10 +1127,10 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                       
                       {guide.tips && guide.tips.length > 0 && (
                         <div className="pt-2 border-t border-border/40">
-                          <p className="text-[10px] font-medium text-card-foreground/60 mb-1">Tips:</p>
+                          <p className="text-[10px] font-medium text-white mb-1">Tips:</p>
                           <ul className="space-y-0.5">
                             {guide.tips.map((tip, idx) => (
-                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-card-foreground/60">
+                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-white">
                                 <CheckCircle2 className="h-3 w-3 text-green-500 shrink-0 mt-0.5" />
                                 <span>{tip}</span>
                               </li>

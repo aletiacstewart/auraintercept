@@ -593,7 +593,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main ref={mainRef} className="flex-1 overflow-auto" data-tour-id="main-content">
+      <main ref={mainRef} className="dashboard-main flex-1 overflow-auto" data-tour-id="main-content">
         <DemoExpiryBanner />
         {/* Mobile install banner (only on small screens, dismissable) */}
         <MobileInstallBanner />

@@ -21,7 +21,7 @@ interface WorkflowChainButtonsProps {
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <div className="flex items-center gap-2 text-sm font-medium text-primary">
         <Zap className="h-4 w-4 text-primary" />
         End-to-End Workflows
       </div>
@@ -35,9 +35,9 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
             <CardContent className="p-3 space-y-2">
               <div className="flex items-center gap-2">
                 <chain.icon className="h-4 w-4 text-primary shrink-0" />
-                <span className="text-sm font-medium text-foreground">{chain.label}</span>
+                <span className="text-sm font-medium text-primary">{chain.label}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{chain.description}</p>
+              <p className="text-xs text-white leading-relaxed">{chain.description}</p>
               <div className="flex items-center gap-1 flex-wrap">
                 {chain.steps.map((step, i) => (
                   <React.Fragment key={i}>

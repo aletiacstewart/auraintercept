@@ -176,7 +176,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto pb-16">
+        <main className="dashboard-main flex-1 overflow-auto pb-16">
           {children}
         </main>
 
@@ -304,7 +304,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="dashboard-main flex-1 overflow-auto">
         <div className="container max-w-7xl py-8 px-6">
           {children}
         </div>
