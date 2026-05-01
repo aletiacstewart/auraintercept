@@ -7109,6 +7109,30 @@ export type Database = {
         Args: { p_metric: string; p_website_id: string }
         Returns: undefined
       }
+      intake_field_completeness: {
+        Args: { p_source: string }
+        Returns: {
+          field: string
+          filled: number
+          pct: number
+          total: number
+        }[]
+      }
+      intake_field_distribution: {
+        Args: { p_field: string; p_since?: string; p_source: string }
+        Returns: {
+          bucket: string
+          count: number
+        }[]
+      }
+      intake_field_timeseries: {
+        Args: { p_field: string; p_months?: number; p_source: string }
+        Returns: {
+          count: number
+          distinct_values: number
+          period: string
+        }[]
+      }
       is_assigned_to_job: {
         Args: { _appointment_id: string; _user_id: string }
         Returns: boolean

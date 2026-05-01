@@ -5,12 +5,13 @@ import { RevenueAnalytics } from '@/components/analytics/RevenueAnalytics';
 import { PerformanceAnalytics } from '@/components/analytics/PerformanceAnalytics';
 import { ForecastAnalytics } from '@/components/analytics/ForecastAnalytics';
 import { InsightsAnalytics } from '@/components/analytics/InsightsAnalytics';
+import { IntakeAnalytics } from '@/components/analytics/IntakeAnalytics';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, DollarSign, Bot, TrendingUp, Sparkles } from 'lucide-react';
+import { BarChart3, DollarSign, Bot, TrendingUp, Sparkles, ClipboardList } from 'lucide-react';
 
 export default function Analytics() {
   const { userRole, companyId } = useAuth();
@@ -70,6 +71,10 @@ export default function Analytics() {
                   <Sparkles className="h-3.5 w-3.5" />
                   Insights
                 </TabsTrigger>
+                <TabsTrigger value="intake" className="flex items-center gap-1.5">
+                  <ClipboardList className="h-3.5 w-3.5" />
+                  Intake
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="overview">
@@ -90,6 +95,10 @@ export default function Analytics() {
               
               <TabsContent value="insights">
                 <InsightsAnalytics companyId={effectiveCompanyId} />
+              </TabsContent>
+
+              <TabsContent value="intake">
+                <IntakeAnalytics companyId={effectiveCompanyId} />
               </TabsContent>
             </Tabs>
           ) : (

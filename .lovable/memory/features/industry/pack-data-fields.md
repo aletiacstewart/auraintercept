@@ -73,3 +73,26 @@ booking form unchanged.
 `leads.intake_data` column added in Phase C is not yet populated from the UI.
 Wire intake into whichever path actually creates `leads` rows when that flow
 is added.
+
+## Reporting (Phase F)
+
+`intake_data` powers a dedicated **Intake** tab in `Analytics.tsx` via
+`src/components/analytics/IntakeAnalytics.tsx`. The picker is driven by
+`src/lib/intakeAnalytics.ts#getReportableIntakeFields(pack)` which dedupes
+across `form_schemas[*].fields[*]` (skipping `textarea`).
+
+Three SECURITY DEFINER RPCs back the views — all scoped to
+`get_user_company_id(auth.uid())`, full scope for `platform_admin`:
+
+- `intake_field_distribution(p_source text, p_field text, p_since timestamptz)`
+  → `(bucket text, count bigint)`. Source ∈ `appointments | leads`.
+- `intake_field_timeseries(p_source text, p_field text, p_months int default 12)`
+  → `(period date, count bigint, distinct_values bigint)`.
+- `intake_field_completeness(p_source text)`
+  → `(field text, total bigint, filled bigint, pct numeric)` ordered by
+  lowest fill rate first (surfaces questions Aura is dropping).
+
+Field-type → chart mapping lives in `chartKindForField`:
+`select|checkbox → donut`, `number → histogram`, `date → timeseries`,
+`text → table`. The Intake tab also accepts `?source=` and `?field=` query
+params so deep links from Aura / external pages preselect the chart.
