@@ -534,7 +534,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               7 Powerful Control Centers (Consoles)
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>
               Purpose-built consoles give your team full control over AI operative operations.
             </p>
           </div>
@@ -589,7 +589,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Three Promises. Zero Headaches.
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.55)", fontSize: 15, maxWidth: 620, margin: "0 auto" }}>
+            <p style={{ color: "#FFFFFF", fontSize: 15, maxWidth: 620, margin: "0 auto" }}>
               Skip the tech jargon. Here's what Aura actually delivers for your business — every day, on autopilot.
             </p>
           </div>
@@ -692,7 +692,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               24 Smart AI Agents
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14 }}>The agent network that powers every promise above.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14 }}>The agent network that powers every promise above.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -740,7 +740,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Connect Everywhere Your Customers Are
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
+            <p style={{ color: "#FFFFFF", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
               Aura Intercept AI synchronizes your voice, chat, email, and SMS into a 24/7 proactive workforce that captures every lead and booking while your team is in the field.
             </p>
           </div>
@@ -774,7 +774,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               The All-in-One AI Center for Service Pros
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {platformFeatures.map((feature) => (
@@ -808,7 +808,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               AI Automation for Field Service Industries
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
             {industryCategories.flatMap(cat => cat.industries).map(industry => (
@@ -845,7 +845,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Get Started in 4 Simple Steps
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.5)", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
+            <p style={{ color: "#FFFFFF", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
           </div>
           <div className="grid md:grid-cols-4 gap-6">
             {howItWorks.map((item, index) => (
@@ -1034,8 +1034,8 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "rgba(200,220,240,0.6)" }}>90-day free trial • No credit card required</p>
-            <p className="text-xs mb-2" style={{ color: "rgba(200,220,240,0.5)" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
+            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>90-day free trial • No credit card required</p>
+            <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$199 Core • $399 Boost • $599 Pro • $799 Elite</span></p>
           </div>
