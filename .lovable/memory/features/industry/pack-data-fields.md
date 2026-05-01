@@ -119,3 +119,33 @@ copyable iframe snippet at `https://auraintercept.ai/book/{slug}?embed=1`.
 
 `get_website_public_data(text)` was extended to return
 `show_booking_widget`, `booking_widget_mode`, and `company_slug`.
+## Phase H — Conditional / branching intake fields
+
+`IntakeFieldDef` now supports optional, backward-compatible extensions:
+
+- `show_if?: ShowIfRule[]` — array of `{ field, op, value|values }` rules
+  (AND-combined). Operators: `equals`, `not_equals`, `in`, `not_in`,
+  `truthy`, `falsy`, `gt`, `gte`, `lt`, `lte`. Hidden fields are skipped by
+  validation and not submitted blank.
+- `pattern?: string` + `patternMessage?: string` — regex validation for
+  text fields. Compiled via `new RegExp`; bad patterns silently no-op.
+- `min` / `max` — numeric bounds for `number` fields, length bounds for
+  `text` / `textarea`.
+- `step?: string` — opt-in multi-step grouping. When ≥2 distinct step ids
+  exist, `DynamicIntakeFields` renders a wizard with Back/Next; the Next
+  button is disabled while the current step has validation errors.
+- `IntakeFormSchema.steps?: Array<{id,label,description?}>` — optional
+  ordered step labels. Inferred from field order when omitted.
+
+Helpers:
+
+- `isFieldVisible(field, value)` — evaluate `show_if`.
+- `validateIntakeFieldErrors(schema, value)` — per-field error map for
+  inline UI (skips hidden fields).
+- `validateIntake(schema, value)` — flat error list (now includes
+  pattern + min/max errors, not just required-blanks).
+- `getSchemaSteps(schema)` — resolve declared/inferred steps.
+
+Renderer (`DynamicIntakeFields`) shows `field.helper` under each input,
+replaced by `fieldError` (text-destructive) when validation fails. Pass
+`multiStep={false}` to force a flat layout regardless of step grouping.

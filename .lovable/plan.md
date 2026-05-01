@@ -104,3 +104,23 @@ After approval I'll add the migration, RPCs, the new tab, the Aura intent, and u
   `https://auraintercept.ai/book/{slug}?embed=1`).
 - Memory: `mem://features/industry/pack-data-fields.md` updated with the
   Phase G section.
+---
+
+# Phase H — Conditional / branching intake fields (DONE)
+
+## What shipped
+
+- `src/lib/industryFormSchemas.ts`: extended `IntakeFieldDef` with optional
+  `show_if` (rule array), `pattern` + `patternMessage`, `min` / `max`,
+  and `step`. Added `IntakeFormSchema.steps`. New helpers: `isFieldVisible`,
+  `getSchemaSteps`, `validateIntakeFieldErrors`. `validateIntake` now also
+  enforces pattern + min/max and skips hidden fields.
+- `src/components/forms/DynamicIntakeFields.tsx`: skips hidden fields,
+  shows inline per-field errors, surfaces `helper` text, applies HTML
+  `pattern`/`min`/`max`/`minLength`/`maxLength` attrs, and renders a
+  Back/Next wizard whenever the schema has ≥2 steps. New props:
+  `multiStep` (default true), `showInlineErrors` (default true).
+- All call sites (`AddAppointmentForm`, `BookingForm`, `LeadForm`) work
+  unchanged — features only activate when packs declare them.
+- Memory: `.lovable/memory/features/industry/pack-data-fields.md` updated
+  with a Phase H section documenting the schema additions.
