@@ -999,9 +999,9 @@ const PlatformDocumentPDF = () => (
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>White-Label Ready</Text>
+          <Text style={styles.featureTitle}>Industry-Tuned</Text>
           <Text style={styles.featureDesc}>
-            Full branding customization. Your logo, colors, and domain. Customers see your brand.
+            Pick your industry at signup and Aura auto-tunes prompts, widgets, and specialist agents for your trade.
           </Text>
         </View>
         
@@ -1171,7 +1171,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingPrice}>$997/month</Text>
         <Text style={styles.pricingFeature}>- 16 Smart AI Agents + 5 Consoles</Text>
         <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Social</Text>
-        <Text style={styles.pricingFeature}>- White-Label Branding included</Text>
+        <Text style={styles.pricingFeature}>- Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim)</Text>
         <Text style={styles.pricingFeature}>- 50 Employee Accounts</Text>
         <Text style={styles.pricingFeature}>- $599 implementation fee</Text>
       </View>
@@ -1181,7 +1181,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingPrice}>$1,997/month</Text>
         <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + 7 Consoles + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
-        <Text style={styles.pricingFeature}>- Full White-Label + AI Hub</Text>
+        <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
         <Text style={styles.pricingFeature}>- $999 implementation fee</Text>
       </View>
@@ -1222,7 +1222,7 @@ const PlatformDocumentPDF = () => (
           - 24 Smart AI Agents organized as 10 Operatives that work together{"\n"}
           - True voice AI (not just IVR or voicemail){"\n"}
           - Full social media content creation (6 platforms){"\n"}
-          - White-label ready from Day 1 (Aura Pro and Elite){"\n"}
+          - 18 industry packs that auto-tune the platform on signup (Aura Pro and Elite get specialist agents){"\n"}
           - Built specifically for service businesses{"\n"}
           - SignalWire, ElevenLabs, Resend, and Tavily bundled — no extra usage fees
         </Text>
