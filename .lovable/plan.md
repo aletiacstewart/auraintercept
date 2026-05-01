@@ -1,82 +1,70 @@
-# Console & Dashboard Text Color Standardization
+I’ll do a deeper, component-level cleanup instead of another narrow pass, because the screenshots show the remaining grey text is coming from shared console primitives and nested cards/forms rather than only the top-level pages.
 
-Apply the same rule we just applied to the landing page across every console and dashboard surface that renders on the dark theme:
+## Scope
+- All AI consoles:
+  - Customer Portal Console
+  - Field Operations Console
+  - Business Management Console
+  - Outreach & Sales Console
+  - Social Media Console
+  - Analytics Console
+- Main dashboards and authenticated dashboard pages under `/dashboard`
+- Technician dashboard pages under `/technician`
+- Shared console/dashboard components used inside those screens
+- Exclusion: sidebar menu text stays as-is/white per your instruction
 
-1. **All grey text → pure white (`#FFFFFF` / `text-white`)** — body copy, descriptions, secondary labels, helper text, "muted" text on cards.
-2. **Grid-box titles → match their color-coded icon** — wherever a card/tile has a colored icon (a `feature-*`, `channel-*`, neon, or tier color), the card's title takes the same color. Numeric values stay white. Descriptions stay white.
-3. **Sidebar text stays white as-is** — no changes to `AppSidebar`, `SidebarMenuButton`, `Sidebar*` primitives or their nav items.
+## Changes to make
 
-## Scope (files to update)
+1. Fix shared console primitives first
+   - Update `PageHeader` so console/page subtitles are solid white, while titles use the feature/icon accent color where appropriate.
+   - Update `WorkflowChainButtons` so:
+     - workflow section label is white or accent-safe on dark backgrounds
+     - grid box titles match their icon color
+     - descriptions are pure white
+     - arrow separators do not appear grey on dark cards
+   - Update `CyberConsoleLayout` so left-panel agent descriptions, metric labels, “Session Metrics”, and small status labels are pure white unless they are intentionally colored status values.
+   - Update `FloatingInput` and Aura input components so placeholder/input helper text is white on dark input bars.
+   - Update `AgentHowToGuide` so collapsed guide text, grid card descriptions, step descriptions, tips, and chevrons are white; guide/card titles match their icon colors.
+   - Update `CompanySelector` so “Choose a company…”, “Click to start chatting”, empty/loading text, and chevrons are white on the dark card background.
 
-### Dashboards
-- `src/components/dashboard/CompanyAdminDashboard.tsx` — KPI grid (12 stat cards), Quick Actions grid, Snapshot rows, Recent Activity card
-- `src/components/dashboard/PlatformAdminDashboard.tsx` — admin metrics + grids
-- `src/components/dashboard/EmployeeDashboard.tsx` — employee KPI tiles
-- `src/components/dashboard/AuraCommandCenter.tsx` — hero metrics, quick chips
-- `src/components/dashboard/AuraTodayStrip.tsx` — today's items
-- `src/components/dashboard/LaunchProgressCard.tsx`, `TrialBanner.tsx`, `DashboardSetupNav.tsx`, `DashboardOnboardingHub.tsx`, `MobileInstallBanner.tsx`, `DashboardViewToggle.tsx`
-- `src/pages/Dashboard.tsx`, `src/pages/technician/TechnicianDashboard.tsx`, `TechnicianCalendar.tsx`, `TechnicianHistory.tsx`, `TechnicianJobs.tsx`
+2. Sweep all console-specific components
+   - Replace remaining grey/low-opacity text classes inside AI console implementations and nested forms/cards, including patterns such as:
+     - `text-muted-foreground`
+     - `text-white/30`, `text-white/40`, `text-white/50`, `text-white/60`, `text-white/70`
+     - `text-card-foreground/60`, `text-foreground/70`, similar opacity text
+     - `text-slate-*`, `text-gray-*`, `text-zinc-*` used for body/description text on dark backgrounds
+     - muted inline styles like `rgba(255,255,255,0.6)` used as text color
+   - Preserve intentional non-grey semantic colors such as cyan, green, amber/yellow, red, purple, success/warning/error badges, and disabled/placeholder states only where they are not on the dark grid/card text the user is calling out.
 
-### AI Consoles (`src/pages/ai-consoles/`)
-All 12 console pages:
-- `FieldOpsConsole.tsx`, `BusinessManagementConsole.tsx`, `MarketingSalesConsole.tsx`, `AnalyticsConsole.tsx`, `SocialMediaConsole.tsx`, `CustomerPortalConsole.tsx`
-- Insight pages: `BusinessInsightsPage.tsx`, `CustomerInsightsPage.tsx`, `KpiDashboardPage.tsx`, `DemandForecastPage.tsx`, `NewLeadPage.tsx`, `PerformanceReportPage.tsx`, `RevenueAnalysisPage.tsx`
+3. Sweep dashboards and technician pages
+   - Update remaining dashboard and technician page headings/subtitles/descriptions from muted grey to white.
+   - Keep sidebar navigation unchanged.
+   - Keep color-coded icons and status indicators colored.
 
-### Console Sub-Components (rendered inside the consoles)
-- `src/components/ai/AIAgentConsole.tsx`, `AIAgentSettings.tsx`, `AppointmentTrackingView.tsx`
-- `src/components/employee/FieldOpsAgentConsole.tsx`, `TechnicianJobQueue.tsx`, `CompletedJobsHistory.tsx`, `AppointmentCalendar.tsx`
-- `src/components/businessops/CustomersManager.tsx` and other `businessops/*` panels rendered inside Business Management Console
-- `src/components/analytics/*` charts/tiles used inside Analytics Console
-- `src/components/social/*` panels inside Social Media Console
-- `src/components/aura/AuraResponseRenderer.tsx`, `charts/AuraStatCard.tsx` (stat card titles → match icon color)
+4. Match grid/card titles to their icon colors
+   - For reusable cards that receive an icon color, wire the title class to the same color.
+   - For console action/guide cards, use the mapped feature/icon color for the title instead of `text-foreground` or grey.
+   - For cards without a clear feature/icon color, keep the title solid white rather than grey.
 
-### Excluded
-- `src/components/ui/sidebar.tsx`, `src/components/dashboard/AppSidebar*`, any `Sidebar*` nav rendering — leave text white.
-- Marketing/landing pages (already done).
-- Public auth pages, customer portal public pages (different surfaces — out of scope unless on dark bg; we'll only touch ones inside the authenticated console shell).
+5. Add a safer dark-surface CSS fallback
+   - Add scoped rules for dashboard/console dark containers so common muted utility text inside dark surfaces renders white by default.
+   - This reduces missed nested cases without affecting the public landing page or sidebar menu.
+   - The rule will avoid overriding explicit feature/status colors.
 
-## Technical approach
+6. Verify by search and targeted visual pass
+   - Re-run searches for muted/opacity text classes across console/dashboard directories.
+   - Review the exact areas shown in your screenshots:
+     - page header subtitles
+     - End-to-End Workflow cards
+     - active agent panel text
+     - session metrics labels
+     - how-to accordion cards
+     - company selector list text
+     - analytics empty-state prompt text
+     - top progress chips where text sits on dark backgrounds
 
-**Step 1 — Grey → White.** In each in-scope file, replace these classes wherever they appear on text inside a console/dashboard card:
-- `text-muted-foreground` → `text-white`
-- `text-white/40`, `text-white/50`, `text-white/60`, `text-white/70`, `text-white/80` → `text-white`
-- `text-card-foreground/70`, `text-card-foreground/80`, `text-card-foreground/90` → `text-white`
-- `text-slate-300/400/500`, `text-gray-300/400/500`, `text-zinc-300/400/500` → `text-white`
-- Inline `color: rgba(...)` low-opacity light values → `color: '#FFFFFF'`
-
-Exceptions kept as-is:
-- Status colors (red/amber/green/emerald for errors, warnings, success badges).
-- Tier accent colors (teal/sky/purple/amber on pricing).
-- Brand colors on integration logos.
-- Disabled states inside form inputs.
-- Sidebar navigation text.
-
-**Step 2 — Color-coded titles.** For every grid card/tile that has a colored icon, give the `CardTitle` (or equivalent `<h3>/<div>`) the same text color class as the icon. Examples:
-
-`CompanyAdminDashboard.tsx` KPI grid (line 183–195):
-```tsx
-// before
-<CardTitle className="text-xs font-medium text-card-foreground/90 ...">{stat.title}</CardTitle>
-// after — derive from stat.colorClass (already 'bg-feature-X/15 text-feature-X')
-<CardTitle className={cn("text-xs font-medium tracking-wide", stat.titleColorClass)}>
-  {stat.title}
-</CardTitle>
-```
-Where `titleColorClass` is the `text-feature-*` half of `colorClass` (e.g., `text-feature-employees`, `text-feature-customers`, `text-feature-leads`, `text-feature-appointments`, `text-feature-quotes`, `text-feature-invoices`, `text-secondary`, `text-channel-sms`, `text-feature-inventory`, `text-feature-marketing`, `text-primary`, `text-feature-analytics`).
-
-Console page grids that use Lucide icons with explicit color classes (e.g., `text-purple-500`, `text-cyan-400`): the sibling `CardTitle` adopts the same class.
-
-Stat cards inside Aura responses (`AuraStatCard`): title takes the icon's color (default `text-primary`).
-
-Numbers/values remain white for legibility; only the **title label** changes color.
-
-**Step 3 — QA pass.** After edits, scan each touched file with `rg "text-muted-foreground|text-white/[0-9]"` to confirm only intentional remnants (status badges, sidebar) remain.
-
-## Out of scope / not changed
-- Sidebar component & nav links.
-- Form input placeholder colors (browser-controlled).
-- Tooltip / popover interior text where contrast already passes on its own background.
-- Landing page (already standardized in the previous loop).
-
-## Risk
-Low. Changes are class-name-only; no behavior, no data, no routes affected. Visual regression is the only risk and is the intended outcome.
+## Technical notes
+- I won’t edit generated Lovable Cloud integration files.
+- No backend/database changes are needed.
+- I’ll prioritize shared components so the fix applies across all consoles instead of changing each screenshot one at a time.
+- Sidebar menu text will not be targeted by the color sweep.
