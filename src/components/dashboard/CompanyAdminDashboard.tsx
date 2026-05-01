@@ -351,7 +351,7 @@ export function CompanyAdminDashboard() {
                 >
                   <div className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-lg ${stat.colorClass.replace('text-', 'bg-').replace('/15', '/60')}`} />
                   <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-                    <CardTitle className="text-xs font-medium text-white tracking-wide">
+                    <CardTitle className={cn("text-xs font-medium tracking-wide", stat.colorClass.split(' ').find(c => c.startsWith('text-')))}>
                       {stat.title}
                     </CardTitle>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
