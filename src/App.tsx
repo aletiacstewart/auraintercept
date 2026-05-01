@@ -124,6 +124,7 @@ import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import AIAgentFlowDemo from "./pages/AIAgentFlowDemo";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import DesignPreview from "./pages/DesignPreview";
+import PublicBooking from "./pages/PublicBooking";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -266,6 +267,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/appointment" element={<CustomerPortal />} />
                 <Route path="/customer-dashboard" element={<CustomerDashboard />} />
                 <Route path="/chat/:companySlug" element={<PublicChat />} />
+                <Route path="/book/:companySlug" element={<PublicBooking />} />
                 
                 {/* Smart Website Routes */}
                 <Route path="/site/:subdomain" element={<SmartWebsite />} />
