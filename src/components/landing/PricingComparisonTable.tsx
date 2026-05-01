@@ -62,6 +62,7 @@ interface FeatureRow {
 
 interface FeatureSection {
   title: string;
+  subtitle?: string;
   features: FeatureRow[];
 }
 
@@ -104,6 +105,16 @@ const sections: FeatureSection[] = [
     ],
   },
   {
+    title: 'Specialist Operatives (Industry-Specific)',
+    subtitle: 'Auto-activated based on the industry you select at signup. Available on Pro and Elite plans.',
+    features: [
+      { name: 'Diagnostic Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Permit & Code Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Site Survey & Quote Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+      { name: 'Insurance Claim Agent', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
+    ],
+  },
+  {
     title: 'Control Centers (3 / 5 / 5 / 7+)',
     features: [
       { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
@@ -136,7 +147,6 @@ const sections: FeatureSection[] = [
       { name: 'Appointments', starter: 'Unlimited', connect: 'Unlimited', performance: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', starter: '10 included', connect: '25 included', performance: '50 included', command: 'Unlimited' },
       { name: 'Additional Employees', starter: '$25/10 employees', connect: '$25/10 employees', performance: '$25/10 employees', command: 'Included' },
-      { name: 'White-Label Branding', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Smart Link Sharing', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
     ],
