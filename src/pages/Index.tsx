@@ -822,8 +822,8 @@ export default function Index() {
                   </div>
                   <span className="absolute inset-0 rounded-lg animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                 </div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{industry.name}</div>
-                <p style={{ fontSize: 8, color: "rgba(200,220,240,0.4)", lineHeight: 1.3 }} className="hidden sm:block">{industry.description}</p>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "#00E5FF" }}>{industry.name}</div>
+                <p style={{ fontSize: 8, color: "#FFFFFF", lineHeight: 1.3 }} className="hidden sm:block">{industry.description}</p>
               </div>
             ))}
           </div>
@@ -861,8 +861,8 @@ export default function Index() {
                     <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 16, background: "rgba(0,229,255,0.4)", opacity: 0.25 }} />
                   </div>
                   <div style={{ fontSize: 11, color: "#00E5FF", letterSpacing: 2, marginBottom: 6, fontWeight: 600 }}>STEP {item.step}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 8 }}>{item.title}</div>
-                  <p style={{ fontSize: 13, color: "rgba(200,220,240,0.5)", lineHeight: 1.6 }}>{item.description}</p>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#00E5FF", marginBottom: 8 }}>{item.title}</div>
+                  <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.6 }}>{item.description}</p>
                 </div>
                 {index < howItWorks.length - 1 && (
                   <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
@@ -885,7 +885,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Choose Your Command Level
             </h2>
-            <p style={{ color: "rgba(200,220,240,0.6)", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
+            <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
               Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
