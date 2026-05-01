@@ -56,7 +56,7 @@ import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
 import { formatDistanceToNow } from 'date-fns';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
-import { INDUSTRY_SPECIALIST_OPERATIVES, SPECIALIST_LABELS, SPECIALIST_DESCRIPTIONS, isSpecialistOperative } from '@/lib/subscriptionAgentConfig';
+import { SPECIALIST_DESCRIPTIONS, isSpecialistOperative } from '@/lib/subscriptionAgentConfig';
 import { Stethoscope } from 'lucide-react';
 
 const CATEGORY_INFO: Record<string, { 
