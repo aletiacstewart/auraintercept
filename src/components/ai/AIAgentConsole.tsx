@@ -473,9 +473,13 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       date: booking.date,
       time: booking.time,
     });
+
+    const intakeSuffix = booking.intakeData && Object.keys(booking.intakeData).length
+      ? `\n\nAdditional details: ${JSON.stringify(booking.intakeData)}`
+      : '';
     
     setActiveTab('chat');
-    await sendMessage(bookingMessage);
+    await sendMessage(bookingMessage + intakeSuffix);
   };
 
   const handleQuoteSubmit = async (quote: QuoteData) => {
@@ -949,6 +953,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               services={services || []}
               onSubmit={handleBookingSubmit}
               isLoading={isLoading}
+              companyId={companyId || null}
             />
           </div>
         )}
