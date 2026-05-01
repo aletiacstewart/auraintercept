@@ -626,6 +626,51 @@ export default function AIAgentsHub() {
                     )}
                   </div>
                 )}
+
+                {/* Specialist Operatives Section — industry-specific, Pro/Elite tier */}
+                {specialistAgents.length > 0 && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowSpecialists(!showSpecialists)}
+                      className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                      <ChevronRight className={cn('h-4 w-4 transition-transform', showSpecialists && 'rotate-90')} />
+                      Specialist Operatives ({specialistAgents.length})
+                      <Badge variant="secondary" className="text-[10px]">Industry-Specific</Badge>
+                    </button>
+                    <p className="text-xs text-muted-foreground -mt-1 ml-6">
+                      Auto-activated based on your industry. Requires Aura Pro or Elite.
+                    </p>
+                    {showSpecialists && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                        {specialistAgents.map((agent) => {
+                          // Platform admins always see specialists as fully unlocked.
+                          const tierAvailable = isPlatformAdmin || canAccessAgent(agent.type);
+                          const inIndustry = isPlatformAdmin || industrySpecialists.has(agent.type);
+                          const isAvailableInTier = tierAvailable && inIndustry;
+                          const requiredTier = getAgentRequiredTier(agent.type);
+                          // Specialists have no cross-agent dependencies
+                          return (
+                            <AgentCard
+                              key={agent.type}
+                              agent={agent}
+                              onToggle={(enabled) => toggleAgent(agent.type, enabled)}
+                              onClick={() => handleAgentClick(agent.type)}
+                              canManage={canManageAgents}
+                              isAvailableInTier={isAvailableInTier}
+                              requiredTier={!tierAvailable ? requiredTier : null}
+                              missingDependencies={!inIndustry && tierAvailable ? ['industry'] : []}
+                              getTierInfo={getTierInfo}
+                              latestEvent={latestEvents?.[agent.type] || null}
+                              onReviewClick={() => setActiveTab('review')}
+                              roiHint={AGENT_ROI_HINTS[agent.type]}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
 
