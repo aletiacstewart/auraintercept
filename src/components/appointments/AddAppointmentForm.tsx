@@ -166,7 +166,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           sms_opt_out: !smsOptIn,
           email_opt_out: !emailOptIn,
           call_opt_out: !callOptIn,
-          intake_data: intakeData as Record<string, unknown>,
+          intake_data: intakeData as never,
         })
         .select()
         .single();
