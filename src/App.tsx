@@ -242,6 +242,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/video-prompts" element={<ProtectedRoute><VideoPromptsPage /></ProtectedRoute>} />
                 <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
+                <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
+                <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
