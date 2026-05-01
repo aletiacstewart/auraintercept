@@ -1049,10 +1049,10 @@ export default function Index() {
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
                     <Zap className="w-3 h-3" /> Beta
                   </span>
-                  <h3 className="text-lg font-bold text-foreground">We're in Beta!</h3>
+                  <h3 className="text-lg font-bold text-primary">We're in Beta!</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  We are currently in <span className="font-semibold text-foreground">Beta</span>. All users who join during the beta period receive{' '}
+                <p className="text-sm text-white leading-relaxed">
+                  We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive{' '}
                   <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
@@ -1062,8 +1062,8 @@ export default function Index() {
                     <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                     <div className="space-y-1">
                       <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks). <span className="font-medium text-foreground">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
+                      <p className="text-xs text-white leading-relaxed">
+                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks). <span className="font-medium text-white">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
                       </p>
                     </div>
                   </div>
@@ -1075,11 +1075,11 @@ export default function Index() {
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2">3rd Party Integration Costs + Usage Fees</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="text-xl font-bold mb-2 text-white">3rd Party Integration Costs + Usage Fees</h3>
+              <p className="text-sm text-white">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
               </p>
-              <p className="text-xs text-muted-foreground/70 italic mt-1">
+              <p className="text-xs text-white italic mt-1">
                 All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
               </p>
             </div>
@@ -1089,93 +1089,93 @@ export default function Index() {
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="font-semibold text-xs text-white">Google Calendar</span>
+                  <span className="font-semibold text-xs text-cyan-400">Google Calendar</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
-                <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Calendar Sync</p>
+                <p className="text-[10px] text-white font-medium">Free - Unlimited</p>
+                <p className="text-[10px] text-white">Required for: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Mail className="w-3.5 h-3.5 text-channel-email" />
-                  <span className="font-semibold text-xs text-white">Resend</span>
+                  <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Email Notifications</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
-                <p className="text-[10px] text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-[10px] text-white/60">Required for: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Email Notifications</p>
+                <p className="text-[10px] text-white font-medium">Free: 3,000 emails/mo</p>
+                <p className="text-[10px] text-white">Then $20/mo for 50k emails ($0.0004/email over)</p>
+                <p className="text-[10px] text-white">Required for: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Mic className="w-3.5 h-3.5 text-purple-400" />
-                  <span className="font-semibold text-xs text-white">ElevenLabs</span>
+                  <span className="font-semibold text-xs text-purple-400">ElevenLabs</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">AI Voice Synthesis (Voice features only)</p>
-                <p className="text-[10px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
-                <p className="text-[10px] text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">AI Voice Synthesis (Voice features only)</p>
+                <p className="text-[10px] text-white font-medium">Free: 10,000 chars/mo</p>
+                <p className="text-[10px] text-white">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
+                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Phone className="w-3.5 h-3.5 text-green-400" />
-                  <span className="font-semibold text-xs text-white">SignalWire</span>
+                  <span className="font-semibold text-xs text-green-400">SignalWire</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (40% cheaper SMS)</p>
-                <p className="text-[10px] text-white/70">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white/60">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
+                <p className="text-[10px] text-white font-medium">Pay-as-you-go (40% cheaper SMS)</p>
+                <p className="text-[10px] text-white">$2/number • $0.004/SMS • $0.01/min calls</p>
+                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Shield className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="font-semibold text-xs text-white">A2P 10DLC Compliance</span>
+                  <span className="font-semibold text-xs text-cyan-400">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">US SMS Carrier Registration (SignalWire)</p>
-                <p className="text-[10px] text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
-                <p className="text-[10px] text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
-                <p className="text-[10px] text-white/60">Required for: All SMS features • Prevents carrier filtering</p>
+                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration (SignalWire)</p>
+                <p className="text-[10px] text-white font-medium">One-time: $4 Brand + $15 Campaign</p>
+                <p className="text-[10px] text-white">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
+                <p className="text-[10px] text-white">Required for: All SMS features • Prevents carrier filtering</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <DollarSign className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="font-semibold text-xs text-white">Stripe (Your Account)</span>
+                  <span className="font-semibold text-xs text-amber-400">Stripe (Your Account)</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
-                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white/60">Required for: Elite (Invoicing)</p>
+                <p className="text-[10px] text-white mb-1">Invoice Payments</p>
+                <p className="text-[10px] text-white font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-[10px] text-white">2.9% + $0.30 per successful transaction</p>
+                <p className="text-[10px] text-white">Required for: Elite (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Send className="w-3.5 h-3.5 text-pink-400" />
-                  <span className="font-semibold text-xs text-white">Social Media Accounts</span>
+                  <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
-                <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white/60">Required for: Pro, Elite • Optional for: Boost</p>
+                <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
+                <p className="text-[10px] text-white font-medium">Free - Your Business Pages</p>
+                <p className="text-[10px] text-white">OAuth connection to your existing accounts</p>
+                <p className="text-[10px] text-white">Required for: Pro, Elite • Optional for: Boost</p>
               </div>
 
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Search className="w-3.5 h-3.5 text-orange-400" />
-                  <span className="font-semibold text-xs text-white">Tavily</span>
+                  <span className="font-semibold text-xs text-orange-400">Tavily</span>
                 </div>
-                <p className="text-[10px] text-white/70 mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-white/90 font-medium">Included in your tier</p>
-                <p className="text-[10px] text-white/70">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-[10px] text-white/60">Available on: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-white mb-1">AI Research Engine</p>
+                <p className="text-[10px] text-white font-medium">Included in your tier</p>
+                <p className="text-[10px] text-white">Real-time industry trends, statistics & expert insights</p>
+                <p className="text-[10px] text-white">Available on: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
-            <p className="text-[10px] text-white/50 italic text-center mt-4">
+            <p className="text-[10px] text-white italic text-center mt-4">
               Usage of bundled providers (SignalWire, ElevenLabs, Resend, Tavily) is included in your subscription. A2P 10DLC and Stripe transaction fees are paid directly to those providers.
             </p>
           </div>
