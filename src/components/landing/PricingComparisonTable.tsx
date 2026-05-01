@@ -348,6 +348,14 @@ export const PricingComparisonTable = () => {
                   )}
                 </tr>
 
+                {section.subtitle && (
+                  <tr className="bg-slate-800/40">
+                    <td colSpan={5} className="py-1.5 px-4 text-xs text-slate-300/80 italic">
+                      {section.subtitle}
+                    </td>
+                  </tr>
+                )}
+
                 {/* Section Rows */}
                 {section.features.map((feature) => {
                   const rowIndex = globalRowIndex++;
