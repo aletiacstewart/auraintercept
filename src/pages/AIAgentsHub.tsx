@@ -655,7 +655,6 @@ export default function AIAgentsHub() {
                           const inIndustry = isPlatformAdmin || industrySpecialists.has(agent.type);
                           const isAvailableInTier = tierAvailable && inIndustry;
                           const requiredTier = getAgentRequiredTier(agent.type);
-                          // Specialists have no cross-agent dependencies
                           return (
                             <AgentCard
                               key={agent.type}
@@ -665,11 +664,16 @@ export default function AIAgentsHub() {
                               canManage={canManageAgents}
                               isAvailableInTier={isAvailableInTier}
                               requiredTier={!tierAvailable ? requiredTier : null}
-                              missingDependencies={!inIndustry && tierAvailable ? ['industry'] : []}
+                              missingDependencies={[]}
                               getTierInfo={getTierInfo}
                               latestEvent={latestEvents?.[agent.type] || null}
                               onReviewClick={() => setActiveTab('review')}
                               roiHint={AGENT_ROI_HINTS[agent.type]}
+                              industryLockReason={
+                                tierAvailable && !inIndustry
+                                  ? `Not part of your industry pack. ${SPECIALIST_DESCRIPTIONS[agent.type as keyof typeof SPECIALIST_DESCRIPTIONS] ?? ''}`
+                                  : undefined
+                              }
                             />
                           );
                         })}
