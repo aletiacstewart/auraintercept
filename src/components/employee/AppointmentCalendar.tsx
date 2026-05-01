@@ -33,6 +33,7 @@ import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
 import { CalendarSyncBadge } from '@/components/appointments/CalendarSyncBadge';
 import { TechnicianAssignmentDialog } from '@/components/appointments/TechnicianAssignmentDialog';
+import { IntakeSummary } from '@/components/forms/IntakeSummary';
 
 interface CalendarEventMapping {
   google_event_id: string | null;
@@ -854,6 +855,11 @@ export function AppointmentCalendar() {
                     <p className="text-sm bg-muted/50 p-3 rounded-lg whitespace-pre-wrap text-foreground">{selectedAppointment.notes}</p>
                   </div>
                 )}
+
+                <IntakeSummary
+                  intakeData={selectedAppointment.intake_data as Record<string, unknown> | null | undefined}
+                  serviceType={selectedAppointment.service_type}
+                />
               </div>
 
               {/* Assigned Technician Info */}
