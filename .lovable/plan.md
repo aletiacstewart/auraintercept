@@ -1,64 +1,75 @@
-## Goal
+## Why you don't see the Specialist Operatives anywhere
 
-Make the 4 Specialist Operatives (Diagnostic, Permit & Code, Site Survey & Quote, Insurance Claim) first-class citizens inside the AI Operatives Hub on every dashboard:
+Right now the four Specialist Operatives (Diagnostic, Permit & Code, Site Survey & Quote, Insurance Claim) only exist in three places:
 
-1. Render them as their own section ("Specialist Operatives") below Core and Advanced agents.
-2. Show all 4, with industry-irrelevant ones clearly visible but locked.
-3. On the **platform admin dashboard**, surface every operative as Active so you can see how they behave end-to-end.
-4. Keep tier-gating for company users (Pro/Elite required); platform_admin and trial users see them unlocked.
+1. **AI Operatives Hub** — they appear as cards in a "Specialist Operatives" section (toggle on/off only).
+2. **Subscription/Pricing page** — listed as a Pro/Elite feature.
+3. **`ai-agent-chat` edge function** — the backend has a system prompt for each one, so they *can* respond if called.
 
-## What changes
+But there is **no entry point in any console** (Customer Portal, Field Ops, Technician, Business Mgmt) that actually opens a chat with a specialist. So no company admin, employee, technician, or customer has a way to use them. That's why they feel invisible.
 
-### 1. `src/hooks/useAIAgentOrchestrator.ts`
-- Add the 4 specialists to `DEFAULT_AGENTS` under a new category `industry_specialist`:
-  - `diagnostic`, `permit_code`, `site_survey`, `insurance_claim` (phase 3 each).
-- For `platform_admin` callers, after `fetchAgents` merges DB rows, force-set `is_enabled: true` on every agent (in-memory only — doesn't write to the company's DB rows). This guarantees the platform admin's view of the dashboard always shows every operative active without polluting tenant data.
+## What this plan adds
 
-### 2. `src/pages/AIAgentsHub.tsx`
-- Add `industry_specialist` to `CATEGORY_INFO` (label "Specialist Operatives", icon `Stethoscope` or `Sparkles`, uses `--feature-analytics` color).
-- Pull the company's `extra_operatives` via `useIndustryPack()` to know which specialists the current industry actually wires up.
-- New `SPECIALIST_AGENT_TYPES` set: split filtered agents into three buckets — Core, Advanced, **Specialist**.
-- Render a third section "Specialist Operatives (Industry-Specific)" with a subtitle: "Auto-activated based on your industry. Requires Aura Pro or Elite."
-- Per specialist card lock logic:
-  - Locked if `!isAvailableInTier` (tier < performance and not in trial) → existing amber lock UI with "Upgrade to Aura Pro".
-  - Locked if `isAvailableInTier` but `!pack.extra_operatives.includes(agent.type)` → new "Not in your industry" lock state (greyed, tooltip lists which industries trigger it).
-  - Unlocked otherwise; toggle works normally.
-- Add specialists to `AGENT_NAMES` and `AGENT_ROI_HINTS` (short value props).
+### 1. Specialist quick-launch in the right consoles
 
-### 3. `src/lib/subscriptionAgentConfig.ts`
-- Add `INDUSTRY_SPECIALIST_OPERATIVES` to the `command` (Elite) tier and to `performance` (Pro) tier inside `TIER_AGENT_CONFIG.agents` so `canAccessAgent` returns true for Pro/Elite without special-casing.
-- Add a helper `getSpecialistRequiredTier()` returning `'performance'`.
-- Add a `CATEGORY` mapping so `industry_specialist` is recognized as a valid category.
+Add a "Specialist Operatives" launcher row to the consoles where each specialist naturally belongs. Each launcher opens an AI chat preset to that specialist's `agent_type`.
 
-### 4. `src/pages/AIAgentsHub.tsx` — platform admin "all active" treatment
-- When `userRole === 'platform_admin'`:
-  - Skip the auto-activation effect (the orchestrator hook already returns them as enabled in-memory).
-  - In the Quick Stats grid + counts, show `totalCount/totalCount Operatives Active`.
-  - Hide tier-locked styling on cards (treat all as available).
+| Specialist | Console where it appears | Used by |
+|---|---|---|
+| Diagnostic | Customer Portal Console + Technician Console | Customer (pre-visit triage), Technician (on-site) |
+| Permit & Code | Field Ops Console + Technician Console | Dispatcher, Technician |
+| Site Survey & Quote | Field Ops Console + Customer Portal Console | Sales/Estimator, Customer (self-survey) |
+| Insurance Claim | Customer Portal Console + Business Mgmt Console | Customer (claim docs), Admin (claim review) |
 
-### 5. Edge function alignment
-- `supabase/functions/ai-agent-chat/index.ts` already references the specialists. Update its `TIER_AGENTS` map to include the 4 specialists in `performance` and `command` so server-side tier checks match the client.
+Cards show:
+- Lock badge if tier < Pro
+- "Industry" badge (greyed) if the company's industry pack doesn't activate it
+- Click → opens `AIAgentChat` with that `agentType`
 
-### 6. Industry Widget Grid (already done in prior phase) — no changes needed.
+### 2. Dedicated "Specialist Operatives Console" page
+
+New route `/dashboard/ai-consoles/specialists` that:
+- Lists the four specialists as tabs (Diagnostic / Permit & Code / Site Survey / Insurance Claim)
+- Each tab embeds the existing `AIAgentChat` component with the matching `agent_type`
+- Includes a sidebar with use-case examples for each specialist
+- Linked from: AI Operatives Hub specialist section ("Open Console" button) + main sidebar (under AI Consoles)
+
+### 3. Customer-facing widget exposure
+
+In the embedded customer chat widget (`/widget`), expose Diagnostic + Site Survey + Insurance Claim as quick-action buttons in the welcome screen when the company's industry pack opts them in. Customers tap → AI starts a structured intake (photos, symptoms, etc.).
+
+### 4. Technician mobile app exposure
+
+In `TechnicianAIConsole`, add Diagnostic + Permit & Code as quick-launch chips above the chat input. Lets a tech in the field instantly ask "what permit do I need for this?" or "what's wrong with this unit?".
+
+### 5. Routing wiring
+
+- Update `src/components/ai/AIAgentChat.tsx` (or wrapping logic) to accept and route specialist `agent_type` values directly — currently the consoles only call known operatives.
+- Make sure `ai-agent-chat` edge function honors the specialist `agent_type` from the client (it already has prompts; just confirm the `TIER_AGENTS` map allows them for Pro/Elite + admin override path).
+- Add the four specialists to the orchestrator's default-active list **for platform admins only** (already partially done in prior work) so you can test them now from your admin dashboard.
+
+### 6. Sidebar entry
+
+Add "Specialist Operatives" link under the AI Consoles group in the dashboard sidebar (visible to Pro/Elite + platform admin), pointing at the new `/dashboard/ai-consoles/specialists` route.
+
+## Files to touch
+
+- `src/pages/ai-consoles/SpecialistOperativesConsole.tsx` (new)
+- `src/App.tsx` — register new route
+- `src/components/dashboard/sidebar/*` — add nav link
+- `src/pages/ai-consoles/CustomerPortalConsole.tsx` — add specialist launcher row
+- `src/pages/ai-consoles/FieldOpsConsole.tsx` — add specialist launcher row
+- `src/pages/ai-consoles/BusinessManagementConsole.tsx` — add Insurance Claim launcher
+- `src/pages/technician/TechnicianAIConsole.tsx` — add Diagnostic + Permit chips
+- `src/components/widget/*` welcome screen — add customer-facing quick actions
+- `src/components/ai/AIAgentChat.tsx` — accept specialist agent types
+- `src/pages/AIAgentsHub.tsx` — add "Open Console" button on specialist cards
+- `supabase/functions/ai-agent-chat/index.ts` — verify specialist routing path (no DB migration needed)
 
 ## Out of scope
 
-- No DB migration. We do **not** auto-insert `ai_agent_configs` rows for specialists on every company; they're rendered from `DEFAULT_AGENTS` and stay disabled in DB until a user toggles them on (or industry pack opts them in via existing logic).
-- No changes to the pricing comparison table (already updated last turn).
-- No changes to the consumer-facing AI Operative Hub layout beyond the new section.
+- No database schema changes; specialists already exist in code/edge logic.
+- No pricing changes; tier gating already gates them to Pro/Elite.
+- No new edge functions.
 
-## Visual outcome
-
-```text
-AI Operatives Hub
-├── Core Agents (Recommended)         [4 cards]
-├── Advanced Agents (6) ▸             [6 cards, expandable]
-└── Specialist Operatives (4) ▸       [4 cards — NEW]
-        Auto-activated by industry. Pro/Elite tier.
-        ├── Diagnostic         [Active on platform admin / Locked per industry]
-        ├── Permit & Code      [Active / Locked]
-        ├── Site Survey & Quote[Active / Locked]
-        └── Insurance Claim    [Active / Locked]
-```
-
-Platform admin dashboard: all 14 operatives show **Active** with full controls. Company users see the same 14 cards but with proper tier + industry locks.
+Approve and I'll implement.

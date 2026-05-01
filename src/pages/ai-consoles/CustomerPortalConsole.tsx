@@ -16,6 +16,7 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
+import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 
 export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
@@ -104,6 +105,12 @@ export default function CustomerPortalConsole() {
                 ) : (
                   <AIAgentChat />
                 )}
+                <div className="mt-6">
+                  <SpecialistOperativesLauncher
+                    show={['diagnostic', 'site_survey', 'insurance_claim']}
+                    subtitle="Customer-facing specialists for self-diagnosis, surveys, and claims."
+                  />
+                </div>
               </div>
               {showPreview && (
                 <div className="hidden lg:block w-[420px] shrink-0 sticky top-4 self-start">
