@@ -376,7 +376,7 @@ export function TechnicianJobQueue() {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
-          <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+          <RefreshCw className="h-6 w-6 animate-spin text-white" />
         </CardContent>
       </Card>
     );
@@ -469,9 +469,9 @@ export function TechnicianJobQueue() {
       {!activeJob && pendingJobs.length === 0 && acceptedJobs.length === 0 && (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Wrench className="h-12 w-12 text-muted-foreground mb-4" />
+            <Wrench className="h-12 w-12 text-white mb-4" />
             <p className="text-lg font-medium">No Active Jobs</p>
-            <p className="text-sm text-muted-foreground">New job assignments will appear here</p>
+            <p className="text-sm text-white">New job assignments will appear here</p>
           </CardContent>
         </Card>
       )}
@@ -578,7 +578,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
           </div>
           <div>
             <p className="font-semibold">{appointment.service_type}</p>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <p className="text-sm text-white flex items-center gap-1">
               <User className="w-3 h-3" />
               {appointment.customer_name}
             </p>
@@ -591,7 +591,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
+        <div className="flex items-center gap-2 text-white">
           <Clock className="w-4 h-4" />
           <span>{format(parseUTCDateTime(appointment.datetime), 'MMM d, h:mm a')}</span>
         </div>
@@ -605,7 +605,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
           </a>
         )}
         {job.customer_address && (
-          <div className="flex items-center gap-2 text-muted-foreground col-span-2">
+          <div className="flex items-center gap-2 text-white col-span-2">
             <MapPin className="w-4 h-4" />
             <span>{job.customer_address}</span>
           </div>
@@ -615,7 +615,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
       {/* Time Tracking Section */}
       {(job.en_route_at || job.started_at) && (
         <div className="bg-muted/50 p-3 rounded-lg mb-3 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+          <p className="text-xs font-medium text-white uppercase tracking-wide flex items-center gap-1">
             <Timer className="w-3 h-3" />
             Time Tracking
           </p>
@@ -624,7 +624,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
               <div className="flex items-center gap-2">
                 <Car className="w-4 h-4 text-purple-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Travel Started</p>
+                  <p className="text-xs text-white">Travel Started</p>
                   <p className="font-medium">{format(new Date(job.en_route_at), 'h:mm a')}</p>
                 </div>
               </div>
@@ -633,7 +633,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-indigo-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Arrived</p>
+                  <p className="text-xs text-white">Arrived</p>
                   <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
                 </div>
               </div>
@@ -642,7 +642,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
               <div className="flex items-center gap-2">
                 <Play className="w-4 h-4 text-orange-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Job Started</p>
+                  <p className="text-xs text-white">Job Started</p>
                   <p className="font-medium">{format(new Date(job.started_at), 'h:mm a')}</p>
                 </div>
               </div>
@@ -651,7 +651,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Completed</p>
+                  <p className="text-xs text-white">Completed</p>
                   <p className="font-medium">{format(new Date(job.completed_at), 'h:mm a')}</p>
                 </div>
               </div>
@@ -662,14 +662,14 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
             {travelTimeMinutes !== null && (
               <div className="flex items-center gap-1">
                 <Car className="w-3 h-3" />
-                <span className="text-muted-foreground">Travel:</span>
+                <span className="text-white">Travel:</span>
                 <span className="font-medium">{travelTimeMinutes} min</span>
               </div>
             )}
             {workTimeMinutes !== null && (
               <div className="flex items-center gap-1">
                 <Wrench className="w-3 h-3" />
-                <span className="text-muted-foreground">Work:</span>
+                <span className="text-white">Work:</span>
                 <span className="font-medium">{workTimeMinutes} min{!job.completed_at && ' (ongoing)'}</span>
               </div>
             )}
@@ -703,7 +703,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
         </div>
       ) : showPhotoSection && !['arrived', 'in_progress'].includes(job.status) ? (
         <div className="mb-3 p-3 bg-muted/30 rounded-lg border">
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-white">
             <Camera className="w-4 h-4" />
             <span className="text-sm">Photo upload will be available once you arrive at the job site and mark your arrival.</span>
           </div>
@@ -747,7 +747,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground mb-3">
+      <p className="text-xs text-white mb-3">
         Assigned {formatDistanceToNow(new Date(job.assigned_at), { addSuffix: true })}
       </p>
 

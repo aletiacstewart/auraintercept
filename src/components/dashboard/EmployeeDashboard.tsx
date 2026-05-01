@@ -186,7 +186,7 @@ export function EmployeeDashboard() {
               <h1 className="text-3xl font-bold tracking-tight">
                 Welcome, {profile?.full_name?.split(' ')[0] || 'Team Member'}
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-white mt-1">
                 {company?.name} • {primaryJobType ? primaryJobType.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Employee'}
               </p>
             </>
@@ -217,7 +217,15 @@ export function EmployeeDashboard() {
         {statCards.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-white">{stat.title}</CardTitle>
+              <CardTitle className={`text-sm font-medium ${
+                stat.gradient.includes('yellow') ? 'text-yellow-400' :
+                stat.gradient.includes('green') ? 'text-green-400' :
+                stat.gradient.includes('blue') ? 'text-blue-400' :
+                stat.gradient.includes('orange') ? 'text-orange-400' :
+                stat.gradient.includes('cyan') ? 'text-cyan-400' :
+                stat.gradient.includes('secondary') ? 'text-secondary' :
+                'text-primary'
+              }`}>{stat.title}</CardTitle>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
                 <stat.icon className="w-5 h-5 text-primary-foreground" />
               </div>
@@ -228,7 +236,7 @@ export function EmployeeDashboard() {
               ) : (
                 <div className={`text-3xl font-bold ${stat.highlight ? 'text-yellow-600' : ''}`}>{stat.value}</div>
               )}
-              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+              <p className="text-xs text-white mt-1">{stat.description}</p>
             </CardContent>
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
@@ -242,7 +250,7 @@ export function EmployeeDashboard() {
             <Settings className="w-5 h-5 text-primary" />
             Quick Actions
           </CardTitle>
-          <CardDescription className="text-muted-foreground">Access your most used features</CardDescription>
+          <CardDescription className="text-white">Access your most used features</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
@@ -268,7 +276,7 @@ export function EmployeeDashboard() {
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle className="text-white">Your Roles</CardTitle>
-            <CardDescription className="text-muted-foreground">Your assigned job responsibilities</CardDescription>
+            <CardDescription className="text-white">Your assigned job responsibilities</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">

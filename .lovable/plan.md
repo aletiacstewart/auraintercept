@@ -1,73 +1,82 @@
-## Homepage grid color fix — titles match icon color, descriptions pure white
+# Console & Dashboard Text Color Standardization
 
-For every grid card on the homepage (`/`), set the **title** to the same color as that card's icon/border accent and set the **description** (and any small body labels) to solid `#FFFFFF`. Colored accent text (POWERED BY tags, "Agents" pills, prices, etc.) stays as-is.
+Apply the same rule we just applied to the landing page across every console and dashboard surface that renders on the dark theme:
 
-### Sections & per-card title color mapping
+1. **All grey text → pure white (`#FFFFFF` / `text-white`)** — body copy, descriptions, secondary labels, helper text, "muted" text on cards.
+2. **Grid-box titles → match their color-coded icon** — wherever a card/tile has a colored icon (a `feature-*`, `channel-*`, neon, or tier color), the card's title takes the same color. Numeric values stay white. Descriptions stay white.
+3. **Sidebar text stays white as-is** — no changes to `AppSidebar`, `SidebarMenuButton`, `Sidebar*` primitives or their nav items.
 
-**1. "Three Promises" grid** — `Index.tsx` lines 597–653
-Already uses `o.color` per card. Change the title color:
-- Never Miss a Call → `#00E5FF` (cyan)
-- Fill Your Calendar → `#00E676` (green)
-- Get Paid Faster → `#FFB300` (amber)
-- Description: `rgba(210,225,240,0.65)` → `#FFFFFF`
+## Scope (files to update)
 
-**2. "24 Smart AI Agents" grid (4 console groups + agent sub-cards)** — lines 698–729
-Use `rgb(${category.neonRgb})` (already defined per group):
-- Customer Portal: cyan • Field & Dispatch Ops: green • Business Operations: violet • Analytics & Reports: indigo • Outreach & Sales: orange • Social Media: pink • Smart Website: teal
-- Group title (line 706): change `rgba(255,255,255,0.9)` → `rgb(${category.neonRgb})`
-- Sub-agent name (line 721): change `rgba(255,255,255,0.92)` → `rgb(${category.neonRgb})`
-- Sub-agent description (line 723): `rgba(200,220,240,0.5)` → `#FFFFFF`
+### Dashboards
+- `src/components/dashboard/CompanyAdminDashboard.tsx` — KPI grid (12 stat cards), Quick Actions grid, Snapshot rows, Recent Activity card
+- `src/components/dashboard/PlatformAdminDashboard.tsx` — admin metrics + grids
+- `src/components/dashboard/EmployeeDashboard.tsx` — employee KPI tiles
+- `src/components/dashboard/AuraCommandCenter.tsx` — hero metrics, quick chips
+- `src/components/dashboard/AuraTodayStrip.tsx` — today's items
+- `src/components/dashboard/LaunchProgressCard.tsx`, `TrialBanner.tsx`, `DashboardSetupNav.tsx`, `DashboardOnboardingHub.tsx`, `MobileInstallBanner.tsx`, `DashboardViewToggle.tsx`
+- `src/pages/Dashboard.tsx`, `src/pages/technician/TechnicianDashboard.tsx`, `TechnicianCalendar.tsx`, `TechnicianHistory.tsx`, `TechnicianJobs.tsx`
 
-**3. Communication Channels grid (Talk to Aura / SMS / Email / Message Aura)** — lines 747–763
-Add a `titleColor` per channel (matching the gradient/border):
-- Talk to Aura: `#EC4899` (pink/voice)
-- SMS Reminders: `#22C55E` (green)
-- Email Reminders: `#0EA5E9` (sky)
-- Message Aura: `#A855F7` (purple)
-- Title (line 759): use `rgb(${channel.neonRgb})` (already available — just inject `color: \`rgb(${channel.neonRgb})\``)
-- Description (line 760): `rgba(200,220,240,0.5)` → `#FFFFFF`
+### AI Consoles (`src/pages/ai-consoles/`)
+All 12 console pages:
+- `FieldOpsConsole.tsx`, `BusinessManagementConsole.tsx`, `MarketingSalesConsole.tsx`, `AnalyticsConsole.tsx`, `SocialMediaConsole.tsx`, `CustomerPortalConsole.tsx`
+- Insight pages: `BusinessInsightsPage.tsx`, `CustomerInsightsPage.tsx`, `KpiDashboardPage.tsx`, `DemandForecastPage.tsx`, `NewLeadPage.tsx`, `PerformanceReportPage.tsx`, `RevenueAnalysisPage.tsx`
 
-**4. 7-Console grid (Customer Portal / Field Operations / Business Management / Outreach & Sales Ops / Analytics & Reports / Social Media / Creative & Web Presence)** — referenced via `agentConsoles` (lines 161–224)
-Title already has a per-console `iconColor` Tailwind class (e.g., `text-cyan-500`, `text-green-500`, `text-orange-500`, `text-purple-500`, `text-indigo-500`, `text-pink-500`, `text-teal-500`). Apply that `iconColor` to the card title. Description and feature pill labels → solid `text-white` (pills keep their colored borders/backgrounds, only the inner label goes white).
+### Console Sub-Components (rendered inside the consoles)
+- `src/components/ai/AIAgentConsole.tsx`, `AIAgentSettings.tsx`, `AppointmentTrackingView.tsx`
+- `src/components/employee/FieldOpsAgentConsole.tsx`, `TechnicianJobQueue.tsx`, `CompletedJobsHistory.tsx`, `AppointmentCalendar.tsx`
+- `src/components/businessops/CustomersManager.tsx` and other `businessops/*` panels rendered inside Business Management Console
+- `src/components/analytics/*` charts/tiles used inside Analytics Console
+- `src/components/social/*` panels inside Social Media Console
+- `src/components/aura/AuraResponseRenderer.tsx`, `charts/AuraStatCard.tsx` (stat card titles → match icon color)
 
-**5. Platform Features grid (12 small cyan cards)** — lines 779–797
-- Title (line 792): `rgba(255,255,255,0.9)` → `#00E5FF`
-- Description (line 794): `rgba(200,220,240,0.5)` → `#FFFFFF`
+### Excluded
+- `src/components/ui/sidebar.tsx`, `src/components/dashboard/AppSidebar*`, any `Sidebar*` nav rendering — leave text white.
+- Marketing/landing pages (already done).
+- Public auth pages, customer portal public pages (different surfaces — out of scope unless on dark bg; we'll only touch ones inside the authenticated console shell).
 
-**6. Pricing tier cards (Aura Core / Boost / Pro / Elite)** — lines 899–1020
-Tier titles already use the tier accent (teal/sky/purple/amber). Confirm; otherwise apply:
-- Core: `text-teal-400` • Boost: `text-sky-400` • Pro: `text-purple-400` • Elite: `text-amber-400`
-- Subtitles, "Best for…" italic line, and feature row labels: → `text-white` (was `text-card-foreground/70` and similar)
-- "$X/year (Save ~20%)" lines and "Requires:" footer keep their tier color
+## Technical approach
 
-**7. Third-Party Cost grid (Google Calendar / Resend / ElevenLabs / SignalWire / A2P 10DLC / Stripe / Social Media / Tavily)** — lines 1090–1180
-Titles get the matching icon color of each card (already colored icons exist — apply same color to the title `<span>`):
-- Google Calendar: `text-sky-400`
-- Resend: `text-cyan-400`
-- ElevenLabs: `text-purple-400`
-- SignalWire: `text-emerald-400`
-- A2P 10DLC: `text-orange-400`
-- Stripe: `text-amber-400`
-- Social Media: `text-pink-400`
-- Tavily: `text-amber-400`
-- All `text-white/60`, `/70`, `/90`, `/50` body labels → solid `text-white`
-- Italic footer disclaimer (line 1178): `text-white/50` → `text-white`
+**Step 1 — Grey → White.** In each in-scope file, replace these classes wherever they appear on text inside a console/dashboard card:
+- `text-muted-foreground` → `text-white`
+- `text-white/40`, `text-white/50`, `text-white/60`, `text-white/70`, `text-white/80` → `text-white`
+- `text-card-foreground/70`, `text-card-foreground/80`, `text-card-foreground/90` → `text-white`
+- `text-slate-300/400/500`, `text-gray-300/400/500`, `text-zinc-300/400/500` → `text-white`
+- Inline `color: rgba(...)` low-opacity light values → `color: '#FFFFFF'`
 
-**8. Beta callout** — lines 1052–1082
-- Heading "We're in Beta!" stays warning color
-- All `text-muted-foreground` body copy → `text-white`
-- `text-foreground` inline emphases → `text-white`
+Exceptions kept as-is:
+- Status colors (red/amber/green/emerald for errors, warnings, success badges).
+- Tier accent colors (teal/sky/purple/amber on pricing).
+- Brand colors on integration logos.
+- Disabled states inside form inputs.
+- Sidebar navigation text.
 
-### Files to edit
-- `src/pages/Index.tsx` (all 8 sections above)
-- `src/components/landing/CompetitiveDifferentiation.tsx` — section heading subtitle and stat labels: title in colored accent if applicable, descriptions/labels → solid white
-- `src/components/landing/PricingComparisonTable.tsx` — `text-white/70` optional labels → `text-white` (X icons stay grey)
-- `src/components/landing/LandingAIChat.tsx` & `FloatingChatWidget.tsx` — `text-muted-foreground` helper labels → `text-white`
+**Step 2 — Color-coded titles.** For every grid card/tile that has a colored icon, give the `CardTitle` (or equivalent `<h3>/<div>`) the same text color class as the icon. Examples:
 
-### Out of scope
-- Icon colors, border colors, gradient backgrounds — unchanged
-- "POWERED BY" tags, agent-count pills, prices, "Save ~20%" lines, warning/destructive text — keep current colored treatment
-- Pages other than `/`
+`CompanyAdminDashboard.tsx` KPI grid (line 183–195):
+```tsx
+// before
+<CardTitle className="text-xs font-medium text-card-foreground/90 ...">{stat.title}</CardTitle>
+// after — derive from stat.colorClass (already 'bg-feature-X/15 text-feature-X')
+<CardTitle className={cn("text-xs font-medium tracking-wide", stat.titleColorClass)}>
+  {stat.title}
+</CardTitle>
+```
+Where `titleColorClass` is the `text-feature-*` half of `colorClass` (e.g., `text-feature-employees`, `text-feature-customers`, `text-feature-leads`, `text-feature-appointments`, `text-feature-quotes`, `text-feature-invoices`, `text-secondary`, `text-channel-sms`, `text-feature-inventory`, `text-feature-marketing`, `text-primary`, `text-feature-analytics`).
 
-### Verification
-After the edits, re-grep the 5 files for `rgba(200,220,240` `rgba(255,255,255,0.9` `text-muted-foreground` `text-white/[5-9]` `text-card-foreground/` to confirm only intentional non-text uses remain.
+Console page grids that use Lucide icons with explicit color classes (e.g., `text-purple-500`, `text-cyan-400`): the sibling `CardTitle` adopts the same class.
+
+Stat cards inside Aura responses (`AuraStatCard`): title takes the icon's color (default `text-primary`).
+
+Numbers/values remain white for legibility; only the **title label** changes color.
+
+**Step 3 — QA pass.** After edits, scan each touched file with `rg "text-muted-foreground|text-white/[0-9]"` to confirm only intentional remnants (status badges, sidebar) remain.
+
+## Out of scope / not changed
+- Sidebar component & nav links.
+- Form input placeholder colors (browser-controlled).
+- Tooltip / popover interior text where contrast already passes on its own background.
+- Landing page (already standardized in the previous loop).
+
+## Risk
+Low. Changes are class-name-only; no behavior, no data, no routes affected. Visual regression is the only risk and is the intended outcome.

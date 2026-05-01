@@ -68,7 +68,7 @@ export function TrialBanner() {
     >
       <button 
         onClick={() => setDismissed(true)}
-        className="absolute top-2 right-2 p-1 rounded-full hover:bg-background/50 text-muted-foreground"
+        className="absolute top-2 right-2 p-1 rounded-full hover:bg-background/50 text-white"
       >
         <X className="w-4 h-4" />
       </button>
@@ -111,7 +111,7 @@ export function TrialBanner() {
             }
           </h3>
 
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-white mt-1">
             {isCritical 
               ? "Subscribe now to keep your AI Agent and all premium features."
               : "You have full access to all Enterprise features during your trial."
@@ -119,7 +119,7 @@ export function TrialBanner() {
           </p>
 
           <div className="mt-3 space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center justify-between text-xs text-white">
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 <span>

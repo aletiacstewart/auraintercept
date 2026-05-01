@@ -150,8 +150,8 @@ export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
               ) : (
                 <div className="text-2xl font-bold text-foreground">{tile.value}</div>
               )}
-              <div className="text-[11px] text-muted-foreground mt-0.5">{tile.label}</div>
-              <div className="text-[10px] text-muted-foreground/70">{tile.hint}</div>
+              <div className="text-[11px] text-white mt-0.5">{tile.label}</div>
+              <div className="text-[10px] text-white/70">{tile.hint}</div>
             </CardContent>
           </Card>
         );
