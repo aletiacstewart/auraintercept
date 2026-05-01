@@ -32,6 +32,7 @@ import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
 
 interface Lead {
   id: string;
@@ -223,6 +224,9 @@ export default function Leads() {
                     className="pl-9"
                   />
                 </div>
+              </div>
+              <div className="min-w-[260px] flex-1">
+                <IntakeDataSearch scope="leads" />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[150px]">

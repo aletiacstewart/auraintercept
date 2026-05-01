@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
+import { IntakeSummary } from '@/components/forms/IntakeSummary';
+import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
 
 import { 
   Search, 
@@ -52,6 +54,7 @@ interface CustomerAppointment {
   service_type: string;
   status: string;
   notes: string | null;
+  intake_data?: Record<string, unknown> | null;
 }
 
 interface CustomerQuote {
@@ -112,7 +115,7 @@ export default function Customers() {
       // Fetch appointments by customer email
       const { data: appointments } = await supabase
         .from('appointments')
-        .select('id, datetime, service_type, status, notes')
+        .select('id, datetime, service_type, status, notes, intake_data')
         .eq('company_id', companyId)
         .eq('customer_email', selectedCustomer.email)
         .order('datetime', { ascending: false })
@@ -222,6 +225,7 @@ export default function Customers() {
               className="pl-10"
             />
           </div>
+          <IntakeDataSearch scope="appointments" className="w-full max-w-sm" />
           <Button onClick={() => setAddCustomerOpen(true)}>
             <UserPlus className="h-4 w-4 mr-2" />
             New Customer
@@ -404,6 +408,15 @@ export default function Customers() {
                               </p>
                               {apt.notes && (
                                 <p className="text-sm text-white/70 mt-1">{apt.notes}</p>
+                              )}
+                              {apt.intake_data && Object.keys(apt.intake_data).length > 0 && (
+                                <div className="mt-2">
+                                  <IntakeSummary
+                                    intakeData={apt.intake_data}
+                                    serviceType={apt.service_type}
+                                    variant="compact"
+                                  />
+                                </div>
                               )}
                             </div>
                             {getStatusBadge(apt.status)}

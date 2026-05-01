@@ -17,11 +17,13 @@ import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { IntakeSummary } from '@/components/forms/IntakeSummary';
 
 interface Invoice {
   id: string;
   company_id: string;
   invoice_number: string | null;
+  appointment_id?: string | null;
   customer_name: string;
   customer_email: string | null;
   customer_phone: string | null;
@@ -82,6 +84,26 @@ export default function Invoices() {
       return data as InvoiceLineItem[];
     },
     enabled: !!viewInvoice?.id,
+  });
+
+  // Fetch the linked appointment's intake_data to surface industry-specific
+  // job details (MLS #s, system age, etc.) directly on the invoice view.
+  const { data: linkedAppointment } = useQuery({
+    queryKey: ['invoice_linked_appointment', viewInvoice?.appointment_id],
+    queryFn: async () => {
+      if (!viewInvoice?.appointment_id) return null;
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('id, service_type, intake_data')
+        .eq('id', viewInvoice.appointment_id)
+        .maybeSingle();
+      if (error) {
+        console.error('Error loading linked appointment for invoice', error);
+        return null;
+      }
+      return data as { id: string; service_type: string; intake_data: Record<string, unknown> | null } | null;
+    },
+    enabled: !!viewInvoice?.appointment_id,
   });
 
   const filteredInvoices = invoices.filter(invoice => {
@@ -368,6 +390,15 @@ export default function Invoices() {
                     <p className="text-sm">{viewInvoice.notes}</p>
                   </div>
                 )}
+
+                {linkedAppointment?.intake_data &&
+                  Object.keys(linkedAppointment.intake_data).length > 0 && (
+                    <IntakeSummary
+                      intakeData={linkedAppointment.intake_data}
+                      serviceType={linkedAppointment.service_type}
+                      title="Job Details"
+                    />
+                  )}
               </div>
             )}
           </DialogContent>
