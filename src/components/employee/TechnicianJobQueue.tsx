@@ -60,6 +60,7 @@ interface JobAssignment {
     datetime: string;
     duration_minutes: number;
     notes: string | null;
+    intake_data?: unknown;
   } | null;
 }
 
@@ -102,7 +103,8 @@ export function TechnicianJobQueue() {
             service_type,
             datetime,
             duration_minutes,
-            notes
+            notes,
+            intake_data
           )
         `)
         .eq('employee_id', user.id)
