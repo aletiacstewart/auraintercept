@@ -52,6 +52,7 @@ interface Appointment {
   duration_minutes: number;
   status: string;
   notes: string | null;
+  intake_data?: Record<string, unknown> | null;
   job_status?: string;
   job_id?: string;
   job_employee_id?: string | null;
@@ -374,7 +375,8 @@ export function AppointmentCalendar() {
             datetime,
             duration_minutes,
             status,
-            notes
+            notes,
+            intake_data
           )
         `)
         .eq('employee_id', user.id)
@@ -422,6 +424,7 @@ export function AppointmentCalendar() {
           duration_minutes: ja.appointments!.duration_minutes,
           status: ja.appointments!.status,
           notes: ja.appointments!.notes,
+          intake_data: (ja.appointments as { intake_data?: Record<string, unknown> | null }).intake_data ?? null,
           job_status: ja.status,
           job_id: ja.id,
           calendar_sync: syncMap.get(ja.appointments!.id) || null,
