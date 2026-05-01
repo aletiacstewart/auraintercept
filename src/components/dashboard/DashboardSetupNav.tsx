@@ -200,11 +200,11 @@ export function DashboardSetupNav() {
               {completedCount} of {sections.length} sections completed
             </p>
           </div>
-          <span className="text-lg font-bold text-secondary">
+          <span className="text-lg font-bold text-primary">
             {Math.round(overallProgress)}%
           </span>
         </div>
-        <Progress value={overallProgress} className="h-2 bg-primary/40 [&>div]:bg-secondary" />
+        <Progress value={overallProgress} className="h-2 bg-primary/40 [&>div]:bg-primary" />
       </div>
 
       {/* Section Navigation */}
@@ -223,7 +223,7 @@ export function DashboardSetupNav() {
                 isActive
                   ? 'bg-background text-foreground shadow-sm'
                   : section.completed
-                    ? 'bg-secondary/10 text-secondary hover:bg-secondary/20'
+                    ? 'bg-primary/10 text-primary hover:bg-primary/20'
                     : 'text-white hover:text-foreground hover:bg-muted/50'
               )}
             >
@@ -236,7 +236,7 @@ export function DashboardSetupNav() {
               <span className={cn(
                 'text-[10px] px-1 py-0.5 rounded',
                 section.completed 
-                  ? 'bg-secondary/20 text-secondary' 
+                  ? 'bg-primary/20 text-primary' 
                   : 'bg-muted text-white'
               )}>
                 {Math.round(section.progress)}%

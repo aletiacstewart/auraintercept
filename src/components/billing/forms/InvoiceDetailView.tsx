@@ -48,8 +48,8 @@ export function InvoiceDetailView({ invoice, onBack, onPayNow }: InvoiceDetailVi
         };
       case 'sent':
         return { 
-          badge: <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Awaiting Payment</Badge>,
-          icon: <Clock className="h-8 w-8 text-blue-500" />,
+          badge: <Badge className="bg-blue-100 text-cyan-400 hover:bg-blue-100">Awaiting Payment</Badge>,
+          icon: <Clock className="h-8 w-8 text-cyan-400" />,
           message: 'Payment is pending. Please pay before the due date.'
         };
       case 'overdue':

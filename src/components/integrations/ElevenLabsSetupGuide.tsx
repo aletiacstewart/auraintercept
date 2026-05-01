@@ -293,7 +293,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                   </div>
                   <p className="text-xs mb-2">Sends a gentle re-engagement message after a period of silence.</p>
                   <div className="bg-blue-50 dark:bg-blue-950/30 p-2 rounded flex items-center gap-2">
-                    <span className="text-xs text-blue-800 dark:text-blue-200">
+                    <span className="text-xs text-cyan-800 dark:text-cyan-200">
                       Set to <strong>8 seconds</strong> with message: <em>"Are you still there? Take your time — I'm here whenever you're ready."</em>
                     </span>
                   </div>
@@ -323,8 +323,8 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-4">
               <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200">
-                <AlertCircle className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-xs text-blue-800 dark:text-blue-200">
+                <AlertCircle className="h-4 w-4 text-cyan-400" />
+                <AlertDescription className="text-xs text-cyan-800 dark:text-cyan-200">
                   <strong>These are Client Tools</strong> — they run in the customer's browser, not via server webhooks. The browser SDK intercepts each tool call and routes it to your backend automatically. <strong>No webhook URL is needed.</strong>
                 </AlertDescription>
               </Alert>
@@ -398,7 +398,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                             </tr>
                             <tr>
                               <td className="py-1.5 pr-3 font-medium text-muted-foreground">Type</td>
-                              <td className="py-1.5"><Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 text-[10px]">Client</Badge></td>
+                              <td className="py-1.5"><Badge className="bg-blue-100 text-cyan-800 hover:bg-blue-100 text-[10px]">Client</Badge></td>
                             </tr>
                           </tbody>
                         </table>
@@ -427,7 +427,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                   <Badge 
                                     className={`text-[10px] px-1.5 ${
                                       param.valueType === 'value' 
-                                        ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
+                                        ? 'bg-blue-100 text-cyan-800 hover:bg-blue-100' 
                                         : 'bg-purple-100 text-purple-800 hover:bg-purple-100'
                                     }`}
                                   >
@@ -480,8 +480,8 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                 {/* Value (only for constant type) */}
                                 {param.valueType === 'value' && param.value && (
                                   <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 p-2 rounded">
-                                    <span className="text-[10px] text-blue-700 dark:text-blue-300 w-20 shrink-0">Paste this:</span>
-                                    <code className="text-xs bg-white dark:bg-blue-900/50 px-2 py-1 rounded flex-1 font-mono text-blue-800 dark:text-blue-200 break-all">{param.value}</code>
+                                    <span className="text-[10px] text-cyan-400 dark:text-cyan-300 w-20 shrink-0">Paste this:</span>
+                                    <code className="text-xs bg-white dark:bg-blue-900/50 px-2 py-1 rounded flex-1 font-mono text-cyan-800 dark:text-cyan-200 break-all">{param.value}</code>
                                     <Button
                                       variant="secondary"
                                       size="sm"
@@ -668,8 +668,8 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </div>
 
               <Alert className="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
-                <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <AlertDescription className="text-xs text-blue-700 dark:text-blue-300">
+                <AlertCircle className="h-4 w-4 text-cyan-400 dark:text-cyan-400" />
+                <AlertDescription className="text-xs text-cyan-400 dark:text-cyan-300">
                   <strong>Important:</strong> This is a workspace-level setting that applies to all your agents.
                 </AlertDescription>
               </Alert>

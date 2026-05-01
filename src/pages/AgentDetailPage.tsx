@@ -54,7 +54,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'customer_engagement',
     phase: 1,
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     capabilities: [
       'Intent classification',
       'Urgency assessment',
@@ -74,7 +74,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'customer_engagement',
     phase: 2,
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     capabilities: [
       'Schedule new appointments',
       'Reschedule existing bookings',
@@ -96,7 +96,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'customer_engagement',
     phase: 3,
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     capabilities: [
       'Post-service check-ins',
       'Satisfaction surveys',
@@ -116,7 +116,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'customer_engagement',
     phase: 4,
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     capabilities: [
       'Review request timing',
       'Multi-platform posting',

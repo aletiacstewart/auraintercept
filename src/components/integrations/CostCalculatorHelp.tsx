@@ -73,7 +73,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
             {/* Voice Explanation */}
             <div className="p-3 rounded-lg bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-900/30">
               <div className="flex items-center gap-2 mb-2">
-                <Phone className="w-4 h-4 text-blue-600" />
+                <Phone className="w-4 h-4 text-cyan-400" />
                 <span className="font-medium">Voice Call Reminders</span>
                 <Badge variant="outline" className="text-xs text-white/70 border-white/30">~12¢ per call</Badge>
               </div>

@@ -39,7 +39,7 @@ interface FlowConfig {
 }
 
 const CATEGORY_CONFIG: Record<string, { icon: React.ElementType; color: string; bgColor: string }> = {
-  customer_engagement: { icon: Users, color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
+  customer_engagement: { icon: Users, color: 'text-cyan-400', bgColor: 'bg-blue-500/10' },
   field_operations: { icon: Truck, color: 'text-green-500', bgColor: 'bg-green-500/10' },
   business_operations: { icon: Briefcase, color: 'text-purple-500', bgColor: 'bg-purple-500/10' },
   marketing_sales: { icon: Megaphone, color: 'text-orange-500', bgColor: 'bg-orange-500/10' },
@@ -86,7 +86,7 @@ const FLOW_CONFIGS: FlowConfig[] = [
     id: 'customer',
     title: 'Customer Portal Flow',
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     bgColor: 'bg-blue-500/10',
     agents: ['triage', 'customer_journey'],
   },

@@ -882,7 +882,7 @@ export function AIAgentTestSuite() {
                       {result.status === 'failed' && <XCircle className="h-5 w-5 text-red-500" />}
                       {result.status === 'slow' && <AlertTriangle className="h-5 w-5 text-amber-500" />}
                       {result.status === 'timeout' && <Clock className="h-5 w-5 text-orange-500" />}
-                      {result.status === 'running' && <Clock className="h-5 w-5 text-blue-500 animate-pulse" />}
+                      {result.status === 'running' && <Clock className="h-5 w-5 text-cyan-400 animate-pulse" />}
                       {result.status === 'pending' && <Clock className="h-5 w-5 text-muted-foreground" />}
                       
                       <div>

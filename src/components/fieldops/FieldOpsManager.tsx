@@ -897,7 +897,7 @@ function AgendaJobCard({
               {financials.quotes.length > 0 && (
                 <a 
                   href={`/dashboard/quotes?search=${encodeURIComponent(job.appointments?.customer_name || '')}`}
-                  className="flex items-center gap-1 text-blue-400 text-xs hover:underline cursor-pointer"
+                  className="flex items-center gap-1 text-cyan-400 text-xs hover:underline cursor-pointer"
                 >
                   <FileText className="h-3 w-3" />
                   {financials.quotes.length} Quote{financials.quotes.length > 1 ? 's' : ''}
@@ -934,7 +934,7 @@ function AgendaJobCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 px-2 text-blue-400 hover:bg-blue-500/20"
+                  className="h-8 px-2 text-cyan-400 hover:bg-blue-500/20"
                   onClick={() => onAssign(job)}
                   title="Assign Technician"
                 >

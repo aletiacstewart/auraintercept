@@ -16,8 +16,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 208 30% 15%;
 
-    /* Primary: Royal Blue #214ebb */
-    --primary: 223 73% 43%;
+    /* Primary: Neon Cyan */
+    --primary: 189 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary: Sky Blue #46a2d3 */
@@ -36,7 +36,7 @@
 
     --border: 210 20% 90%;
     --input: 210 20% 90%;
-    --ring: 223 73% 43%;
+    --ring: 189 100% 50%;
 
     --radius: 0.75rem;
 
@@ -50,11 +50,11 @@
     --sidebar-border: 208 30% 28%;
     --sidebar-ring: 199 60% 55%;
 
-    /* Custom gradients - Royal Blue → Sky Blue */
-    --gradient-primary: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
+    /* Custom gradients - Neon Cyan → Sky Blue */
+    --gradient-primary: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(210, 20%, 96%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
-    --gradient-button: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
 
     /* Channel Colors - Aura Communication Channels (Brighter for readability) */
     --channel-voice: 348 83% 70%;
@@ -84,7 +84,7 @@
     --shadow-sm: 0 1px 2px 0 hsl(208 30% 24% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(208 30% 24% / 0.1), 0 2px 4px -2px hsl(208 30% 24% / 0.1);
     --shadow-lg: 0 10px 15px -3px hsl(208 30% 24% / 0.1), 0 4px 6px -4px hsl(208 30% 24% / 0.1);
-    --shadow-glow: 0 0 20px hsl(223 73% 43% / 0.3);
+    --shadow-glow: 0 0 20px hsl(189 100% 50% / 0.3);
     --shadow-glow-accent: 0 0 20px hsl(199 60% 55% / 0.3);
   }
 
@@ -105,8 +105,8 @@
     --primary: 189 100% 50%;
     --primary-foreground: 210 40% 4%;
 
-    /* Secondary: Royal Blue #214ebb */
-    --secondary: 223 73% 43%;
+    /* Secondary: Neon Cyan */
+    --secondary: 189 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 35% 14%;
@@ -408,12 +408,12 @@
   }
 
   .gradient-button {
-    background: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
+    background: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
     color: hsl(0 0% 100%);
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
+    background: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -560,9 +560,9 @@
     border: 1px solid rgba(0,229,255,0.1);
   }
 
-  /* Glow effects - Royal Blue to Sky Blue */
+  /* Glow effects - Neon Cyan to Sky Blue */
   .glow-primary {
-    box-shadow: 0 0 20px hsl(223 73% 43% / 0.4), 0 0 40px hsl(199 60% 55% / 0.2);
+    box-shadow: 0 0 20px hsl(189 100% 50% / 0.4), 0 0 40px hsl(199 60% 55% / 0.2);
   }
 
   .glow-accent {
@@ -570,7 +570,7 @@
   }
 
   .glow-blue {
-    box-shadow: 0 0 20px hsl(223 73% 43% / 0.5);
+    box-shadow: 0 0 20px hsl(189 100% 50% / 0.5);
   }
 
   .glow-sky {
@@ -594,9 +594,9 @@
     box-shadow: 0 0 20px hsl(var(--channel-chat) / 0.5);
   }
 
-  /* Neon border - Royal Blue */
+  /* Neon border - Cyan */
   .neon-border {
-    box-shadow: inset 0 0 0 1px hsl(223 73% 43% / 0.3), 0 0 15px hsl(223 73% 43% / 0.15);
+    box-shadow: inset 0 0 0 1px hsl(189 100% 50% / 0.3), 0 0 15px hsl(189 100% 50% / 0.15);
   }
 
   .neon-border-gradient {
@@ -609,7 +609,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, #214ebb, #46a2d3);
+    background: linear-gradient(135deg, hsl(189 100% 50%), hsl(199 60% 55%));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -635,8 +635,8 @@
   /* Tech grid background */
   .tech-grid {
     background-image: 
-      linear-gradient(hsl(223 73% 43% / 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(223 73% 43% / 0.03) 1px, transparent 1px);
+      linear-gradient(hsl(189 100% 50% / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(189 100% 50% / 0.03) 1px, transparent 1px);
     background-size: 20px 20px;
   }
 
@@ -691,13 +691,13 @@
 
   /* Button gradient hover */
   .btn-gradient {
-    background: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
+    background: linear-gradient(135deg, hsl(189 100% 50%) 0%, hsl(199 60% 55%) 100%);
     color: hsl(0 0% 100%);
     transition: all 0.3s ease;
   }
 
   .btn-gradient:hover {
-    box-shadow: 0 0 30px hsl(223 73% 43% / 0.4), 0 0 60px hsl(199 60% 55% / 0.3);
+    box-shadow: 0 0 30px hsl(189 100% 50% / 0.4), 0 0 60px hsl(199 60% 55% / 0.3);
     transform: translateY(-1px);
   }
 
@@ -1316,6 +1316,24 @@
 .dashboard-main .text-neutral-400,
 .dashboard-main .text-neutral-500 {
   color: #FFFFFF !important;
+}
+
+/* Dark/royal blue text on dashboard and console surfaces should render as cyan. */
+.dashboard-main .text-cyan-200,
+.dashboard-main .text-cyan-300,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-300,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-300,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400,
+.dashboard-main .text-cyan-400 {
+  color: hsl(var(--primary)) !important;
 }
 
 /* Placeholder text in dashboard inputs stays subtly dimmer for usability */

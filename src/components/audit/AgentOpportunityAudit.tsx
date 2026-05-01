@@ -166,7 +166,7 @@ export function AgentOpportunityAudit() {
             className="text-4xl sm:text-5xl font-brand uppercase tracking-tight mb-3"
             style={{
               background:
-                "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 45%, #00E5FF 70%, #214ebb 100%)",
+                "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 45%, #00E5FF 70%, #00E5FF 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",

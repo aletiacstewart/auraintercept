@@ -26,7 +26,7 @@ export function ElevenLabsVoiceSetupGuide() {
     <Card className="guide-card guide-card-voice">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Mic className="w-5 h-5 text-blue-500" />
+          <Mic className="w-5 h-5 text-cyan-400" />
           <CardTitle className="text-lg">ElevenLabs Setup Guide</CardTitle>
           <Badge variant="secondary">Voice AI</Badge>
         </div>
@@ -80,7 +80,7 @@ export function ElevenLabsVoiceSetupGuide() {
               </ol>
               <div className="bg-muted p-4 rounded-lg space-y-2">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-500" />
+                  <Shield className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">API Key Location</span>
                 </div>
                 <p className="text-xs">Your API key is found under your profile settings, not in a separate API section.</p>
@@ -113,7 +113,7 @@ export function ElevenLabsVoiceSetupGuide() {
               </ol>
               <div className="bg-muted p-4 rounded-lg space-y-2">
                 <div className="flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-blue-500" />
+                  <Volume2 className="w-4 h-4 text-cyan-400" />
                   <span className="font-medium text-foreground">Popular Voice IDs</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">

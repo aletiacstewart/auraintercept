@@ -119,7 +119,7 @@ export function EmployeeDashboard() {
       value: stats?.callsThisMonth ?? 0,
       icon: Phone,
       description: 'This month',
-      gradient: 'from-blue-500 to-blue-600',
+      gradient: 'from-blue-500 to-cyan-600',
     },
   ];
 
@@ -145,7 +145,7 @@ export function EmployeeDashboard() {
   ] : [];
 
   const billingActions = hasJobType('billing_specialist') ? [
-    { label: 'Business AI', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-blue-500 to-blue-600' },
+    { label: 'Business AI', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-blue-500 to-cyan-600' },
   ] : [];
 
   // Marketing actions removed - restricted to platform_admin only
@@ -220,7 +220,7 @@ export function EmployeeDashboard() {
               <CardTitle className={`text-sm font-medium ${
                 stat.gradient.includes('yellow') ? 'text-yellow-400' :
                 stat.gradient.includes('green') ? 'text-green-400' :
-                stat.gradient.includes('blue') ? 'text-blue-400' :
+                stat.gradient.includes('blue') ? 'text-cyan-400' :
                 stat.gradient.includes('orange') ? 'text-orange-400' :
                 stat.gradient.includes('cyan') ? 'text-cyan-400' :
                 stat.gradient.includes('secondary') ? 'text-secondary' :

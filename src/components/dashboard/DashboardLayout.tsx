@@ -357,7 +357,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       >
         {/* Logo */}
         <div data-tour-id="sidebar-logo" className="flex items-center gap-3 px-4 py-5">
-          <div className="w-10 h-10 rounded-xl p-0.5 flex-shrink-0" style={{ background: "linear-gradient(135deg, #00E5FF, #214ebb)" }}>
+          <div className="w-10 h-10 rounded-xl p-0.5 flex-shrink-0" style={{ background: "linear-gradient(135deg, #00E5FF, #00E5FF)" }}>
             <div className="w-full h-full rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "rgba(4,10,20,0.95)" }}>
               <img src={logo} alt="Aura Intercept" className="w-8 h-8 object-contain" />
             </div>

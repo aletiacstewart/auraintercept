@@ -28,7 +28,7 @@ interface Section {
 const sections: Section[] = [
   {
     title: 'Platform Intro',
-    color: 'text-blue-400',
+    color: 'text-cyan-400',
     borderColor: 'border-blue-500/30',
     bgColor: 'bg-blue-500/10',
     clips: [
@@ -43,7 +43,7 @@ const sections: Section[] = [
   },
   {
     title: 'Console 1: Customer Portal',
-    color: 'text-blue-400',
+    color: 'text-cyan-400',
     borderColor: 'border-blue-500/30',
     bgColor: 'bg-blue-500/10',
     clips: [
@@ -316,9 +316,9 @@ const sections: Section[] = [
   },
   {
     title: 'AI Operatives Hub',
-    color: 'text-indigo-400',
-    borderColor: 'border-indigo-500/30',
-    bgColor: 'bg-indigo-500/10',
+    color: 'text-cyan-400',
+    borderColor: 'border-cyan-500/30',
+    bgColor: 'bg-cyan-500/10',
     clips: [
       {
         num: 33,
@@ -490,14 +490,14 @@ export default function VideoPromptsPage() {
               </div>
               <div className="flex flex-wrap gap-2 text-xs mb-3">
                 {[
-                  { label: 'Customer Portal', color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30' },
+                  { label: 'Customer Portal', color: 'bg-blue-500/20 text-cyan-300 border border-blue-500/30' },
                   { label: 'Field Operations', color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
                   { label: 'Business Ops', color: 'bg-purple-500/20 text-purple-300 border border-purple-500/30' },
                   { label: 'Outreach & Sales', color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' },
                   { label: 'Social Media', color: 'bg-pink-500/20 text-pink-300 border border-pink-500/30' },
                   { label: 'Creative & Web', color: 'bg-violet-500/20 text-violet-300 border border-violet-500/30' },
                   { label: 'Analytics & Reports', color: 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' },
-                  { label: 'AI Operatives Hub', color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' },
+                  { label: 'AI Operatives Hub', color: 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' },
                 ].map(item => (
                   <span key={item.label} className={`px-2 py-1 rounded-full font-medium ${item.color}`}>{item.label}</span>
                 ))}

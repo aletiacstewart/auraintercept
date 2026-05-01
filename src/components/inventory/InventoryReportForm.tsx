@@ -169,7 +169,7 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
   const renderReorder = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2">
-        <RefreshCcw className="h-4 w-4 text-blue-500" />
+        <RefreshCcw className="h-4 w-4 text-cyan-400" />
         Reorder Recommendations
       </h4>
 

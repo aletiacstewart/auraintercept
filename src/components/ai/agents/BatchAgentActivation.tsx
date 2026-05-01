@@ -24,7 +24,7 @@ const PHASE_CONFIG = [
     name: 'Customer Portal',
     description: 'AI Receptionist + Customer Journey Agent (Scheduling, Follow-up, Review)',
     icon: Users,
-    color: 'text-blue-500',
+    color: 'text-cyan-400',
     agents: ['triage', 'customer_journey'],
   },
   {

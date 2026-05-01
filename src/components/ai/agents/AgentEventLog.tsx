@@ -94,7 +94,7 @@ export function AgentEventLog({ agentType, companyId }: AgentEventLogProps) {
       case 'failed':
         return <XCircle className="h-4 w-4 text-destructive" />;
       case 'processing':
-        return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
+        return <Loader2 className="h-4 w-4 text-cyan-400 animate-spin" />;
       default:
         return <Clock className="h-4 w-4 text-muted-foreground" />;
     }

@@ -28,11 +28,11 @@ interface SocialAnalyticsFormProps {
 
 const PLATFORM_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
   instagram: { icon: Instagram, color: 'text-pink-600 bg-white border-border', label: 'Instagram' },
-  google_business: { icon: MapPin, color: 'text-blue-600 bg-white border-border', label: 'Google Business' },
-  facebook: { icon: Facebook, color: 'text-indigo-600 bg-white border-border', label: 'Facebook' },
+  google_business: { icon: MapPin, color: 'text-cyan-400 bg-white border-border', label: 'Google Business' },
+  facebook: { icon: Facebook, color: 'text-cyan-400 bg-white border-border', label: 'Facebook' },
   sms: { icon: MessageSquare, color: 'text-green-600 bg-white border-border', label: 'SMS' },
   tiktok: { icon: Video, color: 'text-rose-600 bg-white border-border', label: 'TikTok' },
-  linkedin: { icon: Linkedin, color: 'text-sky-600 bg-white border-border', label: 'LinkedIn' },
+  linkedin: { icon: Linkedin, color: 'text-cyan-400 bg-white border-border', label: 'LinkedIn' },
 };
 
 export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAnalyticsFormProps) {
@@ -156,7 +156,7 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
 
               <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                  <TrendingUp className="h-4 w-4 text-cyan-400" />
                   <span className="text-xs text-muted-foreground">Scheduled</span>
                 </div>
                 <p className="text-2xl font-bold text-foreground">{scheduledCount}</p>

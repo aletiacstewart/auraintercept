@@ -72,7 +72,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     ['Service Booking', 'Instant Quotes', '24/7 Answering', 'Follow-Ups', 'Customer Reminders'],
     { service: 'Service Call', whenOffsetHours: 24, notes: 'Aura captured the lead, qualified the need, and booked the appointment.' },
     { source: 'chat', intent: 'inquiry', serviceInterest: 'General Service', priority: 'normal', score: 70 },
-    AUSTIN, { primary: '#214ebb', secondary: '#46a2d3' },
+    AUSTIN, { primary: '#00E5FF', secondary: '#46a2d3' },
   ),
 
   // ─── Essential Trades ─────────────────────────────────────────────

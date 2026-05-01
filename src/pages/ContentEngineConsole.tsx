@@ -25,7 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 const CHANNEL_STATS_CONFIG = [
-  { channel: 'Website', icon: Globe, key: 'website', color: 'text-blue-400' },
+  { channel: 'Website', icon: Globe, key: 'website', color: 'text-cyan-400' },
   { channel: 'Social', icon: Share2, key: 'social', color: 'text-pink-400' },
   { channel: 'Campaign', icon: Mail, key: 'campaign', color: 'text-amber-400' },
   { channel: 'Blog', icon: FileText, key: 'blog', color: 'text-green-400' },

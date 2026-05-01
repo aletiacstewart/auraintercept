@@ -25,7 +25,7 @@ export function VoiceOnboardingSettings() {
   const { isVoiceModeEnabled, isSupported, toggleVoiceMode, isListening } = useVoice();
 
   const voiceCommands = [
-    { command: '"Next" or "Tab"', action: 'Move to next input field', icon: ArrowRight, color: 'text-blue-500' },
+    { command: '"Next" or "Tab"', action: 'Move to next input field', icon: ArrowRight, color: 'text-cyan-400' },
     { command: '"Back" or "Previous"', action: 'Move to previous field', icon: ArrowLeft, color: 'text-purple-500' },
     { command: '"Clear" or "Erase"', action: 'Clear current field', icon: Trash2, color: 'text-orange-500' },
     { command: '"Save Job" or "Submit"', action: 'Submit the current form', icon: Check, color: 'text-green-500' },

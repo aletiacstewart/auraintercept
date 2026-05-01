@@ -18,7 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 
 const CHANNEL_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-  website: { icon: Globe, color: 'text-blue-400', label: 'Website' },
+  website: { icon: Globe, color: 'text-cyan-400', label: 'Website' },
   social: { icon: Share2, color: 'text-pink-400', label: 'Social' },
   campaign: { icon: Mail, color: 'text-amber-400', label: 'Campaign' },
   blog: { icon: FileText, color: 'text-green-400', label: 'Blog' },

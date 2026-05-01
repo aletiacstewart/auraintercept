@@ -371,7 +371,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
               )}
               {job.arrived_at && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-indigo-500" />
+                  <MapPin className="w-4 h-4 text-cyan-400" />
                   <div>
                     <p className="text-xs text-white">Arrived</p>
                     <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>

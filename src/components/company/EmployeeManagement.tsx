@@ -68,7 +68,7 @@ const JOB_TYPES = [
   { value: 'booking_agent', label: 'Booking Agent', description: 'Scheduling & appointments', color: 'bg-green-500' },
   { value: 'dispatch', label: 'Dispatch', description: 'Emergency routing & assignment', color: 'bg-red-500' },
   { value: 'customer_service', label: 'Customer Service', description: 'Triage & follow-up', color: 'bg-purple-500' },
-  { value: 'manager', label: 'Manager', description: 'Team oversight & full access', color: 'bg-indigo-500' },
+  { value: 'manager', label: 'Manager', description: 'Team oversight & full access', color: 'bg-cyan-500' },
   { value: 'billing', label: 'Billing', description: 'Invoicing & quotes', color: 'bg-yellow-500' },
   { value: 'marketing', label: 'Marketing', description: 'Campaigns & outreach', color: 'bg-pink-500' },
   { value: 'inventory', label: 'Inventory', description: 'Stock management', color: 'bg-orange-500' },

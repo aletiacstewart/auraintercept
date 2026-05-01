@@ -79,7 +79,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
       <div className="flex flex-col h-screen bg-background">
         {/* PWA Install Banner */}
         {isInstallable && showInstallBanner && (
-          <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+          <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white">
             <div className="flex items-center gap-2">
               <Download className="h-4 w-4" />
               <span className="text-sm font-medium">Install Field Ops app</span>

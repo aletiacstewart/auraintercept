@@ -49,7 +49,7 @@ const STATUS_CONFIG = {
 
 const PRIORITY_CONFIG = {
   low: { label: 'Low', color: 'text-muted-foreground' },
-  normal: { label: 'Normal', color: 'text-blue-500' },
+  normal: { label: 'Normal', color: 'text-cyan-400' },
   high: { label: 'High', color: 'text-orange-500' },
   hot: { label: 'Hot', color: 'text-red-500' },
 };

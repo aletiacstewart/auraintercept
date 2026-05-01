@@ -151,7 +151,7 @@ export function AutomationOverview() {
     {
       title: 'Appointment Reminders',
       description: 'Automated SMS and voice call reminders',
-      icon: <Bell className="h-5 w-5 text-blue-500" />,
+      icon: <Bell className="h-5 w-5 text-cyan-400" />,
       items: [
         {
           name: 'SMS Reminders',
@@ -285,14 +285,14 @@ export function AutomationOverview() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
+        <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-600/5 border-blue-500/20">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-500/20">
-                <Bell className="h-5 w-5 text-blue-600" />
+                <Bell className="h-5 w-5 text-cyan-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">{enabledSmsReminders + enabledVoiceReminders}</p>
+                <p className="text-2xl font-bold text-cyan-400">{enabledSmsReminders + enabledVoiceReminders}</p>
                 <p className="text-xs text-muted-foreground">Reminder Rules</p>
               </div>
             </div>

@@ -77,7 +77,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
 
     const buttonStyle = primaryColor 
       ? { background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }
-      : { background: 'linear-gradient(135deg, #214ebb, #46a2d3)' };
+      : { background: 'linear-gradient(135deg, #00E5FF, #46a2d3)' };
 
     return (
       <div ref={ref}>

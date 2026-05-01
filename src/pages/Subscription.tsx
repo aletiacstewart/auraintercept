@@ -759,7 +759,7 @@ export default function Subscription() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MessageSquare className="w-5 h-5 text-sky-500 mt-0.5" />
+                <MessageSquare className="w-5 h-5 text-cyan-400 mt-0.5" />
                 <div>
                   <p className="font-medium text-card-foreground">SMS Reminders</p>
                   <p className="text-muted-foreground">Usage-based via SignalWire</p>

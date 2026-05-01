@@ -54,7 +54,7 @@ const PLATFORM_CONFIG: Record<Platform, {
   facebook: {
     label: 'Facebook',
     icon: Facebook,
-    color: 'text-blue-600',
+    color: 'text-cyan-400',
     bgColor: 'bg-blue-600',
     deepLink: () => 'https://www.facebook.com',
     instructions: 'Paste your copied content into the "What\'s on your mind?" box on Facebook.',
@@ -70,7 +70,7 @@ const PLATFORM_CONFIG: Record<Platform, {
   linkedin: {
     label: 'LinkedIn',
     icon: Linkedin,
-    color: 'text-sky-700',
+    color: 'text-cyan-700',
     bgColor: 'bg-blue-700',
     deepLink: (content) => `https://www.linkedin.com/sharing/share-offsite/?mini=true&summary=${encodeURIComponent(content)}`,
     instructions: 'Your content will be pre-filled. Review and click Post.',

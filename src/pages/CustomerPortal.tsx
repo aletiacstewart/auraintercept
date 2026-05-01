@@ -181,7 +181,7 @@ export default function CustomerPortal() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/30">Scheduled</Badge>;
+        return <Badge className="bg-blue-500/10 text-cyan-400 border-blue-500/30">Scheduled</Badge>;
       case 'completed':
         return <Badge className="bg-green-500/10 text-green-600 border-green-500/30">Completed</Badge>;
       case 'cancelled':
@@ -322,7 +322,7 @@ export default function CustomerPortal() {
               {appointment.delivery_type === 'virtual' && !appointment.meeting_link && appointment.status === 'scheduled' && (
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-blue-600" />
+                    <Phone className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div>
                     <p className="font-medium">Phone Session</p>

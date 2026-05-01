@@ -90,7 +90,7 @@ const CATEGORY_CONFIG: Record<SmartLinkCategory, { label: string; icon: React.Re
   scheduling: {
     label: 'Scheduling',
     icon: <Calendar className="w-4 h-4" />,
-    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    color: 'bg-blue-500/20 text-cyan-400 border-blue-500/30',
     defaultTriggers: ['book', 'schedule', 'appointment', 'availability', 'when can'],
   },
   pricing: {

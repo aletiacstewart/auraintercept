@@ -75,7 +75,7 @@ export function DispatchFieldOpsAppCard() {
               Quick-access Dispatch Console for field operations managers
             </CardDescription>
           </div>
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
+          <Badge variant="outline" className="bg-blue-500/10 text-cyan-400 border-blue-500/30">
             PWA
           </Badge>
         </div>

@@ -325,7 +325,7 @@ export default function Contact() {
       {showChat && (
         <FloatingChatWidget
           websiteId="aura-intercept-contact"
-          primaryColor="#214ebb"
+          primaryColor="#00E5FF"
         />
       )}
     </div>
