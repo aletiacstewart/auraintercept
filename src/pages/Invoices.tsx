@@ -54,6 +54,8 @@ interface InvoiceLineItem {
 
 export default function Invoices() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const header = getPageHeader('invoices', pack);
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewInvoice, setViewInvoice] = useState<Invoice | null>(null);
@@ -170,8 +172,8 @@ export default function Invoices() {
         <div className="space-y-6">
         <PageHeader
           icon={Receipt}
-          title="Invoices"
-          description="Create and manage customer invoices"
+          title={header.title}
+          description={header.description}
           featureColor="invoices"
           showAuraBar
           action={
