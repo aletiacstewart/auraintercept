@@ -479,22 +479,6 @@ export default function TermsOfService() {
             </p>
           </section>
 
-          {/* Section 19: Platform Terms of Service */}
-          <section className="border-t border-border pt-8 mt-12">
-            <h2 className="text-2xl font-semibold mb-4">19. Platform Terms of Service</h2>
-            <p>
-              This application is built on Lovable. For information about Lovable's terms, please review the{' '}
-              <a 
-                href="https://lovable.dev/tos" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Lovable Terms of Service
-              </a>.
-            </p>
-          </section>
-
           {/* Section 20: ElevenLabs AI Agent Disclosure */}
           <section className="border-t border-border pt-8 mt-12">
             <h2 className="text-2xl font-semibold mb-4">20. ElevenLabs AI Agent Disclosure</h2>
