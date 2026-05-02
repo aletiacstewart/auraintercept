@@ -10,6 +10,12 @@ import { toast } from 'sonner';
 import { X, Download, FileSpreadsheet, Calendar, Loader2, FileText } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import jsPDF from 'jspdf';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import {
+  getIndustryReportTemplate,
+  getSectionLabel,
+  type ReportSectionId,
+} from '@/lib/industryReportTemplates';
 
 interface ExportReportFormProps {
   companyId: string;
@@ -17,16 +23,10 @@ interface ExportReportFormProps {
   onExport?: (data: { type: string; count: number }) => void;
 }
 
-// Report type options
-const REPORT_TYPES = [
-  { id: 'appointments', label: 'Appointments' },
-  { id: 'invoices', label: 'Invoices' },
-  { id: 'jobs', label: 'Job Assignments' },
-  { id: 'customers', label: 'Customer List' },
-  { id: 'revenue', label: 'Revenue Summary' },
-  { id: 'feedback', label: 'Customer Feedback' },
-  { id: 'reminders', label: 'Reminder Logs' },
-  { id: 'social', label: 'Social Media' },
+// Report type ids — labels are resolved per-industry below.
+const REPORT_TYPE_IDS: ReportSectionId[] = [
+  'appointments', 'invoices', 'jobs', 'customers',
+  'revenue', 'feedback', 'reminders', 'social',
 ];
 
 // Field options organized by category
@@ -40,6 +40,12 @@ const FIELD_OPTIONS = {
 };
 
 export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, onCancel, onExport }) => {
+  const { pack } = useIndustryPack(companyId);
+  const reportTemplate = getIndustryReportTemplate(pack);
+  const REPORT_TYPES = REPORT_TYPE_IDS.map((id) => ({
+    id,
+    label: getSectionLabel(pack, id),
+  }));
   const [selectedReports, setSelectedReports] = useState<string[]>(['appointments']);
   const [dateRange, setDateRange] = useState('30');
   const [exportFormat, setExportFormat] = useState('csv');
@@ -257,7 +263,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
     let yPosition = 20;
     
     doc.setFontSize(18);
-    doc.text('Analytics Report', 20, yPosition);
+    doc.text(reportTemplate.reportTitle, 20, yPosition);
     yPosition += 10;
     
     doc.setFontSize(10);
@@ -271,7 +277,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         yPosition = 20;
       }
       
-      const reportLabel = REPORT_TYPES.find(r => r.id === reportType)?.label || reportType;
+      const reportLabel = getSectionLabel(pack, reportType as ReportSectionId);
       doc.setFontSize(14);
       doc.text(reportLabel, 20, yPosition);
       yPosition += 8;

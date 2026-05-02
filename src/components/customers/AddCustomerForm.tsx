@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, UserPlus, Mail, Phone, MapPin, MessageSquare, PhoneCall } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIndustryFieldLabel } from '@/lib/industryFieldLabels';
 
 interface AddCustomerFormProps {
   open: boolean;
@@ -18,6 +19,9 @@ interface AddCustomerFormProps {
 export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const fieldLabel = useIndustryFieldLabel('customer');
+  const customerNoun = fieldLabel('customer_name').label;
+  const addressLabel = fieldLabel('service_address').label;
   
   // Form state
   const [firstName, setFirstName] = useState('');
@@ -92,10 +96,10 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-primary" />
-            Add New Customer
+            Add New {customerNoun}
           </DialogTitle>
           <DialogDescription>
-            Create a new customer profile with contact information and communication preferences.
+            Create a new {customerNoun.toLowerCase()} profile with contact information and communication preferences.
           </DialogDescription>
         </DialogHeader>
 
@@ -158,7 +162,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
           <div className="space-y-2">
             <Label htmlFor="address" className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
-              Address
+              {addressLabel}
             </Label>
             <Input
               id="address"

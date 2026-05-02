@@ -82,6 +82,20 @@ Deno.serve(async (req) => {
     const isVirtual = deliveryType === 'virtual';
     const isAtBusiness = deliveryType === 'in_person_business';
 
+    // Resolve industry-specific noun for "Job" (e.g. "Showing", "Reservation",
+    // "Repair Order"). Falls back to "Job" so existing copy is unchanged for
+    // verticals without a pack.
+    let jobNoun = 'Job';
+    try {
+      const { data: packRow } = await supabase
+        .rpc('get_company_industry_pack', { p_company_id: appointment.company_id });
+      const row = Array.isArray(packRow) ? packRow[0] : packRow;
+      const term = (row?.terminology || {}) as Record<string, string>;
+      if (term.job && typeof term.job === 'string') jobNoun = term.job;
+    } catch (e) {
+      console.warn('[Job Notification] Could not resolve industry terminology:', e);
+    }
+
     // Skip irrelevant notifications for virtual/at-business jobs
     if (isVirtual && (notificationType === 'en_route' || notificationType === 'arrived')) {
       console.log(`[Job Notification] Skipping ${notificationType} for virtual appointment`);
@@ -170,6 +184,7 @@ Deno.serve(async (req) => {
         deliveryType,
         meetingLink,
         customerPhone: appointment.customer_phone,
+        jobNoun,
       }
     );
 
@@ -299,9 +314,12 @@ function generateMessages(
     deliveryType?: string;
     meetingLink?: string | null;
     customerPhone?: string | null;
+    jobNoun?: string;
   }
 ): { sms: string; emailSubject: string; emailHtml: string } {
-  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone } = data;
+  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone, jobNoun } = data;
+  const noun = jobNoun || 'Job';
+  const NOUN_UPPER = noun.toUpperCase();
 
   const isVirtual = deliveryType === 'virtual';
   const isAtBusiness = deliveryType === 'in_person_business';
@@ -341,12 +359,12 @@ function generateMessages(
       },
       employee: {
         sms: isVirtual
-          ? `NEW JOB: ${serviceType} (Virtual) for ${customerName} on ${dateStr} at ${timeStr}. Please accept or decline in your dashboard.`
-          : `NEW JOB: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. ${locationInfo}. Please accept or decline in your dashboard.`,
-        emailSubject: `New Job Assignment - ${serviceType}`,
+          ? `NEW ${NOUN_UPPER}: ${serviceType} (Virtual) for ${customerName} on ${dateStr} at ${timeStr}. Please accept or decline in your dashboard.`
+          : `NEW ${NOUN_UPPER}: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. ${locationInfo}. Please accept or decline in your dashboard.`,
+        emailSubject: `New ${noun} Assignment - ${serviceType}`,
         emailHtml: `
-          <h2>New Job Assignment</h2>
-          <p>You have been assigned a new ${isVirtual ? 'virtual ' : ''}job:</p>
+          <h2>New ${noun} Assignment</h2>
+          <p>You have been assigned a new ${isVirtual ? 'virtual ' : ''}${noun.toLowerCase()}:</p>
           <ul>
             <li><strong>Service:</strong> ${serviceType}${isVirtual ? ' (Virtual)' : isAtBusiness ? ' (At Business)' : ''}</li>
             <li><strong>Customer:</strong> ${customerName}</li>
@@ -379,8 +397,8 @@ function generateMessages(
         sms: isVirtual
           ? `Job accepted. ${customerName} has been notified with ${meetingLink ? 'the video session link' : 'phone call details'}.`
           : `Job accepted. ${customerName} has been notified. ${locationInfo}`,
-        emailSubject: `Job Confirmed - ${serviceType}`,
-        emailHtml: `<p>You have accepted the job for ${customerName}. The customer has been notified${isVirtual && meetingLink ? ` with the video session link: <a href="${meetingLink}">${meetingLink}</a>` : ''}.</p>`,
+        emailSubject: `${noun} Confirmed - ${serviceType}`,
+        emailHtml: `<p>You have accepted the ${noun.toLowerCase()} for ${customerName}. The customer has been notified${isVirtual && meetingLink ? ` with the video session link: <a href="${meetingLink}">${meetingLink}</a>` : ''}.</p>`,
       },
     },
     en_route: {
@@ -440,8 +458,8 @@ function generateMessages(
       },
       employee: {
         sms: `Job completed. Great work! Customer has been notified.`,
-        emailSubject: `Job Completed - ${serviceType}`,
-        emailHtml: `<p>Job for ${customerName} has been marked as completed. Great work!</p>`,
+        emailSubject: `${noun} Completed - ${serviceType}`,
+        emailHtml: `<p>${noun} for ${customerName} has been marked as completed. Great work!</p>`,
       },
     },
   };

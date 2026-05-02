@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
+import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
 
 interface AddAppointmentFormProps {
   onSuccess?: () => void;
@@ -107,9 +108,10 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   }, [services, pack.job_templates]);
 
   const effectiveServices = services.length > 0 ? services : packServices;
-  const serviceLabel = pack.terminology?.job
-    ? `${pack.terminology.job} Type *`
-    : 'Service Type *';
+  const serviceField   = getIndustryFieldLabel('appointment', 'service_type', pack);
+  const addressField   = getIndustryFieldLabel('appointment', 'service_address', pack);
+  const customerField  = getIndustryFieldLabel('appointment', 'customer_name', pack);
+  const serviceLabel = `${serviceField.label} *`;
 
   // When the chosen service maps to an industry job template that defines a
   // form_id, render those questions inline (e.g. MLS# for real estate
@@ -316,7 +318,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Customer Name *"
+                placeholder={`${customerField.label} *`}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
@@ -350,7 +352,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Service Address"
+                placeholder={addressField.label}
                 value={customerAddress}
                 onChange={(e) => setCustomerAddress(e.target.value)}
                 className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
