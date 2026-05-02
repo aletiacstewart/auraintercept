@@ -16,6 +16,8 @@ import { Plus, Receipt, Eye, Send, Check, Search, Trash2, DollarSign, AlertTrian
 import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
@@ -52,6 +54,8 @@ interface InvoiceLineItem {
 
 export default function Invoices() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const header = getPageHeader('invoices', pack);
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewInvoice, setViewInvoice] = useState<Invoice | null>(null);
@@ -168,8 +172,8 @@ export default function Invoices() {
         <div className="space-y-6">
         <PageHeader
           icon={Receipt}
-          title="Invoices"
-          description="Create and manage customer invoices"
+          title={header.title}
+          description={header.description}
           featureColor="invoices"
           showAuraBar
           action={

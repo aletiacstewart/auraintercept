@@ -34,6 +34,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { PageContainer } from '@/components/ui/page-container';
 
 interface CustomerProfile {
@@ -84,6 +86,8 @@ interface CustomerFeedback {
 
 export default function Customers() {
   const { companyId, userRole } = useAuth();
+  const { pack } = useIndustryPack();
+  const header = getPageHeader('customers', pack);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerProfile | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -203,8 +207,8 @@ export default function Customers() {
         {/* Header */}
         <PageHeader
           icon={Users}
-          title="Customers"
-          description="View and manage customer information, history, and preferences"
+          title={header.title}
+          description={header.description}
           featureColor="customers"
           showAuraBar
           badge={

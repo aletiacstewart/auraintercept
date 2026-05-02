@@ -19,6 +19,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -154,8 +155,8 @@ export default function Quotes() {
         <div className="space-y-6">
         <PageHeader
           icon={FileText}
-          title="Quotes"
-          description="Create and manage service quotes"
+          title={getPageHeader('quotes', pack).title}
+          description={getPageHeader('quotes', pack).description}
           featureColor="quotes"
           showAuraBar
           action={
