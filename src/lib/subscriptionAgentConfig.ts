@@ -314,7 +314,20 @@ export function normalizeAgentName(agentType: string): string {
 // 4 specialist agents enabled per-industry via industry_template_packs.extra_operatives.
 // Always require Performance ($997) tier minimum (or trial). They never appear in TIER_AGENT_CONFIG
 // because they are opted-in by industry pack rather than by tier alone.
-export const INDUSTRY_SPECIALIST_OPERATIVES = ['diagnostic', 'permit_code', 'site_survey', 'insurance_claim'] as const;
+export const INDUSTRY_SPECIALIST_OPERATIVES = [
+  // Field/repair specialists (existing)
+  'diagnostic', 'permit_code', 'site_survey', 'insurance_claim',
+  // Real Estate
+  'listing_writer', 'offer_drafter', 'comp_analyst',
+  // Beauty & Wellness
+  'style_consultant', 'loyalty_coach',
+  // Restaurants
+  'menu_writer', 'reservation_optimizer',
+  // Personal Assistant
+  'task_triager', 'calendar_optimizer',
+  // Universal booking-first
+  'review_responder',
+] as const;
 
 export type IndustrySpecialistOperative = typeof INDUSTRY_SPECIALIST_OPERATIVES[number];
 
@@ -323,6 +336,16 @@ export const SPECIALIST_LABELS: Record<IndustrySpecialistOperative, string> = {
   permit_code: 'Permit & Code',
   site_survey: 'Site Survey & Quote',
   insurance_claim: 'Insurance Claim',
+  listing_writer: 'Listing Writer',
+  offer_drafter: 'Offer Drafter',
+  comp_analyst: 'Comp Analyst',
+  style_consultant: 'Style Consultant',
+  loyalty_coach: 'Loyalty Coach',
+  menu_writer: 'Menu Writer',
+  reservation_optimizer: 'Reservation Optimizer',
+  task_triager: 'Task Triager',
+  calendar_optimizer: 'Calendar Optimizer',
+  review_responder: 'Review Responder',
 };
 
 export const SPECIALIST_DESCRIPTIONS: Record<IndustrySpecialistOperative, string> = {
@@ -330,6 +353,16 @@ export const SPECIALIST_DESCRIPTIONS: Record<IndustrySpecialistOperative, string
   permit_code: 'Local code lookups, permit determinations, and pull-process guidance.',
   site_survey: 'Pre-install survey workflow, measurements, and takeoff math.',
   insurance_claim: 'Damage documentation and claim-ready reports for carriers.',
+  listing_writer: 'Drafts listing descriptions, headlines, and feature highlights from property data.',
+  offer_drafter: 'Composes offer letters, counter-offers, and contingency language for review.',
+  comp_analyst: 'Pulls comparable sales and rentals, summarizes pricing position.',
+  style_consultant: 'Suggests cuts, colors, and treatments based on client photo + history.',
+  loyalty_coach: 'Identifies repeat-visit risk and drafts personalized rebook outreach.',
+  menu_writer: 'Drafts menu copy, daily specials, and dietary callouts in your brand voice.',
+  reservation_optimizer: 'Reshuffles bookings to maximize covers and minimize gaps.',
+  task_triager: 'Sorts inbound client tasks by urgency, owner, and due date.',
+  calendar_optimizer: 'Suggests slot consolidation and travel-time-aware scheduling fixes.',
+  review_responder: 'Drafts on-brand responses to new reviews across Google, Yelp, and Facebook.',
 };
 
 export function isSpecialistOperative(agentType: string): agentType is IndustrySpecialistOperative {

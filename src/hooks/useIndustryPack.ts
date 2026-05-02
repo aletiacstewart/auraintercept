@@ -20,6 +20,24 @@ export interface IndustryPack {
   kb_seed_documents: unknown[];
   terminology: Record<string, string>;
   is_active: boolean;
+  console_visibility: ConsoleVisibility;
+}
+
+export type FieldOpsMode = 'full' | 'route_mode' | 'booking_mode' | 'hidden';
+
+export interface ConsoleVisibility {
+  field_ops?: FieldOpsMode;
+  dispatch_map?: boolean;
+  truck_inventory?: boolean;
+  emergency_queue?: boolean;
+  permit_tracker?: boolean;
+  site_survey?: boolean;
+  bay_scheduler?: boolean;
+  route_map?: boolean;
+  receptionist?: boolean;
+  reservation_table?: boolean;
+  showings_calendar?: boolean;
+  chair_grid?: boolean;
 }
 
 const DEFAULT_PACK: IndustryPack = {
@@ -40,6 +58,7 @@ const DEFAULT_PACK: IndustryPack = {
   kb_seed_documents: [],
   terminology: { job: 'Job', customer: 'Customer', appointment: 'Appointment' },
   is_active: true,
+  console_visibility: { field_ops: 'full', dispatch_map: true, truck_inventory: true, emergency_queue: true },
 };
 
 /**
