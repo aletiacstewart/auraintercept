@@ -1,105 +1,128 @@
-# Reset & Reseed Demo Environment — Per-Industry Demo Accounts
+# Make Aura Intercept a Real Tenant on Its Own Platform
 
-## Goal
+## What you're getting
 
-Wipe the current 4 tier-based demo companies (Demo Core/Boost/Pro/Elite) and replace with **18 industry-specific demo companies**, one per active `industry_template_packs` row (HVAC, Plumbing, Roofing, Electrical, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Pool & Spa, Pest Control, Landscape & Trees, Solar, Security Systems, Construction, Fencing & Decking, Handyman & Cleaning, Auto Care, Appliance Repair).
+Aura Intercept becomes Tenant #1 on its own platform — a fully-wired Elite-tier company so:
 
-Each industry company gets:
-- **3 user accounts** (admin, employee, customer) — universal password `aidemo*!`
-- **Full demo data** tailored to that industry: customers, appointments, leads, quotes, invoices, inventory, marketing campaigns, blog posts
-- **Industry knowledge base** auto-seeded via existing `trg_seed_industry_pack_kb` trigger
-- **Tier rotation** so all 4 subscription tiers (Core/Boost/Pro/Elite) are represented across the 18 industries — exercises every AI agent set
+1. **You** sign in to a real `company_admin` console (`ai@auraintercept.ai`) and run the SaaS business inside the platform.
+2. **Prospect / customer companies** reach Aura Intercept through the same AI chat / voice / SMS / public booking / customer portal stack the platform provides to every other tenant.
+3. **`auraintercept@gmail.com` is untouched** — stays as pure `platform_admin` (god-mode for managing all tenants, seeders, platform edits).
 
-Total: **18 companies × 3 users = 54 demo accounts**.
+## Account layout
 
-## Account naming convention
+| Email | Password | Role | Purpose |
+|---|---|---|---|
+| `auraintercept@gmail.com` | *(unchanged)* | `platform_admin` only | Manage all tenants, run seeders, edit platform |
+| `ai@auraintercept.ai` | `aiagent*!` | `company_admin` of Aura Intercept tenant | Run the SaaS business |
+| `support@auraintercept.ai` | `aiagent*!` | `employee` + `technician` job | Support persona — answers inbound chats/tickets |
+| `sales@auraintercept.ai` | `aiagent*!` | `employee` + `marketing` + `dispatch` jobs | Sales persona — demo bookings & lead follow-up |
 
-```
-{industry_id}admin@demo.com      → company_admin role
-{industry_id}employee@demo.com   → employee role (technician)
-{industry_id}customer@demo.com   → customer role
-```
+All three tenant accounts link to existing company `04c57cbe-358e-4036-a3ad-b777a55f5be0` ("Aura Intercept", slug `aura-intercept`). Idempotent — safe to re-run; passwords are reset on each run.
 
-Examples: `hvacadmin@demo.com`, `plumbingemployee@demo.com`, `realestatecustomer@demo.com`.
+## Plan
 
-## Tier distribution across 18 industries
+### 1. Promote the existing company row to Elite SaaS tenant
+SQL migration on `companies` row `04c57cbe...`:
+- `subscription_tier = 'command'` (Elite — unlocks all 24 agents)
+- `industry_vertical = 'saas_platform'` *(new pack — see step 2)*
+- Brand colors → cyber-sentry cyan/violet
+- `public_app_url = https://auraintercept.ai`, `is_demo = false` (already set)
+- Refresh `ai_voice_greeting` + `ai_agent_prompt` with Aura Intercept-specific copy ("Thanks for calling Aura Intercept, the AI receptionist platform for service businesses…")
+- Set `contact_email = ai@auraintercept.ai`, `email = ai@auraintercept.ai`, address, dispatch_phone
 
-Cycled so each tier sees real-world industry variety:
+### 2. Add a 19th industry pack: `saas_platform`
+New row in `industry_template_packs` so all industry-aware UI surfaces resolve to SaaS-appropriate copy automatically (matches Industry Template Pack standard).
+
+Pack contents:
+- **Label**: "SaaS Platform"
+- **Job templates / services**: Platform Demo, Onboarding Call, Technical Support, Billing Question, Integration Setup, Custom Quote, Strategy Review
+- **Terminology overrides**: customer → "company", appointment → "demo call", technician → "solutions engineer", service area → "industries served"
+- **KB seed docs (3)**: Platform Overview · Pricing & Tiers (Core $197 / Boost $497 / Pro $997 / Elite $1,997 + 90-day trial) · Integration Guide (SignalWire / ElevenLabs / Resend / Tavily bundled)
+- **FAQs (8)**: trial length, what's in each tier, cancellation, white-label, data ownership, third-party fees disclosure, supported industries, onboarding timeline
+
+The trigger `trg_seed_industry_pack_kb` fires automatically when `industry_vertical` flips to `saas_platform` — KB docs and FAQs land without extra code.
+
+Add `'saas_platform'` to:
+- `src/lib/industryNavLabels.ts`
+- `src/lib/industryKpiLabels.ts`
+- `src/lib/industryEmptyStates.ts`
+- `src/lib/industryAuraFraming.ts`
+- `src/lib/industryMarketingPlaybooks.ts`
+- `src/lib/industryQuickActions.ts`
+
+### 3. Create the 3 staff accounts
+New edge function `seed-aura-intercept` (modeled on `seed-demo-accounts-v2`, `platform_admin` JWT-gated, idempotent). For each account:
+- `auth.admin.createUser` (or password reset on re-run) with `email_confirm: true`
+- Insert/update `profiles` with `company_id = 04c57cbe...`
+- Upsert `user_roles` per the table above
+- Upsert `employee_job_assignments` for support/sales personas
+
+Password for all three: **`aiagent*!`** (per your instruction).
+
+### 4. Seed real workspace state (this is your live workspace, not demo data)
+- **Services**: Replace the 1 stub with 7 SaaS-specific service rows (Demo Call 30m, Onboarding 60m, Tech Support 30m, Integration Setup 60m, Custom Quote 30m, Strategy Review 45m, Billing Question 15m)
+- **Business hours**: Replace existing 28 rows with Mon–Fri 9–18 (office hour_type)
+- **Smart website**: Update existing row — Aura Intercept hero/about/contact copy, enable chat widget, voice widget, public booking widget; ensure subdomain published
+- **AI operatives**: Activate the full Elite-tier agent set (24 agents) for this company
+- **Tenant integrations**: Keep existing row; ensure `use_platform_tts = true` so voice works without a per-tenant ElevenLabs key
+- **Clean inboxes**: Delete the 5 stub appointments + 1 stub lead so you start with empty real inboxes
+
+### 5. Public contact surfaces (how prospect companies reach you)
+Already exist platform-wide — just verified pointed at the new tenant:
+- **Public booking page**: `/book/aura-intercept` → `submit_public_booking` RPC → drops into Aura Intercept's `leads` table
+- **Embedded chat widget**: `/widget?company=aura-intercept` — paste-able snippet for the marketing site
+- **Voice agent**: Wired through `dispatch_phone` + `ai_voice_greeting` + `ai_agent_prompt`; missed-call handler routes to Aura Intercept's queue
+- **Customer portal**: `/portal/aura-intercept` — companies that sign up can view tickets, bookings, billing
+- **Smart website**: Published at the configured subdomain so the marketing site can iframe / link the widgets
+
+### 6. UI safety / role gating
+- `useCompanyAdminDashboard` resolves the Elite-tier layout for `ai@auraintercept.ai`
+- `auraintercept@gmail.com` keeps `platform_admin` only — no `company_id`, no role drift
+- `/dashboard/demo-seeder` gets a new "Re-seed Aura Intercept Tenant" button next to the demo seeder for one-click reset (platform-admin gated)
+
+### 7. Memory + docs
+- New file `mem://platform-operations/aura-intercept-tenant.md` — company id, account emails, password, industry pack, re-seed entrypoint
+- Add a one-liner to memory index Memories section
+- Update existing `mem://auth/admin-identity` to clarify the split: `auraintercept@gmail.com` = platform_admin only; `ai@auraintercept.ai` = tenant company_admin
+
+## Technical notes
 
 ```text
-Core    : hvac, electrical, handyman, auto_care, appliance_repair          (5)
-Boost   : plumbing, pool_spa, pest_control, landscape, fencing             (5)
-Pro     : roofing, beauty_wellness, restaurants, security_systems          (4)
-Elite   : real_estate, personal_assistant, solar, construction             (4)
+Files to add/edit:
+  supabase/migrations/<ts>_aura_intercept_tenant.sql       company update + saas_platform pack row
+  supabase/functions/seed-aura-intercept/index.ts          idempotent seeder (platform_admin gated)
+  src/lib/industry*.ts (6 files)                            saas_platform branch in each
+  src/pages/DemoAccountSeeder.tsx                          add "Seed Aura Intercept" button
+  .lovable/memory/platform-operations/aura-intercept-tenant.md   new memory
+  .lovable/memory/auth/admin-identity.md                    clarify split
+  mem://index.md                                            add Memories entry
+
+DB ops (in migration):
+  - INSERT industry_template_packs row 'saas_platform' (with 3 docs + 8 FAQs in kb_seed_documents)
+  - UPDATE companies SET industry_vertical='saas_platform', subscription_tier='command',
+      ai_voice_greeting=..., ai_agent_prompt=..., contact_email='ai@auraintercept.ai', ...
+      WHERE id='04c57cbe-358e-4036-a3ad-b777a55f5be0'
+  - DELETE existing stub appointments/leads/services for that company
+  - INSERT 7 services rows
+  - REPLACE business_hours rows
+  - UPDATE smart_websites + tenant_integrations rows
+
+Seeder behavior:
+  - Looks up company by id 04c57cbe...
+  - For each of 3 emails: tries createUser → on duplicate, looks up id and resets password
+  - Upserts profiles with company_id
+  - Upserts user_roles (company_admin / employee / employee)
+  - Upserts employee_job_assignments (technician for support; marketing+dispatch for sales)
+  - Returns JSON summary of accounts created/updated
 ```
 
-## Scope of changes
+The `auth.users` table cannot be edited via SQL migration (security memory rule), so all user creation/password-reset goes through the edge function using the service-role admin client — same pattern as `seed-demo-accounts-v2`.
 
-### 1. Wipe existing demo data (one-time SQL migration)
+## Post-deploy steps you'll do
 
-For each of the 4 current `is_demo = true` companies:
-- Delete `auth.users` for the 12 demo accounts (cascades roles/profiles)
-- Delete the 4 demo companies (cascades appointments, leads, quotes, invoices, inventory, blog posts, knowledge docs, faqs, customer profiles, etc. via existing FKs)
+1. After deploy completes, navigate to `/dashboard/demo-seeder` (signed in as `auraintercept@gmail.com`)
+2. Click **"Seed Aura Intercept Tenant"** — runs in ~10 seconds
+3. Sign out, sign in as `ai@auraintercept.ai` / `aiagent*!` → land in the full Elite Aura Intercept console
+4. Drop the chat widget snippet on `auraintercept.ai` → prospects start landing as leads in your console
 
-### 2. Rewrite `seed-demo-accounts-v2` edge function
-
-Replace the 4-tier `TIERS` array with an **18-industry `INDUSTRIES` array** (industry_id, label, tier, primary/secondary colors, agents resolved from tier).
-
-Per-industry seeding logic (extends current per-tier flow):
-- **Company**: insert with `industry_vertical` set → triggers `trg_seed_industry_pack_kb` to auto-populate KB docs and FAQs from the industry template pack
-- **3 users**: ensure auth.users exist with password `aidemo*!`, email_confirm=true
-- **Profiles + roles + job assignment + customer association**: same as today
-- **Business hours**: Mon–Fri 8–17 (Restaurants & Beauty get 6-day schedules)
-- **Industry-aware demo data** using each pack's terminology and service templates:
-  - **5 customer profiles** (the registered customer + 4 sample names)
-  - **5 appointments** with industry-appropriate `service_type` pulled from the pack's `job_templates` (e.g. "Listing Photos Shoot" for real_estate, "Hair Color & Cut" for beauty_wellness, "AC Tune-Up" for hvac)
-  - **6 leads** with industry-appropriate `service_interest` and `intent`
-  - **2 marketing campaigns** with industry-tailored copy
-  - **3 blog posts** (titles drawn from a per-industry template map)
-  - **Quotes/Invoices** (Pro + Elite tiers) — realistic line items per industry
-  - **Inventory items** (Pro + Elite, where applicable) — industry-specific SKUs (skipped for Personal Assistant, Real Estate, Restaurants which use service-only inventory or none)
-
-Per-industry sample-data tables added to the function:
-```text
-INDUSTRY_SERVICES   : { hvac: ['AC Tune-Up','Furnace Repair',...], plumbing: [...], ... }
-INDUSTRY_BLOG_POSTS : { hvac: [{title, content}, ...], ... }
-INDUSTRY_INVENTORY  : { hvac: [{name, sku, ...}, ...], ... }   // null = skip inventory seed
-INDUSTRY_CAMPAIGNS  : { hvac: [{name, message, promo_code}, ...], ... }
-```
-
-Wipe-before-seed (per company) keeps idempotency: re-running clears appointments, leads, campaigns, quotes, invoices, inventory, blog posts for that company before reinsert.
-
-### 3. Update `DemoAccountSeeder.tsx` UI
-
-- Replace 4-tier grid with **18-industry grid** (grouped by tier in 4 collapsible sections)
-- Update copy: "Recreate the 18-industry demo environment: 18 companies × 3 accounts = 54 demo accounts"
-- Show industry label + tier badge + 3 emails per card
-- Result panel renders all 18 cards
-
-### 4. Update memory
-
-Rewrite `mem://platform-operations/demo-account-registry` from "12 demo accounts (4 tiers × admin/employee/customer)" → "54 demo accounts (18 industries × 3 roles), grouped by tier rotation". Reseed at `/dashboard/demo-seeder`.
-
-## Files to change
-
-```text
-supabase/functions/seed-demo-accounts-v2/index.ts   (rewrite TIERS → INDUSTRIES, add per-industry data tables)
-src/pages/DemoAccountSeeder.tsx                     (18-card grid grouped by tier)
-.lovable/memory/platform-operations/demo-account-registry.md   (update via memory tool)
-+ 1 SQL migration: wipe existing 4 demo companies + their 12 users
-```
-
-## How you'll use it
-
-1. Migration auto-applies → existing demo data gone
-2. Open `/dashboard/demo-seeder` → click **Seed All Demo Accounts**
-3. Edge function creates 54 accounts + per-industry data in ~60–90 seconds
-4. Log in as any `{industry}admin@demo.com` / `aidemo*!` to test that industry's AI agents, terminology, KB, forms, and console layout
-
-## Risk / safety
-
-- The seeder requires `platform_admin` JWT (already enforced)
-- All seeded companies have `is_demo = true` — production company data is never touched
-- `expire-demo-trials` cron will not affect these (it only targets rows in `demo_trials` with `expires_at < now()`)
-
-Reply **approve** to execute.
+Reply **approve** to build.
