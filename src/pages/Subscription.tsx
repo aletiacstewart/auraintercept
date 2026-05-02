@@ -818,6 +818,7 @@ export default function Subscription() {
     <ThirdPartyCostDisclosureDialog
       open={disclosureOpen}
       tierName={pendingTierId ?? ''}
+      tierId={pendingTierId ?? undefined}
       onConfirm={handleCheckoutConfirmed}
       onCancel={() => { setDisclosureOpen(false); setPendingTierId(null); }}
     />
