@@ -29,7 +29,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Shield className="h-4 w-4 text-amber-500" />,
     name: 'A2P 10DLC Registration',
     purpose: 'SMS Compliance — required by carriers to send business SMS',
-    estimatedCost: '$4 brand + $15 campaign (one-time) + $10/mo',
+    estimatedCost: 'Bundled in plan · standard registration included',
     required: true,
     learnMoreUrl: 'https://signalwire.com/resources/guides/a2p-10dlc-overview',
   },
@@ -38,7 +38,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Phone className="h-4 w-4 text-cyan-400" />,
     name: 'SignalWire',
     purpose: 'SMS & Voice Calls (Talk to Aura + Message Aura)',
-    estimatedCost: '~$2/number + $20–80/mo usage',
+    estimatedCost: 'Bundled · base: 1 number + included voice/SMS minutes per tier',
     required: true,
     learnMoreUrl: 'https://signalwire.com/pricing',
   },
@@ -47,7 +47,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Zap className="h-4 w-4 text-purple-500" />,
     name: 'ElevenLabs',
     purpose: 'AI Voice Synthesis (Voice Conversations)',
-    estimatedCost: '$0–99+/month based on usage',
+    estimatedCost: 'Bundled · base: ~10k chars/mo (≈10 min TTS) per tier',
     required: true,
     learnMoreUrl: 'https://elevenlabs.io/pricing',
   },
@@ -56,7 +56,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Mail className="h-4 w-4 text-green-500" />,
     name: 'Resend',
     purpose: 'Transactional Email Notifications',
-    estimatedCost: '$0–20+/month based on volume',
+    estimatedCost: 'Bundled · base: 3,000 emails/mo per tier',
     required: true,
     learnMoreUrl: 'https://resend.com/pricing',
   },
@@ -74,7 +74,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Search className="h-4 w-4 text-amber-500" />,
     name: 'Tavily AI Research',
     purpose: 'AI Web Research for Enhanced Content',
-    estimatedCost: 'Free (1,000 searches/mo) or paid plans',
+    estimatedCost: 'Bundled · base: 1,000 searches/mo per tier',
     required: false,
     learnMoreUrl: 'https://tavily.com/#pricing',
   },
@@ -107,8 +107,6 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
   const requiredItems = COST_ITEMS.filter(i => i.required);
   const allRequiredAcknowledged = requiredItems.every(i => acknowledged[i.id]);
 
-  const totalMin = 29;  // ~$2 + $0 + $0 + $10 A2P
-  const totalMax = 211; // ~$80 + $99 + $20 + $2 + $10 A2P
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onCancel()}>
@@ -116,12 +114,13 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            3rd-Party Service Costs — {tierName}
+            Included Services & Plan Limits — {tierName}
           </DialogTitle>
           <DialogDescription>
-            Aura Intercept requires external services to power SMS, voice, and email. These are billed
-            directly by each provider and are <strong>separate from your Aura subscription</strong>.
-            Please review and acknowledge each before proceeding.
+            SMS, voice, email, and AI research are <strong>bundled in your {tierName} plan</strong> at
+            the base limits listed below — no separate vendor bills. If usage exceeds these base limits,
+            the overage is invoiced at the end of the month in addition to your plan fee. 3rd-party
+            vendor pricing may change at any time and could affect overage rates.
           </DialogDescription>
         </DialogHeader>
 
@@ -214,11 +213,11 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
 
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 space-y-1.5">
           <p>
-            <strong>Estimated combined 3rd-party cost:</strong> ~${totalMin}–${totalMax}/month depending on usage.
-            This is in addition to your Aura subscription fee. Factor these into your total monthly ROI calculation.
+            <strong>Plan limits apply.</strong> Each item above lists the base allowance bundled in your plan.
+            Usage above those limits is metered and billed at the end of the month in addition to your plan fee.
           </p>
           <p className="italic text-[10px] opacity-80">
-            All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+            3rd-party vendor pricing is set by each provider (SignalWire, ElevenLabs, Resend, Tavily) and may change at any time, which could affect overage rates.
           </p>
         </div>
 
