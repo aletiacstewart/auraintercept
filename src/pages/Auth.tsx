@@ -1360,10 +1360,12 @@ export default function Auth() {
                                 <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   Add Concierge Onboarding
-                                  <span className="ml-auto text-primary font-bold">$297</span>
+                                  <span className="ml-auto text-primary font-bold">
+                                    {selectedTier === 'performance' || selectedTier === 'command' ? '$697' : '$397'}
+                                  </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of $297. Assistance from primary owner or manager required for company details.
+                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of <span className="font-semibold text-foreground">{selectedTier === 'performance' || selectedTier === 'command' ? '$697 (Pro & Elite)' : '$397 (Core & Boost)'}</span>. Assistance from primary owner or manager required for company details.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Optional — can also be purchased later from your dashboard.
@@ -1406,7 +1408,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">Concierge Onboarding</h4>
                  <p className="text-xs text-foreground">
-                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $297</span>. Assistance from primary owner or manager required for company details.
+                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $397 (Core &amp; Boost) or $697 (Pro &amp; Elite)</span>. Assistance from primary owner or manager required for company details.
                  </p>
               </div>
 
