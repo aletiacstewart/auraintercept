@@ -2974,6 +2974,7 @@ export type Database = {
           appointment_rules: Json
           checklist_library: Json
           cluster: string
+          console_visibility: Json
           created_at: string
           dashboard_widgets: Json
           description: string | null
@@ -2995,6 +2996,7 @@ export type Database = {
           appointment_rules?: Json
           checklist_library?: Json
           cluster: string
+          console_visibility?: Json
           created_at?: string
           dashboard_widgets?: Json
           description?: string | null
@@ -3016,6 +3018,7 @@ export type Database = {
           appointment_rules?: Json
           checklist_library?: Json
           cluster?: string
+          console_visibility?: Json
           created_at?: string
           dashboard_widgets?: Json
           description?: string | null
@@ -6889,6 +6892,7 @@ export type Database = {
           appointment_rules: Json
           checklist_library: Json
           cluster: string
+          console_visibility: Json
           created_at: string
           dashboard_widgets: Json
           description: string | null
