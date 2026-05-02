@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
 
 import { 
@@ -300,11 +301,7 @@ export default function Customers() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-white/70">
-                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="font-medium">No customers found</p>
-                <p className="text-sm">Customers will appear here when they book appointments or request quotes</p>
-              </div>
+              <IndustryEmptyState surface="customers" />
             )}
           </CardContent>
         </Card>
