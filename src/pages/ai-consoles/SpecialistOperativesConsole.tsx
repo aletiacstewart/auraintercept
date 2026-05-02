@@ -319,12 +319,19 @@ export default function SpecialistOperativesConsole() {
     [pack],
   );
 
+  // Show only specialists in the user's industry pack (platform admin sees all).
+  const visibleSpecialists = useMemo(() => {
+    if (isPlatformAdmin) return SPECIALISTS;
+    const inPack = SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
+    return inPack.length > 0 ? inPack : SPECIALISTS.slice(0, 4);
+  }, [isPlatformAdmin, industrySpecialists]);
+
   const initialTab = searchParams.get('agent') as IndustrySpecialistOperative | null;
-  const [activeTab, setActiveTab] = useState<IndustrySpecialistOperative>(
-    initialTab && (INDUSTRY_SPECIALIST_OPERATIVES as readonly string[]).includes(initialTab)
+  const defaultTab: IndustrySpecialistOperative =
+    initialTab && visibleSpecialists.some((s) => s.id === initialTab)
       ? initialTab
-      : 'diagnostic',
-  );
+      : visibleSpecialists[0]?.id ?? 'diagnostic';
+  const [activeTab, setActiveTab] = useState<IndustrySpecialistOperative>(defaultTab);
 
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
@@ -381,8 +388,15 @@ export default function SpecialistOperativesConsole() {
           )}
 
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as IndustrySpecialistOperative)}>
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full">
-              {SPECIALISTS.map((s) => {
+            <TabsList
+              className={cn(
+                'grid w-full',
+                visibleSpecialists.length <= 2 && 'grid-cols-2',
+                visibleSpecialists.length === 3 && 'grid-cols-3',
+                visibleSpecialists.length >= 4 && 'grid-cols-2 md:grid-cols-4',
+              )}
+            >
+              {visibleSpecialists.map((s) => {
                 const Icon = s.icon;
                 return (
                   <TabsTrigger key={s.id} value={s.id} className="gap-1.5">
@@ -393,7 +407,7 @@ export default function SpecialistOperativesConsole() {
               })}
             </TabsList>
 
-            {SPECIALISTS.map((s) => (
+            {visibleSpecialists.map((s) => (
               <TabsContent key={s.id} value={s.id} className="mt-4">
                 {tierUnlocked ? (
                   <SpecialistChat specialist={s} />
