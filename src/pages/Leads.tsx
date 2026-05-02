@@ -80,6 +80,8 @@ const SOURCE_CONFIG = {
 
 export default function Leads() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const header = getPageHeader('leads', pack);
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -153,8 +155,8 @@ export default function Leads() {
         <div className="space-y-6">
         <PageHeader
           icon={Users}
-          title="Leads"
-          description="Manage and follow up on potential customers"
+          title={header.title}
+          description={header.description}
           featureColor="leads"
           showAuraBar
           action={
