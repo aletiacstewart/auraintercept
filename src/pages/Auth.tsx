@@ -369,6 +369,18 @@ export default function Auth() {
         return;
       }
 
+      // Initialize the company's AI agent configuration based on the selected
+      // plan + industry, so the dashboard, AI Operatives Hub, and consoles
+      // immediately show the correct Aura Core/Boost/Pro/Elite agents instead
+      // of an empty hub.
+      try {
+        await supabase.functions.invoke('initialize-company-agents', {
+          body: { company_id: companyData.id },
+        });
+      } catch (initErr) {
+        console.warn('AI agent initialization failed (non-fatal):', initErr);
+      }
+
       toast({ 
         title: 'Welcome! 🎉', 
         description: 'Your 90-day free trial has started. Enjoy full access to all features!' 
