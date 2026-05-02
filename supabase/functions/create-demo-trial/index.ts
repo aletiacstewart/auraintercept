@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
+import { toCanonicalIndustryId } from '../_shared/industry-aliases.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -173,7 +174,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const industryKey = INDUSTRY_DEFAULTS[industry] ? industry : 'other';
+    // Normalize any drifting / legacy id (solar_energy, realestate, etc.) to the canonical
+    // industry_template_packs.industry_id so the seeded company resolves the right pack
+    // across dashboards, consoles, and AI agents.
+    const canonical = toCanonicalIndustryId(industry) ?? 'other';
+    const industryKey = INDUSTRY_DEFAULTS[canonical] ? canonical : 'other';
     const ind = INDUSTRY_DEFAULTS[industryKey];
 
     // Rate limit: 1 trial per email per 7 days
