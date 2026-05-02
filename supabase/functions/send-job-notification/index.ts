@@ -314,9 +314,12 @@ function generateMessages(
     deliveryType?: string;
     meetingLink?: string | null;
     customerPhone?: string | null;
+    jobNoun?: string;
   }
 ): { sms: string; emailSubject: string; emailHtml: string } {
-  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone } = data;
+  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone, jobNoun } = data;
+  const noun = jobNoun || 'Job';
+  const NOUN_UPPER = noun.toUpperCase();
 
   const isVirtual = deliveryType === 'virtual';
   const isAtBusiness = deliveryType === 'in_person_business';
