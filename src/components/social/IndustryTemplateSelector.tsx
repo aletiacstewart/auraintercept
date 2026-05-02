@@ -23,6 +23,8 @@ import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { INDUSTRY_LIST, type IndustryTemplate } from '@/lib/industryTemplates';
 import { cn } from '@/lib/utils';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface IndustryTemplateSelectorProps {
   onSelectTemplate?: (template: string, platform: string) => void;
@@ -33,6 +35,17 @@ export function IndustryTemplateSelector({ onSelectTemplate, className }: Indust
   const [selectedIndustry, setSelectedIndustry] = useState<IndustryTemplate | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('instagram');
+  const { pack } = useIndustryPack();
+  const { userRole } = useAuth();
+  const isPlatformAdmin = userRole === 'platform_admin';
+
+  // For tenant users, lock the template list to the company's industry only.
+  // Platform admins keep the full list to preview every vertical.
+  const companyIndustry = INDUSTRY_LIST.find(i => i.id === pack?.industry_id) ?? null;
+  const visibleIndustries = isPlatformAdmin
+    ? INDUSTRY_LIST
+    : (companyIndustry ? [companyIndustry] : []);
+  const lockedToSingle = !isPlatformAdmin && visibleIndustries.length === 1;
 
   const handleIndustrySelect = (industry: IndustryTemplate) => {
     setSelectedIndustry(industry);
@@ -67,6 +80,23 @@ export function IndustryTemplateSelector({ onSelectTemplate, className }: Indust
 
   return (
     <>
+      {visibleIndustries.length === 0 ? (
+        <Button variant="outline" size="sm" className={cn('gap-2', className)} disabled>
+          <Sparkles className="h-3.5 w-3.5" />
+          No templates for your industry yet
+        </Button>
+      ) : lockedToSingle ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn('gap-2', className)}
+          onClick={() => handleIndustrySelect(visibleIndustries[0])}
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>{visibleIndustries[0].icon}</span>
+          {visibleIndustries[0].label} Templates
+        </Button>
+      ) : (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className={cn('gap-2', className)}>
@@ -80,7 +110,7 @@ export function IndustryTemplateSelector({ onSelectTemplate, className }: Indust
             Select your industry for pre-written templates
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {INDUSTRY_LIST.map((industry) => (
+          {visibleIndustries.map((industry) => (
             <DropdownMenuItem
               key={industry.id}
               onClick={() => handleIndustrySelect(industry)}
@@ -95,6 +125,7 @@ export function IndustryTemplateSelector({ onSelectTemplate, className }: Indust
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+      )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">

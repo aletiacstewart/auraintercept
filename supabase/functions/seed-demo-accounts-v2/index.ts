@@ -510,6 +510,32 @@ async function seedIndustry(admin: ReturnType<typeof createClient>, ind: Industr
     }, { onConflict: 'company_id,day_of_week,hour_type' });
   }
 
+  // 8. Activate AI agents for the tier + industry-specific extra operatives.
+  // Without this, demo admins see an empty AI Operatives Hub even though the
+  // tier (e.g. Aura Core) is supposed to ship 8 agents.
+  const { data: packRow } = await admin
+    .from('industry_template_packs')
+    .select('extra_operatives')
+    .eq('industry_id', ind.key)
+    .eq('is_active', true)
+    .maybeSingle();
+  const extraOperatives: string[] = Array.isArray(packRow?.extra_operatives)
+    ? (packRow!.extra_operatives as string[])
+    : [];
+  const allAgents = Array.from(new Set([...agents, ...extraOperatives]));
+  // Wipe + reinsert so re-seeding always reflects the current tier mapping.
+  await admin.from('ai_agent_configs').delete().eq('company_id', companyId);
+  if (allAgents.length > 0) {
+    await admin.from('ai_agent_configs').insert(
+      allAgents.map(agent_type => ({
+        company_id: companyId,
+        agent_type,
+        is_enabled: true,
+        settings: {},
+      })),
+    );
+  }
+
   // ========= DEMO DATA =========
   const has = (a: string) => agents.includes(a);
 
