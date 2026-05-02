@@ -27,29 +27,12 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import logo from '@/assets/aura-intercept-logo.png';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
 }
-
-const mobileNavItems = [
-  { icon: Home, label: 'Home', path: '/technician' },
-  { icon: Bot, label: 'AI', path: '/technician/ai-console' },
-  { icon: ClipboardList, label: 'Jobs', path: '/technician/jobs' },
-  { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
-  { icon: Settings, label: 'More', path: '/technician/settings' },
-];
-
-const sidebarNavItems = [
-  { icon: Home, label: 'Dashboard', path: '/technician' },
-  { icon: Bot, label: 'Field Operations Console', path: '/technician/ai-console' },
-  { icon: ClipboardList, label: 'My Jobs', path: '/technician/jobs' },
-  { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
-  { icon: History, label: 'Job History', path: '/technician/history' },
-  { icon: Clock, label: 'Availability', path: '/technician/availability' },
-  { icon: User, label: 'Profile', path: '/technician/profile' },
-  { icon: Smartphone, label: 'Install Field Ops App', path: '/technician/install' },
-];
 
 export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps> = ({ children }) => {
   const { pathname } = useLocation();
@@ -60,6 +43,28 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
   const [showInstallBanner, setShowInstallBanner] = React.useState(true);
+  const { pack } = useIndustryPack();
+  const navLabels = getNavLabels(pack);
+  const jobPlural = `${navLabels.jobNoun}s`;
+
+  const mobileNavItems = [
+    { icon: Home, label: 'Home', path: '/technician' },
+    { icon: Bot, label: 'AI', path: '/technician/ai-console' },
+    { icon: ClipboardList, label: jobPlural, path: '/technician/jobs' },
+    { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
+    { icon: Settings, label: 'More', path: '/technician/settings' },
+  ];
+
+  const sidebarNavItems = [
+    { icon: Home, label: 'Dashboard', path: '/technician' },
+    { icon: Bot, label: 'Field Operations Console', path: '/technician/ai-console' },
+    { icon: ClipboardList, label: `My ${jobPlural}`, path: '/technician/jobs' },
+    { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
+    { icon: History, label: `${navLabels.jobNoun} History`, path: '/technician/history' },
+    { icon: Clock, label: 'Availability', path: '/technician/availability' },
+    { icon: User, label: 'Profile', path: '/technician/profile' },
+    { icon: Smartphone, label: 'Install Field Ops App', path: '/technician/install' },
+  ];
 
   const handleSignOut = async () => {
     await signOut();
