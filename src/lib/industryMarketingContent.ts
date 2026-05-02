@@ -127,8 +127,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'voice', intent: 'quote', serviceInterest: 'Panel Upgrade', priority: 'high', score: 75 },
     DALLAS, { primary: '#F59E0B', secondary: '#FBBF24' },
   ),
-  solar_energy: make(
-    'solar_energy', 'Solar Energy', '☀️', 'Essential Trades',
+  solar: make('solar', 'Solar Energy', '☀️', 'Essential Trades',
     {
       headline: 'Sun\'s up. So is your lead pipeline.',
       subheadline: 'Aura qualifies solar prospects, schedules site assessments, and follows up through the long sales cycle so no homeowner slips away.',
@@ -162,8 +161,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'voice', intent: 'emergency', serviceInterest: 'Storm Damage Repair', priority: 'hot', score: 90 },
     DALLAS, { primary: '#DC2626', secondary: '#F97316' },
   ),
-  fencing_decking: make(
-    'fencing_decking', 'Fencing & Decking', '🪵', 'Exterior & Structural',
+  fencing: make('fencing', 'Fencing & Decking', '🪵', 'Exterior & Structural',
     {
       headline: 'Quote more fences. Build more decks.',
       subheadline: 'Aura qualifies linear footage, materials, and HOA constraints up front so your estimates close faster.',
@@ -180,8 +178,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     AUSTIN, { primary: '#92400E', secondary: '#D97706' },
   ),
   // ─── Property & Estate ────────────────────────────────────────────
-  landscape_trees: make(
-    'landscape_trees', 'Landscape & Trees', '🌳', 'Property & Estate',
+  landscape: make('landscape', 'Landscape & Trees', '🌳', 'Property & Estate',
     {
       headline: 'Mow more lawns. Field fewer calls.',
       subheadline: 'Aura books recurring service, quotes seasonal cleanups, and reminds customers about snow contracts before the first storm.',
@@ -249,8 +246,7 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'voice', intent: 'booking', serviceInterest: 'Refrigerator Repair', priority: 'high', score: 76 },
     AUSTIN, { primary: '#0891B2', secondary: '#22D3EE' },
   ),
-  handyman_cleaning: make(
-    'handyman_cleaning', 'Handyman & Cleaning', '🧹', 'Specialized Home',
+  handyman: make('handyman', 'Handyman & Cleaning', '🧹', 'Specialized Home',
     {
       headline: 'Small jobs, big calendar.',
       subheadline: 'Aura books one-off handyman tasks and recurring cleans without burying you in tiny phone calls.',

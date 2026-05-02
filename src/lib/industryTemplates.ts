@@ -169,8 +169,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  landscaping: {
-    id: 'landscaping',
+  landscape: {
+    id: 'landscape',
     label: 'Landscape & Trees',
     icon: '🌳',
     color: '#22C55E',
@@ -199,8 +199,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  pool: {
-    id: 'pool',
+  pool_spa: {
+    id: 'pool_spa',
     label: 'Pool & Spa',
     icon: '🏊',
     color: '#06B6D4',
@@ -229,8 +229,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  pest: {
-    id: 'pest',
+  pest_control: {
+    id: 'pest_control',
     label: 'Pest Control',
     icon: '🐜',
     color: '#84CC16',
@@ -259,8 +259,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  appliance: {
-    id: 'appliance',
+  appliance_repair: {
+    id: 'appliance_repair',
     label: 'Appliance Repair',
     icon: '🔧',
     color: '#6366F1',
@@ -349,8 +349,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  auto: {
-    id: 'auto',
+  auto_care: {
+    id: 'auto_care',
     label: 'Auto Care',
     icon: '🚗',
     color: '#EF4444',
@@ -379,8 +379,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  security: {
-    id: 'security',
+  security_systems: {
+    id: 'security_systems',
     label: 'Security Systems',
     icon: '🔒',
     color: '#1E40AF',
@@ -409,8 +409,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  realestate: {
-    id: 'realestate',
+  real_estate: {
+    id: 'real_estate',
     label: 'Real Estate',
     icon: '🏡',
     color: '#059669',
@@ -439,8 +439,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  beauty: {
-    id: 'beauty',
+  beauty_wellness: {
+    id: 'beauty_wellness',
     label: 'Beauty & Wellness',
     icon: '💆',
     color: '#EC4899',
@@ -469,8 +469,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  restaurant: {
-    id: 'restaurant',
+  restaurants: {
+    id: 'restaurants',
     label: 'Restaurants',
     icon: '🍽️',
     color: '#DC2626',
@@ -499,8 +499,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
-  personalassistant: {
-    id: 'personalassistant',
+  personal_assistant: {
+    id: 'personal_assistant',
     label: 'Personal Assistant',
     icon: '📋',
     color: '#7C3AED',

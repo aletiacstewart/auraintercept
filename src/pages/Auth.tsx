@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_LIST } from '@/lib/industryTemplates';
+import { toCanonicalIndustryId } from '@/lib/industryIdAliases';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, AlertTriangle } from 'lucide-react';
@@ -293,6 +294,7 @@ export default function Auth() {
           address: companyAddress || null,
           phone: companyPhone || null,
           subscription_tier: 'starter',
+          industry_vertical: toCanonicalIndustryId(businessIndustry),
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
         })
