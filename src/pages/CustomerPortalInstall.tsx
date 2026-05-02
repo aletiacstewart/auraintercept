@@ -33,6 +33,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import logo from '@/assets/aura-intercept-logo.png';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
+import { INDUSTRY_LIST } from '@/lib/industryTemplates';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Company {
   id: string;
@@ -41,6 +43,8 @@ interface Company {
   logo_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
+  industry_vertical?: string | null;
+  service_categories?: string[] | null;
 }
 
 interface CompanyAssociation {
@@ -61,6 +65,8 @@ export default function CustomerPortalInstall() {
   const [isIOS, setIsIOS] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [zipFilter, setZipFilter] = useState('');
   const [showInstallInfo, setShowInstallInfo] = useState(true);
   const [hasCheckedRole, setHasCheckedRole] = useState(false);
 
@@ -135,23 +141,17 @@ export default function CustomerPortalInstall() {
     enabled: !!user,
   });
 
-  // Fetch all companies for browsing
+  // Fetch live, subscribed companies for browsing (excludes demo accounts).
   const { data: allCompanies, isLoading: companiesLoading } = useQuery({
-    queryKey: ['browse-companies', searchTerm],
+    queryKey: ['browse-companies', searchTerm, industryFilter, zipFilter],
     queryFn: async () => {
-      let query = supabase
-        .from('companies')
-        .select('id, name, slug, logo_url, primary_color, secondary_color')
-        .order('name');
-
-      if (searchTerm) {
-        query = query.ilike('name', `%${searchTerm}%`);
-      }
-
-      const { data, error } = await query.limit(50);
+      const { data, error } = await supabase.rpc('list_companies_for_customer', {
+        p_search: searchTerm || null,
+        p_industry: industryFilter && industryFilter !== 'all' ? industryFilter : null,
+        p_zip: zipFilter || null,
+      });
       if (error) throw error;
-      
-      return (data || []) as Company[];
+      return ((data || []) as unknown as Company[]);
     },
     enabled: !!user && !selectedCompanyId,
   });
@@ -348,6 +348,29 @@ export default function CustomerPortalInstall() {
               className="pl-10 h-12"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Filters: industry + zip */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Select value={industryFilter} onValueChange={setIndustryFilter}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="All industries" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All industries</SelectItem>
+                {INDUSTRY_LIST.map((i) => (
+                  <SelectItem key={i.id} value={i.id}>{i.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder="Filter by ZIP code"
+              className="h-11"
+              value={zipFilter}
+              onChange={(e) => setZipFilter(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
             />
           </div>
 
@@ -691,11 +714,15 @@ function CompanyCard({
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold truncate">{company.name}</h3>
             <div className="flex items-center gap-2 mt-1">
+              {company.industry_vertical && (
+                <Badge variant="outline" className="text-xs capitalize">
+                  {(INDUSTRY_LIST.find((i) => i.id === company.industry_vertical)?.label) || company.industry_vertical.replace(/_/g, ' ')}
+                </Badge>
+              )}
               <Badge variant="secondary" className="text-xs">
                 <Bot className="w-3 h-3 mr-1" />
                 AI
               </Badge>
-              <span className="text-xs text-muted-foreground">Click to start chatting</span>
             </div>
           </div>
           <div className="flex items-center gap-1">
