@@ -38,6 +38,8 @@ import { CampaignSeriesWizard } from '@/components/marketing/CampaignSeriesWizar
 
 export default function Campaigns() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const campaignsHeader = getPageHeader('campaigns', pack);
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSeriesWizard, setShowSeriesWizard] = useState(false);
@@ -176,8 +178,8 @@ export default function Campaigns() {
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Megaphone}
-          title="Marketing Campaigns"
-          description="Create and track marketing campaigns"
+          title={campaignsHeader.title}
+          description={campaignsHeader.description}
           showAuraBar
           action={
             <div className="flex gap-2">

@@ -11,9 +11,13 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Calendar, ClipboardList, History, Briefcase, Plus } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 
 export default function EmployeeAppointments() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const { pack } = useIndustryPack();
+  const apptHeader = getPageHeader('appointments', pack);
 
   return (
     <DashboardLayout>
@@ -21,8 +25,8 @@ export default function EmployeeAppointments() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Calendar}
-            title="Appointments"
-            description="View and manage scheduled appointments"
+            title={apptHeader.title}
+            description={apptHeader.description}
             featureColor="fieldops"
             action={
               <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>

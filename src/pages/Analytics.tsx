@@ -12,9 +12,13 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3, DollarSign, Bot, TrendingUp, Sparkles, ClipboardList } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 
 export default function Analytics() {
   const { userRole, companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const analyticsHeader = getPageHeader('analytics', pack);
   const [searchParams] = useSearchParams();
   const selectedCompanyId = searchParams.get('company');
 
@@ -29,8 +33,8 @@ export default function Analytics() {
         <div className="space-y-6">
           <PageHeader
             icon={BarChart3}
-            title="Analytics"
-            description="View insights and performance metrics"
+            title={analyticsHeader.title}
+            description={analyticsHeader.description}
             showAuraBar
           />
           
