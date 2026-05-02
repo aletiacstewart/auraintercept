@@ -66,7 +66,12 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   cancelled: { label: 'Cancelled', color: 'text-muted-foreground', bgColor: 'bg-muted', icon: XCircle },
 };
 
-export function CompanyJobQueue() {
+interface CompanyJobQueueProps {
+  emptyTitle?: string;
+  emptyHint?: string;
+}
+
+export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Job assignments will appear here when created' }: CompanyJobQueueProps = {}) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
 
@@ -281,9 +286,9 @@ export function CompanyJobQueue() {
         {totalJobs === 0 && (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Wrench className="h-10 w-10 text-muted-foreground mb-3" />
-            <p className="font-medium text-foreground">No Active Jobs</p>
+            <p className="font-medium text-foreground">{emptyTitle}</p>
             <p className="text-sm text-muted-foreground">
-              Job assignments will appear here when created
+              {emptyHint}
             </p>
           </div>
         )}

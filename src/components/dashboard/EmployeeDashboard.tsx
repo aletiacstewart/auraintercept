@@ -7,12 +7,16 @@ import { Calendar, MessageSquare, Clock, CheckCircle2, Bot, Settings, User, Truc
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getQueueLabels } from '@/lib/industryNavLabels';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 export function EmployeeDashboard() {
   const { user, companyId } = useAuth();
   const { jobTypes, primaryJobType, hasJobType } = useEmployeeJobRole();
   const navigate = useNavigate();
+  const { pack } = useIndustryPack();
+  const queueLabels = getQueueLabels(pack);
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -131,7 +135,7 @@ export function EmployeeDashboard() {
 
   const technicianActions = hasJobType('technician') ? [
     { label: 'Field Ops AI', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-green-600' },
-    { label: 'Job Queue', icon: ClipboardList, href: '/technician/jobs', gradient: 'from-orange-500 to-orange-600' },
+    { label: queueLabels.queueTab, icon: ClipboardList, href: '/technician/jobs', gradient: 'from-orange-500 to-orange-600' },
     { label: 'Route Map', icon: MapPin, href: '/technician/jobs', gradient: 'from-cyan-500 to-cyan-600' },
   ] : [];
 

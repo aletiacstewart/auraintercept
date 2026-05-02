@@ -184,6 +184,50 @@ export function getNavLabels(pack: IndustryPack): IndustryNavLabels {
 }
 
 /**
+ * Industry-aware labels for the Appointments / Bookings manager tabs and
+ * the empty state in the Job/Booking queue. Derived from the existing
+ * `jobNoun` so we do not maintain a parallel per-industry table.
+ */
+export interface IndustryQueueLabels {
+  /** Tab label: "Job Queue" | "Booking Queue" | "Reservation Queue" | … */
+  queueTab: string;
+  /** Tab label: "All Jobs" | "All Bookings" | … */
+  allJobsTab: string;
+  /** Empty-state title: "No Active Jobs" | "No Active Bookings" | … */
+  emptyTitle: string;
+  /** Empty-state hint sentence. */
+  emptyHint: string;
+}
+
+const TRADES_QUEUE: IndustryQueueLabels = {
+  queueTab:    'Job Queue',
+  allJobsTab:  'All Jobs',
+  emptyTitle:  'No Active Jobs',
+  emptyHint:   'New job assignments will appear here',
+};
+
+function pluralize(noun: string): string {
+  if (/s$/i.test(noun)) return noun;
+  if (/(ch|sh|x|z)$/i.test(noun)) return `${noun}es`;
+  if (/[^aeiou]y$/i.test(noun)) return `${noun.slice(0, -1)}ies`;
+  return `${noun}s`;
+}
+
+export function getQueueLabels(pack: IndustryPack | null | undefined): IndustryQueueLabels {
+  if (!pack) return TRADES_QUEUE;
+  const nav = getNavLabels(pack);
+  const noun = nav.jobNoun;
+  if (noun === 'Job') return TRADES_QUEUE;
+  const plural = pluralize(noun);
+  return {
+    queueTab:   `${noun} Queue`,
+    allJobsTab: `All ${plural}`,
+    emptyTitle: `No Active ${plural}`,
+    emptyHint:  `New ${noun.toLowerCase()} assignments will appear here`,
+  };
+}
+
+/**
  * Resolve the page header (title + description) for a given page surface
  * based on the active industry pack.
  */
