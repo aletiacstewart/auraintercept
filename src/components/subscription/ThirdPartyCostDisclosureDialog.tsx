@@ -98,7 +98,7 @@ interface Props {
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
   const isProOrElite = tierId === 'performance' || tierId === 'command' || /pro|elite/i.test(tierName);
-  const conciergeFee = isProOrElite ? 297 : 397; // legacy
+  const conciergeFee = isProOrElite ? 697 : 397; // legacy
   // Use new pricing
   const conciergePriceLabel = isProOrElite ? '$697' : '$397';
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
