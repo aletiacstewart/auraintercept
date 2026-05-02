@@ -714,11 +714,15 @@ function CompanyCard({
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold truncate">{company.name}</h3>
             <div className="flex items-center gap-2 mt-1">
+              {company.industry_vertical && (
+                <Badge variant="outline" className="text-xs capitalize">
+                  {(INDUSTRY_LIST.find((i) => i.id === company.industry_vertical)?.label) || company.industry_vertical.replace(/_/g, ' ')}
+                </Badge>
+              )}
               <Badge variant="secondary" className="text-xs">
                 <Bot className="w-3 h-3 mr-1" />
                 AI
               </Badge>
-              <span className="text-xs text-muted-foreground">Click to start chatting</span>
             </div>
           </div>
           <div className="flex items-center gap-1">
