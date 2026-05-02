@@ -1,3 +1,26 @@
+## Phase 10 — Industry Pack QA (DONE)
+
+Logged in as `elitecompany@demo.com` (Demo Elite, real_estate vertical) and
+verified industry-aware surfaces end-to-end:
+
+- ✅ **Dashboard**: header reads "Real Estate Dashboard", industry widgets
+  block shows real-estate tiles ("Showings Calendar", "Lead Scoring",
+  "Listing Tracker", "Review Pulse", "Missed Calls").
+- ✅ **Sidebar**: Field-Ops nav resolves to "Listings Map" (vs generic
+  "Service Areas"), "Agent View" terminology preserved.
+- ✅ **Trial banner + plan badges**: render correctly across vertical.
+- ⚠️ **`/book/:slug`** returns "Booking Page Not Found" for the demo
+  company — separate functional bug in `get_company_public_info` RPC
+  lookup (not industry copy). Tracked for follow-up.
+- 📝 **Leads page header**: still generic ("LEADS / Manage and follow up
+  on potential customers") — small future polish to wire
+  `industryNavLabels` into manager headers, not just nav items.
+
+Industry-aware initiative is functionally complete. Remaining items above
+are minor and tracked.
+
+---
+
 ## Phase 9 — Industry-Aware Reminder Templates (DONE)
 
 `appointment-reminders` now resolves `getCompanyTerminology` once per
