@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { getCompanyTerminology } from '../_shared/terminology.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -100,7 +101,8 @@ Deno.serve(async (req) => {
     const companyName = company?.name || 'Our Business';
     const customerName = appointment?.customer_name || 'Valued Customer';
     const technicianName = employee?.full_name || 'Our Technician';
-    const serviceType = appointment?.service_type || 'service';
+    const term = await getCompanyTerminology(supabase, appointment.company_id);
+    const serviceType = appointment?.service_type || term.serviceType.toLowerCase();
 
     // Template variables
     const templateVars = {
@@ -108,6 +110,8 @@ Deno.serve(async (req) => {
       company_name: companyName,
       technician_name: technicianName,
       service_type: serviceType,
+      job_noun: term.job,
+      appointment_noun: term.appointment,
     };
 
     // Fetch company's integration credentials
