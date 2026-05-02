@@ -6673,14 +6673,42 @@ export type Database = {
           slug: string
         }[]
       }
+      list_companies_for_customer: {
+        Args: { p_industry?: string; p_search?: string; p_zip?: string }
+        Returns: {
+          business_phone: string
+          contact_phone: string
+          id: string
+          industry_vertical: string
+          logo_url: string
+          name: string
+          phone: string
+          primary_color: string
+          secondary_color: string
+          service_area_cities: string[]
+          service_area_zip_codes: string[]
+          service_categories: string[]
+          slug: string
+          subscription_tier: string
+        }[]
+      }
       list_companies_public: {
         Args: never
         Returns: {
+          business_phone: string
+          contact_phone: string
           id: string
+          industry_vertical: string
           logo_url: string
           name: string
+          phone: string
           primary_color: string
+          secondary_color: string
+          service_area_cities: string[]
+          service_area_zip_codes: string[]
+          service_categories: string[]
           slug: string
+          subscription_tier: string
         }[]
       }
       log_appointment_access: {
