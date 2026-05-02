@@ -245,8 +245,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const getTierDisplay = () => {
     const tierConfig: Record<string, { label: string; color: string; icon: typeof Crown | null }> = {
-      free: { label: 'Free', color: 'bg-muted text-muted-foreground', icon: null },
-      enterprise: { label: 'Enterprise', color: 'bg-amber-500/20 text-amber-500', icon: Crown },
+      free:        { label: 'Free',       color: 'bg-muted text-muted-foreground',       icon: null },
+      starter:     { label: 'Aura Core',  color: 'bg-teal-500/20 text-teal-300',          icon: null },
+      connect:     { label: 'Aura Boost', color: 'bg-sky-500/20 text-cyan-300',           icon: null },
+      performance: { label: 'Aura Pro',   color: 'bg-purple-500/20 text-purple-300',      icon: Crown },
+      command:     { label: 'Aura Elite', color: 'bg-amber-500/20 text-amber-300',        icon: Crown },
+      enterprise:  { label: 'Aura Elite', color: 'bg-amber-500/20 text-amber-300',        icon: Crown },
     };
     return tierConfig[subscriptionTier] || tierConfig.free;
   };
