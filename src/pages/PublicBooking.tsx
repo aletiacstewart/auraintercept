@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle2 } from 'lucide-react';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { toast } from 'sonner';
+import { usePublicIndustryPack } from '@/hooks/useIndustryPack';
 
 interface PublicCompany {
   id: string;
@@ -111,6 +112,11 @@ export default function PublicBooking() {
     },
     enabled: !!companySlug,
   });
+
+  // Industry-aware terminology for the booking page header + confirmation copy.
+  const { pack } = usePublicIndustryPack(company?.id ?? null);
+  const apptNoun = (pack.terminology?.appointment as string) || 'Appointment';
+  const apptNounLower = apptNoun.toLowerCase();
 
   const { data: services = [], isLoading: servicesLoading } = useQuery({
     queryKey: ['public-booking-services', company?.id],
