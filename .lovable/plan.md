@@ -1,38 +1,40 @@
-# Phase 7 — Industry-Aware Forms, Reports & Aura Suggestions
+## Phase 8 — Industry-Aware Outbound, Tutorial & Customer Portal Polish
 
-Phase 6 made KPIs, prompts, portals, onboarding, and empty states industry-aware. Phase 7 closes the loop on the **input side** (forms) and the **output side** (reports + Aura's proactive suggestions) so an operator never sees generic copy in their daily flow.
+Phases 6–7 made KPIs, prompts, forms, reports, and inbound notifications industry-aware. Phase 8 closes the remaining generic surfaces: **customer-facing copy** (portal, public booking, customer emails/SMS), **onboarding/tutorial flows**, and **Aura's response framing**, so a buyer in a real-estate vertical never sees "service request" and a restaurant guest never sees "appointment".
 
 ## Tasks (in order)
 
-### 1. Industry-aware create/edit form labels
-The "Add Job", "Add Lead", "Add Customer" forms still ship generic field labels ("Service Type", "Job Notes"). Use the existing `industryFormSchemas.ts` pack data to drive:
-- Field labels (e.g. trades "Service Type" → real-estate "Listing Type" → restaurant "Reservation Type")
-- Placeholders + helper text
-- Optional/required field visibility per cluster (real-estate hides "Service Address" on listings; restaurants hide "Job Site")
+### 1. Industry-aware Customer Portal copy
+`CustomerPortalHome` and `PortalQuickActions` still ship "Customer Portal" / "Service Request" text. Wire them to `industryPortalCopy.ts` (already exists from Phase 6) so the header title, action labels, and empty-state hints become "Buyer Portal" / "Guest Portal" / "Client Portal" per cluster. Also extend `getPortalCopy(pack)` with `welcomeTitle`, `welcomeSubtitle`, and `requestActionLabel`.
 
-Surfaces: `JobForm`, `LeadForm`, `QuoteForm`, `CustomerForm`, `AppointmentForm`. Build one shared `useIndustryFieldLabel(surface, field)` hook backed by `pack.terminology` + a new `industryFieldLabels.ts` map for fields not already covered.
+### 2. Industry-aware public booking + customer-facing emails/SMS
+- **PublicBooking page**: replace hardcoded "Book a Service" / "Service Type" with `pack.terminology.appointment` + `terminology.serviceType`. Update CTA, page title, confirmation screen.
+- **Customer-facing edge functions**: `send-appointment-email`, `send-appointment-sms`, `appointment-reminders`, `send-review-request` — pull `terminology.appointment` / `terminology.job` from the company row (same RPC pattern Phase 7 added to `send-job-notification`) and substitute into subject + body templates.
 
-### 2. Industry-aware quick-create dropdowns + Aura suggestions
-The header "+" button and Aura's "Try asking…" chips currently show a fixed list. Wire both to `industryQuickActions.ts` so:
-- Header quick-create shows the top 3 actions for the active vertical (e.g. salon → "Book appointment / Add stylist / Send promo")
-- Aura suggestion chips on `/dashboard` and `/aura` rotate vertical-specific prompts ("Show me tomorrow's reservations" for restaurants vs "Show me today's route" for trades)
+### 3. Industry-aware Aura response framing
+`AuraResponseRenderer` and `AuraSummary` use generic phrasing ("Here are your jobs", "No appointments today"). Add `industryAuraFraming.ts` exporting `getAuraFraming(pack)` returning `{ jobsHeader, appointmentsHeader, customersHeader, emptyJobs, emptyAppointments }`. Wire into both components plus `AuraQuickResponsePopup`.
 
-Touch: `DashboardHeader` (or equivalent quick-create), `AuraCommandCenter` suggestion list, `AskAura` page.
-
-### 3. Industry-aware report templates
-`/analytics` already routes to per-vertical KPIs. Extend the export/PDF report templates so the generated report title, section headings, and metric labels match the vertical. Add `industryReportTemplates.ts` returning section blueprints per cluster (e.g. real-estate → "Listings Performance / Showings / Buyer Pipeline"; restaurant → "Covers / Avg Ticket / Reservation Conversion").
-
-Wire into the existing analytics export flow only — no new export routes.
-
-### 4. Industry-aware notification copy
-Staff push/email/SMS alerts currently say "New job assigned". Make the verb match the terminology (`New showing assigned`, `New reservation`, `New appointment`). Single tweak in `send-staff-notification` + `send-job-notification` edge functions: pull `terminology.job` / `terminology.appointment` from the company row and substitute into the title + body.
+### 4. Industry-aware Tutorial + Welcome onboarding
+`tutorialSteps.ts`, `WelcomeModal`, and `LaunchPathSelector` use generic verbs ("Add your first job"). Build `industryTutorialCopy.ts` keyed by cluster with overrides per industry. The tutorial step titles, descriptions, and example prompts all resolve from the active pack. `WelcomeModal` greeting line uses `pack.terminology.businessNoun`.
 
 ### 5. Memory + acceptance
-Add `mem://features/industry/forms-and-reports` to the index. Acceptance: switching `industry_id` changes form labels, quick-create options, Aura chips, exported report headings, and outbound notification copy without further code changes.
+Add `mem://features/industry/customer-facing-copy` to the index documenting the new framing modules. Acceptance: switching `industry_id` on a company changes:
+- Portal header + actions
+- Public booking page + customer SMS/email subjects
+- Aura response headers + empty states
+- Tutorial step copy + welcome greeting
+
+…with no further code changes.
 
 ## Out of scope
-- New form fields (only labels/visibility of existing ones)
-- New analytics queries (only labels around existing data)
-- Marketing site / public booking widget (already industry-aware)
+- New tutorial steps or onboarding flows (only copy)
+- New portal routes or booking functionality
+- Marketing site (already industry-aware)
 
-If you want, I can split this into 5 separate approvals (one per task) or run it as one phase. Default is all 5 in order.
+## Technical notes
+- Reuse the Phase 7 RPC `get_company_terminology(company_id)` for edge functions — extend it to also return `appointment` and `serviceType` if not already.
+- Resolution hierarchy stays consistent: `BY_INDUSTRY[id] ?? BY_CLUSTER[cluster] ?? GENERIC`.
+- All new lib files follow the `industry*.ts` naming under `src/lib/`.
+- Edge function imports use `_shared/industry-pack.ts` (already present).
+
+Run all 5 tasks in order as one phase, or split into individual approvals.
