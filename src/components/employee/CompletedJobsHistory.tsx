@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, differenceInMinutes, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import {
   CheckCircle,
   Clock,
@@ -233,10 +234,7 @@ export function CompletedJobsHistory() {
         </CardHeader>
         <CardContent className="space-y-3">
           {filteredJobs?.length === 0 ? (
-            <div className="text-center py-8 text-white">
-              <Wrench className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No completed jobs found for this period</p>
-            </div>
+            <IndustryEmptyState surface="jobs" />
           ) : (
             filteredJobs?.map((job) => (
               <CompletedJobCard 
