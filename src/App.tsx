@@ -47,6 +47,12 @@ import {
   AnalyticsConsole,
   NewLeadPage,
   SpecialistOperativesConsole,
+  PerformanceReportPage,
+  BusinessInsightsPage,
+  RevenueAnalysisPage,
+  DemandForecastPage,
+  CustomerInsightsPage,
+  KpiDashboardPage,
 } from "./pages/ai-consoles";
 import AskAura from "./pages/AskAura";
 import AIAgentsHub from "./pages/AIAgentsHub";
@@ -212,12 +218,12 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
                 {/* Legacy routes redirect to Analytics & Reports */}
                 <Route path="/dashboard/ask-aura" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/performance-report" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/business-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/revenue-analysis" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/revenue-forecast" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/customer-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/performance-report" element={<ProtectedRoute><PerformanceReportPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/business-insights" element={<ProtectedRoute><BusinessInsightsPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/revenue-analysis" element={<ProtectedRoute><RevenueAnalysisPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/revenue-forecast" element={<ProtectedRoute><DemandForecastPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/customer-insights" element={<ProtectedRoute><CustomerInsightsPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<ProtectedRoute><KpiDashboardPage /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
