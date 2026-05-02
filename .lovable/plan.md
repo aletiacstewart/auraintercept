@@ -1,4 +1,14 @@
-## Phase 9 — Industry-Aware Reminders, Tutorial & Launch Path
+## Phase 9 — Industry-Aware Reminder Templates (DONE)
+
+`appointment-reminders` now resolves `getCompanyTerminology` once per
+company and exposes `{appointment_noun}`, `{service_noun}`, `{job_noun}`,
+`{customer_noun}` to SMS/email/call templates so company-customized
+reminder copy can use vertical-specific words without code changes.
+
+Tutorial copy and `LaunchPathSelector` were intentionally **skipped** —
+the tutorial is a structural sidebar tour (no job/appointment language to
+substitute) and the launch selector copy is plan/path oriented. Industry
+phasing is complete.
 
 Phases 6–8 covered KPIs, prompts, forms, reports, inbound notifications,
 customer-facing emails, the portal header, and Aura framing. Phase 9 closes
