@@ -38,6 +38,12 @@ follows the standard hierarchy: BY_INDUSTRY[id] -> BY_CLUSTER[cluster] -> GENERI
 relay; callers (ai-agent-chat, customer-portal, booking-actions, employee
 components) compose the message text themselves.
 
+`appointment-reminders` resolves `getCompanyTerminology` once per company
+and exposes `{appointment_noun}`, `{service_noun}`, `{job_noun}`,
+`{customer_noun}` template variables alongside the existing
+`{customer_name}`, `{service_type}`, `{company_name}`, `{date}`, `{time}`
+for SMS, email-trigger, and voice-call templates.
+
 ## Acceptance
 
 Switching `companies.industry_vertical` to `restaurants` flips:
