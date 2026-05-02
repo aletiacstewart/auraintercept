@@ -108,9 +108,10 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   }, [services, pack.job_templates]);
 
   const effectiveServices = services.length > 0 ? services : packServices;
-  const serviceLabel = pack.terminology?.job
-    ? `${pack.terminology.job} Type *`
-    : 'Service Type *';
+  const serviceField   = getIndustryFieldLabel('appointment', 'service_type', pack);
+  const addressField   = getIndustryFieldLabel('appointment', 'service_address', pack);
+  const customerField  = getIndustryFieldLabel('appointment', 'customer_name', pack);
+  const serviceLabel = `${serviceField.label} *`;
 
   // When the chosen service maps to an industry job template that defines a
   // form_id, render those questions inline (e.g. MLS# for real estate
