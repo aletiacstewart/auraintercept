@@ -92,6 +92,8 @@ const statusConfig: Record<string, { label: string; icon: React.ElementType; col
 
 export default function CallHistory() {
   const { companyId, userRole } = useAuth();
+  const { pack } = useIndustryPack();
+  const callsHeader = getPageHeader('calls', pack);
   const [searchQuery, setSearchQuery] = useState('');
   const [directionFilter, setDirectionFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -157,8 +159,8 @@ export default function CallHistory() {
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Phone}
-          title="Call History"
-          description="View and analyze all AI agent call activity"
+          title={callsHeader.title}
+          description={callsHeader.description}
           showAuraBar
         />
 
