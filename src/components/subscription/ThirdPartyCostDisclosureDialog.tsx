@@ -91,11 +91,16 @@ const COST_ITEMS: CostItem[] = [
 interface Props {
   open: boolean;
   tierName: string;
+  tierId?: string;
   onConfirm: (wantsConcierge: boolean) => void;
   onCancel: () => void;
 }
 
-export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCancel }: Props) {
+export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
+  const isProOrElite = tierId === 'performance' || tierId === 'command' || /pro|elite/i.test(tierName);
+  const conciergeFee = isProOrElite ? 297 : 397; // legacy
+  // Use new pricing
+  const conciergePriceLabel = isProOrElite ? '$697' : '$397';
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);
 
@@ -195,7 +200,7 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, onConfirm, onCa
               <Label htmlFor="ack-concierge" className="flex items-center gap-2 cursor-pointer font-semibold text-sm">
                 <Zap className="h-4 w-4 text-primary" />
                 Concierge Onboarding — Optional Add-On
-                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">$297 flat fee</Badge>
+                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">{conciergePriceLabel} flat fee</Badge>
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
                 We configure all 3rd-party integrations (SignalWire, ElevenLabs, Resend, A2P 10DLC) for you. Includes onboarding call + AI knowledge base setup.
