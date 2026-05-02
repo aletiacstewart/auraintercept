@@ -17,6 +17,20 @@ import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm'
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
+import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
+
+// Specialists that drive quote/estimate creation per cluster.
+const QUOTE_SPECIALISTS_BY_CLUSTER: Record<string, IndustrySpecialistOperative[]> = {
+  trades:  ['site_survey', 'permit_code', 'insurance_claim'],
+  outdoor: ['site_survey', 'insurance_claim'],
+  repair:  ['diagnostic'],
+  booking: ['task_triager'],
+};
+const QUOTE_SPECIALISTS_BY_INDUSTRY: Record<string, IndustrySpecialistOperative[]> = {
+  real_estate: ['comp_analyst', 'offer_drafter'],
+};
 
 interface Quote {
   id: string;
@@ -48,6 +62,11 @@ export default function Quotes() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const { pack } = useIndustryPack();
+  const quoteSpecialists =
+    (pack && QUOTE_SPECIALISTS_BY_INDUSTRY[pack.industry_id]) ||
+    (pack && QUOTE_SPECIALISTS_BY_CLUSTER[pack.cluster]) ||
+    [];
   const [viewQuote, setViewQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -192,6 +211,14 @@ export default function Quotes() {
             label="Conversion Rate"
           />
         </div>
+
+        {quoteSpecialists.length > 0 && (
+          <SpecialistOperativesLauncher
+            show={quoteSpecialists}
+            title="Quote Specialists"
+            subtitle="AI specialists that help size jobs and draft accurate quotes for your industry."
+          />
+        )}
 
         {/* Filters */}
         <div className="flex gap-4">
