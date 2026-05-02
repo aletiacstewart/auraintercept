@@ -370,7 +370,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$299 implementation fee</FeatureItem>
+        <FeatureItem>$397 implementation fee</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$999 implementation fee</FeatureItem>
+        <FeatureItem>$697 implementation fee</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>

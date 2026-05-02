@@ -183,7 +183,7 @@ export default function TermsOfService() {
               <li><strong className="text-foreground">Stripe:</strong> Payment processing</li>
               <li><strong className="text-foreground">Resend:</strong> Email delivery</li>
               <li><strong className="text-foreground">Google Calendar:</strong> Calendar synchronization</li>
-              <li><strong className="text-foreground">Lovable Cloud (Supabase):</strong> Application hosting, database, authentication, and file storage</li>
+              <li><strong className="text-foreground">Lovable Cloud:</strong> Application hosting, database, authentication, and file storage</li>
             </ul>
             <p className="mt-4">By connecting third-party accounts:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
@@ -301,7 +301,7 @@ export default function TermsOfService() {
               <li>Lost, reduced, suspended, banned, throttled, or shadow-banned social media accounts, followers, likes, shares, comments, reach, impressions, engagement, or any other social media metric or outcome on Meta, Facebook, Instagram, TikTok, LinkedIn, X (Twitter), YouTube, Google, or any other platform;</li>
               <li>Missed, delayed, duplicated, or miscommunicated appointments, quotes, invoices, dispatch assignments, voice calls, SMS messages, emails, chats, notifications, or reminders;</li>
               <li>Failed, delayed, dropped, or misrouted SMS, voice, email, or chat communications;</li>
-              <li>Third-party platform outages, algorithm changes, policy changes, API deprecations, account suspensions, or terminations (including but not limited to Meta, Google, TikTok, LinkedIn, X, YouTube, Stripe, SignalWire, ElevenLabs, Resend, Tavily, OpenAI, Google Gemini, Lovable Cloud, or Supabase);</li>
+              <li>Third-party platform outages, algorithm changes, policy changes, API deprecations, account suspensions, or terminations (including but not limited to Meta, Google, TikTok, LinkedIn, X, YouTube, Stripe, SignalWire, ElevenLabs, Resend, Tavily, OpenAI, Google Gemini, Lovable Cloud);</li>
               <li>Unauthorized access to or alteration of your data or transmissions;</li>
               <li>Actions you, your employees, or your customers took (or failed to take) based on AI-generated content, recommendations, quotes, or communications;</li>
               <li>Any content obtained from or generated through the Service.</li>
@@ -458,7 +458,7 @@ export default function TermsOfService() {
               orders, or regulations; labor disputes; cyberattacks; denial-of-service attacks; internet, telecommunications, or 
               power outages; failures, outages, deprecations, or policy changes by hosting providers, AI providers, telephony 
               providers, payment processors, email providers, or social media platforms (including without limitation Lovable Cloud, 
-              Supabase, OpenAI, Google, ElevenLabs, SignalWire, Stripe, Resend, Tavily, Meta, TikTok, LinkedIn, X, or YouTube); 
+              OpenAI, Google, ElevenLabs, SignalWire, Stripe, Resend, Tavily, Meta, TikTok, LinkedIn, X, or YouTube); 
               or any other event beyond our reasonable control.
             </p>
           </section>
@@ -476,22 +476,6 @@ export default function TermsOfService() {
               limitation the disclaimers of warranties (Section 11), limitations of liability (Sections 12, 12A, 12B), 
               indemnification (Section 13), data ownership (Section 14), governing law (Section 16), assumption of risk 
               (Section 21), and severability (Section 23).
-            </p>
-          </section>
-
-          {/* Section 19: Platform Terms of Service */}
-          <section className="border-t border-border pt-8 mt-12">
-            <h2 className="text-2xl font-semibold mb-4">19. Platform Terms of Service</h2>
-            <p>
-              This application is built on Lovable. For information about Lovable's terms, please review the{' '}
-              <a 
-                href="https://lovable.dev/tos" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Lovable Terms of Service
-              </a>.
             </p>
           </section>
 
