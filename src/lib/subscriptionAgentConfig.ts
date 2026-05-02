@@ -131,11 +131,14 @@ export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
   command: 4,
 };
 
-// Get the minimum tier required for a specific agent
+// Get the minimum tier required for a specific agent.
+// Normalizes legacy agent IDs (booking/lead/route/etc.) to their consolidated
+// operative before checking, so DB rows with old IDs still resolve correctly.
 export function getRequiredTierForAgent(agentType: string): SubscriptionTier | null {
+  const canonical = normalizeAgentName(agentType);
   const tiers: SubscriptionTier[] = ['starter', 'connect', 'performance', 'command'];
   for (const tier of tiers) {
-    if (TIER_AGENT_CONFIG[tier].agents.includes(agentType)) return tier;
+    if (TIER_AGENT_CONFIG[tier].agents.includes(canonical)) return tier;
   }
   return null;
 }
@@ -150,7 +153,8 @@ export function getRequiredTierForConsole(consoleType: string): SubscriptionTier
 }
 
 export function tierIncludesAgent(tier: SubscriptionTier, agentType: string): boolean {
-  return TIER_AGENT_CONFIG[tier]?.agents.includes(agentType) ?? false;
+  const canonical = normalizeAgentName(agentType);
+  return TIER_AGENT_CONFIG[tier]?.agents.includes(canonical) ?? false;
 }
 
 export function tierIncludesConsole(tier: SubscriptionTier, consoleType: string): boolean {
@@ -183,11 +187,12 @@ export function getTierDisplayInfo(tier: SubscriptionTier): { label: string; pri
 }
 
 export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType: string): SubscriptionTier | null {
+  const canonical = normalizeAgentName(agentType);
   const tiers: SubscriptionTier[] = ['starter', 'connect', 'performance', 'command'];
   const currentIndex = tiers.indexOf(currentTier);
   if (currentTier === 'command') return null;
   for (let i = Math.max(0, currentIndex + 1); i < tiers.length; i++) {
-    if (TIER_AGENT_CONFIG[tiers[i]].agents.includes(agentType)) return tiers[i];
+    if (TIER_AGENT_CONFIG[tiers[i]].agents.includes(canonical)) return tiers[i];
   }
   return null;
 }
