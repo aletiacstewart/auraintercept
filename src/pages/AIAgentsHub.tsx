@@ -433,7 +433,10 @@ export default function AIAgentsHub() {
             <AlertDescription className="flex items-center justify-between">
               <span>
                 {inTrial ? (
-                  <>You're in trial mode with full access to all agents.</>
+                  <>
+                    Trial mode on your <strong>{getTierInfo(subscriptionTier).label}</strong> plan —
+                    showing the {availableAgentTypes.length} AI operatives included in your selected tier.
+                  </>
                 ) : subscriptionTier === 'command' ? (
                   <>Your <strong>Command</strong> plan includes all 10 AI operatives.</>
                 ) : (
