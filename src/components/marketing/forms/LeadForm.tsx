@@ -246,7 +246,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
               <Label className="text-foreground/70">Service Interest</Label>
               <Input
                 className="bg-background text-foreground border-input placeholder:text-muted-foreground"
-                placeholder="e.g., HVAC repair"
+                placeholder="Service interest"
                 value={formData.serviceInterest}
                 onChange={(e) => setFormData(prev => ({ ...prev, serviceInterest: e.target.value }))}
               />

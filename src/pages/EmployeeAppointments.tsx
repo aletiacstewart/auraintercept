@@ -12,12 +12,13 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Calendar, ClipboardList, History, Briefcase, Plus } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
-import { getPageHeader } from '@/lib/industryNavLabels';
+import { getPageHeader, getQueueLabels } from '@/lib/industryNavLabels';
 
 export default function EmployeeAppointments() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { pack } = useIndustryPack();
   const apptHeader = getPageHeader('appointments', pack);
+  const queueLabels = getQueueLabels(pack);
 
   return (
     <DashboardLayout>
@@ -54,7 +55,7 @@ export default function EmployeeAppointments() {
               </TabsTrigger>
               <TabsTrigger value="jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <ClipboardList className="h-4 w-4" />
-                Job Queue
+                {queueLabels.queueTab}
               </TabsTrigger>
               <TabsTrigger value="history" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <History className="h-4 w-4" />
@@ -62,20 +63,20 @@ export default function EmployeeAppointments() {
               </TabsTrigger>
               <TabsTrigger value="all-jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Briefcase className="h-4 w-4" />
-                All Jobs
+                {queueLabels.allJobsTab}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="calendar" className="mt-4">
               <AppointmentCalendar />
             </TabsContent>
             <TabsContent value="jobs" className="mt-4">
-              <TechnicianJobQueue />
+              <TechnicianJobQueue emptyTitle={queueLabels.emptyTitle} emptyHint={queueLabels.emptyHint} />
             </TabsContent>
             <TabsContent value="history" className="mt-4">
               <CompletedJobsHistory />
             </TabsContent>
             <TabsContent value="all-jobs" className="mt-4">
-              <CompanyJobQueue />
+              <CompanyJobQueue emptyTitle={queueLabels.emptyTitle} emptyHint={queueLabels.emptyHint} />
             </TabsContent>
           </Tabs>
         </div>
