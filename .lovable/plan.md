@@ -1,228 +1,149 @@
-# Phases J → I — Intake analytics NL queries, then pack authoring UI
+# Industry-aware company provisioning — verify & fix
 
-> **Status (post-Phase L):** J ✅, I ✅, K ✅ (drop-in `<script>` loader at
-> `/embed/booking.js` + auto-resize via `postMessage`), L ✅ (voice + SMS +
-> chat agents now inject pack `agent_prompt_deltas` and `terminology` into
-> their runtime system prompts via shared helper `_shared/industry-pack.ts`).
-> Phase M ✅ — `src/lib/industryAnalyticsPresets.ts` defines per-industry
-> shortcut chips (HVAC system age / Real Estate pre-approval funnel / etc.),
-> rendered as a "Suggested views for {industry}" row at the top of the
-> Intake analytics tab. Presets auto-filter against fields actually present
-> in the active pack and auto-apply on first mount when no `?field=` is in
-> the URL. Industry pack initiative complete.
+## Problem (audit results)
 
-Two sequential phases. J ships first (small, immediate win on top of Phase F);
-I follows (high leverage — unblocks non-engineer pack editing).
+Every dashboard, console, AI agent, and analytics view already reads industry config through `useIndustryPack(companyId)` (or the edge-function equivalent), which looks up `industry_template_packs` by `companies.industry_vertical`. So the run-time wiring is correct end-to-end **as long as `industry_vertical` is populated with a canonical pack id**. Two real bugs break that contract today:
 
----
+### Bug 1 — Signup never persists the selected industry
 
-## Phase J — Aura NL queries over intake analytics
+`src/pages/Auth.tsx` collects `businessIndustry` in the company-admin signup form (line 68, 1155) but the company `INSERT` (lines 288–300) **never writes it to `industry_vertical`**. New companies always get `NULL`, which makes `useIndustryPack` fall back to the generic pack everywhere.
 
-Extend the existing Aura command parser so admins can ask questions like
-"show HVAC system age distribution" or "which intake fields are blank
-most often" and land directly on the right card in the Intake analytics tab.
+### Bug 2 — Three different industry-id namespaces are in use
 
-### Behavior
+The canonical ids (the ones populated in `industry_template_packs.industry_id`) are:
+`hvac, plumbing, electrical, roofing, solar, landscape, pool_spa, pest_control, appliance_repair, handyman, construction, auto_care, security_systems, real_estate, beauty_wellness, restaurants, personal_assistant, fencing`.
 
-- New intent `intake_analytics` recognized by phrases mentioning
-  `intake`, `field`, `distribution`, `completeness`, `blank`, plus any
-  pack-defined field label (e.g. "system age", "pre-approval").
-- Parser returns a structured payload `{ source, field, view }` where:
-  - `source` ∈ `appointments | leads` (defaults to `appointments`).
-  - `field` resolved by fuzzy-matching the query against the active
-    pack's `getReportableIntakeFields()` labels.
-  - `view` ∈ `distribution | trend | completeness`.
-- Aura response renderer adds a "Open Intake analytics" CTA that
-  navigates to `/dashboard/analytics?tab=intake&source=…&field=…&view=…`.
-- `IntakeAnalytics.tsx` (already reads `source` + `field` query params)
-  gains support for `view` and auto-scrolls/focuses the matching card.
+Two other lists drift from those:
 
-### Technical details
+```text
+file                                    drift examples
+─────────────────────────────────────── ─────────────────────────────────────
+src/lib/industryTemplates.ts            landscape→landscaping, pool_spa→pool,
+  (Auth signup dropdown)                pest_control→pest, appliance_repair→appliance,
+                                        auto_care→auto, security_systems→security,
+                                        real_estate→realestate, beauty_wellness→beauty,
+                                        restaurants→restaurant, personal_assistant→
+                                        personalassistant
+src/lib/industryMarketingContent.ts +   solar→solar_energy, fencing→fencing_decking,
+supabase/functions/create-demo-trial/   landscape→landscape_trees, handyman→
+  index.ts INDUSTRY_DEFAULTS            handyman_cleaning
+  (Dynamic demo page + 48-hr trial)
+```
 
-- `src/lib/auraQueryParser.ts`:
-  - Add `'intake_analytics'` to `AuraIntent` union.
-  - Add regex patterns + new `extractIntakeTarget(query, pack)` helper
-    that imports `getReportableIntakeFields` (no DB call — pack already
-    in memo).
-  - Extend `ParsedQuery` with optional `intake?: { source, field, view }`.
-  - Update `getTabFromIntent` to map → `'intake'`.
-- `src/pages/AskAura.tsx`: when intent === `intake_analytics`, render
-  the deep-link CTA via `Link` to the analytics route with query string.
-- `src/components/aura/AuraResponseRenderer.tsx`: surface the intake
-  CTA card when payload.intake is present.
-- `src/components/analytics/IntakeAnalytics.tsx`: read `view` param,
-  auto-scroll to that card via `ref.current?.scrollIntoView` and apply a
-  brief `ring-2 ring-primary/40` highlight.
-- `src/pages/Analytics.tsx`: read `tab` query param so deep-link selects
-  the Intake tab on mount.
+`FastStartWizard` already uses canonical ids (BUSINESS_TEMPLATES) and writes them correctly — keep as the reference.
 
-### Files
+So even after fixing Bug 1, ~half the signups and ~25% of demo trials would still land on the generic pack because the id wouldn't match a row in `industry_template_packs`.
 
-New: none.
+## What this plan does
 
-Edited:
-- `src/lib/auraQueryParser.ts`
-- `src/pages/AskAura.tsx`
-- `src/components/aura/AuraResponseRenderer.tsx`
-- `src/components/analytics/IntakeAnalytics.tsx`
-- `src/pages/Analytics.tsx`
-- `.lovable/memory/features/industry/pack-data-fields.md` (new "Aura NL"
-  subsection)
+1. Make signup actually save the chosen industry.
+2. Normalize the two drifting namespaces to canonical pack ids.
+3. Add a single defensive alias-mapper used at every write point so any legacy or external value (`solar_energy`, `realestate`, etc.) is auto-converted before it hits the DB.
+4. Backfill the small number of existing rows that have a non-canonical value.
+5. QA across every consumer (dashboards, consoles, AI agents).
 
-### QA
+## Code changes
 
-1. Active HVAC pack → "show me hvac system age distribution" routes to
-   Intake tab with the bar chart card focused on `system_age`.
-2. "which intake fields are blank most often" → Completeness card
-   focused, sorted by lowest fill %.
-3. Generic / no pack → fallback to `general` intent (no broken link).
-4. Source disambiguation: "lead intake completeness" → `source=leads`.
+### 1. New canonical alias map — single source of truth
 
----
+**New file** `src/lib/industryIdAliases.ts`
 
-## Phase I — Industry pack authoring UI (platform admin)
+```text
+INDUSTRY_ID_ALIASES: Record<string,string> = {
+  // INDUSTRY_TEMPLATES drift
+  landscaping: 'landscape', pool: 'pool_spa', pest: 'pest_control',
+  appliance: 'appliance_repair', auto: 'auto_care', security: 'security_systems',
+  realestate: 'real_estate', beauty: 'beauty_wellness',
+  restaurant: 'restaurants', personalassistant: 'personal_assistant',
+  // INDUSTRY_DEFAULTS / marketing-content drift
+  solar_energy: 'solar', fencing_decking: 'fencing',
+  landscape_trees: 'landscape', handyman_cleaning: 'handyman',
+  // legacy
+  general_contractor: 'construction',
+}
+export function toCanonicalIndustryId(id: string|null|undefined): string|null
+```
 
-Replace SQL-only pack editing with an admin screen that lets a platform
-admin manage `industry_template_packs` rows in-place: terminology,
-job templates, form schemas (including the Phase H `show_if` / `pattern`
-/ `step` extensions), and prompt deltas.
+Mirror as `supabase/functions/_shared/industry-aliases.ts` (Deno) so edge functions can use the same map.
 
-### Behavior
+### 2. Auth signup — persist + normalize industry
 
-- New page `/dashboard/admin/industry-packs` (gated to `platform_admin`
-  via existing `RequireRole` guard — same pattern as `/audit` exclusion
-  in `power-user-pages-restricted-v1` memory).
-- List view: table of all packs (id, vertical key, label, # templates,
-  # schemas, # extra operatives, last updated). Search + filter by
-  cluster.
-- Editor (drawer or `/admin/industry-packs/:id` route):
-  - **Terminology** tab — key/value editor (e.g. `service → "tune-up"`).
-  - **Job templates** tab — repeatable rows: id, label, form_id select,
-    duration_minutes.
-  - **Form schemas** tab — accordion per form_id; each accordion exposes:
-    - Steps editor (id + label + description).
-    - Field repeater with: name, label, type select, required, options
-      (chips, for select), placeholder, helper, step select, pattern,
-      patternMessage, min, max, and a `show_if` rule builder
-      (field/op/value selector that auto-populates from existing field
-      names in the same schema).
-    - Live preview pane that mounts `<DynamicIntakeFields>` against the
-      in-memory schema with sample data so the admin sees branching
-      and validation working.
-  - **Prompt deltas** tab — JSON-aware textarea for `prompt_deltas` and
-    `kb_seed` keyed by agent id, with schema hint chips.
-  - **Extra operatives** tab — multi-select against the canonical
-    operative list from `subscriptionAgentConfig`.
-- Save action validates the JSON against a zod schema (re-using the
-  Phase H typings) and writes the row via `supabase.from('industry_template_packs').update`.
-- "Duplicate pack" + "Export JSON" + "Import JSON" buttons for
-  cross-environment reuse.
+`src/pages/Auth.tsx` company-admin signup INSERT (~line 290): add
+`industry_vertical: toCanonicalIndustryId(businessIndustry) || null`. Also gate the submit button on `businessIndustry` being set so it can't slip through as null again.
 
-### Technical details
+### 3. Normalize the dropdown source itself
 
-- Routing: add to `src/App.tsx` inside the `RequireRole roles={['platform_admin']}` block.
-- Data layer: new hook `src/hooks/useIndustryPackAdmin.ts`
-  - `useAllPacks()` — list query.
-  - `usePack(id)` — single pack with stale-time 0 (always fresh in editor).
-  - `useUpdatePack()` — optimistic mutation with toast + invalidates
-    the `useIndustryPack` cache for any company using that pack so the
-    rest of the app picks up changes without refresh.
-- Validation: `src/lib/industryPackSchema.ts` — zod schemas mirroring
-  `IntakeFormSchema`, `IntakeFieldDef`, `JobTemplate`, terminology map.
-  Reuses the Phase H union types as the source of truth.
-- Editor components (all in `src/components/admin/industry-packs/`):
-  - `PackList.tsx`
-  - `PackEditor.tsx` (tabbed shell)
-  - `TerminologyEditor.tsx`
-  - `JobTemplatesEditor.tsx`
-  - `FormSchemasEditor.tsx`
-  - `FieldRow.tsx` (single field editor row)
-  - `ShowIfRuleBuilder.tsx`
-  - `PromptDeltasEditor.tsx`
-  - `ExtraOperativesPicker.tsx`
-  - `LivePreview.tsx` (mounts `<DynamicIntakeFields>`)
-- DB: no schema migration needed — table already exists. Add an
-  `updated_by uuid` column + trigger for audit only if cheap; otherwise
-  skip and rely on `updated_at`.
-- RLS: tighten with a migration that ensures only `has_role(auth.uid(),
-  'platform_admin')` can `UPDATE`/`INSERT`/`DELETE` on
-  `industry_template_packs`. Public/company-scoped `SELECT` stays as-is
-  via existing read policy.
-- Memory:
-  - Update `mem://architecture/industry-template-pack-system` with the
-    authoring-UI route and the rule that pack edits hot-swap into
-    company sessions on next `useIndustryPack` refetch.
-  - Cross-link from `mem://features/dashboard/power-user-pages-restricted-v1`.
+`src/lib/industryTemplates.ts`: rename the 10 drifting top-level keys + their `id:` fields to canonical (`landscape`, `pool_spa`, …, `personal_assistant`). Keep the alias map for any deep-link `?industry=` URLs that may still hit the old ids.
 
-### Files
+### 4. Demo trial — normalize at the edge
 
-New:
-- `src/hooks/useIndustryPackAdmin.ts`
-- `src/lib/industryPackSchema.ts`
-- `src/pages/admin/IndustryPacksAdmin.tsx`
-- `src/components/admin/industry-packs/*` (9 components above)
-- `supabase/migrations/<ts>_industry_pack_admin_rls.sql`
+`supabase/functions/create-demo-trial/index.ts`:
+- Import the shared alias helper.
+- Apply `toCanonicalIndustryId(industry)` before the `INDUSTRY_DEFAULTS[...]` lookup.
+- Rename `INDUSTRY_DEFAULTS` keys `solar_energy → solar`, `fencing_decking → fencing`, `landscape_trees → landscape`, `handyman_cleaning → handyman` so the seeded demo data, services, and prompts line up with the pack the company will resolve to.
+- Slug template stays the same (`demo-trial-${canonicalId}-…`).
 
-Edited:
-- `src/App.tsx` (route + guard)
-- `.lovable/memory/architecture/industry-template-pack-system.md`
-- `.lovable/memory/features/dashboard/power-user-pages-restricted-v1.md`
-- `.lovable/plan.md`
+### 5. Marketing demo page — normalize the click-through
 
-### QA
+`src/lib/industryMarketingContent.ts`: rename the same 4 drifting keys + their `id:` fields to canonical. `StartDemoDialog` then automatically passes the canonical id to `create-demo-trial`, which seeds the right pack.
 
-1. As `platform_admin`: open editor for HVAC pack → add a `show_if`
-   rule on a furnace-only field → live preview hides/shows correctly.
-2. Save → switch demo HVAC company, open booking form → branching
-   field appears with the new rule (no app reload required after
-   `queryClient.invalidateQueries(['industry-pack'])`).
-3. As `company_admin`: route is 403/redirected.
-4. Import a pack JSON exported from another env → validates via zod →
-   saved.
-5. RLS: company_admin attempts `UPDATE` via REST → denied.
-6. Bad regex in `pattern` field → zod rejects with inline error before
-   save.
+### 6. Belt-and-suspenders defense at the edge function
 
----
+In `create-demo-trial`, run `toCanonicalIndustryId` on the inbound `industry` param before validation, so any old marketing link cached by a prospect still resolves to the right pack.
 
-## Sequencing & rollout
+### 7. Backfill existing rows (data only — uses insert tool)
 
-- Phase J ships first (single-day scope, no migration, no auth changes).
-- Phase I follows once J is verified — bigger surface area, includes a
-  migration for tightened RLS and ~10 new components.
-- After both: only outstanding industry-pack initiative items will be
-  K (JS embed loader), L (pack-driven agent prompts), M (per-vertical
-  analytics presets).
+Single UPDATE through the insert tool:
 
----
+```text
+UPDATE companies SET industry_vertical = canonical
+WHERE industry_vertical IN (drifting ids)
+  AND industry_vertical IS NOT canonical
+```
 
-# Phase J — Aura NL queries over intake analytics (DONE)
+Touches only the handful of demo + test rows currently in the table.
 
-- `auraQueryParser`: new `intake_analytics` intent, `extractIntakeTarget`,
-  `buildIntakeAnalyticsHref`. `parseAuraQuery(query, pack?)` is now
-  pack-aware — pack field labels promote queries.
-- `Analytics.tsx` reads `?tab=` for deep-link tab selection.
-- `IntakeAnalytics.tsx` reads `?view=` and auto-scrolls + ring-highlights
-  the matching card (Distribution / Trend / Completeness).
-- `AskAura.tsx` + `AuraResponseRenderer.tsx` show an "Open in Intake
-  analytics" CTA when the query parses to an intake target.
+## Verification matrix
 
-# Phase I — Industry pack authoring UI (DONE)
+After the changes, confirm `industry_vertical` flows correctly into every consumer (all already wired through `useIndustryPack` / pack-aware edge functions — verified in audit):
 
-- `src/lib/industryPackSchema.ts` — zod schemas mirroring Phase H types
-  (`packEditableSchema`, `intakeFieldDefSchema` with regex/min/max/
-  show_if validation).
-- `src/pages/admin/IndustryPacksAdmin.tsx` — single-file admin page with
-  list view + tabbed editor (Meta / Terminology / Job templates /
-  Form schemas / Prompt deltas / Extra operatives). Form schemas tab
-  includes a live `<DynamicIntakeFields>` preview and a `show_if` rule
-  builder. Save validates via zod; on success invalidates
-  `['industry-pack']` so live company sessions hot-swap.
-- Routes mounted at `/dashboard/admin/industry-packs` and
-  `/dashboard/admin/industry-packs/:id`, both gated to `platform_admin`.
-- No migration needed — existing RLS already restricts writes to
-  platform admins.
-- Import / Export JSON buttons for cross-env pack sync.
+```text
+Surface                              How it resolves the pack
+──────────────────────────────────── ─────────────────────────────────────────
+CompanyAdminDashboard                useIndustryPack() → labels, KPIs, presets
+AuraCommandCenter                    useIndustryPack() → quick actions
+IndustryWidgetGrid                   useIndustryPack() → widget set
+DashboardLayout (nav labels)         useIndustryPack() → terminology
+BusinessManagementConsole            useIndustryPack()
+FieldOpsConsole                      useIndustryPack() → workflows
+MarketingSalesConsole                useIndustryPack() → playbooks
+CustomerPortalConsole                useIndustryPack() → portal copy
+SpecialistOperativesConsole          useIndustryPack() → extra_operatives gate
+IntakeAnalytics + presets (Phase M)  useIndustryPack() → fields + chips
+ai-agent-chat (chat/booking AI)      industry_template_packs → deltas + intake
+voice-handler (SignalWire SWML)      _shared/industry-pack.ts (Phase L)
+sms-handler                          _shared/industry-pack.ts (Phase L)
+PublicBooking + embed loader         usePublicIndustryPack() → form schema
+```
 
-Remaining proposed phases: K (JS embed loader), L (pack-driven agent
-prompts), M (per-vertical analytics presets).
+## Manual QA after deploy
+
+1. Sign up a fresh company-admin with industry = "Real Estate". Land on the dashboard → header terminology says "Showings/Buyers" (real_estate pack), Intake analytics tab shows the "Pre-approval funnel" preset chip.
+2. From `/for-business`, click the HVAC card → Start 48-hr demo. Inside the demo company, dashboard loads HVAC widgets, AI booking agent system prompt includes the HVAC delta + intake fields (visible in `ai-agent-chat` logs).
+3. Same for one of the previously-drifting verticals (Solar) — confirm the demo no longer falls back to generic.
+4. Spot-check `companies.industry_vertical` in the DB — every new row matches a value in `industry_template_packs.industry_id`.
+
+## Files touched
+
+```text
+NEW   src/lib/industryIdAliases.ts
+NEW   supabase/functions/_shared/industry-aliases.ts
+EDIT  src/pages/Auth.tsx                              (write industry on signup)
+EDIT  src/lib/industryTemplates.ts                    (rename 10 keys → canonical)
+EDIT  src/lib/industryMarketingContent.ts             (rename 4 keys → canonical)
+EDIT  supabase/functions/create-demo-trial/index.ts   (normalize + rename keys)
+DATA  insert tool: UPDATE companies (backfill drifts)
+MEM   mem://architecture/industry-id-canonical-standard (new rule)
+```
+
+No DB schema migration is needed — `industry_vertical` is already a freeform `text` column. Only a data update.
