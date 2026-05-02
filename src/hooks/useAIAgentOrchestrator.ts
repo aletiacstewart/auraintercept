@@ -70,6 +70,17 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'permit_code', name: 'Permit & Code Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
   { type: 'site_survey', name: 'Site Survey & Quote Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
   { type: 'insurance_claim', name: 'Insurance Claim Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  // Booking-vertical specialists — auto-activated by industry pack
+  { type: 'listing_writer', name: 'Listing Writer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'offer_drafter', name: 'Offer Drafter', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'comp_analyst', name: 'Comp Analyst', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'style_consultant', name: 'Style Consultant', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'loyalty_coach', name: 'Loyalty Coach', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'menu_writer', name: 'Menu Writer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'reservation_optimizer', name: 'Reservation Optimizer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'task_triager', name: 'Task Triager', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'calendar_optimizer', name: 'Calendar Optimizer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
+  { type: 'review_responder', name: 'Review Responder', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
