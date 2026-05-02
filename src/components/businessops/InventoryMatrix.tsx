@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { 
   Package, 
   Search, 
@@ -188,12 +189,16 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
               ) : filteredItems.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8}>
-                    <AuraEmptyState
-                      icon={Package}
-                      title={showLowStockOnly ? 'No low stock items' : 'No inventory items yet'}
-                      description={showLowStockOnly ? 'All items are well-stocked — great job!' : 'Track your parts and materials. Add items to get started.'}
-                      compact
-                    />
+                    {showLowStockOnly ? (
+                      <AuraEmptyState
+                        icon={Package}
+                        title="No low stock items"
+                        description="All items are well-stocked — great job!"
+                        compact
+                      />
+                    ) : (
+                      <IndustryEmptyState surface="inventory" />
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (

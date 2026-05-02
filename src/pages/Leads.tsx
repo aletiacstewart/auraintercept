@@ -28,6 +28,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalyticsSection } from '@/components/leads';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
@@ -267,9 +268,7 @@ export default function Leads() {
             {isLoading ? (
               <div className="text-center py-8 text-white/70">Loading leads...</div>
             ) : filteredLeads.length === 0 ? (
-              <div className="text-center py-8 text-white/70">
-                No leads found. Leads are automatically captured when customers interact with your AI agents.
-              </div>
+              <IndustryEmptyState surface="leads" />
             ) : (
               <div className="space-y-3">
                 {filteredLeads.map((lead) => {

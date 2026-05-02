@@ -14,6 +14,7 @@ import { Plus, Receipt, Eye, Send, Check, Search, Trash2, X } from 'lucide-react
 import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 
 interface Invoice {
   id: string;
@@ -217,14 +218,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
               ) : filteredInvoices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5}>
-                    <AuraEmptyState
-                      icon={Receipt}
-                      title="No invoices yet"
-                      description="Create your first invoice or let Aura generate one from a completed quote."
-                      actionLabel="Create an invoice"
-                      onAction={() => setIsAddOpen(true)}
-                      compact
-                    />
+                    <IndustryEmptyState surface="invoices" onAction={() => setIsAddOpen(true)} />
                   </TableCell>
                 </TableRow>
               ) : (

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -276,9 +277,8 @@ export default function Invoices() {
                   </TableRow>
                 ) : filteredInvoices.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      <Receipt className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      No invoices found
+                    <TableCell colSpan={7} className="py-4">
+                      <IndustryEmptyState surface="invoices" />
                     </TableCell>
                   </TableRow>
                 ) : (
