@@ -31,6 +31,8 @@ import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalytic
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
