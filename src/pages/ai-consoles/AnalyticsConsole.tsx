@@ -10,12 +10,16 @@ import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 export default function AnalyticsConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
+  const { pack } = useIndustryPack();
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
+  const industryLabel = pack.label || 'service business';
+  const description = `AI-powered analytics, reporting, and ${industryLabel.toLowerCase()} business insights.`;
 
   return (
     <DashboardLayout>
@@ -25,7 +29,7 @@ export default function AnalyticsConsole() {
             <PageHeader
               icon={BarChart3}
               title="Analytics & Reports Console"
-              description="AI-powered analytics, reporting, and business insights."
+              description={description}
               featureColor="platform"
               showAuraBar
               badge={<ValueBadge label="Saves ~5 hrs/week on reporting" />}
