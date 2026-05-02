@@ -1,70 +1,105 @@
-## Problems Found
+I checked the current implementation and the issue is broader than one demo account. The selected plan and industry are being saved, but several screens still do not consume that mapping consistently.
 
-You are correct on all three counts. Here is what the code/database actually does today:
+Key findings:
+- Current accounts do have `industry_vertical` and `subscription_tier` populated.
+- Demo accounts are seeded from the intended industry-to-tier map, but the seeder still writes older agent IDs like `booking`, `followup`, `review`, `lead`, `marketing`, `route`, `eta`, etc.
+- The visible AI Operatives Hub only renders the newer consolidated operative IDs like `customer_journey`, `outreach`, and `field_navigation`, so enabled legacy rows can exist without showing correctly in the UI.
+- New real signups save company plan + industry, but they do not immediately initialize the company’s enabled AI agent configuration from that plan + industry.
+- Company admins are currently blocked from seeing the AI Operatives Hub in the sidebar even though the plan details say the Hub is included across paid tiers.
+- Some Core features listed in the subscription detail table are incorrectly gated higher in dashboard navigation.
 
-**1. Field Ops & Dispatch show on booking-only verticals (PA, Beauty, Real Estate, Restaurants).**
-`industry_template_packs.console_visibility.field_ops` is already set to `"booking_mode"` for these four industries (verified in DB), and `FieldOpsConsole.tsx` reads it — but **`DashboardLayout.tsx` ignores it**. The "Field Ops" sidebar group is gated only by `requiredTier: 'performance'`, so any Pro/Elite booking-only vertical still sees Technician View + Dispatch View in the sidebar. (Aura Intercept itself is Elite, which is why you see it.)
+Plan to fix it across all accounts:
 
-**2. Social Media console lists every industry in a dropdown.**
-`src/components/social/IndustryTemplateSelector.tsx` renders all 18 entries from the static `INDUSTRY_LIST` regardless of which industry the company selected. It should be locked to the active company's industry pack (with a "switch industry" affordance only for platform_admin).
+1. Create one canonical plan-to-agent resolver
+   - Add a single shared resolver for the 4-tier model:
+     - Aura Core: `starter`
+     - Aura Boost: `connect`
+     - Aura Pro: `performance`
+     - Aura Elite: `command`
+   - Normalize legacy agent IDs into current operative IDs everywhere they are read:
+     - `booking`, `followup`, `review` -> `customer_journey`
+     - `lead`, `marketing`, `campaign` -> `outreach`
+     - `route`, `eta`, `checkin` -> `field_navigation`
+     - `quoting`, `invoice`, `inventory` -> `business_finance`
+     - `social_scheduler`, `social_analytics`, `social_content` -> `creative_content`
+     - `insights`, `performance`, `revenue`, `forecast` -> `analytics_intelligence`
+   - Keep the 24-agent marketing model visible as sub-agent chips/details inside the 10 operative cards, so users still see “Booking Agent”, “Follow-Up Agent”, “Review Agent”, etc. while the backend uses consolidated operatives.
 
-**3. Demo accounts have ZERO AI agents activated.**
-DB query confirms: all 18 demo companies have `0` rows in `ai_agent_configs`. The seeder (`seed-demo-accounts-v2`) builds a `TIER_AGENTS[ind.tier]` array on line 433 and uses it to gate sample data, but **never writes those agents to `ai_agent_configs`**. So `personalassistantadmin@demo.com` (Aura Core / starter tier) shows no AI Receptionist, Booking Agent, Follow-Up, etc., even though Core is supposed to ship 8 agents.
+2. Fix the AI Operatives Hub display
+   - Update `useAIAgentOrchestrator` so it treats legacy enabled rows as enabled current operatives.
+   - Show Aura Core clearly:
+     - AI Receptionist
+     - Customer Journey Agent with Booking / Scheduling, Follow-Up, Review chips
+     - Creative Content Agent
+     - Web Presence Agent
+     - Outreach Agent with Lead + Marketing chips
+   - Make the “Enable Recommended” action activate the full plan-appropriate set, not only a hardcoded legacy “4 core” set.
+   - Show industry-specific add-ons only when the selected industry pack includes them, and label them clearly.
 
----
+3. Make new accounts initialize correctly at signup
+   - After company creation, initialize `ai_agent_configs` from the selected plan and selected industry.
+   - This ensures every new company immediately gets the correct Core / Boost / Pro / Elite agent set before the owner ever opens the Hub.
+   - The initialization will also include valid industry extras from the industry template pack.
+   - This keeps future signups from repeating the current missing-agent state.
 
-## Plan
+4. Fix current existing accounts
+   - Run a backend data update for all existing companies.
+   - For each company:
+     - Read `subscription_tier`.
+     - Read `industry_vertical`.
+     - Resolve the correct plan agents.
+     - Add missing normalized operative rows.
+     - Preserve already-enabled legacy rows but make the current rows active too.
+   - This covers all current real accounts and demo accounts without requiring each user to manually reseed.
 
-### Step 1 — Activate AI agents on all demo companies
-In `supabase/functions/seed-demo-accounts-v2/index.ts`, after the company is created (around line 470, before the data wipe), upsert one `ai_agent_configs` row per agent in `TIER_AGENTS[ind.tier]` with `is_enabled = true`, plus the industry pack's `extra_operatives` (so Personal Assistant gets `task_triager`, `calendar_optimizer`, `review_responder`; Real Estate gets `listing_writer`, `offer_drafter`, `comp_analyst`, etc.).
+5. Fix demo account seeding permanently
+   - Update `seed-demo-accounts-v2` so it writes normalized current operative IDs instead of only legacy IDs.
+   - Keep the user’s demo mapping intact:
+     - Core: Beauty & Wellness, Restaurants, Real Estate, Personal Assistant
+     - Boost: Handyman, Auto Care, Appliance Repair, Pest Control, Fencing
+     - Pro: Security Systems, Pool/Spa, Landscape, Solar
+     - Elite: HVAC, Electrical, Plumbing, Roofing, Construction
+   - Re-running the demo seeder will then produce correctly mapped dashboards and agents every time.
 
-Tier → agent counts after fix:
-- Core (4 demos): 8 agents + extras
-- Boost (5 demos): 12 agents + extras
-- Pro (4 demos): 16 agents + extras
-- Elite (5 demos): 24 agents + extras
+6. Fix dashboard/sidebar feature access to match plan details
+   - Make AI Operatives Hub visible to company admins on paid/trial accounts.
+   - Ensure Aura Core shows Core features from the plan table:
+     - Customer Portal / AI Receptionist surface
+     - Appointments / scheduling
+     - Calendar sync
+     - Creative / Web Presence
+     - Outreach & Sales where Core says it is included
+   - Keep Field Ops / Dispatch hidden for booking-only industries like Personal Assistant, Beauty, Restaurants, and Real Estate.
+   - Keep higher-tier-only features locked or hidden according to the plan matrix.
 
-Then redeploy the function and run `Seed All Demo Accounts` from `/dashboard/demo-seeder`.
+7. Fix industry dashboard widgets
+   - For booking-first industries, especially Personal Assistant, replace confusing field-service widgets with clear Core workflow widgets:
+     - AI Receptionist
+     - Schedule / Bookings
+     - Calendar Sync
+     - Client Portal
+     - Follow-Up / Reviews
+   - Routes will point to the appropriate existing pages: AI console/customer portal, appointments, calendar integration, client/customer portal, and review/follow-up setup.
 
-### Step 2 — Hide Field Ops nav for booking-only industries
-In `src/components/dashboard/DashboardLayout.tsx`:
-- Read `industryPack.console_visibility?.field_ops` (already loaded via `useIndustryPack` on line 272).
-- When `mode === 'hidden'` OR `mode === 'booking_mode'`, filter out the `'/dashboard/ai-consoles/field-ops'` and `'/dashboard/dispatch-field-ops'` nav items.
-- Also drop the entire "Field Ops" group when both children are filtered out (already handled by the existing `.filter(group => group.items.length > 0)` at line 326).
-- Platform admin still sees everything (already covered by `isPlatformAdmin` short-circuit).
+8. Verify all account categories
+   - Verify `personalassistantadmin@demo.com` shows:
+     - AI Operatives Hub in the sidebar.
+     - AI Receptionist active.
+     - Scheduling / Booking visible.
+     - Customer Journey details visible for Booking, Follow-Up, and Review.
+     - Core Creative/Web/Outreach items visible.
+     - No technician/dispatch/field-ops labels.
+   - Spot-check Core, Boost, Pro, and Elite demo accounts.
+   - Spot-check the real Aura Intercept tenant and any non-demo companies.
 
-This means Aura Intercept (which is on the SaaS Platform / generic pack) keeps Field Ops, but `personalassistantadmin@demo.com`, `realestateadmin@demo.com`, `beautywellnessadmin@demo.com`, `restaurantsadmin@demo.com` will not see Technician View / Dispatch View.
+Technical changes expected:
+- `src/lib/subscriptionAgentConfig.ts`
+- `src/hooks/useAIAgentOrchestrator.ts`
+- `src/pages/AIAgentsHub.tsx`
+- `src/components/dashboard/DashboardLayout.tsx`
+- `src/components/dashboard/IndustryWidgetGrid.tsx`
+- `src/pages/Auth.tsx` or a backend account-initialization function it calls
+- `supabase/functions/seed-demo-accounts-v2/index.ts`
+- A backend data update for existing `ai_agent_configs` rows across all companies
 
-### Step 3 — Lock the Social Media industry templates to the company's pack
-In `src/components/social/SocialContentWizard.tsx` (and `IndustryTemplateSelector.tsx`):
-- Replace the full `INDUSTRY_LIST` dropdown with the single industry that matches `useIndustryPack().pack.industry_id`.
-- Show it as a static badge ("Templates for: Personal Assistant") instead of a multi-choice menu.
-- Keep the full list visible only when `userRole === 'platform_admin'` (so platform admins can still preview other verticals).
-- If the company's pack has no matching entry in `INDUSTRY_TEMPLATES` (e.g., the generic SaaS Platform fallback), fall back to the closest match by `cluster` and show a small "Generic templates" note.
-
-### Step 4 — Verify with the Personal Assistant demo
-After redeploying the seeder and reseeding:
-- Sign in as `personalassistantadmin@demo.com` / `aidemo*!`
-- Confirm sidebar has NO Field Ops / Dispatch group.
-- Confirm `/dashboard/ai-agents` shows the 8 Core agents activated.
-- Confirm Social Media console only shows Personal Assistant templates (or generic if not mapped), not the 18-industry list.
-- Spot-check Elite (`hvacadmin@demo.com`) shows 24 agents and full Field Ops; spot-check Beauty (`beautywellnessadmin@demo.com`) shows no Field Ops and the chair-grid console.
-
----
-
-## Files to change
-
-```text
-supabase/functions/seed-demo-accounts-v2/index.ts   (insert ai_agent_configs rows)
-src/components/dashboard/DashboardLayout.tsx        (filter Field Ops by console_visibility)
-src/components/social/IndustryTemplateSelector.tsx  (lock to company industry)
-src/components/social/SocialContentWizard.tsx       (pass company industry, hide selector for non-admins)
-.lovable/memory/platform-operations/demo-account-registry.md  (note that seeder now activates agents)
-```
-
-No DB schema changes — everything uses existing `ai_agent_configs`, `industry_template_packs.console_visibility`, and `useIndustryPack`.
-
-## Out of scope
-
-- Changing the canonical 4-tier names (`starter/connect/performance/command`) — separate cleanup, not needed to fix the symptoms above.
-- Per-industry overrides for non-demo customer accounts — they already get the right `console_visibility`; only the sidebar filter and the social selector were ignoring it.
+No schema change is needed unless the existing table constraints block the backfill. This is primarily a data normalization and feature-gating consistency fix.
