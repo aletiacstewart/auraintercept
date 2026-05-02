@@ -30,12 +30,16 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2, Layers } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { CampaignSeriesWizard } from '@/components/marketing/CampaignSeriesWizard';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const campaignsHeader = getPageHeader('campaigns', pack);
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSeriesWizard, setShowSeriesWizard] = useState(false);
@@ -174,8 +178,8 @@ export default function Campaigns() {
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Megaphone}
-          title="Marketing Campaigns"
-          description="Create and track marketing campaigns"
+          title={campaignsHeader.title}
+          description={campaignsHeader.description}
           showAuraBar
           action={
             <div className="flex gap-2">
