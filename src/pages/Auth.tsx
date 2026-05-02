@@ -766,7 +766,7 @@ export default function Auth() {
                       <h3 className="text-sm font-bold text-foreground">90-Day Free Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your trial includes <span className="font-semibold text-foreground">all 24 AI agents</span>, <span className="font-semibold text-foreground">all 7 control centers + AI Hub</span>, and <span className="font-semibold text-foreground">all integrations</span> — regardless of the plan you select. No credit card required. Choose a plan to see pricing after your trial.
+                      Your <span className="font-semibold text-foreground">90-day free trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                 </div>
                 </div>

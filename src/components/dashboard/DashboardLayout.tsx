@@ -117,10 +117,10 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Field Ops',
-    requiredTier: 'performance',
+    requiredTier: 'connect',
     items: [
-      { label: 'Technician View', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
-      { label: 'Dispatch View', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'performance' },
+      { label: 'Technician View', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'connect' },
+      { label: 'Dispatch View', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'connect' },
     ],
   },
   {
@@ -128,17 +128,17 @@ const navGroups: NavGroup[] = [
     requiredTier: 'performance',
     items: [
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
-      { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Specialist Operatives', icon: Sparkles, href: '/dashboard/ai-consoles/specialists', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'performance' },
     ],
   },
   {
     label: 'Marketing',
-    requiredTier: 'connect',
+    requiredTier: 'starter',
     items: [
-      { label: 'Outreach & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
+      { label: 'Outreach & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'starter' },
       { label: 'Social Media', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
-      { label: 'Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'connect' },
+      { label: 'Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'starter' },
     ],
   },
   {
@@ -245,8 +245,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const getTierDisplay = () => {
     const tierConfig: Record<string, { label: string; color: string; icon: typeof Crown | null }> = {
-      free: { label: 'Free', color: 'bg-muted text-muted-foreground', icon: null },
-      enterprise: { label: 'Enterprise', color: 'bg-amber-500/20 text-amber-500', icon: Crown },
+      free:        { label: 'Free',       color: 'bg-muted text-muted-foreground',       icon: null },
+      starter:     { label: 'Aura Core',  color: 'bg-teal-500/20 text-teal-300',          icon: null },
+      connect:     { label: 'Aura Boost', color: 'bg-sky-500/20 text-cyan-300',           icon: null },
+      performance: { label: 'Aura Pro',   color: 'bg-purple-500/20 text-purple-300',      icon: Crown },
+      command:     { label: 'Aura Elite', color: 'bg-amber-500/20 text-amber-300',        icon: Crown },
+      enterprise:  { label: 'Aura Elite', color: 'bg-amber-500/20 text-amber-300',        icon: Crown },
     };
     return tierConfig[subscriptionTier] || tierConfig.free;
   };
