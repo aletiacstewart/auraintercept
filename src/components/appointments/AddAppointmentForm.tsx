@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
+import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
 
 interface AddAppointmentFormProps {
   onSuccess?: () => void;
