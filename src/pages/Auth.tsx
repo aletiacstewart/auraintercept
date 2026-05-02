@@ -914,30 +914,42 @@ export default function Auth() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-3 pb-3">
+                      {/* Base/Free Limits Notice */}
+                      <div className="mb-2 p-2 rounded bg-amber-500/10 border border-amber-500/30">
+                        <p className="text-[9px] text-amber-300 leading-relaxed">
+                          <span className="font-semibold">⚠ All plans have base limits.</span> Limits below reflect each provider's free/intro tier (bundled into your plan). Any usage <span className="font-semibold">over these limits</span> is billed at the end of each month <span className="font-semibold">in addition to</span> your plan fee. 3rd-party fees may change at any time at the provider's discretion.
+                        </p>
+                      </div>
                       {/* Cost table */}
                       <div className="space-y-1 mb-3">
                         {[
-                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
-                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Included in tier', note: 'Boost+', color: 'text-green-400' },
-                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Included in tier', note: 'Boost+', color: 'text-purple-400' },
-                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend', cost: 'Included in tier', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', note: 'Elite', color: 'text-amber-400' },
-                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', note: 'Pro+', color: 'text-pink-400' },
-                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Included in tier', note: 'All tiers', color: 'text-orange-400' },
-                        ].map(({ icon, name, cost, note, color }) => (
-                          <div key={name} className="flex items-center justify-between text-[9px] py-0.5 border-b border-border/20 last:border-0">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              {icon}
-                              <span className={`font-medium ${color}`}>{name}</span>
+                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', limit: 'Base: 1 brand + 1 campaign', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
+                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Included in tier', limit: 'Base: ~$2/mo number + bundled minutes/SMS per tier', note: 'Boost+', color: 'text-green-400' },
+                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Included in tier', limit: 'Free tier: 10k chars/mo (~10 min TTS)', note: 'Boost+', color: 'text-purple-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend', cost: 'Included in tier', limit: 'Free tier: 3,000 emails/mo · 100/day', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', limit: '1M API requests/day (free)', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', limit: 'No free tier — per-transaction only', note: 'Elite', color: 'text-amber-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', limit: 'Per-platform API rate limits apply', note: 'Pro+', color: 'text-pink-400' },
+                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Included in tier', limit: 'Free tier: 1,000 searches/mo', note: 'All tiers', color: 'text-orange-400' },
+                        ].map(({ icon, name, cost, limit, note, color }) => (
+                          <div key={name} className="py-1 border-b border-border/20 last:border-0">
+                            <div className="flex items-center justify-between text-[9px]">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                {icon}
+                                <span className={`font-medium ${color}`}>{name}</span>
+                              </div>
+                              <div className="text-right shrink-0 ml-2">
+                                <span className="text-foreground/80">{cost}</span>
+                                <span className="text-muted-foreground ml-1">· {note}</span>
+                              </div>
                             </div>
-                            <div className="text-right shrink-0 ml-2">
-                              <span className="text-foreground/80">{cost}</span>
-                              <span className="text-muted-foreground ml-1">· {note}</span>
-                            </div>
+                            <p className="text-[8px] text-muted-foreground/80 mt-0.5 pl-4">{limit}</p>
                           </div>
                         ))}
                       </div>
+                      <p className="mb-3 text-[8px] italic text-muted-foreground/70 leading-relaxed">
+                        Over-limit usage on any 3rd-party service will be invoiced at month-end in addition to your Aura plan fee. Provider fees and free-tier limits are set by each vendor and may change at any time.
+                      </p>
 
                       {/* Setup docs — nested accordion */}
                       <div className="border border-primary/20 rounded-md overflow-hidden">
@@ -1360,10 +1372,12 @@ export default function Auth() {
                                 <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   Add Concierge Onboarding
-                                  <span className="ml-auto text-primary font-bold">$297</span>
+                                  <span className="ml-auto text-primary font-bold">
+                                    {selectedTier === 'performance' || selectedTier === 'command' ? '$697' : '$397'}
+                                  </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of $297. Assistance from primary owner or manager required for company details.
+                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of <span className="font-semibold text-foreground">{selectedTier === 'performance' || selectedTier === 'command' ? '$697 (Pro & Elite)' : '$397 (Core & Boost)'}</span>. Assistance from primary owner or manager required for company details.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Optional — can also be purchased later from your dashboard.
@@ -1406,7 +1420,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">Concierge Onboarding</h4>
                  <p className="text-xs text-foreground">
-                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $297</span>. Assistance from primary owner or manager required for company details.
+                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $397 (Core &amp; Boost) or $697 (Pro &amp; Elite)</span>. Assistance from primary owner or manager required for company details.
                  </p>
               </div>
 

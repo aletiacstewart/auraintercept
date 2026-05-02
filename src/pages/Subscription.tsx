@@ -256,7 +256,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
       { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
       { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
-      { name: 'Implementation Fee', starter: '$199', connect: '$399', performance: '$599', command: '$799' },
+      { name: 'Implementation Fee', starter: '$397', connect: '$397', performance: '$697', command: '$697' },
     ],
   },
 ];
@@ -733,7 +733,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Implementation Fee: $199 Core · $399 Boost · $599 Pro · $799 Elite</span>
+                <span className="text-muted-foreground">Implementation Fee: $397 Core &amp; Boost · $697 Pro &amp; Elite</span>
               </div>
             </div>
           </CardContent>
@@ -818,6 +818,7 @@ export default function Subscription() {
     <ThirdPartyCostDisclosureDialog
       open={disclosureOpen}
       tierName={pendingTierId ?? ''}
+      tierId={pendingTierId ?? undefined}
       onConfirm={handleCheckoutConfirmed}
       onCancel={() => { setDisclosureOpen(false); setPendingTierId(null); }}
     />
