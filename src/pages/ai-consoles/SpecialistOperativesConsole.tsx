@@ -22,6 +22,16 @@ import {
   Sparkles,
   Lock,
   Info,
+  Home,
+  FileSignature,
+  BarChart3,
+  Scissors,
+  Heart,
+  UtensilsCrossed,
+  CalendarClock,
+  ListChecks,
+  CalendarRange,
+  MessageCircleHeart,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -43,7 +53,7 @@ type SpecialistDef = {
   usedBy: string;
 };
 
-const SPECIALISTS: SpecialistDef[] = [
+const SPECIALISTS_RAW: SpecialistDef[] = [
   {
     id: 'diagnostic',
     icon: Stethoscope,
@@ -84,7 +94,85 @@ const SPECIALISTS: SpecialistDef[] = [
       'Produce a claim-ready summary from these photos and dates.',
     ],
   },
+  // Real Estate
+  { id: 'listing_writer', icon: Home, usedBy: 'Agents, Marketing',
+    examples: [
+      'Write a 3-bullet listing description for a 4-bed colonial with a finished basement.',
+      'Draft a punchy headline for an open house this Sunday at 2pm.',
+      'Suggest 5 feature highlights from these photos and the MLS sheet.',
+    ] },
+  { id: 'offer_drafter', icon: FileSignature, usedBy: 'Agents, Brokers',
+    examples: [
+      'Draft an offer letter for a buyer at $625k with a 30-day close.',
+      'Compose a counter-offer that splits the inspection credit.',
+      'Add a financing contingency to this draft offer.',
+    ] },
+  { id: 'comp_analyst', icon: BarChart3, usedBy: 'Agents, Pricing',
+    examples: [
+      'Pull comps for 123 Maple St (3-bed, 1800 sqft) within 1 mile, last 90 days.',
+      'Summarize how this listing prices vs. nearby actives and pendings.',
+      'Show the price-per-sqft trend for this neighborhood over 12 months.',
+    ] },
+  // Beauty & Wellness
+  { id: 'style_consultant', icon: Scissors, usedBy: 'Stylists, Clients',
+    examples: [
+      'Suggest 3 cuts that suit a heart-shaped face and fine hair.',
+      'Recommend a color formula for a level 6 base going to honey-balayage.',
+      'Build a 4-week treatment plan for damaged hair after bleach.',
+    ] },
+  { id: 'loyalty_coach', icon: Heart, usedBy: 'Front desk, Marketing',
+    examples: [
+      'Find clients who haven\'t rebooked in 8+ weeks and draft a personal note for each.',
+      'Suggest a loyalty perk for a client on visit #10.',
+      'Draft a friendly reminder for a client whose last color is fading.',
+    ] },
+  // Restaurants
+  { id: 'menu_writer', icon: UtensilsCrossed, usedBy: 'Owner, FOH manager',
+    examples: [
+      'Write today\'s special: pan-seared halibut with lemon-caper butter.',
+      'Draft dietary callouts (GF, V, DF) for these 6 menu items.',
+      'Write a brunch menu intro in our brand voice.',
+    ] },
+  { id: 'reservation_optimizer', icon: CalendarClock, usedBy: 'Host, Manager',
+    examples: [
+      'Reshuffle tonight\'s 7pm bookings to seat the 6-top by the window.',
+      'Find the best slot to add a 4-top tomorrow without breaking turn time.',
+      'Suggest table moves to free a 2-top for a walk-in.',
+    ] },
+  // Personal Assistant
+  { id: 'task_triager', icon: ListChecks, usedBy: 'Assistants, Clients',
+    examples: [
+      'Sort today\'s 12 inbound requests by urgency and owner.',
+      'Flag anything past due and draft status update messages.',
+      'Group these tasks into errands, calls, and research blocks.',
+    ] },
+  { id: 'calendar_optimizer', icon: CalendarRange, usedBy: 'Assistants',
+    examples: [
+      'Reshuffle this week to consolidate Tuesday meetings into one block.',
+      'Find the best 90-min focus window for deep work tomorrow.',
+      'Add 15-min travel buffers between in-person meetings.',
+    ] },
+  // Universal booking-first
+  { id: 'review_responder', icon: MessageCircleHeart, usedBy: 'Owner, Marketing',
+    examples: [
+      'Draft a warm response to this 5-star Google review.',
+      'Compose a professional reply to this 2-star review without sounding defensive.',
+      'Respond to a Yelp review that mentions long wait times.',
+    ] },
 ];
+
+// Index for lookup. Any specialist in the enum without a hand-written entry
+// gets a sensible auto-generated fallback so new specialists don't crash the UI.
+const SPECIALISTS: SpecialistDef[] = (INDUSTRY_SPECIALIST_OPERATIVES as readonly IndustrySpecialistOperative[]).map((id) => {
+  const found = SPECIALISTS_RAW.find((s) => s.id === id);
+  if (found) return found;
+  return {
+    id,
+    icon: Sparkles,
+    usedBy: 'Industry-specific',
+    examples: [SPECIALIST_DESCRIPTIONS[id] ?? 'Ask the specialist a question.'],
+  };
+});
 
 function SpecialistChat({ specialist }: { specialist: SpecialistDef }) {
   const { companyId, user } = useAuth();
