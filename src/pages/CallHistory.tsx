@@ -48,6 +48,8 @@ import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 
 interface CallLog {
   id: string;
