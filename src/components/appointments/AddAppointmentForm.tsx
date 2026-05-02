@@ -318,7 +318,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Customer Name *"
+                placeholder={`${customerField.label} *`}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
@@ -352,7 +352,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Service Address"
+                placeholder={addressField.label}
                 value={customerAddress}
                 onChange={(e) => setCustomerAddress(e.target.value)}
                 className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
