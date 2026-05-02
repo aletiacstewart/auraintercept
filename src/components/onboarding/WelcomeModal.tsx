@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -45,6 +46,9 @@ export function WelcomeModal({
   const navigate = useNavigate();
   const [isClosing, setIsClosing] = useState(false);
   const isTechnician = jobTypes.includes('technician');
+  const { pack } = useIndustryPack();
+  const jobNoun = (pack.terminology?.job as string) || 'Job';
+  const apptNoun = (pack.terminology?.appointment as string) || 'Appointment';
 
   const handleClose = () => {
     setIsClosing(true);
@@ -67,12 +71,12 @@ export function WelcomeModal({
       return {
         title: `Welcome to ${companyName || 'Your Team'}!`,
         subtitle: "Your mobile job center",
-        description: "Everything you need for your day is right here. Accept jobs, navigate to customers, and update status—all in one place.",
+        description: `Everything you need for your day is right here. Accept ${jobNoun.toLowerCase()}s, navigate to customers, and update status\u2014all in one place.`,
         actions: [
           {
             icon: ClipboardCheck,
-            title: "View Today's Jobs",
-            description: "See assigned jobs and accept work",
+            title: `View Today\u2019s ${jobNoun}s`,
+            description: `See assigned ${jobNoun.toLowerCase()}s and accept work`,
             link: '/technician/jobs',
             primary: true
           },
@@ -134,12 +138,12 @@ export function WelcomeModal({
     return {
       title: `Welcome to ${companyName || 'the Team'}!`,
       subtitle: "Your workspace is ready",
-      description: "Access your schedule, manage tasks, and collaborate with your team from one central dashboard.",
+      description: `Access your schedule, manage ${jobNoun.toLowerCase()}s, and collaborate with your team from one central dashboard.`,
       actions: [
         {
           icon: Calendar,
           title: "View Your Schedule",
-          description: "See upcoming appointments & tasks",
+          description: `See upcoming ${apptNoun.toLowerCase()}s & ${jobNoun.toLowerCase()}s`,
           link: '/dashboard/appointments',
           primary: true
         },

@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
+import { getCompanyTerminology } from '../_shared/terminology.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -87,6 +88,12 @@ Deno.serve(async (req) => {
     const companyName = company?.name || 'Our Business';
     const primaryColor = company?.primary_color || '#0EA5E9';
 
+    // Resolve industry-specific noun for "Appointment" (e.g. "Reservation",
+    // "Showing"). Subject + heading defaults use this noun so a restaurant guest
+    // sees "Reservation Confirmed" instead of "Appointment Confirmed".
+    const term = await getCompanyTerminology(supabase, appointment.company_id);
+    const apptNoun = term.appointment;
+
     // Format appointment datetime
     const appointmentDate = new Date(appointment.datetime);
     const dateStr = appointmentDate.toLocaleDateString('en-US', {
@@ -112,21 +119,21 @@ Deno.serve(async (req) => {
     // Default templates
     const defaultTemplates: Record<string, { subject: string; heading: string; message: string; show_portal_link: boolean }> = {
       confirmation: {
-        subject: `Appointment Confirmed - ${companyName}`,
-        heading: 'Your Appointment is Confirmed!',
+        subject: `${apptNoun} Confirmed - ${companyName}`,
+        heading: `Your ${apptNoun} is Confirmed!`,
         message: `Thank you for booking with ${companyName}. We look forward to seeing you.`,
         show_portal_link: true,
       },
       cancellation: {
-        subject: `Appointment Cancelled - ${companyName}`,
-        heading: 'Your Appointment Has Been Cancelled',
-        message: `Your appointment with ${companyName} has been cancelled. If you did not request this cancellation, please contact us.`,
+        subject: `${apptNoun} Cancelled - ${companyName}`,
+        heading: `Your ${apptNoun} Has Been Cancelled`,
+        message: `Your ${apptNoun.toLowerCase()} with ${companyName} has been cancelled. If you did not request this cancellation, please contact us.`,
         show_portal_link: false,
       },
       reminder: {
-        subject: `Appointment Reminder - ${companyName}`,
-        heading: 'Appointment Reminder',
-        message: `This is a friendly reminder about your upcoming appointment with ${companyName}.`,
+        subject: `${apptNoun} Reminder - ${companyName}`,
+        heading: `${apptNoun} Reminder`,
+        message: `This is a friendly reminder about your upcoming ${apptNoun.toLowerCase()} with ${companyName}.`,
         show_portal_link: true,
       },
     };
@@ -161,10 +168,10 @@ Deno.serve(async (req) => {
     const portalSection = showPortalLink ? `
       <div style="text-align: center; margin: 24px 0;">
         <a href="${portalUrl}" style="display: inline-block; background: ${primaryColor}; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
-          Manage Your Appointment
+          Manage Your ${apptNoun}
         </a>
         <p style="color: #6b7280; font-size: 12px; margin-top: 12px;">
-          Reschedule or cancel your appointment online
+          Reschedule or cancel your ${apptNoun.toLowerCase()} online
         </p>
       </div>
     ` : '';
@@ -208,7 +215,7 @@ Deno.serve(async (req) => {
             <p>${message}</p>
             
             <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #374151;">Appointment Details</h3>
+              <h3 style="margin-top: 0; color: #374151;">${apptNoun} Details</h3>
               <p style="margin: 8px 0;"><strong>Service:</strong> ${appointment.service_type}</p>
               <p style="margin: 8px 0;"><strong>Date:</strong> ${dateStr}</p>
               <p style="margin: 8px 0;"><strong>Time:</strong> ${timeStr}</p>

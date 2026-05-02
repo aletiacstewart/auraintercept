@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle2 } from 'lucide-react';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { toast } from 'sonner';
+import { usePublicIndustryPack } from '@/hooks/useIndustryPack';
 
 interface PublicCompany {
   id: string;
@@ -112,6 +113,11 @@ export default function PublicBooking() {
     enabled: !!companySlug,
   });
 
+  // Industry-aware terminology for the booking page header + confirmation copy.
+  const { pack } = usePublicIndustryPack(company?.id ?? null);
+  const apptNoun = (pack.terminology?.appointment as string) || 'Appointment';
+  const apptNounLower = apptNoun.toLowerCase();
+
   const { data: services = [], isLoading: servicesLoading } = useQuery({
     queryKey: ['public-booking-services', company?.id],
     queryFn: async () => {
@@ -162,7 +168,7 @@ export default function PublicBooking() {
       });
       if (error) throw error;
       setSubmitted(true);
-      toast.success('Booking request sent');
+      toast.success(`${apptNoun} request sent`);
     } catch (err) {
       console.error('Public booking submission failed', err);
       toast.error('Could not submit your request. Please try again.');
@@ -207,7 +213,7 @@ export default function PublicBooking() {
               <CheckCircle2 className="h-10 w-10 text-primary mx-auto" />
               <h2 className="text-lg font-semibold">Request received</h2>
               <p className="text-sm text-muted-foreground">
-                Thanks! {company.name} will reach out shortly to confirm your appointment.
+                Thanks! {company.name} will reach out shortly to confirm your {apptNounLower}.
               </p>
             </CardContent>
           </Card>
@@ -247,7 +253,7 @@ export default function PublicBooking() {
           )}
           <div className="min-w-0">
             <h1 className="text-base font-semibold truncate">{company.name}</h1>
-            <p className="text-xs text-muted-foreground">Request an appointment</p>
+            <p className="text-xs text-muted-foreground">Request {apptNounLower === 'appointment' ? 'an appointment' : `a ${apptNounLower}`}</p>
           </div>
         </div>
       </header>
@@ -259,7 +265,7 @@ export default function PublicBooking() {
               <CheckCircle2 className="h-10 w-10 text-primary mx-auto" />
               <h2 className="text-lg font-semibold">Request received</h2>
               <p className="text-sm text-muted-foreground">
-                Thanks! {company.name} will reach out shortly to confirm your appointment.
+                Thanks! {company.name} will reach out shortly to confirm your {apptNounLower}.
               </p>
             </CardContent>
           </Card>
