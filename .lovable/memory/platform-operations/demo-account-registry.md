@@ -41,6 +41,7 @@ Each industry sits at the tier that best showcases its real console + agent surf
 - Industry-specific inventory items where parts data exists — skipped for service-only verticals (Real Estate, Personal Assistant, Restaurants)
 - Mon–Fri 8–17 business hours
 - Roles + employee job assignment (`technician`) + customer-company association
+- **AI agents auto-activated** in `ai_agent_configs` for the tier (Core 8 / Boost 12 / Pro 18 / Elite 24) plus the industry pack's `extra_operatives` (e.g. Personal Assistant gets `task_triager`, `calendar_optimizer`, `review_responder`). Wiped + reinserted on each reseed.
 
 ## Behavior
 
