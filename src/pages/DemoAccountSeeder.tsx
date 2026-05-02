@@ -175,7 +175,7 @@ export default function DemoAccountSeeder() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="text-xs space-y-1 font-mono text-muted-foreground">
-              <div>ai@auraintercept.ai · company_admin</div>
+              <div>auraintercept@gmail.com · company_admin</div>
               <div>support@auraintercept.ai · employee + technician</div>
               <div>sales@auraintercept.ai · employee + technician</div>
             </div>
@@ -183,7 +183,7 @@ export default function DemoAccountSeeder() {
               <AlertDescription>
                 Sets up the real Aura Intercept workspace so prospect companies can reach you via the platform's chat,
                 voice, SMS, public booking, and customer portal. Idempotent — safe to re-run; passwords are reset each run.
-                Does NOT touch <code>auraintercept@gmail.com</code> (your platform_admin).
+                Does NOT touch <code>ai@auraintercept.ai</code> (your platform_admin).
               </AlertDescription>
             </Alert>
             <Button onClick={runAuraInterceptSeed} disabled={seedingTenant} size="lg" className="w-full" variant="secondary">
