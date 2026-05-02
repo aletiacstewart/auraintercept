@@ -205,14 +205,12 @@ export function UnifiedCustomerConsole({
         .eq('company_id', companyId)
         .eq('is_active', true);
 
-      const inTrial = companyData.trial_ends_at && new Date(companyData.trial_ends_at) > new Date();
-
       setConfig({
         company: {
           ...companyData,
           primary_color: companyData.primary_color || '#6366f1',
           secondary_color: companyData.secondary_color || '#8b5cf6',
-          subscription_tier: inTrial ? 'command' : (companyData.subscription_tier || 'single_point'),
+          subscription_tier: companyData.subscription_tier || 'single_point',
         },
         business_hours: hoursData || [],
         services: servicesData || [],

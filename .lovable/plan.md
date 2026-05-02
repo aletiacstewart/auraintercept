@@ -1,89 +1,66 @@
-## Goal
-
-Two independent fixes:
-
-1. **Real signup must honor what the user picked.** Today, every new company is force-written as Core (`starter`) and the chosen industry is read but never validated. Real customers must get the **plan they selected** and an **industry-correct** workspace from their first login — completely independent of the demo seeder.
-2. **Re-tier the demo accounts** per your earlier mapping (so demos showcase the right consoles per industry). Demo seeder changes never touch real customers.
-
-## Part 1 — Fix real signup (the actual bug)
-
-### What's broken in `src/pages/Auth.tsx`
-
-```ts
-// line ~289–302  — current behavior
-.insert({
-  name: companyName,
-  slug,
-  ...
-  subscription_tier: 'starter',                          // ← always Core, ignores selectedTier
-  industry_vertical: toCanonicalIndustryId(businessIndustry),  // ← no validation, no fallback
-})
-```
-
-`selectedTier` is captured by the UI (and even pre-filled from `?tier=` deep-links from `/for-business`) but never persisted. `industry_vertical` is converted but never required, and an unknown alias silently writes `null`.
-
-### Fix
-
-In `Auth.tsx` `handleSignUp`:
-
-- Use `selectedTier ?? 'starter'` for `subscription_tier` (Core is the only acceptable fallback if the user truly skipped the picker).
-- Validate `selectedTier` against `['starter','connect','performance','command']` before insert.
-- Resolve industry through `toCanonicalIndustryId` and validate with `isCanonicalIndustryId` (already exported from `src/lib/industryIdAliases.ts`); if invalid, block submit with a toast asking them to pick from the dropdown — do NOT silently insert `null`.
-- Set `trial_ends_at = now() + 90 days` on the insert so the 90-day trial banner / progress math works regardless of tier.
-- (Optional, keeps demo isolation crisp) explicitly set `is_demo: false`.
-
-### Why this is enough — no extra provisioning needed
-
-After insert, the platform already:
-
-- Reads `companies.subscription_tier` to decide which AI Operatives, consoles (Field Ops, Marketing & Sales, Business Mgt, Analytics suite), Quotes/Invoices, Inventory, Insights/Forecast surfaces are visible. No code change required there.
-- Auto-seeds the industry-specific Knowledge Base + FAQs via the existing `trg_seed_industry_pack_kb` trigger when `industry_vertical` is set on insert.
-- Resolves industry pack (terminology, nav labels, form schemas, empty states, KPI labels) through `useIndustryPack` for every gated UI surface.
-- Honors `LEGACY_TIER_MAP` everywhere, so all four canonical tier values flow through without further edits.
-
-So the one-file change to `Auth.tsx` is sufficient to make real signups respect both the **plan picked at signup** and the **industry selected**, with the correct console + dashboard + agents from first login.
-
-### Optional follow-up (out of scope unless requested)
-
-- Make the tier picker required when `tier` is not in the URL (right now you can submit without selecting one).
-- Wire the "Subscribe to {Tier}" CTA to actually open Stripe checkout post-signup for paid tiers; today it just creates the trial company.
-
-Tell me if you want either of those folded in.
-
-## Part 2 — Re-tier the demo accounts (already-discussed mapping)
-
-Pure demo-only change — touches `supabase/functions/seed-demo-accounts-v2/index.ts` and the registry memory doc. Has zero effect on real customer signups (different code path).
+I checked the live database and the demo companies themselves are now stored under the correct requested plans:
 
 ```text
-CORE  : beauty_wellness, restaurants, real_estate, personal_assistant
-BOOST : handyman, auto_care, appliance_repair, pest_control, fencing
-PRO   : security_systems, pool_spa, landscape, solar
-ELITE : hvac, electrical, plumbing, roofing, construction
+Core:  beauty_wellness, restaurants, real_estate, personal_assistant
+Boost: handyman, auto_care, appliance_repair, pest_control, fencing
+Pro:   security_systems, pool_spa, landscape, solar
+Elite: hvac, electrical, plumbing, roofing, construction
 ```
 
-Edit the third arg of each `industry(...)` call. The seeder already cascades the change to:
-- `companies.subscription_tier` (`starter`/`connect`/`performance`/`command`)
-- `TIER_AGENTS` enables the right operative set per company
-- Brand swatch via `TIER_COLORS`
-- Quotes/invoices skipped on Core, inventory only where parts data exists
+The problem is twofold:
 
-Update `mem://platform-operations/demo-account-registry` so the rotation block reads `4 / 5 / 4 / 5` instead of `5 / 5 / 4 / 4`.
+1. The `/dashboard/demo-seeder` page is still showing the old hardcoded grouping, so the screen is misleading even though the database rows are correct.
+2. All demo companies still have active `trial_ends_at` dates, and several app paths treat any active trial as full Elite/Command access. That makes Core/Boost/Pro demo accounts behave like Elite even after reseeding.
 
-After deploy: sign in as `auraintercept@gmail.com` → `/dashboard/demo-seeder` → **Seed All Demo Accounts** (~60–90s, idempotent). Aura Intercept tenant is untouched.
+## Plan
 
-## Hard separation between real signup and demos
+### 1. Fix the Demo Account Seeder page grouping
+Update `src/pages/DemoAccountSeeder.tsx` so the visible account cards match the current industry-curated tier mapping:
 
-Codified for future me:
-- Real signup path: `src/pages/Auth.tsx` → `companies` insert with `is_demo: false`. Tier + industry come from the form. Trial = 90 days.
-- Demo path: `seed-demo-accounts-v2` edge function only. Companies always carry `is_demo: true`, slug `demo-<industry>`, and `{industry}admin@demo.com` style logins. The seeder never touches non-demo companies, and `Auth.tsx` never reads anything from the demo seeder.
+- Core: Beauty & Wellness, Restaurants, Real Estate, Personal Assistant
+- Boost: Handyman & Cleaning, Auto Care, Appliance Repair, Pest Control, Fencing & Decking
+- Pro: Security Systems, Pool & Spa, Landscape & Trees, Solar
+- Elite: HVAC, Electrical, Plumbing, Roofing, Construction
 
-Will add this rule to memory so it doesn't drift.
+Also update the helper text/counts so it no longer shows Core as 5 industries or Elite as 4 industries.
 
-## Files changing
+### 2. Stop demo accounts from being promoted to Elite by trial logic
+Update `supabase/functions/seed-demo-accounts-v2/index.ts` so reseeded demo companies are plan-specific demos, not trial-upgraded demos. The seeder should either clear `trial_ends_at` for demo companies or set it in a way that does not grant full access. This keeps the demo account’s actual plan in control.
 
-- `src/pages/Auth.tsx` — pass `selectedTier`, validate industry, set `trial_ends_at`, set `is_demo: false`.
-- `supabase/functions/seed-demo-accounts-v2/index.ts` — flip 14 industry tier args (4 keep current tier).
-- `mem://platform-operations/demo-account-registry` — refresh tier rotation block.
-- New `mem://architecture/signup-vs-demo-isolation` — codify the boundary so this never regresses.
+### 3. Fix subscription checking so active trials honor the selected plan
+Update `supabase/functions/check-subscription/index.ts` so an active 90-day trial returns:
 
-Reply **approve** to apply both parts, or tell me to split them (e.g. "approve part 1 only").
+- `in_trial: true`
+- `tier: company.subscription_tier`
+
+instead of always returning `tier: command`.
+
+This preserves the 90-day trial banner/progress while making dashboards, sidebars, consoles, and AI agents follow the plan the user selected at signup.
+
+### 4. Fix frontend gating that currently treats all trials as full Elite
+Update these frontend tier helpers/components so trial status does not override plan access to `command`:
+
+- `src/hooks/useSubscription.ts`
+- `src/components/dashboard/DashboardLayout.tsx`
+- `src/components/dashboard/CompanyAdminDashboard.tsx`
+- `src/components/ai/AIAgentConsole.tsx`
+- `src/components/customer/UnifiedCustomerConsole.tsx`
+- `src/lib/customerPortalConfig.ts`
+- any related text that says trial gives full Elite/Enterprise access
+
+After this, trial means “90 days free on the selected tier,” not “90 days of Elite.”
+
+### 5. Clean up existing demo rows already in the database
+Add a safe migration or admin-side repair step to update existing demo companies so `trial_ends_at` no longer causes full-access behavior. This will not touch real companies.
+
+### 6. Verify the live database and UI expectations
+After implementation, verify:
+
+- demo companies still have the correct `subscription_tier` values
+- demo companies no longer get full Elite access solely because of active trial dates
+- `/dashboard/demo-seeder` visually shows the correct grouping
+- real signups continue to write `is_demo: false`, selected `industry_vertical`, selected `subscription_tier`, and 90-day trial dates
+
+## Expected result
+
+After approval and implementation, reseeding will no longer make demo accounts appear in the wrong plans. The demo seeder page, stored company tier, sidebar access, dashboard cards, AI Operatives Hub, and customer/agent consoles will all follow the plan assigned to that industry.

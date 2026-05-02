@@ -284,8 +284,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       }
       // Platform admin sees everything, skip tier check
       if (isPlatformAdmin) return true;
-      // Check group-level tier requirement (skip if in trial)
-      if (group.requiredTier && !inTrial && !isAtLeastTier(group.requiredTier)) {
+      // Check group-level tier requirement (trial honors selected tier)
+      if (group.requiredTier && !isAtLeastTier(group.requiredTier)) {
         return false;
       }
       return true;
@@ -310,8 +310,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         // Platform admin sees all items
         if (isPlatformAdmin) return true;
         
-        // Check item-level tier requirement (skip if in trial)
-        if (item.requiredTier && !inTrial && !isAtLeastTier(item.requiredTier)) {
+        // Check item-level tier requirement (trial honors selected tier)
+        if (item.requiredTier && !isAtLeastTier(item.requiredTier)) {
           return false;
         }
         

@@ -271,9 +271,9 @@ serve(async (req) => {
       const { data: services } = await supabase
         .rpc('get_company_services', { p_company_id: company.id });
 
-      // Determine effective tier (trial gets full access)
+      // Effective tier honors the company's selected plan (trial users included).
       const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
-      const effectiveTier = inTrial ? 'command' : (company.subscription_tier || 'single_point');
+      const effectiveTier = company.subscription_tier || 'single_point';
 
       return new Response(JSON.stringify({
         company: {
@@ -297,9 +297,7 @@ serve(async (req) => {
 
     // Quick actions endpoint - filtered by subscription tier
     if (action === 'quick-actions') {
-      // Determine effective tier
-      const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
-      const effectiveTier = inTrial ? 'command' : (company.subscription_tier || 'single_point');
+      const effectiveTier = company.subscription_tier || 'single_point';
       
       // All available actions
       const allActions = [

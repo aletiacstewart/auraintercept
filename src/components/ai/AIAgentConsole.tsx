@@ -192,8 +192,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   // Determine effective subscription tier (trial = command tier access)
   const effectiveTier = React.useMemo((): SubscriptionTier => {
     if (!company) return 'connect';
-    const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
-    if (inTrial) return 'command';
     return (company.subscription_tier || 'connect') as SubscriptionTier;
   }, [company]);
 

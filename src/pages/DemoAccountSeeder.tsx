@@ -28,29 +28,29 @@ const PASSWORD = 'aidemo*!';
 
 const INDUSTRIES_BY_TIER: Record<string, Array<{ key: string; label: string }>> = {
   core: [
-    { key: 'hvac', label: 'HVAC' },
-    { key: 'electrical', label: 'Electrical' },
+    { key: 'beauty_wellness', label: 'Beauty & Wellness' },
+    { key: 'restaurants', label: 'Restaurants' },
+    { key: 'real_estate', label: 'Real Estate' },
+    { key: 'personal_assistant', label: 'Personal Assistant' },
+  ],
+  boost: [
     { key: 'handyman', label: 'Handyman & Cleaning' },
     { key: 'auto_care', label: 'Auto Care' },
     { key: 'appliance_repair', label: 'Appliance Repair' },
-  ],
-  boost: [
-    { key: 'plumbing', label: 'Plumbing' },
-    { key: 'pool_spa', label: 'Pool & Spa' },
     { key: 'pest_control', label: 'Pest Control' },
-    { key: 'landscape', label: 'Landscape & Trees' },
     { key: 'fencing', label: 'Fencing & Decking' },
   ],
   pro: [
-    { key: 'roofing', label: 'Roofing' },
-    { key: 'beauty_wellness', label: 'Beauty & Wellness' },
-    { key: 'restaurants', label: 'Restaurants' },
     { key: 'security_systems', label: 'Security Systems' },
+    { key: 'pool_spa', label: 'Pool & Spa' },
+    { key: 'landscape', label: 'Landscape & Trees' },
+    { key: 'solar', label: 'Solar' },
   ],
   elite: [
-    { key: 'real_estate', label: 'Real Estate' },
-    { key: 'personal_assistant', label: 'Personal Assistant' },
-    { key: 'solar', label: 'Solar' },
+    { key: 'hvac', label: 'HVAC' },
+    { key: 'electrical', label: 'Electrical' },
+    { key: 'plumbing', label: 'Plumbing' },
+    { key: 'roofing', label: 'Roofing' },
     { key: 'construction', label: 'Construction' },
   ],
 };

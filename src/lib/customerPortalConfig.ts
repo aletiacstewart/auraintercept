@@ -148,7 +148,7 @@ export function getEffectiveTier(
   subscriptionTier: string | null | undefined, 
   inTrial: boolean
 ): SubscriptionTier {
-  if (inTrial) return 'command'; // Trial gets full access
+  // Trial honors the selected plan; do not force command-tier access.
   return (subscriptionTier || 'connect') as SubscriptionTier;
 }
 
