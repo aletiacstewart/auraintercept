@@ -37,7 +37,7 @@ export default function DemoAccess() {
           success: true,
           trial_id: row.trial_id,
           expires_at: row.expires_at,
-          password: row.password,
+          password: 'auratrial*!',
           share_url: `${window.location.origin}/demo/${row.trial_id}`,
           admin: { email: row.admin_email, redirect: '/dashboard' },
           employee: { email: row.employee_email, redirect: '/technician' },
