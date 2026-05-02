@@ -1,4 +1,51 @@
-## Phase 8 — Industry-Aware Outbound, Tutorial & Customer Portal Polish
+## Phase 9 — Industry-Aware Reminders, Tutorial & Launch Path
+
+Phases 6–8 covered KPIs, prompts, forms, reports, inbound notifications,
+customer-facing emails, the portal header, and Aura framing. Phase 9 closes
+the last generic surfaces: **SMS reminders**, the **tutorial / launch flow**,
+and a few stragglers (`appointment-reminders`, `LaunchPathSelector`,
+`tutorialSteps`).
+
+## Tasks
+
+### 1. Industry-aware appointment reminders (SMS + Email loop)
+`appointment-reminders/index.ts` builds the SMS body inline before posting to
+SignalWire and forwards email rendering to `send-appointment-email`. Resolve
+`getCompanyTerminology(supabase, companyId)` once per company and substitute
+`appointment` / `serviceType` into the SMS message + log payloads. Email side
+already inherits Phase 8 wording.
+
+### 2. Industry-aware tutorial copy
+Create `src/lib/industryTutorialCopy.ts` exporting `getTutorialCopy(pack)` →
+`{ stepTitles, stepDescriptions, examplePrompts }`. Wire into
+`useTutorial.ts` and `tutorialSteps.ts`. Cluster-keyed with per-industry
+overrides (e.g. "Add your first listing" for real estate, "Add your first
+menu item" for restaurants).
+
+### 3. Launch path selector wording
+`LaunchPathSelector.tsx` uses generic "service" / "job" copy in its three
+option cards. Pull `pack.terminology.job` + `terminology.appointment` so the
+guided launch describes the user's actual work (e.g. "schedule your first
+showing" vs "book your first reservation").
+
+### 4. Memory + acceptance
+Update `mem://features/industry/customer-facing-copy` with the new modules.
+Acceptance: switching `industry_id` flips SMS reminder text, tutorial step
+labels, and launch path cards without code changes.
+
+## Out of scope
+- New tutorial steps or launch flows
+- Voice/IVR scripts (already industry-aware via Phase 7 prompts)
+- Marketing site
+
+## Technical notes
+- Reuse `_shared/terminology.ts` from Phase 8.
+- Resolution stays `BY_INDUSTRY[id] ?? BY_CLUSTER[cluster] ?? GENERIC`.
+- New file: `src/lib/industryTutorialCopy.ts`.
+
+---
+
+## Phase 8 — Industry-Aware Outbound, Tutorial & Customer Portal Polish (DONE)
 
 Phases 6–7 made KPIs, prompts, forms, reports, and inbound notifications industry-aware. Phase 8 closes the remaining generic surfaces: **customer-facing copy** (portal, public booking, customer emails/SMS), **onboarding/tutorial flows**, and **Aura's response framing**, so a buyer in a real-estate vertical never sees "service request" and a restaurant guest never sees "appointment".
 
