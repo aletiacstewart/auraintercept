@@ -7487,33 +7487,11 @@ async function executeAgentTool(
       try {
         switch (dataType) {
           case 'warranties': {
-            let query = supabase
-              .from('warranty_records')
-              .select(countOnly ? 'id' : '*', { count: 'exact' })
-              .eq('company_id', companyId);
-            
-            if (filter === 'active') {
-              query = query.gte('warranty_end_date', now.toISOString());
-            } else if (filter === 'expired') {
-              query = query.lt('warranty_end_date', now.toISOString());
-            } else if (filter === 'expiring_soon') {
-              const thirtyDaysFromNow = new Date(now);
-              thirtyDaysFromNow.setDate(now.getDate() + 30);
-              query = query.gte('warranty_end_date', now.toISOString()).lte('warranty_end_date', thirtyDaysFromNow.toISOString());
-            }
-            
-            if (!countOnly) query = query.limit(limit);
-            
-            const { data, count, error } = await query;
-            if (error) return { success: false, error: error.message };
-            
             return {
-              success: true,
+              success: false,
+              not_supported: true,
               data_type: 'warranties',
-              filter: filter || 'all',
-              count: count || data?.length || 0,
-              records: countOnly ? undefined : data,
-              message: `Found ${count || data?.length || 0} ${filter || ''} warranties.`,
+              message: 'Warranty tracking is not part of this platform.',
             };
           }
           
