@@ -81,6 +81,17 @@ const INDUSTRY_HEADERS: Record<string, Partial<IndustryPageHeaders>> = {
     campaigns:    { title: 'Listing Promotions',    description: 'Plan and run listing and farm-area promotions' },
     employees:    { title: 'Agents',                description: 'Manage agents, roles, and availability' },
   },
+  saas_platform: {
+    leads:     { title: 'Prospect Companies',     description: 'Inbound companies exploring Aura Intercept — qualify and follow up' },
+    quotes:    { title: 'Custom Quotes',          description: 'Scoping for multi-tenant or custom-tier needs' },
+    invoices:  { title: 'Subscription Invoices',  description: 'Plan invoices and one-off charges' },
+    customers: { title: 'Customer Companies',     description: 'View, support, and manage active companies on the platform' },
+    messages:  { title: 'Inbound Conversations',  description: 'Chat and SMS conversations from prospects and customers' },
+    calls:     { title: 'Sales & Support Calls',  description: 'Inbound and outbound call activity' },
+    appointments: { title: 'Demo Calls',          description: 'Demo calls, onboarding, support, and strategy reviews' },
+    campaigns: { title: 'Outbound Campaigns',     description: 'Email and SMS campaigns to prospects and customers' },
+    employees: { title: 'Solutions Engineers',    description: 'Manage solutions engineers, support, and sales staff' },
+  },
   restaurants: {
     leads:     { title: 'Reservation Inquiries', description: 'Manage and follow up on private events and large parties' },
     quotes:    { title: 'Catering Quotes',       description: 'Create and manage catering and private event quotes' },
