@@ -115,8 +115,16 @@ const CATEGORY_INFO: Record<string, {
   },
 };
 
-// Core agents that should always be visible & recommended first
-const CORE_AGENT_TYPES = new Set(['triage', 'customer_journey', 'dispatch', 'business_finance']);
+// Core agents that should always be visible & recommended first.
+// These match the Aura Core ($197) operative set in TIER_AGENT_CONFIG so that
+// "Enable Core Agents" activates the agents Aura Core actually includes.
+const CORE_AGENT_TYPES = new Set([
+  'triage',
+  'customer_journey',
+  'outreach',
+  'creative_content',
+  'web_presence',
+]);
 
 // ROI hint text per agent
 const AGENT_ROI_HINTS: Record<string, string> = {
@@ -269,8 +277,9 @@ export default function AIAgentsHub() {
   // Agents hidden from non-platform-admin roles
   const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign'];
   
-  // Categories hidden from non-platform-admin roles
-  const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];
+  // No categories are hidden from company admins — Outreach & Sales is part of
+  // the Aura Core operative set, so it must be visible to every paid customer.
+  const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN: string[] = [];
 
   // Filter agents based on job roles for employees
   // For company_admin, show ALL agents (tier locking handled in UI)
@@ -424,7 +433,10 @@ export default function AIAgentsHub() {
             <AlertDescription className="flex items-center justify-between">
               <span>
                 {inTrial ? (
-                  <>You're in trial mode with full access to all agents.</>
+                  <>
+                    Trial mode on your <strong>{getTierInfo(subscriptionTier).label}</strong> plan —
+                    showing the {availableAgentTypes.length} AI operatives included in your selected tier.
+                  </>
                 ) : subscriptionTier === 'command' ? (
                   <>Your <strong>Command</strong> plan includes all 10 AI operatives.</>
                 ) : (

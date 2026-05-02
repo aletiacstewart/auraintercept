@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
-import { getNavLabels } from '@/lib/industryNavLabels';
+import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -108,10 +108,11 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Customers',
-    requiredTier: 'connect',
+    requiredTier: 'starter',
     items: [
-      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
+      { label: 'Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-appointments', requiredTier: 'starter' },
+      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'starter' },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'starter' },
     ],
   },
   {
@@ -271,6 +272,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // instead of "Technician View", a salon sees "Stylist View", etc.
   const { pack: industryPack } = useIndustryPack();
   const navLabels = getNavLabels(industryPack);
+  // Industry-aware label for the Schedule entry: Bookings / Reservations /
+  // Showings / Service Visits etc., per the company's industry pack.
+  const scheduleLabel = getPageHeader('appointments', industryPack).title;
 
   // Platform admin always sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
@@ -305,6 +309,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           }
           if (item.href === '/dashboard/dispatch-field-ops') {
             return { ...item, label: navLabels.dispatchView };
+          }
+          if (item.href === '/dashboard/appointments' && item.roles.includes('company_admin')) {
+            return { ...item, label: scheduleLabel };
           }
           return item;
         })

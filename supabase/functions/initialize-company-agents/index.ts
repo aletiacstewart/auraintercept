@@ -5,37 +5,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Mirror src/lib/subscriptionAgentConfig.ts and seed-demo-accounts-v2.
-// Written in the consolidated 10-operative model. Legacy granular IDs are
-// also enabled so older code paths keep working.
+// Canonical tier → consolidated operatives. Mirrors src/lib/subscriptionAgentConfig.ts
+// TIER_AGENT_CONFIG. Legacy granular IDs (booking/lead/route/etc.) are also
+// upserted so older code paths and chat tooling keep working — but tier
+// gating in the UI is driven by the consolidated IDs.
+const CORE_OPERATIVES = ['triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence'];
+const FIELD_OPERATIVES = ['dispatch', 'field_navigation'];
+const BUSINESS_OPERATIVES = ['business_finance', 'analytics_intelligence', 'admin'];
+
+const LEGACY_FOR_CORE = ['booking', 'followup', 'review', 'lead', 'marketing'];
+const LEGACY_FOR_FIELD = ['route', 'eta', 'checkin'];
+const LEGACY_FOR_BUSINESS = ['quoting', 'invoice', 'inventory', 'campaign', 'social_scheduler', 'social_analytics', 'insights', 'performance', 'revenue', 'forecast'];
+
 const TIER_AGENTS: Record<string, string[]> = {
-  starter: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'booking', 'followup', 'review', 'lead', 'marketing',
-  ],
-  connect: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation',
-    'booking', 'followup', 'review', 'lead', 'marketing',
-    'route', 'eta', 'checkin',
-  ],
+  starter: [...CORE_OPERATIVES, ...LEGACY_FOR_CORE],
+  connect: [...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD],
   performance: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation', 'business_finance', 'analytics_intelligence',
-    'booking', 'followup', 'review', 'lead', 'marketing',
-    'route', 'eta', 'checkin',
-    'campaign', 'social_scheduler', 'social_analytics',
-    'quoting', 'invoice',
+    ...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...BUSINESS_OPERATIVES,
+    ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD, ...LEGACY_FOR_BUSINESS,
   ],
   command: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation', 'admin', 'business_finance', 'analytics_intelligence',
-    'booking', 'followup', 'review',
-    'route', 'eta', 'checkin',
-    'quoting', 'invoice', 'inventory',
-    'campaign', 'lead', 'outreach', 'marketing',
-    'social_scheduler', 'social_analytics',
-    'insights', 'performance', 'revenue', 'forecast',
+    ...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...BUSINESS_OPERATIVES,
+    ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD, ...LEGACY_FOR_BUSINESS,
   ],
 };
 

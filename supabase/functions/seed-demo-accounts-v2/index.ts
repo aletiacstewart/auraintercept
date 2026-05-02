@@ -22,46 +22,27 @@ interface IndustryDef {
   campaigns: Array<{ name: string; promo_code: string; discount_value: number; message: string; subject: string }>;
 }
 
-// Tier agent sets, written in the consolidated 10-operative model so that
-// the AI Operatives Hub UI lights them up correctly. We also still seed the
-// legacy granular agent IDs (booking/lead/route/etc.) for backwards
-// compatibility with older code paths that look them up directly.
+// Tier agent sets — must match supabase/functions/initialize-company-agents
+// and src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG. Consolidated
+// operative IDs drive UI gating; legacy aliases are seeded so older code
+// paths still find rows.
+const CORE_OPERATIVES = ['triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence'];
+const FIELD_OPERATIVES = ['dispatch', 'field_navigation'];
+const BUSINESS_OPERATIVES = ['business_finance', 'analytics_intelligence', 'admin'];
+const LEGACY_FOR_CORE = ['booking', 'followup', 'review', 'lead', 'marketing'];
+const LEGACY_FOR_FIELD = ['route', 'eta', 'checkin'];
+const LEGACY_FOR_BUSINESS = ['quoting', 'invoice', 'inventory', 'campaign', 'social_scheduler', 'social_analytics', 'insights', 'performance', 'revenue', 'forecast'];
+
 const TIER_AGENTS: Record<TierKey, string[]> = {
-  // Aura Core ($197): AI Receptionist + customer journey + outreach + creative + web
-  core: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    // legacy aliases
-    'booking', 'followup', 'review', 'lead', 'marketing',
-  ],
-  // Aura Boost ($497): + dispatch + field navigation
-  boost: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation',
-    // legacy aliases
-    'booking', 'followup', 'review', 'lead', 'marketing',
-    'route', 'eta', 'checkin',
-  ],
-  // Aura Pro ($997): + business finance lite + analytics
+  core:  [...CORE_OPERATIVES, ...LEGACY_FOR_CORE],
+  boost: [...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD],
   pro: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation', 'business_finance', 'analytics_intelligence',
-    // legacy aliases
-    'booking', 'followup', 'review', 'lead', 'marketing',
-    'route', 'eta', 'checkin',
-    'campaign', 'social_scheduler', 'social_analytics',
-    'quoting', 'invoice',
+    ...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...BUSINESS_OPERATIVES,
+    ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD, ...LEGACY_FOR_BUSINESS,
   ],
-  // Aura Elite ($1,997): full 10-operative suite
   elite: [
-    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
-    'dispatch', 'field_navigation', 'admin', 'business_finance', 'analytics_intelligence',
-    // legacy aliases
-    'booking', 'followup', 'review',
-    'route', 'eta', 'checkin',
-    'quoting', 'invoice', 'inventory',
-    'campaign', 'lead', 'outreach', 'marketing',
-    'social_scheduler', 'social_analytics',
-    'insights', 'performance', 'revenue', 'forecast',
+    ...CORE_OPERATIVES, ...FIELD_OPERATIVES, ...BUSINESS_OPERATIVES,
+    ...LEGACY_FOR_CORE, ...LEGACY_FOR_FIELD, ...LEGACY_FOR_BUSINESS,
   ],
 };
 

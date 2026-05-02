@@ -13,8 +13,11 @@ export interface TierConfig {
 }
 
 // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-// Map subscription tiers to available agents and consoles
-// 4 TIERS: Core (8) / Boost (12) / Pro (16) / Elite (24)
+// Map subscription tiers to available consolidated operatives.
+// Canonical IDs are the 10-operative model. Legacy 24-agent IDs (booking, lead,
+// route, etc.) are accepted via LEGACY_AGENT_MAP and normalized before any tier
+// check, so DB rows seeded with old IDs still light up the right operatives.
+// 4 TIERS: Core (5) / Boost (7) / Pro (10) / Elite (10 + specialists)
 export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   free: {
     agents: [],
@@ -24,16 +27,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($197/mo): 8 agents, 3 consoles, 10 employees
+    // Aura Core ($197/mo): 5 consolidated operatives (8 underlying agents),
+    // 3 consoles (Customer Portal, Outreach & Sales, Creative & Web), 10 employees.
     agents: [
-      'triage',              // AI Receptionist
-      'booking',             // Booking Agent
-      'followup',            // Follow-Up Agent
-      'review',              // Review Agent
-      'creative_content',    // Creative Content Agent
-      'web_presence',        // Web Presence Agent
-      'lead',                // Lead Agent
-      'marketing',           // Marketing Agent
+      'triage',            // AI Receptionist
+      'customer_journey',  // Booking + Follow-Up + Review
+      'outreach',          // Lead + Marketing + Outreach
+      'creative_content',  // Creative Content Agent
+      'web_presence',      // Web Presence Agent
     ],
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence'],
     label: 'Aura Core',
@@ -41,20 +42,16 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '8 Smart AI Agents for booking, follow-up, creative content & web presence',
   },
   connect: {
-    // Aura Boost ($497/mo): 12 agents, 5 consoles, 25 employees
+    // Aura Boost ($497/mo): Core + Field Operations (Dispatch, Route/ETA/Check-In),
+    // 5 consoles, 25 employees.
     agents: [
-      'triage',              // AI Receptionist
-      'booking',             // Booking Agent
-      'followup',            // Follow-Up Agent
-      'review',              // Review Agent
-      'creative_content',    // Creative Content Agent
-      'web_presence',        // Web Presence Agent
-      'lead',                // Lead Agent
-      'marketing',           // Marketing Agent
-      'dispatch',            // Dispatch Agent
-      'route',               // Route Agent
-      'eta',                 // ETA Agent
-      'checkin',             // Check-In Agent
+      'triage',
+      'customer_journey',
+      'outreach',
+      'creative_content',
+      'web_presence',
+      'dispatch',
+      'field_navigation',
     ],
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations', 'social_media'],
     label: 'Aura Boost',
@@ -62,14 +59,19 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Pro ($997/mo): 16 agents, 5 consoles, 50 employees
+    // Aura Pro ($997/mo): Boost + Business Finance + Analytics + Admin,
+    // 5 consoles, 50 employees.
     agents: [
-      'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
-      'creative_content', 'web_presence',                   // Creative & Web (2)
-      'lead', 'marketing',                                  // Core marketing (2)
-      'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
-      'campaign', 'outreach',                               // Outreach & Sales (2)
-      'social_scheduler', 'social_analytics',               // Social Media (2)
+      'triage',
+      'customer_journey',
+      'outreach',
+      'creative_content',
+      'web_presence',
+      'dispatch',
+      'field_navigation',
+      'business_finance',
+      'analytics_intelligence',
+      'admin',
     ],
     consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations'],
     label: 'Aura Pro',
@@ -77,16 +79,19 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '16 Smart AI Agents with social media, campaigns, and industry specialist agents',
   },
   command: {
-    // Aura Elite ($1,997/mo): All 24 agents, all 7 consoles + AI Hub, unlimited employees
+    // Aura Elite ($1,997/mo): All 10 consolidated operatives + industry specialists,
+    // all 7 consoles + AI Hub, unlimited employees.
     agents: [
-      'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
-      'dispatch', 'route', 'eta', 'checkin',                // Field Operations (4)
-      'admin', 'quoting', 'invoice', 'inventory',           // Business Operations (4)
-      'campaign', 'lead', 'outreach', 'marketing',          // Outreach & Sales (4)
-      'creative_content', 'web_presence',                   // Creative & Web (2)
-      'social_scheduler', 'social_analytics',               // Social Media (2)
-      'insights', 'performance',                            // Analytics (2)
-      'revenue', 'forecast',                                // Predictive (2)
+      'triage',
+      'customer_journey',
+      'outreach',
+      'creative_content',
+      'web_presence',
+      'dispatch',
+      'field_navigation',
+      'business_finance',
+      'analytics_intelligence',
+      'admin',
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Elite',
@@ -126,11 +131,14 @@ export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
   command: 4,
 };
 
-// Get the minimum tier required for a specific agent
+// Get the minimum tier required for a specific agent.
+// Normalizes legacy agent IDs (booking/lead/route/etc.) to their consolidated
+// operative before checking, so DB rows with old IDs still resolve correctly.
 export function getRequiredTierForAgent(agentType: string): SubscriptionTier | null {
+  const canonical = normalizeAgentName(agentType);
   const tiers: SubscriptionTier[] = ['starter', 'connect', 'performance', 'command'];
   for (const tier of tiers) {
-    if (TIER_AGENT_CONFIG[tier].agents.includes(agentType)) return tier;
+    if (TIER_AGENT_CONFIG[tier].agents.includes(canonical)) return tier;
   }
   return null;
 }
@@ -145,7 +153,8 @@ export function getRequiredTierForConsole(consoleType: string): SubscriptionTier
 }
 
 export function tierIncludesAgent(tier: SubscriptionTier, agentType: string): boolean {
-  return TIER_AGENT_CONFIG[tier]?.agents.includes(agentType) ?? false;
+  const canonical = normalizeAgentName(agentType);
+  return TIER_AGENT_CONFIG[tier]?.agents.includes(canonical) ?? false;
 }
 
 export function tierIncludesConsole(tier: SubscriptionTier, consoleType: string): boolean {
@@ -178,11 +187,12 @@ export function getTierDisplayInfo(tier: SubscriptionTier): { label: string; pri
 }
 
 export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType: string): SubscriptionTier | null {
+  const canonical = normalizeAgentName(agentType);
   const tiers: SubscriptionTier[] = ['starter', 'connect', 'performance', 'command'];
   const currentIndex = tiers.indexOf(currentTier);
   if (currentTier === 'command') return null;
   for (let i = Math.max(0, currentIndex + 1); i < tiers.length; i++) {
-    if (TIER_AGENT_CONFIG[tiers[i]].agents.includes(agentType)) return tiers[i];
+    if (TIER_AGENT_CONFIG[tiers[i]].agents.includes(canonical)) return tiers[i];
   }
   return null;
 }
