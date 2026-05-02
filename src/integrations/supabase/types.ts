@@ -2433,7 +2433,6 @@ export type Database = {
           expires_at: string
           id: string
           industry: string
-          password: string
           prospect_email: string
           prospect_name: string
           prospect_phone: string | null
@@ -2454,7 +2453,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry: string
-          password: string
           prospect_email: string
           prospect_name: string
           prospect_phone?: string | null
@@ -2475,7 +2473,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry?: string
-          password?: string
           prospect_email?: string
           prospect_name?: string
           prospect_phone?: string | null
@@ -6987,7 +6984,6 @@ export type Database = {
           employee_email: string
           expires_at: string
           industry: string
-          password: string
           status: string
           trial_id: string
         }[]
@@ -7017,6 +7013,58 @@ export type Database = {
           job_templates: Json
           label: string
           terminology: Json
+        }[]
+      }
+      get_smart_website_public_config: {
+        Args: { p_subdomain: string }
+        Returns: {
+          about_header: string
+          about_image_url: string
+          about_paragraph: string
+          about_subheader: string
+          background_image_url: string
+          background_style: string
+          booking_widget_mode: string
+          company_id: string
+          contact_address: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          contact_title: string
+          cta_button_text: string
+          cta_button_url: string
+          emergency_cta_text: string
+          emergency_cta_url: string
+          enable_night_mode: boolean
+          gallery_images: string[]
+          hero_headline: string
+          hero_subheadline: string
+          id: string
+          is_published: boolean
+          logo_transparency_mode: string
+          night_end_hour: number
+          night_header: string
+          night_start_hour: number
+          night_subheadline: string
+          show_about_section: boolean
+          show_blog: boolean
+          show_booking_widget: boolean
+          show_chat_widget: boolean
+          show_console_appointments: boolean
+          show_console_billing: boolean
+          show_console_emergency: boolean
+          show_console_feedback: boolean
+          show_console_quotes: boolean
+          show_console_tracking: boolean
+          show_contact: boolean
+          show_emergency_hours: boolean
+          show_field_hours: boolean
+          show_gallery: boolean
+          show_holidays: boolean
+          show_hours: boolean
+          show_services: boolean
+          show_voice_widget: boolean
+          subdomain: string
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
