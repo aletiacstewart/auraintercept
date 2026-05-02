@@ -1,5 +1,7 @@
 import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getAuraFraming } from '@/lib/industryAuraFraming';
 
 interface AuraSummaryProps {
   content: string;
@@ -8,6 +10,8 @@ interface AuraSummaryProps {
 }
 
 export function AuraSummary({ content, isLoading = false, className }: AuraSummaryProps) {
+  const { pack } = useIndustryPack();
+  const framing = getAuraFraming(pack);
   return (
     <div className={cn('flex gap-3', className)}>
       {/* Aura avatar */}
@@ -24,7 +28,7 @@ export function AuraSummary({ content, isLoading = false, className }: AuraSumma
               <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
-            <span className="text-sm text-muted-foreground">Aura is analyzing...</span>
+            <span className="text-sm text-muted-foreground">{framing.analyzingLabel}</span>
           </div>
         ) : (
           <div className="prose prose-sm dark:prose-invert max-w-none">

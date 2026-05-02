@@ -11,6 +11,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DollarSign, TrendingUp, Users, Target, BarChart3, ClipboardList } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getAuraFraming } from '@/lib/industryAuraFraming';
 
 interface AuraResponseRendererProps {
   intent: AuraIntent;
@@ -49,6 +51,8 @@ export function AuraResponseRenderer({
   intake,
 }: AuraResponseRendererProps) {
   const visualizationType = getSuggestedVisualization(intent);
+  const { pack } = useIndustryPack();
+  const framing = getAuraFraming(pack);
 
   if (isLoading) {
     return (
@@ -106,7 +110,7 @@ export function AuraResponseRenderer({
       {/* Chart */}
       {data?.chartData && data.chartData.length > 0 && (
         <AuraLineChart
-          title={data.chartTitle || 'Trend Analysis'}
+          title={data.chartTitle || framing.trendChartTitle}
           data={data.chartData}
           type={intent === 'forecast' ? 'area' : 'line'}
           valuePrefix={intent === 'revenue' || intent === 'forecast' ? '$' : ''}
