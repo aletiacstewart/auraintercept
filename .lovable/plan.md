@@ -1,149 +1,183 @@
-# Industry-aware company provisioning — verify & fix
 
-## Problem (audit results)
+# Industry-Specific Widgets, Consoles & Agents — Audit + Recommendations
 
-Every dashboard, console, AI agent, and analytics view already reads industry config through `useIndustryPack(companyId)` (or the edge-function equivalent), which looks up `industry_template_packs` by `companies.industry_vertical`. So the run-time wiring is correct end-to-end **as long as `industry_vertical` is populated with a canonical pack id**. Two real bugs break that contract today:
+## What's already industry-aware (working today)
 
-### Bug 1 — Signup never persists the selected industry
+| Surface | Mechanism | Status |
+|---|---|---|
+| Dashboard widget grid (`IndustryWidgetGrid`) | `pack.dashboard_widgets[]` → `WIDGET_REGISTRY` | Live, all 18 packs have 5 widgets each |
+| KPI tile labels | `industryKpiLabels.ts` | Live, per-cluster + per-industry overrides |
+| Quick actions on Aura command center | `industryQuickActions.ts` | Live (cluster + 2 overrides) |
+| Business Mgmt workflow chains | `industryWorkflows.ts` | Live, per-cluster |
+| Field Ops workflow chains | `industryFieldOpsWorkflows.ts` | Live, all 18 overrides |
+| Intake form schemas + booking fields | `pack.form_schemas` | Live |
+| Voice/SMS/chat agent prompts | `agent_prompt_deltas` + terminology block | Live |
+| Specialist operatives shown | `pack.extra_operatives[]` | Live (4 specialists across packs) |
+| Analytics presets | `industryAnalyticsPresets.ts` | Live |
 
-`src/pages/Auth.tsx` collects `businessIndustry` in the company-admin signup form (line 68, 1155) but the company `INSERT` (lines 288–300) **never writes it to `industry_vertical`**. New companies always get `NULL`, which makes `useIndustryPack` fall back to the generic pack everywhere.
+## The actual gaps (features that don't fit every industry)
 
-### Bug 2 — Three different industry-id namespaces are in use
+After auditing the 18 packs and the 14 consoles, these mismatches exist:
 
-The canonical ids (the ones populated in `industry_template_packs.industry_id`) are:
-`hvac, plumbing, electrical, roofing, solar, landscape, pool_spa, pest_control, appliance_repair, handyman, construction, auto_care, security_systems, real_estate, beauty_wellness, restaurants, personal_assistant, fencing`.
+### Gap 1 — Universal consoles show irrelevant tabs/widgets
+- **Field Ops Console**: shows "Dispatch Map" and "Truck Stock" for **Real Estate, Salon, Personal Assistant, Restaurants** — none of these dispatch trucks. They need a Booking-First console variant (no map, no truck stock; instead: today's bookings, no-show recovery, walk-in queue).
+- **Customer Portal Console**: same template for everyone. Real Estate clients want "My showings + offer status"; Salons want "My next appointment + loyalty"; Restaurants want "My reservation + party size"; Trades want "My job + technician ETA + invoice".
+- **Marketing/Sales Console**: "Quote Pipeline" doesn't exist for Salon/Restaurant; should become "Booking Funnel" (visit → repeat → review).
+- **Business Management Console**: shows "Invoice / Receivables" prominently for Salons & Restaurants where transactions settle at the chair/table — they need "Daily Cash Reconciliation" instead.
 
-Two other lists drift from those:
+### Gap 2 — Widget registry has 5 widgets per pack but only 3 surfaces show them
+Widgets currently render only on the main admin dashboard. They should also appear (filtered/contextually) inside:
+- Field Ops Console (route map, dispatch map, emergency queue, weather alerts, bay scheduler — these belong here, not on the main dashboard)
+- Marketing Console (lead scoring, quote pipeline, smart link clicks, review pulse)
+- Customer Portal Console (client portal, calendar sync)
 
-```text
-file                                    drift examples
-─────────────────────────────────────── ─────────────────────────────────────
-src/lib/industryTemplates.ts            landscape→landscaping, pool_spa→pool,
-  (Auth signup dropdown)                pest_control→pest, appliance_repair→appliance,
-                                        auto_care→auto, security_systems→security,
-                                        real_estate→realestate, beauty_wellness→beauty,
-                                        restaurants→restaurant, personal_assistant→
-                                        personalassistant
-src/lib/industryMarketingContent.ts +   solar→solar_energy, fencing→fencing_decking,
-supabase/functions/create-demo-trial/   landscape→landscape_trees, handyman→
-  index.ts INDUSTRY_DEFAULTS            handyman_cleaning
-  (Dynamic demo page + 48-hr trial)
-```
+### Gap 3 — Specialist operatives are under-mapped
+Only 4 specialists exist (`diagnostic`, `permit_code`, `site_survey`, `insurance_claim`). These are missing:
+- **Real Estate** → `listing_writer`, `offer_drafter`, `comp_analyst` (none assigned)
+- **Salon / Beauty** → `style_consultant`, `loyalty_coach` (none assigned)
+- **Restaurants** → `menu_writer`, `reservation_optimizer`, `review_responder` (none assigned)
+- **Personal Assistant** → `task_triager`, `calendar_optimizer` (none assigned)
+- **Pest / Pool / Landscape** → `chemistry_advisor`, `route_optimizer` (none assigned)
+- **Auto Care** → `vin_decoder`, `recall_lookup` (none assigned beyond diagnostic)
+- **Construction** → `bid_assembler`, `subcontractor_coordinator` (none assigned)
 
-`FastStartWizard` already uses canonical ids (BUSINESS_TEMPLATES) and writes them correctly — keep as the reference.
+### Gap 4 — Console headers, empty states, terminology
+"Today's Jobs" header is hardcoded in several consoles even though terminology says "Showings" or "Reservations" or "Sessions".
 
-So even after fixing Bug 1, ~half the signups and ~25% of demo trials would still land on the generic pack because the id wouldn't match a row in `industry_template_packs`.
-
-## What this plan does
-
-1. Make signup actually save the chosen industry.
-2. Normalize the two drifting namespaces to canonical pack ids.
-3. Add a single defensive alias-mapper used at every write point so any legacy or external value (`solar_energy`, `realestate`, etc.) is auto-converted before it hits the DB.
-4. Backfill the small number of existing rows that have a non-canonical value.
-5. QA across every consumer (dashboards, consoles, AI agents).
-
-## Code changes
-
-### 1. New canonical alias map — single source of truth
-
-**New file** `src/lib/industryIdAliases.ts`
+## Recommended cluster groupings (which industries share UI)
 
 ```text
-INDUSTRY_ID_ALIASES: Record<string,string> = {
-  // INDUSTRY_TEMPLATES drift
-  landscaping: 'landscape', pool: 'pool_spa', pest: 'pest_control',
-  appliance: 'appliance_repair', auto: 'auto_care', security: 'security_systems',
-  realestate: 'real_estate', beauty: 'beauty_wellness',
-  restaurant: 'restaurants', personalassistant: 'personal_assistant',
-  // INDUSTRY_DEFAULTS / marketing-content drift
-  solar_energy: 'solar', fencing_decking: 'fencing',
-  landscape_trees: 'landscape', handyman_cleaning: 'handyman',
-  // legacy
-  general_contractor: 'construction',
-}
-export function toCanonicalIndustryId(id: string|null|undefined): string|null
+CLUSTER A — Field Service (trades + repair-with-trucks)
+  hvac, plumbing, electrical, appliance_repair, handyman, security_systems, auto_care, construction
+  Shared UI: Dispatch Map, Truck/Bay Inventory, Emergency Queue, Tech Utilization,
+             Permit Tracker, Job Photos, Diagnostic specialist
+  Console set: Field Ops + Business Mgmt + Marketing + Specialists
+
+CLUSTER B — Outdoor Recurring Routes (subset of A but route-centric)
+  landscape, pest_control, pool_spa
+  Shared UI: Recurring Route Map, Seasonal Calendar, Weather Alerts, Chemistry/Treatment Log,
+             Equipment Tracker, Crew Scheduler
+  Console set: Field Ops (route-mode) + Business Mgmt + Marketing
+  Drop: Emergency Queue, Permit Tracker (mostly N/A)
+
+CLUSTER C — Project / Estimate-Heavy (outdoor install + large repair)
+  roofing, solar, fencing, construction
+  Shared UI: Site Survey Queue, Material Calculator, Quote Pipeline, Permit Tracker,
+             Insurance Claim Tracker (roofing/solar), Multi-Phase Tracker (construction)
+  Console set: Field Ops + Business Mgmt + Marketing + Specialists (site_survey, permit_code, insurance_claim)
+  Drop: 24/7 Emergency Queue, Truck Stock prominence
+
+CLUSTER D — Booking-First (in-person, no field dispatch)
+  beauty_wellness, restaurants, real_estate, personal_assistant
+  Shared UI: Today's Bookings, No-Show Recovery, Review Pulse, Smart Link Clicks,
+             Receptionist Queue, Hours Status, Upsell/Repeat Tracker
+  Console set: NEW Booking Operations Console (replaces Field Ops) +
+               Business Mgmt (cash reconciliation flavor) + Marketing + Customer Portal
+  Drop entirely: Dispatch Map, Truck Stock, Permit Tracker, Material Calculator,
+                 Emergency Queue, Insurance Claim, Site Survey
 ```
 
-Mirror as `supabase/functions/_shared/industry-aliases.ts` (Deno) so edge functions can use the same map.
+## Concrete implementation plan
 
-### 2. Auth signup — persist + normalize industry
+### Phase 1 — Console-level industry filtering (highest impact, lowest effort)
 
-`src/pages/Auth.tsx` company-admin signup INSERT (~line 290): add
-`industry_vertical: toCanonicalIndustryId(businessIndustry) || null`. Also gate the submit button on `businessIndustry` being set so it can't slip through as null again.
+1. **Add `console_visibility` to `IndustryPack`** (DB column + Zod schema):
+   ```ts
+   console_visibility: {
+     field_ops: 'full' | 'route_mode' | 'booking_mode' | 'hidden',
+     dispatch_map: boolean,
+     truck_inventory: boolean,
+     emergency_queue: boolean,
+     permit_tracker: boolean,
+     site_survey: boolean,
+     bay_scheduler: boolean,
+     route_map: boolean,
+     receptionist: boolean,
+     reservation_table: boolean,  // restaurants
+     showings_calendar: boolean,  // real estate
+     chair_grid: boolean,         // beauty
+   }
+   ```
+   Seed sensible defaults per cluster (script in migration).
 
-### 3. Normalize the dropdown source itself
+2. **Refactor `FieldOpsConsole.tsx`** to render one of three layouts based on `console_visibility.field_ops`:
+   - `full` (Cluster A): current dispatch + map + emergency
+   - `route_mode` (Cluster B): recurring route map + seasonal calendar + weather
+   - `booking_mode` (Cluster D): today's bookings grid + no-show queue + walk-in (no map)
 
-`src/lib/industryTemplates.ts`: rename the 10 drifting top-level keys + their `id:` fields to canonical (`landscape`, `pool_spa`, …, `personal_assistant`). Keep the alias map for any deep-link `?industry=` URLs that may still hit the old ids.
+3. **Rename Field Ops Console** dynamically per cluster:
+   - Cluster A → "Field Operations"
+   - Cluster B → "Route Operations"
+   - Cluster C → "Project Operations"
+   - Cluster D → "Booking Operations"
 
-### 4. Demo trial — normalize at the edge
+### Phase 2 — Customer Portal Console variants
 
-`supabase/functions/create-demo-trial/index.ts`:
-- Import the shared alias helper.
-- Apply `toCanonicalIndustryId(industry)` before the `INDUSTRY_DEFAULTS[...]` lookup.
-- Rename `INDUSTRY_DEFAULTS` keys `solar_energy → solar`, `fencing_decking → fencing`, `landscape_trees → landscape`, `handyman_cleaning → handyman` so the seeded demo data, services, and prompts line up with the pack the company will resolve to.
-- Slug template stays the same (`demo-trial-${canonicalId}-…`).
+4. **Create `customerPortalLayouts.ts`** mapping cluster → layout config:
+   - Trades/Repair: Job status + Tech ETA + Invoice + Quote approval
+   - Outdoor: Next visit + Service history + Treatment log
+   - Booking-First: My next appointment + Loyalty + Rebook + Review prompt
+   - Real Estate (override): My showings + Offers in flight + Doc room
 
-### 5. Marketing demo page — normalize the click-through
+5. Update `CustomerPortalConsole.tsx` to switch sections based on layout.
 
-`src/lib/industryMarketingContent.ts`: rename the same 4 drifting keys + their `id:` fields to canonical. `StartDemoDialog` then automatically passes the canonical id to `create-demo-trial`, which seeds the right pack.
+### Phase 3 — Expand the specialist operative roster (12 new roles)
 
-### 6. Belt-and-suspenders defense at the edge function
+6. **Add to `IndustrySpecialistOperative` enum**:
+   ```ts
+   'diagnostic' | 'permit_code' | 'site_survey' | 'insurance_claim'  // existing
+   | 'listing_writer' | 'offer_drafter' | 'comp_analyst'             // real_estate
+   | 'style_consultant' | 'loyalty_coach'                            // beauty
+   | 'menu_writer' | 'reservation_optimizer' | 'review_responder'    // restaurants
+   | 'task_triager' | 'calendar_optimizer'                           // personal_assistant
+   | 'route_optimizer' | 'chemistry_advisor'                         // outdoor recurring
+   | 'vin_decoder' | 'recall_lookup'                                 // auto_care
+   | 'bid_assembler' | 'subcontractor_coordinator'                   // construction
+   ```
 
-In `create-demo-trial`, run `toCanonicalIndustryId` on the inbound `industry` param before validation, so any old marketing link cached by a prospect still resolves to the right pack.
+7. **Backfill `extra_operatives`** in DB for the 4 booking-first packs + missing assignments (migration).
 
-### 7. Backfill existing rows (data only — uses insert tool)
+8. **Add prompt deltas** for each new specialist in `subscriptionAgentConfig.ts` + edge function `_shared/industry-pack.ts`.
 
-Single UPDATE through the insert tool:
+### Phase 4 — Widget surfacing in non-dashboard consoles
+
+9. Add an optional `surface` filter to `IndustryWidgetGrid`:
+   ```tsx
+   <IndustryWidgetGrid surface="field_ops" />   // shows only route/dispatch/emergency widgets
+   <IndustryWidgetGrid surface="marketing" />   // shows lead_scoring, smart_link_clicks, review_pulse
+   <IndustryWidgetGrid surface="portal" />      // shows client_portal, calendar_sync
+   ```
+10. Tag each widget in `WIDGET_REGISTRY` with a `surfaces: string[]` array.
+11. Embed the grid inside Field Ops, Marketing, and Customer Portal consoles.
+
+### Phase 5 — Terminology cleanup in console chrome
+
+12. Replace hardcoded "Jobs / Appointments / Customers" strings in console headers with `pack.terminology` lookups (touches ~12 files).
+
+## Technical details (for engineering)
+
+- **DB migration**: add `console_visibility jsonb DEFAULT '{}'::jsonb` to `industry_template_packs`; backfill per cluster.
+- **Pack schema**: extend `packEditableSchema` in `src/lib/industryPackSchema.ts`.
+- **Hook**: `useIndustryPack` already returns the full row — no signature change needed.
+- **Edge functions**: only the specialist prompt deltas need to be added in `_shared/industry-pack.ts`. No verify_jwt changes.
+- **Authoring UI**: extend `IndustryPacksAdmin.tsx` editor with a Console Visibility tab + Specialist picker.
+- **No frontend tier-gating changes** — `tierAllowsSpecialists()` continues to gate all specialists at Pro/Elite.
+
+## Suggested rollout order
 
 ```text
-UPDATE companies SET industry_vertical = canonical
-WHERE industry_vertical IN (drifting ids)
-  AND industry_vertical IS NOT canonical
+Week 1:  Phase 1 (console visibility + Field Ops 3 modes)         ← biggest UX win
+Week 2:  Phase 2 (Customer Portal variants)
+Week 3:  Phase 3 (12 new specialist operatives + prompts)
+Week 4:  Phase 4 (widget surface filtering)
+Week 5:  Phase 5 (terminology cleanup) + authoring UI updates
 ```
 
-Touches only the handful of demo + test rows currently in the table.
+## What I recommend doing first
 
-## Verification matrix
+If you want one focused next step instead of all five phases, do **Phase 1 + the booking-first specialist roster (subset of Phase 3)**. That alone removes the biggest "feature doesn't fit my industry" complaints because:
+- Salons / Real Estate / Restaurants stop seeing dispatch maps and truck inventory
+- They get specialists that actually match their workflow (review_responder, listing_writer, etc.)
+- Trades industries are unchanged
 
-After the changes, confirm `industry_vertical` flows correctly into every consumer (all already wired through `useIndustryPack` / pack-aware edge functions — verified in audit):
-
-```text
-Surface                              How it resolves the pack
-──────────────────────────────────── ─────────────────────────────────────────
-CompanyAdminDashboard                useIndustryPack() → labels, KPIs, presets
-AuraCommandCenter                    useIndustryPack() → quick actions
-IndustryWidgetGrid                   useIndustryPack() → widget set
-DashboardLayout (nav labels)         useIndustryPack() → terminology
-BusinessManagementConsole            useIndustryPack()
-FieldOpsConsole                      useIndustryPack() → workflows
-MarketingSalesConsole                useIndustryPack() → playbooks
-CustomerPortalConsole                useIndustryPack() → portal copy
-SpecialistOperativesConsole          useIndustryPack() → extra_operatives gate
-IntakeAnalytics + presets (Phase M)  useIndustryPack() → fields + chips
-ai-agent-chat (chat/booking AI)      industry_template_packs → deltas + intake
-voice-handler (SignalWire SWML)      _shared/industry-pack.ts (Phase L)
-sms-handler                          _shared/industry-pack.ts (Phase L)
-PublicBooking + embed loader         usePublicIndustryPack() → form schema
-```
-
-## Manual QA after deploy
-
-1. Sign up a fresh company-admin with industry = "Real Estate". Land on the dashboard → header terminology says "Showings/Buyers" (real_estate pack), Intake analytics tab shows the "Pre-approval funnel" preset chip.
-2. From `/for-business`, click the HVAC card → Start 48-hr demo. Inside the demo company, dashboard loads HVAC widgets, AI booking agent system prompt includes the HVAC delta + intake fields (visible in `ai-agent-chat` logs).
-3. Same for one of the previously-drifting verticals (Solar) — confirm the demo no longer falls back to generic.
-4. Spot-check `companies.industry_vertical` in the DB — every new row matches a value in `industry_template_packs.industry_id`.
-
-## Files touched
-
-```text
-NEW   src/lib/industryIdAliases.ts
-NEW   supabase/functions/_shared/industry-aliases.ts
-EDIT  src/pages/Auth.tsx                              (write industry on signup)
-EDIT  src/lib/industryTemplates.ts                    (rename 10 keys → canonical)
-EDIT  src/lib/industryMarketingContent.ts             (rename 4 keys → canonical)
-EDIT  supabase/functions/create-demo-trial/index.ts   (normalize + rename keys)
-DATA  insert tool: UPDATE companies (backfill drifts)
-MEM   mem://architecture/industry-id-canonical-standard (new rule)
-```
-
-No DB schema migration is needed — `industry_vertical` is already a freeform `text` column. Only a data update.
+Approve and I'll execute the rollout in the order above, or tell me to start with just Phase 1 + booking specialists.
