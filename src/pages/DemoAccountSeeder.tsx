@@ -12,6 +12,8 @@ import { toast } from 'sonner';
 
 interface SeedResult {
   ok: boolean;
+  industry?: string;
+  label?: string;
   tier?: string;
   company_id?: string;
   users?: {
@@ -22,14 +24,43 @@ interface SeedResult {
   error?: string;
 }
 
-const TIER_INFO = [
-  { key: 'core', label: 'Aura Core', price: '$197/mo', company: 'Demo Core' },
-  { key: 'boost', label: 'Aura Boost', price: '$497/mo', company: 'Demo Boost' },
-  { key: 'pro', label: 'Aura Pro', price: '$997/mo', company: 'Demo Pro' },
-  { key: 'elite', label: 'Aura Elite', price: '$1,997/mo', company: 'Demo Elite' },
-];
-
 const PASSWORD = 'aidemo*!';
+
+const INDUSTRIES_BY_TIER: Record<string, Array<{ key: string; label: string }>> = {
+  core: [
+    { key: 'hvac', label: 'HVAC' },
+    { key: 'electrical', label: 'Electrical' },
+    { key: 'handyman', label: 'Handyman & Cleaning' },
+    { key: 'auto_care', label: 'Auto Care' },
+    { key: 'appliance_repair', label: 'Appliance Repair' },
+  ],
+  boost: [
+    { key: 'plumbing', label: 'Plumbing' },
+    { key: 'pool_spa', label: 'Pool & Spa' },
+    { key: 'pest_control', label: 'Pest Control' },
+    { key: 'landscape', label: 'Landscape & Trees' },
+    { key: 'fencing', label: 'Fencing & Decking' },
+  ],
+  pro: [
+    { key: 'roofing', label: 'Roofing' },
+    { key: 'beauty_wellness', label: 'Beauty & Wellness' },
+    { key: 'restaurants', label: 'Restaurants' },
+    { key: 'security_systems', label: 'Security Systems' },
+  ],
+  elite: [
+    { key: 'real_estate', label: 'Real Estate' },
+    { key: 'personal_assistant', label: 'Personal Assistant' },
+    { key: 'solar', label: 'Solar' },
+    { key: 'construction', label: 'Construction' },
+  ],
+};
+
+const TIER_META: Record<string, { name: string; price: string; color: string }> = {
+  core:  { name: 'Aura Core',  price: '$197/mo',   color: 'bg-sky-500/10 text-sky-600 border-sky-500/30' },
+  boost: { name: 'Aura Boost', price: '$497/mo',   color: 'bg-violet-500/10 text-violet-600 border-violet-500/30' },
+  pro:   { name: 'Aura Pro',   price: '$997/mo',   color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
+  elite: { name: 'Aura Elite', price: '$1,997/mo', color: 'bg-red-500/10 text-red-600 border-red-500/30' },
+};
 
 export default function DemoAccountSeeder() {
   const [running, setRunning] = useState(false);
@@ -43,7 +74,7 @@ export default function DemoAccountSeeder() {
       if (error) throw error;
       if (!data?.success) throw new Error(data?.error ?? 'Seeding failed');
       setResults(data.results as SeedResult[]);
-      toast.success('Demo accounts seeded successfully');
+      toast.success(`Seeded ${data.total} industry demo companies`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Seeding failed';
       toast.error(msg);
@@ -63,43 +94,56 @@ export default function DemoAccountSeeder() {
         <PageHeader
           icon={Sparkles}
           title="Demo Account Seeder"
-          description="Recreate the 4-tier demo environment: 4 companies × (admin + employee + customer) = 12 accounts, plus realistic demo data per tier."
+          description="Recreate the 18-industry demo environment: 18 companies × (admin + employee + customer) = 54 accounts, with industry-specific demo data per company."
         />
 
         <Card>
           <CardHeader>
             <CardTitle>What this creates</CardTitle>
             <CardDescription>
-              Universal password for all 12 accounts: <code className="font-mono bg-muted px-2 py-1 rounded">{PASSWORD}</code>
+              Universal password for all 54 accounts: <code className="font-mono bg-muted px-2 py-1 rounded">{PASSWORD}</code>
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-3 md:grid-cols-2">
-              {TIER_INFO.map((t) => (
-                <div key={t.key} className="border rounded-lg p-3 bg-muted/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-semibold">{t.label}</div>
-                    <Badge variant="outline">{t.price}</Badge>
+          <CardContent className="space-y-5">
+            {Object.entries(INDUSTRIES_BY_TIER).map(([tierKey, industries]) => {
+              const meta = TIER_META[tierKey];
+              return (
+                <div key={tierKey} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className={meta.color}>{meta.name}</Badge>
+                    <span className="text-xs text-muted-foreground">{meta.price} · {industries.length} industries</span>
                   </div>
-                  <div className="text-xs space-y-1 text-muted-foreground font-mono">
-                    <div>{t.key}company@demo.com</div>
-                    <div>{t.key}employee@demo.com</div>
-                    <div>{t.key}customer@demo.com</div>
+                  <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                    {industries.map((ind) => {
+                      const ek = ind.key.replace(/_/g, '');
+                      return (
+                        <div key={ind.key} className="border rounded-lg p-3 bg-muted/20">
+                          <div className="font-semibold text-sm mb-1">Demo {ind.label}</div>
+                          <div className="text-[10px] space-y-0.5 text-muted-foreground font-mono">
+                            <div>{ek}admin@demo.com</div>
+                            <div>{ek}employee@demo.com</div>
+                            <div>{ek}customer@demo.com</div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
 
             <Alert>
               <AlertDescription>
-                Re-running is safe. Existing demo users get their password reset; companies are upserted; demo data
-                (appointments, leads, campaigns, blog posts, quotes, invoices, inventory) is wiped and re-seeded for each tier.
+                Re-running is safe. Existing demo users have their password reset; companies upsert by slug; demo data
+                (appointments, leads, campaigns, blog posts, quotes, invoices, inventory) is wiped and re-seeded with
+                industry-specific content. Old tier-based demo accounts (corecompany@, boostemployee@, etc.) are
+                cleaned up automatically on first run.
               </AlertDescription>
             </Alert>
 
             <Button onClick={runSeed} disabled={running} size="lg" className="w-full">
               {running ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding 4 tiers…</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding 18 industries…</>
               ) : (
                 <><Sparkles className="mr-2 h-4 w-4" /> Seed All Demo Accounts</>
               )}
@@ -114,38 +158,42 @@ export default function DemoAccountSeeder() {
               <CardDescription>Click any email to copy. Password: {PASSWORD}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {results.map((r) => (
-                <div key={r.tier} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {r.ok ? <CheckCircle2 className="h-5 w-5 text-success" /> : <span className="text-destructive">✗</span>}
-                      <span className="font-semibold capitalize">{r.tier}</span>
+              {results.map((r) => {
+                const meta = r.tier ? TIER_META[r.tier] : null;
+                return (
+                  <div key={r.industry} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        {r.ok ? <CheckCircle2 className="h-5 w-5 text-success" /> : <span className="text-destructive">✗</span>}
+                        <span className="font-semibold">Demo {r.label ?? r.industry}</span>
+                        {meta && <Badge variant="outline" className={meta.color}>{meta.name}</Badge>}
+                      </div>
+                      {r.ok && <Badge variant="secondary">{r.company_id?.slice(0, 8)}…</Badge>}
                     </div>
-                    {r.ok && <Badge variant="secondary">{r.company_id?.slice(0, 8)}…</Badge>}
+                    {r.ok && r.users ? (
+                      <div className="space-y-1.5">
+                        {Object.entries(r.users).map(([role, u]) => (
+                          <button
+                            key={role}
+                            onClick={() => copyEmail(u.email)}
+                            className="flex items-center justify-between w-full text-sm bg-muted/50 hover:bg-muted px-3 py-2 rounded font-mono"
+                          >
+                            <span>{u.email}</span>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={u.created ? 'default' : 'outline'} className="text-[10px]">
+                                {u.created ? 'NEW' : 'EXISTS'}
+                              </Badge>
+                              <Copy className="h-3 w-3" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-destructive">{r.error}</div>
+                    )}
                   </div>
-                  {r.ok && r.users ? (
-                    <div className="space-y-1.5">
-                      {Object.entries(r.users).map(([role, u]) => (
-                        <button
-                          key={role}
-                          onClick={() => copyEmail(u.email)}
-                          className="flex items-center justify-between w-full text-sm bg-muted/50 hover:bg-muted px-3 py-2 rounded font-mono"
-                        >
-                          <span>{u.email}</span>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={u.created ? 'default' : 'outline'} className="text-[10px]">
-                              {u.created ? 'NEW' : 'EXISTS'}
-                            </Badge>
-                            <Copy className="h-3 w-3" />
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-destructive">{r.error}</div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
         )}
