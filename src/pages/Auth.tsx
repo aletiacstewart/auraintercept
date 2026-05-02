@@ -67,8 +67,7 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
-  const [dbaFile, setDbaFile] = useState<File | null>(null);
-  const [einFile, setEinFile] = useState<File | null>(null);
+  const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
 
@@ -1211,34 +1210,36 @@ export default function Auth() {
                               </div>
                             </div>
 
-                            {/* DBA + EIN upload row */}
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="space-y-1">
-                                <Label className="text-xs">DBA Document <span className="text-destructive font-normal">(required for SMS/Text & API Approval)</span></Label>
-                                 <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
-                                   <FileText className="w-3 h-3 shrink-0" />
-                                   <span className="truncate">{dbaFile ? dbaFile.name : 'Upload PDF/DOC/PNG…'}</span>
-                                   <input
-                                     type="file"
-                                     accept=".pdf,.doc,.docx,.png"
-                                     className="hidden"
-                                     onChange={(e) => setDbaFile(e.target.files?.[0] ?? null)}
-                                   />
-                                 </label>
-                               </div>
-                               <div className="space-y-1">
-                                 <Label className="text-xs">EIN / Tax ID Doc <span className="text-destructive font-normal">(required for SMS/Text & API Approval)</span></Label>
-                                 <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
-                                   <FileText className="w-3 h-3 shrink-0" />
-                                   <span className="truncate">{einFile ? einFile.name : 'Upload PDF/DOC/PNG…'}</span>
-                                   <input
-                                     type="file"
-                                     accept=".pdf,.doc,.docx,.png"
-                                     className="hidden"
-                                     onChange={(e) => setEinFile(e.target.files?.[0] ?? null)}
-                                   />
-                                </label>
-                              </div>
+                            {/* Compliance documents upload (combined) */}
+                            <div className="space-y-1">
+                              <Label className="text-xs">
+                                Compliance Documents <span className="text-destructive font-normal">(required for SMS/Text & API Approval)</span>
+                              </Label>
+                              <p className="text-[11px] text-muted-foreground">
+                                Upload DBA, EIN/Tax ID, and LLC/Inc formation documents. You can select multiple files.
+                              </p>
+                              <label className="flex items-center gap-2 px-2 py-1.5 rounded border border-border/50 bg-card cursor-pointer hover:border-primary/40 transition-colors text-xs text-muted-foreground">
+                                <FileText className="w-3 h-3 shrink-0" />
+                                <span className="truncate">
+                                  {complianceFiles.length > 0
+                                    ? `${complianceFiles.length} file${complianceFiles.length > 1 ? 's' : ''} selected`
+                                    : 'Upload PDF/DOC/PNG… (multiple allowed)'}
+                                </span>
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                  multiple
+                                  className="hidden"
+                                  onChange={(e) => setComplianceFiles(Array.from(e.target.files ?? []))}
+                                />
+                              </label>
+                              {complianceFiles.length > 0 && (
+                                <ul className="text-[11px] text-muted-foreground space-y-0.5 pl-1">
+                                  {complianceFiles.map((f, i) => (
+                                    <li key={i} className="truncate">• {f.name}</li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                           </div>
                         )}
