@@ -145,10 +145,6 @@ serve(async (req) => {
     ).join('\n') || "No services listed";
 
     const faqsContext = faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') || "No FAQs";
-    
-    const warrantiesContext = warranties.map(w => 
-      `• ${w.name}: ${w.coverage_details || 'Standard coverage'}${w.duration_months ? ` (${w.duration_months} months)` : ''}`
-    ).join('\n') || "No warranties listed";
 
     const inventoryContext = inventory.map(i => 
       `• ${i.name}${i.brand ? ` (${i.brand})` : ''}${i.category ? ` - ${i.category}` : ''}`
@@ -180,9 +176,6 @@ ${faqsContext}
 
 Business Hours:
 ${formattedHours}
-
-Warranties & Guarantees:
-${warrantiesContext}
 
 Equipment/Products Available:
 ${inventoryContext}
