@@ -77,6 +77,13 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Business Size', starter: 'Solo / Small', connect: 'Small teams', performance: 'Growing companies', command: 'Enterprise' },
       { name: 'Use Case', starter: 'Booking & web presence', connect: 'Field service teams', performance: 'Full business mgmt', command: 'Full suite enterprise' },
+      {
+        name: 'Industries',
+        starter: 'Beauty & Wellness, Restaurants, Real Estate, Personal Assistant',
+        connect: 'Handyman, Auto Care, Appliance Repair, Pest Control, Fencing',
+        performance: 'Security Systems, Pool & Spa, Landscape, Solar',
+        command: 'HVAC, Electrical, Plumbing, Roofing, Construction',
+      },
     ],
   },
   {
