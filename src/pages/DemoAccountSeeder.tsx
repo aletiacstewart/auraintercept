@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, Copy, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Loader2, Copy, CheckCircle2, Building2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
@@ -65,6 +65,7 @@ const TIER_META: Record<string, { name: string; price: string; color: string }> 
 export default function DemoAccountSeeder() {
   const [running, setRunning] = useState(false);
   const [results, setResults] = useState<SeedResult[] | null>(null);
+  const [seedingTenant, setSeedingTenant] = useState(false);
 
   const runSeed = async () => {
     setRunning(true);
@@ -86,6 +87,20 @@ export default function DemoAccountSeeder() {
   const copyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
     toast.success(`Copied ${email}`);
+  };
+
+  const runAuraInterceptSeed = async () => {
+    setSeedingTenant(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('seed-aura-intercept');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error ?? 'Seed failed');
+      toast.success(`Aura Intercept tenant ready — ${data.personas?.length ?? 0} accounts. Password: aiagent*!`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Seed failed');
+    } finally {
+      setSeedingTenant(false);
+    }
   };
 
   return (
@@ -146,6 +161,36 @@ export default function DemoAccountSeeder() {
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding 18 industries…</>
               ) : (
                 <><Sparkles className="mr-2 h-4 w-4" /> Seed All Demo Accounts</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Building2 className="h-5 w-5" /> Aura Intercept Tenant</CardTitle>
+            <CardDescription>
+              Real Elite-tier company on the platform (not demo). Password: <code className="font-mono bg-muted px-2 py-1 rounded">aiagent*!</code>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="text-xs space-y-1 font-mono text-muted-foreground">
+              <div>ai@auraintercept.ai · company_admin</div>
+              <div>support@auraintercept.ai · employee + technician</div>
+              <div>sales@auraintercept.ai · employee + technician</div>
+            </div>
+            <Alert>
+              <AlertDescription>
+                Sets up the real Aura Intercept workspace so prospect companies can reach you via the platform's chat,
+                voice, SMS, public booking, and customer portal. Idempotent — safe to re-run; passwords are reset each run.
+                Does NOT touch <code>auraintercept@gmail.com</code> (your platform_admin).
+              </AlertDescription>
+            </Alert>
+            <Button onClick={runAuraInterceptSeed} disabled={seedingTenant} size="lg" className="w-full" variant="secondary">
+              {seedingTenant ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding tenant…</>
+              ) : (
+                <><Building2 className="mr-2 h-4 w-4" /> Seed Aura Intercept Tenant</>
               )}
             </Button>
           </CardContent>
