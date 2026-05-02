@@ -67,8 +67,7 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
-  const [dbaFile, setDbaFile] = useState<File | null>(null);
-  const [einFile, setEinFile] = useState<File | null>(null);
+  const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
 
