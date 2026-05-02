@@ -3435,8 +3435,9 @@ serve(async (req) => {
     const trialEndsAt = companyTierData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Determine allowed agents based on tier (trial gets full access)
-    const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
+    // Determine allowed agents based on the company's selected tier.
+    // Trial users get the agents of their selected plan, not full Elite access.
+    const allowedAgents = TIER_AGENTS[subscriptionTier] || [];
 
     // === INDUSTRY TEMPLATE PACK ===
     // Fetch the company's industry pack (drives prompt deltas + specialist agent gating)
