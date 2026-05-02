@@ -263,7 +263,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
     let yPosition = 20;
     
     doc.setFontSize(18);
-    doc.text('Analytics Report', 20, yPosition);
+    doc.text(reportTemplate.reportTitle, 20, yPosition);
     yPosition += 10;
     
     doc.setFontSize(10);
@@ -277,7 +277,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         yPosition = 20;
       }
       
-      const reportLabel = REPORT_TYPES.find(r => r.id === reportType)?.label || reportType;
+      const reportLabel = getSectionLabel(pack, reportType as ReportSectionId);
       doc.setFontSize(14);
       doc.text(reportLabel, 20, yPosition);
       yPosition += 8;
