@@ -13,6 +13,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
     // Create admin client with service role
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
@@ -21,6 +22,37 @@ Deno.serve(async (req) => {
         persistSession: false,
       },
     });
+
+    // ===== AUTH GATE: require platform_admin =====
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const callerId = claimsData.claims.sub as string;
+    const { data: isAdmin, error: roleErr2 } = await supabaseAdmin.rpc('has_role', {
+      _user_id: callerId,
+      _role: 'platform_admin',
+    });
+    if (roleErr2 || !isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden — platform_admin required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const { companyId, adminEmail, adminName } = await req.json();
 
@@ -33,7 +65,7 @@ Deno.serve(async (req) => {
 
     console.log(`Creating admin for company ${companyId} with email ${adminEmail}`);
 
-    // Generate a temporary password
+    // Generate a strong random password — never returned in response.
     const tempPassword = crypto.randomUUID().slice(0, 12) + 'Aa1!';
 
     // Create the user account
@@ -108,9 +140,8 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Company admin created successfully',
+        message: 'Company admin created. A password reset email has been generated.',
         userId,
-        tempPassword, // Return temp password so platform admin can share it
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

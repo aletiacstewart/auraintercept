@@ -1,104 +1,103 @@
-## Deep-Dive Audit: Findings
+# Production-Readiness Plan — Close All Deferred & Security Items
 
-I read the route table (75 dashboard routes), the 14 AI consoles, the 18 published industry packs, the demo company seeds, the 49 files that consume `useIndustryPack`, the 80+ edge functions, and the schema (92 tables). Below is what is fully implemented, what is partially wired, and what is broken or inconsistent — followed by a credit-conscious fix sequence.
+Goal: Take the platform from "feature-complete-ish" to **100% onboarding-ready** by fixing every critical security finding, completing all deferred batches, and removing remaining mock data.
 
----
-
-### What is fully implemented and consistent
-
-- **Industry pack engine**: 18 packs published in `industry_template_packs` (hvac, plumbing, electrical, roofing, landscape, fencing, pool_spa, pest_control, solar, appliance_repair, auto_care, handyman, construction, security_systems, beauty_wellness, restaurants, real_estate, personal_assistant) — all active, all with 5 widgets, all with cluster + terminology. Matches the 4-cluster model (trades/outdoor/repair/booking).
-- **Industry-aware surfaces (49 files)**: dashboard widgets, sidebar nav labels, page headers (Leads/Quotes/Invoices/Customers/Inventory), Aura suggestions, KPI labels, empty states, form schemas, marketing playbooks, portal copy, field-ops workflows, report templates, quick actions.
-- **AI agent / operative model**: 24 agents grouped into 10 operatives, 14 console pages, `agentStyles` plain-English labels, dynamic console nav, handoff/event routing.
-- **Tier model**: 4-tier (Core/Boost/Pro/Elite) with `LEGACY_TIER_MAP` translating DB values (starter/connect/performance/command).
-- **Subscription/trial**: 90-day trial, trial banner, Stripe mapping, subscription-check edge function returns 200 OK on failure.
-- **Public surfaces**: `/book/:slug` now resolves slug-or-UUID; `/site/:subdomain`, `/customer-portal/:companySlug`, `/chat/:companySlug` all live.
-- **Edge function inventory**: voice, SMS, email, calendar OAuth, social OAuth, ElevenLabs, SignalWire, content engine, demo seeder, missed-call, reminders, digest cadences — all present.
-- **Security posture**: SECURITY DEFINER RPCs for public lookups, role table separated from profiles, tenant integrations table.
+Estimated cost: ~70–80 credits. Executes in 7 batches, in priority order (security first).
 
 ---
 
-### Inconsistencies / partial implementations (ordered by severity)
+## Batch 1 — Critical Security Fixes (BLOCKER for onboarding)
 
-**1. Industry-awareness gaps on operational consoles** (medium)
-These consoles do not consume `useIndustryPack`, so vertical context is lost the moment a user leaves the dashboard:
-- `AnalyticsConsole.tsx`
-- `SocialMediaConsole.tsx`
-- `Analytics.tsx`, `CallHistory.tsx`, `Messages.tsx`, `Campaigns.tsx`, `EmployeeAppointments.tsx`
-- `BlogManagement.tsx`, `ContentEngineConsole.tsx`
+These are `error`-level findings exposing customer/company data. Must ship before any real company signs up.
 
-A real-estate user sees "Calls" / "Messages" / "Campaigns" generically instead of "Showings Inquiries" / "Buyer Texts" / "Listing Promotions".
+1. **`create-company-admin` open endpoint** — add JWT check + `platform_admin` role check, stop returning `tempPassword` in response, send password-reset email instead, add audit log row.
+2. **`demo_trials.password` plaintext** — drop the `password` column; switch demo trial flow to use Supabase Auth magic links / per-account random passwords (return one-time only via secured response to platform admin).
+3. **`employee_registration_codes` anon UPDATE** — drop `anon` from the "mark as used" RLS policy; only `authenticated` users mid-registration can update.
+4. **`smart_websites` blanket public SELECT** — replace `USING (true)` policy with a `SECURITY DEFINER` RPC `get_smart_website_public_config(subdomain)` that returns only widget-safe columns (no `dns_verification_code`, no internal flags). Update widget loader + `public/embed/booking.js` to use it.
+5. **`voice-audio` storage policies** — restrict INSERT/DELETE to `service_role` only.
+6. **`job-photos` DELETE storage policy** — add path-prefix ownership check (`company_id` folder must match `get_user_company_id(auth.uid())`).
+7. **`technician_service_assignments` write policy** — require `has_role(auth.uid(), 'company_admin')` or `has_company_full_access`.
+8. **Hardcoded demo passwords** (`auratrial*!`, `aidemo*!`) — replace with per-account `crypto.randomUUID()` passwords; store/return securely; update demo seeder UI to display one-time.
+9. **Update security memory** explaining what's intentional (public RPCs for booking widget) and what was fixed.
 
-**2. Demo accounts: customer role missing from join** (medium)
-Memory says 12 demo accounts (4 tiers × admin/employee/customer). DB shows only 8 admin+employee profiles linked to demo companies. Customers either don't exist, aren't linked to demo companies, or live in a different table. Reseeder may need a re-run.
+## Batch 2 — Deferred Legacy DB Cleanup (Batch E from prior audit)
 
-**3. Legacy warranty + CRM tables still in DB** (low / cosmetic)
-`warranty_claims`, `warranty_policies`, `warranty_records`, `crm_connections`, `crm_field_mappings`, `crm_sync_logs`, `crm_entity_mappings` still exist despite the "CRM/Warranty Removal" memory rule. No UI references them, but they bloat the schema and security surface.
+1. Audit `ai-agent-chat` and `generate-social-content` edge functions; remove or stub the `warranty_*` and `crm_*` tool handlers (they reference removed concepts per memory).
+2. Migration: `DROP TABLE` for `warranty_policies`, `warranty_claims`, `warranty_registrations`, `crm_*` tables (after confirming zero reads).
+3. Drop `get_company_warranty_policies` RPC.
+4. Remove `can_access_warranties` from `has_feature_access` and `company_role_permissions`.
 
-**4. Power-user routes still in App.tsx** (low)
-`/dashboard/cyber-sentry-mockup`, `/dashboard/cyber-sentry-portal-mockup`, `/dashboard/architecture`, `/dashboard/calculators`, `/dashboard/export-docs` are correctly gated to `platform_admin` — fine. But `BusinessMgtOpsApp.tsx`, `Companies.tsx`, `CustomerPortalInstall.tsx`, `Referrals.tsx` flagged in the `MOCK|TODO` scan — need a quick read to confirm there is no leftover mock data.
+## Batch 3 — Deferred Mock Data Cleanup (Batch G)
 
-**5. AI consoles routing collisions** (low)
-Six routes (`/dashboard/ai-consoles/performance-report`, `/business-insights`, `/revenue-analysis`, `/revenue-forecast`, `/customer-insights`, `/kpi-dashboard`) all render the **same** `<AskAura />` component. Dedicated pages exist (`PerformanceReportPage.tsx`, `BusinessInsightsPage.tsx`, etc.) but are not wired to their routes.
+Replace remaining hardcoded data with live queries in:
+- `src/pages/BusinessMgtOpsApp.tsx`
+- `src/pages/Companies.tsx` (already uses `list_companies_admin` — verify; remove any stub arrays)
+- `src/pages/CustomerPortalInstall.tsx`
+- `src/pages/Referrals.tsx`
 
-**6. Generic page headers not personalized everywhere**
-Batch 2 wired Leads/Quotes/Invoices/Customers/Inventory. Still generic: `Messages`, `CallHistory`, `Campaigns`, `Employees`, `EmployeeAppointments`, `Analytics`, `BusinessOperations`.
+## Batch 4 — KB Seed Content Authoring (Flagged Gap)
 
-**7. Industry pack seeding trigger may not have run for older companies**
-The trigger `seed_industry_pack_kb_on_industry_change` runs on INSERT/UPDATE OF `industry_vertical`. Companies created before the trigger or never re-saved will have empty KB. Worth a one-line backfill check.
+The KB seeding pipeline works but `industry_template_packs.kb_seed_documents` is empty. Author a baseline set per industry:
+- For each of the 18 industries: 3 starter KB docs (Services Overview, FAQ, Pricing/Process) + 5 starter FAQs.
+- Insert via migration into `industry_template_packs.kb_seed_documents` JSONB.
+- Re-run `seed_industry_pack_kb_for_company` for all existing demo + real companies.
 
----
+## Batch 5 — Industry-Aware Console Wiring (Completion of Batch C)
 
-### Recommended fix sequence (≈30 credits, leaves buffer)
+Verify and finish industry pack integration on remaining surfaces:
+- `AnalyticsConsole`, `SocialMediaConsole`, `MarketingSalesConsole`, `BusinessManagementConsole`, `FieldOpsConsole`, `CustomerPortalConsole`, `SpecialistOperativesConsole` — wire `useIndustryPack()` and use vertical-specific labels for tabs, suggested prompts, and empty states.
+- Audit `Settings.tsx`, `Dashboard.tsx`, `OnboardingForm.tsx`, `AIAgent.tsx` for any remaining generic "Service" / "Customer" labels that should be industry-aware.
 
-**Batch A — Wire orphaned AI console routes (1 message, ~3 credits)**
-Replace the 6 redirects-to-AskAura with their real page components. Files exist; just swap the route element.
+## Batch 6 — Onboarding Flow End-to-End Validation
 
-**Batch B — Industry-aware headers on remaining ops pages (1 message, ~5 credits)**
-Extend `getPageHeader()` registry with `messages`, `calls`, `campaigns`, `appointments`, `employees`, `analytics`. Apply to the 6 page components.
+Manually walk a fresh company signup for each of the 4 tiers × 3 sample industries (Real Estate, Restaurant, HVAC):
+1. Signup → tier selection → industry selection → Fast-Start Wizard → first AI agent activation → first booking.
+2. Confirm: industry pack loads, KB seeds, smart website provisions, voice/SMS feature flags evaluate correctly, trial countdown shows 90 days, agent metrics initialize.
+3. Fix anything that breaks.
 
-**Batch C — Industry pack on the 4 operational consoles (1 message, ~5–8 credits)**
-Add `useIndustryPack` + terminology to AnalyticsConsole, SocialMediaConsole, Campaigns, Messages, CallHistory. Use existing `industryAuraSuggestions` / `industryQuickActions` for inline prompts.
+## Batch 7 — Final Sweep
 
-**Batch D — Demo customer reseeder verification (1 message, ~3 credits)**
-Read `seed-demo-accounts-v2/index.ts`, confirm it creates 4 customer auth users + customer_profiles for each demo company. If missing, add. Instruct user to hit `/dashboard/demo-seeder`.
-
-**Batch E — Legacy table cleanup migration (1 message, ~3 credits)**
-Drop `warranty_*` and `crm_*` tables (after confirming zero code references with `rg`). Removes a security/maintenance surface.
-
-**Batch F — KB backfill + scan (1 message, ~3 credits)**
-- One UPDATE statement to re-trigger pack KB seeding on existing companies missing it.
-- Run security scan, fix only severity ≥ warning.
-
-**Optional Batch G — Mock-data cleanup (~3–5 credits)**
-Read the 4 flagged files (BusinessMgtOpsApp, Companies, CustomerPortalInstall, Referrals) and replace any remaining mock arrays with real Supabase queries.
-
----
-
-### Estimated total: ~25 credits
-
-| Batch | Purpose | Credits |
-|---|---|---|
-| A | Wire orphaned analytics routes | 3 |
-| B | Industry headers on remaining ops pages | 5 |
-| C | Industry pack on 4 operational consoles | 5–8 |
-| D | Verify demo customer accounts | 3 |
-| E | Drop legacy warranty + CRM tables | 3 |
-| F | KB backfill + security scan | 3 |
-| G | (Optional) Mock-data cleanup | 3–5 |
-| **Core (A–F)** | | **22–25** |
+1. Re-run security scan; mark fixed/ignored with explanations.
+2. Run Supabase linter; fix any new issues introduced by the cleanup migrations.
+3. Verify all 4 demo accounts re-seed cleanly from `/dashboard/demo-seeder`.
+4. Update `mem://index.md` with: warranty/CRM truly removed, KB content authored, security hardening complete.
+5. Brief release-notes summary in chat.
 
 ---
 
-### What I am NOT proposing
+## Technical Details
 
-- New features
-- Tutorial copy overhauls
-- Re-running browser QA on every vertical (Demo Elite already passed)
-- Touching the 24-agent model, tier names, or auth schema
-- Multi-location work (memory rule excludes it)
+**Smart websites RPC pattern:**
+```sql
+CREATE FUNCTION get_smart_website_public_config(p_subdomain text)
+RETURNS TABLE(
+  id uuid, company_id uuid, subdomain text,
+  hero_headline text, hero_subheadline text, primary_color text,
+  show_chat_widget boolean, show_booking_widget boolean,
+  -- ONLY widget-safe fields, NO dns_verification_code
+)
+SECURITY DEFINER ... WHERE is_published = true;
+```
+
+**Demo password generation:**
+```ts
+const password = `${crypto.randomUUID().slice(0,8)}Aa1!`;
+// store in demo_trials only as bcrypt hash, return once at creation
+```
+
+**create-company-admin auth gate:**
+```ts
+const { data: { claims } } = await supabase.auth.getClaims(token);
+const { data: isAdmin } = await supabaseAdmin.rpc('has_role', {
+  _user_id: claims.sub, _role: 'platform_admin'
+});
+if (!isAdmin) return 403;
+```
 
 ---
 
-### Confirmation
+## Order of Execution
 
-If approved, I will execute Batches A → F in order, pausing only if a batch reveals something unexpected. Tell me to "skip G" if you want to preserve more buffer, or "do all" to include cleanup.
+Batch 1 (security) → Batch 2 (legacy cleanup) → Batch 4 (KB content, parallel-safe with 5) → Batch 5 (consoles) → Batch 3 (mock cleanup) → Batch 6 (validation) → Batch 7 (final sweep).
+
+I'll pause only if a batch surfaces something unexpected (e.g., a warranty reference still in active use). Reply **approve** to execute, or tell me to skip specific batches to conserve credits.

@@ -1409,7 +1409,6 @@ export type Database = {
           can_access_invoices: boolean | null
           can_access_leads: boolean | null
           can_access_quotes: boolean | null
-          can_access_warranties: boolean | null
           can_create: boolean | null
           can_delete: boolean | null
           can_edit: boolean | null
@@ -1430,7 +1429,6 @@ export type Database = {
           can_access_invoices?: boolean | null
           can_access_leads?: boolean | null
           can_access_quotes?: boolean | null
-          can_access_warranties?: boolean | null
           can_create?: boolean | null
           can_delete?: boolean | null
           can_edit?: boolean | null
@@ -1451,7 +1449,6 @@ export type Database = {
           can_access_invoices?: boolean | null
           can_access_leads?: boolean | null
           can_access_quotes?: boolean | null
-          can_access_warranties?: boolean | null
           can_create?: boolean | null
           can_delete?: boolean | null
           can_edit?: boolean | null
@@ -1608,297 +1605,6 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_connections: {
-        Row: {
-          access_token: string | null
-          company_id: string
-          connected_at: string | null
-          connected_by: string | null
-          created_at: string | null
-          id: string
-          last_error: string | null
-          last_sync_at: string | null
-          provider: Database["public"]["Enums"]["crm_provider"]
-          refresh_token: string | null
-          settings: Json | null
-          status: Database["public"]["Enums"]["crm_connection_status"]
-          sync_activities: boolean | null
-          sync_contacts: boolean | null
-          sync_deals: boolean | null
-          sync_direction:
-            | Database["public"]["Enums"]["crm_sync_direction"]
-            | null
-          sync_leads: boolean | null
-          token_expires_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          access_token?: string | null
-          company_id: string
-          connected_at?: string | null
-          connected_by?: string | null
-          created_at?: string | null
-          id?: string
-          last_error?: string | null
-          last_sync_at?: string | null
-          provider: Database["public"]["Enums"]["crm_provider"]
-          refresh_token?: string | null
-          settings?: Json | null
-          status?: Database["public"]["Enums"]["crm_connection_status"]
-          sync_activities?: boolean | null
-          sync_contacts?: boolean | null
-          sync_deals?: boolean | null
-          sync_direction?:
-            | Database["public"]["Enums"]["crm_sync_direction"]
-            | null
-          sync_leads?: boolean | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          access_token?: string | null
-          company_id?: string
-          connected_at?: string | null
-          connected_by?: string | null
-          created_at?: string | null
-          id?: string
-          last_error?: string | null
-          last_sync_at?: string | null
-          provider?: Database["public"]["Enums"]["crm_provider"]
-          refresh_token?: string | null
-          settings?: Json | null
-          status?: Database["public"]["Enums"]["crm_connection_status"]
-          sync_activities?: boolean | null
-          sync_contacts?: boolean | null
-          sync_deals?: boolean | null
-          sync_direction?:
-            | Database["public"]["Enums"]["crm_sync_direction"]
-            | null
-          sync_leads?: boolean | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_connections_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_connections_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_entity_mappings: {
-        Row: {
-          company_id: string
-          connection_id: string
-          created_at: string | null
-          crm_entity_id: string
-          crm_entity_type: string | null
-          entity_type: Database["public"]["Enums"]["crm_entity_type"]
-          id: string
-          last_synced_at: string | null
-          local_entity_id: string
-          sync_hash: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          company_id: string
-          connection_id: string
-          created_at?: string | null
-          crm_entity_id: string
-          crm_entity_type?: string | null
-          entity_type: Database["public"]["Enums"]["crm_entity_type"]
-          id?: string
-          last_synced_at?: string | null
-          local_entity_id: string
-          sync_hash?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          company_id?: string
-          connection_id?: string
-          created_at?: string | null
-          crm_entity_id?: string
-          crm_entity_type?: string | null
-          entity_type?: Database["public"]["Enums"]["crm_entity_type"]
-          id?: string
-          last_synced_at?: string | null
-          local_entity_id?: string
-          sync_hash?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_entity_mappings_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_entity_mappings_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_entity_mappings_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "crm_connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_field_mappings: {
-        Row: {
-          company_id: string
-          connection_id: string | null
-          created_at: string | null
-          crm_field: string
-          direction: string | null
-          entity_type: string
-          id: string
-          is_active: boolean | null
-          local_field: string
-          transform_function: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          company_id: string
-          connection_id?: string | null
-          created_at?: string | null
-          crm_field: string
-          direction?: string | null
-          entity_type: string
-          id?: string
-          is_active?: boolean | null
-          local_field: string
-          transform_function?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          company_id?: string
-          connection_id?: string | null
-          created_at?: string | null
-          crm_field?: string
-          direction?: string | null
-          entity_type?: string
-          id?: string
-          is_active?: boolean | null
-          local_field?: string
-          transform_function?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_field_mappings_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_field_mappings_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_field_mappings_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "crm_connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_sync_logs: {
-        Row: {
-          company_id: string
-          completed_at: string | null
-          connection_id: string
-          created_at: string | null
-          direction: Database["public"]["Enums"]["crm_sync_direction"]
-          entity_type: Database["public"]["Enums"]["crm_entity_type"]
-          error_details: Json | null
-          error_message: string | null
-          id: string
-          records_created: number | null
-          records_failed: number | null
-          records_processed: number | null
-          records_updated: number | null
-          started_at: string | null
-          status: string
-        }
-        Insert: {
-          company_id: string
-          completed_at?: string | null
-          connection_id: string
-          created_at?: string | null
-          direction: Database["public"]["Enums"]["crm_sync_direction"]
-          entity_type: Database["public"]["Enums"]["crm_entity_type"]
-          error_details?: Json | null
-          error_message?: string | null
-          id?: string
-          records_created?: number | null
-          records_failed?: number | null
-          records_processed?: number | null
-          records_updated?: number | null
-          started_at?: string | null
-          status?: string
-        }
-        Update: {
-          company_id?: string
-          completed_at?: string | null
-          connection_id?: string
-          created_at?: string | null
-          direction?: Database["public"]["Enums"]["crm_sync_direction"]
-          entity_type?: Database["public"]["Enums"]["crm_entity_type"]
-          error_details?: Json | null
-          error_message?: string | null
-          id?: string
-          records_created?: number | null
-          records_failed?: number | null
-          records_processed?: number | null
-          records_updated?: number | null
-          started_at?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_sync_logs_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_sync_logs_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_sync_logs_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "crm_connections"
             referencedColumns: ["id"]
           },
         ]
@@ -2433,7 +2139,6 @@ export type Database = {
           expires_at: string
           id: string
           industry: string
-          password: string
           prospect_email: string
           prospect_name: string
           prospect_phone: string | null
@@ -2454,7 +2159,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry: string
-          password: string
           prospect_email: string
           prospect_name: string
           prospect_phone?: string | null
@@ -2475,7 +2179,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry?: string
-          password?: string
           prospect_email?: string
           prospect_name?: string
           prospect_phone?: string | null
@@ -3043,7 +2746,6 @@ export type Database = {
           category: string | null
           company_id: string
           created_at: string
-          crm_product_id: string | null
           description: string | null
           external_sku: string | null
           id: string
@@ -3063,7 +2765,6 @@ export type Database = {
           category?: string | null
           company_id: string
           created_at?: string
-          crm_product_id?: string | null
           description?: string | null
           external_sku?: string | null
           id?: string
@@ -3083,7 +2784,6 @@ export type Database = {
           category?: string | null
           company_id?: string
           created_at?: string
-          crm_product_id?: string | null
           description?: string | null
           external_sku?: string | null
           id?: string
@@ -4853,7 +4553,6 @@ export type Database = {
           category: string | null
           company_id: string
           created_at: string
-          crm_product_id: string | null
           delivery_type: string | null
           description: string | null
           duration_minutes: number | null
@@ -4880,7 +4579,6 @@ export type Database = {
           category?: string | null
           company_id: string
           created_at?: string
-          crm_product_id?: string | null
           delivery_type?: string | null
           description?: string | null
           duration_minutes?: number | null
@@ -4907,7 +4605,6 @@ export type Database = {
           category?: string | null
           company_id?: string
           created_at?: string
-          crm_product_id?: string | null
           delivery_type?: string | null
           description?: string | null
           duration_minutes?: number | null
@@ -6331,227 +6028,6 @@ export type Database = {
         }
         Relationships: []
       }
-      warranty_claims: {
-        Row: {
-          appointment_id: string | null
-          claim_type: string | null
-          company_id: string
-          created_at: string
-          id: string
-          issue_description: string
-          photos: string[] | null
-          resolution_notes: string | null
-          resolved_at: string | null
-          reviewed_at: string | null
-          status: string
-          submitted_at: string
-          updated_at: string
-          warranty_id: string
-        }
-        Insert: {
-          appointment_id?: string | null
-          claim_type?: string | null
-          company_id: string
-          created_at?: string
-          id?: string
-          issue_description: string
-          photos?: string[] | null
-          resolution_notes?: string | null
-          resolved_at?: string | null
-          reviewed_at?: string | null
-          status?: string
-          submitted_at?: string
-          updated_at?: string
-          warranty_id: string
-        }
-        Update: {
-          appointment_id?: string | null
-          claim_type?: string | null
-          company_id?: string
-          created_at?: string
-          id?: string
-          issue_description?: string
-          photos?: string[] | null
-          resolution_notes?: string | null
-          resolved_at?: string | null
-          reviewed_at?: string | null
-          status?: string
-          submitted_at?: string
-          updated_at?: string
-          warranty_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "warranty_claims_appointment_id_fkey"
-            columns: ["appointment_id"]
-            isOneToOne: false
-            referencedRelation: "appointments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "warranty_claims_warranty_id_fkey"
-            columns: ["warranty_id"]
-            isOneToOne: false
-            referencedRelation: "warranty_records"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      warranty_policies: {
-        Row: {
-          company_id: string
-          coverage_details: string | null
-          coverage_type: string
-          created_at: string
-          description: string | null
-          duration_months: number
-          duration_text: string | null
-          exclusions: string | null
-          id: string
-          is_active: boolean | null
-          labor_covered: boolean | null
-          name: string
-          parts_covered: boolean | null
-          sort_order: number | null
-          terms_conditions: string | null
-          updated_at: string
-        }
-        Insert: {
-          company_id: string
-          coverage_details?: string | null
-          coverage_type?: string
-          created_at?: string
-          description?: string | null
-          duration_months?: number
-          duration_text?: string | null
-          exclusions?: string | null
-          id?: string
-          is_active?: boolean | null
-          labor_covered?: boolean | null
-          name: string
-          parts_covered?: boolean | null
-          sort_order?: number | null
-          terms_conditions?: string | null
-          updated_at?: string
-        }
-        Update: {
-          company_id?: string
-          coverage_details?: string | null
-          coverage_type?: string
-          created_at?: string
-          description?: string | null
-          duration_months?: number
-          duration_text?: string | null
-          exclusions?: string | null
-          id?: string
-          is_active?: boolean | null
-          labor_covered?: boolean | null
-          name?: string
-          parts_covered?: boolean | null
-          sort_order?: number | null
-          terms_conditions?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "warranty_policies_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "warranty_policies_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      warranty_records: {
-        Row: {
-          appointment_id: string | null
-          company_id: string
-          coverage_details: string | null
-          coverage_type: string | null
-          created_at: string
-          crm_asset_id: string | null
-          crm_case_id: string | null
-          customer_address: string | null
-          customer_email: string | null
-          customer_name: string
-          customer_phone: string | null
-          equipment_model: string | null
-          equipment_type: string
-          id: string
-          installation_date: string | null
-          is_active: boolean
-          last_synced_at: string | null
-          purchase_date: string | null
-          serial_number: string | null
-          updated_at: string
-          warranty_end_date: string
-          warranty_start_date: string
-        }
-        Insert: {
-          appointment_id?: string | null
-          company_id: string
-          coverage_details?: string | null
-          coverage_type?: string | null
-          created_at?: string
-          crm_asset_id?: string | null
-          crm_case_id?: string | null
-          customer_address?: string | null
-          customer_email?: string | null
-          customer_name: string
-          customer_phone?: string | null
-          equipment_model?: string | null
-          equipment_type: string
-          id?: string
-          installation_date?: string | null
-          is_active?: boolean
-          last_synced_at?: string | null
-          purchase_date?: string | null
-          serial_number?: string | null
-          updated_at?: string
-          warranty_end_date: string
-          warranty_start_date: string
-        }
-        Update: {
-          appointment_id?: string | null
-          company_id?: string
-          coverage_details?: string | null
-          coverage_type?: string | null
-          created_at?: string
-          crm_asset_id?: string | null
-          crm_case_id?: string | null
-          customer_address?: string | null
-          customer_email?: string | null
-          customer_name?: string
-          customer_phone?: string | null
-          equipment_model?: string | null
-          equipment_type?: string
-          id?: string
-          installation_date?: string | null
-          is_active?: boolean
-          last_synced_at?: string | null
-          purchase_date?: string | null
-          serial_number?: string | null
-          updated_at?: string
-          warranty_end_date?: string
-          warranty_start_date?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "warranty_records_appointment_id_fkey"
-            columns: ["appointment_id"]
-            isOneToOne: false
-            referencedRelation: "appointments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       winback_offers: {
         Row: {
           appointment_id: string | null
@@ -6962,22 +6438,6 @@ export type Database = {
           trial_ends_at: string
         }[]
       }
-      get_company_warranty_policies: {
-        Args: { p_company_id: string }
-        Returns: {
-          coverage_details: string
-          coverage_type: string
-          description: string
-          duration_months: number
-          duration_text: string
-          exclusions: string
-          id: string
-          labor_covered: boolean
-          name: string
-          parts_covered: boolean
-          terms_conditions: string
-        }[]
-      }
       get_demo_trial_access: {
         Args: { p_trial_id: string }
         Returns: {
@@ -6987,7 +6447,6 @@ export type Database = {
           employee_email: string
           expires_at: string
           industry: string
-          password: string
           status: string
           trial_id: string
         }[]
@@ -7017,6 +6476,58 @@ export type Database = {
           job_templates: Json
           label: string
           terminology: Json
+        }[]
+      }
+      get_smart_website_public_config: {
+        Args: { p_subdomain: string }
+        Returns: {
+          about_header: string
+          about_image_url: string
+          about_paragraph: string
+          about_subheader: string
+          background_image_url: string
+          background_style: string
+          booking_widget_mode: string
+          company_id: string
+          contact_address: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          contact_title: string
+          cta_button_text: string
+          cta_button_url: string
+          emergency_cta_text: string
+          emergency_cta_url: string
+          enable_night_mode: boolean
+          gallery_images: string[]
+          hero_headline: string
+          hero_subheadline: string
+          id: string
+          is_published: boolean
+          logo_transparency_mode: string
+          night_end_hour: number
+          night_header: string
+          night_start_hour: number
+          night_subheadline: string
+          show_about_section: boolean
+          show_blog: boolean
+          show_booking_widget: boolean
+          show_chat_widget: boolean
+          show_console_appointments: boolean
+          show_console_billing: boolean
+          show_console_emergency: boolean
+          show_console_feedback: boolean
+          show_console_quotes: boolean
+          show_console_tracking: boolean
+          show_contact: boolean
+          show_emergency_hours: boolean
+          show_field_hours: boolean
+          show_gallery: boolean
+          show_holidays: boolean
+          show_hours: boolean
+          show_services: boolean
+          show_voice_widget: boolean
+          subdomain: string
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
