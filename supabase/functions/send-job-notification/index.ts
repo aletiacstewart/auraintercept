@@ -82,6 +82,20 @@ Deno.serve(async (req) => {
     const isVirtual = deliveryType === 'virtual';
     const isAtBusiness = deliveryType === 'in_person_business';
 
+    // Resolve industry-specific noun for "Job" (e.g. "Showing", "Reservation",
+    // "Repair Order"). Falls back to "Job" so existing copy is unchanged for
+    // verticals without a pack.
+    let jobNoun = 'Job';
+    try {
+      const { data: packRow } = await supabase
+        .rpc('get_company_industry_pack', { p_company_id: appointment.company_id });
+      const row = Array.isArray(packRow) ? packRow[0] : packRow;
+      const term = (row?.terminology || {}) as Record<string, string>;
+      if (term.job && typeof term.job === 'string') jobNoun = term.job;
+    } catch (e) {
+      console.warn('[Job Notification] Could not resolve industry terminology:', e);
+    }
+
     // Skip irrelevant notifications for virtual/at-business jobs
     if (isVirtual && (notificationType === 'en_route' || notificationType === 'arrived')) {
       console.log(`[Job Notification] Skipping ${notificationType} for virtual appointment`);
@@ -170,6 +184,7 @@ Deno.serve(async (req) => {
         deliveryType,
         meetingLink,
         customerPhone: appointment.customer_phone,
+        jobNoun,
       }
     );
 
