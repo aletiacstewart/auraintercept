@@ -34,6 +34,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { PageContainer } from '@/components/ui/page-container';
 
 interface CustomerProfile {
