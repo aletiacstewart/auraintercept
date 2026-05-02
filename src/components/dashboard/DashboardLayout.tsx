@@ -275,6 +275,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Platform admin always sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
 
+  // Hide field-ops nav for booking-only / hidden industries (e.g. real estate,
+  // personal assistant, beauty, restaurants). Platform admin always sees it.
+  const fieldOpsMode = industryPack?.console_visibility?.field_ops ?? 'full';
+  const fieldOpsHidden = !isPlatformAdmin && (fieldOpsMode === 'hidden' || fieldOpsMode === 'booking_mode');
+
   // Filter groups and items based on user role, job types, and subscription tier
   const filteredNavGroups = navGroups
     .filter(group => {
@@ -304,6 +309,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           return item;
         })
         .filter(item => {
+        // Industry-pack override: booking-only verticals hide field-ops & dispatch.
+        if (fieldOpsHidden && (
+          item.href === '/dashboard/ai-consoles/field-ops' ||
+          item.href === '/dashboard/dispatch-field-ops'
+        )) {
+          return false;
+        }
         // Check basic role permission
         if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
         
