@@ -108,10 +108,11 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Customers',
-    requiredTier: 'connect',
+    requiredTier: 'starter',
     items: [
-      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'connect' },
+      { label: 'Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-appointments', requiredTier: 'starter' },
+      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'starter' },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'starter' },
     ],
   },
   {
