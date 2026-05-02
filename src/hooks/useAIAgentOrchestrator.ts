@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { normalizeAgentName } from '@/lib/subscriptionAgentConfig';
 
 export interface AgentInfo {
   type: string;
@@ -128,11 +129,22 @@ export function useAIAgentOrchestrator() {
       if (error) throw error;
       
       const mergedAgents = DEFAULT_AGENTS.map(defaultAgent => {
-        const config = configs?.find(c => c.agent_type === defaultAgent.type);
+        // Match either an exact-typed config row OR any legacy row that
+        // normalizes to this consolidated operative (e.g. "booking" -> "customer_journey").
+        // This way, accounts seeded with the old 24-agent IDs still light up the
+        // current 10-operative UI without requiring a re-seed.
+        const matchingConfigs = (configs ?? []).filter(c =>
+          c.agent_type === defaultAgent.type ||
+          normalizeAgentName(c.agent_type) === defaultAgent.type
+        );
+        const config =
+          matchingConfigs.find(c => c.agent_type === defaultAgent.type) ??
+          matchingConfigs[0];
         if (config) {
+          const isEnabled = matchingConfigs.some(c => c.is_enabled);
           return {
             ...defaultAgent,
-            is_enabled: config.is_enabled || false,
+            is_enabled: isEnabled,
             settings: (config.settings as Record<string, any>) || {},
             config_id: config.id,
           };

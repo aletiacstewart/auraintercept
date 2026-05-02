@@ -22,11 +22,47 @@ interface IndustryDef {
   campaigns: Array<{ name: string; promo_code: string; discount_value: number; message: string; subject: string }>;
 }
 
+// Tier agent sets, written in the consolidated 10-operative model so that
+// the AI Operatives Hub UI lights them up correctly. We also still seed the
+// legacy granular agent IDs (booking/lead/route/etc.) for backwards
+// compatibility with older code paths that look them up directly.
 const TIER_AGENTS: Record<TierKey, string[]> = {
-  core:  ['triage','booking','followup','review','creative_content','web_presence','lead','marketing'],
-  boost: ['triage','booking','followup','review','creative_content','web_presence','lead','marketing','dispatch','route','eta','checkin'],
-  pro:   ['triage','booking','followup','review','creative_content','web_presence','lead','marketing','dispatch','route','eta','checkin','campaign','outreach','social_scheduler','social_analytics','quoting','invoice'],
-  elite: ['triage','booking','followup','review','dispatch','route','eta','checkin','admin','quoting','invoice','inventory','campaign','lead','outreach','marketing','creative_content','web_presence','social_scheduler','social_analytics','insights','performance','revenue','forecast'],
+  // Aura Core ($197): AI Receptionist + customer journey + outreach + creative + web
+  core: [
+    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
+    // legacy aliases
+    'booking', 'followup', 'review', 'lead', 'marketing',
+  ],
+  // Aura Boost ($497): + dispatch + field navigation
+  boost: [
+    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
+    'dispatch', 'field_navigation',
+    // legacy aliases
+    'booking', 'followup', 'review', 'lead', 'marketing',
+    'route', 'eta', 'checkin',
+  ],
+  // Aura Pro ($997): + business finance lite + analytics
+  pro: [
+    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
+    'dispatch', 'field_navigation', 'business_finance', 'analytics_intelligence',
+    // legacy aliases
+    'booking', 'followup', 'review', 'lead', 'marketing',
+    'route', 'eta', 'checkin',
+    'campaign', 'social_scheduler', 'social_analytics',
+    'quoting', 'invoice',
+  ],
+  // Aura Elite ($1,997): full 10-operative suite
+  elite: [
+    'triage', 'customer_journey', 'outreach', 'creative_content', 'web_presence',
+    'dispatch', 'field_navigation', 'admin', 'business_finance', 'analytics_intelligence',
+    // legacy aliases
+    'booking', 'followup', 'review',
+    'route', 'eta', 'checkin',
+    'quoting', 'invoice', 'inventory',
+    'campaign', 'lead', 'outreach', 'marketing',
+    'social_scheduler', 'social_analytics',
+    'insights', 'performance', 'revenue', 'forecast',
+  ],
 };
 
 const TIER_INTERNAL: Record<TierKey, string> = {
