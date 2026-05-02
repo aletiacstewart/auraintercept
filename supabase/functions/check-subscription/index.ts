@@ -182,10 +182,11 @@ serve(async (req) => {
     }
 
     if (inTrial) {
-      logStep("Company in active trial, granting command access");
+      const trialTier = companyData?.subscription_tier || 'starter';
+      logStep("Company in active trial, returning selected tier", { trialTier });
       return new Response(JSON.stringify({
         subscribed: true,
-        tier: "command",
+        tier: trialTier,
         in_trial: true,
         trial_ends_at: trialEndsAt,
         subscription_end: trialEndsAt,
