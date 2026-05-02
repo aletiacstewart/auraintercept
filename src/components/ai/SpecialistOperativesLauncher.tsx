@@ -2,7 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Stethoscope, FileCheck, Ruler, ShieldCheck, Sparkles, ChevronRight, Lock } from 'lucide-react';
+import {
+  Stethoscope, FileCheck, Ruler, ShieldCheck, Sparkles, ChevronRight, Lock,
+  Home, FileSignature, BarChart3, Scissors, Heart, UtensilsCrossed, CalendarClock,
+  ListChecks, CalendarRange, MessageCircleHeart,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -19,6 +23,16 @@ const ICONS: Record<IndustrySpecialistOperative, React.ElementType> = {
   permit_code: FileCheck,
   site_survey: Ruler,
   insurance_claim: ShieldCheck,
+  listing_writer: Home,
+  offer_drafter: FileSignature,
+  comp_analyst: BarChart3,
+  style_consultant: Scissors,
+  loyalty_coach: Heart,
+  menu_writer: UtensilsCrossed,
+  reservation_optimizer: CalendarClock,
+  task_triager: ListChecks,
+  calendar_optimizer: CalendarRange,
+  review_responder: MessageCircleHeart,
 };
 
 interface SpecialistOperativesLauncherProps {
