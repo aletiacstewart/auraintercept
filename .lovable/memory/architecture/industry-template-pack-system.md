@@ -1,5 +1,22 @@
 
 ## Per-vertical analytics presets (Phase M)
+## Phase 4+5: Console widget surfacing & terminology
+
+- **Customer Portal** (`CustomerPortalConsole.tsx`) — picks specialist roster
+  per cluster (`PORTAL_SPECIALISTS_BY_CLUSTER`) with industry overrides for
+  real_estate, beauty_wellness, restaurants, personal_assistant.
+- **Marketing Sales Console** — surfaces a `Marketing Specialists` launcher
+  with cluster + industry overrides (e.g. `listing_writer` for real_estate,
+  `menu_writer` for restaurants, `style_consultant` for beauty).
+- **Quotes page** — surfaces a `Quote Specialists` launcher (site_survey,
+  permit_code, insurance_claim for trades; comp_analyst+offer_drafter for
+  real_estate). Hidden if no specialists apply.
+- **Field Ops Console** — already cluster-aware via `console_visibility`;
+  picks specialists from `pack.extra_operatives` first, then mode defaults.
+- **Nav labels** (`industryNavLabels.ts`) — extended with `teamMemberNoun`
+  and `jobNoun` per cluster + per industry. Drives `TechnicianDashboardLayout`
+  sidebar so a salon sees "Stylist View / My Appointments" instead of
+  "Technician View / My Jobs".
 
 `src/lib/industryAnalyticsPresets.ts` maps each `industry_id` to a curated
 list of `{ source, field, view, label }` shortcuts (HVAC system age, Real
