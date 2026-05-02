@@ -33,7 +33,6 @@ interface InventoryItem {
   external_sku: string | null;
   barcode: string | null;
   manufacturer_part_number: string | null;
-  crm_product_id: string | null;
   last_synced_at: string | null;
 }
 
