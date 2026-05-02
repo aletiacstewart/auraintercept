@@ -284,8 +284,26 @@ export default function Auth() {
     }
 
     if (authData.user) {
-      // Create company first — default new signups to Aura Core ('starter') with 90-day trial
-      // (DB default is 'free' which would lock everything; mark them as Core trial-tier instead).
+      // Create company — honor the tier the user picked at signup (defaults to Core if skipped)
+      // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
+      // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
+      // and powers useIndustryPack everywhere). 90-day trial regardless of tier.
+      const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
+      if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
+        toast({
+          title: 'Industry required',
+          description: 'Please select your industry from the dropdown so we can set up the right console, agents, and templates.',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+      const validTiers = ['starter', 'connect', 'performance', 'command'] as const;
+      const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
+        ? selectedTier
+        : 'starter';
+      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
         .insert({
@@ -293,8 +311,10 @@ export default function Auth() {
           slug,
           address: companyAddress || null,
           phone: companyPhone || null,
-          subscription_tier: 'starter',
-          industry_vertical: toCanonicalIndustryId(businessIndustry),
+          subscription_tier: tierToPersist,
+          industry_vertical: canonicalIndustry,
+          is_demo: false,
+          trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
         })
