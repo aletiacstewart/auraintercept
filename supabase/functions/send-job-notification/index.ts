@@ -359,12 +359,12 @@ function generateMessages(
       },
       employee: {
         sms: isVirtual
-          ? `NEW JOB: ${serviceType} (Virtual) for ${customerName} on ${dateStr} at ${timeStr}. Please accept or decline in your dashboard.`
-          : `NEW JOB: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. ${locationInfo}. Please accept or decline in your dashboard.`,
-        emailSubject: `New Job Assignment - ${serviceType}`,
+          ? `NEW ${NOUN_UPPER}: ${serviceType} (Virtual) for ${customerName} on ${dateStr} at ${timeStr}. Please accept or decline in your dashboard.`
+          : `NEW ${NOUN_UPPER}: ${serviceType} for ${customerName} on ${dateStr} at ${timeStr}. ${locationInfo}. Please accept or decline in your dashboard.`,
+        emailSubject: `New ${noun} Assignment - ${serviceType}`,
         emailHtml: `
-          <h2>New Job Assignment</h2>
-          <p>You have been assigned a new ${isVirtual ? 'virtual ' : ''}job:</p>
+          <h2>New ${noun} Assignment</h2>
+          <p>You have been assigned a new ${isVirtual ? 'virtual ' : ''}${noun.toLowerCase()}:</p>
           <ul>
             <li><strong>Service:</strong> ${serviceType}${isVirtual ? ' (Virtual)' : isAtBusiness ? ' (At Business)' : ''}</li>
             <li><strong>Customer:</strong> ${customerName}</li>
