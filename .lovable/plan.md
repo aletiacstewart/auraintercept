@@ -1,114 +1,105 @@
-# Production-Readiness Plan — Close All Deferred & Security Items
+# Reset & Reseed Demo Environment — Per-Industry Demo Accounts
 
-Goal: Take the platform from "feature-complete-ish" to **100% onboarding-ready** by fixing every critical security finding, completing all deferred batches, and removing remaining mock data.
+## Goal
 
-Estimated cost: ~70–80 credits. Executes in 7 batches, in priority order (security first).
+Wipe the current 4 tier-based demo companies (Demo Core/Boost/Pro/Elite) and replace with **18 industry-specific demo companies**, one per active `industry_template_packs` row (HVAC, Plumbing, Roofing, Electrical, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Pool & Spa, Pest Control, Landscape & Trees, Solar, Security Systems, Construction, Fencing & Decking, Handyman & Cleaning, Auto Care, Appliance Repair).
 
----
+Each industry company gets:
+- **3 user accounts** (admin, employee, customer) — universal password `aidemo*!`
+- **Full demo data** tailored to that industry: customers, appointments, leads, quotes, invoices, inventory, marketing campaigns, blog posts
+- **Industry knowledge base** auto-seeded via existing `trg_seed_industry_pack_kb` trigger
+- **Tier rotation** so all 4 subscription tiers (Core/Boost/Pro/Elite) are represented across the 18 industries — exercises every AI agent set
 
-## Batch 1 — Critical Security Fixes (BLOCKER for onboarding)
+Total: **18 companies × 3 users = 54 demo accounts**.
 
-These are `error`-level findings exposing customer/company data. Must ship before any real company signs up.
+## Account naming convention
 
-1. **`create-company-admin` open endpoint** — add JWT check + `platform_admin` role check, stop returning `tempPassword` in response, send password-reset email instead, add audit log row.
-2. **`demo_trials.password` plaintext** — drop the `password` column; switch demo trial flow to use Supabase Auth magic links / per-account random passwords (return one-time only via secured response to platform admin).
-3. **`employee_registration_codes` anon UPDATE** — drop `anon` from the "mark as used" RLS policy; only `authenticated` users mid-registration can update.
-4. **`smart_websites` blanket public SELECT** — replace `USING (true)` policy with a `SECURITY DEFINER` RPC `get_smart_website_public_config(subdomain)` that returns only widget-safe columns (no `dns_verification_code`, no internal flags). Update widget loader + `public/embed/booking.js` to use it.
-5. **`voice-audio` storage policies** — restrict INSERT/DELETE to `service_role` only.
-6. **`job-photos` DELETE storage policy** — add path-prefix ownership check (`company_id` folder must match `get_user_company_id(auth.uid())`).
-7. **`technician_service_assignments` write policy** — require `has_role(auth.uid(), 'company_admin')` or `has_company_full_access`.
-8. **Hardcoded demo passwords** (`auratrial*!`, `aidemo*!`) — replace with per-account `crypto.randomUUID()` passwords; store/return securely; update demo seeder UI to display one-time.
-9. **Update security memory** explaining what's intentional (public RPCs for booking widget) and what was fixed.
-
-## Batch 2 — Deferred Legacy DB Cleanup (Batch E from prior audit)
-
-1. Audit `ai-agent-chat` and `generate-social-content` edge functions; remove or stub the `warranty_*` and `crm_*` tool handlers (they reference removed concepts per memory).
-2. Migration: `DROP TABLE` for `warranty_policies`, `warranty_claims`, `warranty_registrations`, `crm_*` tables (after confirming zero reads).
-3. Drop `get_company_warranty_policies` RPC.
-4. Remove `can_access_warranties` from `has_feature_access` and `company_role_permissions`.
-
-## Batch 3 — Deferred Mock Data Cleanup (Batch G)
-
-Replace remaining hardcoded data with live queries in:
-- `src/pages/BusinessMgtOpsApp.tsx`
-- `src/pages/Companies.tsx` (already uses `list_companies_admin` — verify; remove any stub arrays)
-- `src/pages/CustomerPortalInstall.tsx`
-- `src/pages/Referrals.tsx`
-
-## Batch 4 — KB Seed Content Authoring (Flagged Gap)
-
-The KB seeding pipeline works but `industry_template_packs.kb_seed_documents` is empty. Author a baseline set per industry:
-- For each of the 18 industries: 3 starter KB docs (Services Overview, FAQ, Pricing/Process) + 5 starter FAQs.
-- Insert via migration into `industry_template_packs.kb_seed_documents` JSONB.
-- Re-run `seed_industry_pack_kb_for_company` for all existing demo + real companies.
-
-## Batch 5 — Industry-Aware Console Wiring (Completion of Batch C)
-
-Verify and finish industry pack integration on remaining surfaces:
-- `AnalyticsConsole`, `SocialMediaConsole`, `MarketingSalesConsole`, `BusinessManagementConsole`, `FieldOpsConsole`, `CustomerPortalConsole`, `SpecialistOperativesConsole` — wire `useIndustryPack()` and use vertical-specific labels for tabs, suggested prompts, and empty states.
-- Audit `Settings.tsx`, `Dashboard.tsx`, `OnboardingForm.tsx`, `AIAgent.tsx` for any remaining generic "Service" / "Customer" labels that should be industry-aware.
-
-## Batch 6 — Onboarding Flow End-to-End Validation
-
-Manually walk a fresh company signup for each of the 4 tiers × 3 sample industries (Real Estate, Restaurant, HVAC):
-1. Signup → tier selection → industry selection → Fast-Start Wizard → first AI agent activation → first booking.
-2. Confirm: industry pack loads, KB seeds, smart website provisions, voice/SMS feature flags evaluate correctly, trial countdown shows 90 days, agent metrics initialize.
-3. Fix anything that breaks.
-
-## Batch 7 — Final Sweep
-
-1. Re-run security scan; mark fixed/ignored with explanations.
-2. Run Supabase linter; fix any new issues introduced by the cleanup migrations.
-3. Verify all 4 demo accounts re-seed cleanly from `/dashboard/demo-seeder`.
-4. Update `mem://index.md` with: warranty/CRM truly removed, KB content authored, security hardening complete.
-5. Brief release-notes summary in chat.
-
----
-
-## Technical Details
-
-**Smart websites RPC pattern:**
-```sql
-CREATE FUNCTION get_smart_website_public_config(p_subdomain text)
-RETURNS TABLE(
-  id uuid, company_id uuid, subdomain text,
-  hero_headline text, hero_subheadline text, primary_color text,
-  show_chat_widget boolean, show_booking_widget boolean,
-  -- ONLY widget-safe fields, NO dns_verification_code
-)
-SECURITY DEFINER ... WHERE is_published = true;
+```
+{industry_id}admin@demo.com      → company_admin role
+{industry_id}employee@demo.com   → employee role (technician)
+{industry_id}customer@demo.com   → customer role
 ```
 
-**Demo password generation:**
-```ts
-const password = `${crypto.randomUUID().slice(0,8)}Aa1!`;
-// store in demo_trials only as bcrypt hash, return once at creation
+Examples: `hvacadmin@demo.com`, `plumbingemployee@demo.com`, `realestatecustomer@demo.com`.
+
+## Tier distribution across 18 industries
+
+Cycled so each tier sees real-world industry variety:
+
+```text
+Core    : hvac, electrical, handyman, auto_care, appliance_repair          (5)
+Boost   : plumbing, pool_spa, pest_control, landscape, fencing             (5)
+Pro     : roofing, beauty_wellness, restaurants, security_systems          (4)
+Elite   : real_estate, personal_assistant, solar, construction             (4)
 ```
 
-**create-company-admin auth gate:**
-```ts
-const { data: { claims } } = await supabase.auth.getClaims(token);
-const { data: isAdmin } = await supabaseAdmin.rpc('has_role', {
-  _user_id: claims.sub, _role: 'platform_admin'
-});
-if (!isAdmin) return 403;
+## Scope of changes
+
+### 1. Wipe existing demo data (one-time SQL migration)
+
+For each of the 4 current `is_demo = true` companies:
+- Delete `auth.users` for the 12 demo accounts (cascades roles/profiles)
+- Delete the 4 demo companies (cascades appointments, leads, quotes, invoices, inventory, blog posts, knowledge docs, faqs, customer profiles, etc. via existing FKs)
+
+### 2. Rewrite `seed-demo-accounts-v2` edge function
+
+Replace the 4-tier `TIERS` array with an **18-industry `INDUSTRIES` array** (industry_id, label, tier, primary/secondary colors, agents resolved from tier).
+
+Per-industry seeding logic (extends current per-tier flow):
+- **Company**: insert with `industry_vertical` set → triggers `trg_seed_industry_pack_kb` to auto-populate KB docs and FAQs from the industry template pack
+- **3 users**: ensure auth.users exist with password `aidemo*!`, email_confirm=true
+- **Profiles + roles + job assignment + customer association**: same as today
+- **Business hours**: Mon–Fri 8–17 (Restaurants & Beauty get 6-day schedules)
+- **Industry-aware demo data** using each pack's terminology and service templates:
+  - **5 customer profiles** (the registered customer + 4 sample names)
+  - **5 appointments** with industry-appropriate `service_type` pulled from the pack's `job_templates` (e.g. "Listing Photos Shoot" for real_estate, "Hair Color & Cut" for beauty_wellness, "AC Tune-Up" for hvac)
+  - **6 leads** with industry-appropriate `service_interest` and `intent`
+  - **2 marketing campaigns** with industry-tailored copy
+  - **3 blog posts** (titles drawn from a per-industry template map)
+  - **Quotes/Invoices** (Pro + Elite tiers) — realistic line items per industry
+  - **Inventory items** (Pro + Elite, where applicable) — industry-specific SKUs (skipped for Personal Assistant, Real Estate, Restaurants which use service-only inventory or none)
+
+Per-industry sample-data tables added to the function:
+```text
+INDUSTRY_SERVICES   : { hvac: ['AC Tune-Up','Furnace Repair',...], plumbing: [...], ... }
+INDUSTRY_BLOG_POSTS : { hvac: [{title, content}, ...], ... }
+INDUSTRY_INVENTORY  : { hvac: [{name, sku, ...}, ...], ... }   // null = skip inventory seed
+INDUSTRY_CAMPAIGNS  : { hvac: [{name, message, promo_code}, ...], ... }
 ```
 
----
+Wipe-before-seed (per company) keeps idempotency: re-running clears appointments, leads, campaigns, quotes, invoices, inventory, blog posts for that company before reinsert.
 
-## Order of Execution
+### 3. Update `DemoAccountSeeder.tsx` UI
 
-Batch 1 (security) → Batch 2 (legacy cleanup) → Batch 4 (KB content, parallel-safe with 5) → Batch 5 (consoles) → Batch 3 (mock cleanup) → Batch 6 (validation) → Batch 7 (final sweep).
+- Replace 4-tier grid with **18-industry grid** (grouped by tier in 4 collapsible sections)
+- Update copy: "Recreate the 18-industry demo environment: 18 companies × 3 accounts = 54 demo accounts"
+- Show industry label + tier badge + 3 emails per card
+- Result panel renders all 18 cards
 
-I'll pause only if a batch surfaces something unexpected (e.g., a warranty reference still in active use). Reply **approve** to execute, or tell me to skip specific batches to conserve credits.
+### 4. Update memory
 
-## ✅ EXECUTION COMPLETE — All Batches Shipped
+Rewrite `mem://platform-operations/demo-account-registry` from "12 demo accounts (4 tiers × admin/employee/customer)" → "54 demo accounts (18 industries × 3 roles), grouped by tier rotation". Reseed at `/dashboard/demo-seeder`.
 
-- Batch 1 (Security): admin gate + plaintext password drop + smart_websites RPC + storage policies — done.
-- Batch 2 (Legacy cleanup): warranty/CRM tables, RPCs, and tool handlers removed — done.
-- Batch 3 (Mock cleanup): verified — Referrals/Companies/CustomerPortalInstall/BusinessMgtOpsApp already use live data; only static UI marketing copy remains (intentional).
-- Batch 4 (KB authoring): 18 industries × 3 docs + 5 inline FAQs seeded; existing companies re-seeded automatically. Confirmed: 4 demo companies each have 3 docs + 5 FAQs.
-- Batch 5 (Console industry-wiring): AnalyticsConsole + SocialMediaConsole now resolve `useIndustryPack()` and render vertical-aware descriptions. The other 5 consoles were already wired.
-- Batch 6/7 (Validation): linter shows 119 pre-existing intentional warnings (public RPCs covered by security memory). No new findings introduced by this batch.
+## Files to change
 
-Platform is onboarding-ready.
+```text
+supabase/functions/seed-demo-accounts-v2/index.ts   (rewrite TIERS → INDUSTRIES, add per-industry data tables)
+src/pages/DemoAccountSeeder.tsx                     (18-card grid grouped by tier)
+.lovable/memory/platform-operations/demo-account-registry.md   (update via memory tool)
++ 1 SQL migration: wipe existing 4 demo companies + their 12 users
+```
+
+## How you'll use it
+
+1. Migration auto-applies → existing demo data gone
+2. Open `/dashboard/demo-seeder` → click **Seed All Demo Accounts**
+3. Edge function creates 54 accounts + per-industry data in ~60–90 seconds
+4. Log in as any `{industry}admin@demo.com` / `aidemo*!` to test that industry's AI agents, terminology, KB, forms, and console layout
+
+## Risk / safety
+
+- The seeder requires `platform_admin` JWT (already enforced)
+- All seeded companies have `is_demo = true` — production company data is never touched
+- `expire-demo-trials` cron will not affect these (it only targets rows in `demo_trials` with `expires_at < now()`)
+
+Reply **approve** to execute.
