@@ -397,8 +397,8 @@ function generateMessages(
         sms: isVirtual
           ? `Job accepted. ${customerName} has been notified with ${meetingLink ? 'the video session link' : 'phone call details'}.`
           : `Job accepted. ${customerName} has been notified. ${locationInfo}`,
-        emailSubject: `Job Confirmed - ${serviceType}`,
-        emailHtml: `<p>You have accepted the job for ${customerName}. The customer has been notified${isVirtual && meetingLink ? ` with the video session link: <a href="${meetingLink}">${meetingLink}</a>` : ''}.</p>`,
+        emailSubject: `${noun} Confirmed - ${serviceType}`,
+        emailHtml: `<p>You have accepted the ${noun.toLowerCase()} for ${customerName}. The customer has been notified${isVirtual && meetingLink ? ` with the video session link: <a href="${meetingLink}">${meetingLink}</a>` : ''}.</p>`,
       },
     },
     en_route: {
