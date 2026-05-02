@@ -76,7 +76,12 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   cancelled: { label: 'Cancelled', color: 'bg-muted', icon: XCircle },
 };
 
-export function TechnicianJobQueue() {
+interface TechnicianJobQueueProps {
+  emptyTitle?: string;
+  emptyHint?: string;
+}
+
+export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'New job assignments will appear here' }: TechnicianJobQueueProps = {}) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -473,8 +478,8 @@ export function TechnicianJobQueue() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Wrench className="h-12 w-12 text-white mb-4" />
-            <p className="text-lg font-medium">No Active Jobs</p>
-            <p className="text-sm text-white">New job assignments will appear here</p>
+            <p className="text-lg font-medium">{emptyTitle}</p>
+            <p className="text-sm text-white">{emptyHint}</p>
           </CardContent>
         </Card>
       )}
