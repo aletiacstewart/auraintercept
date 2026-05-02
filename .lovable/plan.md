@@ -1,71 +1,38 @@
-# Phase 6 — Task 5: Industry-Aware Empty States
+# Phase 7 — Industry-Aware Forms, Reports & Aura Suggestions
 
-Replace generic "No X yet" placeholders across the platform with **industry-specific, actionable** empty states that match the active industry pack (trades, salon, real-estate, restaurant, etc.).
+Phase 6 made KPIs, prompts, portals, onboarding, and empty states industry-aware. Phase 7 closes the loop on the **input side** (forms) and the **output side** (reports + Aura's proactive suggestions) so an operator never sees generic copy in their daily flow.
 
-## Goals
-- Every console with a list/grid shows a vertical-specific first action when empty.
-- Click of the empty-state CTA either navigates to the relevant create flow OR fires an Aura prompt (consistent with existing `PortalQuickActions` pattern).
-- Zero new dependencies; reuse `useIndustryPack` + a new `industryEmptyStates.ts` registry.
+## Tasks (in order)
 
-## What to build
+### 1. Industry-aware create/edit form labels
+The "Add Job", "Add Lead", "Add Customer" forms still ship generic field labels ("Service Type", "Job Notes"). Use the existing `industryFormSchemas.ts` pack data to drive:
+- Field labels (e.g. trades "Service Type" → real-estate "Listing Type" → restaurant "Reservation Type")
+- Placeholders + helper text
+- Optional/required field visibility per cluster (real-estate hides "Service Address" on listings; restaurants hide "Job Site")
 
-### 1. New registry — `src/lib/industryEmptyStates.ts`
-A typed map keyed by **surface** (jobs, leads, quotes, customers, inventory, appointments, employees, invoices, technicians) returning per-cluster + per-industry copy + CTA:
-```ts
-interface EmptyState {
-  icon: LucideIcon;
-  title: string;          // "No showings booked"
-  body: string;           // "Add your first listing to start scheduling tours."
-  ctaLabel: string;       // "Add a listing"
-  ctaRoute?: string;      // navigate target
-  ctaPrompt?: string;     // OR Aura prompt (clipboard fallback)
-}
-getEmptyState(surface, pack): EmptyState
-```
-Resolution order: industry_id → cluster → generic fallback (preserving today's wording so nothing regresses).
+Surfaces: `JobForm`, `LeadForm`, `QuoteForm`, `CustomerForm`, `AppointmentForm`. Build one shared `useIndustryFieldLabel(surface, field)` hook backed by `pack.terminology` + a new `industryFieldLabels.ts` map for fields not already covered.
 
-Examples:
-- **jobs** + trades → "Add your first service area"
-- **jobs** + salon → "Add your first stylist + chair"
-- **jobs** + real_estate → "Add your first listing"
-- **jobs** + restaurant → "Add a reservation slot"
-- **inventory** + trades → "Stock your first truck"
-- **inventory** + restaurant → "Add a menu item"
-- **employees** + salon → "Invite your first stylist"
-- **employees** + real_estate → "Invite your first agent"
+### 2. Industry-aware quick-create dropdowns + Aura suggestions
+The header "+" button and Aura's "Try asking…" chips currently show a fixed list. Wire both to `industryQuickActions.ts` so:
+- Header quick-create shows the top 3 actions for the active vertical (e.g. salon → "Book appointment / Add stylist / Send promo")
+- Aura suggestion chips on `/dashboard` and `/aura` rotate vertical-specific prompts ("Show me tomorrow's reservations" for restaurants vs "Show me today's route" for trades)
 
-### 2. New component — `src/components/shared/IndustryEmptyState.tsx`
-Cyber-Sentry styled card (theme tokens only). Props: `surface`, optional `pack` override, optional `onAction` override. Resolves pack via `useIndustryPack()`, renders icon + title + body + primary action button. Default action: navigate to `ctaRoute`, or copy `ctaPrompt` to clipboard + toast (mirrors `PortalQuickActions`).
+Touch: `DashboardHeader` (or equivalent quick-create), `AuraCommandCenter` suggestion list, `AskAura` page.
 
-### 3. Wire into top-traffic surfaces (replace existing empty blocks)
-Touch only the visible empty-state JSX — no logic changes:
-- `src/pages/Leads.tsx` → `surface="leads"`
-- `src/pages/Quotes.tsx` → `surface="quotes"`
-- `src/pages/Invoices.tsx` → `surface="invoices"`
-- `src/pages/Customers.tsx` → `surface="customers"`
-- `src/pages/Inventory.tsx` → `surface="inventory"`
-- `src/pages/Employees.tsx` → `surface="employees"`
-- `src/pages/EmployeeAppointments.tsx` → `surface="appointments"`
-- `src/components/employee/CompletedJobsHistory.tsx` → `surface="jobs"`
-- `src/components/quotes/QuotesManager.tsx` → `surface="quotes"`
-- `src/components/leads/LeadsManager.tsx` → `surface="leads"`
-- `src/components/invoices/InvoicesManager.tsx` → `surface="invoices"`
-- `src/components/businessops/InventoryMatrix.tsx` → `surface="inventory"`
-- `src/pages/technician/TechnicianJobs.tsx` → `surface="jobs"` (uses `pack.terminology.job` in title)
+### 3. Industry-aware report templates
+`/analytics` already routes to per-vertical KPIs. Extend the export/PDF report templates so the generated report title, section headings, and metric labels match the vertical. Add `industryReportTemplates.ts` returning section blueprints per cluster (e.g. real-estate → "Listings Performance / Showings / Buyer Pipeline"; restaurant → "Covers / Avg Ticket / Reservation Conversion").
 
-Other empty states (settings forms, search-no-results) stay unchanged — those aren't workflow-actionable.
+Wire into the existing analytics export flow only — no new export routes.
 
-### 4. Memory update
-Add `mem://features/ux/industry-empty-states` to index referencing the new registry + component, plus the surface list above.
+### 4. Industry-aware notification copy
+Staff push/email/SMS alerts currently say "New job assigned". Make the verb match the terminology (`New showing assigned`, `New reservation`, `New appointment`). Single tweak in `send-staff-notification` + `send-job-notification` edge functions: pull `terminology.job` / `terminology.appointment` from the company row and substitute into the title + body.
 
-## Acceptance
-- Switching `industry_id` in `companies` row visibly changes empty-state copy + CTA in Leads / Quotes / Inventory / Employees / Jobs without code changes.
-- Generic fallback identical to current text for any unmapped surface/industry combo.
-- No theme regressions (CSS vars only), no new console warnings.
+### 5. Memory + acceptance
+Add `mem://features/industry/forms-and-reports` to the index. Acceptance: switching `industry_id` changes form labels, quick-create options, Aura chips, exported report headings, and outbound notification copy without further code changes.
 
 ## Out of scope
-- Search-result-empty states ("No matches for…")
-- Form validation empties
-- Marketing-site empties
+- New form fields (only labels/visibility of existing ones)
+- New analytics queries (only labels around existing data)
+- Marketing site / public booking widget (already industry-aware)
 
-After your approval I'll implement in this order: registry → component → wire 13 surfaces → memory update.
+If you want, I can split this into 5 separate approvals (one per task) or run it as one phase. Default is all 5 in order.
