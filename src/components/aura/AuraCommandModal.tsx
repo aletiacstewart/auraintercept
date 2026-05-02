@@ -7,15 +7,9 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { 
-  Sparkles, 
-  TrendingUp, 
-  DollarSign, 
-  Users, 
-  BarChart3, 
-  Target,
-  Clock 
-} from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryAuraSuggestions } from '@/lib/industryAuraSuggestions';
 
 interface AuraCommandModalProps {
   open: boolean;
@@ -25,45 +19,6 @@ interface AuraCommandModalProps {
   onSubmit: (query: string) => void;
 }
 
-const QUICK_SUGGESTIONS = [
-  { 
-    id: 'revenue', 
-    label: 'What is my total revenue this month?', 
-    icon: DollarSign,
-    category: 'Revenue' 
-  },
-  { 
-    id: 'forecast', 
-    label: 'What is my projected revenue next month?', 
-    icon: TrendingUp,
-    category: 'Forecast' 
-  },
-  { 
-    id: 'performance', 
-    label: 'Who are my top performing team members?', 
-    icon: Users,
-    category: 'Performance' 
-  },
-  { 
-    id: 'kpi', 
-    label: 'Show me my key performance metrics', 
-    icon: Target,
-    category: 'KPIs' 
-  },
-  { 
-    id: 'comparison', 
-    label: 'Compare this month to last month', 
-    icon: BarChart3,
-    category: 'Comparison' 
-  },
-  { 
-    id: 'trends', 
-    label: 'What trends should I be aware of?', 
-    icon: Clock,
-    category: 'Insights' 
-  },
-];
-
 export function AuraCommandModal({
   open,
   onOpenChange,
@@ -71,6 +26,9 @@ export function AuraCommandModal({
   onQueryChange,
   onSubmit,
 }: AuraCommandModalProps) {
+  const { pack } = useIndustryPack();
+  const QUICK_SUGGESTIONS = getIndustryAuraSuggestions(pack);
+
   // Handle Enter key to submit custom query
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
