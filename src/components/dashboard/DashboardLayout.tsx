@@ -144,7 +144,7 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin'], featureColor: 'text-feature-config' },
+      { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
