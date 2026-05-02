@@ -351,6 +351,29 @@ export default function CustomerPortalInstall() {
             />
           </div>
 
+          {/* Filters: industry + zip */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Select value={industryFilter} onValueChange={setIndustryFilter}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="All industries" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All industries</SelectItem>
+                {INDUSTRY_LIST.map((i) => (
+                  <SelectItem key={i.id} value={i.id}>{i.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder="Filter by ZIP code"
+              className="h-11"
+              value={zipFilter}
+              onChange={(e) => setZipFilter(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+            />
+          </div>
+
           {/* Favorites */}
           {favoriteCompanies.length > 0 && (
             <section>
