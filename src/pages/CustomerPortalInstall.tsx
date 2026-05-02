@@ -33,6 +33,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import logo from '@/assets/aura-intercept-logo.png';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
+import { INDUSTRY_LIST } from '@/lib/industryTemplates';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Company {
   id: string;
@@ -41,6 +43,8 @@ interface Company {
   logo_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
+  industry_vertical?: string | null;
+  service_categories?: string[] | null;
 }
 
 interface CompanyAssociation {
@@ -61,6 +65,8 @@ export default function CustomerPortalInstall() {
   const [isIOS, setIsIOS] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [zipFilter, setZipFilter] = useState('');
   const [showInstallInfo, setShowInstallInfo] = useState(true);
   const [hasCheckedRole, setHasCheckedRole] = useState(false);
 
@@ -135,23 +141,17 @@ export default function CustomerPortalInstall() {
     enabled: !!user,
   });
 
-  // Fetch all companies for browsing
+  // Fetch live, subscribed companies for browsing (excludes demo accounts).
   const { data: allCompanies, isLoading: companiesLoading } = useQuery({
-    queryKey: ['browse-companies', searchTerm],
+    queryKey: ['browse-companies', searchTerm, industryFilter, zipFilter],
     queryFn: async () => {
-      let query = supabase
-        .from('companies')
-        .select('id, name, slug, logo_url, primary_color, secondary_color')
-        .order('name');
-
-      if (searchTerm) {
-        query = query.ilike('name', `%${searchTerm}%`);
-      }
-
-      const { data, error } = await query.limit(50);
+      const { data, error } = await supabase.rpc('list_companies_for_customer', {
+        p_search: searchTerm || null,
+        p_industry: industryFilter && industryFilter !== 'all' ? industryFilter : null,
+        p_zip: zipFilter || null,
+      });
       if (error) throw error;
-      
-      return (data || []) as Company[];
+      return ((data || []) as unknown as Company[]);
     },
     enabled: !!user && !selectedCompanyId,
   });
