@@ -19,6 +19,23 @@ import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPortalCopy } from '@/lib/industryPortalCopy';
+import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
+
+// Cluster-aware specialist roster for the customer-facing portal.
+// Trades/Repair surface diagnostics & claims; Outdoor surfaces site surveys;
+// Booking-first surfaces booking/loyalty/review specialists tuned per industry.
+const PORTAL_SPECIALISTS_BY_CLUSTER: Record<string, IndustrySpecialistOperative[]> = {
+  trades: ['diagnostic', 'permit_code', 'insurance_claim', 'review_responder'],
+  outdoor: ['site_survey', 'insurance_claim', 'diagnostic', 'review_responder'],
+  repair: ['diagnostic', 'review_responder'],
+  booking: ['task_triager', 'calendar_optimizer', 'review_responder'],
+};
+const PORTAL_SPECIALISTS_BY_INDUSTRY: Record<string, IndustrySpecialistOperative[]> = {
+  real_estate: ['listing_writer', 'offer_drafter', 'comp_analyst', 'review_responder'],
+  beauty_wellness: ['style_consultant', 'loyalty_coach', 'review_responder'],
+  restaurants: ['menu_writer', 'reservation_optimizer', 'review_responder'],
+  personal_assistant: ['task_triager', 'calendar_optimizer', 'review_responder'],
+};
 
 export default function CustomerPortalConsole() {
   const { userRole } = useAuth();
@@ -27,6 +44,10 @@ export default function CustomerPortalConsole() {
   const [showPreview, setShowPreview] = useState(false);
   const { pack } = useIndustryPack();
   const copy = getPortalCopy(pack);
+  const specialists =
+    (pack && PORTAL_SPECIALISTS_BY_INDUSTRY[pack.industry_id]) ||
+    (pack && PORTAL_SPECIALISTS_BY_CLUSTER[pack.cluster]) ||
+    ['diagnostic', 'site_survey', 'insurance_claim'];
 
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
@@ -111,7 +132,7 @@ export default function CustomerPortalConsole() {
                 )}
                 <div className="mt-6">
                   <SpecialistOperativesLauncher
-                    show={['diagnostic', 'site_survey', 'insurance_claim']}
+                    show={specialists}
                     subtitle={copy.specialistSubtitle}
                   />
                 </div>
