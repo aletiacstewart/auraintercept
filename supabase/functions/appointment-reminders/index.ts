@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { getCompanyTerminology } from '../_shared/terminology.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -165,6 +166,9 @@ Deno.serve(async (req) => {
       }
 
       const companyName = integration?.company?.name || 'Our company';
+      // Resolve industry-aware nouns once per company so SMS/email/call
+      // templates can substitute {appointment_noun}, {service_noun}, {job_noun}.
+      const term = await getCompanyTerminology(supabase as any, companyId);
 
       // Process each reminder setting for this company
       for (const setting of settings) {
@@ -229,6 +233,10 @@ Deno.serve(async (req) => {
             company_name: companyName,
             date: formattedDate,
             time: formattedTime,
+            appointment_noun: term.appointment,
+            service_noun: term.serviceType,
+            job_noun: term.job,
+            customer_noun: term.customer,
           };
 
           // Send SMS reminder (check opt-out)
