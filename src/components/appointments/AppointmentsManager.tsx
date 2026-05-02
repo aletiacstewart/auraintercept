@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar, ClipboardList, History, Briefcase, Plus, X } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getQueueLabels } from '@/lib/industryNavLabels';
 
 interface AppointmentsManagerProps {
   onClose?: () => void;
@@ -15,6 +17,8 @@ interface AppointmentsManagerProps {
 
 export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClose }) => {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const { pack } = useIndustryPack();
+  const queueLabels = getQueueLabels(pack);
 
   return (
     <div className="space-y-4">
@@ -61,7 +65,7 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
           </TabsTrigger>
           <TabsTrigger value="jobs" className="flex items-center gap-1.5">
             <ClipboardList className="h-3 w-3" />
-            Job Queue
+            {queueLabels.queueTab}
           </TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-1.5">
             <History className="h-3 w-3" />
@@ -69,20 +73,20 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
           </TabsTrigger>
           <TabsTrigger value="all-jobs" className="flex items-center gap-1.5">
             <Briefcase className="h-3 w-3" />
-            All Jobs
+            {queueLabels.allJobsTab}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="calendar" className="mt-4">
           <AppointmentCalendar />
         </TabsContent>
         <TabsContent value="jobs" className="mt-4">
-          <TechnicianJobQueue />
+          <TechnicianJobQueue emptyTitle={queueLabels.emptyTitle} emptyHint={queueLabels.emptyHint} />
         </TabsContent>
         <TabsContent value="history" className="mt-4">
           <CompletedJobsHistory />
         </TabsContent>
         <TabsContent value="all-jobs" className="mt-4">
-          <CompanyJobQueue />
+          <CompanyJobQueue emptyTitle={queueLabels.emptyTitle} emptyHint={queueLabels.emptyHint} />
         </TabsContent>
       </Tabs>
     </div>
