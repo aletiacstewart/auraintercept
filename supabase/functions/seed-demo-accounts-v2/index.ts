@@ -40,10 +40,14 @@ const TIER_COLORS: Record<TierKey, [string, string]> = {
   elite: ['#EF4444', '#F87171'],
 };
 
-// 18 industries — tier rotation distributes Core/Boost/Pro/Elite across verticals
+// 18 industries — tier mapping curated so each demo showcases the correct console for its industry:
+//   CORE  (4): beauty_wellness, restaurants, real_estate, personal_assistant
+//   BOOST (5): handyman, auto_care, appliance_repair, pest_control, fencing
+//   PRO   (4): security_systems, pool_spa, landscape, solar
+//   ELITE (5): hvac, electrical, plumbing, roofing, construction
 const INDUSTRIES: IndustryDef[] = [
   // CORE (5)
-  industry('hvac', 'HVAC', 'core',
+  industry('hvac', 'HVAC', 'elite',
     ['AC Tune-Up','Furnace Repair','Heat Pump Install','Duct Cleaning','Thermostat Upgrade'],
     [
       { name: 'Air Filter 16x25x1', sku: 'AF-16251', quantity: 42, min_quantity: 20, unit_cost: 8.99, category: 'HVAC' },
@@ -60,7 +64,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Win-Back Past Customers', promo_code: 'COMEBACK50', discount_value: 50, message: 'We miss you! $50 off your next service.', subject: 'We Miss You — $50 Off' },
     ],
   ),
-  industry('electrical', 'Electrical', 'core',
+  industry('electrical', 'Electrical', 'elite',
     ['Panel Upgrade','Outlet Installation','EV Charger Install','Whole-Home Surge Protection','Lighting Retrofit'],
     [
       { name: '20A Circuit Breaker', sku: 'CB-20A', quantity: 35, min_quantity: 10, unit_cost: 14.5, category: 'Electrical' },
@@ -77,7 +81,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Safety Inspection Bundle', promo_code: 'SAFE25', discount_value: 25, message: 'Bundle a panel + outlet inspection and save 25%.', subject: 'Whole-Home Safety Inspection — 25% Off' },
     ],
   ),
-  industry('handyman', 'Handyman & Cleaning', 'core',
+  industry('handyman', 'Handyman & Cleaning', 'boost',
     ['Drywall Repair','TV Mounting','Furniture Assembly','Deep Clean','Gutter Cleaning'],
     [
       { name: 'Drywall Patch Kit', sku: 'DW-PATCH', quantity: 18, min_quantity: 6, unit_cost: 12.5, category: 'Repair' },
@@ -94,7 +98,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Bundle & Save', promo_code: 'BUNDLE15', discount_value: 15, message: 'Book 3 small jobs in one visit — save 15%.', subject: 'Save 15% With a Multi-Task Visit' },
     ],
   ),
-  industry('auto_care', 'Auto Care', 'core',
+  industry('auto_care', 'Auto Care', 'boost',
     ['Oil Change','Brake Service','Tire Rotation','Battery Replacement','State Inspection'],
     [
       { name: '5W-30 Synthetic Oil (qt)', sku: 'OIL-5W30', quantity: 60, min_quantity: 24, unit_cost: 6.5, category: 'Fluids' },
@@ -111,7 +115,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Brake Special', promo_code: 'BRAKE40', discount_value: 40, message: 'Front brake pads + rotor turn — $40 off.', subject: 'Brake Service — $40 Off' },
     ],
   ),
-  industry('appliance_repair', 'Appliance Repair', 'core',
+  industry('appliance_repair', 'Appliance Repair', 'boost',
     ['Refrigerator Repair','Washer Repair','Dryer Repair','Oven Repair','Dishwasher Repair'],
     [
       { name: 'Universal Drain Pump', sku: 'AP-DP-U', quantity: 14, min_quantity: 5, unit_cost: 42.0, category: 'Parts' },
@@ -129,7 +133,7 @@ const INDUSTRIES: IndustryDef[] = [
     ],
   ),
   // BOOST (5)
-  industry('plumbing', 'Plumbing', 'boost',
+  industry('plumbing', 'Plumbing', 'elite',
     ['Leak Repair','Drain Cleaning','Water Heater Install','Toilet Replacement','Sewer Line Inspection'],
     [
       { name: '1" Copper Pipe (10ft)', sku: 'CP-1-10', quantity: 24, min_quantity: 10, unit_cost: 18.5, category: 'Plumbing' },
@@ -146,7 +150,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Water Heater Replacement Promo', promo_code: 'WH200', discount_value: 200, message: '$200 off tankless water heater installation.', subject: 'Tankless Upgrade — $200 Off' },
     ],
   ),
-  industry('pool_spa', 'Pool & Spa', 'boost',
+  industry('pool_spa', 'Pool & Spa', 'pro',
     ['Weekly Pool Cleaning','Equipment Repair','Acid Wash','Spa Tune-Up','Liner Replacement'],
     [
       { name: 'Chlorine Tabs (50lb)', sku: 'CHL-50', quantity: 12, min_quantity: 4, unit_cost: 165.0, category: 'Chemicals' },
@@ -180,7 +184,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Mosquito Season Special', promo_code: 'SKEET25', discount_value: 25, message: '25% off your first mosquito treatment.', subject: 'Take Back the Backyard — 25% Off' },
     ],
   ),
-  industry('landscape', 'Landscape & Trees', 'boost',
+  industry('landscape', 'Landscape & Trees', 'pro',
     ['Lawn Maintenance','Tree Pruning','Mulch Install','Irrigation Repair','Fall Cleanup'],
     [
       { name: 'Premium Mulch (yd)', sku: 'MLCH-PR', quantity: 30, min_quantity: 10, unit_cost: 42.0, category: 'Materials' },
@@ -215,7 +219,7 @@ const INDUSTRIES: IndustryDef[] = [
     ],
   ),
   // PRO (4)
-  industry('roofing', 'Roofing', 'pro',
+  industry('roofing', 'Roofing', 'elite',
     ['Shingle Repair','Full Roof Replacement','Gutter Install','Storm Damage Inspection','Skylight Install'],
     [
       { name: 'Architectural Shingles (sq)', sku: 'SH-ARCH', quantity: 80, min_quantity: 30, unit_cost: 95.0, category: 'Roofing' },
@@ -232,7 +236,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Full Replace Promo', promo_code: 'ROOF500', discount_value: 500, message: '$500 off complete roof replacement booked this quarter.', subject: 'New Roof — $500 Off' },
     ],
   ),
-  industry('beauty_wellness', 'Beauty & Wellness', 'pro',
+  industry('beauty_wellness', 'Beauty & Wellness', 'core',
     ['Hair Color & Cut','Balayage','Manicure & Pedicure','Facial Treatment','Massage Therapy'],
     [
       { name: 'Color Developer (qt)', sku: 'CD-QT', quantity: 18, min_quantity: 6, unit_cost: 22.0, category: 'Color' },
@@ -249,7 +253,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Refer-a-Friend', promo_code: 'REFER15', discount_value: 15, message: 'Refer a friend and you both get 15% off.', subject: 'Bring a Friend, Save Together' },
     ],
   ),
-  industry('restaurants', 'Restaurants', 'pro',
+  industry('restaurants', 'Restaurants', 'core',
     ['Reservation','Private Event Booking','Catering Inquiry','Tasting Menu','Wine Pairing'],
     null, // service-only — no parts inventory
     [
@@ -280,7 +284,7 @@ const INDUSTRIES: IndustryDef[] = [
     ],
   ),
   // ELITE (4)
-  industry('real_estate', 'Real Estate', 'elite',
+  industry('real_estate', 'Real Estate', 'core',
     ['Listing Consultation','Buyer Showing','Open House','Comparative Market Analysis','Closing Coordination'],
     null,
     [
@@ -293,7 +297,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Buyer Workshop', promo_code: 'BUY1', discount_value: 0, message: 'Free first-time buyer workshop next Saturday — RSVP today.', subject: 'First-Time Buyer Workshop — Saturday' },
     ],
   ),
-  industry('personal_assistant', 'Personal Assistant', 'elite',
+  industry('personal_assistant', 'Personal Assistant', 'core',
     ['Calendar Management','Travel Booking','Errand Running','Inbox Triage','Event Planning'],
     null,
     [
@@ -306,7 +310,7 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Event Planning Special', promo_code: 'EVENT250', discount_value: 250, message: 'Full-service event planning — $250 off events booked 60 days out.', subject: 'Plan Your Event — $250 Off' },
     ],
   ),
-  industry('solar', 'Solar', 'elite',
+  industry('solar', 'Solar', 'pro',
     ['Solar Site Survey','PV System Install','Battery Backup Install','Panel Cleaning','Production Audit'],
     [
       { name: '400W Solar Panel', sku: 'PV-400', quantity: 60, min_quantity: 20, unit_cost: 220.0, category: 'PV' },
