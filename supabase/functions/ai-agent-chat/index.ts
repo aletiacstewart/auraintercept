@@ -6533,98 +6533,18 @@ async function executeAgentTool(
     // WARRANTY TOOLS
     // ==========================================
     case 'check_warranty': {
-      console.log('[AI Agent] Checking warranty:', args);
-      
-      let query = supabase
-        .from('warranty_records')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('is_active', true);
-
-      if (args.serial_number) {
-        query = query.eq('serial_number', args.serial_number);
-      }
-      if (args.customer_id) {
-        query = query.or(`customer_email.eq.${args.customer_id},customer_phone.eq.${args.customer_id}`);
-      }
-
-      const { data: warranties, error } = await query.order('warranty_end_date', { ascending: false }).limit(10);
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      const today = new Date();
-      const activeWarranties = warranties?.filter((w: any) => new Date(w.warranty_end_date) >= today) || [];
-      const expiredWarranties = warranties?.filter((w: any) => new Date(w.warranty_end_date) < today) || [];
-
       return {
-        success: true,
-        warranties_found: warranties?.length || 0,
-        active_warranties: activeWarranties.map((w: any) => ({
-          id: w.id,
-          equipment: w.equipment_type,
-          model: w.equipment_model,
-          serial: w.serial_number,
-          coverage: w.coverage_type,
-          expires: w.warranty_end_date,
-          days_remaining: Math.ceil((new Date(w.warranty_end_date).getTime() - today.getTime()) / (24 * 60 * 60 * 1000)),
-        })),
-        expired_warranties: expiredWarranties.length,
-        message: `Found ${activeWarranties.length} active warranties and ${expiredWarranties.length} expired.`,
+        success: false,
+        not_supported: true,
+        message: 'Warranty tracking is not part of this platform. Use Lead Capture & Scoring or Customer notes instead.',
       };
     }
 
     case 'submit_warranty_claim': {
-      console.log('[AI Agent] Submitting warranty claim:', args);
-      
-      // Find the warranty record
-      const { data: warranty } = await supabase
-        .from('warranty_records')
-        .select('*')
-        .eq('company_id', companyId)
-        .or(`id.eq.${args.equipment_id},serial_number.eq.${args.equipment_id}`)
-        .maybeSingle();
-
-      if (!warranty) {
-        return { success: false, error: 'Warranty record not found' };
-      }
-
-      // Check if warranty is still valid
-      if (new Date(warranty.warranty_end_date) < new Date()) {
-        return { 
-          success: false, 
-          error: 'Warranty has expired',
-          expired_on: warranty.warranty_end_date,
-        };
-      }
-
-      // Create warranty claim
-      const { data: claim, error } = await supabase
-        .from('warranty_claims')
-        .insert({
-          warranty_id: warranty.id,
-          company_id: companyId,
-          issue_description: args.issue_description,
-          claim_type: args.claim_type || 'repair',
-          photos: args.photos || [],
-          status: 'submitted',
-        })
-        .select()
-        .single();
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
       return {
-        success: true,
-        claim_id: claim.id,
-        warranty_id: warranty.id,
-        equipment: warranty.equipment_type,
-        coverage: warranty.coverage_type,
-        status: 'submitted',
-        message: `Warranty claim submitted for ${warranty.equipment_type}. Claim ID: ${claim.id.substring(0, 8)}`,
+        success: false,
+        not_supported: true,
+        message: 'Warranty claims are not part of this platform. Open a service ticket or job instead.',
       };
     }
 
