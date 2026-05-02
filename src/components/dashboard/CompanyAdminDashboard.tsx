@@ -180,7 +180,6 @@ export function CompanyAdminDashboard() {
   const hasTierAccess = (requiredTier?: SubscriptionTier) => {
     if (!requiredTier) return true;
     if (isPlatformAdmin) return true;
-    if (inTrial) return true;
     return isAtLeastTier(requiredTier);
   };
 

@@ -97,7 +97,6 @@ export const useSubscription = () => {
 
   // AI Agent access methods
   const canAccessAgent = (agentType: string): boolean => {
-    if (inTrial) return true;
     if (isSpecialistOperative(agentType)) {
       return tierAllowsSpecialists(subscriptionTier as ConfigTier);
     }
@@ -105,17 +104,14 @@ export const useSubscription = () => {
   };
 
   const canAccessConsole = (consoleType: string): boolean => {
-    if (inTrial) return true;
     return tierIncludesConsole(subscriptionTier as ConfigTier, consoleType);
   };
 
   const getAvailableAgents = (): string[] => {
-    if (inTrial) return getAgentsForTier('command');
     return getAgentsForTier(subscriptionTier as ConfigTier);
   };
 
   const getAvailableConsoles = (): string[] => {
-    if (inTrial) return getConsolesForTier('command');
     return getConsolesForTier(subscriptionTier as ConfigTier);
   };
 
@@ -146,7 +142,6 @@ export const useSubscription = () => {
 
   // Feature area access methods (for role permissions)
   const canAccessFeatureArea = (featureField: string): boolean => {
-    if (inTrial) return true;
     return tierIncludesFeature(subscriptionTier as ConfigTier, featureField);
   };
 
