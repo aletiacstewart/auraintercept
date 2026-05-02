@@ -458,8 +458,8 @@ function generateMessages(
       },
       employee: {
         sms: `Job completed. Great work! Customer has been notified.`,
-        emailSubject: `Job Completed - ${serviceType}`,
-        emailHtml: `<p>Job for ${customerName} has been marked as completed. Great work!</p>`,
+        emailSubject: `${noun} Completed - ${serviceType}`,
+        emailHtml: `<p>${noun} for ${customerName} has been marked as completed. Great work!</p>`,
       },
     },
   };
