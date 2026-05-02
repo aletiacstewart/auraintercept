@@ -16,6 +16,8 @@ import { Plus, Receipt, Eye, Send, Check, Search, Trash2, DollarSign, AlertTrian
 import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { PageHeader } from '@/components/ui/page-header';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
