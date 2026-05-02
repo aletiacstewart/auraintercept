@@ -1,67 +1,70 @@
-## Goal
+## Problems Found
 
-Swap the platform-admin identity from `auraintercept@gmail.com` → `ai@auraintercept.ai`, and convert `auraintercept@gmail.com` into the `company_admin` of the Aura Intercept tenant. This preserves all the Google/Gmail/Calendar/3rd-party OAuth integrations already authorized under `auraintercept@gmail.com` (since those are bound to the Google account, not the role).
+You are correct on all three counts. Here is what the code/database actually does today:
 
-## What stays put
+**1. Field Ops & Dispatch show on booking-only verticals (PA, Beauty, Real Estate, Restaurants).**
+`industry_template_packs.console_visibility.field_ops` is already set to `"booking_mode"` for these four industries (verified in DB), and `FieldOpsConsole.tsx` reads it — but **`DashboardLayout.tsx` ignores it**. The "Field Ops" sidebar group is gated only by `requiredTier: 'performance'`, so any Pro/Elite booking-only vertical still sees Technician View + Dispatch View in the sidebar. (Aura Intercept itself is Elite, which is why you see it.)
 
-- GCP project ownership, Google Workspace, Calendar OAuth tokens, Gmail integration → **remain on `auraintercept@gmail.com`** (that's the whole point).
-- `support@`, `sales@` employees → unchanged.
-- Aura Intercept company record (`04c57cbe-358e-4036-a3ad-b777a55f5be0`), tier, subscription, Stripe data → unchanged.
-- Demo account registry (54 demo accounts) → unchanged.
+**2. Social Media console lists every industry in a dropdown.**
+`src/components/social/IndustryTemplateSelector.tsx` renders all 18 entries from the static `INDUSTRY_LIST` regardless of which industry the company selected. It should be locked to the active company's industry pack (with a "switch industry" affordance only for platform_admin).
 
-## Migration steps (executed in safe order)
+**3. Demo accounts have ZERO AI agents activated.**
+DB query confirms: all 18 demo companies have `0` rows in `ai_agent_configs`. The seeder (`seed-demo-accounts-v2`) builds a `TIER_AGENTS[ind.tier]` array on line 433 and uses it to gate sample data, but **never writes those agents to `ai_agent_configs`**. So `personalassistantadmin@demo.com` (Aura Core / starter tier) shows no AI Receptionist, Booking Agent, Follow-Up, etc., even though Core is supposed to ship 8 agents.
+
+---
+
+## Plan
+
+### Step 1 — Activate AI agents on all demo companies
+In `supabase/functions/seed-demo-accounts-v2/index.ts`, after the company is created (around line 470, before the data wipe), upsert one `ai_agent_configs` row per agent in `TIER_AGENTS[ind.tier]` with `is_enabled = true`, plus the industry pack's `extra_operatives` (so Personal Assistant gets `task_triager`, `calendar_optimizer`, `review_responder`; Real Estate gets `listing_writer`, `offer_drafter`, `comp_analyst`, etc.).
+
+Tier → agent counts after fix:
+- Core (4 demos): 8 agents + extras
+- Boost (5 demos): 12 agents + extras
+- Pro (4 demos): 16 agents + extras
+- Elite (5 demos): 24 agents + extras
+
+Then redeploy the function and run `Seed All Demo Accounts` from `/dashboard/demo-seeder`.
+
+### Step 2 — Hide Field Ops nav for booking-only industries
+In `src/components/dashboard/DashboardLayout.tsx`:
+- Read `industryPack.console_visibility?.field_ops` (already loaded via `useIndustryPack` on line 272).
+- When `mode === 'hidden'` OR `mode === 'booking_mode'`, filter out the `'/dashboard/ai-consoles/field-ops'` and `'/dashboard/dispatch-field-ops'` nav items.
+- Also drop the entire "Field Ops" group when both children are filtered out (already handled by the existing `.filter(group => group.items.length > 0)` at line 326).
+- Platform admin still sees everything (already covered by `isPlatformAdmin` short-circuit).
+
+This means Aura Intercept (which is on the SaaS Platform / generic pack) keeps Field Ops, but `personalassistantadmin@demo.com`, `realestateadmin@demo.com`, `beautywellnessadmin@demo.com`, `restaurantsadmin@demo.com` will not see Technician View / Dispatch View.
+
+### Step 3 — Lock the Social Media industry templates to the company's pack
+In `src/components/social/SocialContentWizard.tsx` (and `IndustryTemplateSelector.tsx`):
+- Replace the full `INDUSTRY_LIST` dropdown with the single industry that matches `useIndustryPack().pack.industry_id`.
+- Show it as a static badge ("Templates for: Personal Assistant") instead of a multi-choice menu.
+- Keep the full list visible only when `userRole === 'platform_admin'` (so platform admins can still preview other verticals).
+- If the company's pack has no matching entry in `INDUSTRY_TEMPLATES` (e.g., the generic SaaS Platform fallback), fall back to the closest match by `cluster` and show a small "Generic templates" note.
+
+### Step 4 — Verify with the Personal Assistant demo
+After redeploying the seeder and reseeding:
+- Sign in as `personalassistantadmin@demo.com` / `aidemo*!`
+- Confirm sidebar has NO Field Ops / Dispatch group.
+- Confirm `/dashboard/ai-agents` shows the 8 Core agents activated.
+- Confirm Social Media console only shows Personal Assistant templates (or generic if not mapped), not the 18-industry list.
+- Spot-check Elite (`hvacadmin@demo.com`) shows 24 agents and full Field Ops; spot-check Beauty (`beautywellnessadmin@demo.com`) shows no Field Ops and the chair-grid console.
+
+---
+
+## Files to change
 
 ```text
-Step 0 → Reset password for ai@auraintercept.ai to `aiagent*!`
-         (matches existing tenant-account password standard).
-         Done via service-role admin API in a one-shot edge function.
-
-Step 1 → PROMOTE ai@auraintercept.ai
-         INSERT user_roles (ai@.id, 'platform_admin')
-         UPDATE profiles SET company_id = NULL WHERE id = ai@.id
-         DELETE user_roles WHERE user_id = ai@.id AND role = 'company_admin'
-
-Step 2 → DEMOTE auraintercept@gmail.com
-         INSERT user_roles (gmail.id, 'company_admin')
-         (profiles.company_id already = Aura Intercept — no change needed)
-         DELETE user_roles WHERE user_id = gmail.id AND role = 'platform_admin'
+supabase/functions/seed-demo-accounts-v2/index.ts   (insert ai_agent_configs rows)
+src/components/dashboard/DashboardLayout.tsx        (filter Field Ops by console_visibility)
+src/components/social/IndustryTemplateSelector.tsx  (lock to company industry)
+src/components/social/SocialContentWizard.tsx       (pass company industry, hide selector for non-admins)
+.lovable/memory/platform-operations/demo-account-registry.md  (note that seeder now activates agents)
 ```
 
-All as one SQL migration so it's atomic.
-
-## Files to update
-
-### Database
-- **New migration** — performs Steps 1 & 2 above (atomic role swap).
-
-### Edge function (one-shot password reset)
-- `supabase/functions/seed-aura-intercept/index.ts` — flip the role table:
-  - `auraintercept@gmail.com` → `company_admin` (added to seed list, password `aiagent*!`)
-  - `ai@auraintercept.ai` → excluded (treated like the platform admin used to be)
-  - On rerun, idempotently resets `ai@auraintercept.ai` password to `aiagent*!` before promoting (Step 0).
-
-### UI
-- `src/pages/DemoAccountSeeder.tsx`
-  - Display copy: `auraintercept@gmail.com · company_admin` (was `ai@auraintercept.ai · company_admin`)
-  - Footer note: "Does NOT touch `ai@auraintercept.ai` (your platform_admin)."
-
-### Memory updates
-- `mem://platform-operations/aura-intercept-tenant.md` — swap the email/role table.
-- `mem://auth/admin-identity` — clarify the split:
-  - **Lovable platform_admin** (god-mode in this app) = `ai@auraintercept.ai`
-  - **GCP / Google Workspace owner** (OAuth integrations, Calendar, Gmail) = `auraintercept@gmail.com`
-- Index update reflecting the new admin identity rule.
-
-## After migration
-
-1. Sign out everywhere.
-2. Sign in as `ai@auraintercept.ai` (password `aiagent*!`) — verify god-mode access at `/dashboard/demo-seeder`, platform-admin gated routes (`/architecture`, `/cyber-sentry-mockup`, etc.).
-3. Sign in as `auraintercept@gmail.com` — verify it now lands in the Aura Intercept tenant as company admin and that all Google Calendar / Gmail / OAuth integrations show as connected without re-auth.
+No DB schema changes — everything uses existing `ai_agent_configs`, `industry_template_packs.console_visibility`, and `useIndustryPack`.
 
 ## Out of scope
 
-- Re-authorizing any 3rd-party integrations (the swap is specifically designed to avoid this).
-- Touching `support@` / `sales@` employees.
-- Touching demo accounts.
-
-Reply **approve** to execute the swap.
+- Changing the canonical 4-tier names (`starter/connect/performance/command`) — separate cleanup, not needed to fix the symptoms above.
+- Per-industry overrides for non-demo customer accounts — they already get the right `console_visibility`; only the sidebar filter and the social selector were ignoring it.
