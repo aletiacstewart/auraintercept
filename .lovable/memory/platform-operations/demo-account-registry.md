@@ -1,10 +1,10 @@
 ---
-name: Demo Account Registry v3
-description: 54 demo accounts (18 industries × admin/employee/customer), one per active industry pack with tier rotation. Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
+name: Demo Account Registry v4
+description: 54 demo accounts (18 industries × admin/employee/customer) with industry-curated tier mapping (4/5/4/5). Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
 type: feature
 ---
 
-# Demo Account Registry v3 — Per-Industry
+# Demo Account Registry v4 — Industry-Curated Tiers
 
 The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI) creates **18 demo companies** — one per active row in `industry_template_packs` — with **3 user accounts each (admin / employee / customer)** for a total of **54 demo accounts**. Universal password: `aidemo*!`.
 
@@ -18,14 +18,16 @@ The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI)
 
 Examples: `hvacadmin@demo.com`, `realestateemployee@demo.com`, `personalassistantcustomer@demo.com`.
 
-## Tier rotation (across 18 industries)
+## Tier mapping (curated per industry — not rotation)
 
 ```
-Core    : hvac, electrical, handyman, auto_care, appliance_repair          (5)
-Boost   : plumbing, pool_spa, pest_control, landscape, fencing             (5)
-Pro     : roofing, beauty_wellness, restaurants, security_systems          (4)
-Elite   : real_estate, personal_assistant, solar, construction             (4)
+CORE  (4): beauty_wellness, restaurants, real_estate, personal_assistant
+BOOST (5): handyman, auto_care, appliance_repair, pest_control, fencing
+PRO   (4): security_systems, pool_spa, landscape, solar
+ELITE (5): hvac, electrical, plumbing, roofing, construction
 ```
+
+Each industry sits at the tier that best showcases its real console + agent surface.
 
 ## Per-company seed includes
 
@@ -36,7 +38,7 @@ Elite   : real_estate, personal_assistant, solar, construction             (4)
 - 2 marketing campaigns with industry-tailored copy + promo codes
 - 3 blog posts (2 published, 1 draft) with industry-specific titles & content
 - 3 quotes + 3 invoices (Pro/Elite tiers only)
-- Industry-specific inventory items (HVAC, Plumbing, Roofing, Solar, Construction, etc.) — skipped for service-only verticals (Real Estate, Personal Assistant, Restaurants)
+- Industry-specific inventory items where parts data exists — skipped for service-only verticals (Real Estate, Personal Assistant, Restaurants)
 - Mon–Fri 8–17 business hours
 - Roles + employee job assignment (`technician`) + customer-company association
 
@@ -45,6 +47,7 @@ Elite   : real_estate, personal_assistant, solar, construction             (4)
 - Re-running is idempotent: companies upsert by slug, demo data wiped per-company before reinsert, user passwords reset.
 - First run also auto-deletes stale tier-based demo users from the previous schema (`{tier}company@demo.com`, etc.).
 - Requires `platform_admin` JWT on the edge function call.
+- **Demo seeder NEVER touches non-demo companies.** See `mem://architecture/signup-vs-demo-isolation`.
 
 ## How to use
 
