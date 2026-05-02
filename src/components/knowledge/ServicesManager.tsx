@@ -80,7 +80,6 @@ interface Service {
   sort_order: number | null;
   category: string | null;
   // CRM compatibility fields
-  crm_product_id: string | null;
   sync_to_crm: boolean;
   last_synced_at: string | null;
 }
