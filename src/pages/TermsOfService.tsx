@@ -458,7 +458,7 @@ export default function TermsOfService() {
               orders, or regulations; labor disputes; cyberattacks; denial-of-service attacks; internet, telecommunications, or 
               power outages; failures, outages, deprecations, or policy changes by hosting providers, AI providers, telephony 
               providers, payment processors, email providers, or social media platforms (including without limitation Lovable Cloud, 
-              Supabase, OpenAI, Google, ElevenLabs, SignalWire, Stripe, Resend, Tavily, Meta, TikTok, LinkedIn, X, or YouTube); 
+              OpenAI, Google, ElevenLabs, SignalWire, Stripe, Resend, Tavily, Meta, TikTok, LinkedIn, X, or YouTube); 
               or any other event beyond our reasonable control.
             </p>
           </section>
