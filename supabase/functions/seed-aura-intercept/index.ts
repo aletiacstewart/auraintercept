@@ -16,7 +16,9 @@ type Persona = {
 };
 
 const PERSONAS: Persona[] = [
-  { email: 'ai@auraintercept.ai',      fullName: 'Aura Intercept Admin',   role: 'company_admin', jobs: [] },
+  // auraintercept@gmail.com is now the company_admin of Aura Intercept (preserves Google/OAuth integrations).
+  // ai@auraintercept.ai is the platform_admin and is intentionally NOT seeded here.
+  { email: 'auraintercept@gmail.com',  fullName: 'Aura Intercept Admin',   role: 'company_admin', jobs: [] },
   { email: 'support@auraintercept.ai', fullName: 'Aura Intercept Support', role: 'employee',      jobs: ['technician'] },
   { email: 'sales@auraintercept.ai',   fullName: 'Aura Intercept Sales',   role: 'employee',      jobs: ['technician'] },
 ];
