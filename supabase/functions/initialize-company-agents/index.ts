@@ -99,12 +99,19 @@ Deno.serve(async (req) => {
       if (c.industry_vertical) {
         const { data: pack } = await admin
           .from('industry_template_packs')
-          .select('extra_operatives')
+          .select('extra_operatives, min_tier_per_extra')
           .eq('industry_id', c.industry_vertical)
           .eq('is_active', true)
           .maybeSingle();
         if (Array.isArray(pack?.extra_operatives)) {
-          extras = pack!.extra_operatives as string[];
+          const tierRank: Record<string, number> = { starter: 1, connect: 2, performance: 3, command: 4 };
+          const myRank = tierRank[tier] ?? 1;
+          const minMap = (pack?.min_tier_per_extra ?? {}) as Record<string, string>;
+          extras = (pack!.extra_operatives as string[]).filter((op) => {
+            const required = minMap[op];
+            if (!required) return true; // no min => available to whatever tier the pack ships on
+            return myRank >= (tierRank[required] ?? 3);
+          });
         }
       }
 
