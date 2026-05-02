@@ -52,8 +52,9 @@ export default function Help() {
   const isPlatformAdmin = userRole === 'platform_admin';
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Effective tier for display: trial users see all, others see their tier
-  const effectiveTier: SubscriptionTier = inTrial || isPlatformAdmin ? 'command' : (subscriptionTier || 'starter');
+  // Effective tier for display: platform admin sees all; everyone else (including
+  // trial users) sees the help content for their selected plan.
+  const effectiveTier: SubscriptionTier = isPlatformAdmin ? 'command' : (subscriptionTier || 'starter');
   
   // Get available consoles based on tier
   const availableConsoles = useMemo(() => {
