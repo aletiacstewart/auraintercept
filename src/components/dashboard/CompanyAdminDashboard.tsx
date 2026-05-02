@@ -26,7 +26,7 @@ import { DashboardViewToggle } from './DashboardViewToggle';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
-import { relabelKpi } from '@/lib/industryKpiLabels';
+import { relabelKpi, getSimpleModeKpis } from '@/lib/industryKpiLabels';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -200,19 +200,17 @@ export function CompanyAdminDashboard() {
     { title: 'Website Traffic', value: stats?.totalPageViews ?? 0, icon: Globe, description: `${stats?.totalVisitors ?? 0} visitors, ${stats?.totalChatInteractions ?? 0} chats`, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics', requiredTier: 'multi_track' as SubscriptionTier },
   ].map(card => ({ ...card, title: relabelKpi(pack, card.title) }));
 
-  // Simple mode: show only the 5 most actionable KPIs an SMB owner cares about daily.
-  // Pro mode: show every tier-allowed stat card.
-  // Compare against the relabeled titles so Simple mode still works per industry.
-  const SIMPLE_TITLES = new Set([
-    relabelKpi(pack, 'Appointments'),
-    relabelKpi(pack, 'Open Quotes'),
-    relabelKpi(pack, 'Outstanding'),
-    relabelKpi(pack, 'Revenue (Month)'),
-    relabelKpi(pack, 'Leads'),
-  ]);
+  // Phase 6 task 1: industry-aware Simple Mode KPI selection.
+  // The list and ORDER come from getSimpleModeKpis(pack) so e.g. real estate
+  // surfaces "Showings, Active Listings, Buyer Leads…" while restaurants
+  // surface "Reservations, Guests, Stock On Hand…".
+  const simpleCanonicalTitles = getSimpleModeKpis(pack);
   const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
   const statCards = isSimple
-    ? tierFilteredCards.filter(c => SIMPLE_TITLES.has(c.title)).slice(0, 5)
+    ? simpleCanonicalTitles
+        .map(t => tierFilteredCards.find(c => c.title === relabelKpi(pack, t)))
+        .filter((c): c is typeof tierFilteredCards[number] => Boolean(c))
+        .slice(0, 5)
     : tierFilteredCards;
 
   const allQuickActions = [

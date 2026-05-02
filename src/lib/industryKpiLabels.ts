@@ -49,3 +49,40 @@ export function relabelKpi(pack: IndustryPack, title: string): string {
   const map = getKpiLabelMap(pack) as Record<string, string>;
   return map[title] ?? title;
 }
+/**
+ * Canonical KPI titles to surface in Simple Mode (top-5 KPI strip).
+ * Returned in display order. Always uses canonical (pre-relabel) titles —
+ * the dashboard relabels them via `relabelKpi` before matching.
+ */
+export type CanonicalKpiTitle =
+  | 'Customers' | 'Leads' | 'Appointments' | 'Open Quotes'
+  | 'Outstanding' | 'Revenue (Month)' | 'Inventory' | 'Employees'
+  | 'Messages' | 'Campaigns' | 'Social Posts' | 'Blog Posts'
+  | 'Website Traffic';
+
+const SIMPLE_KPI_BY_CLUSTER: Record<IndustryPack['cluster'], CanonicalKpiTitle[]> = {
+  trades:  ['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Leads'],
+  outdoor: ['Appointments', 'Customers', 'Open Quotes', 'Revenue (Month)', 'Leads'],
+  repair:  ['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Customers'],
+  booking: ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Leads'],
+};
+
+const SIMPLE_KPI_BY_INDUSTRY: Record<string, CanonicalKpiTitle[]> = {
+  real_estate:        ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Customers'],
+  beauty_wellness:    ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Employees'],
+  restaurants:        ['Appointments', 'Customers', 'Revenue (Month)', 'Inventory', 'Messages'],
+  personal_assistant: ['Appointments', 'Customers', 'Messages', 'Revenue (Month)', 'Leads'],
+  auto_care:          ['Appointments', 'Open Quotes', 'Outstanding', 'Inventory', 'Revenue (Month)'],
+  appliance_repair:   ['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Customers'],
+  landscape:          ['Appointments', 'Customers', 'Open Quotes', 'Revenue (Month)', 'Outstanding'],
+  pest_control:       ['Appointments', 'Customers', 'Revenue (Month)', 'Open Quotes', 'Outstanding'],
+  pool_spa:           ['Appointments', 'Customers', 'Revenue (Month)', 'Open Quotes', 'Outstanding'],
+  roofing:            ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Outstanding'],
+  solar:              ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Customers'],
+};
+
+export function getSimpleModeKpis(pack: IndustryPack): CanonicalKpiTitle[] {
+  return SIMPLE_KPI_BY_INDUSTRY[pack.industry_id]
+      ?? SIMPLE_KPI_BY_CLUSTER[pack.cluster]
+      ?? SIMPLE_KPI_BY_CLUSTER.trades;
+}

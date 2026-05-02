@@ -8,11 +8,15 @@ import { LogOut, Download } from 'lucide-react';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import logo from '@/assets/aura-intercept-logo.png';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { useCustomerPrimaryCompany } from '@/hooks/useCustomerPrimaryCompany';
+import { PortalQuickActions } from '@/components/customer-portal/PortalQuickActions';
+import { toast } from 'sonner';
 
 export default function CustomerPortalHome() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { isInstallable, isInstalled, promptInstall } = usePWAInstall();
+  const { companyId } = useCustomerPrimaryCompany();
 
   // Redirect if not logged in or not a customer
   useEffect(() => {
@@ -96,6 +100,19 @@ export default function CustomerPortalHome() {
           </div>
         </div>
       )}
+
+      {/* Industry-aware quick actions strip (Phase 6 task 3). */}
+      <div className="max-w-4xl mx-auto w-full">
+        <PortalQuickActions
+          companyId={companyId}
+          onAction={(prompt) => {
+            try { navigator.clipboard?.writeText(prompt); } catch { /* noop */ }
+            toast.success('Suggested message copied', {
+              description: 'Paste it into the chat below to send.',
+            });
+          }}
+        />
+      </div>
 
       {/* The same AIAgentConsole used in the dashboard */}
       <main className="flex-1 max-w-4xl mx-auto w-full">

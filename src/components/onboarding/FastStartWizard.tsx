@@ -216,9 +216,19 @@ export function FastStartWizard() {
         await supabase.from('services').upsert(rows, { onConflict: 'company_id,name', ignoreDuplicates: false });
       }
 
-      // 3. Business hours
+      // 3. Business hours — prefer imported KB; otherwise prefill from the
+      // industry template (Phase 6 task 4). Skip entirely if neither is set.
+      const parseRange = (range: string): { open: string; close: string; closed: boolean } | null => {
+        const r = range?.trim();
+        if (!r || /closed|on-call|monitoring/i.test(r)) return { open: '', close: '', closed: true };
+        const m = r.match(/(\d{1,2}):?(\d{2})?\s*[-–]\s*(\d{1,2}):?(\d{2})?/);
+        if (!m) return null;
+        const pad = (h: string, mm?: string) => `${h.padStart(2, '0')}:${(mm ?? '00').padStart(2, '0')}`;
+        return { open: pad(m[1], m[2]), close: pad(m[3], m[4]), closed: false };
+      };
+      let hourRows: any[] = [];
       if (kb?.business_hours?.length) {
-        const rows = kb.business_hours
+        hourRows = kb.business_hours
           .filter((h) => DAY_INDEX[h.day?.toLowerCase()] !== undefined)
           .map((h) => ({
             company_id: companyId,
@@ -228,9 +238,23 @@ export function FastStartWizard() {
             close_time: h.is_closed ? null : (h.close || '17:00'),
             hour_type: 'regular',
           }));
-        if (rows.length) {
-          await supabase.from('business_hours').upsert(rows as any, { onConflict: 'company_id,day_of_week,hour_type' });
-        }
+      } else if (template?.hours) {
+        const wk = parseRange(template.hours.weekday);
+        const we = parseRange(template.hours.weekend);
+        const make = (d: number, r: typeof wk) => r ? ({
+          company_id: companyId,
+          day_of_week: d,
+          is_closed: r.closed,
+          open_time: r.closed ? null : r.open,
+          close_time: r.closed ? null : r.close,
+          hour_type: 'regular',
+        }) : null;
+        hourRows = [1,2,3,4,5].map(d => make(d, wk))
+          .concat([0, 6].map(d => make(d, we)))
+          .filter(Boolean);
+      }
+      if (hourRows.length) {
+        await supabase.from('business_hours').upsert(hourRows as any, { onConflict: 'company_id,day_of_week,hour_type' });
       }
 
       // 4. FAQs
