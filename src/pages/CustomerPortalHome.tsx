@@ -10,6 +10,8 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useCustomerPrimaryCompany } from '@/hooks/useCustomerPrimaryCompany';
 import { PortalQuickActions } from '@/components/customer-portal/PortalQuickActions';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getPortalCopy } from '@/lib/industryPortalCopy';
 import { toast } from 'sonner';
 
 export default function CustomerPortalHome() {
@@ -17,6 +19,8 @@ export default function CustomerPortalHome() {
   const navigate = useNavigate();
   const { isInstallable, isInstalled, promptInstall } = usePWAInstall();
   const { companyId } = useCustomerPrimaryCompany();
+  const { pack } = useIndustryPack(companyId);
+  const portalCopy = getPortalCopy(pack);
 
   // Redirect if not logged in or not a customer
   useEffect(() => {
@@ -64,7 +68,7 @@ export default function CustomerPortalHome() {
             <div className="w-8 h-8 rounded-lg overflow-hidden">
               <img src={logo} alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
+            <span className="text-sm font-semibold text-card-foreground">{portalCopy.portalHeaderLabel}</span>
           </div>
           <div className="flex items-center gap-2">
             {isInstallable && !isInstalled && (
@@ -103,6 +107,9 @@ export default function CustomerPortalHome() {
 
       {/* Industry-aware quick actions strip (Phase 6 task 3). */}
       <div className="max-w-4xl mx-auto w-full">
+        <div className="px-4 pt-3">
+          <p className="text-xs text-muted-foreground">{portalCopy.welcomeSubtitle}</p>
+        </div>
         <PortalQuickActions
           companyId={companyId}
           onAction={(prompt) => {
