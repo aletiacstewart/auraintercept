@@ -940,9 +940,9 @@ export default function Index() {
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">3 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents + Industry Specialists</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (bundled)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers (Field Ops, Social, Analytics included)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Triage + Booking + Follow-Up + Review</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Creative Content + Web Presence</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">10 Employee Accounts</span></div>
@@ -953,7 +953,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-teal-400/70 mt-2 text-center">Requires: Resend + ElevenLabs (limited) + SignalWire (limited)</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms (voice, SMS, email, chat) bundled — no extra fees</p>
               </CardContent>
             </Card>
 
@@ -972,11 +972,11 @@ export default function Index() {
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents + Industry Specialists</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (bundled)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media Console</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media + Analytics</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=connect')}>
@@ -985,7 +985,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: Stripe + SignalWire + ElevenLabs + Calendar</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · Stripe + Calendar optional</p>
               </CardContent>
             </Card>
 
@@ -1004,10 +1004,10 @@ export default function Index() {
                 <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">16 Smart AI Agents with social media, campaigns, and industry specialists.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Campaign + Outreach + Social</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-purple-400">Industry Specialist Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents + Industry Specialists</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers (Business Mgmt unlocked)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Quoting + Invoicing + Inventory</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Insights + Performance Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=performance')}>
@@ -1016,7 +1016,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-purple-400/70 mt-2 text-center">All integrations required</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · Stripe + Calendar optional</p>
               </CardContent>
             </Card>
 
@@ -1036,9 +1036,9 @@ export default function Index() {
                 <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers + AI Hub</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers + AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All Industry Specialists Included</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Unlimited Employees</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>
                 </div>
                 <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/auth?mode=company&tab=signup&tier=command')}>
                   Start Free Trial
@@ -1046,7 +1046,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-amber-400/70 mt-2 text-center">All integrations + advanced compliance</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms + advanced compliance bundled</p>
               </CardContent>
             </Card>
           </div>
@@ -1133,9 +1133,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Email Notifications</p>
-                <p className="text-[10px] text-white font-medium">Free: 3,000 emails/mo</p>
-                <p className="text-[10px] text-white">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-[10px] text-white">Required for: All tiers</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1143,10 +1142,9 @@ export default function Index() {
                   <Mic className="w-3.5 h-3.5 text-purple-400" />
                   <span className="font-semibold text-xs text-purple-400">ElevenLabs</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">AI Voice Synthesis (Voice features only)</p>
-                <p className="text-[10px] text-white font-medium">Free: 10,000 chars/mo</p>
-                <p className="text-[10px] text-white">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1155,9 +1153,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-green-400">SignalWire</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-white font-medium">Pay-as-you-go (40% cheaper SMS)</p>
-                <p className="text-[10px] text-white">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no carrier or per-message fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1165,10 +1162,9 @@ export default function Index() {
                   <Shield className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="font-semibold text-xs text-cyan-400">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration (SignalWire)</p>
-                <p className="text-[10px] text-white font-medium">One-time: $4 Brand + $15 Campaign</p>
-                <p className="text-[10px] text-white">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
-                <p className="text-[10px] text-white">Required for: All SMS features • Prevents carrier filtering</p>
+                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Handled & paid by Aura Intercept</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
