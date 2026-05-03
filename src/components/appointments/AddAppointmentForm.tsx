@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
-import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
+import { resolveFormSchema, validateIntake, getAppointmentRules } from '@/lib/industryFormSchemas';
 import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { getNavLabels } from '@/lib/industryNavLabels';
@@ -38,17 +38,25 @@ interface ServiceOption {
   duration_minutes: number;
 }
 
-// Generate time slots from 8 AM to 6 PM
-const TIME_SLOTS = Array.from({ length: 21 }, (_, i) => {
-  const hour = Math.floor(i / 2) + 8;
-  const minute = i % 2 === 0 ? '00' : '30';
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  return {
-    value: `${hour.toString().padStart(2, '0')}:${minute}`,
-    label: `${displayHour}:${minute} ${period}`
-  };
-});
+// Generate time slots from a business-hours window (defaults: 8AM-6PM, 30m).
+function buildTimeSlots(startHHMM = '08:00', endHHMM = '18:00', intervalMin = 30) {
+  const [sh, sm] = startHHMM.split(':').map(Number);
+  const [eh, em] = endHHMM.split(':').map(Number);
+  const start = sh * 60 + sm;
+  const end = eh * 60 + em;
+  const out: { value: string; label: string }[] = [];
+  for (let m = start; m <= end - intervalMin; m += intervalMin) {
+    const hour = Math.floor(m / 60);
+    const minute = m % 60;
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    out.push({
+      value: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+      label: `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`,
+    });
+  }
+  return out;
+}
 
 export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ 
   onSuccess,
@@ -57,6 +65,17 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack();
+  const rules = React.useMemo(() => getAppointmentRules(pack), [pack]);
+  const TIME_SLOTS = React.useMemo(
+    () => buildTimeSlots(
+      rules.business_hours?.start ?? '08:00',
+      rules.business_hours?.end ?? '18:00',
+      rules.business_hours?.interval_minutes ?? 30,
+    ),
+    [rules.business_hours],
+  );
+  const reminderChannels = (rules.reminder_channels ?? ['sms', 'email', 'call']) as Array<'sms'|'email'|'call'>;
+  const showAddress = rules.address_required !== false; // default true unless pack says otherwise
   
   const [selectedService, setSelectedService] = useState<string>('');
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -66,7 +85,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const [duration, setDuration] = useState<number>(60);
+  const [duration, setDuration] = useState<number>(rules.default_duration_minutes ?? 60);
   const [assignedTechnician, setAssignedTechnician] = useState<string>('');
   const [smsOptIn, setSmsOptIn] = useState(true);
   const [emailOptIn, setEmailOptIn] = useState(true);
