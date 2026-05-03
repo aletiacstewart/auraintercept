@@ -11,6 +11,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_LIST } from '@/lib/industryTemplates';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import {
+  CustomIndustryWizard,
+  EMPTY_CUSTOM_INDUSTRY,
+  buildIndustryConfig,
+  type CustomIndustryConfig,
+} from '@/components/onboarding/CustomIndustryWizard';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, AlertTriangle } from 'lucide-react';
@@ -67,10 +73,7 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
-  // For "Other / Custom" industry: lets the customer describe what they do
-  // so the workspace resolver can stamp it onto industry_config.description
-  // and the AI agents can adapt their language at runtime.
-  const [customIndustryDescription, setCustomIndustryDescription] = useState('');
+  const [customIndustry, setCustomIndustry] = useState<CustomIndustryConfig>(EMPTY_CUSTOM_INDUSTRY);
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
@@ -321,8 +324,8 @@ export default function Auth() {
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
           industry_config:
-            canonicalIndustry === 'other' && customIndustryDescription.trim()
-              ? { description: customIndustryDescription.trim() }
+            canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
+              ? (buildIndustryConfig(customIndustry) as never)
               : null,
         })
         .select()
@@ -1265,18 +1268,7 @@ export default function Auth() {
                             </div>
 
                             {businessIndustry === 'other' && (
-                              <div className="space-y-1">
-                                <Label className="text-xs">Describe Your Business</Label>
-                                <p className="text-[11px] text-muted-foreground">
-                                  In one sentence — what do you sell or schedule, and who is your customer? Aura uses this to tailor your console, agents, and scripts.
-                                </p>
-                                <Input
-                                  placeholder="e.g. We run a mobile dog-grooming service for busy pet owners."
-                                  value={customIndustryDescription}
-                                  onChange={(e) => setCustomIndustryDescription(e.target.value)}
-                                  className="text-xs h-8"
-                                />
-                              </div>
+                              <CustomIndustryWizard value={customIndustry} onChange={setCustomIndustry} />
                             )}
 
                             {/* Compliance documents upload (combined) */}
