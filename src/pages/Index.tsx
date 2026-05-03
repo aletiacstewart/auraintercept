@@ -1133,9 +1133,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Email Notifications</p>
-                <p className="text-[10px] text-white font-medium">Free: 3,000 emails/mo</p>
-                <p className="text-[10px] text-white">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-[10px] text-white">Required for: All tiers</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1143,10 +1142,9 @@ export default function Index() {
                   <Mic className="w-3.5 h-3.5 text-purple-400" />
                   <span className="font-semibold text-xs text-purple-400">ElevenLabs</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">AI Voice Synthesis (Voice features only)</p>
-                <p className="text-[10px] text-white font-medium">Free: 10,000 chars/mo</p>
-                <p className="text-[10px] text-white">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1155,9 +1153,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-green-400">SignalWire</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-white font-medium">Pay-as-you-go (40% cheaper SMS)</p>
-                <p className="text-[10px] text-white">$2/number • $0.004/SMS • $0.01/min calls</p>
-                <p className="text-[10px] text-white">Limited for: Core • Required for: Boost, Pro, Elite</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no carrier or per-message fees</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1165,10 +1162,9 @@ export default function Index() {
                   <Shield className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="font-semibold text-xs text-cyan-400">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration (SignalWire)</p>
-                <p className="text-[10px] text-white font-medium">One-time: $4 Brand + $15 Campaign</p>
-                <p className="text-[10px] text-white">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
-                <p className="text-[10px] text-white">Required for: All SMS features • Prevents carrier filtering</p>
+                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Handled & paid by Aura Intercept</p>
+                <p className="text-[10px] text-white">Included on: All tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
