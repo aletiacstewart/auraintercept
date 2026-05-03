@@ -385,7 +385,7 @@ export default function Help() {
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
-                        <span>Perfect for field technicians on the go</span>
+                        <span>Perfect for {teamMembersLower} on the go</span>
                       </li>
                     </ul>
                   </div>
@@ -575,7 +575,7 @@ export default function Help() {
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">4</Badge>
                         <div>
                           <p className="font-medium text-card-foreground">Access Your Dashboard</p>
-                          <p className="text-sm text-card-foreground/70">Once registered, you'll be redirected to your dashboard. Technicians go to the mobile-optimized Field Ops dashboard.</p>
+                          <p className="text-sm text-card-foreground/70">Once registered, you'll be redirected to your dashboard. {teamMember}s go to the mobile-optimized {navLabels.techView}.</p>
                         </div>
                       </div>
                     </div>
@@ -585,7 +585,7 @@ export default function Help() {
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                       <Shield className="w-5 h-5 text-green-500" />
-                      Field Technician Dashboard Features
+                      {teamMember} Dashboard Features
                     </h3>
                     <div className="ml-7 space-y-2 text-sm">
                       <p className="text-card-foreground/70">As a technician, your mobile-optimized dashboard includes:</p>
