@@ -86,3 +86,56 @@ export function getSimpleModeKpis(pack: IndustryPack): CanonicalKpiTitle[] {
       ?? SIMPLE_KPI_BY_CLUSTER[pack.cluster]
       ?? SIMPLE_KPI_BY_CLUSTER.trades;
 }
+
+/**
+ * Maps blueprint KPI slugs (stored on `industry_blueprints.default_kpis`)
+ * to the canonical dashboard tile titles used by `CompanyAdminDashboard`.
+ * Anything unmapped falls back to the cluster default.
+ */
+const BLUEPRINT_KPI_TO_CANONICAL: Record<string, CanonicalKpiTitle> = {
+  jobs_today: 'Appointments',
+  appts_today: 'Appointments',
+  showings_week: 'Appointments',
+  bays_in_use: 'Appointments',
+  chairs_in_use: 'Appointments',
+  installs_today: 'Appointments',
+  installs_scheduled: 'Appointments',
+  estimates_open: 'Open Quotes',
+  proposals_sent: 'Open Quotes',
+  quotes_pending: 'Open Quotes',
+  listings_active: 'Open Quotes',
+  permits_open: 'Open Quotes',
+  contracts_active: 'Customers',
+  recurring_active: 'Customers',
+  monitoring_active: 'Customers',
+  leads_new: 'Leads',
+  emergency_calls: 'Messages',
+  link_clicks: 'Messages',
+  msgs_today: 'Messages',
+  calls_today: 'Messages',
+  messages_today: 'Messages',
+  revenue_today: 'Revenue (Month)',
+  revenue_mtd: 'Revenue (Month)',
+  records_today: 'Customers',
+  parts_pending: 'Inventory',
+  rebooking_pct: 'Customers',
+  first_time_fix_pct: 'Outstanding',
+  avg_response_min: 'Outstanding',
+  route_efficiency: 'Outstanding',
+  projects_active: 'Open Quotes',
+  tasks_open: 'Open Quotes',
+};
+
+export function blueprintKpisToCanonical(slugs: string[] | undefined | null): CanonicalKpiTitle[] {
+  if (!slugs || slugs.length === 0) return [];
+  const out: CanonicalKpiTitle[] = [];
+  const seen = new Set<string>();
+  for (const s of slugs) {
+    const t = BLUEPRINT_KPI_TO_CANONICAL[s];
+    if (t && !seen.has(t)) {
+      seen.add(t);
+      out.push(t);
+    }
+  }
+  return out;
+}
