@@ -1258,9 +1258,11 @@ export default function Auth() {
                                     <SelectValue placeholder="Select industry…" />
                                   </SelectTrigger>
                                   <SelectContent className="max-h-48">
-                                    {INDUSTRY_LIST.map(ind => (
-                                      <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
-                                    ))}
+                                    {[...INDUSTRY_LIST]
+                                      .sort((a, b) => a.label.localeCompare(b.label))
+                                      .map(ind => (
+                                        <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
+                                      ))}
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
