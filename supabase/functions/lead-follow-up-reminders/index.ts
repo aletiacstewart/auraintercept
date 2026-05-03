@@ -104,8 +104,11 @@ serve(async (req) => {
                 .single();
 
               if (settings?.signalwire_project_id && settings?.signalwire_api_token && settings?.signalwire_phone_number && settings?.signalwire_space_url) {
-                const message = followUp.message_template || 
-                  `Hi ${leadName}, this is ${companyName} following up on your inquiry. How can we help you today?`;
+                const message = applyTerminology(
+                  followUp.message_template ||
+                    `Hi ${leadName}, this is ${companyName} following up on your inquiry. How can we help you today?`,
+                  pack
+                );
 
                 try {
                   const signalwireResponse = await fetch(
@@ -147,8 +150,11 @@ serve(async (req) => {
               
               if (resendApiKey) {
                 const subject = `Following up on your inquiry - ${companyName}`;
-                const message = followUp.message_template || 
-                  `Hello ${leadName},\n\nI wanted to follow up on your recent inquiry with ${companyName}. Please let me know if you have any questions or would like to schedule a service.\n\nBest regards,\n${companyName}`;
+                const message = applyTerminology(
+                  followUp.message_template ||
+                    `Hello ${leadName},\n\nI wanted to follow up on your recent inquiry with ${companyName}. Please let me know if you have any questions or would like to schedule a {service}.\n\nBest regards,\n${companyName}`,
+                  pack
+                );
 
                 try {
                   const emailResponse = await fetch('https://api.resend.com/emails', {
