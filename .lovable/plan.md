@@ -1,54 +1,120 @@
-# Phase 2 — Auth, Onboarding, Trial, Roles
+# Industry-Adaptive Workspace Refactor
 
-## Findings
+Goal: Make Aura Intercept truly multi-tenant and industry-adaptive. Industry choice (at signup) automatically configures dashboards, consoles, AI agents, KPIs, workflows, and prompts — no manual toggling. Plan tier controls capacity (how many industries, how much automation), not which industry features are available.
 
-### Critical (data loss / compliance gap)
-1. **Compliance documents are silently discarded.** `src/pages/Auth.tsx` collects `complianceFiles` (DBA, EIN, LLC/Inc) for FCC 10DLC registration but never uploads them anywhere. After signup the files vanish — there is no Storage upload, no DB row, no edge-function call. Compliance promise on the signup screen is broken.
-2. **No `compliance-docs` storage bucket exists.** Storage currently has 8 buckets, none for tenant onboarding compliance.
+## 1. Database Schema
 
-### High (branding / billing model drift)
-3. **Trial reminder emails violate "bundled Resend" rule.** `supabase/functions/trial-reminders/index.ts` reads `tenant_integrations.resend_api_key` per-company and skips companies without a key. Per memory, Resend is bundled into the tier — the platform key (`RESEND_API_KEY` env) must be used so every trialing company gets reminders.
-4. **Wrong sender domain.** Trial reminders send from `noreply@aura-intercept.com`; the canonical domain is `auraintercept.ai`. `lead-follow-up-reminders` falls back to `noreply@resend.dev`.
+Add to `companies` (or `business_profiles`):
+- `industry_type` (text) — primary industry slug (e.g. `hvac`, `real_estate`, `saas`, `restaurant`, `wellness`, `legal`, `other`)
+- `secondary_industries` (text[]) — additional industries (gated by plan capacity)
+- `operating_model` (text) — derived: `field_dispatch`, `appointment_booking`, `pipeline_sales`, `receptionist_only`, `custom`
+- `industry_config` (jsonb) — per-tenant overrides (KPIs, prompts, custom fields, workflows)
+- `supported_modules` (jsonb) — resolved list of active consoles/agents/widgets
 
-### Medium (security)
-5. **Customer signup allows 6-char passwords.** `src/pages/CustomerAuth.tsx` uses `z.string().min(6)`, while company/employee signup enforces 8+ via `passwordSchema` and HIBP. Inconsistent and weaker than platform standard.
+New table `industry_blueprints` (seeded, editable by platform_admin):
+- `slug`, `name`, `operating_model`, `primary_records` (jsonb), `default_agents` (jsonb), `default_consoles` (jsonb), `default_kpis` (jsonb), `prompt_overrides` (jsonb), `restrictions` (jsonb — e.g. restaurants = receptionist_only)
 
-### Verified OK (no change needed)
-- Real-signup tier/industry persistence (validates against `['starter','connect','performance','command']`, blocks invalid industry, sets `is_demo:false`, 90-day `trial_ends_at`).
-- `initialize-company-agents` invoked on signup so dashboard/operatives are provisioned.
-- `customer-register` edge fn: rate-limited, HIBP-checked, generic error messages, role assigned, association created.
-- `useOnboardingState` profile read/write + localStorage fallback.
-- Trial math: 90 days everywhere (`Date.now() + 90*24*60*60*1000`, reminders at 7/3/1 days).
-- Employee signup: registration-code validation, single-use marking, role insert.
-- Role separation: `company_admin`, `employee`, `customer`, `platform_admin` consistent across `ProtectedRoute` and signup paths.
+## 2. Workspace Resolver
 
-## Fixes to apply
+Single source of truth: `src/lib/workspace/resolveCompanyWorkspace.ts`
 
-### 1. Persist compliance documents (DB + Storage + UI wiring)
-- New private storage bucket `compliance-docs` (RLS: company_admin can read/write own company folder, platform_admin can read all).
-- New table `public.company_compliance_documents` (`id`, `company_id`, `uploaded_by`, `file_path`, `file_name`, `mime_type`, `size_bytes`, `doc_type` enum {dba, ein, formation, other}, `status` enum {pending, approved, rejected}, `created_at`). RLS: company_admin sees own, platform_admin sees all.
-- In `Auth.tsx` `handleSignUp`, after company creation: loop `complianceFiles`, upload each to `compliance-docs/{company_id}/{uuid}-{filename}`, insert metadata row (`doc_type: 'other'` until UI lets them tag), surface a toast if any upload fails but do NOT block signup.
+```typescript
+resolveCompanyWorkspace(company) -> {
+  operatingModel,
+  primaryRecords,        // e.g. ['service_calls','equipment'] vs ['demos','trials']
+  activeConsoles,        // which console components to render
+  activeAgents,          // which of the 24 agents are auto-enabled
+  agentActions,          // industry-specific tools per agent
+  kpis,                  // dashboard metrics
+  promptOverrides,       // injected into AI agent prompts
+  restrictions           // hard limits (e.g. no booking for restaurants)
+}
+```
 
-### 2. Trial reminders use bundled platform Resend
-- Edit `supabase/functions/trial-reminders/index.ts` to read `Deno.env.get('RESEND_API_KEY')` once at startup, drop the per-company `tenant_integrations` lookup and skip-on-missing branch.
-- Change `from` to `Aura Intercept <noreply@auraintercept.ai>` in both reminder and expired branches.
+Logic: `blueprint(industry) ∩ planCapacity(tier) ∪ industry_config overrides`
 
-### 3. Lead follow-up sender
-- Edit `supabase/functions/lead-follow-up-reminders/index.ts`: replace `noreply@resend.dev` fallback with `noreply@auraintercept.ai` (keep `${companyName}` display name).
+Replaces all current manual `ai_agent_configs.enabled` toggling. A sync function writes resolved agent set to `ai_agent_configs` automatically on industry/plan change.
 
-### 4. Customer password floor → 8 chars
-- `src/pages/CustomerAuth.tsx`: `passwordSchema = z.string().min(8, 'Password must be at least 8 characters')`. (HIBP check stays as-is server-side via existing pattern — optional follow-up.)
+## 3. Plan = Capacity, Not Features
 
-## Files to touch
-- New migration: `compliance-docs` bucket, `company_compliance_documents` table + RLS + storage policies.
-- `src/pages/Auth.tsx` — upload loop after company insert.
-- `src/pages/CustomerAuth.tsx` — bump password min.
-- `supabase/functions/trial-reminders/index.ts` — platform key + sender domain.
-- `supabase/functions/lead-follow-up-reminders/index.ts` — sender domain.
+| Tier  | Industries | Agent depth | Automation runs |
+|-------|------------|-------------|-----------------|
+| Core  | 1          | Core 10     | Limited         |
+| Boost | 2          | Core + 4 adv| Standard        |
+| Pro   | 3          | Most agents | High            |
+| Elite | Unlimited  | All 24      | Unlimited       |
 
-## Out of scope for Phase 2 (will surface in later phases)
-- Admin UI to review/approve compliance docs (Phase 3 — admin dashboards).
-- Migrating other transactional emails to platform Resend (Phase 6 — comms).
-- Auto-tagging uploaded compliance docs by filename/AI classification.
+Industries are NOT locked to specific tiers. Any industry works on any tier.
 
-After approval I'll implement all five fixes in one pass and report back before starting Phase 3.
+## 4. Adaptive Operations Console
+
+Refactor `/dashboard/dispatch-field-ops` → `/dashboard/operations` with router:
+
+```text
+operatingModel === 'field_dispatch'      -> <FieldDispatchConsole/>   (HVAC, plumbing, electrical, locksmith, towing, cleaning, landscaping, pest)
+operatingModel === 'appointment_booking' -> <AppointmentConsole/>     (wellness, salon, dental, medical, fitness, legal-consults)
+operatingModel === 'pipeline_sales'      -> <PipelineConsole/>        (saas, real_estate, insurance, auto-sales)
+operatingModel === 'receptionist_only'   -> <ReceptionistConsole/>    (restaurants — AI receptionist + smart links only)
+operatingModel === 'custom'              -> <CustomConsole/>          (Other industry, user-defined workflow)
+```
+
+Each console renders genuinely different UI: different primary records, different actions, different layouts — not just renamed labels.
+
+Examples:
+- FieldDispatch: live truck map, dispatch board, route optimization, equipment history
+- Appointment: chair/room calendar, recurring bookings, deposit collection, no-show recovery
+- Pipeline: deal stages, demo scheduler, trial-rescue queue, MRR tracker
+- Receptionist: call log, smart-link manager, FAQ trainer (no booking UI)
+
+## 5. Adaptive Dashboard & Sidebar
+
+`CompanyAdminDashboard` reads workspace KPIs from resolver and renders the matching widget set. Sidebar filters items where `requiredOperatingModel` doesn't match. Agent labels (Front Desk / On The Way / etc.) get an industry layer (e.g. "On The Way" → "Agent En Route" for real estate showings).
+
+## 6. Industry-Specific Agent Behavior
+
+`customer_journey` operative gains industry actions:
+- HVAC: `book_service_call`, `dispatch_emergency`, `quote_repair`
+- Real estate: `schedule_showing`, `send_listing`, `request_preapproval`
+- SaaS: `book_demo`, `start_trial`, `escalate_churn_risk`
+- Restaurant: `send_smart_link`, `take_message` (no booking)
+
+Agent prompts get `promptOverrides` injected from blueprint — terminology, scripts, escalation rules adapt automatically.
+
+## 7. Signup / Onboarding
+
+- Industry dropdown at signup (18 verticals + "Other / Custom")
+- "Other" → wizard collects: primary thing scheduled/sold, customer type, key actions, then drafts an `industry_config`
+- Free Audit asks vertical-specific questions
+- After signup, resolver runs and provisions the workspace automatically
+
+## 8. Restaurants — Hardcoded Restriction
+
+Restaurant blueprint sets `restrictions: { booking: false, integrations: ['receptionist','smart_links'] }`. Booking UI hidden, agents instructed to direct customers to website/booking link, no dispatch console.
+
+## 9. Demo Account Migration
+
+Update the 54 demo accounts (18 industries × admin/employee/customer) to set `industry_type` and let resolver provision them. Reseeder at `/dashboard/demo-seeder` updated. Per-vertical empty-state copy already exists — wire it through workspace.
+
+## 10. Files Touched (high level)
+
+- Migration: add columns + `industry_blueprints` table + seed 18 blueprints
+- `src/lib/workspace/resolveCompanyWorkspace.ts` (new)
+- `src/hooks/useWorkspace.ts` (new) — replaces scattered useIndustryPack/useTier checks
+- `src/pages/dashboard/Operations.tsx` (new router) + 5 console components
+- `src/components/dashboard/CompanyAdminDashboard.tsx` — KPI driven by resolver
+- `src/components/Sidebar*.tsx` — filter by operatingModel
+- `src/lib/agents/` — inject promptOverrides + industry actions
+- Edge functions: `sync-company-workspace` (runs on industry/plan change), update agent-normalization
+- Onboarding: `IndustryStep.tsx`, `CustomIndustryWizard.tsx`
+- Demo seeder updates
+
+## 11. What This Is NOT
+
+- Not just renaming labels (Job Queue → Schedule). Consoles render structurally different components.
+- Not manual toggles. Admins can override but defaults come from resolver.
+- Not industry-locked tiers. Industry shapes workspace; tier sets capacity.
+- Not adding restaurant reservations (explicit exclusion).
+
+## Approval
+
+Reply "approve" or "build it" to begin. I'll start with the migration + resolver + Operations router, then migrate one console (HVAC field_dispatch) end-to-end as a reference pattern before doing the rest.
