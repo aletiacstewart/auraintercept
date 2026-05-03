@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getIndustryVoiceGreeting } from '@/lib/industryVoiceGreetings';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -734,6 +735,22 @@ export const AIAgentSettings = () => {
                 <Volume2 className="h-4 w-4 text-white" />
                 Voice Greeting
               </Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  if (!companyId) return;
+                  const { data: c } = await supabase
+                    .from('companies')
+                    .select('industry_vertical, name')
+                    .eq('id', companyId)
+                    .maybeSingle();
+                  setVoiceGreeting(getIndustryVoiceGreeting(c?.industry_vertical, c?.name));
+                }}
+              >
+                Reset to industry default
+              </Button>
               {hasElevenLabs && (
                 <Button
                   type="button"
