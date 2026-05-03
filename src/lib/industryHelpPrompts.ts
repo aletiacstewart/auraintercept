@@ -45,6 +45,41 @@ const HEALTHCARE_SHARED: Partial<Record<ConsoleId, string[]>> = {
   ],
 };
 
+const HEALTHCARE_FIELD_OPS = [
+  '"Pull up today\'s patient schedule"',
+  '"Mark patient as checked in"',
+  '"Update visit status to in-progress"',
+  '"Complete this visit and notify the patient"',
+  '"Show me the next patient on the schedule"',
+];
+
+const HEALTHCARE_SOCIAL = [
+  '"Post a new-patient welcome on Facebook"',
+  '"Share a wellness tip on Instagram"',
+  '"Schedule a recall reminder post for next week"',
+  '"Generate a Google My Business update"',
+];
+
+const HEALTHCARE_CREATIVE = [
+  '"Write a blog post about preventive care"',
+  '"Update the website with our new hours"',
+  '"Generate a patient newsletter"',
+  '"Refresh the homepage hero copy"',
+];
+
+const HEALTHCARE_OPERATIVES = [
+  '"Show me which agents are active"',
+  '"Enable the recall reminder agent"',
+  '"Run a test on the booking agent"',
+  '"View this week\'s agent activity"',
+];
+
+// Apply to every healthcare console fallthrough
+HEALTHCARE_SHARED.field_operations = HEALTHCARE_FIELD_OPS;
+HEALTHCARE_SHARED.social_media = HEALTHCARE_SOCIAL;
+HEALTHCARE_SHARED.creative_web_presence = HEALTHCARE_CREATIVE;
+HEALTHCARE_SHARED.ai_operatives_hub = HEALTHCARE_OPERATIVES;
+
 const BY_INDUSTRY: Record<string, Partial<Record<ConsoleId, string[]>>> = {
   dental: {
     ...HEALTHCARE_SHARED,
