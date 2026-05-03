@@ -2,6 +2,8 @@ import { useState, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { resolveServiceCatalog } from '@/lib/industryFormSchemas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -272,6 +274,8 @@ function SortableRow({
 
 export function ServicesManager() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const starterCatalog = useMemo(() => resolveServiceCatalog(pack), [pack]);
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
