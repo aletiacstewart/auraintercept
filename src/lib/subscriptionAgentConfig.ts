@@ -27,23 +27,25 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($197/mo): 5 consolidated operatives (8 underlying agents),
-    // 3 consoles (Customer Portal, Outreach & Sales, Creative & Web), 10 employees.
+    // Aura Core ($197/mo): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
+    // industry specialists (auto-activated by industry pack). 10 employees.
     agents: [
-      'triage',            // AI Receptionist
-      'customer_journey',  // Booking + Follow-Up + Review
-      'outreach',          // Lead + Marketing + Outreach
-      'creative_content',  // Creative Content Agent
-      'web_presence',      // Web Presence Agent
+      'triage',
+      'customer_journey',
+      'outreach',
+      'creative_content',
+      'web_presence',
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence'],
+    consoles: [
+      'customer_portal', 'marketing_sales', 'creative_web_presence',
+      'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
+    ],
     label: 'Aura Core',
     price: '$197/mo',
     description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included',
   },
   connect: {
-    // Aura Boost ($497/mo): Core + Field Operations (Dispatch, Route/ETA/Check-In),
-    // 5 consoles, 25 employees.
+    // Aura Boost ($497/mo): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
     agents: [
       'triage',
       'customer_journey',
@@ -53,14 +55,17 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'dispatch',
       'field_navigation',
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations', 'social_media'],
+    consoles: [
+      'customer_portal', 'marketing_sales', 'creative_web_presence',
+      'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
+    ],
     label: 'Aura Boost',
     price: '$497/mo',
     description: 'Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Pro ($997/mo): Boost + Business Finance + Analytics + Admin,
-    // 5 consoles, 50 employees.
+    // Aura Pro ($997/mo): Boost + Business Finance + Analytics + Admin + Business Management Console.
+    // 50 employees.
     agents: [
       'triage',
       'customer_journey',
@@ -73,7 +78,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'analytics_intelligence',
       'admin',
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence', 'field_operations'],
+    consoles: [
+      'customer_portal', 'marketing_sales', 'creative_web_presence',
+      'social_media', 'field_operations', 'analytics_reports',
+      'business_management', 'ai_operatives_hub',
+    ],
     label: 'Aura Pro',
     price: '$997/mo',
     description: '16 Smart AI Agents with social media, campaigns, and industry specialist agents',
@@ -208,6 +217,8 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_customers',
     'can_access_leads',
     'can_access_campaigns',
+    'can_access_field_ops',
+    'can_access_analytics',
     'api_access',
   ],
   connect: [
@@ -216,14 +227,18 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_leads',
     'can_access_campaigns',
     'can_access_field_ops',
+    'can_access_analytics',
     'api_access',
   ],
   performance: [
     'can_access_appointments',
     'can_access_customers',
     'can_access_quotes',
+    'can_access_invoices',
+    'can_access_inventory',
     'can_access_leads',
     'can_access_field_ops',
+    'can_access_analytics',
     'can_access_campaigns',
     'api_access',
   ],
