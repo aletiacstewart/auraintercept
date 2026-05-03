@@ -251,7 +251,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
         </div>
         
         <div style="text-align: center;">
-          <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/dashboard/subscription" class="cta-button">
+          <a href="https://auraintercept.ai/dashboard/subscription" class="cta-button">
             Subscribe Now - Starting at $197/month
           </a>
         </div>
@@ -295,7 +295,7 @@ function getExpiredEmailHtml(companyName: string): string {
         <p>We hope you enjoyed using Aura Intercept! To restore full access to your AI appointment assistant, subscribe to our Enterprise plan.</p>
         
         <div style="text-align: center;">
-          <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/dashboard/subscription" class="cta-button">
+          <a href="https://auraintercept.ai/dashboard/subscription" class="cta-button">
             Subscribe Now - Starting at $197/month
           </a>
         </div>
