@@ -118,3 +118,22 @@ Update the 54 demo accounts (18 industries × admin/employee/customer) to set `i
 ## Approval
 
 Reply "approve" or "build it" to begin. I'll start with the migration + resolver + Operations router, then migrate one console (HVAC field_dispatch) end-to-end as a reference pattern before doing the rest.
+
+---
+
+## Update — Continued (next pass)
+
+- ✅ Wired `loadCompanyWorkspace` + `buildIndustryPromptSnippet` into `voice-handler` so the SignalWire SWML system prompt now picks up industry terminology, scripts, and `restrictions.booking === false` (e.g. restaurants are explicitly told NOT to book and to send a Smart Link).
+- ✅ Sidebar `Operations` entry now reads `useWorkspace().operatingModel` and adapts:
+  - `field_dispatch` → "Dispatch View" (HVAC etc.)
+  - `appointment_booking` → "Appointment Console"
+  - `pipeline_sales` → "Pipeline Console"
+  - `receptionist_only` → entry is hidden (restaurants), with rendering falling back to `<ReceptionistConsole/>` if a deep link is hit.
+  - `custom` → "Operations"
+- ✅ `restrictions.dispatch === false` now also hides the field-ops entries, regardless of legacy `console_visibility` settings.
+
+### Still TODO (next pass)
+1. Inject workspace prompt into `aura-unified` (text intent classifier) so chat replies follow industry restrictions too.
+2. Replace placeholder cards in `AppointmentConsole`, `PipelineConsole`, `ReceptionistConsole` with real queries (calls today, smart-link clicks, deals by stage).
+3. Add "Industry" step to onboarding + "Other / Custom" wizard that writes `industry_config`.
+4. Update `CompanyAdminDashboard` KPI grid to read from `workspace.kpis` instead of hardcoded list.
