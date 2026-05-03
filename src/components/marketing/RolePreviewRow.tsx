@@ -1,33 +1,20 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, Wrench, User, ArrowRight } from 'lucide-react';
+import { getRolePreviewCopy } from '@/lib/industryRolePreview';
 
 interface RolePreviewRowProps {
   onTryDemo: () => void;
+  industryId?: string;
 }
 
-const ROLES = [
-  {
-    icon: LayoutDashboard,
-    title: 'Owner Dashboard',
-    description: 'See every call, lead, job, and dollar flowing through your business — in real time.',
-    highlights: ['Live call & lead feed', 'Revenue analytics', 'Aura command center'],
-  },
-  {
-    icon: Wrench,
-    title: 'Technician App',
-    description: 'Mobile-first PWA your techs use in the field. Routes, jobs, photos, invoices — all in one.',
-    highlights: ['Today\'s jobs', 'One-tap navigation', 'Photo & note capture'],
-  },
-  {
-    icon: User,
-    title: 'Customer Portal',
-    description: 'What your customers see — book service, see ETAs, chat with Aura, pay invoices.',
-    highlights: ['Self-service booking', 'Live ETA tracking', '24/7 AI chat'],
-  },
-];
-
-export function RolePreviewRow({ onTryDemo }: RolePreviewRowProps) {
+export function RolePreviewRow({ onTryDemo, industryId }: RolePreviewRowProps) {
+  const copy = getRolePreviewCopy(industryId);
+  const ROLES = [
+    { icon: LayoutDashboard, ...copy.owner },
+    { icon: Wrench, ...copy.field },
+    { icon: User, ...copy.customer },
+  ];
   return (
     <section className="py-10 bg-muted/20">
       <div className="container max-w-5xl mx-auto px-4">
@@ -66,7 +53,7 @@ export function RolePreviewRow({ onTryDemo }: RolePreviewRowProps) {
             </div>
             <div className="pt-4 border-t border-border/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <p className="text-xs text-muted-foreground">
-                One demo unlocks <span className="text-foreground font-medium">all 3 logins</span> — admin, employee &amp; customer.
+                One demo unlocks <span className="text-foreground font-medium">all 3 logins</span> — {copy.loginRoles}.
               </p>
               <Button size="lg" onClick={onTryDemo} className="sm:min-w-[240px]">
                 Try all 3 views — Free demo
