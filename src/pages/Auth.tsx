@@ -67,6 +67,10 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
+  // For "Other / Custom" industry: lets the customer describe what they do
+  // so the workspace resolver can stamp it onto industry_config.description
+  // and the AI agents can adapt their language at runtime.
+  const [customIndustryDescription, setCustomIndustryDescription] = useState('');
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
