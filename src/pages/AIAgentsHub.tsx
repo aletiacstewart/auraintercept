@@ -438,11 +438,11 @@ export default function AIAgentsHub() {
                     showing the {availableAgentTypes.length} AI operatives included in your selected tier.
                   </>
                 ) : subscriptionTier === 'command' ? (
-                  <>Your <strong>Command</strong> plan includes all 10 AI operatives.</>
+                  <>Your <strong>Aura Elite</strong> plan includes all 10 AI operatives.</>
                 ) : (
                   <>
-                    Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.
-                    {lockedAgentCount > 0 && ` ${lockedAgentCount} agents require an upgrade.`}
+                    Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI operatives.
+                    {lockedAgentCount > 0 && ` ${lockedAgentCount} additional operatives unlock with an upgrade.`}
                   </>
                 )}
               </span>
