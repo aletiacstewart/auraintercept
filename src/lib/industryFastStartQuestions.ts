@@ -193,3 +193,45 @@ export function formatFastStartAnswers(
   if (lines.length === 0) return '';
   return `Business context (from Fast Start):\n${lines.join('\n\n')}`;
 }
+
+
+const FAST_START_BLOCK_HEADER = 'Business context (from Fast Start):';
+
+/** Round-trip helpers so admins can edit the answers later in the KB. */
+export function parseFastStartAnswers(
+  industryId: string | null | undefined,
+  prompt: string | null | undefined,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!prompt) return out;
+  const idx = prompt.indexOf(FAST_START_BLOCK_HEADER);
+  if (idx === -1) return out;
+  const block = prompt.slice(idx + FAST_START_BLOCK_HEADER.length);
+  const qs = getFastStartQuestions(industryId);
+  const labelToKey = new Map(qs.map((q) => [q.label, q.key]));
+  const re = /Q:\s*([^\n]+)\nA:\s*([\s\S]*?)(?=\n\nQ:|$)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(block)) !== null) {
+    const key = labelToKey.get(m[1].trim());
+    if (key) out[key] = m[2].trim();
+  }
+  return out;
+}
+
+/** Replace or append the Fast Start block inside the prompt, preserving
+ *  whatever the admin wrote above it. */
+export function upsertFastStartBlock(
+  prompt: string | null | undefined,
+  newBlock: string,
+): string {
+  const base = (prompt ?? '').trimEnd();
+  const idx = base.indexOf(FAST_START_BLOCK_HEADER);
+  if (idx === -1) {
+    if (!newBlock) return base;
+    return base ? `${base}\n\n${newBlock}` : newBlock;
+  }
+  const before = base.slice(0, idx).trimEnd();
+  if (!newBlock) return before;
+  return before ? `${before}\n\n${newBlock}` : newBlock;
+}
+
