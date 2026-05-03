@@ -43,12 +43,15 @@ import {
   getFilteredAgents
 } from '@/lib/helpContentConfig';
 import { SubscriptionTier, TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryUseCases } from '@/lib/industryHelpPrompts';
 
 type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
 export default function Help() {
   const { userRole } = useAuth();
   const { subscriptionTier, inTrial } = useSubscription();
+  const { pack: industryPack } = useIndustryPack();
   const isPlatformAdmin = userRole === 'platform_admin';
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -98,6 +101,11 @@ export default function Help() {
   const filteredAgents = useMemo(() => {
     return getFilteredAgents(currentConsole, effectiveTier);
   }, [currentConsole, effectiveTier]);
+
+  // Industry-aware example prompts
+  const industryUseCases = useMemo(() => {
+    return getIndustryUseCases(currentConsole.id, industryPack, currentConsole.useCases);
+  }, [currentConsole, industryPack]);
 
   // Tier display info
   const tierInfo = TIER_HELP_DESCRIPTIONS[effectiveTier];
@@ -238,7 +246,7 @@ export default function Help() {
                       Example Prompts
                     </h3>
                     <div className="ml-7 space-y-2">
-                      {currentConsole.useCases.map((useCase, index) => (
+                      {industryUseCases.map((useCase, index) => (
                         <div key={index} className="bg-muted/50 px-3 py-2 rounded-lg text-sm">
                           {useCase}
                         </div>
@@ -248,41 +256,6 @@ export default function Help() {
                 </CardContent>
               </Card>
 
-              {/* Tier-Locked Consoles */}
-              {effectiveTier !== 'command' && (
-                <Card className="border-dashed border-muted-foreground/30">
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
-                        <Lock className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-muted-foreground">Upgrade to Unlock More</CardTitle>
-                        <CardDescription>Additional consoles and agents available with higher plans</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {CONSOLE_HELP_CONFIG.filter(c => !availableConsoles.some(ac => ac.id === c.id)).map((console) => {
-                        const Icon = console.icon;
-                        return (
-                          <div key={console.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                            <Icon className="w-5 h-5 text-muted-foreground" />
-                            <div className="flex-1">
-                              <p className="font-medium text-muted-foreground">{console.title}</p>
-                              <p className="text-xs text-muted-foreground/70">Requires {TIER_AGENT_CONFIG[console.requiredTier].label}</p>
-                            </div>
-                            <Badge variant="outline" className="text-xs">
-                              {TIER_AGENT_CONFIG[console.requiredTier].price}
-                            </Badge>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </TabsContent>
 
             {/* Aura Voice Tab - Available for ALL tiers */}
