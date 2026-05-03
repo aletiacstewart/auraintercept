@@ -13,6 +13,7 @@
  *   data-aura-max-width    max wrapper width (e.g. "640px", default "100%")
  *   data-aura-theme        "light" | "dark" (passed through as ?theme=)
  *   data-aura-primary      hex color, passed through as ?primary=
+ *   data-aura-title        iframe title attribute (default "Booking")
  *
  * The loader auto-mounts an iframe pointed at /book/{slug}?embed=1 and
  * resizes itself in response to postMessage events from the booking page.
@@ -35,6 +36,7 @@
     var maxWidth = el.getAttribute('data-aura-max-width') || '100%';
     var theme = el.getAttribute('data-aura-theme') || '';
     var primary = el.getAttribute('data-aura-primary') || '';
+    var title = el.getAttribute('data-aura-title') || 'Booking';
 
     var qs = ['embed=1'];
     if (theme) qs.push('theme=' + encodeURIComponent(theme));
@@ -46,7 +48,7 @@
 
     var iframe = document.createElement('iframe');
     iframe.src = src;
-    iframe.title = 'Book appointment';
+    iframe.title = title;
     iframe.setAttribute('loading', 'lazy');
     iframe.setAttribute('allow', 'clipboard-write');
     iframe.style.width = '100%';
