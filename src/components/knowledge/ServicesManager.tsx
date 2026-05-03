@@ -2,6 +2,8 @@ import { useState, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { resolveServiceCatalog } from '@/lib/industryFormSchemas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -272,6 +274,8 @@ function SortableRow({
 
 export function ServicesManager() {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const starterCatalog = useMemo(() => resolveServiceCatalog(pack), [pack]);
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -883,6 +887,50 @@ export function ServicesManager() {
         </div>
       </CardHeader>
       <CardContent>
+        {starterCatalog.length > 0 && services && services.length === 0 && (
+          <div className="mb-6 p-4 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <div>
+                <h4 className="font-semibold">Suggested {pack.label} services</h4>
+                <p className="text-sm text-muted-foreground">
+                  Add a starter set tailored to your industry. You can edit pricing and details anytime.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={async () => {
+                  if (!companyId) return;
+                  const payload = starterCatalog.map((s) => ({
+                    company_id: companyId,
+                    name: s.name,
+                    category: s.category ?? null,
+                    duration_minutes: s.default_duration_minutes ?? 60,
+                    service_type: 'in_person',
+                    is_active: true,
+                  }));
+                  const { error } = await supabase.from('services').insert(payload);
+                  if (error) {
+                    toast.error('Failed to add starter services');
+                  } else {
+                    toast.success(`Added ${payload.length} starter services`);
+                    queryClient.invalidateQueries({ queryKey: ['services'] });
+                  }
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add all
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {starterCatalog.map((s) => (
+                <Badge key={s.name} variant="outline" className="text-xs">
+                  {s.name}
+                  {s.default_duration_minutes ? ` · ${s.default_duration_minutes}m` : ''}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}

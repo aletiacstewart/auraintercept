@@ -1,4 +1,5 @@
 import type { IndustryPack } from '@/hooks/useIndustryPack';
+import type { ServiceCatalogEntry } from '@/hooks/useIndustryPack';
 
 export type IntakeFieldType =
   | 'text'
@@ -300,4 +301,48 @@ export function summarizeIntake(
     out.push({ label, value: display });
   }
   return out;
+}
+// ============================================================
+// v2: Industry Pack starter-data resolvers
+// ============================================================
+
+/** Service catalog suggested by the company's industry pack. */
+export function resolveServiceCatalog(pack: IndustryPack | null | undefined): ServiceCatalogEntry[] {
+  if (!pack || !Array.isArray(pack.service_catalog)) return [];
+  return pack.service_catalog as ServiceCatalogEntry[];
+}
+
+/** Vertical-specific service-type dropdown options (e.g. "Tele-dentistry"). */
+export function getServiceTypeOptions(pack: IndustryPack | null | undefined): string[] {
+  if (!pack || !Array.isArray(pack.service_type_options)) return [];
+  return pack.service_type_options as string[];
+}
+
+/** Customer-intake schema overrides per vertical (insurance, pet info, member tier). */
+export function getCustomerIntakeSchema(pack: IndustryPack | null | undefined): { fields: IntakeFieldDef[] } | null {
+  const raw = pack?.customer_intake_schema as { fields?: unknown } | undefined;
+  if (!raw || !Array.isArray(raw.fields)) return null;
+  return { fields: raw.fields as IntakeFieldDef[] };
+}
+
+export interface AppointmentRules {
+  address_required?: boolean;
+  allow_appointments?: boolean;
+  default_duration_minutes?: number;
+  default_service_type?: string;
+  business_hours?: { start: string; end: string; interval_minutes: number };
+  reminder_channels?: Array<'sms' | 'email' | 'call'>;
+  lead_time_minutes?: number;
+  buffer_minutes?: number;
+  recurring_supported?: boolean;
+}
+
+export function getAppointmentRules(pack: IndustryPack | null | undefined): AppointmentRules {
+  return (pack?.appointment_rules as AppointmentRules) || {};
+}
+
+export function getInventoryTaxonomy(pack: IndustryPack | null | undefined): {
+  label?: string; categories?: string[]; units?: string[];
+} {
+  return (pack?.inventory_taxonomy as { label?: string; categories?: string[]; units?: string[] }) || {};
 }

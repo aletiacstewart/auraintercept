@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
-import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
+import { resolveFormSchema, validateIntake, getAppointmentRules } from '@/lib/industryFormSchemas';
 import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { getNavLabels } from '@/lib/industryNavLabels';
@@ -38,17 +38,25 @@ interface ServiceOption {
   duration_minutes: number;
 }
 
-// Generate time slots from 8 AM to 6 PM
-const TIME_SLOTS = Array.from({ length: 21 }, (_, i) => {
-  const hour = Math.floor(i / 2) + 8;
-  const minute = i % 2 === 0 ? '00' : '30';
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  return {
-    value: `${hour.toString().padStart(2, '0')}:${minute}`,
-    label: `${displayHour}:${minute} ${period}`
-  };
-});
+// Generate time slots from a business-hours window (defaults: 8AM-6PM, 30m).
+function buildTimeSlots(startHHMM = '08:00', endHHMM = '18:00', intervalMin = 30) {
+  const [sh, sm] = startHHMM.split(':').map(Number);
+  const [eh, em] = endHHMM.split(':').map(Number);
+  const start = sh * 60 + sm;
+  const end = eh * 60 + em;
+  const out: { value: string; label: string }[] = [];
+  for (let m = start; m <= end - intervalMin; m += intervalMin) {
+    const hour = Math.floor(m / 60);
+    const minute = m % 60;
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    out.push({
+      value: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+      label: `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`,
+    });
+  }
+  return out;
+}
 
 export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ 
   onSuccess,
@@ -57,6 +65,17 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack();
+  const rules = React.useMemo(() => getAppointmentRules(pack), [pack]);
+  const TIME_SLOTS = React.useMemo(
+    () => buildTimeSlots(
+      rules.business_hours?.start ?? '08:00',
+      rules.business_hours?.end ?? '18:00',
+      rules.business_hours?.interval_minutes ?? 30,
+    ),
+    [rules.business_hours],
+  );
+  const reminderChannels = (rules.reminder_channels ?? ['sms', 'email', 'call']) as Array<'sms'|'email'|'call'>;
+  const showAddress = rules.address_required !== false; // default true unless pack says otherwise
   
   const [selectedService, setSelectedService] = useState<string>('');
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -66,7 +85,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const [duration, setDuration] = useState<number>(60);
+  const [duration, setDuration] = useState<number>(rules.default_duration_minutes ?? 60);
   const [assignedTechnician, setAssignedTechnician] = useState<string>('');
   const [smsOptIn, setSmsOptIn] = useState(true);
   const [emailOptIn, setEmailOptIn] = useState(true);
@@ -351,15 +370,17 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
               </div>
             </div>
 
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder={addressField.label}
-                value={customerAddress}
-                onChange={(e) => setCustomerAddress(e.target.value)}
-                className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
-              />
-            </div>
+            {showAddress && (
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder={addressField.label}
+                  value={customerAddress}
+                  onChange={(e) => setCustomerAddress(e.target.value)}
+                  className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                />
+              </div>
+            )}
           </div>
 
           {/* Assign Technician — only shown for verticals that dispatch field staff */}
@@ -398,30 +419,24 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           <div className="space-y-2">
             <Label className="text-foreground/70">Send Reminders Via</Label>
             <div className="flex gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="sms-opt"
-                  checked={smsOptIn}
-                  onCheckedChange={(checked) => setSmsOptIn(!!checked)}
-                />
-                <Label htmlFor="sms-opt" className="text-sm cursor-pointer text-foreground/70">SMS</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="email-opt"
-                  checked={emailOptIn}
-                  onCheckedChange={(checked) => setEmailOptIn(!!checked)}
-                />
-                <Label htmlFor="email-opt" className="text-sm cursor-pointer text-foreground/70">Email</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="call-opt"
-                  checked={callOptIn}
-                  onCheckedChange={(checked) => setCallOptIn(!!checked)}
-                />
-                <Label htmlFor="call-opt" className="text-sm cursor-pointer text-foreground/70">Call</Label>
-              </div>
+              {reminderChannels.includes('sms') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="sms-opt" checked={smsOptIn} onCheckedChange={(c) => setSmsOptIn(!!c)} />
+                  <Label htmlFor="sms-opt" className="text-sm cursor-pointer text-foreground/70">SMS</Label>
+                </div>
+              )}
+              {reminderChannels.includes('email') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="email-opt" checked={emailOptIn} onCheckedChange={(c) => setEmailOptIn(!!c)} />
+                  <Label htmlFor="email-opt" className="text-sm cursor-pointer text-foreground/70">Email</Label>
+                </div>
+              )}
+              {reminderChannels.includes('call') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="call-opt" checked={callOptIn} onCheckedChange={(c) => setCallOptIn(!!c)} />
+                  <Label htmlFor="call-opt" className="text-sm cursor-pointer text-foreground/70">Call</Label>
+                </div>
+              )}
             </div>
           </div>
 

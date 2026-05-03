@@ -21,6 +21,27 @@ export interface IndustryPack {
   terminology: Record<string, string>;
   is_active: boolean;
   console_visibility: ConsoleVisibility;
+  // v2 additions
+  service_catalog: ServiceCatalogEntry[];
+  service_type_options: string[];
+  customer_intake_schema: { fields?: IntakeField[] };
+  inventory_taxonomy: { label?: string; categories?: string[]; units?: string[] };
+  quote_template: Record<string, unknown>;
+  invoice_template: Record<string, unknown>;
+}
+
+export interface ServiceCatalogEntry {
+  name: string;
+  category?: string;
+  default_duration_minutes?: number;
+  default_service_type?: string;
+}
+
+export interface IntakeField {
+  key: string;
+  label: string;
+  type: 'text' | 'textarea' | 'date' | 'number' | 'boolean' | 'json';
+  required?: boolean;
 }
 
 export type FieldOpsMode = 'full' | 'route_mode' | 'booking_mode' | 'hidden';
@@ -59,6 +80,12 @@ const DEFAULT_PACK: IndustryPack = {
   terminology: { job: 'Job', customer: 'Customer', appointment: 'Appointment' },
   is_active: true,
   console_visibility: { field_ops: 'full', dispatch_map: true, truck_inventory: true, emergency_queue: true },
+  service_catalog: [],
+  service_type_options: [],
+  customer_intake_schema: {},
+  inventory_taxonomy: {},
+  quote_template: {},
+  invoice_template: {},
 };
 
 /**
@@ -129,7 +156,7 @@ export function usePublicIndustryPack(companyId: string | null | undefined) {
       } else {
         const row = Array.isArray(data) ? data[0] : data;
         if (row && row.industry_id) {
-          setPack({ ...DEFAULT_PACK, ...(row as Partial<IndustryPack>) } as IndustryPack);
+          setPack({ ...DEFAULT_PACK, ...(row as unknown as Partial<IndustryPack>) } as IndustryPack);
         } else {
           setPack(DEFAULT_PACK);
         }
