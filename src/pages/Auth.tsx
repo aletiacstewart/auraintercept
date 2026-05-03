@@ -11,6 +11,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_LIST } from '@/lib/industryTemplates';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import {
+  CustomIndustryWizard,
+  EMPTY_CUSTOM_INDUSTRY,
+  buildIndustryConfig,
+  type CustomIndustryConfig,
+} from '@/components/onboarding/CustomIndustryWizard';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones, Send, AlertTriangle } from 'lucide-react';
@@ -67,6 +73,7 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
+  const [customIndustry, setCustomIndustry] = useState<CustomIndustryConfig>(EMPTY_CUSTOM_INDUSTRY);
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
