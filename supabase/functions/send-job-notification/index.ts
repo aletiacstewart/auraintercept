@@ -86,12 +86,14 @@ Deno.serve(async (req) => {
     // "Repair Order"). Falls back to "Job" so existing copy is unchanged for
     // verticals without a pack.
     let jobNoun = 'Job';
+    let apptNoun = 'Appointment';
     try {
       const { data: packRow } = await supabase
         .rpc('get_company_industry_pack', { p_company_id: appointment.company_id });
       const row = Array.isArray(packRow) ? packRow[0] : packRow;
       const term = (row?.terminology || {}) as Record<string, string>;
       if (term.job && typeof term.job === 'string') jobNoun = term.job;
+      if (term.appointment && typeof term.appointment === 'string') apptNoun = term.appointment;
     } catch (e) {
       console.warn('[Job Notification] Could not resolve industry terminology:', e);
     }
@@ -185,6 +187,7 @@ Deno.serve(async (req) => {
         meetingLink,
         customerPhone: appointment.customer_phone,
         jobNoun,
+        apptNoun,
       }
     );
 
@@ -315,10 +318,12 @@ function generateMessages(
     meetingLink?: string | null;
     customerPhone?: string | null;
     jobNoun?: string;
+    apptNoun?: string;
   }
 ): { sms: string; emailSubject: string; emailHtml: string } {
-  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone, jobNoun } = data;
+  const { customerName, employeeName, serviceType, companyName, dateStr, timeStr, address, estimatedArrival, deliveryType, meetingLink, customerPhone, jobNoun, apptNoun } = data;
   const noun = jobNoun || 'Job';
+  const apNoun = apptNoun || 'Appointment';
   const NOUN_UPPER = noun.toUpperCase();
 
   const isVirtual = deliveryType === 'virtual';
@@ -347,7 +352,7 @@ function generateMessages(
           : isAtBusiness
           ? `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} appointment on ${dateStr} at ${timeStr}. Visit us at ${address}.`
           : `Hi ${customerName}! ${employeeName} from ${companyName} has been assigned to your ${serviceType} service on ${dateStr} at ${timeStr}. We'll notify you when they're on their way.`,
-        emailSubject: `Appointment Assigned - ${companyName}`,
+        emailSubject: `${apNoun} Assigned - ${companyName}`,
         emailHtml: `
           <h2>Your ${isVirtual ? 'Session' : 'Appointment'} Has Been Assigned</h2>
           <p>Hi ${customerName},</p>
@@ -382,7 +387,7 @@ function generateMessages(
           : isAtBusiness
           ? `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}. Visit us at ${address}. See you soon! - ${companyName}`
           : `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}.${estimatedArrival ? ` Estimated arrival: ${estimatedArrival} minutes.` : ''} See you soon! - ${companyName}`,
-        emailSubject: `Appointment Confirmed - ${companyName}`,
+        emailSubject: `${apNoun} Confirmed - ${companyName}`,
         emailHtml: `
           <h2>Your ${isVirtual ? 'Session' : 'Appointment'} is Confirmed</h2>
           <p>Hi ${customerName},</p>
