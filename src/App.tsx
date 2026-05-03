@@ -83,6 +83,7 @@ import ExportDocumentation from "./pages/ExportDocumentation";
 import VideoPromptsPage from "./pages/VideoPromptsPage";
 import CyberSentryMockup from "./pages/CyberSentryMockup";
 import IndustryPacksAdmin from "./pages/admin/IndustryPacksAdmin";
+import PackCoverage from "./pages/admin/PackCoverage";
 import CyberSentryPortalMockup from "./pages/CyberSentryPortalMockup";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
@@ -254,6 +255,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
+                <Route path="/dashboard/pack-coverage" element={<ProtectedRoute requiredRole="platform_admin"><PackCoverage /></ProtectedRoute>} />
                 <Route path="/dashboard/operations" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
