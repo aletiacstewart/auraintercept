@@ -149,3 +149,13 @@ Reply "approve" or "build it" to begin. I'll start with the migration + resolver
 
 ### Plan complete
 All four "Still TODO" items are done. The platform is now end-to-end industry-adaptive: signup → blueprint → operating_model → consoles, sidebar, dashboard KPIs, voice prompts, and chat prompts all read from a single `useWorkspace`/`loadCompanyWorkspace` source of truth.
+
+## Update — Final pass (gap closure)
+- ✅ Added `companies.supported_modules` (jsonb) cache column.
+- ✅ Created `sync-company-workspace` edge function — caches resolved consoles/KPIs/restrictions onto `supported_modules` and re-runs `initialize-company-agents`.
+- ✅ DB trigger `trg_sync_company_workspace` fires on industry/plan/config change to re-resolve in the background.
+- ✅ Seeded `industry_blueprints.agent_actions` for all 18 verticals + `other` (HVAC `book_service_call`, real_estate `schedule_showing`, restaurants `send_smart_link`, etc.). The `customer_journey` operative now sees these via the existing `buildIndustryPromptSnippet`.
+- ✅ Industry agent label overlay: new `getAgentStyleForIndustry(agent, industrySlug)` in `src/lib/agentStyles.ts` (real_estate "On The Way" → "Agent En Route", restaurants "Front Desk" → "Host", auto_care "On The Way" → "Bay Ready", etc.).
+- ✅ Free Audit already includes vertical-specific branching questions (industry_type, service_location, dispatch_routing, customer_eta, etc.) with per-vertical tier scoring.
+- ✅ Demo seeder (`seed-demo-accounts-v2`) sets `industry_vertical` per demo company → triggers fire automatically → `operating_model`, `supported_modules`, and `ai_agent_configs` all provision through the resolver.
+- ✅ New `CustomIndustryWizard` component collects the three plan-required fields (primary offering, customer type, key actions) and `buildIndustryConfig` writes them as a structured `industry_config` (description + agent_actions + prompt_overrides). Wired into `/auth` signup when "Other / Custom" is selected.
