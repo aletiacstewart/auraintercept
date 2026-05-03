@@ -1,52 +1,38 @@
-## Continue Industry-Awareness Rollout
+## AI Operative Prompt Audit — Industry Context Injection
 
-Two parallel workstreams remain. Tackle both in this batch.
+Ensure every AI operative edge function injects the caller's industry pack into its system prompt so AI replies use the right terminology, scope, and guardrails (e.g. dental "treatment plan" vs HVAC "quote", healthcare HIPAA guardrails, salon "clients" vs "jobs").
 
-### 1. Seed Quote & Invoice Templates into Industry Packs
+### Scope
 
-Populate `quote_template` and `invoice_template` JSONB on `industry_template_packs` rows so the recently-wired forms actually pre-fill. One migration, all 18 verticals.
+Audit all operative edge functions under `supabase/functions/` that build a system prompt for an LLM call (chat, voice, SMS auto-reply, content gen, lead triage, field navigation, etc.).
 
-Per-vertical line-item starters (examples):
-- **Dental** — Comprehensive Exam, Cleaning, Bitewing X-Rays, Fluoride
-- **Veterinary** — Wellness Exam, Vaccinations (DHPP/Rabies), Heartworm Test
-- **Chiropractic** — Initial Consultation, Adjustment, Therapeutic Modalities
-- **Medical Office / PT / Optometry** — vertical-appropriate visit + procedure codes
-- **Salon / Beauty** — Service charge, Product, Gratuity line
-- **Fitness** — Session/Class pack, Membership, Assessment
-- **Professional Services** — Consultation hours, Deliverable, Retainer
-- **Trades (HVAC/Plumbing/Electrical/Roofing/Landscaping/Pest/Cleaning/Auto)** — Diagnostic, Labor, Materials, Trip charge
-- **Restaurants / Real Estate** — minimal (catering deposit / commission line) since billing is rarely used
+### Steps
 
-Each template carries: `line_items: [{description, quantity, unit_price, taxable}]`, `default_tax_rate`, `default_terms`, `footer_note`.
+1. **Inventory** every edge function that calls an LLM and builds a system prompt. Catalog which already call `applyIndustryPackToPrompt` (or equivalent) and which don't.
+2. **Centralize** the helper. If `applyIndustryPackToPrompt` lives only in one function, lift it into a shared module (e.g. `supabase/functions/_shared/industryPack.ts`) so every function imports the same logic. Helper should:
+   - Load the company's `industry_template_packs` row
+   - Inject `terminology`, `agent_prompt_deltas` (with DELTA_KEY_ALIASES), `address_required`, and any vertical guardrails
+   - No-op safely when company has no pack
+3. **Wire missing functions** to call the helper before sending the prompt to the model. Priority order:
+   - `ai-agent-chat` (verify alias map still applied)
+   - `voice-*` / SignalWire SWML prompt builders
+   - `sms-auto-responder` and outbound SMS draft
+   - `content-engine-*` (blog, social caption gen)
+   - `lead-triage`, `customer-journey`, `outreach`
+   - Any analytics/insight functions that summarize data narratively
+4. **Healthcare guardrails**: for healthcare verticals, append the existing HIPAA guardrail block (no PHI echo, no diagnosis, route to provider) — reuse existing copy from healthcare integrations registry if present.
+5. **Memory**: update `mem://architecture/industry-template-pack-system.md` (or add a new note) documenting the shared helper path and the canonical injection point for every operative.
 
-### 2. Field Ops Console — In-Office Vertical Refinement
+### Out of Scope
 
-Use `hasFieldTechnicians(pack)` (already exists in `src/lib/industryCapabilities.ts`) to gate dispatch UI.
-
-Surfaces to update:
-- `src/pages/FieldOperations.tsx` and `src/pages/ai-consoles/FieldOpsConsole.tsx` — when `hasFieldTechnicians === false`, swap "Dispatch Board / Map / Travel Time" for an "In-Office Schedule" view (today's chair/room/provider list).
-- `src/components/fieldops/*` — hide route-map, ETA, and "On The Way" status chips for in-office verticals; replace with "Ready / In Room / Checked Out".
-- `src/pages/technician/TechnicianDashboard.tsx` and `TechnicianJobs.tsx` — relabel "Jobs" → pack terminology (`appointments` for dental/medical, `clients` for salon/fitness/professional). Hide "Navigate" / address map button when `address_required === false`.
-- `useFieldOpsWorkflow.ts` — short-circuit travel-time and geolocation hooks for in-office packs.
-
-### 3. Memory Update
-
-Add a memory note documenting:
-- `quote_template` / `invoice_template` JSONB shape on `industry_template_packs`
-- `hasFieldTechnicians()` as the canonical gate for dispatch-vs-in-office UI
+- New industry packs or new agent types
+- UI changes (purely server-side prompt work)
+- Translating prompts (English only this round)
 
 ### Files (expected)
 
-- `supabase/migrations/2026050318xxxx_seed_quote_invoice_templates.sql` (new)
-- `src/pages/FieldOperations.tsx`, `src/pages/ai-consoles/FieldOpsConsole.tsx`
-- `src/components/fieldops/*` (status chips, dispatch board)
-- `src/pages/technician/TechnicianDashboard.tsx`, `TechnicianJobs.tsx`
-- `src/hooks/useFieldOpsWorkflow.ts`
-- `mem://architecture/industry-billing-templates.md` (new)
+- `supabase/functions/_shared/industryPack.ts` (new — shared helper)
+- Individual `supabase/functions/<operative>/index.ts` updates (1–2 line import + call each)
+- Memory note update
 
-### Out of Scope (future loop)
-- AI prompt audit across operative edge functions
-- Salon/Fitness/Professional pack data deep-fill beyond billing templates
-- Quotes/Invoices managers list-view terminology (forms only this round)
-
-Reply **go** to proceed, or pick **1** (templates only) or **2** (field-ops only).
+Reply **go** to execute, or scope it down to a subset of operatives.
