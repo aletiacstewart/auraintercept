@@ -380,6 +380,51 @@ export default function Auth() {
         console.warn('AI agent initialization failed (non-fatal):', initErr);
       }
 
+      // Upload compliance documents (DBA / EIN / formation papers) to private
+      // storage and record metadata. Non-fatal: signup still succeeds if any
+      // file fails — admin can re-upload later from settings.
+      if (complianceFiles.length > 0) {
+        const uploadFailures: string[] = [];
+        for (const file of complianceFiles) {
+          try {
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const path = `${companyData.id}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+            const { error: uploadErr } = await supabase.storage
+              .from('compliance-docs')
+              .upload(path, file, { contentType: file.type, upsert: false });
+            if (uploadErr) {
+              uploadFailures.push(file.name);
+              continue;
+            }
+            const lower = file.name.toLowerCase();
+            const docType: 'dba' | 'ein' | 'formation' | 'other' =
+              lower.includes('dba') ? 'dba'
+              : (lower.includes('ein') || lower.includes('tax')) ? 'ein'
+              : (lower.includes('llc') || lower.includes('inc') || lower.includes('formation') || lower.includes('articles')) ? 'formation'
+              : 'other';
+            await supabase.from('company_compliance_documents').insert({
+              company_id: companyData.id,
+              uploaded_by: authData.user.id,
+              file_path: path,
+              file_name: file.name,
+              mime_type: file.type || null,
+              size_bytes: file.size,
+              doc_type: docType,
+              status: 'pending',
+            });
+          } catch (e) {
+            uploadFailures.push(file.name);
+          }
+        }
+        if (uploadFailures.length > 0) {
+          toast({
+            title: 'Some documents did not upload',
+            description: `${uploadFailures.join(', ')} — please re-upload from Settings → Compliance.`,
+            variant: 'destructive',
+          });
+        }
+      }
+
       toast({ 
         title: 'Welcome! 🎉', 
         description: 'Your 90-day free trial has started. Enjoy full access to all features!' 

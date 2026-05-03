@@ -22,8 +22,18 @@ serve(async (req) => {
     { auth: { persistSession: false } }
   );
 
+  const PLATFORM_RESEND_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
+  const FROM_ADDRESS = "Aura Intercept <noreply@auraintercept.ai>";
+
   try {
     logStep("Function started");
+    if (!PLATFORM_RESEND_KEY) {
+      logStep("Missing platform RESEND_API_KEY — aborting");
+      return new Response(JSON.stringify({ error: "RESEND_API_KEY not configured" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
 
     const now = new Date();
     const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -63,19 +73,6 @@ serve(async (req) => {
       const adminEmail = admins[0].email;
       if (!adminEmail) continue;
 
-      // Get company's Resend API key
-      const { data: integrations } = await supabaseClient
-        .from('tenant_integrations')
-        .select('resend_api_key')
-        .eq('company_id', company.id)
-        .single();
-
-      const resendApiKey = integrations?.resend_api_key;
-      if (!resendApiKey) {
-        logStep("No Resend API key for company, skipping", { companyId: company.id });
-        continue;
-      }
-
       let shouldSendReminder = false;
       let reminderType = '';
       let updateField = '';
@@ -101,11 +98,11 @@ serve(async (req) => {
           const emailResponse = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${resendApiKey}`,
+              'Authorization': `Bearer ${PLATFORM_RESEND_KEY}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'Aura Intercept <noreply@aura-intercept.com>',
+              from: FROM_ADDRESS,
               to: adminEmail,
               subject: getEmailSubject(reminderType, company.name),
               html: getEmailHtml(reminderType, company.name, daysRemaining),
@@ -151,23 +148,17 @@ serve(async (req) => {
         .select('email')
         .eq('company_id', company.id);
 
-      const { data: integrations } = await supabaseClient
-        .from('tenant_integrations')
-        .select('resend_api_key')
-        .eq('company_id', company.id)
-        .single();
-
-      if (!admins?.[0]?.email || !integrations?.resend_api_key) continue;
+      if (!admins?.[0]?.email) continue;
 
       try {
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${integrations.resend_api_key}`,
+            'Authorization': `Bearer ${PLATFORM_RESEND_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Aura Intercept <noreply@aura-intercept.com>',
+            from: FROM_ADDRESS,
             to: admins[0].email,
             subject: `Your free trial has ended - ${company.name}`,
             html: getExpiredEmailHtml(company.name),
