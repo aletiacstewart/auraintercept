@@ -72,7 +72,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
           email: email.trim(),
           phone: phone.trim() || null,
           address: address.trim() || null,
-          intake_data: intakeSchema && Object.keys(intakeData).length > 0 ? intakeData : null,
+          intake_data: (intakeSchema && Object.keys(intakeData).length > 0 ? intakeData : null) as never,
           sms_opt_out: !smsOptIn,
           email_opt_out: !emailOptIn,
           call_opt_out: !callOptIn,
