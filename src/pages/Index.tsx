@@ -168,14 +168,14 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Online booking', 'Appointment tracking', 'Quote requests', 'AI chat & voice support']
 }, {
-  name: 'Field Operations Console',
-  description: 'Smart dispatch, real-time technician routing, and live job tracking in the field.',
+  name: 'Service Delivery Console',
+  description: 'Schedule, assign, and track every job, visit, or appointment in real time — across technicians, providers, stylists, and agents.',
   icon: Truck,
   gradient: 'from-green-500 to-emerald-500',
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
   tier: 'performance',
-  features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
+  features: ['Smart scheduling & assignment', 'Route & visit optimization', 'Live status & ETA tracking', 'Staff check-in & updates']
 }, {
   name: 'Business Management Console',
   description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
