@@ -18,9 +18,14 @@ import {
 import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
 import { getPublishedDomain } from '@/lib/url';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 export default function CustomerPortalAppInstall() {
   const installUrl = `${getPublishedDomain()}/customer-portal-install`;
+  const { pack } = useIndustryPack();
+  const customerNoun = (pack?.terminology?.customer as string) || 'Customer';
+  const customerNounLower = customerNoun.toLowerCase();
+  const customersPlural = `${customerNoun}s`;
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(installUrl);
@@ -32,8 +37,8 @@ export default function CustomerPortalAppInstall() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Users}
-            title="Customer Portal App Install"
-            description="Mobile app installation page for your customers"
+            title={`${customerNoun} Portal App Install`}
+            description={`Mobile app installation page for your ${customerNounLower}s`}
             featureColor="customers"
           />
 
@@ -42,7 +47,7 @@ export default function CustomerPortalAppInstall() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Smartphone className="w-5 h-5 text-cyan-400" />
-              Customer Portal PWA
+              {customerNoun} Portal PWA
             </CardTitle>
             <CardDescription className="text-muted-foreground">
               Standalone Progressive Web App with install info, sign-in, and full AI Console access
@@ -55,23 +60,23 @@ export default function CustomerPortalAppInstall() {
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">1</span>
-                    <span>Customers sign up through company's embedded widget</span>
+                    <span>{customersPlural} sign up through your embedded widget</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">2</span>
-                    <span>After signup, they're prompted to install the Customer Portal App</span>
+                    <span>After signup, they're prompted to install the {customerNoun} Portal App</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">3</span>
-                    <span>Gives customers access to the Customer Portal Mobile App</span>
+                    <span>Gives {customersPlural.toLowerCase()} access to the {customerNoun} Portal Mobile App</span>
                   </li>
                 </ul>
               </div>
               <div className="space-y-4">
-                <h4 className="font-semibold text-sm text-foreground">Customer Benefits</h4>
+                <h4 className="font-semibold text-sm text-foreground">{customerNoun} Benefits</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Customer Portal Mobile App Access', icon: Building2 },
+                    { label: `${customerNoun} Portal Mobile App Access`, icon: Building2 },
                     { label: 'Track appointments', icon: Calendar },
                     { label: 'View quotes & invoices', icon: FileText },
                     { label: 'Get notifications', icon: Bell }
@@ -89,7 +94,7 @@ export default function CustomerPortalAppInstall() {
                     onClick={() => window.open(installUrl, '_blank')}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Open Customer Portal PWA
+                    Open {customerNoun} Portal PWA
                   </Button>
                 </div>
               </div>
@@ -107,7 +112,7 @@ export default function CustomerPortalAppInstall() {
                 Installation QR Code
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Customers can scan this code to install the app
+                {customersPlural} can scan this code to install the app
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
@@ -135,7 +140,7 @@ export default function CustomerPortalAppInstall() {
                 Direct Install Link
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Share this link with customers to install the app
+                Share this link with {customersPlural.toLowerCase()} to install the app
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -184,9 +189,9 @@ export default function CustomerPortalAppInstall() {
         {/* Customer Journey */}
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle>Customer Installation Journey</CardTitle>
+            <CardTitle>{customerNoun} Installation Journey</CardTitle>
             <CardDescription className="text-muted-foreground">
-              The path customers take to install and use the app
+              The path {customersPlural.toLowerCase()} take to install and use the app
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -195,7 +200,7 @@ export default function CustomerPortalAppInstall() {
                 { step: 1, title: 'Sign Up', desc: 'Via embedded widget' },
                 { step: 2, title: 'See QR Code', desc: 'Post-signup prompt' },
                 { step: 3, title: 'Scan & Install', desc: 'Add to home screen' },
-                { step: 4, title: 'Mobile App', desc: 'for Customer Portal' },
+                { step: 4, title: 'Mobile App', desc: `for ${customerNoun} Portal` },
               ].map((item, idx) => (
                 <div key={item.step} className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center text-center flex-1">
