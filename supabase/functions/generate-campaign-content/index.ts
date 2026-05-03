@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -170,11 +171,13 @@ serve(async (req) => {
       ? `IMPORTANT: Do NOT use these words: ${aiProfile.avoid_keywords.join(', ')}`
       : '';
 
-    const systemPrompt = `You are a marketing copywriter for ${resolvedCompanyName || 'a service business'}. Create compelling campaign content that drives engagement and conversions.
+    const baseSystemPrompt = `You are a marketing copywriter for ${resolvedCompanyName || 'a service business'}. Create compelling campaign content that drives engagement and conversions.
 ${toneGuidance}
 ${voiceGuidance}
 Be direct, use action-oriented language, and create urgency when appropriate.
 ${avoidanceGuidance}`;
+    const industryPack = companyId ? await loadIndustryPackForCompany(supabase, companyId) : null;
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'campaign');
 
     // Build context from form data
     let contextDetails = [];
