@@ -6249,8 +6249,8 @@ async function executeAgentTool(
               quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app'}/payment-success?invoice=${invoice.id}`,
-            cancel_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app'}/invoices`,
+            success_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.ai'}/payment-success?invoice=${invoice.id}`,
+            cancel_url: `${Deno.env.get('SITE_URL') || 'https://auraintercept.ai'}/invoices`,
             metadata: { invoice_id: invoice.id, company_id: companyId },
           });
           paymentLink = session.url || '';
@@ -6260,7 +6260,7 @@ async function executeAgentTool(
       }
       
       if (!paymentLink) {
-        const baseUrl = Deno.env.get('SITE_URL') || 'https://auraintercept.lovable.app';
+        const baseUrl = Deno.env.get('SITE_URL') || 'https://auraintercept.ai';
         paymentLink = `${baseUrl}/pay/${invoice.id}`;
         console.warn('[AI Agent] Stripe not configured, using fallback payment URL');
       }
@@ -6762,7 +6762,7 @@ async function executeAgentTool(
         return { success: false, error: error.message };
       }
 
-      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
+      const baseUrl = Deno.env.get('SITE_URL') || 'https://auraintercept.ai';
       const referralLink = `${baseUrl}/refer/${referralCode}`;
 
       return {
@@ -7287,7 +7287,7 @@ async function executeAgentTool(
       }
 
       // Generate the photo upload link - this points to the employee dashboard with the job expanded
-      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
+      const baseUrl = Deno.env.get('SITE_URL') || 'https://auraintercept.ai';
       const photoUploadLink = `${baseUrl}/dashboard/appointments?job=${jobId}&upload=${photoType}`;
       
       return {

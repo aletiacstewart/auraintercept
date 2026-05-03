@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
 
     // Generate portal and unsubscribe links
     const baseUrl = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1';
-    const portalUrl = `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${appointment.customer_token}`;
+    const portalUrl = `https://auraintercept.ai/appointment?token=${appointment.customer_token}`;
     const unsubscribeSmsUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=sms`;
     const unsubscribeEmailUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=email`;
     const unsubscribeCallUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=call`;

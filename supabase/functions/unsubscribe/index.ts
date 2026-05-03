@@ -190,7 +190,7 @@ function generateHtmlResponse(title: string, message: string, success: boolean, 
   // All dynamic content is already escaped before being passed to this function
   // Title is static, message contains pre-escaped content
   const safeTitle = escapeHtml(title);
-  const portalLink = token ? `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${encodeURIComponent(token)}` : '';
+  const portalLink = token ? `https://auraintercept.ai/appointment?token=${encodeURIComponent(token)}` : '';
   
   return `<!DOCTYPE html>
 <html>
