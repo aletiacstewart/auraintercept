@@ -14,6 +14,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePublicIndustryPack } from '@/hooks/useIndustryPack';
 
 interface Message {
   id: string;
@@ -38,11 +39,17 @@ interface CustomerAIChatProps {
 
 export function CustomerAIChat({ company }: CustomerAIChatProps) {
   const { user } = useAuth();
+  const { pack } = usePublicIndustryPack(company.id);
+  const term = (pack?.terminology ?? {}) as Record<string, string>;
+  const apptNoun = term.appointment || 'Appointment';
+  const apptLower = apptNoun.toLowerCase();
+  const apptArticle = /^[aeiou]/i.test(apptLower) ? 'an' : 'a';
+  const apptPluralLower = (apptNoun.endsWith('s') ? apptNoun : `${apptNoun}s`).toLowerCase();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: company.ai_voice_greeting || `Hello! Welcome to ${company.name}. I'm here to help you with booking appointments, getting quotes, tracking your services, and answering any questions. How can I assist you today?`,
+      content: company.ai_voice_greeting || `Hello! Welcome to ${company.name}. I'm here to help you with booking ${apptPluralLower}, getting quotes, tracking your services, and answering any questions. How can I assist you today?`,
       timestamp: new Date()
     }
   ]);
@@ -108,9 +115,9 @@ export function CustomerAIChat({ company }: CustomerAIChatProps) {
   };
 
   const quickActions = [
-    { label: 'Book Appointment', icon: Calendar, prompt: 'I would like to book an appointment' },
+    { label: `Book ${apptNoun}`, icon: Calendar, prompt: `I would like to book ${apptArticle} ${apptLower}` },
     { label: 'Get Quote', icon: FileText, prompt: 'I need a quote for your services' },
-    { label: 'Track Appointment', icon: MapPin, prompt: 'I want to track my appointment status' },
+    { label: `Track ${apptNoun}`, icon: MapPin, prompt: `I want to track my ${apptLower} status` },
   ];
 
   return (

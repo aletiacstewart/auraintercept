@@ -70,3 +70,11 @@ Pattern: small `applyTerminology(template, pack)` helper added to `_shared/indus
 - Memory note: extend `mem://architecture/industry-prompt-injection-standard` with terminology placeholder convention
 
 Reply **go** to execute B → A → E in sequence, or pick a single letter to scope to one workstream.
+
+---
+
+## Phase C — Customer-facing surfaces (in progress)
+
+- ✅ `BookingForm` — header, pending notice, and submit CTA now use `pack.terminology.appointment`
+- ✅ `CustomerAIChat` — greeting fallback + quick-action labels/prompts use industry noun
+- Remaining: portal welcome subtitle deeper wiring, embed widget script copy, public booking confirmation already done
