@@ -138,6 +138,20 @@ const guideCategories = [
         tips: ['Trial users get full Elite tier access', 'Annual billing = 10x monthly rate']
       },
       {
+        title: 'Healthcare Practices (HIPAA Scope)',
+        duration: '5 min',
+        steps: [
+          'Supported verticals: Dental, Chiropractic, Medical Office, Veterinary, Physical Therapy, Optometry — available on all 4 tiers',
+          'Pick your healthcare vertical at signup; HIPAA acknowledgement is required and recorded',
+          'Aura books appointments, sends recall reminders, and captures insurance (carrier + member ID), then emails the front desk to verify',
+          'Veterinary uses a pets-as-JSON model: each owner record can hold multiple pets',
+          'Manage 3rd-party integrations at /dashboard/integrations/healthcare (Google/Outlook Calendar, Slack, Teams, webhook, BYO Twilio)',
+          'OUT OF SCOPE: medical records, EHR/PMS sync, prescriptions, medications, clinical advice, diagnosis, pharmacy or lab integrations, and any PHI beyond what is needed to book a visit',
+          'Aura always self-identifies as an AI assistant (not a clinician) and routes any clinical question to your staff'
+        ],
+        tips: ['Confirm your front-desk email receives insurance-verification notifications', 'Use the Recall workflow to keep 6-month/annual visits booked']
+      },
+      {
         title: 'User Roles & Permissions',
         duration: '8 min',
         steps: [
