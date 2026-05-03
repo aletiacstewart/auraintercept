@@ -559,6 +559,145 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
+  // ─── Healthcare & Wellness (appointments + insurance only — no clinical advice) ───
+  dental: {
+    id: 'dental', label: 'Dental', icon: '🦷', color: '#0EA5E9',
+    templates: {
+      instagram: [
+        "😁 Time for your 6-month cleaning? Book online in seconds. #DentalCare #HealthySmile",
+        "✨ A confident smile starts with great care. Schedule your check-up today!",
+        "🪥 Friendly reminder: replace your toothbrush every 3 months. We've got the rest covered.",
+      ],
+      facebook: [
+        "🦷 New patient? We make your first visit easy — online booking, insurance verification handled for you.",
+        "📅 Family appointments back-to-back? We can group them. Just ask!",
+        "💙 Now accepting new patients. Most insurance plans welcome.",
+      ],
+      linkedin: [
+        "Modern dentistry built around your schedule. Our team handles the booking, the reminders, and the insurance verification so you can focus on your smile.",
+      ],
+      tiktok: [
+        "POV: your hygienist actually remembers your name 🦷 #DentalLife",
+      ],
+      sms: [
+        "Hi {name}! It's been 6 months — time for your cleaning. Reply YES to book or tap {link}.",
+        "Reminder: your dental visit is {date} at {time}. Reply C to confirm.",
+      ],
+    },
+  },
+  chiropractic: {
+    id: 'chiropractic', label: 'Chiropractic', icon: '🧘', color: '#10B981',
+    templates: {
+      instagram: [
+        "🧘 Move better. Feel better. Book your adjustment today.",
+        "💪 Wellness is a routine, not a one-time fix. Schedule your next visit.",
+      ],
+      facebook: [
+        "👋 New patient consults available this week. We'll verify your insurance before you arrive.",
+        "📅 Easy online booking for adjustments, re-evaluations, and wellness visits.",
+      ],
+      linkedin: [
+        "Patient-first chiropractic care with a modern booking experience.",
+      ],
+      tiktok: [
+        "That post-adjustment feeling 😌 #Chiropractic",
+      ],
+      sms: [
+        "Hi {name}, your adjustment is set for {date} at {time}. Reply C to confirm.",
+        "It's been a while — ready to get back on the table? Book: {link}",
+      ],
+    },
+  },
+  medical_office: {
+    id: 'medical_office', label: 'Medical Office', icon: '🩺', color: '#3B82F6',
+    templates: {
+      instagram: [
+        "🩺 Annual physicals open for booking. Reserve your slot today.",
+        "📅 Same-day sick visits often available — call or book online.",
+      ],
+      facebook: [
+        "👋 Now accepting new patients. We'll verify your insurance ahead of your first visit.",
+        "💙 Routine care, follow-ups, and wellness visits — book online anytime.",
+      ],
+      linkedin: [
+        "Modern primary care with effortless booking and insurance verification.",
+      ],
+      tiktok: [
+        "Tip: book your annual physical early in the year 📅 #PrimaryCare",
+      ],
+      sms: [
+        "Hi {name}, your appointment with Dr. {provider} is {date} at {time}. Reply C to confirm.",
+        "Time for your annual physical? Book: {link}",
+      ],
+    },
+  },
+  veterinary: {
+    id: 'veterinary', label: 'Veterinary', icon: '🐾', color: '#F59E0B',
+    templates: {
+      instagram: [
+        "🐾 Wellness exams keep tails wagging. Book {pet}'s visit today!",
+        "💉 Vaccines due? We'll verify and schedule in one visit.",
+      ],
+      facebook: [
+        "🐶 New patient pets welcome! Online booking + reminders for every visit.",
+        "🐱 Our team is great with anxious kitties. Tell us when you book.",
+      ],
+      linkedin: [
+        "Compassionate veterinary care with simple online booking.",
+      ],
+      tiktok: [
+        "When the dog is more excited than the owner 🐕 #VetLife",
+      ],
+      sms: [
+        "Hi {name}, {pet}'s visit is {date} at {time}. Reply C to confirm.",
+        "Time for {pet}'s wellness exam — book: {link}",
+      ],
+    },
+  },
+  physical_therapy: {
+    id: 'physical_therapy', label: 'Physical Therapy', icon: '🏋️', color: '#8B5CF6',
+    templates: {
+      instagram: [
+        "🏋️ Recovery is a routine. Book your next session today.",
+        "💪 New patient evaluations open this week. Insurance verified ahead of time.",
+      ],
+      facebook: [
+        "👋 Sports injury, post-surgery rehab, or chronic pain — we'll help you book the right visit.",
+      ],
+      linkedin: [
+        "Patient-centered physical therapy with modern scheduling and insurance verification.",
+      ],
+      tiktok: [
+        "PT tip of the week 💪 #PhysicalTherapy",
+      ],
+      sms: [
+        "Hi {name}, your PT session is {date} at {time}. Reply C to confirm.",
+        "Don't skip this week's session — book a make-up: {link}",
+      ],
+    },
+  },
+  optometry: {
+    id: 'optometry', label: 'Optometry', icon: '👓', color: '#06B6D4',
+    templates: {
+      instagram: [
+        "👓 Annual eye exam due? Book in seconds.",
+        "✨ New frames just arrived — pair them with a vision check today.",
+      ],
+      facebook: [
+        "👋 We accept most vision and medical insurance — we'll verify before your visit.",
+      ],
+      linkedin: [
+        "Modern optometry with online booking, reminders, and insurance verification.",
+      ],
+      tiktok: [
+        "When you finally see leaves on the trees again 🍃 #EyeCare",
+      ],
+      sms: [
+        "Hi {name}, your eye exam is {date} at {time}. Reply C to confirm.",
+        "Time for your annual eye exam — book: {link}",
+      ],
+    },
+  },
 };
 
 export const INDUSTRY_LIST = Object.values(INDUSTRY_TEMPLATES);
