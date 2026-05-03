@@ -2865,6 +2865,7 @@ export type Database = {
           cluster: string
           console_visibility: Json
           created_at: string
+          customer_intake_schema: Json
           dashboard_widgets: Json
           description: string | null
           extra_operatives: Json
@@ -2872,11 +2873,16 @@ export type Database = {
           icon: string | null
           id: string
           industry_id: string
+          inventory_taxonomy: Json
+          invoice_template: Json
           is_active: boolean
           job_templates: Json
           kb_seed_documents: Json
           label: string
           min_tier_per_extra: Json
+          quote_template: Json
+          service_catalog: Json
+          service_type_options: Json
           terminology: Json
           updated_at: string
         }
@@ -2887,6 +2893,7 @@ export type Database = {
           cluster: string
           console_visibility?: Json
           created_at?: string
+          customer_intake_schema?: Json
           dashboard_widgets?: Json
           description?: string | null
           extra_operatives?: Json
@@ -2894,11 +2901,16 @@ export type Database = {
           icon?: string | null
           id?: string
           industry_id: string
+          inventory_taxonomy?: Json
+          invoice_template?: Json
           is_active?: boolean
           job_templates?: Json
           kb_seed_documents?: Json
           label: string
           min_tier_per_extra?: Json
+          quote_template?: Json
+          service_catalog?: Json
+          service_type_options?: Json
           terminology?: Json
           updated_at?: string
         }
@@ -2909,6 +2921,7 @@ export type Database = {
           cluster?: string
           console_visibility?: Json
           created_at?: string
+          customer_intake_schema?: Json
           dashboard_widgets?: Json
           description?: string | null
           extra_operatives?: Json
@@ -2916,11 +2929,16 @@ export type Database = {
           icon?: string | null
           id?: string
           industry_id?: string
+          inventory_taxonomy?: Json
+          invoice_template?: Json
           is_active?: boolean
           job_templates?: Json
           kb_seed_documents?: Json
           label?: string
           min_tier_per_extra?: Json
+          quote_template?: Json
+          service_catalog?: Json
+          service_type_options?: Json
           terminology?: Json
           updated_at?: string
         }
@@ -4821,6 +4839,7 @@ export type Database = {
           flat_fee: number | null
           hourly_rate: number | null
           id: string
+          intake_schema_overrides: Json | null
           is_active: boolean
           last_synced_at: string | null
           name: string
@@ -4847,6 +4866,7 @@ export type Database = {
           flat_fee?: number | null
           hourly_rate?: number | null
           id?: string
+          intake_schema_overrides?: Json | null
           is_active?: boolean
           last_synced_at?: string | null
           name: string
@@ -4873,6 +4893,7 @@ export type Database = {
           flat_fee?: number | null
           hourly_rate?: number | null
           id?: string
+          intake_schema_overrides?: Json | null
           is_active?: boolean
           last_synced_at?: string | null
           name?: string
@@ -6632,6 +6653,7 @@ export type Database = {
           cluster: string
           console_visibility: Json
           created_at: string
+          customer_intake_schema: Json
           dashboard_widgets: Json
           description: string | null
           extra_operatives: Json
@@ -6639,11 +6661,16 @@ export type Database = {
           icon: string | null
           id: string
           industry_id: string
+          inventory_taxonomy: Json
+          invoice_template: Json
           is_active: boolean
           job_templates: Json
           kb_seed_documents: Json
           label: string
           min_tier_per_extra: Json
+          quote_template: Json
+          service_catalog: Json
+          service_type_options: Json
           terminology: Json
           updated_at: string
         }
@@ -6733,10 +6760,15 @@ export type Database = {
       get_public_industry_pack: {
         Args: { p_company_id: string }
         Returns: {
+          appointment_rules: Json
+          customer_intake_schema: Json
           form_schemas: Json
           industry_id: string
+          inventory_taxonomy: Json
           job_templates: Json
           label: string
+          service_catalog: Json
+          service_type_options: Json
           terminology: Json
         }[]
       }
@@ -7014,6 +7046,10 @@ export type Database = {
           service_interest: string
           status: string
         }[]
+      }
+      seed_company_starter_data: {
+        Args: { p_company_id: string }
+        Returns: undefined
       }
       seed_industry_pack_kb_for_company: {
         Args: { p_company_id: string }
