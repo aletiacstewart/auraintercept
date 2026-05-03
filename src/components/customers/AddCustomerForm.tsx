@@ -66,7 +66,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
 
       const { data, error } = await supabase
         .from('customer_profiles')
-        .insert({
+        .insert([{
           company_id: companyId,
           name: fullName,
           email: email.trim(),
@@ -76,7 +76,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
           sms_opt_out: !smsOptIn,
           email_opt_out: !emailOptIn,
           call_opt_out: !callOptIn,
-        })
+        }])
         .select()
         .single();
 
