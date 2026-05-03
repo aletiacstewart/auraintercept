@@ -325,7 +325,7 @@ export default function Auth() {
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
           industry_config:
             canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
-              ? buildIndustryConfig(customIndustry)
+              ? (buildIndustryConfig(customIndustry) as never)
               : null,
         })
         .select()
