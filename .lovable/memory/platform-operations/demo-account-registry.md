@@ -1,12 +1,12 @@
 ---
-name: Demo Account Registry v4
-description: 54 demo accounts (18 industries × admin/employee/customer) with industry-curated tier mapping (4/5/4/5). Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
+name: Demo Account Registry v5
+description: 72 demo accounts (24 industries × admin/employee/customer) including 6 healthcare verticals. Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
 type: feature
 ---
 
-# Demo Account Registry v4 — Industry-Curated Tiers
+# Demo Account Registry v5 — 24 Industries
 
-The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI) creates **18 demo companies** — one per active row in `industry_template_packs` — with **3 user accounts each (admin / employee / customer)** for a total of **54 demo accounts**. Universal password: `aidemo*!`.
+The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI) creates **24 demo companies** — one per active row in `industry_template_packs` — with **3 user accounts each (admin / employee / customer)** for a total of **72 demo accounts**. Universal password: `aidemo*!`.
 
 ## Email convention
 
@@ -16,18 +16,20 @@ The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI)
 {industry_key_no_underscores}customer@demo.com   → customer
 ```
 
-Examples: `hvacadmin@demo.com`, `realestateemployee@demo.com`, `personalassistantcustomer@demo.com`.
+Examples: `hvacadmin@demo.com`, `dentaladmin@demo.com`, `medicalofficeemployee@demo.com`, `physicaltherapycustomer@demo.com`.
 
 ## Tier mapping (curated per industry — not rotation)
 
 ```
-CORE  (4): beauty_wellness, restaurants, real_estate, personal_assistant
-BOOST (5): handyman, auto_care, appliance_repair, pest_control, fencing
-PRO   (4): security_systems, pool_spa, landscape, solar
+CORE  (7): beauty_wellness, restaurants, real_estate, personal_assistant,
+           chiropractic, physical_therapy, optometry
+BOOST (7): handyman, auto_care, appliance_repair, pest_control, fencing,
+           dental, veterinary
+PRO   (5): security_systems, pool_spa, landscape, solar, medical_office
 ELITE (5): hvac, electrical, plumbing, roofing, construction
 ```
 
-Each industry sits at the tier that best showcases its real console + agent surface.
+Each industry sits at the tier that best showcases its real console + agent surface. Healthcare verticals (dental, chiropractic, medical_office, veterinary, physical_therapy, optometry) are scoped to **appointments + insurance verification email only** — no EHR/PMS, prescriptions, lab results, medical records, or clinical advice.
 
 ## Per-company seed includes
 
