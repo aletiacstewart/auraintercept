@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2 } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, Activity, HeartPulse, PawPrint, Dumbbell, Eye } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -401,6 +401,35 @@ const industryCategories = [{
     name: 'Personal Assistant',
     icon: Bot,
     description: 'Calendar & Scheduling'
+  }]
+}, {
+  category: 'Healthcare & Wellness',
+  emoji: '🩺',
+  subtitle: 'Appointments & Insurance',
+  industries: [{
+    name: 'Dental',
+    icon: Stethoscope,
+    description: 'Cleanings & New Patients'
+  }, {
+    name: 'Chiropractic',
+    icon: Activity,
+    description: 'Adjustments & Wellness'
+  }, {
+    name: 'Medical Office',
+    icon: HeartPulse,
+    description: 'Primary Care & Clinics'
+  }, {
+    name: 'Veterinary',
+    icon: PawPrint,
+    description: 'Pet Care & Animal Hospital'
+  }, {
+    name: 'Physical Therapy',
+    icon: Dumbbell,
+    description: 'PT & Rehab Clinics'
+  }, {
+    name: 'Optometry',
+    icon: Eye,
+    description: 'Eye Exams & Vision Care'
   }]
 }];
 const howItWorks = [{

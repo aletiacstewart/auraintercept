@@ -383,6 +383,110 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'referral', intent: 'booking', serviceInterest: 'Strategy Session', priority: 'high', score: 80 },
     AUSTIN, { primary: '#6366F1', secondary: '#A5B4FC' },
   ),
+  // ─── Healthcare & Wellness (appointments + insurance verification only) ───
+  // Aura is NOT a clinician. No medical advice, diagnosis, prescriptions, or PHI beyond carrier/member ID.
+  dental: make(
+    'dental', 'Dental', '🦷', 'Healthcare & Wellness',
+    {
+      headline: 'Cleanings, recalls, and new patients — booked automatically.',
+      subheadline: 'Aura answers every call 24/7, books appointments, sends recall reminders, and emails the front desk to verify insurance — without taking on any clinical work.',
+    },
+    [
+      { title: 'Recall sweeps that actually work', description: 'Aura nudges 6-month patients with friendly reminders until they book.' },
+      { title: 'Insurance verification, handled', description: 'Aura collects carrier + member ID and emails the front desk to verify before the visit.' },
+      { title: 'New patient intake in one call', description: 'Demographics, insurance, and reason for visit captured and routed to your team.' },
+    ],
+    ['I\'d like to book a cleaning.', 'I have a toothache — can someone see me today?', 'Are you taking new patients with Delta Dental?'],
+    ['New Patient Exam', 'Cleaning', 'Recall Visit', 'Emergency Toothache', 'Insurance Verification'],
+    { service: 'Cleaning', whenOffsetHours: 48, notes: '6-month recall. Insurance: Delta Dental — front desk to verify.' },
+    { source: 'voice', intent: 'booking', serviceInterest: 'Cleaning', priority: 'normal', score: 75 },
+    AUSTIN, { primary: '#0EA5E9', secondary: '#67E8F9' },
+  ),
+  chiropractic: make(
+    'chiropractic', 'Chiropractic', '🧘', 'Healthcare & Wellness',
+    {
+      headline: 'Adjustments and consults — booked while you treat.',
+      subheadline: 'Aura handles the front desk: new patient intake, re-evals, and recurring adjustment scheduling, with insurance verification routed to your team.',
+    },
+    [
+      { title: 'Recurring adjustment plans', description: 'Aura books the next 4–12 visits in one call so patients stay on plan.' },
+      { title: 'New patient consults', description: 'Demographics, complaint area, and insurance captured before the first visit.' },
+      { title: 'No clinical advice', description: 'Aura is not a clinician — symptom questions are routed to staff every time.' },
+    ],
+    ['I\'d like a new patient consult.', 'Can I get on the schedule for an adjustment this week?', 'Do you take Blue Cross?'],
+    ['New Patient Consult', 'Adjustment', 'Re-Evaluation', 'Massage Add-On', 'Insurance Verification'],
+    { service: 'Adjustment', whenOffsetHours: 30, notes: 'Returning patient. Lower back focus. Routine visit.' },
+    { source: 'chat', intent: 'booking', serviceInterest: 'New Patient Consult', priority: 'normal', score: 72 },
+    DALLAS, { primary: '#10B981', secondary: '#6EE7B7' },
+  ),
+  medical_office: make(
+    'medical_office', 'Medical Office', '🩺', 'Healthcare & Wellness',
+    {
+      headline: 'Front-desk overflow, answered.',
+      subheadline: 'Aura books physicals, follow-ups, and sick visits, captures insurance, and routes anything clinical to your staff — 24/7.',
+    },
+    [
+      { title: 'Same-day sick visit triage', description: 'Aura captures symptoms generically and routes to staff for clinical decisions.' },
+      { title: 'Annual physicals booked at scale', description: 'Recall reminders nudge patients into their yearly visit window.' },
+      { title: 'Insurance verification flow', description: 'Carrier + member ID emailed to the front desk for every new patient.' },
+    ],
+    ['I need to schedule my annual physical.', 'Can I see someone today? I\'m not feeling well.', 'I need to update my insurance on file.'],
+    ['New Patient Visit', 'Annual Physical', 'Sick Visit', 'Follow-Up', 'Insurance Verification'],
+    { service: 'Annual Physical', whenOffsetHours: 72, notes: 'Established patient. Provider preference noted. Insurance verified.' },
+    { source: 'voice', intent: 'booking', serviceInterest: 'Annual Physical', priority: 'normal', score: 70 },
+    HOUSTON, { primary: '#3B82F6', secondary: '#93C5FD' },
+  ),
+  veterinary: make(
+    'veterinary', 'Veterinary', '🐾', 'Healthcare & Wellness',
+    {
+      headline: 'Pets booked. Owners reminded. Staff focused on care.',
+      subheadline: 'Aura books wellness exams, vaccines, and dental cleanings, tracks each pet under the owner\'s record, and reminds owners when visits are due.',
+    },
+    [
+      { title: 'Pet-aware booking', description: 'Each pet is stored on the owner\'s record so visits stay organized.' },
+      { title: 'Vaccination reminders', description: 'Aura nudges owners when shots are due — no spreadsheet required.' },
+      { title: 'Wellness plan recall', description: 'Annual exams and dental cleanings booked automatically.' },
+    ],
+    ['I\'d like to book Bella\'s annual exam.', 'My dog needs his vaccines updated.', 'How much is a dental cleaning for my cat?'],
+    ['Wellness Exam', 'Vaccination', 'Sick Visit', 'Dental Cleaning', 'Insurance Verification'],
+    { service: 'Wellness Exam', whenOffsetHours: 48, notes: 'Bella, 4yr lab. Annual exam + DHPP booster.' },
+    { source: 'chat', intent: 'booking', serviceInterest: 'Wellness Exam', priority: 'normal', score: 74 },
+    PHOENIX, { primary: '#F59E0B', secondary: '#FCD34D' },
+  ),
+  physical_therapy: make(
+    'physical_therapy', 'Physical Therapy', '🏋️', 'Healthcare & Wellness',
+    {
+      headline: 'Recurring sessions, booked and reminded.',
+      subheadline: 'Aura schedules initial evals, recurring therapy sessions, and re-evals while sending reminders to keep patients on plan.',
+    },
+    [
+      { title: 'Recurring session blocks', description: 'Book 8–12 sessions in one call so patients stay on schedule.' },
+      { title: 'Re-evaluation cadence', description: 'Aura tracks plan-of-care milestones and prompts re-evals on time.' },
+      { title: 'Insurance verification', description: 'Auth + carrier captured up front and emailed to the front desk.' },
+    ],
+    ['I have a referral for PT — how do I book?', 'Can we move my Tuesday session?', 'Do you take Aetna?'],
+    ['Initial Evaluation', 'Therapy Session', 'Re-Evaluation', 'Discharge Visit', 'Insurance Verification'],
+    { service: 'Therapy Session', whenOffsetHours: 24, notes: 'Post-op knee, week 4. Standing 3pm slot.' },
+    { source: 'voice', intent: 'booking', serviceInterest: 'Initial Evaluation', priority: 'high', score: 78 },
+    ORLANDO, { primary: '#8B5CF6', secondary: '#C4B5FD' },
+  ),
+  optometry: make(
+    'optometry', 'Optometry', '👓', 'Healthcare & Wellness',
+    {
+      headline: 'Eye exams and lens fittings — booked on the call.',
+      subheadline: 'Aura books annual exams, contact lens fittings, and frame appointments, with vision and medical insurance verification routed to your team.',
+    },
+    [
+      { title: 'Annual exam recall', description: 'Patients nudged each year so prescriptions never lapse.' },
+      { title: 'Vision + medical insurance', description: 'Both plans captured and emailed to the front desk for verification.' },
+      { title: 'Frame and contact appointments', description: 'Booked alongside exams so visits are efficient.' },
+    ],
+    ['I\'d like to schedule my annual eye exam.', 'I need a contact lens fitting.', 'Do you accept VSP?'],
+    ['Annual Eye Exam', 'Contact Lens Fitting', 'Frame Selection', 'Follow-Up', 'Insurance Verification'],
+    { service: 'Annual Eye Exam', whenOffsetHours: 50, notes: 'Returning patient. VSP + medical on file.' },
+    { source: 'chat', intent: 'booking', serviceInterest: 'Annual Eye Exam', priority: 'normal', score: 73 },
+    DALLAS, { primary: '#06B6D4', secondary: '#67E8F9' },
+  ),
   // ─── Catch-all ────────────────────────────────────────────────────
   other: make(
     'other', 'Other', '🏢', 'Other',
@@ -412,6 +516,7 @@ export const INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] 
   { group: 'Specialized Home', emoji: '🛠', ids: ['appliance_repair', 'handyman_cleaning', 'construction'] },
   { group: 'Mobile & Commercial', emoji: '🚗', ids: ['auto_care', 'security_systems', 'real_estate'] },
   { group: 'Wellness & Personal', emoji: '💆', ids: ['beauty_wellness', 'restaurants', 'personal_assistant'] },
+  { group: 'Healthcare & Wellness', emoji: '🩺', ids: ['dental', 'chiropractic', 'medical_office', 'veterinary', 'physical_therapy', 'optometry'] },
 ];
 
 export function getIndustryContent(id: string | null | undefined): IndustryContent {
