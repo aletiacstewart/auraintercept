@@ -1,75 +1,72 @@
-## Findings
+# Hybrid Workflow Cards
 
-### 1. Help page is only partially industry-aware
+Make the "End-to-End Workflows" cards (Bid Walk, Change Order, Punch List, etc.) do **two things** instead of just firing the AI prompt: a primary "Run with Aura" action (current behavior) plus a secondary "Open Page" link to the relevant working surface.
 
-`src/pages/Help.tsx` resolves industry-aware **example prompts** via `getIndustryUseCases()` (good), but **everything else on the AI Agents tab is still generic / HVAC-flavored**:
+## Changes
 
-- Console **descriptions** in `CONSOLE_HELP_CONFIG` mention "AC repair", "HVAC", "water heater", "air filters", "summer AC tune-up", etc.
-- Console **features** lists are static (e.g., "Photo documentation for job check-ins", "Service catalog with pricing").
-- Console **tabs** (`Quote / Invoice / Lead / Inventory / Companies`) don't reflect healthcare reality (no inventory in dental, no leads in PT, etc.).
-- The **Voice / Company-Employees / FAQ** tabs also use trades language (e.g., "Field Ops dashboard", "AC repair tomorrow", "HVAC maintenance").
-- `industryHelpPrompts.ts` has good healthcare overrides for `customer_portal` but **falls through to generic** for `field_operations`, `business_management`, `social_media`, `creative_web_presence`, `analytics_reports`, `ai_operatives_hub` on most healthcare verticals (only `customer_portal` is overridden per-industry; the `HEALTHCARE_SHARED` block is spread but is only partial).
+### 1. Extend the `WorkflowChain` type
+File: `src/components/ui/workflow-chain-buttons.tsx`
 
-### 2. PWA install pages are NOT industry-specific
+Add an optional `targetRoute` field:
+```ts
+export interface WorkflowChain {
+  id: string;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+  steps: string[];
+  command: string;          // AI prompt
+  targetRoute?: string;     // NEW — page to open for manual work
+}
+```
 
-The 5 install pages are hardcoded:
+### 2. Update card UI
+Same file. Replace the single click handler with two explicit buttons inside the card:
+- **Primary** "Run with Aura" (Zap icon) — calls `onTrigger(command)` (existing behavior)
+- **Secondary** "Open Page" (ArrowRight icon) — `navigate(targetRoute)`, only rendered when `targetRoute` is set
 
-| File | Header copy | Issue |
-|---|---|---|
-| `FieldOpsInstall.tsx` | "Technician Field Ops Install" / "Deploy the Field Ops mobile app to your technicians' devices" | Says "Technician" for dental/vet/PT/etc. |
-| `DispatchFieldOpsInstall.tsx` | Dispatch / Shop Queue copy | Wrong noun for healthcare (should be Front Desk / Patient Schedule) |
-| `BusinessMgtOpsInstall.tsx` | Generic admin | Mostly OK but references trades terminology in subcards |
-| `CustomerPortalAppInstall.tsx` | Customer-facing PWA | Says "customer" everywhere — should say "patient" / "client" / "guest" per industry |
-| `TechnicianInstall.tsx` | "Technician" PWA | Same naming issue for healthcare |
+Whole-card click is removed to prevent accidental AI runs. Buttons use existing `Button` variants (`default` and `outline` size `sm`) — no new tokens.
 
-None of them use `useIndustryPack()` or `getNavLabels()`.
+### 3. Add `targetRoute` to all workflow chains
+File: `src/lib/industryFieldOpsWorkflows.ts`
 
-## Plan
+Map each workflow id to the most relevant existing route:
 
-### Part A — Make the Help page fully industry-aware
+| Workflow id pattern | Target route |
+|---|---|
+| `bid-walk`, `intake-quote`, `site-survey` | `/dashboard/quotes` |
+| `change-order`, `parts-repair`, `intake-diagnose` | `/dashboard/jobs` |
+| `punch-list`, `dispatch-complete`, `emergency-*`, `route-service`, `weather-reshuffle`, `install-day`, `route-day`, `end-of-day` | `/dashboard/dispatch-field-ops` |
+| `lead-to-booking`, `lead-to-showing`, `no-show-recovery`, `rebook-loop` | `/dashboard/lead-pipeline` |
+| `daily-prep`, `daily-brief`, `reservations-prep` | `/dashboard/appointments` |
+| `status-update`, `monitoring-check`, `inbox-zero` | `/dashboard/messages` |
+| `review-pulse` | `/dashboard/reputation` |
+| `listing-launch` | `/dashboard/social-media` |
+| `maintenance-renewal`, `recurring-clean` | `/dashboard/customers` |
+| `travel-coord` | `/dashboard/calendar` |
 
-1. **Extend `src/lib/industryHelpPrompts.ts`** to also export industry-aware overrides for:
-   - `consoleDescription` (per console + per industry)
-   - `consoleFeatures` (per console + per industry, additive — generic features stay, healthcare-specific ones added)
-   - `consoleTabs` (per industry override list — e.g., dental Field Ops tabs become "Patient Lookup / Update Status / Insurance Note / Complete Visit")
+Routes that don't exist for a given tenant/industry will simply not render the secondary button (we'll guard with a small allow-list check against the app router).
 
-2. **Add `getIndustryConsoleConfig(consoleId, pack, fallbackConfig)`** that returns the merged config (description + features + tabs + use cases) and call it inside `Help.tsx` instead of reading `currentConsole` fields directly.
+### 4. Update `WorkflowChainButtons` consumers
+Files already using it work as-is (the new prop is optional):
+- `src/pages/FieldOperations.tsx`
+- `src/pages/ai-consoles/FieldOpsConsole.tsx`
 
-3. **Replace HVAC-flavored generic copy in `helpContentConfig.ts`** with industry-neutral defaults (e.g., "Accept your next job and notify the customer" stays, but "Generate a quote for HVAC installation" → "Generate a quote for the next job"). Generic stays generic; healthcare/real-estate/restaurants get explicit overrides.
+No changes needed in those files.
 
-4. **Update the static "Field Technician Dashboard Features" section** (lines 570-597) and the Voice "Pro Tips" / FAQ blocks to use `navLabels.techView` / `jobNoun` (already imported via `useIndustryPack` — needs `getNavLabels`).
+### 5. Memory
+Add a short note: `mem://features/field-ops/workflow-cards-hybrid-action` documenting that workflow cards expose **two actions** (Run with Aura + Open Page) and that new chains added to `industryFieldOpsWorkflows.ts` should set `targetRoute` when an obvious destination exists.
 
-5. **Add healthcare override coverage** in `industryHelpPrompts.ts` for the 5 missing consoles per the 6 healthcare verticals (dental / chiropractic / medical_office / veterinary / physical_therapy / optometry), so the prompts stop falling through to "AC repair".
+## Out of scope
+- No new pages.
+- No `?workflow=` deep-link pre-selection on target pages (can be added later if you want the secondary button to also pre-open a panel).
+- No changes to `useAuraCommand` routing.
 
-### Part B — Make PWA install pages industry-aware
-
-1. **`FieldOpsInstall.tsx`** — read `useIndustryPack()` + `getNavLabels()`; render header as:
-   - Dental: "Hygienist Mobile App Install"
-   - Vet: "Vet Tech Mobile App Install"
-   - Trades: "Technician Field Ops Install" (current default)
-   - Replace "technicians' devices" with `${navLabels.teamMemberNoun.toLowerCase()}s' devices`.
-
-2. **`DispatchFieldOpsInstall.tsx`** — header switches based on cluster:
-   - Healthcare: "Front Desk / Patient Schedule App Install"
-   - Repair: "Shop Queue App Install"
-   - Booking: "Schedule App Install"
-   - Trades (default): "Dispatch & Field Ops App Install"
-
-3. **`CustomerPortalAppInstall.tsx`** — replace literal "customer" tokens with the industry customer noun (`patient`, `client`, `guest`, `member`) using `pack.terminology.customer` (already on the pack).
-
-4. **`BusinessMgtOpsInstall.tsx`** — replace static service examples in subcards with industry-neutral copy or pack-driven examples.
-
-5. **`TechnicianInstall.tsx`** — same pattern as FieldOpsInstall: dynamic header noun + body copy.
-
-6. **All 5 pages** — keep route paths unchanged (per `Console Routes Standard` memory). Only header titles + descriptions + body copy change.
-
-### Part C — Memory updates
-
-Add `mem://features/help/industry-aware-content-standard`:
-> Help page (Help.tsx) and all 5 PWA install pages MUST resolve console title/description/features/tabs and customer/team-member nouns from `useIndustryPack()` + `getNavLabels()`. Generic config in `helpContentConfig.ts` is the trades default — every other industry (especially the 6 healthcare verticals) requires explicit overrides via `industryHelpPrompts.ts` (rename to `industryHelpContent.ts` or extend in-place).
-
-### Out of scope
-
-- No new install pages, no new routes.
-- No changes to `helpContentConfig.ts` console structure (ids, required tiers, agent IDs stay).
-- No changes to PWA service worker / manifest scope.
+## Result
+Each card renders like:
+```text
+Punch List Closeout                       [icon]
+Close out the punch list and invoice
+[Punch] -> [Photos] -> [Invoice]
+[ Run with Aura ]   [ Open Page -> ]
+```

@@ -324,7 +324,60 @@ const OVERRIDES: Record<string, WorkflowChain[]> = {
 
 /** Resolve up to 3 industry-tailored field-ops workflow chains. */
 export function getFieldOpsWorkflows(pack: IndustryPack): WorkflowChain[] {
-  return OVERRIDES[pack.industry_id] ?? CLUSTER[pack.cluster] ?? CLUSTER.trades;
+  const chains = OVERRIDES[pack.industry_id] ?? CLUSTER[pack.cluster] ?? CLUSTER.trades;
+  return chains.map((c) => ({ ...c, targetRoute: c.targetRoute ?? resolveTargetRoute(c.id) }));
+}
+
+/**
+ * Map a workflow chain id to its most relevant working-surface route.
+ * Returns undefined when no obvious destination exists — the card will then
+ * only show "Run with Aura" without an "Open Page" button.
+ */
+function resolveTargetRoute(id: string): string | undefined {
+  // Quotes / estimates / surveys
+  if (id === 'bid-walk' || id === 'intake-quote' || id === 'site-survey' ||
+      id === 'inspection-quote' || id === 'seasonal-quote' || id === 'water-heater' ||
+      id === 'green-pool' || id === 'panel-upgrade' || id === 'incentive-calc') {
+    return '/dashboard/quotes';
+  }
+  // Jobs / repair orders / change orders
+  if (id === 'change-order' || id === 'parts-repair' || id === 'intake-diagnose' ||
+      id === 'equipment-repair' || id === 'drain-clog' || id === 'service-call' ||
+      id === 'warranty-check' || id === 'permit-check' || id === 'insurance-claim') {
+    return '/dashboard/jobs';
+  }
+  // Field ops dispatch surface
+  if (id === 'punch-list' || id === 'dispatch-complete' || id.startsWith('emergency') ||
+      id === 'leak-emergency' || id === 'outage-emergency' || id === 'urgent-infestation' ||
+      id === 'no-cool-emergency' || id === 'route-service' || id === 'recurring-route' ||
+      id === 'weather-reshuffle' || id === 'install-day' || id === 'route-day' ||
+      id === 'end-of-day' || id === 'storm-cleanup' || id === 'storm-canvass') {
+    return '/dashboard/dispatch-field-ops';
+  }
+  // Lead pipeline
+  if (id === 'lead-to-booking' || id === 'lead-to-showing' || id === 'no-show-recovery' ||
+      id === 'rebook-loop') {
+    return '/dashboard/lead-pipeline';
+  }
+  // Appointments / daily prep
+  if (id === 'daily-prep' || id === 'daily-brief' || id === 'reservations-prep') {
+    return '/dashboard/appointments';
+  }
+  // Messaging
+  if (id === 'status-update' || id === 'monitoring-check' || id === 'inbox-zero') {
+    return '/dashboard/messages';
+  }
+  // Reputation
+  if (id === 'review-pulse') return '/dashboard/reputation';
+  // Social
+  if (id === 'listing-launch') return '/dashboard/social-media';
+  // Customers / recurring plans
+  if (id === 'maintenance-renewal' || id === 'recurring-clean' || id === 'inspection-plan') {
+    return '/dashboard/customers';
+  }
+  // Calendar / travel
+  if (id === 'travel-coord') return '/dashboard/calendar';
+  return undefined;
 }
 
 export type { LucideIcon };

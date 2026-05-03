@@ -1,7 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Zap } from 'lucide-react';
+import { ArrowRight, Zap, ExternalLink } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export interface WorkflowChain {
@@ -11,6 +12,8 @@ export interface WorkflowChain {
   icon: LucideIcon;
   steps: string[];
   command: string;
+  /** Optional route to the working surface for this workflow (e.g. /dashboard/quotes). */
+  targetRoute?: string;
 }
 
 interface WorkflowChainButtonsProps {
@@ -19,6 +22,7 @@ interface WorkflowChainButtonsProps {
 }
 
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
+  const navigate = useNavigate();
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium text-primary">
@@ -29,8 +33,7 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
         {chains.map((chain) => (
           <Card
             key={chain.id}
-            className="group cursor-pointer border-border/50 bg-card/50 hover:border-primary/40 hover:bg-card transition-all"
-            onClick={() => onTrigger(chain.command)}
+            className="group border-border/50 bg-card/50 hover:border-primary/40 hover:bg-card transition-all"
           >
             <CardContent className="p-3 space-y-2">
               <div className="flex items-center gap-2">
@@ -49,6 +52,28 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                     )}
                   </React.Fragment>
                 ))}
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="h-7 px-2 text-xs flex-1"
+                  onClick={() => onTrigger(chain.command)}
+                >
+                  <Zap className="h-3 w-3 mr-1" />
+                  Run with Aura
+                </Button>
+                {chain.targetRoute && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => navigate(chain.targetRoute!)}
+                  >
+                    Open Page
+                    <ExternalLink className="h-3 w-3 ml-1" />
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
