@@ -28,6 +28,8 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getAppointmentRules } from '@/lib/industryPackSchema';
 
 // Aura Intercept themed status styles
 const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string; label: string }> = {
@@ -46,6 +48,10 @@ export default function TechnicianDashboard() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { pack } = useIndustryPack();
+  const showAddress = (() => {
+    try { return getAppointmentRules(pack)?.address_required !== false; } catch { return true; }
+  })();
 
   // Fetch profile and company for welcome modal
   const { data: profileData } = useQuery({
@@ -218,7 +224,7 @@ export default function TechnicianDashboard() {
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Address */}
-              {currentJob.customer_address && (
+              {showAddress && currentJob.customer_address && (
                 <div className="flex items-start gap-2 p-2.5 rounded-lg bg-muted/50 border border-border/50 text-sm">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-accent" />
                   <span className="text-foreground/80">{currentJob.customer_address}</span>
@@ -226,8 +232,8 @@ export default function TechnicianDashboard() {
               )}
 
               {/* Quick Actions Row */}
-              <div className="grid grid-cols-3 gap-2">
-                <Button
+              <div className={cn("grid gap-2", showAddress ? "grid-cols-3" : "grid-cols-2") }>
+                {showAddress && <Button
                   variant="outline"
                   size="sm"
                   className="h-11 flex-col gap-1 border-accent/30 text-accent hover:bg-accent/10"
@@ -239,7 +245,7 @@ export default function TechnicianDashboard() {
                 >
                   <Navigation className="h-4 w-4" />
                   <span className="text-[10px]">Directions</span>
-                </Button>
+                </Button>}
                 {currentJob.appointment?.customer_phone && (
                   <Button
                     variant="outline"
