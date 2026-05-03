@@ -26,7 +26,8 @@ import { DashboardViewToggle } from './DashboardViewToggle';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
-import { relabelKpi, getSimpleModeKpis } from '@/lib/industryKpiLabels';
+import { relabelKpi, getSimpleModeKpis, blueprintKpisToCanonical } from '@/lib/industryKpiLabels';
+import { useWorkspace } from '@/hooks/useWorkspace';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -35,6 +36,7 @@ export function CompanyAdminDashboard() {
   const { isSimple } = useDashboardViewMode();
   const [snapshotOpen, setSnapshotOpen] = useState(false);
   const { pack } = useIndustryPack();
+  const { workspace } = useWorkspace();
 
   // Platform admin sees everything
   const isPlatformAdmin = userRole === 'platform_admin';
@@ -203,7 +205,13 @@ export function CompanyAdminDashboard() {
   // The list and ORDER come from getSimpleModeKpis(pack) so e.g. real estate
   // surfaces "Showings, Active Listings, Buyer Leads…" while restaurants
   // surface "Reservations, Guests, Stock On Hand…".
-  const simpleCanonicalTitles = getSimpleModeKpis(pack);
+  // Phase 6 task 4: prefer the workspace blueprint's KPI list when available;
+  // fall back to the static cluster/industry map for legacy companies that
+  // haven't been resolved through `industry_blueprints` yet.
+  const blueprintTitles = blueprintKpisToCanonical(workspace?.kpis);
+  const simpleCanonicalTitles = blueprintTitles.length >= 3
+    ? blueprintTitles
+    : getSimpleModeKpis(pack);
   const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
   const statCards = isSimple
     ? simpleCanonicalTitles

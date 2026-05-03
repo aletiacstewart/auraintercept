@@ -67,6 +67,10 @@ export default function Auth() {
   const [companyPhone, setCompanyPhone] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessIndustry, setBusinessIndustry] = useState('');
+  // For "Other / Custom" industry: lets the customer describe what they do
+  // so the workspace resolver can stamp it onto industry_config.description
+  // and the AI agents can adapt their language at runtime.
+  const [customIndustryDescription, setCustomIndustryDescription] = useState('');
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
@@ -316,6 +320,10 @@ export default function Auth() {
           trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          industry_config:
+            canonicalIndustry === 'other' && customIndustryDescription.trim()
+              ? { description: customIndustryDescription.trim() }
+              : null,
         })
         .select()
         .single();
@@ -1250,10 +1258,26 @@ export default function Auth() {
                                     {INDUSTRY_LIST.map(ind => (
                                       <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
                                     ))}
+                                    <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
                             </div>
+
+                            {businessIndustry === 'other' && (
+                              <div className="space-y-1">
+                                <Label className="text-xs">Describe Your Business</Label>
+                                <p className="text-[11px] text-muted-foreground">
+                                  In one sentence — what do you sell or schedule, and who is your customer? Aura uses this to tailor your console, agents, and scripts.
+                                </p>
+                                <Input
+                                  placeholder="e.g. We run a mobile dog-grooming service for busy pet owners."
+                                  value={customIndustryDescription}
+                                  onChange={(e) => setCustomIndustryDescription(e.target.value)}
+                                  className="text-xs h-8"
+                                />
+                              </div>
+                            )}
 
                             {/* Compliance documents upload (combined) */}
                             <div className="space-y-1">
