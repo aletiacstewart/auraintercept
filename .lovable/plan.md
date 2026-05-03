@@ -72,3 +72,14 @@ Edited:
 - `.lovable/plan.md` (record audit + closures)
 
 Reply **go** to execute steps 1 → 5 in order.
+## Onboarding Readiness Audit — DONE (2026-05-03)
+
+1. ✓ Verified all 8 onboarding components, Auth signup, OnboardingForm toggle, and 83 edge functions
+2. ✓ DB schema: 28 packs (terminology, quote, invoice, ≥3 KB docs, services), 25 companies fully seeded, 526 ai_agent_configs
+3. ✓ Backfilled `service_catalog` for 19 trades/booking packs (derived from quote_template line items)
+4. ✓ Fixed `tenant_integrations_safe` view → `security_invoker = on` (linter ERROR cleared)
+5. ✓ Added signup-complete telemetry event in Auth.tsx (FastStartWizard already wired)
+6. ✓ WelcomeModal already wired in Dashboard.tsx via `shouldShowWelcome()` — verified
+7. ✓ Updated security memory: documented intentional public RPCs and public buckets so the remaining linter warnings are not re-flagged
+
+Platform is onboarding-ready.
