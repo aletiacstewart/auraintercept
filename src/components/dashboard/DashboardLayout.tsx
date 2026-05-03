@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -276,6 +277,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // instead of "Technician View", a salon sees "Stylist View", etc.
   const { pack: industryPack } = useIndustryPack();
   const navLabels = getNavLabels(industryPack);
+  // Adaptive Operations entry: label + visibility derive from the company's
+  // operatingModel (field_dispatch / appointment_booking / pipeline_sales /
+  // receptionist_only / custom). This is what makes the sidebar truly
+  // industry-adaptive instead of just renaming labels.
+  const { workspace } = useWorkspace();
+  const operatingModel = workspace?.operatingModel ?? 'field_dispatch';
+  const operationsLabelByModel: Record<string, string> = {
+    field_dispatch: navLabels.dispatchView || 'Dispatch View',
+    appointment_booking: 'Appointment Console',
+    pipeline_sales: 'Pipeline Console',
+    receptionist_only: 'Receptionist Console',
+    custom: 'Operations',
+  };
+  const operationsLabel = operationsLabelByModel[operatingModel] ?? 'Operations';
+  const dispatchAllowed = (workspace?.restrictions as { dispatch?: boolean } | undefined)?.dispatch !== false;
   // Industry-aware label for the Schedule entry: Bookings / Reservations /
   // Showings / Service Visits etc., per the company's industry pack.
   const scheduleLabel = getPageHeader('appointments', industryPack).title;
@@ -286,7 +302,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Hide field-ops nav for booking-only / hidden industries (e.g. real estate,
   // personal assistant, beauty, restaurants). Platform admin always sees it.
   const fieldOpsMode = industryPack?.console_visibility?.field_ops ?? 'full';
-  const fieldOpsHidden = !isPlatformAdmin && (fieldOpsMode === 'hidden' || fieldOpsMode === 'booking_mode');
+  const fieldOpsHidden = !isPlatformAdmin && (
+    fieldOpsMode === 'hidden' ||
+    fieldOpsMode === 'booking_mode' ||
+    !dispatchAllowed ||
+    operatingModel === 'receptionist_only'
+  );
 
   // Filter groups and items based on user role, job types, and subscription tier
   const filteredNavGroups = navGroups
@@ -312,7 +333,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             return { ...item, label: navLabels.techView };
           }
           if (item.href === '/dashboard/dispatch-field-ops') {
-            return { ...item, label: navLabels.dispatchView };
+            return { ...item, label: operationsLabel };
           }
           if (item.href === '/dashboard/appointments' && item.roles.includes('company_admin')) {
             return { ...item, label: scheduleLabel };
