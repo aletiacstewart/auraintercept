@@ -85,6 +85,13 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const publicPack = usePublicIndustryPack(isPublic ? companyId ?? null : null);
   const pack = isPublic ? publicPack.pack : authPack.pack;
 
+  // Industry-aware terminology for headings, notice, and CTA copy.
+  const term = (pack?.terminology ?? {}) as Record<string, string>;
+  const apptNoun = term.appointment || 'Appointment';
+  const apptNounLower = apptNoun.toLowerCase();
+  const apptArticle = /^[aeiou]/i.test(apptNounLower) ? 'an' : 'a';
+  const apptPlural = apptNoun.endsWith('s') ? apptNoun : `${apptNoun}s`;
+
   // Build the intake schema from the FIRST selected service (single-service intake).
   const primaryServiceName = selectedServices.length > 0
     ? services.find((s) => s.id === selectedServices[0])?.name ?? ''
@@ -137,7 +144,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       <div>
         <h3 className="text-base font-semibold flex items-center gap-2">
           <CalendarIcon className="h-4 w-4 text-primary" />
-          Request an Appointment
+          Request {apptArticle} {apptNoun}
         </h3>
       </div>
 
@@ -301,7 +308,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
           {/* Pending Notice */}
           <div className="flex items-start gap-2 rounded-lg border border-cyan-500/20 bg-cyan-500/5 px-3 py-2.5 text-xs text-cyan-200/70">
             <span className="mt-0.5 shrink-0 text-cyan-400">ℹ️</span>
-            <span>All appointments are <strong className="text-cyan-300">pending until approved</strong> by the company. Once confirmed, you'll receive a notification via Email, SMS, and/or Call. Thank you!</span>
+            <span>All {apptPlural.toLowerCase()} are <strong className="text-cyan-300">pending until approved</strong> by the company. Once confirmed, you'll receive a notification via Email, SMS, and/or Call. Thank you!</span>
           </div>
 
           {/* Submit Button */}
@@ -318,7 +325,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
             ) : (
               <>
                 <Send className="h-3.5 w-3.5 mr-1.5" />
-                Request Appointment
+                Request {apptNoun}
               </>
             )}
           </Button>
