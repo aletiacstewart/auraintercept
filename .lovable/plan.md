@@ -1,97 +1,66 @@
-# Healthcare Vertical Pack — Final Plan (Scoped + Integrations)
+# Add Healthcare Verticals Across Platform Surfaces
 
-Adds 6 healthcare verticals (Dental, Chiropractic, General Medical, Veterinary, Physical Therapy, Optometry) to the existing platform. Scope is intentionally narrow: **appointments + insurance verification emails to front desk only**. No medications, no medical/dental records, no clinical charting, no e-prescribing, no EDI claims, no lab orders.
+The 6 healthcare verticals (Dental, Chiropractic, Medical Office, Veterinary, Physical Therapy, Optometry) currently exist in `industry_blueprints`, `agentStyles`, and `CustomIndustryWizard`, but they're missing from every other surface that renders the industry catalog. This plan threads them through signup, landing pages, marketing PDFs, guides, and content packs.
 
-## Decisions locked in
+## Scope
 
-1. **Pricing**: Available on **all 4 tiers** (Core / Boost / Pro / Elite). HIPAA guardrails apply on every tier.
-2. **Insurance verification**: Wired as `verify_insurance` agent action → emails the front desk with the captured info + creates a task. No verification logic, no payer API, no eligibility checks.
-3. **Vet data model**: Pets stored as **JSON array on the customer record** (`customers.pets`). Appointments reference `pet_id` from the array. Reuses existing customers + appointments consoles with zero new tables.
+Add the 6 healthcare IDs (`dental`, `chiropractic`, `medical_office`, `veterinary`, `physical_therapy`, `optometry`) and one new "Healthcare & Wellness" group across:
 
-## Explicitly OUT of scope
+### 1. Canonical registry
+- `src/lib/industryIdAliases.ts` — add the 6 IDs to `CANONICAL_INDUSTRY_IDS`; add aliases (`dentist→dental`, `chiro→chiropractic`, `medical→medical_office`, `vet→veterinary`, `pt→physical_therapy`, `optom→optometry`).
 
-- No prescription / medication management
-- No medical, dental, spinal, or vision records / charting / SOAP notes
-- No e-prescribing, refill request handling, or pharmacy integration
-- No lab orders, results, or imaging
-- No EDI / clearinghouse / payer integration
-- No CDT/CPT code library
-- No PHI document storage (intake forms collect basic info only — no x-rays, no charts)
+### 2. Signup & onboarding
+- `src/components/onboarding/BusinessTypeSelector.tsx` — add 6 `BusinessTemplate` entries with healthcare-appropriate icons (Stethoscope, Activity, HeartPulse, PawPrint, Dumbbell, Eye), services, hours, and a new `cluster: 'healthcare'`. Add Healthcare label to `CLUSTER_LABELS`.
+- `src/pages/Auth.tsx` — already reads from `INDUSTRY_LIST`; will pick up new entries automatically. Verify dropdown and HIPAA hint text appears when a healthcare ID is chosen.
 
-Agent actions limited to: `book_appointment`, `reschedule`, `cancel`, `confirm_appointment`, `send_recall`, `verify_insurance` (email only), `triage_emergency` (route to staff/911), `answer_faq`.
+### 3. Marketing content registry
+- `src/lib/industryMarketingContent.ts` — add 6 `IndustryContent` entries with hero copy, pain points, sample calls (appointment-focused, no clinical), sample services (Cleanings, Adjustments, Annual Exams, Wellness Visits, Therapy Sessions, Eye Exams), sample appointment + lead, colors. Add new group entry to `INDUSTRY_GROUPS`: `{ group: 'Healthcare & Wellness', emoji: '🩺', ids: [...6 ids] }`.
 
-## What gets built
+### 4. Landing page
+- `src/pages/Index.tsx` — add a 7th `industryCategories` entry "Healthcare & Wellness" with the 6 verticals (icons + short descriptions). Auto-renders in the industry grid.
 
-### 1. Migration
+### 5. Industry templates (social/SMS)
+- `src/lib/industryTemplates.ts` — add 6 `IndustryTemplate` entries with appointment-reminder, recall, and review-request copy. Strict no-clinical-advice guardrails baked into copy ("schedule your check-up", never "your symptoms suggest…").
 
-- 6 rows in `industry_blueprints` (slugs: `dental`, `chiropractic`, `medical_office`, `veterinary`, `physical_therapy`, `optometry`). All use `operating_model='appointment_booking'`.
-- `companies.healthcare_compliance boolean default false`. Trigger `trg_sync_company_workspace` extended to auto-set the flag for healthcare slugs.
-- `insurance_verification_requests` table (company_id, customer_id, carrier, member_id, group_number, policyholder_name, policyholder_dob, photo_url nullable, status, requested_at, completed_at, notes). RLS by company.
-- `customers.pets jsonb default '[]'` and `appointments.pet_id text` (nullable, vet-only).
+### 6. Field ops + analytics presets
+- `src/lib/industryFieldOpsWorkflows.ts` — add appointment-centric workflows (Recall sweep, Insurance verification, No-show recovery, Day-end wrap).
+- `src/lib/industryAnalyticsPresets.ts` — add KPI presets (Recall completion %, No-show rate, Insurance verification rate, Avg lead time to appointment).
 
-### 2. Compliance overlay
+### 7. Documentation & PDFs
+- `src/lib/documentationConfig.ts` — bump `PLATFORM_STATS.industries` to include the 6 healthcare verticals; update the "18 industry packs" wording to "24 industry packs" (also in `PlatformDocumentPDF.tsx` line 1225).
+- `src/components/documentation/IndustryMarketingKitPDF.tsx` — add 6 industry sections following the existing badge + content-template pattern. Each section includes hero copy, sample calls, social templates, and a HIPAA-aware disclaimer footer ("Aura is not a clinician; appointments + insurance only").
+- `src/components/documentation/PlatformFAQPDF.tsx` — auto-picks up new industries via `PLATFORM_STATS.industries`. Add one Q/A about healthcare scope (appointments + insurance verification only; no PHI/EHR/medications).
+- `src/components/documentation/SocialMediaContentPackPDF.tsx`, `WebsiteCopyPDF.tsx`, `SalesPitchDataPDF.tsx` — add a "Healthcare verticals" section/callout listing the 6 supported types and the explicit out-of-scope items.
 
-- `aura-unified` prepends a HIPAA guardrail block when `healthcare_compliance=true`: AI self-identifies, no diagnosis/clinical advice, no medication discussion, no medical-records discussion, identity verification before sharing patient info, mandatory disclaimer on health-adjacent replies.
-- Voice intro forced per-vertical: *"Hi, I'm Aura, an AI receptionist for [Practice]. I'm not a licensed [dentist/doctor/chiro/therapist/optometrist/vet]…"*
-- SMS/email composer shows a "Contains PHI — minimum-necessary rule" banner for healthcare tenants.
+### 8. Help & guides
+- `src/lib/helpContentConfig.ts`, `src/lib/howToUseContent.ts` — add a "Healthcare setup" entry covering HIPAA acknowledgement, insurance verification flow, vet pets-as-JSON, and the Healthcare Integrations Console at `/dashboard/integrations/healthcare`.
+- `src/pages/PlatformGuides.tsx` — add a Healthcare guide card linking to the integrations console and the HIPAA scope notes.
 
-### 3. Insurance verification — email-only
+### 9. Pricing comparison
+- `src/components/landing/PricingComparisonTable.tsx` — note that healthcare verticals are available on **all 4 tiers** (Core/Boost/Pro/Elite) with the same HIPAA guardrails.
 
-- New edge function `verify-insurance` (`verify_jwt=false`, internal, Zod-validated):
-  - Inserts `insurance_verification_requests` row with status `pending`.
-  - Sends staff email via existing notification flow listing all collected fields + a "Mark verified" deep link.
-  - Creates an in-app task assigned to staff.
-- Surfaced as `verify_insurance` agent action and a "Verify Insurance" Quick Action on the patient record.
+### 10. Empty states & industry packs
+- `src/lib/industry*` files referenced by `IndustryEmptyState` — confirm healthcare empty-state copy exists (it was added in the previous Healthcare Vertical Pack work). Add any missing surfaces (leads/quotes/customers).
 
-### 4. Terminology + UX overlays (existing files only)
+## Out of scope (explicit guardrails reinforced everywhere)
 
-Extend `agentStyles`, `industryFieldLabels`, `industryNavLabels`, `industryEmptyStates`, `industryQuickActions`, `industryKpiLabels`, `industryAnalyticsPresets`, `industryFormSchemas`, `industryAuraFraming`, `industryAuraSuggestions` to map: Customers→Patients (vet: Pet Owners), Jobs→Visits/Adjustments/Sessions/Exams, Invoices→Statements, Follow-ups→Recalls. KPIs per vertical (Today's Production, Schedule Fill, No-Show Rate, Case Acceptance, Hygiene Production, Recall Effectiveness, Pre-Appointment %). Intake schemas have demographics + insurance + chief complaint + consents only (vet adds pets array).
+All new copy and PDFs explicitly state Aura Intercept does **not** handle:
+- Medical records / EHR / PMS sync
+- Medications, prescriptions, refills
+- Clinical advice, triage, or diagnosis
+- Pharmacy or lab integrations
+- HIPAA-covered PHI beyond appointments + insurance carrier/member ID
 
-### 5. Onboarding
+## Technical Notes
 
-- 6 healthcare options as first-class chips in `CustomIndustryWizard.tsx`.
-- HIPAA acknowledgement modal: "Aura is used as an AI receptionist for appointments and insurance intake only. It does not handle medical records, prescriptions, or clinical advice."
+- All new healthcare entries use the existing `appointment_booking` blueprint model.
+- Veterinary uses the already-shipped `customers.pets` JSONB + `appointments.pet_id`.
+- The `trg_auto_set_healthcare_compliance` trigger already flips `companies.healthcare_compliance = true` for these IDs, so no DB migration is needed.
+- HIPAA acknowledgement modal in `CustomIndustryWizard` already exists and triggers on these IDs.
+- Memory file `mem://features/industry/healthcare-vertical-pack` already documents the scope; no memory updates needed unless new constraints emerge.
 
-### 6. **NEW — Healthcare 3rd-Party Integrations Setup**
+## Files Touched (estimate ~15)
 
-A dedicated **"Integrations"** tab is added to the healthcare onboarding flow and to Settings → Integrations (filtered to healthcare tenants). Strictly scoped to **scheduling + front-desk notifications** — no PMS/EHR/clearinghouse/pharmacy connectors.
+Registries (3) + onboarding (2) + landing (1) + content libs (4) + PDFs (5) + help/guides (2) + pricing (1).
 
-**Architecture:**
-- New table `company_integrations` (company_id, provider_key, status, config jsonb, connected_at, last_synced_at, last_error). Standard RLS by company.
-- New `IntegrationsConsole` page rendered from the existing settings shell — each card shows status pill (Not connected / Connected / Action needed), a Connect/Configure button, and a short "what this does" line.
-- Each provider has a thin adapter file in `src/lib/integrations/healthcare/` exporting `{ key, label, scope, connect(), test(), disconnect() }`. Adapters that need real OAuth defer to existing edge functions where one already exists; otherwise they collect API key + webhook URL via a modal and store config in `company_integrations.config` (secrets in Vault).
-
-**Providers shipped in v1 (all optional, all free to add):**
-
-| Provider | Purpose | Method |
-|---|---|---|
-| **Google Calendar** | Two-way sync of Aura-booked appointments to the practice's clinical calendar | Reuses existing Google OAuth flow |
-| **Microsoft 365 / Outlook Calendar** | Same, for practices on M365 | OAuth (new edge function `ms-calendar-oauth`) |
-| **Apple/iCloud Calendar (CalDAV)** | One-way push for solo practitioners | App-specific password + CalDAV URL |
-| **Twilio (BYO)** | For practices that want to use their own SMS number instead of bundled SignalWire | Account SID + Auth Token + From number |
-| **Front-desk webhook** | Generic POST endpoint for insurance-verification + new-appointment events (lets practices wire to Slack, Teams, Zapier, Make, n8n, or their own PMS inbox) | URL + optional shared secret |
-| **Slack** | Direct Slack channel notifications for new appointments + insurance requests | Slack incoming-webhook URL |
-| **Microsoft Teams** | Same, via incoming webhook | Teams webhook URL |
-| **Mailchimp / Constant Contact (recall lists only)** | One-way export of opted-in patients for recall campaigns — **no PHI fields**, only name + email + last-visit-date | API key |
-
-**Out-of-scope integrations (explicitly refused if asked):** Dentrix / Eaglesoft / Open Dental / Epic / athenahealth / DrChrono / Practice Fusion / NEA / DentalXChange / Surescripts / any PMS / EHR / pharmacy / lab / clearinghouse. We surface a "Not supported — out of scope" tile so users know not to ask.
-
-**Event routing:** When `verify-insurance` runs or an appointment is booked/changed, a small `dispatch-integrations` edge function fans the event out to every connected provider for that company (calendar push, Slack/Teams ping, webhook POST). Failures are logged in `company_integrations.last_error` and surfaced as a yellow "Action needed" pill on the card.
-
-### 7. Demo seeder
-
-- 6 demo practices (one per vertical), distributed across all 4 tiers, each pre-wired with at least one mock integration so the Integrations console isn't empty in demos.
-
-### 8. Memory
-
-- `mem://features/industry/healthcare-vertical-pack` — scope, HIPAA guardrails, vet pets-as-JSON model, OUT-OF-SCOPE list.
-- `mem://features/integrations/healthcare-integrations-scope` — the 8 supported providers + the explicit blocklist of PMS/EHR/clearinghouse/pharmacy systems so future requests are auto-refused.
-
-## Files touched
-
-- 1 migration (blueprints, flag, trigger, insurance table, pets/pet_id columns, `company_integrations` table)
-- 2 new edge functions: `verify-insurance`, `dispatch-integrations` (+ `ms-calendar-oauth` if user wants Outlook in v1)
-- New: `src/pages/IntegrationsConsole.tsx`, `src/lib/integrations/healthcare/` (one file per provider), `src/components/integrations/IntegrationCard.tsx`
-- Edits to: `aura-unified`, `agentStyles`, `industryFieldLabels`, `industryNavLabels`, `industryEmptyStates`, `industryKpiLabels`, `industryAnalyticsPresets`, `industryQuickActions`, `industryFormSchemas`, `industryAuraFraming`, `industryAuraSuggestions`, `CustomIndustryWizard`, `seed-demo-accounts-v2`, settings nav
-
-Ready to build on approval.
+No new routes, no schema changes, no edge functions.
