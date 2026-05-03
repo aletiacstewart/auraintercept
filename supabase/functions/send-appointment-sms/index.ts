@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,11 +32,15 @@ Deno.serve(async (req) => {
       throw new Error('Invalid JSON body');
     }
 
-    const { companyId, customerPhone, customerName, message, appointmentId } = payload;
+    const { companyId, customerPhone, customerName, message: rawMessage, appointmentId } = payload;
 
     if (!companyId) throw new Error('companyId is required');
     if (!customerPhone) throw new Error('customerPhone is required');
-    if (!message) throw new Error('message is required');
+    if (!rawMessage) throw new Error('message is required');
+
+    // Apply industry-aware terminology (no-op if message has no placeholders)
+    const pack = await loadIndustryPackForCompany(supabase, companyId);
+    const message = applyTerminology(rawMessage, pack);
 
     const normalizedPhone = normalizePhoneNumber(customerPhone);
 
