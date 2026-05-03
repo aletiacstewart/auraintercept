@@ -82,4 +82,13 @@ Reply **go** to execute B → A → E in sequence, or pick a single letter to sc
 - ✅ `send-job-notification` — staff/customer email subjects use pack `appointment` noun
 - ✅ `embed/booking.js` — iframe title overridable via `data-aura-title`
 
-Next: **Phase D** (Analytics & Reports — wire `industryKpiLabels` + `industryReportTemplates` into export flows).
+
+## Phase D — Analytics & Reports ✅ (initial pass)
+
+- ✅ `ExportReportForm` already pack-aware via `industryReportTemplates`
+- ✅ `IntakeAnalytics` already pack-aware via `industryAnalyticsPresets`
+- ✅ `CompanyAdminDashboard` KPI tiles already use `relabelKpi`
+- ✅ `KpiDashboardForm` — Job Completion / Jobs Completed / Customer Satisfaction now read pack `job`/`customer` nouns
+- ✅ `PerformanceReportForm` — team overview + per-employee tiles use pack `appointment`/`job` nouns
+
+Next: **Phase F** (industry-specific Fast Start questions) or **Phase G** (KB seed expansion).

@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { TrendingUp, CheckCircle, Clock, DollarSign, Users, Calendar } from 'lucide-react';
 import { subDays, startOfMonth, endOfMonth } from 'date-fns';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface KpiDashboardFormProps {
   companyId: string;
@@ -26,6 +27,11 @@ interface KpiItem {
 
 export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, onCancel, onAnalyze }) => {
   const [dateRange, setDateRange] = useState('month');
+  const { pack } = useIndustryPack(companyId);
+  const term = (pack?.terminology ?? {}) as Record<string, string>;
+  const jobNoun = term.job || 'Job';
+  const jobsPlural = jobNoun.endsWith('s') ? jobNoun : `${jobNoun}s`;
+  const customerNoun = term.customer || 'Customer';
 
   const getDateRange = () => {
     const now = new Date();
@@ -158,7 +164,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Job Completion Rate</span>
+                <span className="text-sm font-medium text-foreground">{jobNoun} Completion Rate</span>
               </div>
               <span className={`font-bold ${getProgressColor(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)}`}>
                 {(kpis?.completionRate.value || 0).toFixed(1)}%
@@ -188,7 +194,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Jobs Completed</span>
+                <span className="text-sm font-medium text-foreground">{jobsPlural} Completed</span>
               </div>
               <span className={`font-bold ${getProgressColor(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)}`}>
                 {kpis?.jobsCompleted.value || 0}
@@ -218,7 +224,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Customer Satisfaction</span>
+                <span className="text-sm font-medium text-foreground">{customerNoun} Satisfaction</span>
               </div>
               <span className={`font-bold ${getProgressColor((kpis?.satisfaction.value || 0) * 20, (kpis?.satisfaction.target || 4.5) * 20)}`}>
                 {(kpis?.satisfaction.value || 0).toFixed(1)} / 5
