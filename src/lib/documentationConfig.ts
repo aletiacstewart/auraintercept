@@ -474,7 +474,14 @@ export const PLATFORM_STATS = {
   maxEmployees: 'Unlimited',
   socialPlatforms: 6,
   analyticsTabs: 8,
-  industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness', 'Restaurants', 'Personal Services'],
+  industries: [
+    'HVAC', 'Plumbing', 'Electrical', 'Solar', 'Roofing', 'Fencing & Decking',
+    'Landscape & Trees', 'Pool & Spa', 'Pest Control', 'Appliance Repair',
+    'Handyman & Cleaning', 'Construction', 'Auto Care', 'Security Systems',
+    'Real Estate', 'Beauty & Wellness', 'Restaurants', 'Personal Assistant',
+    // Healthcare verticals (appointments + insurance verification only)
+    'Dental', 'Chiropractic', 'Medical Office', 'Veterinary', 'Physical Therapy', 'Optometry',
+  ],
 };
 
 // ============================================
