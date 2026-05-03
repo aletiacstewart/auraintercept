@@ -55,6 +55,7 @@ import {
   KpiDashboardPage,
 } from "./pages/ai-consoles";
 import AskAura from "./pages/AskAura";
+import OperationsRouter from "./pages/operations/OperationsRouter";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AIAgentGuide from "./pages/AIAgentGuide";
 import AgentDetailPage from "./pages/AgentDetailPage";
@@ -251,7 +252,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
-                <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
+                <Route path="/dashboard/operations" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
+                <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops-install" element={<ProtectedRoute><DispatchFieldOpsInstall /></ProtectedRoute>} />
