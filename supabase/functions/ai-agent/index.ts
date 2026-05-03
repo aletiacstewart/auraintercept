@@ -170,7 +170,9 @@ serve(async (req) => {
 
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);
-    const systemPrompt = buildSystemPrompt(knowledgeContext, agent_type);
+    const baseSystemPrompt = buildSystemPrompt(knowledgeContext, agent_type);
+    const industryPack = await loadIndustryPackForCompany(supabase, company_id);
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, agent_type);
 
     const tools = [
       {
