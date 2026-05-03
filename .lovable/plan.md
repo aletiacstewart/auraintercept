@@ -1,85 +1,48 @@
-# Onboarding Readiness Audit
+# Industry-aware RolePreviewRow on /for-business
 
-Deep-dive audit of onboarding-critical files, schema, content packs, edge functions, and security. Below is the verified state plus the small set of gaps to close before declaring "100% ready."
+## Problem
+On `/for-business?industry=...` the "TRY EVERY VIEW, ALL IN ONE DEMO" section (`src/components/marketing/RolePreviewRow.tsx`) is hardcoded with trades/HVAC copy:
+- "Owner Dashboard" / "Technician App" / "Customer Portal"
+- "Mobile-first PWA your techs use…", "Routes, jobs, photos, invoices"
+- "book service, see ETAs… pay invoices"
+- Bullets: "Live call & lead feed", "Today's jobs", "Self-service booking", etc.
 
-## What's verified GREEN
+It does not change when the user picks Dental, Real Estate, Restaurant, Salon, etc. We already have all the resolution primitives (`useIndustryPack`, `getNavLabels`, `getPortalCopy`, terminology) — they just aren't wired into this section.
 
-**Onboarding flows (code)**
-- `src/pages/OnboardingForm.tsx` — Fast Start / Full toggle wired
-- `src/components/onboarding/FastStartWizard.tsx` (682 lines) — industry pack injection, voice greeting, telemetry to `onboarding_step_events`
-- `CompanyOnboardingForm.tsx`, `BusinessTypeSelector`, `CustomIndustryWizard`, `GuidedLaunchFlow`, `LaunchPathSelector`, `WelcomeModal`, `GoLiveTimeline` all present
-- `src/pages/Auth.tsx` — signup creates company, sets `industry_vertical`, fires `initialize-company-agents`, KB seed trigger fires
-- No `TODO`/`FIXME` markers in any onboarding component
+## Plan
 
-**Industry packs (28 verticals)**
-- 28/28 packs have terminology, quote_template, invoice_template, ≥3 KB seed docs
-- Healthcare (6) + salon/fitness/professional packs have populated `service_catalog` (5–9 services)
-- All 25 existing companies have `industry_vertical`, `subscription_tier`, `ai_agent_prompt`, `ai_voice_greeting`
+1. **Refactor `RolePreviewRow.tsx`** to accept an `industryId: string` prop and resolve copy from existing libs:
+   - Resolve pack via `getPackByIndustryId(industryId)` (same helper `ForBusiness.tsx` content layer uses) so it works without a logged-in tenant.
+   - Use `getNavLabels(pack)` for `techView` / `dispatchView` / `teamMemberNoun` / `jobNoun`.
+   - Use `getPortalCopy(pack)` for `customerNoun` / `requestNoun` / portal welcome line.
+   - Use `pack.terminology` for `customer`, `appointment`, etc.
 
-**Industry-aware libs (all present)**
-- FastStart questions, voice greetings, marketing playbooks, KPI labels, nav labels, quick actions, empty states, form schemas, capabilities, help content, Aura framing/suggestions, report templates, workflows, portal copy, field labels, analytics presets
+2. **Build the 3 cards dynamically** from the pack (no static `ROLES` array):
+   - **Card 1 — Owner Dashboard**: title stays "Owner Dashboard"; description and bullets swap nouns:
+     - e.g. dental → "Live call & new-patient feed", "Production analytics", "Aura command center"
+     - real estate → "Live lead & showing feed", "Commission analytics", …
+   - **Card 2 — Field/Team app**: title becomes `${nav.techView}` (e.g. "Stylist App", "Agent App", "Server App", "Provider App", "Technician App"). Description and bullets use `nav.jobNoun` / `terminology.appointment` (e.g. dental → "Mobile app your providers use chairside. Schedule, charts notes, photos — all in one." with bullets "Today's appointments", "One-tap patient lookup", "Photo & note capture").
+   - **Card 3 — Customer/Client/Patient/Guest Portal**: title from `portalCopy.portalHeaderLabel`. Description uses `portalCopy.welcomeSubtitle` + `requestNoun`. Bullets adapt: "Self-service booking" stays for booking cluster; for trades stays "Self-service booking"; healthcare → "Self-service appointment booking", "Live appointment reminders", "24/7 AI chat"; real estate → "Self-service tour booking", "Live showing status", "24/7 AI chat".
+   - Bottom CTA copy "all 3 logins — admin, employee & customer" → "admin, ${teamMemberNoun.toLowerCase()} & ${customerNoun.toLowerCase()}".
 
-**Backend**
-- 83 edge functions deployed, including `initialize-company-agents`, `create-company-admin`, `create-demo-trial`, `seed_industry_pack_kb_for_company` trigger
-- `_shared/terminology.ts` resolver wired across customer-facing functions
-- `onboarding_step_events` table created; 526 `ai_agent_configs` rows across 25 companies (avg 21 agents/company — full operative roster)
-- Admin audit page `/dashboard/pack-coverage` live
+3. **Resolution helper** `getRolePreviewCopy(industryId)` placed in a new small lib `src/lib/industryRolePreview.ts`:
+   - Cluster-level defaults for `trades | outdoor | repair | booking` (covers contractors, salons, restaurants, fitness, etc.).
+   - Industry overrides for the 6 healthcare verticals (dental, medical_office, chiropractic, physical_therapy, optometry, veterinary), `real_estate`, `restaurant`, `salon`, `fitness`, `legal`, `accounting`, `cleaning`, `auto_repair` to ensure premium verticals never fall through to "AC repair / technician / pay invoices" copy.
+   - Returns `{ ownerCard, fieldCard, customerCard, ctaSubtext }` consumed by the component.
 
-## Gaps found (small, targeted)
+4. **Wire from `ForBusiness.tsx`**: pass `industry` into `<RolePreviewRow industryId={industry} onTryDemo={…} />`. Re-renders automatically when the dropdown / `?industry=` query param changes (already handled via `useState` + URL sync).
 
-### Gap 1 — `service_catalog` empty for 19 trades/booking packs
-19 of 28 packs (HVAC, plumbing, electrical, landscape, roofing, pest_control, pool_spa, fencing, handyman, appliance_repair, auto_care, beauty_wellness, construction, real_estate, restaurants, security_systems, solar, personal_assistant, saas_platform) have `service_catalog = []`. Quote/Invoice forms still work (line items come from `quote_template`), but the "Services" picker on booking and the price-anchor in agent prompts is empty for these verticals.
+5. **Memory update**: extend the existing `mem://features/help/industry-aware-content-standard.md` (or add a sibling `mem://features/marketing/industry-aware-role-preview.md`) noting that `RolePreviewRow` must resolve via `getRolePreviewCopy` and never hardcode "Technician" / "Customer" / "pay invoices".
 
-**Fix:** Migration that backfills `service_catalog` with 4–8 starter services per pack (name, est_duration_min, base_price, description), pulled from each pack's existing `quote_template.line_items` where present and from canonical trade pricing for the rest.
+## Files
 
-### Gap 2 — Onboarding telemetry not yet flowing
-`onboarding_step_events` table exists and FastStartWizard logs view/launch events, but `CompanyOnboardingForm` (Full Setup) and `Auth` signup steps do not emit events. 0 rows captured so far.
+- `src/lib/industryRolePreview.ts` (new)
+- `src/components/marketing/RolePreviewRow.tsx` (refactor)
+- `src/pages/ForBusiness.tsx` (pass `industryId`)
+- `mem://features/marketing/industry-aware-role-preview.md` (new memory)
 
-**Fix:** Add the same `logEvent` helper to `CompanyOnboardingForm` step transitions and to `Auth` (signup_started / signup_completed / company_created) — non-blocking inserts.
+## Out of scope
+- Other marketing sections on `/for-business` already wired through `getIndustryContent` are untouched.
+- No DB / edge-function changes.
 
-### Gap 3 — Supabase linter: 1 ERROR + 127 WARNs
-- 1 ERROR: `Security Definer View` — needs identification + conversion to `security_invoker = true` or removal
-- 5 WARN: public storage buckets allow listing (likely brand-asset/blog buckets — may be intentional)
-- ~120 WARN: `SECURITY DEFINER` functions callable by anon (most are intentional public RPCs like `get_public_companies`, `check_company_subscription`, etc.)
-
-**Fix:** Resolve the 1 ERROR (true bug); audit the 5 bucket warnings (confirm intentional and add to security memory); leave the public RPC warnings since they back the public website / customer portal by design — document in security memory so they're not re-flagged.
-
-### Gap 4 — Welcome / first-run UX validation
-`WelcomeModal` exists but is not wired into the dashboard for fresh signups. New users land on `/dashboard` cold without the guided launch CTA being explicit.
-
-**Fix:** On `Dashboard.tsx` mount, if `companies.onboarding_state` is `signed_up` or `industry_selected` (not yet `launched`), surface `WelcomeModal` with a "Continue to Fast Start" CTA pointing at `/onboarding`.
-
-## Execution plan
-
-1. **DB migration** — backfill `service_catalog` for 19 packs (idempotent: only updates rows where `service_catalog = '[]'`).
-2. **Telemetry** — extend `logEvent` to `CompanyOnboardingForm` + `Auth.tsx` signup; add 4 event types.
-3. **Linter cleanup** — find the SECURITY DEFINER view (`SELECT viewname FROM pg_views WHERE schemaname='public'` cross-referenced with definer setting), fix it; update `@security-memory` to whitelist the intentional public RPCs and bucket policies.
-4. **Welcome flow wiring** — read `companies.onboarding_state` in `Dashboard.tsx`; conditionally render `WelcomeModal`; ensure `FastStartWizard.handleLaunch` writes `onboarding_state='launched'`.
-5. **Verification queries** — re-run pack/services/events counts and confirm `companies_with_vertical = total_companies`, `service_catalog_min ≥ 4` for all 28 packs, and at least one `onboarding_step_events` row per signup path in a smoke test.
-
-## Files touched (expected)
-
-New:
-- `supabase/migrations/<ts>_backfill_service_catalog.sql`
-
-Edited:
-- `src/components/onboarding/CompanyOnboardingForm.tsx` (telemetry hooks)
-- `src/pages/Auth.tsx` (telemetry hooks)
-- `src/pages/Dashboard.tsx` (welcome modal trigger)
-- `src/components/onboarding/WelcomeModal.tsx` (wire CTA → /onboarding)
-- `src/components/onboarding/FastStartWizard.tsx` (set `onboarding_state='launched'` on success)
-- security memory document
-- `.lovable/plan.md` (record audit + closures)
-
-Reply **go** to execute steps 1 → 5 in order.
-## Onboarding Readiness Audit — DONE (2026-05-03)
-
-1. ✓ Verified all 8 onboarding components, Auth signup, OnboardingForm toggle, and 83 edge functions
-2. ✓ DB schema: 28 packs (terminology, quote, invoice, ≥3 KB docs, services), 25 companies fully seeded, 526 ai_agent_configs
-3. ✓ Backfilled `service_catalog` for 19 trades/booking packs (derived from quote_template line items)
-4. ✓ Fixed `tenant_integrations_safe` view → `security_invoker = on` (linter ERROR cleared)
-5. ✓ Added signup-complete telemetry event in Auth.tsx (FastStartWizard already wired)
-6. ✓ WelcomeModal already wired in Dashboard.tsx via `shouldShowWelcome()` — verified
-7. ✓ Updated security memory: documented intentional public RPCs and public buckets so the remaining linter warnings are not re-flagged
-
-Platform is onboarding-ready.
+Reply "go" to execute.
