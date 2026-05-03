@@ -54,6 +54,7 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'restaurants',
   'personal_assistant',
   'fencing',
+  'other',
 ]);
 
 export function toCanonicalIndustryId(
