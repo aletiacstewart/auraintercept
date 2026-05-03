@@ -17,6 +17,26 @@ export interface IndustryPackLite {
   agent_prompt_deltas: Record<string, string>;
 }
 
+/** Healthcare verticals receive HIPAA-style guardrails appended to every prompt. */
+const HEALTHCARE_INDUSTRY_IDS = new Set<string>([
+  'dental', 'chiropractic', 'medical_office', 'physical_therapy',
+  'optometry', 'veterinary',
+]);
+
+const HEALTHCARE_GUARDRAIL = `
+
+HEALTHCARE GUARDRAILS (STRICT):
+- Never echo, store, or transmit Protected Health Information (PHI), diagnoses,
+  test results, medication names/dosages, or treatment recommendations.
+- Never provide medical/clinical advice, triage acuity, or diagnosis. Defer all
+  clinical questions to the licensed provider/staff.
+- Stay strictly within: scheduling, rescheduling, cancellations, intake basics
+  (name, phone, email, reason-for-visit at a high level), insurance carrier
+  acknowledgement (no policy numbers in chat), directions/hours, and follow-ups.
+- If asked anything clinical, respond: "I can't help with clinical questions —
+  let me get you to the office team." Then route to staff.
+`.trim();
+
 /** Map free-form agent identifiers to the short keys used in pack deltas. */
 function normalizeAgentKey(agent?: string | null): string {
   if (!agent) return 'aura';
@@ -97,6 +117,9 @@ export function applyIndustryPackToPrompt(
     suffix += `\n\nPREFERRED TERMINOLOGY (use these words verbatim):\n${termEntries
       .map(([k, v]) => `- "${k}" → "${v}"`)
       .join('\n')}`;
+  }
+  if (HEALTHCARE_INDUSTRY_IDS.has(pack.industry_id)) {
+    suffix += `\n\n${HEALTHCARE_GUARDRAIL}`;
   }
   return suffix ? `${basePrompt}${suffix}` : basePrompt;
 }

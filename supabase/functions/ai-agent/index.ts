@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -169,7 +170,9 @@ serve(async (req) => {
 
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);
-    const systemPrompt = buildSystemPrompt(knowledgeContext, agent_type);
+    const baseSystemPrompt = buildSystemPrompt(knowledgeContext, agent_type);
+    const industryPack = await loadIndustryPackForCompany(supabase, company_id);
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, agent_type);
 
     const tools = [
       {

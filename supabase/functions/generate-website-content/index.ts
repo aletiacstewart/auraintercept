@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -318,7 +319,7 @@ serve(async (req) => {
       toneGuidance = toneDescriptions[aiProfile.tone] || '';
     }
 
-    const systemPrompt = `You are a professional marketing copywriter specializing in Aura Web Presence pages for service businesses. 
+    const baseSystemPrompt = `You are a professional marketing copywriter specializing in Aura Web Presence pages for service businesses. 
 Generate concise, engaging content that:
 - Is clear and easy to read
 - Focuses on customer benefits
@@ -330,6 +331,8 @@ ${aiProfile?.brand_voice ? `\nBrand Voice: ${aiProfile.brand_voice}` : ''}
 
 IMPORTANT: Return ONLY the generated content, no explanations, quotes, or additional text.
 The content must be specifically relevant to the business described in the context.`;
+    const industryPack = companyId ? await loadIndustryPackForCompany(supabase, companyId) : null;
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'website');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

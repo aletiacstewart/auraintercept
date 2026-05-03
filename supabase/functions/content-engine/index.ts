@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -184,6 +185,9 @@ Primary CTA: ${ctaText}${ctaUrl ? ` → ${ctaUrl}` : ""}
 4. Match the specified platform's best practices
 5. Include a clear call-to-action when appropriate`;
 
+    const industryPack = await loadIndustryPackForCompany(supabase, companyId);
+    const industrySystemPrompt = applyIndustryPackToPrompt(systemPrompt, industryPack, channel);
+
     // ============ BUILD CHANNEL-SPECIFIC PROMPTS ============
     const channelPrompts: Record<ContentChannel, string> = {
       website: `Generate professional website copy for: ${topic}
@@ -228,7 +232,7 @@ Format: JSON array with objects containing: message, character_count`,
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: industrySystemPrompt },
           { role: "user", content: userPrompt + (additionalContext ? `\n\nAdditional context: ${JSON.stringify(additionalContext)}` : "") },
         ],
         response_format: { type: "json_object" },

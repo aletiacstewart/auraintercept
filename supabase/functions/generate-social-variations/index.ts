@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -254,6 +255,9 @@ Platform Requirements:
 - Include relevant hashtags for Instagram and TikTok only
 - CTA must align with: ${ctaTarget} → ${ctaUrl}`;
 
+    const industryPack = await loadIndustryPackForCompany(supabase, companyId);
+    const industrySystemPrompt = applyIndustryPackToPrompt(systemPrompt, industryPack, 'social');
+
     const userPrompt = `Create social media content about: "${topic}"
 
 Generate unique, platform-optimized content for: ${platforms.join(", ")}`;
@@ -324,7 +328,7 @@ Generate unique, platform-optimized content for: ${platforms.join(", ")}`;
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: industrySystemPrompt },
           { role: "user", content: userPrompt },
         ],
         tools: [

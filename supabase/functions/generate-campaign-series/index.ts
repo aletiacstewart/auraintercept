@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,6 +30,7 @@ serve(async (req) => {
     // Fetch company info for context
     let companyName = 'our company';
     let aiProfile = null;
+    let industryPack: any = null;
     
     if (companyId) {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -50,6 +52,7 @@ serve(async (req) => {
         .maybeSingle();
       
       aiProfile = profileData;
+      industryPack = await loadIndustryPackForCompany(supabase, companyId);
     }
 
     // Build channel list
@@ -94,11 +97,12 @@ serve(async (req) => {
 
     const typeDesc = typeDescriptions[campaignType] || typeDescriptions.promotional;
 
-    const systemPrompt = `You are an expert marketing copywriter specializing in multi-touch campaign sequences.
+    const baseSystemPrompt = `You are an expert marketing copywriter specializing in multi-touch campaign sequences.
 Generate compelling, professional marketing content that builds on each touchpoint to create a cohesive campaign journey.
 For SMS messages, keep them under 160 characters.
 For email subjects, keep them under 60 characters.
 Return ONLY valid JSON with no markdown formatting or code blocks.`;
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'campaign');
 
     const userPrompt = `Create a ${durationWeeks}-week marketing campaign series focused on ${typeDesc}.
 
