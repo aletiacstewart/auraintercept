@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ShieldOff, CheckCircle2, AlertTriangle, Plug } from "lucide-react";
+import { ShieldOff, CheckCircle2, AlertTriangle, Plug, Stethoscope } from "lucide-react";
 import {
   HEALTHCARE_INTEGRATIONS,
   HEALTHCARE_INTEGRATIONS_OUT_OF_SCOPE,
@@ -31,8 +31,7 @@ interface CompanyIntegrationRow {
 }
 
 export default function HealthcareIntegrationsConsole() {
-  const { profile } = useAuth();
-  const companyId = profile?.company_id;
+  const { companyId } = useAuth();
   const qc = useQueryClient();
   const [editing, setEditing] = useState<HealthcareIntegrationDef | null>(null);
   const [formState, setFormState] = useState<Record<string, string>>({});
@@ -56,14 +55,14 @@ export default function HealthcareIntegrationsConsole() {
     mutationFn: async ({ key, config }: { key: string; config: Record<string, unknown> }) => {
       if (!companyId) throw new Error("No company");
       const { error } = await supabase.from("company_integrations").upsert(
-        {
+        [{
           company_id: companyId,
           provider_key: key,
           status: "connected",
-          config,
+          config: config as never,
           connected_at: new Date().toISOString(),
           last_error: null,
-        },
+        }],
         { onConflict: "company_id,provider_key" },
       );
       if (error) throw error;
@@ -114,6 +113,7 @@ export default function HealthcareIntegrationsConsole() {
     <DashboardLayout>
       <PageContainer>
         <PageHeader
+          icon={Stethoscope}
           title="Healthcare Integrations"
           description="Optional connections for calendars, staff messaging, and recall lists. Scope is limited to scheduling + front-desk notifications — no PMS, EHR, clearinghouse, pharmacy, or lab connectors."
         />
