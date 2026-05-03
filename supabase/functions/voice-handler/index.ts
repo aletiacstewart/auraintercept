@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2"; // voice-handler SWML
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt, type IndustryPackLite } from "../_shared/industry-pack.ts";
+import { loadCompanyWorkspace, buildIndustryPromptSnippet, type CompanyWorkspaceContext } from "../_shared/workspace.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,6 +47,7 @@ function buildPhoneSystemPrompt(
   agentPrompt: string | null,
   services: any[],
   pack: IndustryPackLite | null = null,
+  workspace: CompanyWorkspaceContext | null = null,
 ): string {
   const context = agentPrompt ? agentPrompt.replace(/technician/gi, 'team member') : `a helpful AI assistant for ${companyName}`;
   
@@ -71,7 +73,8 @@ Guidelines:
 - Use filler words like "um" or "uh" sparingly and only when you are genuinely pausing to think or look something up. Never use them as a habit after every response.
 - NEVER re-ask for information the caller has already provided in this conversation. If you collected their name, phone number, or email earlier, use it — do not ask again.
 - Do NOT ask "would you like to leave your contact info" if you already have it from earlier in the conversation.`;
-  return applyIndustryPackToPrompt(base, pack, 'voice');
+  const withPack = applyIndustryPackToPrompt(base, pack, 'voice');
+  return withPack + buildIndustryPromptSnippet(workspace, 'voice_receptionist');
 }
 
 // Build the SWML document for SignalWire's native AI agent
@@ -83,10 +86,11 @@ function buildSWMLDocument(
   voiceId: string,
   services: any[] = [],
   pack: IndustryPackLite | null = null,
+  workspace: CompanyWorkspaceContext | null = null,
 ): object {
   const companyName = company?.name || 'our company';
   const greeting = company?.ai_voice_greeting || `Thank you for calling ${companyName}. How can I help you today?`;
-  const systemPrompt = buildPhoneSystemPrompt(companyName, company?.ai_agent_prompt || null, services, pack);
+  const systemPrompt = buildPhoneSystemPrompt(companyName, company?.ai_agent_prompt || null, services, pack, workspace);
 
   const swaigUrl = `${supabaseUrl}/functions/v1/voice-swaig`;
   const postPromptUrl = `${supabaseUrl}/functions/v1/voice-post-prompt`;
@@ -385,12 +389,13 @@ async function handleIncoming(
 
   // Load industry pack once and pass into SWML builder.
   const pack = await loadIndustryPackForCompany(supabase, company_id);
+  const workspace = await loadCompanyWorkspace(company_id);
 
   if (routingMode === 'ring_first' && businessPhone) {
     const normalizedBusiness = normalizePhoneNumber(businessPhone);
     console.log(`Ring-first mode: SWML connect to ${normalizedBusiness} for ${ringTimeout}s, then AI fallback`);
 
-    const swml = buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId, services || [], pack);
+    const swml = buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId, services || [], pack, workspace);
     // Insert connect verb before the ai block
     const mainSection = (swml as any).sections.main;
     const aiBlock = mainSection.pop();
@@ -408,7 +413,7 @@ async function handleIncoming(
 
   // === AI DIRECT MODE — return SWML document ===
   console.log(`AI direct mode: returning SWML document for company ${company_id}`);
-  return swmlResponse(buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId, services || [], pack));
+  return swmlResponse(buildSWMLDocument(supabaseUrl, company, company_id, logId, voiceId, services || [], pack, workspace));
 }
 
 // (handleDialStatus removed — ring-first now uses SWML connect verb with native AI fallback)
