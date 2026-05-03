@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { BarChart3, TrendingUp, TrendingDown, Minus, Calendar, Users, CheckCircle, Target, Award, AlertTriangle } from 'lucide-react';
 import { format, subDays } from 'date-fns';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface PerformanceReportFormProps {
   companyId: string;
@@ -31,6 +32,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const [dateRange, setDateRange] = useState('30');
   const [department, setDepartment] = useState('all');
   const [compareRange, setCompareRange] = useState('previous');
+  const { pack } = useIndustryPack(companyId);
+  const term = (pack?.terminology ?? {}) as Record<string, string>;
+  const apptPlural = ((term.appointment || 'Appointment').endsWith('s')
+    ? (term.appointment || 'Appointment')
+    : `${term.appointment || 'Appointment'}s`);
+  const jobPlural = ((term.job || 'Job').endsWith('s') ? (term.job || 'Job') : `${term.job || 'Job'}s`);
 
   const getDateRanges = () => {
     const days = parseInt(dateRange);
@@ -206,7 +213,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <Calendar className="h-4 w-4" />
-            <span className="text-sm">Appointments</span>
+            <span className="text-sm">{apptPlural}</span>
           </div>
           <p className="text-2xl font-bold text-foreground">{currentMetrics?.totalAppointments || 0}</p>
           {compareRange === 'previous' && renderTrend(appointmentChange)}
@@ -215,7 +222,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <CheckCircle className="h-4 w-4" />
-            <span className="text-sm">Completed Jobs</span>
+            <span className="text-sm">Completed {jobPlural}</span>
           </div>
           <p className="text-2xl font-bold text-foreground">{currentMetrics?.totalJobs || 0}</p>
           {compareRange === 'previous' && renderTrend(jobChange)}
@@ -400,7 +407,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
                 <div>
-                  <p className="text-foreground/50">Appointments</p>
+                  <p className="text-foreground/50">{apptPlural}</p>
                   <p className="font-medium text-foreground">{emp.appointments}</p>
                 </div>
                 <div>
@@ -408,7 +415,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
                   <p className="font-medium text-foreground">{emp.completed}</p>
                 </div>
                 <div>
-                  <p className="text-foreground/50">Jobs</p>
+                  <p className="text-foreground/50">{jobPlural}</p>
                   <p className="font-medium text-foreground">{emp.jobs}</p>
                 </div>
               </div>
