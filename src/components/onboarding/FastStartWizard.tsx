@@ -30,6 +30,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  getFastStartQuestions,
+  formatFastStartAnswers,
+} from '@/lib/industryFastStartQuestions';
 
 const STEPS = [
   { label: 'Welcome', icon: Building2 },
@@ -64,6 +68,7 @@ interface FastStartData {
   calendarConnected: boolean;
   agentsActivated: boolean;
   agentsActivatedCount: number;
+  verticalAnswers: Record<string, string>;
 }
 
 export function FastStartWizard() {
@@ -89,11 +94,17 @@ export function FastStartWizard() {
     calendarConnected: false,
     agentsActivated: false,
     agentsActivatedCount: 0,
+    verticalAnswers: {},
   });
 
   const template = useMemo(
     () => BUSINESS_TEMPLATES.find((t) => t.id === data.businessType),
     [data.businessType]
+  );
+
+  const verticalQuestions = useMemo(
+    () => getFastStartQuestions(data.businessType),
+    [data.businessType],
   );
 
   const tierInfo = getTierInfo(subscriptionTier);
@@ -182,6 +193,8 @@ export function FastStartWizard() {
       if (kb?.content_profile?.business_description) {
         promptParts.push(kb.content_profile.business_description);
       }
+      const answersBlock = formatFastStartAnswers(data.businessType, data.verticalAnswers);
+      if (answersBlock) promptParts.push(answersBlock);
 
       // 1. Update company basics
       const { data: companyRow } = await supabase
@@ -324,6 +337,36 @@ export function FastStartWizard() {
             <Input id="fs-addr" value={data.address} onChange={(e) => setData((p) => ({ ...p, address: e.target.value }))} placeholder="123 Main St, Dallas TX" />
           </div>
         </div>
+        {data.businessType && verticalQuestions.length > 0 && (
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-primary">
+              <Sparkles className="h-4 w-4" />
+              A few quick {template?.label ?? 'industry'} questions
+              <span className="ml-auto text-[10px] font-normal text-muted-foreground uppercase tracking-wider">Optional</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Answers go straight into your AI agents' context so they sound like an expert from day one.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {verticalQuestions.map((q) => (
+                <div key={q.key} className="space-y-1">
+                  <Label htmlFor={`fs-q-${q.key}`} className="text-xs">{q.label}</Label>
+                  <Input
+                    id={`fs-q-${q.key}`}
+                    value={data.verticalAnswers[q.key] ?? ''}
+                    onChange={(e) =>
+                      setData((p) => ({
+                        ...p,
+                        verticalAnswers: { ...p.verticalAnswers, [q.key]: e.target.value },
+                      }))
+                    }
+                    placeholder={q.placeholder}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
