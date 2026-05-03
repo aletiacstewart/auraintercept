@@ -37,17 +37,17 @@ const agentCategories = [{
   }]
 }, {
   id: 'field',
-  name: 'Field & Dispatch Ops',
+  name: 'Service Delivery',
   icon: MapPin,
   color: 'from-green-500 to-emerald-500',
   neonRgb: '0,230,118',
   agents: [{
-    name: 'Dispatch Agent',
-    description: 'Smart job assignment by skills, proximity, and workload balancing',
+    name: 'Assignment Agent',
+    description: 'Smart job, visit, or appointment assignment by skills, availability, and workload',
     icon: Users
   }, {
-    name: 'Route Agent',
-    description: 'Traffic-aware multi-stop route optimization for field teams',
+    name: 'Routing Agent',
+    description: 'Traffic-aware multi-stop routing for technicians, providers, and field teams',
     icon: Navigation
   }, {
     name: 'ETA Agent',
@@ -55,7 +55,7 @@ const agentCategories = [{
     icon: Truck
   }, {
     name: 'Check-In Agent',
-    description: 'Job progress logging, time tracking, and on-site status updates',
+    description: 'Staff check-in, progress logging, and on-site or on-visit status updates',
     icon: CheckCircle2
   }]
 }, {

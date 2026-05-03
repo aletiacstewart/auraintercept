@@ -1,33 +1,19 @@
-# Rename Homepage Tile → "Service Delivery Console"
+# Rename the homepage AI agents grid box
+
+The grid box shown in the screenshot lives in `src/pages/Index.tsx` (lines 38–61) inside the static `agentCategories` array that powers the "Meet the AI Agents" homepage section. It still says **"Field & Dispatch Ops"** with trades-only agent names, which contradicts the new Service Delivery framing for all 28 verticals.
 
 ## Changes
 
-### 1. `src/pages/Index.tsx` (~L170-178) — rename console tile
-- **Name**: `Service Delivery Console`
-- **Description**: `Schedule, assign, and track every job, visit, or appointment in real time — across technicians, providers, stylists, and agents.`
-- **Features**:
-  - `Smart scheduling & assignment`
-  - `Route & visit optimization`
-  - `Live status & ETA tracking`
-  - `Staff check-in & updates`
-- Keep icon (`Truck`) or swap to a more neutral one. Recommend **`CalendarClock`** or **`Route`** to feel less trades-only. (Default: `CalendarClock`.)
+**`src/pages/Index.tsx`** — update the `field` category object only:
 
-### 2. `src/pages/Index.tsx` L466 — rotating subtitle
-`'Field Operations'` → `'Service Delivery'`
+- **Category name**: `Field & Dispatch Ops` → `Service Delivery`
+- **Agent renames + neutral descriptions** (keep icons + RGB):
+  - `Dispatch Agent` → `Assignment Agent` — "Smart job, visit, or appointment assignment by skills, availability, and workload"
+  - `Route Agent` → `Routing Agent` — "Traffic-aware multi-stop routing for technicians, providers, and field teams"
+  - `ETA Agent` — keep name — "Real-time arrival estimates and customer notification updates"
+  - `Check-In Agent` — keep name — "Staff check-in, progress logging, and on-site or on-visit status updates"
 
-### 3. `src/pages/Index.tsx` L979 — mid-tier feature blurb
-`'Field Operations + Social Media + Analytics'` → `'Service Delivery + Social Media + Analytics'`
+## Out of scope
 
-### 4. `src/components/landing/PricingComparisonTable.tsx`
-- L46 tooltip key + L136 row name: rename `'Field Operations Console'` → `'Service Delivery Console'`
-- New tooltip: `Real-time console to schedule, assign, and track jobs, visits, and appointments across every staff role.`
-
-## Out of Scope
-- Internal route `/field-operations`, file `FieldOpsConsole.tsx`, pack flag `hasFieldTechnicians`, and the in-app sidebar label all stay (covered by canonical naming registry + industry-aware nav labels).
-- This change is **homepage marketing copy only**.
-
-## Files
-- `src/pages/Index.tsx`
-- `src/components/landing/PricingComparisonTable.tsx`
-
-Reply **go** to apply.
+- Internal IDs (`id: 'field'`), routes (`/field-operations`), edge function keys, and the `dispatch` / `field_navigation` operative IDs stay unchanged — only marketing copy on the homepage tile changes.
+- No other category boxes in this grid are touched.
