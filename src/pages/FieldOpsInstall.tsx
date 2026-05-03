@@ -7,9 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { Monitor, ExternalLink, Globe, Truck } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { useNavigate } from 'react-router-dom';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 export default function FieldOpsInstall() {
   const navigate = useNavigate();
+  const { pack } = useIndustryPack();
+  const nav = getNavLabels(pack);
+  const team = nav.teamMemberNoun;
 
   return (
     <DashboardLayout>
@@ -17,8 +22,8 @@ export default function FieldOpsInstall() {
         <div className="space-y-6">
           <PageHeader
             icon={Truck}
-            title="Technician Field Ops Install"
-            description="Deploy the Field Ops mobile app to your technicians' devices"
+            title={`${team} Mobile App Install`}
+            description={`Deploy the ${nav.techView} mobile app to your ${team.toLowerCase()}s' devices`}
             featureColor="fieldops"
           />
         
@@ -50,7 +55,7 @@ export default function FieldOpsInstall() {
               <div className="p-4 rounded-lg border border-border/50 bg-card">
                 <h4 className="font-medium mb-1 text-card-foreground">Technician Console</h4>
                 <p className="text-sm text-card-foreground/70 mb-3">
-                  Full Field Ops experience for technicians accessing via web browser
+                  Full {nav.techView} experience for {team.toLowerCase()}s accessing via web browser
                 </p>
                 <Button 
                   variant="outline" 
