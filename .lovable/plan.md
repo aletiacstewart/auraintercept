@@ -142,3 +142,10 @@ Reply "approve" or "build it" to begin. I'll start with the migration + resolver
 
 - ✅ DB trigger `trg_sync_operating_model` now auto-fills `companies.operating_model` from `industry_blueprints` whenever a company's industry is set/changed (signup, demo seeding, admin edits). Backfilled all existing rows.
 - ✅ `aura-unified` now accepts an optional `companyId`, loads the workspace, and prepends the `buildIndustryPromptSnippet` to the intent-classification system prompt — so restaurants etc. honor `restrictions.booking === false` in the chat flow too.
+
+- ✅ Onboarding (`/auth` signup) now offers an **Other / Custom** industry option. Picking it reveals a one-line "Describe Your Business" field and writes the description into `companies.industry_config.description`, which downstream resolvers and AI prompts pick up automatically.
+- ✅ Added an `other` row to `industry_blueprints` (operating_model = `custom`) and to `CANONICAL_INDUSTRY_IDS` so the signup validator accepts it.
+- ✅ `CompanyAdminDashboard` now reads `workspace.kpis` from the resolver. When the blueprint defines KPIs, they drive the Simple-Mode top-5 strip via the new `blueprintKpisToCanonical` mapper; otherwise we fall back to the existing cluster/industry table for legacy tenants.
+
+### Plan complete
+All four "Still TODO" items are done. The platform is now end-to-end industry-adaptive: signup → blueprint → operating_model → consoles, sidebar, dashboard KPIs, voice prompts, and chat prompts all read from a single `useWorkspace`/`loadCompanyWorkspace` source of truth.
