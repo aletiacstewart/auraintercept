@@ -4,11 +4,13 @@ import { FieldOpsManager } from '@/components/fieldops';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Truck, Route, MapPin, ClipboardCheck } from 'lucide-react';
+import { Truck, Route, MapPin, ClipboardCheck, CalendarCheck } from 'lucide-react';
 import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 
 const DISPATCH_WORKFLOWS: WorkflowChain[] = [
   {
@@ -40,6 +42,9 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
 export default function FieldOperations() {
   const { companyId, loading } = useAuth();
   const { submitQuery } = useAuraCommand();
+  const { pack } = useIndustryPack();
+  const isDispatch = hasFieldTechnicians(pack);
+  const jobNoun = pack?.terminology?.job || (isDispatch ? 'Job' : 'Appointment');
 
   if (loading) {
     return (
@@ -68,20 +73,26 @@ export default function FieldOperations() {
       <PageContainer>
         <div className="space-y-6">
           <PageHeader
-            icon={Truck}
-            title="Dispatch-Field Ops"
-            description="Real-time dispatch console for managing field technicians"
+            icon={isDispatch ? Truck : CalendarCheck}
+            title={isDispatch ? 'Dispatch-Field Ops' : 'In-Office Operations'}
+            description={
+              isDispatch
+                ? 'Real-time dispatch console for managing field technicians'
+                : `Today's ${jobNoun.toLowerCase()}s, room/provider assignments, and check-ins`
+            }
             featureColor="fieldops"
             showAuraBar
             action={<InstallOnPhoneButton to="/dashboard/dispatch-field-ops-install" />}
           />
-          <WorkflowChainButtons
-            chains={DISPATCH_WORKFLOWS}
-            onTrigger={(cmd) => {
-              toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
-              submitQuery(cmd);
-            }}
-          />
+          {isDispatch && (
+            <WorkflowChainButtons
+              chains={DISPATCH_WORKFLOWS}
+              onTrigger={(cmd) => {
+                toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
+                submitQuery(cmd);
+              }}
+            />
+          )}
           <div className="h-[calc(100vh-20rem)]">
             <FieldOpsManager companyId={companyId} />
           </div>
