@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { loadCompanyWorkspace, buildIndustryPromptSnippet } from "../_shared/workspace.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -67,7 +68,7 @@ serve(async (req) => {
   }
 
   try {
-    const { input, currentPage, visibleButtons, visibleCards, visibleFields } = await req.json();
+    const { input, currentPage, visibleButtons, visibleCards, visibleFields, companyId } = await req.json();
     
     if (!input || typeof input !== 'string' || !input.trim()) {
       return new Response(
@@ -85,6 +86,12 @@ serve(async (req) => {
       );
     }
 
+    // Inject industry-adaptation snippet so the classifier respects industry
+    // restrictions (e.g. restaurants must NOT be routed into booking flows).
+    const workspace = companyId ? await loadCompanyWorkspace(companyId) : null;
+    const industrySnippet = buildIndustryPromptSnippet(workspace);
+    const systemPrompt = INTENT_CLASSIFICATION_PROMPT + industrySnippet;
+
     // Step 1: Classify intent
     const classificationResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -95,7 +102,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: INTENT_CLASSIFICATION_PROMPT },
+          { role: "system", content: systemPrompt },
           { role: "user", content: input }
         ],
         temperature: 0.1,

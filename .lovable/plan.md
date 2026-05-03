@@ -139,3 +139,6 @@ Reply "approve" or "build it" to begin. I'll start with the migration + resolver
 4. Update `CompanyAdminDashboard` KPI grid to read from `workspace.kpis` instead of hardcoded list.
 
 - ✅ Replaced placeholder "—" cards in `AppointmentConsole`, `PipelineConsole`, and `ReceptionistConsole` with live Supabase counts (appointments today/week/no-shows; lead stage counts + conversion %; calls today + smart-link inventory). Each console now shows real, company-scoped data and remains structurally distinct from the field dispatch view.
+
+- ✅ DB trigger `trg_sync_operating_model` now auto-fills `companies.operating_model` from `industry_blueprints` whenever a company's industry is set/changed (signup, demo seeding, admin edits). Backfilled all existing rows.
+- ✅ `aura-unified` now accepts an optional `companyId`, loads the workspace, and prepends the `buildIndustryPromptSnippet` to the intent-classification system prompt — so restaurants etc. honor `restrictions.booking === false` in the chat flow too.
