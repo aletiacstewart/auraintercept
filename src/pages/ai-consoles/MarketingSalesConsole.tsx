@@ -26,7 +26,7 @@ const MARKETING_SPECIALISTS_BY_CLUSTER: Record<string, IndustrySpecialistOperati
 const MARKETING_SPECIALISTS_BY_INDUSTRY: Record<string, IndustrySpecialistOperative[]> = {
   real_estate:     ['listing_writer', 'comp_analyst', 'review_responder'],
   beauty_wellness: ['style_consultant', 'loyalty_coach', 'review_responder'],
-  restaurants:     ['menu_writer', 'reservation_optimizer', 'review_responder'],
+  restaurants:     ['menu_writer', 'review_responder'],
   personal_assistant: ['task_triager', 'calendar_optimizer', 'review_responder'],
 };
 
