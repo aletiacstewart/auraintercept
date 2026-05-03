@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,9 +59,11 @@ async function generateSingleBlog(
   tone: string,
   wordCount: number,
   researchContext: string,
-  apiKey: string
+  apiKey: string,
+  industryPack: any = null
 ): Promise<GeneratedBlog> {
-  const systemPrompt = `You are an expert content writer specializing in creating engaging, SEO-optimized blog articles for service-based businesses. Write in a ${tone} tone that connects with readers while incorporating relevant keywords naturally.`;
+  const baseSystemPrompt = `You are an expert content writer specializing in creating engaging, SEO-optimized blog articles for service-based businesses. Write in a ${tone} tone that connects with readers while incorporating relevant keywords naturally.`;
+  const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'blog');
 
   const userPrompt = `${researchContext ? `=== CURRENT INDUSTRY RESEARCH ===\n${researchContext}\n\n` : ''}=== TASK ===
 Write a comprehensive blog article about: ${topic.topic}
@@ -175,6 +178,7 @@ serve(async (req) => {
 
     const companyName = company?.name || null;
     const industry = company?.service_categories?.[0] || null;
+    const industryPack = await loadIndustryPackForCompany(supabase, companyId);
 
     // Fetch Tavily API key
     const { data: integrations } = await supabase
@@ -232,7 +236,8 @@ serve(async (req) => {
           tone,
           wordCount,
           researchContext,
-          LOVABLE_API_KEY
+          LOVABLE_API_KEY,
+          industryPack
         );
         generatedBlogs.push(blog);
 
