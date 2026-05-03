@@ -1,4 +1,5 @@
 import type { IndustryPack } from '@/hooks/useIndustryPack';
+import type { ServiceCatalogEntry } from '@/hooks/useIndustryPack';
 
 export type IntakeFieldType =
   | 'text'
