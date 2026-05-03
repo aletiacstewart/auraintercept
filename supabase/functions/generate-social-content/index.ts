@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -215,6 +216,9 @@ For each platform, generate:
   * TikTok: 2200 chars max (title)
   * SMS: 160 chars max`;
 
+    const industryPack = await loadIndustryPackForCompany(supabase, companyId);
+    const industrySystemPrompt = applyIndustryPackToPrompt(systemPrompt, industryPack, 'social');
+
     const userPrompt = `A technician${employeeName ? ` named ${employeeName}` : ""} just completed a ${service} job${customerName ? ` for a customer` : ""}.
 ${afterPhotos?.length ? `They uploaded ${afterPhotos.length} photo(s) of the completed work.` : "No photos available."}
 
@@ -236,7 +240,7 @@ Generate social media content for all 6 platforms:
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: industrySystemPrompt },
           { role: "user", content: userPrompt },
         ],
         tools: [
