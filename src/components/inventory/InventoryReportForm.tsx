@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { X, Package, AlertTriangle, CheckCircle, RefreshCcw, Boxes } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getInventoryTaxonomy } from '@/lib/industryFormSchemas';
 
 interface InventoryReportFormProps {
   companyId: string;
@@ -20,6 +22,9 @@ type ReportView = 'stock_levels' | 'low_stock' | 'reorder';
 export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ companyId, onCancel, onAnalyze: _onAnalyze }) => {
   const [reportView, setReportView] = useState<ReportView>('stock_levels');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const { pack } = useIndustryPack();
+  const taxonomy = getInventoryTaxonomy(pack);
+  const inventoryLabel = taxonomy.label || 'Inventory';
 
   // Fetch inventory data
   const { data: inventoryData, isLoading } = useQuery({
@@ -43,8 +48,10 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
       const outOfStockItems = items?.filter(item => item.quantity === 0) || [];
       const healthyItems = items?.filter(item => item.quantity > item.min_quantity) || [];
 
-      // Get unique categories
-      const categories = [...new Set(items?.map(item => item.category).filter(Boolean))] as string[];
+      // Get unique categories — merge actual data with industry pack suggestions
+      const dataCategories = [...new Set(items?.map(item => item.category).filter(Boolean))] as string[];
+      const packCategories = (taxonomy.categories || []) as string[];
+      const categories = [...new Set([...dataCategories, ...packCategories])];
 
       return {
         items: items || [],
@@ -238,7 +245,7 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Package className="h-5 w-5 text-orange-600" />
-            Inventory Report
+            {inventoryLabel} Report
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onCancel}>
             <X className="h-4 w-4" />

@@ -10,6 +10,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, UserPlus, Mail, Phone, MapPin, MessageSquare, PhoneCall } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIndustryFieldLabel } from '@/lib/industryFieldLabels';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getCustomerIntakeSchema, getAppointmentRules } from '@/lib/industryFormSchemas';
+import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 
 interface AddCustomerFormProps {
   open: boolean;
@@ -22,6 +25,10 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
   const fieldLabel = useIndustryFieldLabel('customer');
   const customerNoun = fieldLabel('customer_name').label;
   const addressLabel = fieldLabel('service_address').label;
+  const { pack } = useIndustryPack();
+  const intakeSchema = getCustomerIntakeSchema(pack);
+  const appointmentRules = getAppointmentRules(pack);
+  const showAddress = appointmentRules.address_required !== false;
   
   // Form state
   const [firstName, setFirstName] = useState('');
@@ -29,6 +36,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [intakeData, setIntakeData] = useState<Record<string, unknown>>({});
   
   // Opt-in preferences (default to opted IN)
   const [smsOptIn, setSmsOptIn] = useState(true);
@@ -41,6 +49,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
     setEmail('');
     setPhone('');
     setAddress('');
+    setIntakeData({});
     setSmsOptIn(true);
     setEmailOptIn(true);
     setCallOptIn(true);
@@ -57,16 +66,17 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
 
       const { data, error } = await supabase
         .from('customer_profiles')
-        .insert({
+        .insert([{
           company_id: companyId,
           name: fullName,
           email: email.trim(),
           phone: phone.trim() || null,
           address: address.trim() || null,
+          intake_data: (intakeSchema && Object.keys(intakeData).length > 0 ? intakeData : null) as never,
           sms_opt_out: !smsOptIn,
           email_opt_out: !emailOptIn,
           call_opt_out: !callOptIn,
-        })
+        }])
         .select()
         .single();
 
@@ -159,6 +169,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
           </div>
 
           {/* Address */}
+          {showAddress && (
           <div className="space-y-2">
             <Label htmlFor="address" className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -171,6 +182,18 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
               placeholder="123 Main St, City, State 12345"
             />
           </div>
+          )}
+
+          {/* Industry-specific intake fields */}
+          {intakeSchema && (
+            <DynamicIntakeFields
+              schema={intakeSchema as never}
+              value={intakeData}
+              onChange={setIntakeData}
+              title="Additional Information"
+              multiStep={false}
+            />
+          )}
 
           {/* Communication Preferences */}
           <div className="space-y-3">
