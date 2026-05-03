@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -73,14 +74,16 @@ async function generateSocialContent(
   brandVoice: string | null,
   targetAudience: string | null,
   researchContext: string,
-  apiKey: string
+  apiKey: string,
+  industryPack: any = null
 ): Promise<GeneratedSocialPost> {
   const targetPlatforms = topic.platforms?.length ? topic.platforms : platforms;
   
-  const systemPrompt = `You are an expert social media content strategist who creates engaging, platform-optimized content. You understand the unique characteristics, algorithms, and audience expectations of each social platform.
+  const baseSystemPrompt = `You are an expert social media content strategist who creates engaging, platform-optimized content. You understand the unique characteristics, algorithms, and audience expectations of each social platform.
 
 ${brandVoice ? `Brand Voice: ${brandVoice}` : ''}
 ${targetAudience ? `Target Audience: ${targetAudience}` : ''}`;
+  const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'social');
 
   const platformInstructions = targetPlatforms.map(p => {
     const limit = PLATFORM_LIMITS[p] || 2000;
@@ -230,6 +233,7 @@ serve(async (req) => {
 
     const brandVoice = aiProfile?.brand_voice || null;
     const targetAudience = aiProfile?.target_audience || null;
+    const industryPack = await loadIndustryPackForCompany(supabase, companyId);
 
     // Fetch Tavily API key
     const { data: integrations } = await supabase
@@ -288,7 +292,8 @@ serve(async (req) => {
           brandVoice,
           targetAudience,
           researchContext,
-          LOVABLE_API_KEY
+          LOVABLE_API_KEY,
+          industryPack
         );
         generatedPosts.push(post);
 
