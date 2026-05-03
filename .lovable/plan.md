@@ -73,8 +73,13 @@ Reply **go** to execute B → A → E in sequence, or pick a single letter to sc
 
 ---
 
-## Phase C — Customer-facing surfaces (in progress)
+## Phase C — Customer-facing surfaces ✅
 
 - ✅ `BookingForm` — header, pending notice, and submit CTA now use `pack.terminology.appointment`
 - ✅ `CustomerAIChat` — greeting fallback + quick-action labels/prompts use industry noun
-- Remaining: portal welcome subtitle deeper wiring, embed widget script copy, public booking confirmation already done
+- ✅ `PublicBooking` — header subtitle + confirmation copy
+- ✅ `CustomerPortalHome` + `PortalQuickActions` — pack-driven welcome and actions
+- ✅ `send-job-notification` — staff/customer email subjects use pack `appointment` noun
+- ✅ `embed/booking.js` — iframe title overridable via `data-aura-title`
+
+Next: **Phase D** (Analytics & Reports — wire `industryKpiLabels` + `industryReportTemplates` into export flows).
