@@ -13,6 +13,8 @@ import { format } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 import { AIContentButton } from '@/components/ai/AIContentButton';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getAppointmentRules } from '@/lib/industryFormSchemas';
 
 export interface InvoiceFormData {
   appointmentId: string | null;
@@ -81,6 +83,10 @@ export function InvoiceForm({
   mode = 'ai'
 }: InvoiceFormProps) {
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack();
+  const invoiceNoun = (pack?.terminology as Record<string, string> | undefined)?.invoice || 'Invoice';
+  const showAddress = getAppointmentRules(pack).address_required !== false;
+  const invoiceTemplate = (pack?.invoice_template as { line_items?: Array<{ description: string; quantity?: number; unit_price?: number }> } | undefined) || {};
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJobs, setSelectedJobs] = useState<SelectedJob[]>([]);
   const [customerName, setCustomerName] = useState('');
@@ -98,6 +104,23 @@ export function InvoiceForm({
     { id: generateLineItemId(), description: '', quantity: 1, unit_price: 0, appointmentId: null }
   ]);
   const prevSelectedJobsRef = useRef<string[]>([]);
+
+  // Pre-fill line items from industry pack invoice_template (direct mode, when blank)
+  useEffect(() => {
+    if (mode !== 'direct') return;
+    const tmplItems = invoiceTemplate.line_items;
+    if (!Array.isArray(tmplItems) || tmplItems.length === 0) return;
+    const isEmpty = lineItems.length === 1 && !lineItems[0].description && !lineItems[0].unit_price;
+    if (!isEmpty) return;
+    setLineItems(tmplItems.map((it) => ({
+      id: generateLineItemId(),
+      description: it.description || '',
+      quantity: Number(it.quantity) || 1,
+      unit_price: Number(it.unit_price) || 0,
+      appointmentId: null,
+    })));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pack?.id, mode]);
 
   // Get existing invoice count for generating invoice number
   const { data: invoiceCount = 0 } = useQuery({
@@ -426,7 +449,7 @@ export function InvoiceForm({
           </Button>
         )}
         <Receipt className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold text-foreground">{mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}</h3>
+        <h3 className="font-semibold text-foreground">{mode === 'direct' ? `Create ${invoiceNoun}` : `Generate ${invoiceNoun}`}</h3>
       </div>
 
       {/* Selected Jobs Display */}
@@ -539,12 +562,14 @@ export function InvoiceForm({
             placeholder="Email Address"
             className="h-9 text-sm"
           />
-          <Input
-            value={customerAddress}
-            onChange={(e) => setCustomerAddress(e.target.value)}
-            placeholder="Billing Address"
-            className="h-9 text-sm"
-          />
+          {showAddress ? (
+            <Input
+              value={customerAddress}
+              onChange={(e) => setCustomerAddress(e.target.value)}
+              placeholder="Billing Address"
+              className="h-9 text-sm"
+            />
+          ) : <div />}
         </div>
 
         <div>
@@ -664,7 +689,7 @@ export function InvoiceForm({
 
         {mode === 'ai' && (
           <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
-            <Label className="text-sm font-medium text-foreground">Send Invoice Via</Label>
+            <Label className="text-sm font-medium text-foreground">Send {invoiceNoun} Via</Label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch checked={sendEmail} onCheckedChange={setSendEmail} />
@@ -694,7 +719,7 @@ export function InvoiceForm({
         ) : (
           <>
             <Send className="mr-2 h-4 w-4" />
-            {mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}
+            {mode === 'direct' ? `Create ${invoiceNoun}` : `Generate ${invoiceNoun}`}
           </>
         )}
       </Button>

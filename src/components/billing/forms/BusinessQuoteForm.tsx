@@ -10,6 +10,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AIContentButton } from '@/components/ai/AIContentButton';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getAppointmentRules } from '@/lib/industryFormSchemas';
 
 interface Service {
   id: string;
@@ -49,6 +51,10 @@ export function BusinessQuoteForm({
   mode = 'ai'
 }: BusinessQuoteFormProps) {
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack();
+  const quoteNoun = (pack?.terminology as Record<string, string> | undefined)?.quote || 'Quote';
+  const showAddress = getAppointmentRules(pack).address_required !== false;
+  const quoteTemplate = (pack?.quote_template as { line_items?: Array<{ description: string; quantity?: number; unit_price?: number }> } | undefined) || {};
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -62,6 +68,21 @@ export function BusinessQuoteForm({
   const [lineItems, setLineItems] = useState<{description: string; quantity: number; unit_price: number}[]>([
     { description: '', quantity: 1, unit_price: 0 }
   ]);
+
+  // Pre-fill line items from industry pack template (direct mode only, when blank)
+  React.useEffect(() => {
+    if (mode !== 'direct') return;
+    const tmplItems = quoteTemplate.line_items;
+    if (!Array.isArray(tmplItems) || tmplItems.length === 0) return;
+    const isEmpty = lineItems.length === 1 && !lineItems[0].description && !lineItems[0].unit_price;
+    if (!isEmpty) return;
+    setLineItems(tmplItems.map((it) => ({
+      description: it.description || '',
+      quantity: Number(it.quantity) || 1,
+      unit_price: Number(it.unit_price) || 0,
+    })));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pack?.id, mode]);
 
   const { data: services = [] } = useQuery({
     queryKey: ['services', companyId],
@@ -231,7 +252,7 @@ export function BusinessQuoteForm({
           </Button>
         )}
         <FileText className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold text-foreground">Create Quote</h3>
+        <h3 className="font-semibold text-foreground">Create {quoteNoun}</h3>
       </div>
 
       <div className="space-y-3">
@@ -260,12 +281,14 @@ export function BusinessQuoteForm({
             placeholder="Email Address"
             className="h-9 text-sm"
           />
-          <Input
-            value={customerAddress}
-            onChange={(e) => setCustomerAddress(e.target.value)}
-            placeholder="Service Address"
-            className="h-9 text-sm"
-          />
+          {showAddress ? (
+            <Input
+              value={customerAddress}
+              onChange={(e) => setCustomerAddress(e.target.value)}
+              placeholder="Service Address"
+              className="h-9 text-sm"
+            />
+          ) : <div />}
         </div>
 
         {mode === 'ai' && (
@@ -419,7 +442,7 @@ export function BusinessQuoteForm({
         ) : (
           <>
             <Send className="h-4 w-4 mr-2" />
-            {mode === 'ai' ? 'Create & Send Quote' : 'Create Quote'}
+            {mode === 'ai' ? `Create & Send ${quoteNoun}` : `Create ${quoteNoun}`}
           </>
         )}
       </Button>
