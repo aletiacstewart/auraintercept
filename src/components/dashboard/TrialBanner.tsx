@@ -48,7 +48,7 @@ export function TrialBanner() {
   // If subscribed but not in trial, it means they have a real subscription
   if (subscribed && !inTrial) return null;
 
-  const totalDays = 30;
+  const totalDays = 90;
   const daysUsed = totalDays - (timeRemaining?.days ?? 0);
   const progressPercent = Math.min((daysUsed / totalDays) * 100, 100);
 
@@ -113,8 +113,8 @@ export function TrialBanner() {
 
           <p className="text-sm text-white mt-1">
             {isCritical 
-              ? "Subscribe now to keep your AI Agent and all premium features."
-              : "You have full access to all Enterprise features during your trial."
+              ? "Subscribe now to keep your AI Operatives and all premium features."
+              : "You have full access to every Aura Elite feature during your 90-day trial."
             }
           </p>
 
