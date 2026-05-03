@@ -514,6 +514,13 @@ GUIDELINES:
 - For bookings, always confirm all details before using the tool
 - For emergencies, prioritize speed and reassurance`;
 
+      try {
+        const industryPack = await loadIndustryPackForCompany(supabase, company.id);
+        systemPrompt = applyIndustryPackToPrompt(systemPrompt, industryPack, agentContext || 'chat');
+      } catch (e) {
+        console.warn('[widget-api] industry pack injection failed:', e);
+      }
+
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) {
         return new Response(JSON.stringify({ error: 'AI not configured' }), {
