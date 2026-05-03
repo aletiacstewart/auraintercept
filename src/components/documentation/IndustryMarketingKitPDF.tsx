@@ -1720,6 +1720,67 @@ export const IndustryMarketingKitPDF: React.FC = () => (
 
       <Footer />
     </Page>
+
+    {/* Healthcare Verticals — appointments + insurance verification only */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Healthcare Verticals" pageNum={22} />
+
+      <View style={[styles.industryBadge, { backgroundColor: colors.medical }]}>
+        <Text style={styles.industryBadgeText}>HEALTHCARE & WELLNESS</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Six Healthcare Practice Types</Text>
+      <Text style={styles.sectionSubtitle}>
+        Dental, Chiropractic, Medical Office, Veterinary, Physical Therapy, and Optometry. Available on all 4 tiers (Core, Boost, Pro, Elite).
+      </Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.dental }]}>
+            <Text style={styles.painPointTitle}>Dental</Text>
+            <Text style={styles.painPointText}>Recall sweeps, new patient intake, insurance verification routed to the front desk.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.chiropractic }]}>
+            <Text style={styles.painPointTitle}>Chiropractic</Text>
+            <Text style={styles.painPointText}>Recurring adjustment plans, new patient consults, re-evaluations booked in one call.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.medical }]}>
+            <Text style={styles.painPointTitle}>Medical Office</Text>
+            <Text style={styles.painPointText}>Annual physicals, sick visits, follow-ups. Clinical questions always routed to staff.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.veterinary }]}>
+            <Text style={styles.painPointTitle}>Veterinary</Text>
+            <Text style={styles.painPointText}>Pet-aware booking — each pet stored on the owner record. Vaccine + wellness recall.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.physical_therapy }]}>
+            <Text style={styles.painPointTitle}>Physical Therapy</Text>
+            <Text style={styles.painPointText}>Recurring session blocks, plan-of-care milestones, re-eval cadence handled automatically.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.optometry }]}>
+            <Text style={styles.painPointTitle}>Optometry</Text>
+            <Text style={styles.painPointText}>Annual eye exam recall, contact lens fittings, vision + medical insurance verification.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.solutionCard}>
+        <Text style={styles.solutionTitle}>HIPAA Scope</Text>
+        <Text style={styles.solutionText}>
+          Aura Intercept is NOT a clinician. Healthcare verticals are scoped to: appointment scheduling, recall reminders, and insurance verification (carrier + member ID emailed to the front desk). Aura does NOT handle medical records, EHR/PMS sync, prescriptions, medications, clinical advice, diagnosis, pharmacy or lab integrations, or any HIPAA-covered PHI beyond what is needed to book a visit. A HIPAA acknowledgement is required at signup.
+        </Text>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Sample Patient Text Reminder</Text>
+        <Text style={styles.templateText}>
+          Hi {'{name}'} — it's been 6 months. Time for your cleaning! Reply YES to book or tap {'{link}'}. Reply STOP to opt out.
+        </Text>
+      </View>
+
+      <Footer />
+    </Page>
   </Document>
 );
 
