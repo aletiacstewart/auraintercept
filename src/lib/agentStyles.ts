@@ -74,6 +74,51 @@ export function getAgentStyle(agent: string | undefined | null): AgentStyle {
 }
 
 /**
+ * Industry-specific label overlays. Keys are agent IDs (canonical or legacy),
+ * values are per-industry replacements for the default plain-English label.
+ * Anything unmapped falls back to the canonical label from AGENT_STYLES.
+ * Used by `getAgentStyleForIndustry` so e.g. real-estate "On The Way" reads
+ * as "Agent En Route" and restaurants' "Front Desk" reads as "Host".
+ */
+const INDUSTRY_AGENT_LABELS: Record<string, Record<string, string>> = {
+  real_estate: {
+    field_navigation: 'Agent En Route',
+    route: 'Agent En Route',
+    eta: 'Agent En Route',
+    checkin: 'Agent En Route',
+    customer_journey: 'Buyer Concierge',
+    triage: 'Buyer Concierge',
+  },
+  restaurants: {
+    customer_journey: 'Host',
+    triage: 'Host',
+  },
+  beauty_wellness: {
+    customer_journey: 'Front Desk',
+    field_navigation: 'Stylist Ready',
+  },
+  auto_care: {
+    field_navigation: 'Bay Ready',
+    customer_journey: 'Service Advisor',
+  },
+  hvac: { customer_journey: 'Service Desk' },
+  plumbing: { customer_journey: 'Service Desk' },
+  electrical: { customer_journey: 'Service Desk' },
+};
+
+export function getAgentStyleForIndustry(
+  agent: string | undefined | null,
+  industrySlug: string | undefined | null,
+): AgentStyle {
+  const base = getAgentStyle(agent);
+  if (!agent || !industrySlug) return base;
+  const overlay = INDUSTRY_AGENT_LABELS[industrySlug.toLowerCase()];
+  if (!overlay) return base;
+  const replacement = overlay[agent.toLowerCase()];
+  return replacement ? { ...base, label: replacement } : base;
+}
+
+/**
  * Get all available agent types grouped by category (10 consolidated)
  */
 export const AGENT_CATEGORIES = {
