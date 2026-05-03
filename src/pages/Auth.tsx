@@ -338,6 +338,17 @@ export default function Auth() {
         return;
       }
 
+      // Best-effort onboarding telemetry — never blocks signup.
+      try {
+        void supabase.from('onboarding_step_events' as any).insert({
+          company_id: companyData.id,
+          user_id: authData.user.id,
+          step: 'signup',
+          action: 'complete',
+          metadata: { tier: tierToPersist, industry: canonicalIndustry },
+        } as any);
+      } catch { /* swallow */ }
+
       // Wait a moment for the trigger to create the profile
       await new Promise(resolve => setTimeout(resolve, 500));
 
