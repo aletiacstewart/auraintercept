@@ -1950,6 +1950,7 @@ export type Database = {
           email: string
           email_opt_out: boolean | null
           id: string
+          intake_data: Json | null
           latitude: number | null
           longitude: number | null
           name: string
@@ -1968,6 +1969,7 @@ export type Database = {
           email: string
           email_opt_out?: boolean | null
           id?: string
+          intake_data?: Json | null
           latitude?: number | null
           longitude?: number | null
           name: string
@@ -1986,6 +1988,7 @@ export type Database = {
           email?: string
           email_opt_out?: boolean | null
           id?: string
+          intake_data?: Json | null
           latitude?: number | null
           longitude?: number | null
           name?: string
