@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -88,6 +89,7 @@ serve(async (req) => {
 
         const companyName = company?.name || 'Our Team';
         const leadName = lead.name || 'there';
+        const pack = await loadIndustryPackForCompany(supabase, followUp.company_id);
 
         let sent = false;
         let errorMessage: string | null = null;
