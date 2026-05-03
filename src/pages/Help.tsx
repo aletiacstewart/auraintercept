@@ -110,7 +110,7 @@ export default function Help() {
   // Industry-aware description + tabs
   const consoleOverride = useMemo(() => {
     return getIndustryConsoleConfig(currentConsole, industryPack);
-  }, [currentConsole, effectiveTier]);
+  }, [currentConsole, industryPack]);
   
   const filteredAgents = useMemo(() => {
     return getFilteredAgents(currentConsole, effectiveTier);
