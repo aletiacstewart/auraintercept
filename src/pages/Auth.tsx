@@ -320,6 +320,10 @@ export default function Auth() {
           trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          industry_config:
+            canonicalIndustry === 'other' && customIndustryDescription.trim()
+              ? { description: customIndustryDescription.trim() }
+              : null,
         })
         .select()
         .single();
