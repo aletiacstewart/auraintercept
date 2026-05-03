@@ -315,15 +315,21 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-subscription", { message: errorMessage });
-    
-    const isAuthError = errorMessage.includes('Authentication error') || 
-                        errorMessage.includes('session') || 
-                        errorMessage.includes('token') ||
-                        errorMessage.includes('No authorization header');
-    
-    return new Response(JSON.stringify({ error: errorMessage }), {
+
+    // Per platform standard (Sub Check Edge Handling memory): always return
+    // 200 OK with subscribed: false on failure rather than 401/500. This
+    // prevents the dashboard from hard-erroring when Stripe or auth hiccups,
+    // and lets the UI degrade gracefully to the free/locked state.
+    return new Response(JSON.stringify({
+      subscribed: false,
+      tier: "free",
+      in_trial: false,
+      trial_ends_at: null,
+      subscription_end: null,
+      error: errorMessage,
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: isAuthError ? 401 : 500,
+      status: 200,
     });
   }
 });
