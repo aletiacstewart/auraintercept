@@ -137,3 +137,5 @@ Reply "approve" or "build it" to begin. I'll start with the migration + resolver
 2. Replace placeholder cards in `AppointmentConsole`, `PipelineConsole`, `ReceptionistConsole` with real queries (calls today, smart-link clicks, deals by stage).
 3. Add "Industry" step to onboarding + "Other / Custom" wizard that writes `industry_config`.
 4. Update `CompanyAdminDashboard` KPI grid to read from `workspace.kpis` instead of hardcoded list.
+
+- ✅ Replaced placeholder "—" cards in `AppointmentConsole`, `PipelineConsole`, and `ReceptionistConsole` with live Supabase counts (appointments today/week/no-shows; lead stage counts + conversion %; calls today + smart-link inventory). Each console now shows real, company-scoped data and remains structurally distinct from the field dispatch view.
