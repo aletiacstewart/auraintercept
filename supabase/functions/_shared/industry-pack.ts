@@ -123,3 +123,39 @@ export function applyIndustryPackToPrompt(
   }
   return suffix ? `${basePrompt}${suffix}` : basePrompt;
 }
+
+/**
+ * Substitute industry-aware nouns into outbound message templates (subjects,
+ * bodies, SMS). Templates use placeholders like `{appointment}`, `{customer}`,
+ * `{technician}`, `{quote}`, `{invoice}`, `{lead}`, `{job}`. Each placeholder
+ * is replaced with the pack's terminology (or a sane default).
+ *
+ * Capitalization is preserved: `{Appointment}` → "Visit", `{appointment}` → "visit".
+ */
+export function applyTerminology(
+  template: string,
+  pack: IndustryPackLite | null,
+): string {
+  const term = (pack?.terminology || {}) as Record<string, string>;
+  const get = (key: string, fallback: string) =>
+    term[key] || term[`${key}_singular`] || fallback;
+  const lookup: Record<string, string> = {
+    appointment: get('appointment', get('job_singular', 'appointment')),
+    job: get('job', get('job_singular', 'job')),
+    customer: get('customer', get('customer_singular', 'customer')),
+    technician: get('technician', get('employee_singular', 'technician')),
+    quote: get('quote', 'quote'),
+    invoice: get('invoice', 'invoice'),
+    lead: get('lead', 'lead'),
+    service: get('service', get('service_singular', 'service')),
+  };
+  return template.replace(/\{([A-Za-z]+)\}/g, (match, raw: string) => {
+    const key = raw.toLowerCase();
+    const value = lookup[key];
+    if (!value) return match;
+    if (raw[0] === raw[0].toUpperCase()) {
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+    return value.toLowerCase();
+  });
+}

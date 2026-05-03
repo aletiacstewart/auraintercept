@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface Quote {
   id: string;
@@ -47,6 +48,9 @@ interface QuotesManagerProps {
 }
 
 export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
+  const { pack } = useIndustryPack();
+  const quoteNoun = (pack?.terminology as any)?.quote || 'Quote';
+  const quotePlural = `${quoteNoun}s`;
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -133,21 +137,21 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Quotes</h3>
-          <p className="text-sm text-foreground/70">Create and manage service quotes</p>
+          <h3 className="text-lg font-semibold text-foreground">{quotePlural}</h3>
+          <p className="text-sm text-foreground/70">Create and manage {quotePlural.toLowerCase()}</p>
         </div>
         <div className="flex items-center gap-2">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
                 <Plus className="w-4 h-4 mr-2" />
-                New Quote
+                New {quoteNoun}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create Quote</DialogTitle>
-                <DialogDescription>Create a new quote for a customer.</DialogDescription>
+                <DialogTitle>Create {quoteNoun}</DialogTitle>
+                <DialogDescription>Create a new {quoteNoun.toLowerCase()} for a customer.</DialogDescription>
               </DialogHeader>
               {companyId && (
                 <BusinessQuoteForm

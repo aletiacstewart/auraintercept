@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -88,6 +89,7 @@ serve(async (req) => {
 
         const companyName = company?.name || 'Our Team';
         const leadName = lead.name || 'there';
+        const pack = await loadIndustryPackForCompany(supabase, followUp.company_id);
 
         let sent = false;
         let errorMessage: string | null = null;
@@ -104,8 +106,11 @@ serve(async (req) => {
                 .single();
 
               if (settings?.signalwire_project_id && settings?.signalwire_api_token && settings?.signalwire_phone_number && settings?.signalwire_space_url) {
-                const message = followUp.message_template || 
-                  `Hi ${leadName}, this is ${companyName} following up on your inquiry. How can we help you today?`;
+                const message = applyTerminology(
+                  followUp.message_template ||
+                    `Hi ${leadName}, this is ${companyName} following up on your inquiry. How can we help you today?`,
+                  pack
+                );
 
                 try {
                   const signalwireResponse = await fetch(
@@ -147,8 +152,11 @@ serve(async (req) => {
               
               if (resendApiKey) {
                 const subject = `Following up on your inquiry - ${companyName}`;
-                const message = followUp.message_template || 
-                  `Hello ${leadName},\n\nI wanted to follow up on your recent inquiry with ${companyName}. Please let me know if you have any questions or would like to schedule a service.\n\nBest regards,\n${companyName}`;
+                const message = applyTerminology(
+                  followUp.message_template ||
+                    `Hello ${leadName},\n\nI wanted to follow up on your recent inquiry with ${companyName}. Please let me know if you have any questions or would like to schedule a {service}.\n\nBest regards,\n${companyName}`,
+                  pack
+                );
 
                 try {
                   const emailResponse = await fetch('https://api.resend.com/emails', {
