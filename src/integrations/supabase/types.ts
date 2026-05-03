@@ -394,6 +394,7 @@ export type Database = {
           last_synced_at: string | null
           meeting_link: string | null
           notes: string | null
+          pet_id: string | null
           reminder_1h_sent: boolean | null
           reminder_1h_sent_at: string | null
           reminder_24h_sent: boolean | null
@@ -429,6 +430,7 @@ export type Database = {
           last_synced_at?: string | null
           meeting_link?: string | null
           notes?: string | null
+          pet_id?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
           reminder_24h_sent?: boolean | null
@@ -464,6 +466,7 @@ export type Database = {
           last_synced_at?: string | null
           meeting_link?: string | null
           notes?: string | null
+          pet_id?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
           reminder_24h_sent?: boolean | null
@@ -939,6 +942,7 @@ export type Database = {
           emergency_sms_enabled: boolean | null
           emergency_surcharge: number | null
           followup_call_script: string | null
+          healthcare_compliance: boolean
           id: string
           industry_config: Json
           industry_vertical: string | null
@@ -1075,6 +1079,7 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
+          healthcare_compliance?: boolean
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
@@ -1211,6 +1216,7 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
+          healthcare_compliance?: boolean
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
@@ -1421,6 +1427,60 @@ export type Database = {
           },
           {
             foreignKeyName: "company_compliance_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_integrations: {
+        Row: {
+          company_id: string
+          config: Json
+          connected_at: string | null
+          created_at: string
+          id: string
+          last_error: string | null
+          last_synced_at: string | null
+          provider_key: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          config?: Json
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          last_synced_at?: string | null
+          provider_key: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          config?: Json
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          last_synced_at?: string | null
+          provider_key?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_integrations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_integrations_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
@@ -2106,6 +2166,7 @@ export type Database = {
           lifecycle_stage: string | null
           mobile_phone: string | null
           notes: string | null
+          pets: Json
           phone: string | null
           postal_code: string | null
           preferred_contact_method: string | null
@@ -2138,6 +2199,7 @@ export type Database = {
           lifecycle_stage?: string | null
           mobile_phone?: string | null
           notes?: string | null
+          pets?: Json
           phone?: string | null
           postal_code?: string | null
           preferred_contact_method?: string | null
@@ -2170,6 +2232,7 @@ export type Database = {
           lifecycle_stage?: string | null
           mobile_phone?: string | null
           notes?: string | null
+          pets?: Json
           phone?: string | null
           postal_code?: string | null
           preferred_contact_method?: string | null
@@ -2862,6 +2925,82 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      insurance_verification_requests: {
+        Row: {
+          carrier: string | null
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          customer_id: string | null
+          group_number: string | null
+          id: string
+          member_id: string | null
+          notes: string | null
+          photo_url: string | null
+          policyholder_dob: string | null
+          policyholder_name: string | null
+          requested_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          carrier?: string | null
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string | null
+          group_number?: string | null
+          id?: string
+          member_id?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          policyholder_dob?: string | null
+          policyholder_name?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          carrier?: string | null
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string | null
+          group_number?: string | null
+          id?: string
+          member_id?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          policyholder_dob?: string | null
+          policyholder_name?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_verification_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_verification_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_verification_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inventory_items: {
         Row: {
