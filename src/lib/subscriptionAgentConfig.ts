@@ -39,7 +39,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence'],
     label: 'Aura Core',
     price: '$197/mo',
-    description: '8 Smart AI Agents for booking, follow-up, creative content & web presence',
+    description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included',
   },
   connect: {
     // Aura Boost ($497/mo): Core + Field Operations (Dispatch, Route/ETA/Check-In),
@@ -56,7 +56,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     consoles: ['customer_portal', 'marketing_sales', 'creative_web_presence', 'field_operations', 'social_media'],
     label: 'Aura Boost',
     price: '$497/mo',
-    description: '12 Smart AI Agents with dispatch, routing & field operations',
+    description: 'Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
     // Aura Pro ($997/mo): Boost + Business Finance + Analytics + Admin,

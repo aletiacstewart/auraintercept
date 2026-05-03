@@ -1,72 +1,52 @@
-# Hybrid Workflow Cards
+## Fix 1 — Surface Voice / SMS / Email / Chat on Core AND Boost
 
-Make the "End-to-End Workflows" cards (Bid Walk, Change Order, Punch List, etc.) do **two things** instead of just firing the AI prompt: a primary "Run with Aura" action (current behavior) plus a secondary "Open Page" link to the relevant working surface.
+Both tiers already include these channels (Triage = AI Receptionist, Customer Journey covers SMS + email follow-up; voice via bundled SignalWire/ElevenLabs minutes; chat via web widget). Boost adds Dispatch + Field Navigation on top. The descriptions just don't say so.
 
-## Changes
+Update **`src/lib/subscriptionAgentConfig.ts`**:
 
-### 1. Extend the `WorkflowChain` type
-File: `src/components/ui/workflow-chain-buttons.tsx`
+- **starter (Core, $197):** "Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included"
+- **connect (Boost, $497):** "Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations"
 
-Add an optional `targetRoute` field:
-```ts
-export interface WorkflowChain {
-  id: string;
-  label: string;
-  description: string;
-  icon: LucideIcon;
-  steps: string[];
-  command: string;          // AI prompt
-  targetRoute?: string;     // NEW — page to open for manual work
-}
-```
+Mirror the channel callout for **both Core and Boost** in the public-facing surfaces:
 
-### 2. Update card UI
-Same file. Replace the single click handler with two explicit buttons inside the card:
-- **Primary** "Run with Aura" (Zap icon) — calls `onTrigger(command)` (existing behavior)
-- **Secondary** "Open Page" (ArrowRight icon) — `navigate(targetRoute)`, only rendered when `targetRoute` is set
+- `src/components/documentation/PricingSummaryPDF.tsx`
+- `src/components/documentation/SalesPitchDataPDF.tsx`
+- `src/components/documentation/WebsiteCopyPDF.tsx`
+- `src/components/documentation/PlatformFAQPDF.tsx`
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx`
+- `src/lib/helpContentConfig.ts` and `src/lib/documentationConfig.ts`
 
-Whole-card click is removed to prevent accidental AI runs. Buttons use existing `Button` variants (`default` and `outline` size `sm`) — no new tokens.
+Add a "Channels included" line to Core and Boost feature lists: **Voice calls, SMS, Email, Web chat** (bundled — no carrier passthrough, per existing memory rule). Pro and Elite already inherit these implicitly; add the same line for consistency.
 
-### 3. Add `targetRoute` to all workflow chains
-File: `src/lib/industryFieldOpsWorkflows.ts`
+No tier permissions or agent arrays change — Triage + Customer Journey already power those channels via existing edge functions (`ai-agent-chat`, `signalwire-*`, `send-*-email`).
 
-Map each workflow id to the most relevant existing route:
+## Fix 2 — Reseed the 6 healthcare demo accounts
 
-| Workflow id pattern | Target route |
-|---|---|
-| `bid-walk`, `intake-quote`, `site-survey` | `/dashboard/quotes` |
-| `change-order`, `parts-repair`, `intake-diagnose` | `/dashboard/jobs` |
-| `punch-list`, `dispatch-complete`, `emergency-*`, `route-service`, `weather-reshuffle`, `install-day`, `route-day`, `end-of-day` | `/dashboard/dispatch-field-ops` |
-| `lead-to-booking`, `lead-to-showing`, `no-show-recovery`, `rebook-loop` | `/dashboard/lead-pipeline` |
-| `daily-prep`, `daily-brief`, `reservations-prep` | `/dashboard/appointments` |
-| `status-update`, `monitoring-check`, `inbox-zero` | `/dashboard/messages` |
-| `review-pulse` | `/dashboard/reputation` |
-| `listing-launch` | `/dashboard/social-media` |
-| `maintenance-renewal`, `recurring-clean` | `/dashboard/customers` |
-| `travel-coord` | `/dashboard/calendar` |
+The seeder `supabase/functions/seed-demo-accounts-v2/index.ts` already declares all 6 healthcare industries (lines 366–433), but `auth.users` returns 0 rows for them — the function hasn't been re-run since they were added.
 
-Routes that don't exist for a given tenant/industry will simply not render the secondary button (we'll guard with a small allow-list check against the app router).
+Action: run the existing seeder, no code change needed.
 
-### 4. Update `WorkflowChainButtons` consumers
-Files already using it work as-is (the new prop is optional):
-- `src/pages/FieldOperations.tsx`
-- `src/pages/ai-consoles/FieldOpsConsole.tsx`
+1. Open **`/dashboard/demo-seeder`** as platform admin.
+2. Click **"Seed All Demo Accounts"** — idempotent: upserts companies, resets passwords, inserts the 6 healthcare tenants:
 
-No changes needed in those files.
+| Industry | Tier | Admin | Employee | Patient |
+|---|---|---|---|---|
+| Dental | Boost | dentaladmin@demo.com | dentalemployee@demo.com | dentalcustomer@demo.com |
+| Chiropractic | Core | chiropracticadmin@demo.com | chiropracticemployee@demo.com | chiropracticcustomer@demo.com |
+| Medical Office | Pro | medicalofficeadmin@demo.com | medicalofficeemployee@demo.com | medicalofficecustomer@demo.com |
+| Veterinary | Boost | veterinaryadmin@demo.com | veterinaryemployee@demo.com | veterinarycustomer@demo.com |
+| Physical Therapy | Core | physicaltherapyadmin@demo.com | physicaltherapyemployee@demo.com | physicaltherapycustomer@demo.com |
+| Optometry | Core | optometryadmin@demo.com | optometryemployee@demo.com | optometrycustomer@demo.com |
 
-### 5. Memory
-Add a short note: `mem://features/field-ops/workflow-cards-hybrid-action` documenting that workflow cards expose **two actions** (Run with Aura + Open Page) and that new chains added to `industryFieldOpsWorkflows.ts` should set `targetRoute` when an obvious destination exists.
+Password (universal): **`aidemo*!`**
+
+After seeding, all 18 healthcare user rows appear in the Users panel.
+
+## Memory updates
+
+- Update **`mem://marketing/pricing/canonical-four-tier-model`**: Core AND Boost explicitly include Voice / SMS / Email / Web Chat (bundled).
 
 ## Out of scope
-- No new pages.
-- No `?workflow=` deep-link pre-selection on target pages (can be added later if you want the secondary button to also pre-open a panel).
-- No changes to `useAuraCommand` routing.
 
-## Result
-Each card renders like:
-```text
-Punch List Closeout                       [icon]
-Close out the punch list and invoice
-[Punch] -> [Photos] -> [Invoice]
-[ Run with Aura ]   [ Open Page -> ]
-```
+- No new edge functions, no DB migrations, no tier-permission changes.
+- Healthcare scope guardrails (no EHR/Rx/records) stay as-is.
