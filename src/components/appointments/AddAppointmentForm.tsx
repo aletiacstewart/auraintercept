@@ -363,7 +363,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           </div>
 
           {/* Assign Technician — only shown for verticals that dispatch field staff */}
-          {hasFieldTechnicians(pack) && (
+          {hasFieldTechnicians(pack) && pack && (
             <div className="space-y-2">
               <Label className="text-foreground/70">Assign {getNavLabels(pack!).teamMemberNoun} (optional)</Label>
               <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
