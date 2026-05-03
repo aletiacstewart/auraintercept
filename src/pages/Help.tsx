@@ -588,15 +588,15 @@ export default function Help() {
                       {teamMember} Dashboard Features
                     </h3>
                     <div className="ml-7 space-y-2 text-sm">
-                      <p className="text-card-foreground/70">As a technician, your mobile-optimized dashboard includes:</p>
+                      <p className="text-card-foreground/70">As a {teamMember.toLowerCase()}, your mobile-optimized dashboard includes:</p>
                       <ul className="space-y-2 mt-2">
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
-                          <span><strong className="text-card-foreground">Job Queue:</strong> View and manage assigned jobs, update status (en route, arrived, completed)</span>
+                          <span><strong className="text-card-foreground">{navLabels.jobNoun} Queue:</strong> View and manage assigned {jobNounLower}s, update status</span>
                         </li>
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
-                          <span><strong className="text-card-foreground">AI Console:</strong> Access the Field Operations AI agent for navigation and support</span>
+                          <span><strong className="text-card-foreground">AI Console:</strong> Access the {navLabels.techView} AI agent for support</span>
                         </li>
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
