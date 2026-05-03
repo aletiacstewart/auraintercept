@@ -29,7 +29,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
-import { getAppointmentRules } from '@/lib/industryPackSchema';
+import { getAppointmentRules } from '@/lib/industryFormSchemas';
 
 // Aura Intercept themed status styles
 const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string; label: string }> = {
