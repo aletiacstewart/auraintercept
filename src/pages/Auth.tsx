@@ -1268,18 +1268,7 @@ export default function Auth() {
                             </div>
 
                             {businessIndustry === 'other' && (
-                              <div className="space-y-1">
-                                <Label className="text-xs">Describe Your Business</Label>
-                                <p className="text-[11px] text-muted-foreground">
-                                  In one sentence — what do you sell or schedule, and who is your customer? Aura uses this to tailor your console, agents, and scripts.
-                                </p>
-                                <Input
-                                  placeholder="e.g. We run a mobile dog-grooming service for busy pet owners."
-                                  value={customIndustryDescription}
-                                  onChange={(e) => setCustomIndustryDescription(e.target.value)}
-                                  className="text-xs h-8"
-                                />
-                              </div>
+                              <CustomIndustryWizard value={customIndustry} onChange={setCustomIndustry} />
                             )}
 
                             {/* Compliance documents upload (combined) */}
