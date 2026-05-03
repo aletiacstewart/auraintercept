@@ -1356,6 +1356,66 @@ export type Database = {
           },
         ]
       }
+      company_compliance_documents: {
+        Row: {
+          company_id: string
+          created_at: string
+          doc_type: Database["public"]["Enums"]["compliance_doc_type"]
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string | null
+          notes: string | null
+          size_bytes: number | null
+          status: Database["public"]["Enums"]["compliance_doc_status"]
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["compliance_doc_type"]
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["compliance_doc_status"]
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["compliance_doc_type"]
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["compliance_doc_status"]
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_compliance_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_compliance_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_role_agent_access: {
         Row: {
           agent_type: string
@@ -6783,6 +6843,8 @@ export type Database = {
     }
     Enums: {
       app_role: "platform_admin" | "company_admin" | "employee" | "customer"
+      compliance_doc_status: "pending" | "approved" | "rejected"
+      compliance_doc_type: "dba" | "ein" | "formation" | "other"
       crm_connection_status:
         | "disconnected"
         | "pending"
@@ -6969,6 +7031,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["platform_admin", "company_admin", "employee", "customer"],
+      compliance_doc_status: ["pending", "approved", "rejected"],
+      compliance_doc_type: ["dba", "ein", "formation", "other"],
       crm_connection_status: [
         "disconnected",
         "pending",
