@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,7 @@ import {
   getFastStartQuestions,
   formatFastStartAnswers,
 } from '@/lib/industryFastStartQuestions';
+import { getIndustryVoiceGreeting } from '@/lib/industryVoiceGreetings';
 
 const STEPS = [
   { label: 'Welcome', icon: Building2 },
@@ -73,12 +74,33 @@ interface FastStartData {
 
 export function FastStartWizard() {
   const navigate = useNavigate();
-  const { companyId } = useAuth();
+  const { companyId, user } = useAuth();
   const { subscriptionTier, getAvailableAgents, getTierInfo } = useSubscription();
   const { markOnboardingCompleted } = useOnboardingState();
 
   const [step, setStep] = useState(0);
+
+  // Phase 8: lightweight onboarding funnel telemetry. Best-effort only.
+  const logEvent = (
+    stepName: string,
+    action: 'view' | 'complete' | 'skip' | 'launch',
+    metadata: Record<string, unknown> = {},
+  ) => {
+    try {
+      void supabase.from('onboarding_step_events' as any).insert({
+        company_id: companyId ?? null,
+        user_id: user?.id ?? null,
+        step: stepName,
+        action,
+        metadata,
+      } as any);
+    } catch {
+      /* swallow — never block UX on analytics */
+    }
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Step view telemetry — fires once per visible step.
+  // (declared after logEvent below via effect)
   const [isImporting, setIsImporting] = useState(false);
   const [companySlug, setCompanySlug] = useState<string | null>(null);
 
@@ -96,6 +118,12 @@ export function FastStartWizard() {
     agentsActivatedCount: 0,
     verticalAnswers: {},
   });
+
+  // Fire a `view` event whenever the visible step changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    logEvent(STEPS[step]?.label?.toLowerCase() ?? `step-${step}`, 'view');
+  }, [step]);
 
   const template = useMemo(
     () => BUSINESS_TEMPLATES.find((t) => t.id === data.businessType),
@@ -206,6 +234,7 @@ export function FastStartWizard() {
           email: kb?.company_info?.email || undefined,
           ai_agent_prompt: promptParts.join('\n\n') || undefined,
           industry_vertical: data.businessType || undefined,
+          ai_voice_greeting: getIndustryVoiceGreeting(data.businessType, data.companyName),
         })
         .eq('id', companyId)
         .select('slug')
@@ -295,6 +324,7 @@ export function FastStartWizard() {
       // 6. Mark onboarding complete
       await markOnboardingCompleted();
 
+      logEvent('launch', 'launch', { agentsActivated: data.agentsActivated, importedKB: !!data.importedKB });
       toast.success('Your 24 AI agents are now live 24/7', { duration: 6000, icon: '🚀' });
       navigate('/dashboard?welcome=true');
     } catch (err) {

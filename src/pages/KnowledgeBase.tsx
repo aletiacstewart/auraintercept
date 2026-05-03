@@ -9,6 +9,7 @@ import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManage
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
+import { BusinessContextManager } from '@/components/knowledge/BusinessContextManager';
 import { KnowledgeBaseWizard } from '@/components/knowledge/KnowledgeBaseWizard';
 import { SmartLinksManager } from '@/components/knowledge/SmartLinksManager';
 import { AuraIntelligenceSettings } from '@/components/settings/AuraIntelligenceSettings';
@@ -71,6 +72,10 @@ export default function KnowledgeBase() {
               <Brain className="w-3.5 h-3.5 hidden sm:block" />
               Aura Intelligence
             </TabsTrigger>
+            <TabsTrigger value="business-context" className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 hidden sm:block" />
+              Business Context
+            </TabsTrigger>
             <TabsTrigger value="services" className="flex items-center gap-1.5">
               <Briefcase className="w-3.5 h-3.5 hidden sm:block" />
               Services
@@ -108,6 +113,10 @@ export default function KnowledgeBase() {
 
           <TabsContent value="aura-intelligence">
             <AuraIntelligenceSettings />
+          </TabsContent>
+
+          <TabsContent value="business-context" className="space-y-3">
+            <BusinessContextManager />
           </TabsContent>
 
           <TabsContent value="services" className="space-y-3">
