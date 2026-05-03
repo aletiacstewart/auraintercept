@@ -940,6 +940,7 @@ export type Database = {
           emergency_surcharge: number | null
           followup_call_script: string | null
           id: string
+          industry_config: Json
           industry_vertical: string | null
           is_demo: boolean
           last_bounce_alert_at: string | null
@@ -965,6 +966,7 @@ export type Database = {
           monthly_digest_time: string | null
           monthly_digest_timezone: string | null
           name: string
+          operating_model: string | null
           phone: string | null
           phone_number_setup_type: string | null
           primary_color: string | null
@@ -992,6 +994,7 @@ export type Database = {
           review_yelp_url: string | null
           ring_timeout_seconds: number
           secondary_color: string | null
+          secondary_industries: string[]
           service_area_cities: string[] | null
           service_area_zip_codes: string[] | null
           service_categories: string[] | null
@@ -1001,6 +1004,7 @@ export type Database = {
           sms_optout_alert_threshold: number | null
           stripe_customer_id: string | null
           subscription_tier: string | null
+          supported_modules: Json
           trial_ends_at: string | null
           trial_expired_sent: boolean | null
           trial_reminder_1d_sent: boolean | null
@@ -1072,6 +1076,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          industry_config?: Json
           industry_vertical?: string | null
           is_demo?: boolean
           last_bounce_alert_at?: string | null
@@ -1097,6 +1102,7 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name: string
+          operating_model?: string | null
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
@@ -1124,6 +1130,7 @@ export type Database = {
           review_yelp_url?: string | null
           ring_timeout_seconds?: number
           secondary_color?: string | null
+          secondary_industries?: string[]
           service_area_cities?: string[] | null
           service_area_zip_codes?: string[] | null
           service_categories?: string[] | null
@@ -1133,6 +1140,7 @@ export type Database = {
           sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
+          supported_modules?: Json
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null
@@ -1204,6 +1212,7 @@ export type Database = {
           emergency_surcharge?: number | null
           followup_call_script?: string | null
           id?: string
+          industry_config?: Json
           industry_vertical?: string | null
           is_demo?: boolean
           last_bounce_alert_at?: string | null
@@ -1229,6 +1238,7 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name?: string
+          operating_model?: string | null
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
@@ -1256,6 +1266,7 @@ export type Database = {
           review_yelp_url?: string | null
           ring_timeout_seconds?: number
           secondary_color?: string | null
+          secondary_industries?: string[]
           service_area_cities?: string[] | null
           service_area_zip_codes?: string[] | null
           service_categories?: string[] | null
@@ -1265,6 +1276,7 @@ export type Database = {
           sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
+          supported_modules?: Json
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null
@@ -2730,6 +2742,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      industry_blueprints: {
+        Row: {
+          agent_actions: Json
+          created_at: string
+          default_agents: Json
+          default_consoles: Json
+          default_kpis: Json
+          id: string
+          is_active: boolean
+          name: string
+          operating_model: string
+          primary_records: Json
+          prompt_overrides: Json
+          restrictions: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          agent_actions?: Json
+          created_at?: string
+          default_agents?: Json
+          default_consoles?: Json
+          default_kpis?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          operating_model: string
+          primary_records?: Json
+          prompt_overrides?: Json
+          restrictions?: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          agent_actions?: Json
+          created_at?: string
+          default_agents?: Json
+          default_consoles?: Json
+          default_kpis?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          operating_model?: string
+          primary_records?: Json
+          prompt_overrides?: Json
+          restrictions?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       industry_template_packs: {
         Row: {
