@@ -158,7 +158,7 @@ serve(async (req) => {
                       'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                      from: `${companyName} <noreply@resend.dev>`,
+                      from: `${companyName} <noreply@auraintercept.ai>`,
                       to: [lead.email],
                       subject,
                       text: message,
