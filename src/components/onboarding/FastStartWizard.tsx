@@ -74,7 +74,7 @@ interface FastStartData {
 
 export function FastStartWizard() {
   const navigate = useNavigate();
-  const { companyId } = useAuth();
+  const { companyId, user } = useAuth();
   const { subscriptionTier, getAvailableAgents, getTierInfo } = useSubscription();
   const { markOnboardingCompleted } = useOnboardingState();
 
@@ -89,7 +89,7 @@ export function FastStartWizard() {
     try {
       void supabase.from('onboarding_step_events' as any).insert({
         company_id: companyId ?? null,
-        user_id: undefined,
+        user_id: user?.id ?? null,
         step: stepName,
         action,
         metadata,
