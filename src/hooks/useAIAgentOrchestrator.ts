@@ -65,7 +65,7 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
   // Analytics & Reports (1 unified agent)
   { type: 'analytics_intelligence', name: 'Analytics Intelligence Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
-  // Industry Specialist Operatives (4) — auto-activated by industry pack on Pro/Elite
+  // Industry Specialist Operatives (4) — auto-activated by industry pack on ALL plans
   { type: 'diagnostic', name: 'Diagnostic Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
   { type: 'permit_code', name: 'Permit & Code Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
   { type: 'site_survey', name: 'Site Survey & Quote Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
