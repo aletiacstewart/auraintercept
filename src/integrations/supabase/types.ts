@@ -6599,6 +6599,7 @@ export type Database = {
       }
     }
     Functions: {
+      backfill_service_catalog_defaults: { Args: never; Returns: number }
       can_view_company: { Args: { _company_id: string }; Returns: boolean }
       check_integration_configured: {
         Args: { p_company_id: string; p_integration_type: string }
