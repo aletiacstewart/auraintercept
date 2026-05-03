@@ -1,161 +1,85 @@
-# Industry-Adaptive Workspace Refactor
+# Healthcare Vertical Pack — Final Plan (Scoped)
 
-Goal: Make Aura Intercept truly multi-tenant and industry-adaptive. Industry choice (at signup) automatically configures dashboards, consoles, AI agents, KPIs, workflows, and prompts — no manual toggling. Plan tier controls capacity (how many industries, how much automation), not which industry features are available.
+Adds 6 healthcare verticals (Dental, Chiropractic, General Medical, Veterinary, Physical Therapy, Optometry) to the existing platform. Scope is intentionally narrow: **appointments + insurance verification emails to front desk only**. No medications, no medical/dental records, no clinical charting, no e-prescribing, no EDI claims, no lab orders.
 
-## 1. Database Schema
+## Decisions locked in
 
-Add to `companies` (or `business_profiles`):
-- `industry_type` (text) — primary industry slug (e.g. `hvac`, `real_estate`, `saas`, `restaurant`, `wellness`, `legal`, `other`)
-- `secondary_industries` (text[]) — additional industries (gated by plan capacity)
-- `operating_model` (text) — derived: `field_dispatch`, `appointment_booking`, `pipeline_sales`, `receptionist_only`, `custom`
-- `industry_config` (jsonb) — per-tenant overrides (KPIs, prompts, custom fields, workflows)
-- `supported_modules` (jsonb) — resolved list of active consoles/agents/widgets
+1. **Pricing**: Available on **all 4 tiers** (Core / Boost / Pro / Elite). HIPAA guardrails apply on every tier.
+2. **Insurance verification**: Wired as `verify_insurance` agent action → emails the front desk with the captured info + creates a task. No verification logic, no payer API, no eligibility checks.
+3. **Vet data model**: Pets stored as **JSON array on the customer record** (`customers.pets`). Appointments reference `pet_id` from the array. Reuses existing customers + appointments consoles with zero new tables.
 
-New table `industry_blueprints` (seeded, editable by platform_admin):
-- `slug`, `name`, `operating_model`, `primary_records` (jsonb), `default_agents` (jsonb), `default_consoles` (jsonb), `default_kpis` (jsonb), `prompt_overrides` (jsonb), `restrictions` (jsonb — e.g. restaurants = receptionist_only)
+## Explicitly OUT of scope
 
-## 2. Workspace Resolver
+- No prescription / medication management
+- No medical, dental, spinal, or vision records / charting / SOAP notes
+- No e-prescribing, refill request handling, or pharmacy integration
+- No lab orders, results, or imaging
+- No EDI / clearinghouse / payer integration
+- No CDT/CPT code library
+- No PHI document storage (intake forms collect basic info only — no x-rays, no charts)
 
-Single source of truth: `src/lib/workspace/resolveCompanyWorkspace.ts`
+This narrows agent actions to: `book_appointment`, `reschedule`, `cancel`, `confirm_appointment`, `send_recall`, `verify_insurance` (email only), `triage_emergency` (route to staff/911), `answer_faq`.
 
-```typescript
-resolveCompanyWorkspace(company) -> {
-  operatingModel,
-  primaryRecords,        // e.g. ['service_calls','equipment'] vs ['demos','trials']
-  activeConsoles,        // which console components to render
-  activeAgents,          // which of the 24 agents are auto-enabled
-  agentActions,          // industry-specific tools per agent
-  kpis,                  // dashboard metrics
-  promptOverrides,       // injected into AI agent prompts
-  restrictions           // hard limits (e.g. no booking for restaurants)
-}
-```
+## What gets built
 
-Logic: `blueprint(industry) ∩ planCapacity(tier) ∪ industry_config overrides`
+### 1. Migration
 
-Replaces all current manual `ai_agent_configs.enabled` toggling. A sync function writes resolved agent set to `ai_agent_configs` automatically on industry/plan change.
+- 6 rows in `industry_blueprints` (slugs: `dental`, `chiropractic`, `medical_office`, `veterinary`, `physical_therapy`, `optometry`). All use `operating_model='appointment_booking'` → reuses `AppointmentConsole`.
+- `companies.healthcare_compliance boolean default false`.
+- Extend `trg_sync_company_workspace` to auto-set the flag for healthcare slugs.
+- New table `insurance_verification_requests` (company_id, customer_id, carrier, member_id, group_number, policyholder_name, policyholder_dob, photo_url nullable, status, requested_at, completed_at, notes). Standard RLS by company.
+- `customers.pets jsonb default '[]'::jsonb` and `appointments.pet_id text` (nullable, vet-only).
 
-## 3. Plan = Capacity, Not Features
+### 2. Compliance overlay
 
-| Tier  | Industries | Agent depth | Automation runs |
-|-------|------------|-------------|-----------------|
-| Core  | 1          | Core 10     | Limited         |
-| Boost | 2          | Core + 4 adv| Standard        |
-| Pro   | 3          | Most agents | High            |
-| Elite | Unlimited  | All 24      | Unlimited       |
+- `aura-unified` `buildIndustrySystemPrompt` prepends a HIPAA guardrail block when `healthcare_compliance=true`:
+  - AI must self-identify on first turn (vertical-aware).
+  - No diagnosis, no clinical advice, no symptom interpretation.
+  - No medication / refill discussion — route to staff.
+  - No medical records discussion — route to staff.
+  - Verify identity before sharing any patient info.
+  - Required disclaimer line on any health-adjacent reply.
+- Voice agent intro forced per-vertical: *"Hi, I'm Aura, an AI receptionist for [Practice]. I'm not a licensed dentist/doctor/chiropractor/therapist/optometrist/vet. I can help with appointments and insurance — for clinical questions I'll connect you with the team."*
+- SMS/email composer shows a "Contains PHI — minimum-necessary rule" banner for healthcare tenants.
 
-Industries are NOT locked to specific tiers. Any industry works on any tier.
+### 3. Insurance verification action — email-only
 
-## 4. Adaptive Operations Console
+- New edge function `verify-insurance` (`verify_jwt=false`, internal):
+  - Input: `{ company_id, customer_id, carrier, member_id, group_number, policyholder_name, policyholder_dob, photo_url? }` (Zod-validated).
+  - Inserts row in `insurance_verification_requests` with status `pending`.
+  - Sends email to `companies.notification_email` via existing `send-staff-notification` flow, body lists all collected fields and a "Mark verified" deep link to the customer record.
+  - Also creates an in-app task assigned to staff so it shows in the dashboard task list.
+- Surfaced as:
+  - A `verify_insurance` agent action available to the customer-journey AI when caller asks about coverage.
+  - A "Verify Insurance" Quick Action button on the patient record.
 
-Refactor `/dashboard/dispatch-field-ops` → `/dashboard/operations` with router:
+### 4. Terminology + UX overlays (existing files only)
 
-```text
-operatingModel === 'field_dispatch'      -> <FieldDispatchConsole/>   (HVAC, plumbing, electrical, locksmith, towing, cleaning, landscaping, pest)
-operatingModel === 'appointment_booking' -> <AppointmentConsole/>     (wellness, salon, dental, medical, fitness, legal-consults)
-operatingModel === 'pipeline_sales'      -> <PipelineConsole/>        (saas, real_estate, insurance, auto-sales)
-operatingModel === 'receptionist_only'   -> <ReceptionistConsole/>    (restaurants — AI receptionist + smart links only)
-operatingModel === 'custom'              -> <CustomConsole/>          (Other industry, user-defined workflow)
-```
+Extend:
+- `src/lib/agentStyles.ts` → `INDUSTRY_AGENT_LABELS` for 6 verticals.
+- `src/lib/industryFieldLabels.ts` → Customers→Patients (vet: Pet Owners), Jobs→Visits / Adjustments / Sessions / Exams, Invoices→Statements, Follow-ups→Recalls / Rechecks / Progress Checks.
+- `src/lib/industryNavLabels.ts`, `industryEmptyStates.ts`, `industryQuickActions.ts` → matching copy + CTAs (Book, Send intake, Verify insurance, Send recall).
+- `src/lib/industryKpiLabels.ts` + `industryAnalyticsPresets.ts` → 5–8 KPIs per vertical (Today's Production, Schedule Fill, No-Show Rate, Case Acceptance, Hygiene Production, Collections Ratio, Pre-Appointment %).
+- `src/lib/industryFormSchemas.ts` → simple new-patient intake (demographics, insurance, chief complaint, consents). **No medical/dental/spinal/vision history fields** — out of scope. Vet schema includes pets array (`name, species, breed, dob, sex, weight, notes`).
+- `src/lib/industryAuraFraming.ts` + `industryAuraSuggestions.ts` → vertical scripts (emergency triage routing, insurance ask, reschedule, recall) per the supplied blueprints, scrubbed of refill/records language.
 
-Each console renders genuinely different UI: different primary records, different actions, different layouts — not just renamed labels.
+### 5. Onboarding
 
-Examples:
-- FieldDispatch: live truck map, dispatch board, route optimization, equipment history
-- Appointment: chair/room calendar, recurring bookings, deposit collection, no-show recovery
-- Pipeline: deal stages, demo scheduler, trial-rescue queue, MRR tracker
-- Receptionist: call log, smart-link manager, FAQ trainer (no booking UI)
+- Add the 6 healthcare options as first-class chips in `CustomIndustryWizard.tsx`.
+- HIPAA acknowledgement modal on selection: "Aura is used as an AI receptionist for appointments and insurance intake only. It does not handle medical records, prescriptions, or clinical advice. Interactions are logged for compliance."
 
-## 5. Adaptive Dashboard & Sidebar
+### 6. Demo seeder
 
-`CompanyAdminDashboard` reads workspace KPIs from resolver and renders the matching widget set. Sidebar filters items where `requiredOperatingModel` doesn't match. Agent labels (Front Desk / On The Way / etc.) get an industry layer (e.g. "On The Way" → "Agent En Route" for real estate showings).
+- Add 6 demo practices (one per vertical) to `seed-demo-accounts-v2`, distributed across all 4 tiers so every combo is previewable.
 
-## 6. Industry-Specific Agent Behavior
+### 7. Memory
 
-`customer_journey` operative gains industry actions:
-- HVAC: `book_service_call`, `dispatch_emergency`, `quote_repair`
-- Real estate: `schedule_showing`, `send_listing`, `request_preapproval`
-- SaaS: `book_demo`, `start_trial`, `escalate_churn_risk`
-- Restaurant: `send_smart_link`, `take_message` (no booking)
+- New: `mem://features/industry/healthcare-vertical-pack` capturing scope (appointments + insurance email only), HIPAA guardrails, vet pets-as-JSON model, and the explicit OUT-OF-SCOPE list so future changes don't accidentally add medical-record features.
 
-Agent prompts get `promptOverrides` injected from blueprint — terminology, scripts, escalation rules adapt automatically.
+## Files touched (summary)
 
-## 7. Signup / Onboarding
+- 1 migration (blueprints, flag, trigger extension, insurance table, pets/pet_id columns)
+- 1 new edge function: `verify-insurance`
+- Edits to: `aura-unified`, `agentStyles`, `industryFieldLabels`, `industryNavLabels`, `industryEmptyStates`, `industryKpiLabels`, `industryAnalyticsPresets`, `industryQuickActions`, `industryFormSchemas`, `industryAuraFraming`, `industryAuraSuggestions`, `CustomIndustryWizard`, `seed-demo-accounts-v2`
 
-- Industry dropdown at signup (18 verticals + "Other / Custom")
-- "Other" → wizard collects: primary thing scheduled/sold, customer type, key actions, then drafts an `industry_config`
-- Free Audit asks vertical-specific questions
-- After signup, resolver runs and provisions the workspace automatically
-
-## 8. Restaurants — Hardcoded Restriction
-
-Restaurant blueprint sets `restrictions: { booking: false, integrations: ['receptionist','smart_links'] }`. Booking UI hidden, agents instructed to direct customers to website/booking link, no dispatch console.
-
-## 9. Demo Account Migration
-
-Update the 54 demo accounts (18 industries × admin/employee/customer) to set `industry_type` and let resolver provision them. Reseeder at `/dashboard/demo-seeder` updated. Per-vertical empty-state copy already exists — wire it through workspace.
-
-## 10. Files Touched (high level)
-
-- Migration: add columns + `industry_blueprints` table + seed 18 blueprints
-- `src/lib/workspace/resolveCompanyWorkspace.ts` (new)
-- `src/hooks/useWorkspace.ts` (new) — replaces scattered useIndustryPack/useTier checks
-- `src/pages/dashboard/Operations.tsx` (new router) + 5 console components
-- `src/components/dashboard/CompanyAdminDashboard.tsx` — KPI driven by resolver
-- `src/components/Sidebar*.tsx` — filter by operatingModel
-- `src/lib/agents/` — inject promptOverrides + industry actions
-- Edge functions: `sync-company-workspace` (runs on industry/plan change), update agent-normalization
-- Onboarding: `IndustryStep.tsx`, `CustomIndustryWizard.tsx`
-- Demo seeder updates
-
-## 11. What This Is NOT
-
-- Not just renaming labels (Job Queue → Schedule). Consoles render structurally different components.
-- Not manual toggles. Admins can override but defaults come from resolver.
-- Not industry-locked tiers. Industry shapes workspace; tier sets capacity.
-- Not adding restaurant reservations (explicit exclusion).
-
-## Approval
-
-Reply "approve" or "build it" to begin. I'll start with the migration + resolver + Operations router, then migrate one console (HVAC field_dispatch) end-to-end as a reference pattern before doing the rest.
-
----
-
-## Update — Continued (next pass)
-
-- ✅ Wired `loadCompanyWorkspace` + `buildIndustryPromptSnippet` into `voice-handler` so the SignalWire SWML system prompt now picks up industry terminology, scripts, and `restrictions.booking === false` (e.g. restaurants are explicitly told NOT to book and to send a Smart Link).
-- ✅ Sidebar `Operations` entry now reads `useWorkspace().operatingModel` and adapts:
-  - `field_dispatch` → "Dispatch View" (HVAC etc.)
-  - `appointment_booking` → "Appointment Console"
-  - `pipeline_sales` → "Pipeline Console"
-  - `receptionist_only` → entry is hidden (restaurants), with rendering falling back to `<ReceptionistConsole/>` if a deep link is hit.
-  - `custom` → "Operations"
-- ✅ `restrictions.dispatch === false` now also hides the field-ops entries, regardless of legacy `console_visibility` settings.
-
-### Still TODO (next pass)
-1. Inject workspace prompt into `aura-unified` (text intent classifier) so chat replies follow industry restrictions too.
-2. Replace placeholder cards in `AppointmentConsole`, `PipelineConsole`, `ReceptionistConsole` with real queries (calls today, smart-link clicks, deals by stage).
-3. Add "Industry" step to onboarding + "Other / Custom" wizard that writes `industry_config`.
-4. Update `CompanyAdminDashboard` KPI grid to read from `workspace.kpis` instead of hardcoded list.
-
-- ✅ Replaced placeholder "—" cards in `AppointmentConsole`, `PipelineConsole`, and `ReceptionistConsole` with live Supabase counts (appointments today/week/no-shows; lead stage counts + conversion %; calls today + smart-link inventory). Each console now shows real, company-scoped data and remains structurally distinct from the field dispatch view.
-
-- ✅ DB trigger `trg_sync_operating_model` now auto-fills `companies.operating_model` from `industry_blueprints` whenever a company's industry is set/changed (signup, demo seeding, admin edits). Backfilled all existing rows.
-- ✅ `aura-unified` now accepts an optional `companyId`, loads the workspace, and prepends the `buildIndustryPromptSnippet` to the intent-classification system prompt — so restaurants etc. honor `restrictions.booking === false` in the chat flow too.
-
-- ✅ Onboarding (`/auth` signup) now offers an **Other / Custom** industry option. Picking it reveals a one-line "Describe Your Business" field and writes the description into `companies.industry_config.description`, which downstream resolvers and AI prompts pick up automatically.
-- ✅ Added an `other` row to `industry_blueprints` (operating_model = `custom`) and to `CANONICAL_INDUSTRY_IDS` so the signup validator accepts it.
-- ✅ `CompanyAdminDashboard` now reads `workspace.kpis` from the resolver. When the blueprint defines KPIs, they drive the Simple-Mode top-5 strip via the new `blueprintKpisToCanonical` mapper; otherwise we fall back to the existing cluster/industry table for legacy tenants.
-
-### Plan complete
-All four "Still TODO" items are done. The platform is now end-to-end industry-adaptive: signup → blueprint → operating_model → consoles, sidebar, dashboard KPIs, voice prompts, and chat prompts all read from a single `useWorkspace`/`loadCompanyWorkspace` source of truth.
-
-## Update — Final pass (gap closure)
-- ✅ Added `companies.supported_modules` (jsonb) cache column.
-- ✅ Created `sync-company-workspace` edge function — caches resolved consoles/KPIs/restrictions onto `supported_modules` and re-runs `initialize-company-agents`.
-- ✅ DB trigger `trg_sync_company_workspace` fires on industry/plan/config change to re-resolve in the background.
-- ✅ Seeded `industry_blueprints.agent_actions` for all 18 verticals + `other` (HVAC `book_service_call`, real_estate `schedule_showing`, restaurants `send_smart_link`, etc.). The `customer_journey` operative now sees these via the existing `buildIndustryPromptSnippet`.
-- ✅ Industry agent label overlay: new `getAgentStyleForIndustry(agent, industrySlug)` in `src/lib/agentStyles.ts` (real_estate "On The Way" → "Agent En Route", restaurants "Front Desk" → "Host", auto_care "On The Way" → "Bay Ready", etc.).
-- ✅ Free Audit already includes vertical-specific branching questions (industry_type, service_location, dispatch_routing, customer_eta, etc.) with per-vertical tier scoring.
-- ✅ Demo seeder (`seed-demo-accounts-v2`) sets `industry_vertical` per demo company → triggers fire automatically → `operating_model`, `supported_modules`, and `ai_agent_configs` all provision through the resolver.
-- ✅ New `CustomIndustryWizard` component collects the three plan-required fields (primary offering, customer type, key actions) and `buildIndustryConfig` writes them as a structured `industry_config` (description + agent_actions + prompt_overrides). Wired into `/auth` signup when "Other / Custom" is selected.
+Ready to build on approval.
