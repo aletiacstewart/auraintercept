@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -164,10 +165,12 @@ serve(async (req) => {
       ? `\nIMPORTANT: Do NOT use these words/phrases: ${aiProfile.avoid_keywords.join(', ')}`
       : '';
 
-    const systemPrompt = `You are an expert content writer for ${resolvedCompanyName || 'a service business'}. Create engaging, SEO-optimized blog articles.
+    const baseSystemPrompt = `You are an expert content writer for ${resolvedCompanyName || 'a service business'}. Create engaging, SEO-optimized blog articles.
 Write in a ${resolvedTone} tone that connects with readers.
 ${aiProfile?.brand_voice ? `Brand voice: ${aiProfile.brand_voice}` : ''}
 Incorporate keywords naturally without keyword stuffing.${avoidKeywords}`;
+    const industryPack = companyId ? await loadIndustryPackForCompany(supabase, companyId) : null;
+    const systemPrompt = applyIndustryPackToPrompt(baseSystemPrompt, industryPack, 'blog');
 
     const userPrompt = `${researchContext ? `=== CURRENT INDUSTRY RESEARCH ===\n${researchContext}\n\n` : ''}${aiProfileContext.length > 0 ? `=== BRAND PROFILE ===\n${aiProfileContext.join('\n')}\n\n` : ''}${knowledgeContext.length > 0 ? `=== KNOWLEDGE BASE ===\n${knowledgeContext.join('\n')}\n\n` : ''}=== TASK ===
 Write a comprehensive blog article about: ${topic}
