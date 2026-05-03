@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
 
 interface Invoice {
   id: string;
@@ -38,6 +39,9 @@ interface InvoicesManagerProps {
 }
 
 export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => {
+  const { pack } = useIndustryPack();
+  const invoiceNoun = (pack?.terminology as any)?.invoice || 'Invoice';
+  const invoicePlural = `${invoiceNoun}s`;
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -117,21 +121,21 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Invoices</h3>
-          <p className="text-sm text-foreground/70">Create and manage customer invoices</p>
+          <h3 className="text-lg font-semibold text-foreground">{invoicePlural}</h3>
+          <p className="text-sm text-foreground/70">Create and manage customer {invoicePlural.toLowerCase()}</p>
         </div>
         <div className="flex items-center gap-2">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
                 <Plus className="w-4 h-4 mr-2" />
-                New Invoice
+                New {invoiceNoun}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create Invoice</DialogTitle>
-                <DialogDescription>Create a new invoice for a customer.</DialogDescription>
+                <DialogTitle>Create {invoiceNoun}</DialogTitle>
+                <DialogDescription>Create a new {invoiceNoun.toLowerCase()} for a customer.</DialogDescription>
               </DialogHeader>
               {companyId && (
                 <InvoiceForm
