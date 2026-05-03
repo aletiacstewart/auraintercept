@@ -370,15 +370,17 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
               </div>
             </div>
 
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder={addressField.label}
-                value={customerAddress}
-                onChange={(e) => setCustomerAddress(e.target.value)}
-                className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
-              />
-            </div>
+            {showAddress && (
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder={addressField.label}
+                  value={customerAddress}
+                  onChange={(e) => setCustomerAddress(e.target.value)}
+                  className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                />
+              </div>
+            )}
           </div>
 
           {/* Assign Technician — only shown for verticals that dispatch field staff */}
@@ -417,30 +419,24 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           <div className="space-y-2">
             <Label className="text-foreground/70">Send Reminders Via</Label>
             <div className="flex gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="sms-opt"
-                  checked={smsOptIn}
-                  onCheckedChange={(checked) => setSmsOptIn(!!checked)}
-                />
-                <Label htmlFor="sms-opt" className="text-sm cursor-pointer text-foreground/70">SMS</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="email-opt"
-                  checked={emailOptIn}
-                  onCheckedChange={(checked) => setEmailOptIn(!!checked)}
-                />
-                <Label htmlFor="email-opt" className="text-sm cursor-pointer text-foreground/70">Email</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="call-opt"
-                  checked={callOptIn}
-                  onCheckedChange={(checked) => setCallOptIn(!!checked)}
-                />
-                <Label htmlFor="call-opt" className="text-sm cursor-pointer text-foreground/70">Call</Label>
-              </div>
+              {reminderChannels.includes('sms') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="sms-opt" checked={smsOptIn} onCheckedChange={(c) => setSmsOptIn(!!c)} />
+                  <Label htmlFor="sms-opt" className="text-sm cursor-pointer text-foreground/70">SMS</Label>
+                </div>
+              )}
+              {reminderChannels.includes('email') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="email-opt" checked={emailOptIn} onCheckedChange={(c) => setEmailOptIn(!!c)} />
+                  <Label htmlFor="email-opt" className="text-sm cursor-pointer text-foreground/70">Email</Label>
+                </div>
+              )}
+              {reminderChannels.includes('call') && (
+                <div className="flex items-center gap-2">
+                  <Checkbox id="call-opt" checked={callOptIn} onCheckedChange={(c) => setCallOptIn(!!c)} />
+                  <Label htmlFor="call-opt" className="text-sm cursor-pointer text-foreground/70">Call</Label>
+                </div>
+              )}
             </div>
           </div>
 
