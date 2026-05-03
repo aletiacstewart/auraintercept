@@ -386,6 +386,11 @@ const PlatformFAQPDF = () => {
           answer={`Aura Intercept is designed for service businesses including: ${PLATFORM_STATS.industries.join(', ')}. The platform is flexible and can be configured for most B2C service industries.`}
         />
 
+        <FAQItem
+          question="Does Aura Intercept support healthcare practices?"
+          answer={`Yes — Dental, Chiropractic, Medical Office, Veterinary, Physical Therapy, and Optometry are supported on all 4 tiers (Core, Boost, Pro, Elite). Healthcare is scoped to appointment scheduling, recall reminders, and insurance verification (carrier + member ID is captured and emailed to your front desk). Aura is NOT a clinician and does NOT handle medical records, EHR/PMS sync, prescriptions, medications, clinical advice, diagnosis, pharmacy or lab integrations, or HIPAA-covered PHI beyond what is needed to book a visit. A HIPAA acknowledgement is required at signup for these verticals.`}
+        />
+
         <View style={styles.infoBox}>
           <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>Quick Start Checklist</Text>
           <BulletPoint>Complete company profile with branding</BulletPoint>
