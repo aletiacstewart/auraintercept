@@ -45,6 +45,8 @@ import {
 import { SubscriptionTier, TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getIndustryUseCases } from '@/lib/industryHelpPrompts';
+import { getIndustryConsoleConfig } from '@/lib/industryHelpContent';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
@@ -53,6 +55,11 @@ export default function Help() {
   const { subscriptionTier, inTrial } = useSubscription();
   const { pack: industryPack } = useIndustryPack();
   const isPlatformAdmin = userRole === 'platform_admin';
+  const navLabels = getNavLabels(industryPack);
+  const teamMember = navLabels.teamMemberNoun;
+  const teamMembersLower = `${teamMember.toLowerCase()}s`;
+  const jobNounLower = navLabels.jobNoun.toLowerCase();
+  const customerNoun = (industryPack?.terminology?.customer as string) || 'Customer';
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Effective tier for display: platform admin sees all; everyone else (including
@@ -95,7 +102,14 @@ export default function Help() {
   
   // Get filtered content for current tier
   const filteredFeatures = useMemo(() => {
+    const industryOverride = getIndustryConsoleConfig(currentConsole, industryPack);
+    if (industryOverride.features) return industryOverride.features;
     return getFilteredFeatures(currentConsole, effectiveTier);
+  }, [currentConsole, effectiveTier, industryPack]);
+
+  // Industry-aware description + tabs
+  const consoleOverride = useMemo(() => {
+    return getIndustryConsoleConfig(currentConsole, industryPack);
   }, [currentConsole, effectiveTier]);
   
   const filteredAgents = useMemo(() => {
@@ -183,20 +197,20 @@ export default function Help() {
                     </div>
                     <div>
                       <CardTitle>{currentConsole.title}</CardTitle>
-                      <CardDescription className="text-card-foreground/70">{currentConsole.description}</CardDescription>
+                      <CardDescription className="text-card-foreground/70">{consoleOverride.description}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Quick Action Tabs */}
-                  {currentConsole.tabs && currentConsole.tabs.length > 0 && (
+                  {consoleOverride.tabs && consoleOverride.tabs.length > 0 && (
                     <div>
                       <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                         <Keyboard className="w-5 h-5 text-amber-500" />
                         Quick Action Tabs
                       </h3>
                       <div className="flex flex-wrap gap-2 ml-7">
-                        {currentConsole.tabs.map((tab, index) => (
+                        {consoleOverride.tabs.map((tab, index) => (
                           <Badge key={index} variant="outline" className="text-xs px-2 py-1 text-foreground border-foreground/30">
                             {tab}
                           </Badge>
