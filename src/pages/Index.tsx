@@ -938,9 +938,10 @@ export default function Index() {
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
-                <p className="text-xs text-white mb-4">8 Smart AI Agents handling booking, follow-up, creative content & web presence.</p>
+                <p className="text-xs text-white mb-4">Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">3 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Triage + Booking + Follow-Up + Review</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Creative Content + Web Presence</span></div>
@@ -969,9 +970,10 @@ export default function Index() {
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
-                <p className="text-xs text-white mb-4">12 Smart AI Agents with dispatch, routing & field operations.</p>
+                <p className="text-xs text-white mb-4">Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">5 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media Console</span></div>

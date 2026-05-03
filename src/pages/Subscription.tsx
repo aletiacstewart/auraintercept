@@ -84,10 +84,10 @@ const TIERS = [
     consoleCount: 3,
     highlights: [
       '8 Smart AI Agents',
+      'Voice + SMS + Email + Web Chat',
       '3 Control Centers',
       'Triage + Booking + Follow-Up + Review',
       'Creative Content + Web Presence',
-      'Email Reminders',
       '10 Employee Accounts',
     ],
   },
@@ -103,10 +103,10 @@ const TIERS = [
     consoleCount: 5,
     highlights: [
       '12 Smart AI Agents',
+      'Voice + SMS + Email + Web Chat',
       '5 Control Centers',
       'Dispatch + Route + ETA + Check-In',
       'Field Operations + Social Media Console',
-      'Voice + SMS Reminders',
       '25 Employee Accounts',
     ],
   },
