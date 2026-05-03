@@ -92,3 +92,16 @@ Reply **go** to execute B → A → E in sequence, or pick a single letter to sc
 - ✅ `PerformanceReportForm` — team overview + per-employee tiles use pack `appointment`/`job` nouns
 
 Next: **Phase F** (industry-specific Fast Start questions) or **Phase G** (KB seed expansion).
+
+## Phase F — Industry-specific Fast Start questions ✅
+
+- ✅ New static registry `src/lib/industryFastStartQuestions.ts` with 3–4 vertical-aware questions per industry (28 packs + generic fallback)
+- ✅ Wired into `FastStartWizard` Step 0 — questions appear after a business type is picked, all optional
+- ✅ Answers appended to `companies.ai_agent_prompt` on launch via `formatFastStartAnswers` so every operative sees the context
+- No schema changes — purely additive, free-text answers
+
+## Phase G — KB seed expansion ✅
+
+- ✅ Salon, fitness, professional packs each grew from 1 → 3 KB seed docs (services, FAQs, prep tips)
+- ✅ All 6 healthcare packs (chiropractic, dental, medical_office, optometry, physical_therapy, veterinary) gained an insurance/intake doc, HIPAA-safely worded
+- All 28 packs now seed at minimum 3 KB documents into `knowledge_documents` on company industry-vertical change
