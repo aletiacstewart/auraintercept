@@ -45,6 +45,8 @@ import {
 import { SubscriptionTier, TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getIndustryUseCases } from '@/lib/industryHelpPrompts';
+import { getIndustryConsoleConfig } from '@/lib/industryHelpContent';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
@@ -53,6 +55,11 @@ export default function Help() {
   const { subscriptionTier, inTrial } = useSubscription();
   const { pack: industryPack } = useIndustryPack();
   const isPlatformAdmin = userRole === 'platform_admin';
+  const navLabels = getNavLabels(industryPack);
+  const teamMember = navLabels.teamMemberNoun;
+  const teamMembersLower = `${teamMember.toLowerCase()}s`;
+  const jobNounLower = navLabels.jobNoun.toLowerCase();
+  const customerNoun = (industryPack?.terminology?.customer as string) || 'Customer';
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Effective tier for display: platform admin sees all; everyone else (including
@@ -95,8 +102,15 @@ export default function Help() {
   
   // Get filtered content for current tier
   const filteredFeatures = useMemo(() => {
+    const industryOverride = getIndustryConsoleConfig(currentConsole, industryPack);
+    if (industryOverride.features) return industryOverride.features;
     return getFilteredFeatures(currentConsole, effectiveTier);
-  }, [currentConsole, effectiveTier]);
+  }, [currentConsole, effectiveTier, industryPack]);
+
+  // Industry-aware description + tabs
+  const consoleOverride = useMemo(() => {
+    return getIndustryConsoleConfig(currentConsole, industryPack);
+  }, [currentConsole, industryPack]);
   
   const filteredAgents = useMemo(() => {
     return getFilteredAgents(currentConsole, effectiveTier);
@@ -183,20 +197,20 @@ export default function Help() {
                     </div>
                     <div>
                       <CardTitle>{currentConsole.title}</CardTitle>
-                      <CardDescription className="text-card-foreground/70">{currentConsole.description}</CardDescription>
+                      <CardDescription className="text-card-foreground/70">{consoleOverride.description}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Quick Action Tabs */}
-                  {currentConsole.tabs && currentConsole.tabs.length > 0 && (
+                  {consoleOverride.tabs && consoleOverride.tabs.length > 0 && (
                     <div>
                       <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                         <Keyboard className="w-5 h-5 text-amber-500" />
                         Quick Action Tabs
                       </h3>
                       <div className="flex flex-wrap gap-2 ml-7">
-                        {currentConsole.tabs.map((tab, index) => (
+                        {consoleOverride.tabs.map((tab, index) => (
                           <Badge key={index} variant="outline" className="text-xs px-2 py-1 text-foreground border-foreground/30">
                             {tab}
                           </Badge>
@@ -371,7 +385,7 @@ export default function Help() {
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
-                        <span>Perfect for field technicians on the go</span>
+                        <span>Perfect for {teamMembersLower} on the go</span>
                       </li>
                     </ul>
                   </div>
@@ -561,7 +575,7 @@ export default function Help() {
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">4</Badge>
                         <div>
                           <p className="font-medium text-card-foreground">Access Your Dashboard</p>
-                          <p className="text-sm text-card-foreground/70">Once registered, you'll be redirected to your dashboard. Technicians go to the mobile-optimized Field Ops dashboard.</p>
+                          <p className="text-sm text-card-foreground/70">Once registered, you'll be redirected to your dashboard. {teamMember}s go to the mobile-optimized {navLabels.techView}.</p>
                         </div>
                       </div>
                     </div>
@@ -571,18 +585,18 @@ export default function Help() {
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                       <Shield className="w-5 h-5 text-green-500" />
-                      Field Technician Dashboard Features
+                      {teamMember} Dashboard Features
                     </h3>
                     <div className="ml-7 space-y-2 text-sm">
-                      <p className="text-card-foreground/70">As a technician, your mobile-optimized dashboard includes:</p>
+                      <p className="text-card-foreground/70">As a {teamMember.toLowerCase()}, your mobile-optimized dashboard includes:</p>
                       <ul className="space-y-2 mt-2">
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
-                          <span><strong className="text-card-foreground">Job Queue:</strong> View and manage assigned jobs, update status (en route, arrived, completed)</span>
+                          <span><strong className="text-card-foreground">{navLabels.jobNoun} Queue:</strong> View and manage assigned {jobNounLower}s, update status</span>
                         </li>
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
-                          <span><strong className="text-card-foreground">AI Console:</strong> Access the Field Operations AI agent for navigation and support</span>
+                          <span><strong className="text-card-foreground">AI Console:</strong> Access the {navLabels.techView} AI agent for support</span>
                         </li>
                         <li className="flex items-start gap-2 text-card-foreground/80">
                           <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />

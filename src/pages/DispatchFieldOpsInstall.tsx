@@ -7,9 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { Monitor, ExternalLink, Globe, MapPin } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { useNavigate } from 'react-router-dom';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 export default function DispatchFieldOpsInstall() {
   const navigate = useNavigate();
+  const { pack } = useIndustryPack();
+  const nav = getNavLabels(pack);
+  const dispatchLabel = nav.dispatchView; // e.g. Patient Schedule, Shop Queue, Chair Schedule
 
   return (
     <DashboardLayout>
@@ -17,8 +22,8 @@ export default function DispatchFieldOpsInstall() {
         <div className="space-y-6">
           <PageHeader
             icon={MapPin}
-            title="Dispatch Field Ops Install"
-            description="Deploy the Dispatch Field Ops mobile app to your dispatchers' and managers' devices"
+            title={`${dispatchLabel} Mobile App Install`}
+            description={`Deploy the ${dispatchLabel} mobile app to your front-desk and manager devices`}
             featureColor="fieldops"
           />
         
@@ -40,7 +45,7 @@ export default function DispatchFieldOpsInstall() {
                   </Badge>
                 </div>
                 <CardDescription>
-                  Access Dispatch Console directly through the platform for desktop use or as a backup method
+                  Access {dispatchLabel} directly through the platform for desktop use or as a backup method
                 </CardDescription>
               </div>
             </div>
@@ -48,9 +53,9 @@ export default function DispatchFieldOpsInstall() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="p-4 rounded-lg border border-border/50 bg-card">
-                <h4 className="font-medium mb-1 text-card-foreground">Dispatch Console (Dashboard)</h4>
+                <h4 className="font-medium mb-1 text-card-foreground">{dispatchLabel} (Dashboard)</h4>
                 <p className="text-sm text-card-foreground/70 mb-3">
-                  Full dispatch experience within the main dashboard
+                  Full {dispatchLabel.toLowerCase()} experience within the main dashboard
                 </p>
                 <Button 
                   variant="outline" 
@@ -58,13 +63,13 @@ export default function DispatchFieldOpsInstall() {
                   onClick={() => navigate('/dashboard/dispatch-field-ops')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Open Dispatch Console
+                  Open {dispatchLabel}
                 </Button>
               </div>
               <div className="p-4 rounded-lg border border-border/50 bg-card">
-                <h4 className="font-medium mb-1 text-card-foreground">Standalone Dispatch App</h4>
+                <h4 className="font-medium mb-1 text-card-foreground">Standalone {dispatchLabel} App</h4>
                 <p className="text-sm text-card-foreground/70 mb-3">
-                  Lightweight dispatch console without dashboard navigation
+                  Lightweight {dispatchLabel.toLowerCase()} console without dashboard navigation
                 </p>
                 <Button 
                   variant="outline" 

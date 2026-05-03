@@ -14,6 +14,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { isLovablePreviewOrigin, normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -22,6 +24,10 @@ interface BeforeInstallPromptEvent extends Event {
 
 const TechnicianInstall = () => {
   const { companyId } = useAuth();
+  const { pack } = useIndustryPack();
+  const nav = getNavLabels(pack);
+  const team = nav.teamMemberNoun;
+  const techView = nav.techView;
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -135,7 +141,7 @@ const TechnicianInstall = () => {
           <div>
             <h1 className="text-2xl font-bold">Install App</h1>
             <p className="text-muted-foreground">
-              Install Field Ops on your device for quick access
+              Install {techView} on your device for quick access
             </p>
           </div>
           <Badge variant={isOnline ? 'default' : 'secondary'} className="gap-1">
@@ -154,7 +160,7 @@ const TechnicianInstall = () => {
                 <div>
                   <h3 className="font-semibold text-lg">App Installed!</h3>
                   <p className="text-muted-foreground">
-                    You're using Field Ops as a standalone app
+                    You're using {techView} as a standalone app
                   </p>
                 </div>
               </div>
@@ -171,7 +177,7 @@ const TechnicianInstall = () => {
                       <Smartphone className="h-8 w-8 text-white" />
                     </div>
                     <div className="flex-1 text-center sm:text-left">
-                      <h3 className="font-semibold text-lg">Install Field Ops</h3>
+                      <h3 className="font-semibold text-lg">Install {techView}</h3>
                       <p className="text-muted-foreground text-sm">
                         Add to your home screen for quick access
                       </p>
