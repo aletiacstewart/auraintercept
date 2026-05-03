@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -468,7 +469,7 @@ You are the ETA Agent. Help track technician arrival.
         nextWeekDates.push(`${dayNames[i % 7]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`);
       }
 
-      const systemPrompt = `You are a friendly AI assistant for ${company.name}. 
+      let systemPrompt = `You are a friendly AI assistant for ${company.name}. 
 
 CURRENT DATE/TIME CONTEXT:
 - TODAY is: ${dayNames[now.getDay()]}, ${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}
