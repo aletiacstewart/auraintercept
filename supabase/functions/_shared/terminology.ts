@@ -12,6 +12,10 @@ export interface CompanyTerminology {
   appointment: string;
   customer: string;
   serviceType: string;
+  technician: string;
+  quote: string;
+  invoice: string;
+  lead: string;
 }
 
 const DEFAULTS: CompanyTerminology = {
@@ -19,6 +23,10 @@ const DEFAULTS: CompanyTerminology = {
   appointment: 'Appointment',
   customer: 'Customer',
   serviceType: 'Service',
+  technician: 'Technician',
+  quote: 'Quote',
+  invoice: 'Invoice',
+  lead: 'Lead',
 };
 
 export async function getCompanyTerminology(
@@ -32,16 +40,25 @@ export async function getCompanyTerminology(
     });
     const row = Array.isArray(data) ? data[0] : data;
     const term = ((row as Record<string, unknown>)?.terminology || {}) as Record<string, string>;
+    const pick = (...keys: string[]): string | undefined => {
+      for (const k of keys) {
+        const v = term[k];
+        if (typeof v === 'string' && v) return v;
+      }
+      return undefined;
+    };
     return {
-      job: (typeof term.job === 'string' && term.job) || DEFAULTS.job,
+      job: pick('job', 'job_singular') || DEFAULTS.job,
       appointment:
-        (typeof term.appointment === 'string' && term.appointment) || DEFAULTS.appointment,
-      customer: (typeof term.customer === 'string' && term.customer) || DEFAULTS.customer,
+        pick('appointment', 'job_singular', 'job') || DEFAULTS.appointment,
+      customer: pick('customer', 'customer_singular') || DEFAULTS.customer,
       serviceType:
-        (typeof term.serviceType === 'string' && term.serviceType) ||
-        (typeof term.service_type === 'string' && term.service_type) ||
-        (typeof term.service === 'string' && term.service) ||
+        pick('serviceType', 'service_type', 'service', 'service_singular') ||
         DEFAULTS.serviceType,
+      technician: pick('technician', 'employee_singular', 'employee') || DEFAULTS.technician,
+      quote: pick('quote') || DEFAULTS.quote,
+      invoice: pick('invoice') || DEFAULTS.invoice,
+      lead: pick('lead') || DEFAULTS.lead,
     };
   } catch (e) {
     console.warn('[terminology] resolve failed:', e);
