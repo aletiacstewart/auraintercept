@@ -259,15 +259,6 @@ const OVERRIDES: Record<string, Partial<MarketingPlaybook>> = {
       { title: 'At-Risk Win-Back', description: 'Re-engage accounts with falling usage',
         command: 'Identify accounts with falling 30-day usage and draft a win-back outreach campaign' },
     ] },
-  real_estate: { tagline: 'More booked showings and faster offers',
-    campaigns: [
-      { title: 'New Listing Launch', description: 'Social + email + open house',
-        command: 'For my newest listing, build a launch campaign across social and email and schedule the open house' },
-      { title: 'Just-Sold Postcard', description: 'Win neighbors with proof',
-        command: 'For my latest just-sold address, draft a just-sold postcard and digital ad targeting the surrounding blocks' },
-      { title: 'Past-Client Touch', description: 'Annual home-value check-in',
-        command: 'Build an annual home-value check-in campaign for past clients and queue for approval' },
-    ] },
   // ── Healthcare verticals (HIPAA-aware: no PHI in marketing copy) ───
   dental: { tagline: 'Reactivate hygiene, fill the chair',
     campaigns: [
