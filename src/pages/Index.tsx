@@ -168,14 +168,14 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Online booking', 'Appointment tracking', 'Quote requests', 'AI chat & voice support']
 }, {
-  name: 'Field Operations Console',
-  description: 'Smart dispatch, real-time technician routing, and live job tracking in the field.',
+  name: 'Service Delivery Console',
+  description: 'Schedule, assign, and track every job, visit, or appointment in real time — across technicians, providers, stylists, and agents.',
   icon: Truck,
   gradient: 'from-green-500 to-emerald-500',
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
   tier: 'performance',
-  features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
+  features: ['Smart scheduling & assignment', 'Route & visit optimization', 'Live status & ETA tracking', 'Staff check-in & updates']
 }, {
   name: 'Business Management Console',
   description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
@@ -463,7 +463,7 @@ const heroStats = [{
   value: '7+',
   label: 'Control Centers (Consoles)'
 }];
-const subtitles = ['Booking & Scheduling', 'Field Operations', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
+const subtitles = ['Booking & Scheduling', 'Service Delivery', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
 export default function Index() {
   const navigate = useNavigate();
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
@@ -976,7 +976,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (bundled)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Field Operations + Social Media + Analytics</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Service Delivery + Social Media + Analytics</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=connect')}>
