@@ -379,13 +379,15 @@ export function isSpecialistOperative(agentType: string): agentType is IndustryS
   return (INDUSTRY_SPECIALIST_OPERATIVES as readonly string[]).includes(agentType);
 }
 
-// Specialist operatives unlock at Performance (Aura Pro) tier and above.
-export const SPECIALIST_MIN_TIER: SubscriptionTier = 'performance';
+// Specialist operatives are industry-specific and available on ALL plans
+// (including the free trial). Activation is driven by the industry pack, not by tier.
+export const SPECIALIST_MIN_TIER: SubscriptionTier = 'free';
 
 export function getSpecialistRequiredTier(): SubscriptionTier {
   return SPECIALIST_MIN_TIER;
 }
 
-export function tierAllowsSpecialists(tier: SubscriptionTier): boolean {
-  return isTierAtLeast(tier, SPECIALIST_MIN_TIER);
+export function tierAllowsSpecialists(_tier: SubscriptionTier): boolean {
+  // Specialist operatives ship with every plan since they are industry-specific.
+  return true;
 }
