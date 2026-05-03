@@ -91,7 +91,7 @@ export default function ForBusiness() {
       <main className="flex-1">
         <IndustryHero content={content} onStartDemo={() => setDemoOpen(true)} />
         <IndustryValueProps content={content} />
-        <RolePreviewRow onTryDemo={() => setDemoOpen(true)} />
+        <RolePreviewRow industryId={industry} onTryDemo={() => setDemoOpen(true)} />
         <IntegrationStatusPanel />
 
         {/* Pricing snapshot */}
