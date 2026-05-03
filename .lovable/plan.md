@@ -1,107 +1,75 @@
-## Industry-Awareness Rollout — Phase B → A → E
+## Polish & Coverage Sweep — Items 1 → 8
 
-Three sequential workstreams, executed in this order so downstream surfaces have richer data to render.
-
----
-
-### B. Salon / Fitness / Professional pack deep-fill
-
-Bring the lighter packs up to parity with trades/healthcare. Single migration that updates `industry_template_packs` rows for these `industry_id`s:
-
-- `beauty_wellness` (salon/spa/barber)
-- `fitness` (gym/studio/personal training)
-- `professional_services` (consulting/legal/accounting/marketing agencies)
-
-For each, populate / expand:
-- **`agent_prompt_deltas`** — keys: `voice`, `sms`, `chat`, `booking`, `billing`, `lead`, `outreach`. 2–4 sentences each, vertical-specific (e.g. salon: "Always confirm stylist preference and service duration. Mention add-ons like deep conditioning or color gloss.").
-- **`terminology`** — full map: jobs→appointments/sessions/engagements, customers→clients/members, technician→stylist/trainer/consultant, quote→proposal/treatment plan/SOW, invoice→statement/membership invoice.
-- **`quick_actions`** — 6–8 vertical actions (Salon: "Book Color Service", "Add to Stylist Waitlist"; Fitness: "Book Class", "Renew Membership"; Pro Services: "Schedule Discovery Call", "Send SOW").
-- **`kpi_labels`** — relabel the standard 6 KPIs (e.g. salon: "Chair Utilization", "Avg Ticket", "Rebook Rate"; fitness: "Active Members", "Class Fill Rate", "Churn"; pro services: "Billable Hours", "Utilization", "Pipeline Value").
-- **`empty_states`** — vertical copy for leads/quotes/invoices/customers/jobs.
-- **`marketing_playbooks`** — 2–3 starter campaigns each (salon: "Color Refresh Reminder"; fitness: "30-Day Comeback"; pro: "Quarterly Check-in").
+Executes the eight follow-ups to the industry-awareness rollout in the recommended order. Items 1, 3, 6 are mostly verification/data; items 2, 4, 5, 7, 8 add new code.
 
 ---
 
-### A. List-view terminology pass
+### 1. QA pass — terminology audit (verification only)
 
-Wire `useIndustryPack` into the manager/list pages so titles, table headers, empty states, and primary CTAs read from `pack.terminology`:
+Programmatic ripgrep sweep across customer-facing surfaces (`src/components/customer`, `src/components/portal`, `src/components/booking`, `src/pages/CustomerPortal*`, `src/pages/PublicBooking*`) for hardcoded `Job`, `Technician`, `Customer` strings. Already spot-checked clean — confirm with a final pass and document findings in plan.md.
 
-- `src/pages/Quotes.tsx` + `src/components/quotes/QuotesManager.tsx`
-- `src/pages/Invoices.tsx` + `src/components/invoices/InvoicesManager.tsx`
-- `src/pages/Leads.tsx`
-- `src/pages/Inventory.tsx` (relabel "Inventory" → "Products" / "Retail" for salon, or hide entirely for pro services where `pack.has_inventory === false`)
-- `src/pages/EmployeeAppointments.tsx` (relabel "Jobs" → "Appointments" / "Sessions" / "Engagements")
-- `src/pages/Employees.tsx` (relabel role pickers via terminology)
+### 2. Surface Fast Start answers in Knowledge Base
 
-Use existing `IndustryEmptyState` for the empty body. No data-shape changes.
+- Extend `src/lib/industryFastStartQuestions.ts` with `parseFastStartAnswers()` and `upsertFastStartBlock()` helpers (regex-based round-trip on the prompt block).
+- New component `src/components/knowledge/BusinessContextManager.tsx` — loads the company's `ai_agent_prompt`, parses the Fast Start block, renders the same questions as editable inputs, and saves back via `upsertFastStartBlock` (preserves admin's free-form prompt above the block).
+- Add a new "Business Context" tab (icon: Sparkles) to `src/pages/KnowledgeBase.tsx`, placed after AI Profile.
 
----
+### 3. Backfill new KB seed docs into existing companies
 
-### E. Notification & email/SMS template terminology
+Run `seed_industry_pack_kb_for_company` for every company with an `industry_vertical` set. Function is idempotent (skips existing doc names). Done via psql/migration tool.
 
-Wire pack terminology into outbound message copy. Each function loads the pack via the existing shared helper and substitutes nouns into subjects/bodies:
+### 4. Pack coverage report (admin-only)
 
-- `supabase/functions/send-appointment-email/index.ts` — subject: "Your {appointment} with {company}" → "Your visit with Dr. Smith" / "Your training session at FitClub"
-- `supabase/functions/send-appointment-sms/index.ts` — same noun swap, keep <160 char budget
-- `supabase/functions/send-job-notification/index.ts` — staff alerts: "New job assigned" → "New appointment assigned" / "New client engagement"
-- `supabase/functions/appointment-reminders/index.ts` — reminder copy
-- `supabase/functions/lead-follow-up-reminders/index.ts` — "lead" → terminology.lead (e.g. "prospect" / "inquiry")
-- `supabase/functions/monthly-digest/index.ts` + `weekly-digest/index.ts` + `quarterly-digest/index.ts` — section headers via terminology
-- `supabase/functions/send-review-request/index.ts` — "Rate your service" → "Rate your visit" / "Rate your session"
+- New page `src/pages/admin/PackCoverage.tsx` (gated to platform_admin, route `/dashboard/pack-coverage`).
+- Reads all 28 rows of `industry_template_packs` plus `src/lib/industryMarketingPlaybooks.ts` and presents a table with checkmark columns: terminology, kpi_labels, quick_actions, kb_seed_documents (count), agent_prompt_deltas (count), marketing_playbooks (count), service_catalog (count). Highlights any pack below the parity bar (3 KB docs, 2 playbooks, 6 quick actions, full terminology set).
+- Add nav entry in the platform_admin sidebar group.
 
-Pattern: small `applyTerminology(template, pack)` helper added to `_shared/industry-pack.ts` that does string substitution on a known set of placeholders (`{appointment}`, `{job}`, `{customer}`, `{technician}`, `{quote}`, `{invoice}`, `{lead}`).
+### 5. Marketing playbooks parity for thin packs
 
----
+Extend `src/lib/industryMarketingPlaybooks.ts` so salon, fitness, professional, and the 6 healthcare verticals each have 2-3 starter campaigns matching the trades depth (subject + body + cadence + audience filter). No schema changes — file is static.
 
-### Out of Scope (later phases C/D/F/G)
+### 6. Operative prompt-injection audit
 
-- Customer-facing portal terminology (Phase C)
-- Analytics KPI label rewiring (Phase D — partly enabled by B's `kpi_labels`)
-- Vertical-specific Fast Start questions (Phase F)
-- KB seed expansion beyond what's already in `kb_seed_documents` (Phase G)
+Ripgrep across `supabase/functions/*/index.ts` for the operative system-prompt construction sites and verify each one calls the `industry-pack` injection helper. Patch any that don't (likely candidates: newer marketing/content edge functions). Already-touched ones include `ai-agent`, `ai-agent-chat`, `voice-handler`, `sms-handler`, `widget-api`.
 
-### Files (expected)
+### 7. Industry-aware Aura voice greeting
 
-- `supabase/migrations/2026050319xxxx_deepen_salon_fitness_pro_packs.sql` (new)
-- `src/pages/Quotes.tsx`, `Invoices.tsx`, `Leads.tsx`, `Inventory.tsx`, `EmployeeAppointments.tsx`, `Employees.tsx`
-- `src/components/quotes/QuotesManager.tsx`, `src/components/invoices/InvoicesManager.tsx`
-- `supabase/functions/_shared/industry-pack.ts` (add `applyTerminology` helper)
-- 9 notification edge functions listed above
-- Memory note: extend `mem://architecture/industry-prompt-injection-standard` with terminology placeholder convention
+- New helper `getIndustryVoiceGreeting(pack)` in `src/lib/industryVoiceGreetings.ts` returning a vertical-tailored greeting (e.g. salon: "Thanks for calling {company}, this is Aura — would you like to book or check on an appointment?").
+- Wire into `FastStartWizard.handleLaunch` so when `companies.ai_voice_greeting` is still the default, we replace it on launch.
+- Also expose a "Reset to industry default" button in `src/components/ai/AIAgentSettings.tsx` (already manages this field).
 
-Reply **go** to execute B → A → E in sequence, or pick a single letter to scope to one workstream.
+### 8. Onboarding completion analytics
+
+- New table `onboarding_step_events` (company_id, step, action: 'view'|'complete'|'skip', created_at) with RLS: insert by anyone with `auth.uid()`, select restricted to platform_admin + own company.
+- Instrument `FastStartWizard` step transitions to fire inserts (no-op on failure).
+- New admin tile on `/dashboard/pack-coverage` (or the existing analytics suite) showing step-by-step funnel and skip rates across the last 30 days.
 
 ---
 
-## Phase C — Customer-facing surfaces ✅
+### Technical notes
 
-- ✅ `BookingForm` — header, pending notice, and submit CTA now use `pack.terminology.appointment`
-- ✅ `CustomerAIChat` — greeting fallback + quick-action labels/prompts use industry noun
-- ✅ `PublicBooking` — header subtitle + confirmation copy
-- ✅ `CustomerPortalHome` + `PortalQuickActions` — pack-driven welcome and actions
-- ✅ `send-job-notification` — staff/customer email subjects use pack `appointment` noun
-- ✅ `embed/booking.js` — iframe title overridable via `data-aura-title`
+- Items 3 and 8 are the only DB-touching ones (3 = data refresh via existing function, 8 = new table + RLS migration).
+- Items 5 and 6 are pure code; no schema. Item 7 adds one tiny lib file plus two small wirings.
+- All new UI uses theme CSS variables only (Cyber-Sentry standard).
+- Item 4's coverage page lives under platform_admin gating per `/dashboard/architecture` precedent.
+- The pack-coverage table doesn't require a backend RPC — `industry_template_packs` is already readable by authenticated users and we filter client-side; counts are cheap.
 
+### Files touched (expected)
 
-## Phase D — Analytics & Reports ✅ (initial pass)
+New:
+- `src/components/knowledge/BusinessContextManager.tsx`
+- `src/pages/admin/PackCoverage.tsx`
+- `src/lib/industryVoiceGreetings.ts`
+- `supabase/migrations/<timestamp>_onboarding_step_events.sql`
 
-- ✅ `ExportReportForm` already pack-aware via `industryReportTemplates`
-- ✅ `IntakeAnalytics` already pack-aware via `industryAnalyticsPresets`
-- ✅ `CompanyAdminDashboard` KPI tiles already use `relabelKpi`
-- ✅ `KpiDashboardForm` — Job Completion / Jobs Completed / Customer Satisfaction now read pack `job`/`customer` nouns
-- ✅ `PerformanceReportForm` — team overview + per-employee tiles use pack `appointment`/`job` nouns
+Edited:
+- `src/lib/industryFastStartQuestions.ts` (add parser/upsert)
+- `src/lib/industryMarketingPlaybooks.ts` (9 thin packs)
+- `src/pages/KnowledgeBase.tsx` (new tab)
+- `src/components/onboarding/FastStartWizard.tsx` (voice greeting + analytics events)
+- `src/components/ai/AIAgentSettings.tsx` (reset-to-default button)
+- `src/App.tsx` + sidebar config (route + nav for /dashboard/pack-coverage)
+- 1-3 edge functions identified by item 6's audit
+- `.lovable/plan.md` (mark all 8 done)
 
-Next: **Phase F** (industry-specific Fast Start questions) or **Phase G** (KB seed expansion).
-
-## Phase F — Industry-specific Fast Start questions ✅
-
-- ✅ New static registry `src/lib/industryFastStartQuestions.ts` with 3–4 vertical-aware questions per industry (28 packs + generic fallback)
-- ✅ Wired into `FastStartWizard` Step 0 — questions appear after a business type is picked, all optional
-- ✅ Answers appended to `companies.ai_agent_prompt` on launch via `formatFastStartAnswers` so every operative sees the context
-- No schema changes — purely additive, free-text answers
-
-## Phase G — KB seed expansion ✅
-
-- ✅ Salon, fitness, professional packs each grew from 1 → 3 KB seed docs (services, FAQs, prep tips)
-- ✅ All 6 healthcare packs (chiropractic, dental, medical_office, optometry, physical_therapy, veterinary) gained an insurance/intake doc, HIPAA-safely worded
-- All 28 packs now seed at minimum 3 KB documents into `knowledge_documents` on company industry-vertical change
+Reply **go** to execute 1 → 8 in sequence.
