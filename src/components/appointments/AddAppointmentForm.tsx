@@ -19,6 +19,8 @@ import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import { resolveFormSchema, validateIntake } from '@/lib/industryFormSchemas';
 import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getNavLabels } from '@/lib/industryNavLabels';
 
 interface AddAppointmentFormProps {
   onSuccess?: () => void;
@@ -360,23 +362,25 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             </div>
           </div>
 
-          {/* Assign Technician */}
-          <div className="space-y-2">
-            <Label className="text-foreground/70">Assign Technician (optional)</Label>
-            <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
-                <SelectValue placeholder="Unassigned" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unassigned">Unassigned</SelectItem>
-                {technicians.map((tech) => (
-                  <SelectItem key={tech.id} value={tech.id}>
-                    {tech.full_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Assign Technician — only shown for verticals that dispatch field staff */}
+          {hasFieldTechnicians(pack) && pack && (
+            <div className="space-y-2">
+              <Label className="text-foreground/70">Assign {getNavLabels(pack!).teamMemberNoun} (optional)</Label>
+              <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
+                <SelectTrigger className="bg-white text-slate-900 border-border">
+                  <SelectValue placeholder="Unassigned" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {technicians.map((tech) => (
+                    <SelectItem key={tech.id} value={tech.id}>
+                      {tech.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Notes */}
           <div className="space-y-2">
