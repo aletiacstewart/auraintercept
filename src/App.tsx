@@ -35,6 +35,7 @@ import Messages from "./pages/Messages";
 import EmailLogs from "./pages/EmailLogs";
 import SMSLogs from "./pages/SMSLogs";
 import Integrations from "./pages/Integrations";
+import HealthcareIntegrationsConsole from "./pages/HealthcareIntegrationsConsole";
 import { VoiceIntegration, SMSIntegration, EmailIntegration, CalendarIntegration, SocialMediaIntegration, TavilyIntegration } from "./pages/integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
@@ -199,6 +200,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 
                 <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                 <Route path="/dashboard/3rd-party-overview" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/healthcare" element={<ProtectedRoute><HealthcareIntegrationsConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/voice" element={<ProtectedRoute><VoiceIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/sms" element={<ProtectedRoute><SMSIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/email" element={<ProtectedRoute><EmailIntegration /></ProtectedRoute>} />

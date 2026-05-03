@@ -104,6 +104,13 @@ const INDUSTRY_AGENT_LABELS: Record<string, Record<string, string>> = {
   hvac: { customer_journey: 'Service Desk' },
   plumbing: { customer_journey: 'Service Desk' },
   electrical: { customer_journey: 'Service Desk' },
+  // Healthcare verticals — appointment + insurance scope only
+  dental:           { customer_journey: 'Patient Coordinator', triage: 'Patient Coordinator', admin: 'Insurance Desk', business_finance: 'Statements' },
+  chiropractic:     { customer_journey: 'Patient Coordinator', triage: 'Patient Coordinator', admin: 'Insurance Desk', business_finance: 'Statements' },
+  medical_office:   { customer_journey: 'Patient Coordinator', triage: 'Patient Coordinator', admin: 'Insurance Desk', business_finance: 'Statements' },
+  veterinary:       { customer_journey: 'Pet Owner Concierge', triage: 'Pet Owner Concierge', admin: 'Insurance Desk', business_finance: 'Statements' },
+  physical_therapy: { customer_journey: 'Patient Coordinator', triage: 'Patient Coordinator', admin: 'Insurance Desk', business_finance: 'Statements' },
+  optometry:        { customer_journey: 'Patient Coordinator', triage: 'Patient Coordinator', admin: 'Insurance Desk', business_finance: 'Statements' },
 };
 
 export function getAgentStyleForIndustry(
