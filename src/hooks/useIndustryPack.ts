@@ -156,7 +156,7 @@ export function usePublicIndustryPack(companyId: string | null | undefined) {
       } else {
         const row = Array.isArray(data) ? data[0] : data;
         if (row && row.industry_id) {
-          setPack({ ...DEFAULT_PACK, ...(row as Partial<IndustryPack>) } as IndustryPack);
+          setPack({ ...DEFAULT_PACK, ...(row as unknown as Partial<IndustryPack>) } as IndustryPack);
         } else {
           setPack(DEFAULT_PACK);
         }
