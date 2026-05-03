@@ -18,7 +18,7 @@ export function AppointmentConsole({ workspace }: Props) {
         icon={CalendarDays}
         title={`${workspace.industryName} — Appointments`}
         description={`Calendar-first console for ${workspace.industryName.toLowerCase()} bookings`}
-        featureColor="customer"
+        featureColor="appointments"
       />
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="p-4 surface-elevated-dark">
