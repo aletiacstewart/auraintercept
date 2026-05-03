@@ -1,85 +1,74 @@
-## Polish & Coverage Sweep — Items 1 → 8
+# Onboarding Readiness Audit
 
-Executes the eight follow-ups to the industry-awareness rollout in the recommended order. Items 1, 3, 6 are mostly verification/data; items 2, 4, 5, 7, 8 add new code.
+Deep-dive audit of onboarding-critical files, schema, content packs, edge functions, and security. Below is the verified state plus the small set of gaps to close before declaring "100% ready."
 
----
+## What's verified GREEN
 
-### 1. QA pass — terminology audit (verification only)
+**Onboarding flows (code)**
+- `src/pages/OnboardingForm.tsx` — Fast Start / Full toggle wired
+- `src/components/onboarding/FastStartWizard.tsx` (682 lines) — industry pack injection, voice greeting, telemetry to `onboarding_step_events`
+- `CompanyOnboardingForm.tsx`, `BusinessTypeSelector`, `CustomIndustryWizard`, `GuidedLaunchFlow`, `LaunchPathSelector`, `WelcomeModal`, `GoLiveTimeline` all present
+- `src/pages/Auth.tsx` — signup creates company, sets `industry_vertical`, fires `initialize-company-agents`, KB seed trigger fires
+- No `TODO`/`FIXME` markers in any onboarding component
 
-Programmatic ripgrep sweep across customer-facing surfaces (`src/components/customer`, `src/components/portal`, `src/components/booking`, `src/pages/CustomerPortal*`, `src/pages/PublicBooking*`) for hardcoded `Job`, `Technician`, `Customer` strings. Already spot-checked clean — confirm with a final pass and document findings in plan.md.
+**Industry packs (28 verticals)**
+- 28/28 packs have terminology, quote_template, invoice_template, ≥3 KB seed docs
+- Healthcare (6) + salon/fitness/professional packs have populated `service_catalog` (5–9 services)
+- All 25 existing companies have `industry_vertical`, `subscription_tier`, `ai_agent_prompt`, `ai_voice_greeting`
 
-### 2. Surface Fast Start answers in Knowledge Base
+**Industry-aware libs (all present)**
+- FastStart questions, voice greetings, marketing playbooks, KPI labels, nav labels, quick actions, empty states, form schemas, capabilities, help content, Aura framing/suggestions, report templates, workflows, portal copy, field labels, analytics presets
 
-- Extend `src/lib/industryFastStartQuestions.ts` with `parseFastStartAnswers()` and `upsertFastStartBlock()` helpers (regex-based round-trip on the prompt block).
-- New component `src/components/knowledge/BusinessContextManager.tsx` — loads the company's `ai_agent_prompt`, parses the Fast Start block, renders the same questions as editable inputs, and saves back via `upsertFastStartBlock` (preserves admin's free-form prompt above the block).
-- Add a new "Business Context" tab (icon: Sparkles) to `src/pages/KnowledgeBase.tsx`, placed after AI Profile.
+**Backend**
+- 83 edge functions deployed, including `initialize-company-agents`, `create-company-admin`, `create-demo-trial`, `seed_industry_pack_kb_for_company` trigger
+- `_shared/terminology.ts` resolver wired across customer-facing functions
+- `onboarding_step_events` table created; 526 `ai_agent_configs` rows across 25 companies (avg 21 agents/company — full operative roster)
+- Admin audit page `/dashboard/pack-coverage` live
 
-### 3. Backfill new KB seed docs into existing companies
+## Gaps found (small, targeted)
 
-Run `seed_industry_pack_kb_for_company` for every company with an `industry_vertical` set. Function is idempotent (skips existing doc names). Done via psql/migration tool.
+### Gap 1 — `service_catalog` empty for 19 trades/booking packs
+19 of 28 packs (HVAC, plumbing, electrical, landscape, roofing, pest_control, pool_spa, fencing, handyman, appliance_repair, auto_care, beauty_wellness, construction, real_estate, restaurants, security_systems, solar, personal_assistant, saas_platform) have `service_catalog = []`. Quote/Invoice forms still work (line items come from `quote_template`), but the "Services" picker on booking and the price-anchor in agent prompts is empty for these verticals.
 
-### 4. Pack coverage report (admin-only)
+**Fix:** Migration that backfills `service_catalog` with 4–8 starter services per pack (name, est_duration_min, base_price, description), pulled from each pack's existing `quote_template.line_items` where present and from canonical trade pricing for the rest.
 
-- New page `src/pages/admin/PackCoverage.tsx` (gated to platform_admin, route `/dashboard/pack-coverage`).
-- Reads all 28 rows of `industry_template_packs` plus `src/lib/industryMarketingPlaybooks.ts` and presents a table with checkmark columns: terminology, kpi_labels, quick_actions, kb_seed_documents (count), agent_prompt_deltas (count), marketing_playbooks (count), service_catalog (count). Highlights any pack below the parity bar (3 KB docs, 2 playbooks, 6 quick actions, full terminology set).
-- Add nav entry in the platform_admin sidebar group.
+### Gap 2 — Onboarding telemetry not yet flowing
+`onboarding_step_events` table exists and FastStartWizard logs view/launch events, but `CompanyOnboardingForm` (Full Setup) and `Auth` signup steps do not emit events. 0 rows captured so far.
 
-### 5. Marketing playbooks parity for thin packs
+**Fix:** Add the same `logEvent` helper to `CompanyOnboardingForm` step transitions and to `Auth` (signup_started / signup_completed / company_created) — non-blocking inserts.
 
-Extend `src/lib/industryMarketingPlaybooks.ts` so salon, fitness, professional, and the 6 healthcare verticals each have 2-3 starter campaigns matching the trades depth (subject + body + cadence + audience filter). No schema changes — file is static.
+### Gap 3 — Supabase linter: 1 ERROR + 127 WARNs
+- 1 ERROR: `Security Definer View` — needs identification + conversion to `security_invoker = true` or removal
+- 5 WARN: public storage buckets allow listing (likely brand-asset/blog buckets — may be intentional)
+- ~120 WARN: `SECURITY DEFINER` functions callable by anon (most are intentional public RPCs like `get_public_companies`, `check_company_subscription`, etc.)
 
-### 6. Operative prompt-injection audit
+**Fix:** Resolve the 1 ERROR (true bug); audit the 5 bucket warnings (confirm intentional and add to security memory); leave the public RPC warnings since they back the public website / customer portal by design — document in security memory so they're not re-flagged.
 
-Ripgrep across `supabase/functions/*/index.ts` for the operative system-prompt construction sites and verify each one calls the `industry-pack` injection helper. Patch any that don't (likely candidates: newer marketing/content edge functions). Already-touched ones include `ai-agent`, `ai-agent-chat`, `voice-handler`, `sms-handler`, `widget-api`.
+### Gap 4 — Welcome / first-run UX validation
+`WelcomeModal` exists but is not wired into the dashboard for fresh signups. New users land on `/dashboard` cold without the guided launch CTA being explicit.
 
-### 7. Industry-aware Aura voice greeting
+**Fix:** On `Dashboard.tsx` mount, if `companies.onboarding_state` is `signed_up` or `industry_selected` (not yet `launched`), surface `WelcomeModal` with a "Continue to Fast Start" CTA pointing at `/onboarding`.
 
-- New helper `getIndustryVoiceGreeting(pack)` in `src/lib/industryVoiceGreetings.ts` returning a vertical-tailored greeting (e.g. salon: "Thanks for calling {company}, this is Aura — would you like to book or check on an appointment?").
-- Wire into `FastStartWizard.handleLaunch` so when `companies.ai_voice_greeting` is still the default, we replace it on launch.
-- Also expose a "Reset to industry default" button in `src/components/ai/AIAgentSettings.tsx` (already manages this field).
+## Execution plan
 
-### 8. Onboarding completion analytics
+1. **DB migration** — backfill `service_catalog` for 19 packs (idempotent: only updates rows where `service_catalog = '[]'`).
+2. **Telemetry** — extend `logEvent` to `CompanyOnboardingForm` + `Auth.tsx` signup; add 4 event types.
+3. **Linter cleanup** — find the SECURITY DEFINER view (`SELECT viewname FROM pg_views WHERE schemaname='public'` cross-referenced with definer setting), fix it; update `@security-memory` to whitelist the intentional public RPCs and bucket policies.
+4. **Welcome flow wiring** — read `companies.onboarding_state` in `Dashboard.tsx`; conditionally render `WelcomeModal`; ensure `FastStartWizard.handleLaunch` writes `onboarding_state='launched'`.
+5. **Verification queries** — re-run pack/services/events counts and confirm `companies_with_vertical = total_companies`, `service_catalog_min ≥ 4` for all 28 packs, and at least one `onboarding_step_events` row per signup path in a smoke test.
 
-- New table `onboarding_step_events` (company_id, step, action: 'view'|'complete'|'skip', created_at) with RLS: insert by anyone with `auth.uid()`, select restricted to platform_admin + own company.
-- Instrument `FastStartWizard` step transitions to fire inserts (no-op on failure).
-- New admin tile on `/dashboard/pack-coverage` (or the existing analytics suite) showing step-by-step funnel and skip rates across the last 30 days.
-
----
-
-### Technical notes
-
-- Items 3 and 8 are the only DB-touching ones (3 = data refresh via existing function, 8 = new table + RLS migration).
-- Items 5 and 6 are pure code; no schema. Item 7 adds one tiny lib file plus two small wirings.
-- All new UI uses theme CSS variables only (Cyber-Sentry standard).
-- Item 4's coverage page lives under platform_admin gating per `/dashboard/architecture` precedent.
-- The pack-coverage table doesn't require a backend RPC — `industry_template_packs` is already readable by authenticated users and we filter client-side; counts are cheap.
-
-### Files touched (expected)
+## Files touched (expected)
 
 New:
-- `src/components/knowledge/BusinessContextManager.tsx`
-- `src/pages/admin/PackCoverage.tsx`
-- `src/lib/industryVoiceGreetings.ts`
-- `supabase/migrations/<timestamp>_onboarding_step_events.sql`
+- `supabase/migrations/<ts>_backfill_service_catalog.sql`
 
 Edited:
-- `src/lib/industryFastStartQuestions.ts` (add parser/upsert)
-- `src/lib/industryMarketingPlaybooks.ts` (9 thin packs)
-- `src/pages/KnowledgeBase.tsx` (new tab)
-- `src/components/onboarding/FastStartWizard.tsx` (voice greeting + analytics events)
-- `src/components/ai/AIAgentSettings.tsx` (reset-to-default button)
-- `src/App.tsx` + sidebar config (route + nav for /dashboard/pack-coverage)
-- 1-3 edge functions identified by item 6's audit
-- `.lovable/plan.md` (mark all 8 done)
+- `src/components/onboarding/CompanyOnboardingForm.tsx` (telemetry hooks)
+- `src/pages/Auth.tsx` (telemetry hooks)
+- `src/pages/Dashboard.tsx` (welcome modal trigger)
+- `src/components/onboarding/WelcomeModal.tsx` (wire CTA → /onboarding)
+- `src/components/onboarding/FastStartWizard.tsx` (set `onboarding_state='launched'` on success)
+- security memory document
+- `.lovable/plan.md` (record audit + closures)
 
-Reply **go** to execute 1 → 8 in sequence.
-
-## Polish 1-8 — DONE (2026-05-03)
-1. QA: no hardcoded Job/Technician/Customer in customer-facing surfaces ✓
-2. Business Context tab in Knowledge Base + parser/upsert helpers ✓
-3. Backfilled industry KB seeds for 25 existing companies ✓
-4. /dashboard/pack-coverage admin page (terminology/KB/services/deltas) ✓
-5. Marketing playbooks for salon, fitness, professional, saas, dental, medical_office, chiropractic, physical_therapy, optometry, veterinary ✓
-6. Operative prompt-injection audit: all edge fns already wired (no patches needed) ✓
-7. Industry voice greeting on Fast Start launch + reset button in AI Agent Settings ✓
-8. onboarding_step_events table + step view/launch telemetry in FastStartWizard ✓
+Reply **go** to execute steps 1 → 5 in order.
