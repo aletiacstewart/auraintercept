@@ -73,3 +73,13 @@ Edited:
 - `.lovable/plan.md` (mark all 8 done)
 
 Reply **go** to execute 1 → 8 in sequence.
+
+## Polish 1-8 — DONE (2026-05-03)
+1. QA: no hardcoded Job/Technician/Customer in customer-facing surfaces ✓
+2. Business Context tab in Knowledge Base + parser/upsert helpers ✓
+3. Backfilled industry KB seeds for 25 existing companies ✓
+4. /dashboard/pack-coverage admin page (terminology/KB/services/deltas) ✓
+5. Marketing playbooks for salon, fitness, professional, saas, dental, medical_office, chiropractic, physical_therapy, optometry, veterinary ✓
+6. Operative prompt-injection audit: all edge fns already wired (no patches needed) ✓
+7. Industry voice greeting on Fast Start launch + reset button in AI Agent Settings ✓
+8. onboarding_step_events table + step view/launch telemetry in FastStartWizard ✓
