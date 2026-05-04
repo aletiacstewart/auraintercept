@@ -56,72 +56,14 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
-import { getAgentStyle } from '@/lib/agentStyles';
+import { getAgentStyleForIndustry } from '@/lib/agentStyles';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig, type ServiceQuickAction, type ServiceActionId } from '@/lib/industryAgentMap';
 import { BusinessQuoteForm, BusinessQuoteData } from '@/components/billing/forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from '@/components/billing/forms/InvoiceForm';
 
-// Field Operations AI Agent icons and descriptions
-const FIELD_OPS_AGENT_CONFIG: Record<string, { icon: LucideIcon; description: string }> = {
-  dispatch: { icon: Truck, description: 'Assigns technicians to jobs and manages dispatching workflow' },
-  route: { icon: Navigation, description: 'Optimizes routes and provides navigation for field technicians' },
-  eta: { icon: Clock, description: 'Calculates and communicates estimated arrival times to customers' },
-  checkin: { icon: CheckSquare, description: 'Manages arrival confirmations and job check-in processes' },
-};
-
-const FIELD_OPS_AGENTS = [
-  { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'directions', name: 'Get Directions', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'enroute', name: 'En Route', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'eta', name: 'Update ETA', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'arrive_start', name: 'Arrive & Start', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'complete', name: 'Complete Job', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-  { id: 'quote', name: 'Generate Quote', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  { id: 'invoice', name: 'Generate Invoice', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-cyan-400' },
-];
-
-// Tabs for the console - include all quick action icons
-const TABS = [
-  { id: 'chat', label: 'Home', icon: MessageSquare, featureColor: 'text-feature-fieldops' },
-  { id: 'accept', label: 'Accept', icon: UserCheck, featureColor: 'text-feature-fieldops' },
-  { id: 'decline', label: 'Decline', icon: XCircle, featureColor: 'text-destructive' },
-  { id: 'directions', label: 'Directions', icon: Navigation, featureColor: 'text-feature-fieldops' },
-  { id: 'enroute', label: 'En Route', icon: Truck, featureColor: 'text-feature-fieldops' },
-  { id: 'eta', label: 'ETA', icon: Clock, featureColor: 'text-feature-appointments' },
-  { id: 'arrive_start', label: 'Arrive', icon: Play, featureColor: 'text-feature-fieldops' },
-  { id: 'complete', label: 'Complete', icon: CheckCircle, variant: 'destructive' as const, featureColor: 'text-feature-fieldops' },
-  { id: 'reschedule', label: 'Reschedule', icon: CalendarClock, featureColor: 'text-feature-appointments' },
-  { id: 'quote', label: 'Quote', icon: FileText, featureColor: 'text-feature-quotes' },
-  { id: 'invoice', label: 'Invoice', icon: Receipt, featureColor: 'text-feature-invoices' },
-  { id: 'dispatch', label: 'Dispatch', icon: Phone, featureColor: 'text-feature-fieldops' },
-];
-
-interface FieldOpsQuickAction {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  message: string;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  featureColor?: string;
-}
-
-// Job action IDs that require employee role (not available to company/platform admins for execution)
-const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrive_start', 'complete'];
-
-// Field Operations AI Agent quick actions - optimized workflow
-const QUICK_ACTIONS: FieldOpsQuickAction[] = [
-  { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job.", featureColor: 'text-feature-fieldops' },
-  { id: 'decline', label: 'Decline Job', icon: XCircle, message: "I want to decline a job.", featureColor: 'text-destructive' },
-  { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job", featureColor: 'text-feature-fieldops' },
-  { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer.", featureColor: 'text-feature-fieldops' },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job.", featureColor: 'text-feature-appointments' },
-  { id: 'arrive_start', label: 'Arrive & Start', icon: Play, message: "I have arrived at the customer's location and I'm ready to start the job.", featureColor: 'text-feature-fieldops' },
-  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive', featureColor: 'text-feature-fieldops' },
-  { id: 'reschedule', label: 'Reschedule', icon: CalendarClock, message: "I need to reschedule an appointment.", featureColor: 'text-feature-appointments' },
-  { id: 'quote', label: 'Generate Quote', icon: FileText, message: "I need to create a quote for this job.", featureColor: 'text-feature-quotes' },
-  { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: "I need to create an invoice for this completed job.", featureColor: 'text-feature-invoices' },
-  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch", featureColor: 'text-feature-fieldops' },
-];
+// Job action IDs that require employee/front-line role (admins can test/manage them).
+const EMPLOYEE_ONLY_ACTIONS: ServiceActionId[] = ['accept', 'enroute', 'eta', 'arrive_start', 'complete'];
 
 interface JobAssignment {
   id: string;
@@ -157,12 +99,18 @@ interface JobContextForForms {
   appointmentId?: string;
 }
 
-type SelectorMode = 'accept' | 'decline' | 'directions' | 'enroute' | 'eta' | 'arrive_start' | 'complete' | 'reschedule' | 'quote' | 'invoice' | null;
+type SelectorMode = Exclude<ServiceActionId, 'dispatch'> | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
   const navigate = useNavigate();
+  const { pack } = useIndustryPack(effectiveCompanyId);
+  const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
+  const jobNoun = serviceConfig.jobNoun;
+  const jobNounLower = jobNoun.toLowerCase();
+  const customerNoun = serviceConfig.customerNoun;
+  const customerNounLower = customerNoun.toLowerCase();
   
   // Company admins and platform admins have full access to all actions (for testing/management)
   // Employees can perform job actions as part of their normal workflow
@@ -216,7 +164,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'field_navigation', // Field Ops uses Field Navigation operative
+    initialAgent: serviceConfig.defaultOperative,
     onAgentChange: (agent) => {
       console.log('[FieldOps] Agent changed to:', agent);
     },
@@ -248,7 +196,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           )
         `)
         .eq('employee_id', user.id)
-        .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'])
+        .in('status', serviceConfig.fieldRouting ? ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'] : ['pending_acceptance', 'accepted', 'arrived', 'in_progress'])
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -267,12 +215,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     const allVirtual = assignedJobs.length > 0 && assignedJobs.every(j => j.appointments?.delivery_type === 'virtual');
     const allAtBusiness = assignedJobs.length > 0 && assignedJobs.every(j => j.appointments?.delivery_type === 'in_person_business');
     
-    return QUICK_ACTIONS.filter(action => {
+    return serviceConfig.quickActions.filter(action => {
+      if (!serviceConfig.fieldRouting) return !action.fieldOnly;
       if (allVirtual) return !['directions', 'enroute', 'arrive_start'].includes(action.id);
       if (allAtBusiness) return !['directions', 'enroute'].includes(action.id);
       return true;
     });
-  }, [assignedJobs]);
+  }, [assignedJobs, serviceConfig]);
 
   // Filter jobs based on selector mode
   const getFilteredJobs = () => {
@@ -289,7 +238,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       return assignedJobs.filter(job => ['accepted', 'en_route'].includes(job.status));
     }
     if (selectorMode === 'arrive_start') {
-      return assignedJobs.filter(job => job.status === 'en_route');
+      return assignedJobs.filter(job => serviceConfig.fieldRouting ? job.status === 'en_route' : ['accepted', 'arrived'].includes(job.status));
     }
     if (selectorMode === 'complete') {
       return assignedJobs.filter(job => ['arrived', 'in_progress'].includes(job.status));
@@ -316,12 +265,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     await sendMessage(message);
   };
 
-  const handleQuickAction = useCallback(async (action: FieldOpsQuickAction) => {
+  const handleQuickAction = useCallback(async (action: ServiceQuickAction) => {
     // Check if this is an employee-only action and user is not an employee
     const isEmployeeOnlyAction = EMPLOYEE_ONLY_ACTIONS.includes(action.id);
     if (isEmployeeOnlyAction && !canPerformJobActions) {
       toast.info('Employee Action', { 
-        description: 'This action is only available to field technicians' 
+        description: `This action is only available to assigned ${serviceConfig.teamMemberNoun.toLowerCase()}s`
       });
       return;
     }
@@ -391,10 +340,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       if (companyData?.dispatch_phone) {
         const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
         window.location.href = `tel:${cleanPhone}`;
-        toast.success('Calling Dispatch', { description: companyData.name || 'Company dispatch line' });
+        toast.success(`Calling ${serviceConfig.contactTeamLabel.replace(/^Contact /, '')}`, { description: companyData.name || serviceConfig.contactTeamLabel });
       } else {
-        toast.error('Dispatch phone not configured', { 
-          description: 'Please contact your administrator to set up the dispatch number' 
+        toast.error(`${serviceConfig.contactTeamLabel.replace(/^Contact /, '')} phone not configured`, { 
+          description: 'Please contact your administrator to set up the team phone number' 
         });
       }
       return;
@@ -402,7 +351,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     
     // All other actions send message to AI agent which will use tools
     await sendMessage(action.message);
-  }, [sendMessage, companyData, canPerformJobActions]);
+  }, [sendMessage, companyData, canPerformJobActions, serviceConfig]);
 
   const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
@@ -412,22 +361,22 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setSelectorMode(null);
       setActiveTab('directions');
       toast.success('Loading directions', { 
-        description: `To: ${job.appointments?.customer_name || 'Customer'} at ${address}` 
+        description: `To: ${job.appointments?.customer_name || customerNoun} at ${address}` 
       });
       
       // Trigger callback if provided
       onNavigateRequest?.(address);
     } else {
-      toast.error('No address available', { description: 'This job has no customer address on file' });
+      toast.error(serviceConfig.noAddressLabel, { description: `This ${jobNounLower} has no ${customerNounLower} address on file` });
       setSelectorMode(null);
     }
-  }, [onNavigateRequest]);
+  }, [onNavigateRequest, customerNoun, customerNounLower, jobNounLower, serviceConfig.noAddressLabel]);
 
   const handleSelectJobForEnRoute = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
+    const customerName = job.appointments?.customer_name || customerNoun;
     
     try {
       const { error: updateError } = await supabase
@@ -477,7 +426,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
 
     setProcessingJobId(selectedJobForEta.id);
-    const customerName = selectedJobForEta.appointments?.customer_name || 'Customer';
+    const customerName = selectedJobForEta.appointments?.customer_name || customerNoun;
     
     try {
       const { error: updateError } = await supabase
@@ -518,7 +467,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
+    const customerName = job.appointments?.customer_name || customerNoun;
     
     try {
       const { error: updateError } = await supabase
@@ -540,14 +489,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      toast.success(`Job accepted for ${customerName}`, { description: 'Customer has been notified' });
+      toast.success(`${jobNoun} accepted for ${customerName}`, { description: 'Customer has been notified' });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have accepted the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+      sendMessage(`I have accepted the ${job.appointments?.service_type || serviceConfig.serviceNoun} ${jobNounLower} for ${customerName}.`);
 
     } catch (error) {
-      console.error('Accept job error:', error);
-      toast.error('Failed to accept job', { description: 'Please try again' });
+      console.error('Accept assignment error:', error);
+      toast.error(`Failed to accept ${jobNounLower}`, { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
@@ -558,7 +507,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
+    const customerName = job.appointments?.customer_name || customerNoun;
     
     try {
       const { error: updateError } = await supabase
@@ -588,14 +537,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      toast.success(`Job declined for ${customerName}`, { description: 'Customer has been notified' });
+      toast.success(`${jobNoun} declined for ${customerName}`, { description: 'Customer has been notified' });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have declined the ${job.appointments?.service_type || 'service'} job for ${customerName}. The appointment has been cancelled and the customer was notified.`);
+      sendMessage(`I have declined the ${job.appointments?.service_type || serviceConfig.serviceNoun} ${jobNounLower} for ${customerName}. The appointment has been cancelled and the ${customerNounLower} was notified.`);
 
     } catch (error) {
-      console.error('Decline job error:', error);
-      toast.error('Failed to decline job', { description: 'Please try again' });
+      console.error('Decline assignment error:', error);
+      toast.error(`Failed to decline ${jobNounLower}`, { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
@@ -643,7 +592,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         } catch (e) { console.error('Reschedule SMS failed:', e); }
       }
 
-      toast.success(`Appointment rescheduled for ${customerName}`, { description: 'Customer has been notified' });
+      toast.success(`${jobNoun} rescheduled for ${customerName}`, { description: 'Customer has been notified' });
       refetchJobs();
       setSelectorMode(null);
       setSelectedJobForReschedule(null);
@@ -664,7 +613,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
+    const customerName = job.appointments?.customer_name || customerNoun;
     
     try {
       // First update to arrived
@@ -700,7 +649,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       if (startError) throw startError;
 
-      toast.success(`Arrived & started job for ${customerName}`, { 
+      toast.success(`${serviceConfig.fieldRouting ? 'Arrived & started' : 'Checked in / started'} ${jobNounLower} for ${customerName}`, { 
         description: 'Customer has been notified of your arrival' 
       });
       refetchJobs();
@@ -717,7 +666,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         appointmentId: job.appointments?.id,
       });
       
-      sendMessage(`I have arrived at ${customerName}'s location and started working on the ${job.appointments?.service_type || 'service'} job.`);
+      sendMessage(serviceConfig.fieldRouting ? `I have arrived at ${customerName}'s location and started working on the ${job.appointments?.service_type || serviceConfig.serviceNoun} ${jobNounLower}.` : `I have checked in ${customerName} and started the ${job.appointments?.service_type || serviceConfig.serviceNoun} ${jobNounLower}.`);
 
     } catch (error) {
       console.error('Arrive & Start error:', error);
@@ -731,7 +680,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
+    const customerName = job.appointments?.customer_name || customerNoun;
     
     try {
       const { error: updateError } = await supabase
@@ -764,16 +713,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         appointmentId: job.appointments?.id,
       });
 
-      toast.success(`Job completed for ${customerName}`, { 
+      toast.success(`${jobNoun} completed for ${customerName}`, { 
         description: 'Customer has been notified. Generate a quote or invoice?' 
       });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have completed the ${job.appointments?.service_type || 'service'} job for ${customerName}. Would you like to generate a quote or invoice?`);
+      sendMessage(`I have completed the ${job.appointments?.service_type || serviceConfig.serviceNoun} ${jobNounLower} for ${customerName}. Would you like to generate an estimate, quote, or invoice?`);
 
     } catch (error) {
       console.error('Complete job error:', error);
-      toast.error('Failed to complete job', { description: 'Please try again' });
+      toast.error(`Failed to complete ${jobNounLower}`, { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
@@ -803,17 +752,17 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     );
   };
 
-  const agentInfo = getAgentStyle(currentAgent);
+  const agentInfo = getAgentStyleForIndustry(currentAgent, serviceConfig.industryId);
   
   // Get active label based on selector mode - show "Home" when no action is active
   const getActiveLabel = () => {
-    if (selectorMode === 'accept') return 'Job Accept';
-    if (selectorMode === 'decline') return 'Job Decline';
+    if (selectorMode === 'accept') return `${jobNoun} Accept`;
+    if (selectorMode === 'decline') return `${jobNoun} Decline`;
     if (selectorMode === 'directions') return 'Directions';
     if (selectorMode === 'enroute') return 'En Route';
     if (selectorMode === 'eta') return 'ETA Update';
-    if (selectorMode === 'arrive_start') return 'Arrival';
-    if (selectorMode === 'complete') return 'Completion';
+    if (selectorMode === 'arrive_start') return serviceConfig.fieldRouting ? 'Arrival' : 'Check-In';
+    if (selectorMode === 'complete') return `${jobNoun} Completion`;
     if (selectorMode === 'reschedule') return 'Reschedule';
     if (selectorMode === 'quote') return 'Quoting';
     if (selectorMode === 'invoice') return 'Invoicing';
@@ -874,19 +823,23 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'accepted': return 'bg-blue-500';
-      case 'en_route': return 'bg-yellow-500';
+      case 'en_route': return serviceConfig.fieldRouting ? 'bg-yellow-500' : 'bg-cyan-500';
       case 'arrived': return 'bg-green-500';
       case 'in_progress': return 'bg-purple-500';
       default: return 'bg-muted-foreground';
     }
   };
 
+  const getSelectorText = (id: ServiceActionId, fallbackTitle: string, fallbackEmpty: string) => ({
+    title: serviceConfig.selectorText[id]?.title || fallbackTitle,
+    emptyMessage: serviceConfig.selectorText[id]?.emptyMessage || fallbackEmpty,
+  });
+
   const getSelectorConfig = () => {
     if (selectorMode === 'accept') {
       return {
         icon: CheckCircle,
-        title: 'Select job to accept',
-        emptyMessage: 'No pending jobs to accept',
+        ...getSelectorText('accept', `Select ${jobNounLower} to accept`, `No pending ${jobNounLower}s to accept`),
         actionIcon: CheckCircle,
         onSelect: handleSelectJobForAccept,
       };
@@ -894,8 +847,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'decline') {
       return {
         icon: XCircle,
-        title: 'Select job to decline',
-        emptyMessage: 'No pending jobs to decline',
+        ...getSelectorText('decline', `Select ${jobNounLower} to decline`, `No pending ${jobNounLower}s to decline`),
         actionIcon: XCircle,
         onSelect: handleSelectJobForDecline,
       };
@@ -903,8 +855,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'directions') {
       return {
         icon: Navigation,
-        title: 'Select appointment for directions',
-        emptyMessage: 'No appointments assigned to you',
+        ...getSelectorText('directions', `Select ${jobNounLower} for directions`, `No ${jobNounLower}s assigned to you`),
         actionIcon: Navigation,
         onSelect: handleSelectJobForDirections,
       };
@@ -912,8 +863,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'enroute') {
       return {
         icon: Truck,
-        title: 'Select appointment to mark as en route',
-        emptyMessage: 'No accepted appointments to mark as en route',
+        ...getSelectorText('enroute', `Select ${jobNounLower} to mark as en route`, `No accepted ${jobNounLower}s to mark as en route`),
         actionIcon: Truck,
         onSelect: handleSelectJobForEnRoute,
       };
@@ -921,8 +871,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'eta') {
       return {
         icon: Clock,
-        title: selectedJobForEta ? 'Enter estimated arrival time' : 'Select appointment to update ETA',
-        emptyMessage: 'No active appointments to update ETA',
+        title: selectedJobForEta ? 'Enter estimated arrival time' : getSelectorText('eta', `Select ${jobNounLower} to update ETA`, `No active ${jobNounLower}s to update ETA`).title,
+        emptyMessage: getSelectorText('eta', `Select ${jobNounLower} to update ETA`, `No active ${jobNounLower}s to update ETA`).emptyMessage,
         actionIcon: Clock,
         onSelect: handleSelectJobForEta,
       };
@@ -930,8 +880,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'arrive_start') {
       return {
         icon: Play,
-        title: 'Select job to arrive & start',
-        emptyMessage: 'No en route jobs available',
+        ...getSelectorText('arrive_start', serviceConfig.fieldRouting ? `Select ${jobNounLower} to arrive & start` : `Select ${jobNounLower} to check in / start`, serviceConfig.fieldRouting ? `No en route ${jobNounLower}s available` : `No ready ${jobNounLower}s available`),
         actionIcon: Play,
         onSelect: handleSelectJobForArriveAndStart,
       };
@@ -939,8 +888,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'complete') {
       return {
         icon: CheckCircle,
-        title: 'Select job to mark as completed',
-        emptyMessage: 'No active jobs to complete',
+        ...getSelectorText('complete', `Select ${jobNounLower} to mark as completed`, `No active ${jobNounLower}s to complete`),
         actionIcon: CheckCircle,
         onSelect: handleSelectJobForComplete,
       };
@@ -948,8 +896,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'reschedule') {
       return {
         icon: CalendarClock,
-        title: selectedJobForReschedule ? 'Set new date & time' : 'Select appointment to reschedule',
-        emptyMessage: 'No active appointments to reschedule',
+        title: selectedJobForReschedule ? 'Set new date & time' : getSelectorText('reschedule', `Select ${jobNounLower} to reschedule`, `No active ${jobNounLower}s to reschedule`).title,
+        emptyMessage: getSelectorText('reschedule', `Select ${jobNounLower} to reschedule`, `No active ${jobNounLower}s to reschedule`).emptyMessage,
         actionIcon: CalendarClock,
         onSelect: handleSelectJobForReschedule,
       };
@@ -963,30 +911,30 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const fm = fieldOpsMetrics;
   const { companyCreatedAt } = useCompanyUptime(effectiveCompanyId);
 
-  const FIELDOPS_AGENTS: CyberAgent[] = [
-    { id: 'dispatch', name: 'Dispatch Agent', description: 'Assigns technicians to jobs', icon: Truck, hsl: '189,100%,65%', status: 'active', metric1Value: fm?.jobsTotal ?? 0, metric1Label: 'Jobs', metric2Value: fm?.jobsEnRoute ?? 0, metric2Label: 'En Route' },
-    { id: 'field_navigation', name: 'Field Navigation Agent', description: 'Routes, ETAs & check-ins', icon: Navigation, hsl: '142,72%,55%', status: 'standby', metric1Value: fm?.jobsPending ?? 0, metric1Label: 'Pending', metric2Value: fm?.jobsCompletedToday ?? 0, metric2Label: 'Done Today' },
-  ];
+  const FIELDOPS_AGENTS: CyberAgent[] = serviceConfig.operatives.map((agent, index) => ({
+    ...agent,
+    metric1Value: index === 0 ? (fm?.jobsTotal ?? 0) : (fm?.jobsPending ?? 0),
+    metric2Value: index === 0 ? (serviceConfig.fieldRouting ? (fm?.jobsEnRoute ?? 0) : (fm?.jobsPending ?? 0)) : (fm?.jobsCompletedToday ?? 0),
+  }));
 
   return (
     <CyberConsoleLayout
-      companyName={companyData?.name || "Field Ops Assistant"}
+      companyName={companyData?.name || serviceConfig.workerConsoleTitle}
       logoUrl={companyData?.logo_url}
       agentLabel={activeLabel}
       agentColor={agentInfo.color}
       agentBgColor={agentInfo.bgColor}
-      subtitle="Field Operations — Cyber-Sentry Edition"
+      subtitle={serviceConfig.consoleSubtitle}
       companyCreatedAt={companyCreatedAt}
-      tabs={TABS}
+      tabs={serviceConfig.tabs}
       activeTab={activeTab}
       onTabChange={(tabId) => {
         setActiveTab(tabId);
         if (tabId === 'dispatch') {
-          // Contact Dispatch tab — call dispatch phone
-          const action = QUICK_ACTIONS.find(a => a.id === 'dispatch');
+          const action = availableActions.find(a => a.id === 'dispatch');
           if (action) handleQuickAction(action);
         } else if (tabId !== 'chat' && tabId !== 'directions') {
-          const action = QUICK_ACTIONS.find(a => a.id === tabId);
+          const action = availableActions.find(a => a.id === tabId);
           if (action) handleQuickAction(action);
         }
       }}
@@ -1000,17 +948,22 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       }}
       agents={FIELDOPS_AGENTS}
       currentAgentId={
-        activeTab === 'directions' ? 'route' :
-        activeTab === 'eta' ? 'eta' :
-        (activeTab === 'arrive_start' || activeTab === 'complete') ? 'checkin' :
-        'dispatch'
+        activeTab === 'directions' ? 'field_navigation' :
+        activeTab === 'eta' ? 'field_navigation' :
+        (activeTab === 'arrive_start' || activeTab === 'complete') ? serviceConfig.defaultOperative :
+        activeTab === 'invoice' || activeTab === 'quote' ? 'business_finance' :
+        serviceConfig.defaultOperative
       }
       onAgentClick={(agentId) => {
         const AGENT_TO_TAB: Record<string, string> = {
           dispatch: 'chat',
+          field_navigation: serviceConfig.fieldRouting ? 'directions' : 'chat',
           route: 'directions',
           eta: 'eta',
           checkin: 'arrive_start',
+          customer_journey: 'chat',
+          business_finance: 'invoice',
+          outreach: 'chat',
         };
         const tabId = AGENT_TO_TAB[agentId];
         if (tabId) {
@@ -1019,14 +972,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             setActiveTab('chat');
           } else {
             setActiveTab(tabId);
-            const action = QUICK_ACTIONS.find(a => a.id === tabId);
+            const action = availableActions.find(a => a.id === tabId);
             if (action) handleQuickAction(action);
           }
         }
       }}
-      quickActions={FIELD_OPS_AGENTS.map(a => ({ id: a.id, label: a.name, icon: Truck, message: a.name, hsl: '189,100%,65%' }))}
+      quickActions={availableActions.map(a => ({ id: a.id, label: a.label, icon: a.icon, message: a.message, hsl: '189,100%,65%' }))}
       onQuickAction={(_, id) => {
-        const action = QUICK_ACTIONS.find(a => a.id === id);
+        const action = availableActions.find(a => a.id === id);
         if (action) handleQuickAction(action);
       }}
       showPhone={!!companyData?.dispatch_phone}
@@ -1127,7 +1080,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 </Button>
               </div>
               <p className="text-[10px] text-foreground/60 mt-1">
-                Customer will be notified via SMS & email
+                {customerNoun} will be notified via SMS & email
               </p>
             </div>
           )}
@@ -1174,7 +1127,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 </div>
               </div>
               <p className="text-[10px] text-white mt-1">
-                Customer will be notified via SMS & email
+                {customerNoun} will be notified via SMS & email
               </p>
             </div>
           )}
@@ -1213,7 +1166,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm truncate">
-                            {appointment?.customer_name || 'Customer'}
+                            {appointment?.customer_name || customerNoun}
                           </span>
                           <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                             {job.status.replace('_', ' ')}
@@ -1228,7 +1181,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                             <span className="truncate">{address}</span>
                           </p>
                         ) : (
-                          <p className="text-xs text-destructive mt-1">No address available</p>
+                          <p className="text-xs text-destructive mt-1">{serviceConfig.noAddressLabel}</p>
                         )}
                         <div className="flex items-center gap-2 mt-0.5">
                           {appointment?.datetime && (
@@ -1240,7 +1193,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                           {job.estimated_arrival_minutes && (
                             <p className="text-[10px] text-white flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              ETA: {job.estimated_arrival_minutes}m
+                              {serviceConfig.fieldRouting ? 'ETA' : 'Wait'}: {job.estimated_arrival_minutes}m
                             </p>
                           )}
                         </div>
@@ -1288,7 +1241,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <h3 className="font-semibold text-foreground">Update ETA</h3>
-              <p className="text-sm text-white">Select a job to update the estimated arrival time</p>
+              <p className="text-sm text-white">Select a {jobNounLower} to update the estimated arrival time</p>
             </div>
 
             {jobsLoading ? (
@@ -1297,7 +1250,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               </div>
             ) : assignedJobs.filter(j => ['accepted', 'en_route'].includes(j.status)).length === 0 ? (
               <div className="text-center py-8 text-sm text-white">
-                No jobs currently en route or accepted
+                No {jobNounLower}s currently en route or accepted
               </div>
             ) : (
               <div className="space-y-3">
@@ -1322,14 +1275,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-sm truncate">
-                                {appointment?.customer_name || 'Customer'}
+                                {appointment?.customer_name || customerNoun}
                               </span>
                               <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                                 {job.status.replace('_', ' ')}
                               </Badge>
                             </div>
                             <p className="text-xs text-white truncate">
-                              {appointment?.service_type || 'Service'}
+                              {appointment?.service_type || serviceConfig.serviceNoun}
                             </p>
                             {address && (
                               <p className="text-xs flex items-center gap-1 mt-1">
@@ -1378,7 +1331,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                             </Button>
                           </div>
                           <p className="text-[10px] text-white mt-2">
-                            Customer will be notified via SMS & email
+                            {customerNoun} will be notified via SMS & email
                           </p>
                         </div>
                       )}
@@ -1398,9 +1351,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <Phone className="w-8 h-8 text-white" />
             </div>
-            <h3 className="font-semibold text-foreground mb-1">Contact Dispatch</h3>
+            <h3 className="font-semibold text-foreground mb-1">{serviceConfig.contactTeamLabel}</h3>
             <p className="text-sm text-white max-w-xs mx-auto mb-6">
-              Reach out to your dispatch team for assistance
+              {serviceConfig.contactTeamDescription}
             </p>
             {companyData?.dispatch_phone ? (
               <Button
@@ -1412,10 +1365,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 }}
               >
                 <Phone className="h-5 w-5 mr-2" />
-                Call Dispatch
+                {serviceConfig.contactTeamLabel.replace(/^Contact /, 'Call ')}
               </Button>
             ) : (
-              <p className="text-sm text-white">No dispatch phone number configured</p>
+              <p className="text-sm text-white">No team phone number configured</p>
             )}
           </div>
         </div>
@@ -1427,10 +1380,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
             {messages.length === 0 && !selectorMode && (
               <WelcomeScreen
-                title="Field Ops Ready"
+                title={serviceConfig.welcomeTitle}
                 subtitle={canPerformJobActions 
-                  ? "Manage your jobs - accept, navigate, update ETAs, and complete assignments"
-                  : "View job information and get directions (job actions are for technicians only)"
+                  ? serviceConfig.welcomeSubtitle
+                  : `View ${jobNounLower} information${serviceConfig.fieldRouting ? ' and get directions' : ''} (${jobNounLower} actions are for assigned ${serviceConfig.teamMemberNoun.toLowerCase()}s only)`
                 }
                 actions={availableActions}
                 onAction={(message, actionId) => {
@@ -1490,7 +1443,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               setEtaMinutes('');
             }}
             isLoading={isLoading}
-            placeholder="Ask about jobs, directions, ETAs..."
+            placeholder={serviceConfig.inputPlaceholder}
           />
         </div>
       )}
