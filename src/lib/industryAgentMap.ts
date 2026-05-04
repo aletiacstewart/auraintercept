@@ -126,6 +126,9 @@ export interface IndustryServiceConsoleConfig {
   openWorkLabel: string;
   openWorkHint: string;
   openWorkRoute: string;
+  /** Sidebar group label for the Field Ops nav section (e.g. "Field Ops",
+   * "Project Ops", "Salon Floor"). Derived per industry pack. */
+  fieldOpsSectionLabel: string;
 }
 
 type PartialConfig = Partial<Omit<IndustryServiceConsoleConfig, 'quickActions' | 'tabs' | 'operatives' | 'statusLabels' | 'selectorText' | 'specialistShow'>> & {
