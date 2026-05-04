@@ -14,7 +14,7 @@ export default function DispatchFieldOpsInstall() {
   const navigate = useNavigate();
   const { pack } = useIndustryPack();
   const nav = getNavLabels(pack);
-  const dispatchLabel = nav.dispatchView; // e.g. Patient Schedule, Shop Queue, Chair Schedule
+  const dispatchLabel = nav.dispatchView; // e.g. Service Schedule, Shop Queue, Chair Schedule
 
   return (
     <DashboardLayout>

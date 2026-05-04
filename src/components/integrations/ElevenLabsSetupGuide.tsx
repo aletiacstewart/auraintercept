@@ -104,7 +104,7 @@ FLOW:
 8. Confirm ALL details before booking (book_appointment)
 
 GUIDELINES:
-- Be conversational, patient, and natural
+- Be conversational, calm, and natural
 - NEVER ask for formatted dates - always accept natural language
 - Always confirm details before booking
 - If no times available, offer the next available alternatives`;
