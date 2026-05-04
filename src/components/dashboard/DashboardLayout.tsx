@@ -6,6 +6,7 @@ import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -277,6 +278,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // instead of "Technician View", a salon sees "Stylist View", etc.
   const { pack: industryPack } = useIndustryPack();
   const navLabels = getNavLabels(industryPack);
+  const serviceConfig = getIndustryServiceConsoleConfig(industryPack);
   // Adaptive Operations entry: label + visibility derive from the company's
   // operatingModel (field_dispatch / appointment_booking / pipeline_sales /
   // receptionist_only / custom). This is what makes the sidebar truly
@@ -443,7 +445,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <div key={group.label} className="space-y-1">
                   {!collapsed && (
                     <p className="px-3 py-1 text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(0,229,255,0.35)" }}>
-                      {group.label}
+                      {group.label === 'Field Ops'
+                        ? (serviceConfig.fieldOpsSectionLabel || 'Field Ops')
+                        : group.label}
                     </p>
                   )}
                   {group.items.map((item) => {

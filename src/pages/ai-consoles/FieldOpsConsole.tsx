@@ -35,8 +35,8 @@ export default function FieldOpsConsole() {
   const mode = pack.console_visibility?.field_ops ?? 'full';
 
   const { title, description, icon: TitleIcon, badge } = useMemo(() => ({
-    title: serviceConfig.consoleTitle,
-    description: serviceConfig.consoleDescription,
+    title: serviceConfig.workerConsoleTitle,
+    description: serviceConfig.workerConsoleDescription || serviceConfig.consoleDescription,
     icon: serviceConfig.fieldRouting ? (mode === 'route_mode' ? MapIcon : HardHat) : CalendarCheck,
     badge: serviceConfig.consoleBadge,
   }), [mode, serviceConfig]);

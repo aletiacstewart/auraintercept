@@ -1,84 +1,80 @@
-
 ## Problem
 
-The sidebar labels and the console page titles drift apart. In the screenshots (construction pack), the sidebar shows **Technician View** + **Shop Queue**, but the consoles show **Project Operations Console** + **Dispatch-Field Ops**. Same pattern exists for other industries because two unrelated config files own the names.
+From the screenshot (construction pack) two mismatches are visible:
+
+1. **Sidebar item ↔ console title mismatch.** Sidebar item under FIELD OPS is **"Project Crew"** (correct = `workerConsoleTitle` = "Project Crew Console"). Clicking it opens the page titled **"PROJECT OPERATIONS CONSOLE"** (= `consoleTitle`). They don't match because `FieldOpsConsole.tsx` (the Technician/Worker route) is rendering the dispatcher title.
+
+2. **"FIELD OPS" group label is hardcoded** — every industry sees the same trades-style "Field Ops" section header, even when the rest of the pack is renamed (e.g. construction → Project Ops, salon → Salon Floor, restaurants → Service Floor).
 
 ## Root Cause
 
-Three independent label sources, none synced:
+- `src/pages/ai-consoles/FieldOpsConsole.tsx` (route `/dashboard/ai-consoles/field-ops`) is the **worker / technician** console but uses `serviceConfig.consoleTitle` + `consoleDescription` (the **dispatcher** strings). It should use `workerConsoleTitle` / a worker description.
+- `src/components/dashboard/DashboardLayout.tsx` group label `"Field Ops"` (line 120) is a literal string, not derived from the industry pack.
 
-1. **Sidebar labels** — `src/lib/industryNavLabels.ts` (`techView` / `dispatchView`)
-   - Construction is not listed in `INDUSTRY_OVERRIDES`, so it falls back to the cluster default → "Technician View" + "Shop Queue" (repair cluster default).
-2. **Field-Ops Console title** — `src/lib/industryAgentMap.ts` (`consoleTitle`, `workerConsoleTitle`)
-   - Construction → "Project Operations Console" / "Project Crew Console".
-3. **Dispatch console header** — hardcoded literal `"Dispatch-Field Ops"` in `src/components/fieldops/FieldOpsManager.tsx` (line 423). Ignores the pack entirely.
+`industryAgentMap.ts` already exposes both names per industry — we just need to wire the worker page to the worker name and add a per-pack section label.
 
-So every industry can have up to three different names for the same surface.
+## Fix
 
-## Fix — make `industryAgentMap.ts` the single source of truth
+### 1. Worker console uses worker title
 
-The agent map already has the richest per-industry naming (`consoleTitle`, `workerConsoleTitle`, `teamMemberNoun`, `jobNoun`). Drive everything else from it.
+In `src/pages/ai-consoles/FieldOpsConsole.tsx`, change the header to the worker variant:
 
-### 1. Derive sidebar labels from the agent map
-
-In `src/lib/industryNavLabels.ts`, replace the static `INDUSTRY_OVERRIDES` for `techView` / `dispatchView` with values pulled from `getIndustryServiceConsoleConfig(pack)`:
-
-- `techView` ← `workerConsoleTitle` (e.g. "Project Crew Console" → displayed as "Project Crew")
-- `dispatchView` ← `consoleTitle` (e.g. "Project Operations Console" → displayed as "Project Operations")
-
-Strip the trailing " Console" suffix when used as a sidebar label so the sidebar stays compact, but keep the full name on the page header. Cluster fallbacks stay as today.
-
-### 2. Make the dispatch header industry-aware
-
-In `src/components/fieldops/FieldOpsManager.tsx`:
-- Read `useIndustryPack()` + `getIndustryServiceConsoleConfig(pack)`
-- Replace the hardcoded `"Dispatch-Field Ops"` h1 and its description with `consoleTitle` and `consoleDescription` from the pack.
-
-### 3. Audit & fill missing per-industry entries in `industryAgentMap.ts`
-
-Walk every `industry_id` that ships in the pack registry and verify it has:
-- `consoleTitle` (used by Field Ops Console + sidebar dispatch label)
-- `workerConsoleTitle` (used by Technician layout + sidebar tech label)
-- `teamMemberNoun`, `jobNoun`
-
-Industries currently relying on cluster defaults that should get explicit titles for consistency:
-- `construction`, `roofing`, `solar`, `fencing`, `handyman`, `security_systems`, `mobile_mechanic`, `auto_care`, `landscape`, `pool_spa`, `pest_control`, `appliance_repair`, plus all booking-cluster industries (`real_estate`, `restaurants`, `beauty_wellness`, `salon`, `fitness`, `professional`, `personal_assistant`).
-
-Each gets a matching pair, e.g.:
-
-```text
-construction:  Project Operations Console  / Project Crew Console
-roofing:       Roofing Operations Console  / Roofing Crew Console
-landscape:     Crew Route Console          / Crew Console
-real_estate:   Showing Console             / Agent Console
-salon:         Chair Schedule Console      / Stylist Console
-restaurants:   Guest Flow Console          / Server Console
+```ts
+title: serviceConfig.workerConsoleTitle,
+description: serviceConfig.workerConsoleDescription
+        ?? serviceConfig.consoleDescription,
 ```
 
-### 4. Match the Technician layout title to the same source
+Result for construction: page header reads **"Project Crew Console"**, matching the sidebar's "Project Crew". For salon: "Stylist Console" matches "Stylist". For real estate: "Agent Console" matches "Agent".
 
-In `src/components/dashboard/TechnicianDashboardLayout.tsx`, replace any hardcoded "Technician" header with `workerConsoleTitle` from the same helper so a construction tech sees "Project Crew Console", a salon stylist sees "Stylist Console", etc.
+`FieldOpsManager.tsx` (the dispatcher page at `/dashboard/dispatch-field-ops`) keeps `consoleTitle` — that one matches the sidebar's dispatch label correctly.
 
-### 5. Add a regression test
+### 2. Add an optional `sectionLabel` to the agent map
 
-Add `src/lib/__tests__/consoleNamingConsistency.test.ts` that, for every industry pack, asserts:
-- `getNavLabels(pack).techView` matches the worker console title (minus " Console")
-- `getNavLabels(pack).dispatchView` matches the dispatch console title (minus " Console")
+Add an optional `fieldOpsSectionLabel` field to `IndustryServiceConsoleConfig` in `src/lib/industryAgentMap.ts`. Populate per industry, with cluster fallback:
 
-This prevents future drift.
+```text
+construction        -> "Project Ops"
+roofing / solar     -> "Project Ops"
+landscape           -> "Crew Ops"
+pest_control / pool -> "Route Ops"
+auto_care           -> "Shop Ops"
+appliance_repair    -> "Service Ops"
+salon / beauty      -> "Salon Floor"
+fitness             -> "Studio Ops"
+restaurants         -> "Service Floor"
+real_estate         -> "Showings"
+professional        -> "Client Ops"
+personal_assistant  -> "Concierge Ops"
+trades (default)    -> "Field Ops"
+```
+
+### 3. Drive the sidebar group label from the pack
+
+In `src/components/dashboard/DashboardLayout.tsx`:
+
+- Add `sectionKey: 'fieldOps'` (optional) to `NavGroup`, set on the Field Ops group.
+- After `navLabels` is computed, when rendering each group, replace the literal `"Field Ops"` with `serviceConfig.fieldOpsSectionLabel` (fallback to `"Field Ops"`).
+- Hide rule and tier rule unchanged.
+
+### 4. Extend the regression test
+
+In `src/lib/__tests__/consoleNamingConsistency.test.ts`, add assertions:
+
+- `getNavLabels(pack).techView === stripConsole(serviceConfig.workerConsoleTitle)`
+- For every industry, `serviceConfig.fieldOpsSectionLabel` is defined OR cluster fallback exists.
+- Test that the worker page title equals the sidebar techView (string comparison via the helpers).
 
 ## Files Touched
 
-- `src/lib/industryNavLabels.ts` — derive from agent map
-- `src/lib/industryAgentMap.ts` — fill missing per-industry titles
-- `src/components/fieldops/FieldOpsManager.tsx` — replace hardcoded header
-- `src/components/dashboard/TechnicianDashboardLayout.tsx` — use worker title
-- `src/lib/__tests__/consoleNamingConsistency.test.ts` — new test
+- `src/pages/ai-consoles/FieldOpsConsole.tsx` — switch to `workerConsoleTitle` / worker description.
+- `src/lib/industryAgentMap.ts` — add `fieldOpsSectionLabel` per industry + cluster default; optional `workerConsoleDescription` where it differs.
+- `src/components/dashboard/DashboardLayout.tsx` — render Field Ops group label from pack.
+- `src/lib/__tests__/consoleNamingConsistency.test.ts` — add new assertions.
 
 ## Out of Scope
 
-- Renaming routes (`/dashboard/dispatch-field-ops` etc.) — labels only.
-- Marketing/landing copy — separate surface.
-- Customer-portal rollup labels in `agentStyles.ts` — already canonical.
+- Renaming routes (`/dashboard/ai-consoles/field-ops`, `/dashboard/dispatch-field-ops`) — labels only.
+- Other group labels (Customers, Business, Marketing) — same pattern can be added later if needed; this task is the Field Ops + console mismatch the user called out.
 
 Approve and I'll switch to build mode and apply this in one pass.
