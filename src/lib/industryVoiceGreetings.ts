@@ -29,7 +29,7 @@ const PER_INDUSTRY: Record<string, string> = {
   beauty_wellness: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or check on an appointment?',
   salon: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or check on an appointment?',
   fitness: 'Thanks for calling {company}. This is Aura — are you a member, or would you like to learn about classes and trials?',
-  restaurants: 'Thanks for calling {company}. This is Aura — would you like a reservation, takeout, or info about an event?',
+  restaurants: 'Thanks for calling {company}. This is Aura — I can text you a link to book a table, view our menu, hours, or catering info. What would you like?',
   personal_assistant: 'Thanks for calling {company}. This is Aura — how can I help you today?',
   professional: 'Thanks for calling {company}. This is Aura — how can I direct your call today?',
   saas_platform: 'Thanks for contacting {company}. This is Aura — are you a customer needing support, or exploring our platform?',

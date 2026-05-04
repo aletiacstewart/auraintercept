@@ -56,8 +56,8 @@ const BY_INDUSTRY: Record<string, QuickAction[]> = {
     { label: 'Reschedule', icon: Clock, prompt: 'I need to reschedule.' },
   ],
   restaurants: [
-    { label: 'Book a Table', icon: Calendar, prompt: 'Send me the link to book a table.' },
-    { label: 'View Menu', icon: UtensilsCrossed, prompt: 'Send me the menu link.' },
+    { label: 'Get Booking Link', icon: Calendar, prompt: 'Send me the link to book a table.' },
+    { label: 'Menu Link', icon: UtensilsCrossed, prompt: 'Send me the menu link.' },
     { label: 'Hours & Location', icon: Clock, prompt: 'What are your hours and where are you located?' },
     { label: 'Catering / Private Events', icon: MessageCircle, prompt: 'I have a catering or private event question.' },
   ],
