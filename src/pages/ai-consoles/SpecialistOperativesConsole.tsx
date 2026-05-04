@@ -322,8 +322,7 @@ export default function SpecialistOperativesConsole() {
   // Show only specialists in the user's industry pack (platform admin sees all).
   const visibleSpecialists = useMemo(() => {
     if (isPlatformAdmin) return SPECIALISTS;
-    const inPack = SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
-    return inPack.length > 0 ? inPack : SPECIALISTS.slice(0, 4);
+    return SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
   }, [isPlatformAdmin, industrySpecialists]);
 
   const initialTab = searchParams.get('agent') as IndustrySpecialistOperative | null;
@@ -376,7 +375,7 @@ export default function SpecialistOperativesConsole() {
             </Alert>
           )}
 
-          {tierUnlocked && !inIndustry && (
+          {tierUnlocked && !inIndustry && visibleSpecialists.length > 0 && (
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
@@ -387,6 +386,17 @@ export default function SpecialistOperativesConsole() {
             </Alert>
           )}
 
+          {tierUnlocked && visibleSpecialists.length === 0 ? (
+            <Card className="p-12 text-center border-border/60">
+              <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+              <h3 className="font-semibold mb-1">No specialist operatives for your industry</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Your industry pack ({pack?.label ?? 'Generic'}) doesn't include specialist operatives.
+                Specialists like Diagnostic, Permit &amp; Code, Site Survey, and Insurance Claim are tailored
+                to field-service and trades industries and aren't enabled here.
+              </p>
+            </Card>
+          ) : (
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as IndustrySpecialistOperative)}>
             <TabsList
               className={cn(
@@ -422,6 +432,7 @@ export default function SpecialistOperativesConsole() {
               </TabsContent>
             ))}
           </Tabs>
+          )}
 
           {/* Where this shows up summary */}
           <Card className="p-4 border-border/60">
