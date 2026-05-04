@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 const DISPATCH_WORKFLOWS: WorkflowChain[] = [
   {
@@ -43,8 +44,9 @@ export default function FieldOperations() {
   const { companyId, loading } = useAuth();
   const { submitQuery } = useAuraCommand();
   const { pack } = useIndustryPack();
-  const isDispatch = hasFieldTechnicians(pack);
-  const jobNoun = pack?.terminology?.job || (isDispatch ? 'Job' : 'Appointment');
+  const serviceConfig = getIndustryServiceConsoleConfig(pack);
+  const isDispatch = hasFieldTechnicians(pack) && serviceConfig.fieldRouting;
+  const jobNoun = serviceConfig.jobNoun;
 
   if (loading) {
     return (
@@ -74,11 +76,11 @@ export default function FieldOperations() {
         <div className="space-y-6">
           <PageHeader
             icon={isDispatch ? Truck : CalendarCheck}
-            title={isDispatch ? 'Dispatch-Field Ops' : 'In-Office Operations'}
+            title={isDispatch ? serviceConfig.consoleTitle : serviceConfig.appointmentBoardTitle}
             description={
               isDispatch
-                ? 'Real-time dispatch console for managing field technicians'
-                : `Today's ${jobNoun.toLowerCase()}s, room/provider assignments, and check-ins`
+                ? serviceConfig.consoleDescription
+                : serviceConfig.appointmentBoardDescription
             }
             featureColor="fieldops"
             showAuraBar
