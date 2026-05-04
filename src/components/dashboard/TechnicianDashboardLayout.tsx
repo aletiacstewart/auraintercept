@@ -124,7 +124,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
             </div>
             <div>
               <h1 className="font-semibold text-base leading-tight">
-                {mobileNavItems.find(item => isActive(item.path))?.label || 'Field Ops'}
+                {mobileNavItems.find(item => isActive(item.path))?.label || workerLayoutTitle}
               </h1>
               <p className="text-[10px] text-accent/80">Aura Intercept</p>
             </div>
@@ -241,7 +241,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-sm truncate">Field Operations</h1>
+              <h1 className="font-bold text-sm truncate">{workerLayoutTitle}</h1>
               <p className="text-xs text-sidebar-foreground/60 truncate">Aura Intercept</p>
             </div>
           )}
