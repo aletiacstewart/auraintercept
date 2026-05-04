@@ -46,10 +46,6 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
         `Terminology — call jobs "${cfg.jobNoun}", customers "${cfg.customerNoun}", staff "${cfg.teamMemberNoun}", providers "${cfg.providerNoun}", rooms "${cfg.roomNoun}".`,
         `Operating model: ${cfg.fieldRouting ? 'field dispatch (assign + route staff to customer locations)' : 'appointment-based (customers come to provider/room — no truck dispatch)'}.`,
       ];
-      const isHealthcare = ['dental','chiropractic','medical_office','physical_therapy','optometry','veterinary'].includes(pack.industry_id);
-      if (isHealthcare) {
-        lines.push('HIPAA guardrail: never give clinical advice, diagnosis, medication, or PHI. Stick to non-clinical scheduling, intake, billing, and follow-up.');
-      }
       industryContext = `\n\nIndustry context:\n${lines.join('\n')}`;
     }
     const base = pageContext ? `${dateTimeContext}\n\n${pageContext}` : dateTimeContext;

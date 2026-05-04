@@ -1222,7 +1222,7 @@ const PlatformDocumentPDF = () => (
           - 24 Smart AI Agents organized as 10 Operatives that work together{"\n"}
           - True voice AI (not just IVR or voicemail){"\n"}
           - Full social media content creation (6 platforms){"\n"}
-          - 24 industry packs (18 service trades + 6 healthcare verticals) that auto-tune the platform on signup. Healthcare verticals are scoped to appointments + insurance verification only — no PHI, EHR, or clinical workflows.{"\n"}
+          - 22 industry packs covering trades, outdoor, repair, and booking-first verticals that auto-tune the platform on signup.{"\n"}
           - Built specifically for service businesses{"\n"}
           - SignalWire, ElevenLabs, Resend, and Tavily bundled — no extra usage fees
         </Text>
