@@ -365,7 +365,7 @@ export default function TechnicianDashboard() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
               <ClipboardList className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-xs font-medium">All Jobs</span>
+            <span className="text-xs font-medium">All {jobNounPlural}</span>
           </Button>
         </div>
 
@@ -408,7 +408,7 @@ export default function TechnicianDashboard() {
           className="w-full justify-between text-white"
           onClick={() => navigate('/technician/jobs')}
         >
-          View all jobs
+          View all {jobNounPlural.toLowerCase()}
           <ArrowRight className="h-4 w-4" />
         </Button>
 
