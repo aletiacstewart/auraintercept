@@ -1351,9 +1351,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <Phone className="w-8 h-8 text-white" />
             </div>
-            <h3 className="font-semibold text-foreground mb-1">Contact Dispatch</h3>
+            <h3 className="font-semibold text-foreground mb-1">{serviceConfig.contactTeamLabel}</h3>
             <p className="text-sm text-white max-w-xs mx-auto mb-6">
-              Reach out to your dispatch team for assistance
+              {serviceConfig.contactTeamDescription}
             </p>
             {companyData?.dispatch_phone ? (
               <Button
