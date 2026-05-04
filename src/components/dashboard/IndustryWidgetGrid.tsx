@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useNavigate } from 'react-router-dom';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 // Widget registry: id → { label, icon, description, primary CTA }
 // Phase 2 ships full content for trades widgets. Outdoor/Repair/Booking widgets
@@ -173,6 +174,11 @@ export function IndustryWidgetGrid() {
   if (loading || !pack || pack.industry_id === 'generic' || !pack.dashboard_widgets?.length) {
     return null;
   }
+  const cfg = getIndustryServiceConsoleConfig(pack);
+  const rerouteForBooking = (route: string) =>
+    cfg.fieldRouting === false && route === '/dashboard/dispatch-field-ops'
+      ? cfg.openWorkRoute
+      : route;
 
   return (
     <Card className="border-primary/20 bg-card/60">
@@ -198,7 +204,7 @@ export function IndustryWidgetGrid() {
               <button
                 key={id}
                 type="button"
-                onClick={() => clickable && navigate(w.cta!.route)}
+                onClick={() => clickable && navigate(rerouteForBooking(w.cta!.route))}
                 disabled={!clickable}
                 className={
                   'text-left p-3 rounded-lg border border-border/60 bg-background/60 transition-all ' +

@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CalendarCheck, Wrench, DollarSign, Activity, TrendingUp } from 'lucide-react';
+import { CalendarCheck, Wrench, DollarSign, Activity, Briefcase } from 'lucide-react';
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 interface AuraTodayStripProps {
   companyId: string;
@@ -18,6 +20,15 @@ interface AuraTodayStripProps {
  */
 export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
   const navigate = useNavigate();
+  const { pack } = useIndustryPack();
+  const cfg = pack ? getIndustryServiceConsoleConfig(pack) : null;
+  const openWorkLabel = cfg?.openWorkLabel ?? 'Open Jobs';
+  const openWorkRoute = cfg?.openWorkRoute ?? '/dashboard/dispatch-field-ops';
+  const openWorkHint = cfg?.openWorkHint ?? 'In progress + upcoming';
+  const todayLabel = cfg?.todayLabel ?? "Today's Bookings";
+  const openWorkIcon = cfg?.fieldRouting === false
+    ? (pack?.cluster === 'repair' ? Briefcase : CalendarCheck)
+    : Wrench;
 
   const { data, isLoading } = useQuery({
     queryKey: ['aura-today-strip', companyId],
@@ -91,7 +102,7 @@ export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
 
   const tiles = [
     {
-      label: "Today's Bookings",
+      label: todayLabel,
       value: data?.todaysBookings ?? 0,
       icon: CalendarCheck,
       href: '/dashboard/appointments',
@@ -99,12 +110,12 @@ export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
       hint: 'Scheduled today',
     },
     {
-      label: 'Open Jobs',
+      label: openWorkLabel,
       value: data?.openJobs ?? 0,
-      icon: Wrench,
-      href: '/dashboard/dispatch-field-ops',
+      icon: openWorkIcon,
+      href: openWorkRoute,
       kind: 'jobs' as const,
-      hint: 'In progress + upcoming',
+      hint: openWorkHint,
     },
     {
       label: 'Revenue (Week)',

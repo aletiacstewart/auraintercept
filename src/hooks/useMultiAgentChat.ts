@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -27,6 +29,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
   const [currentAgent, setCurrentAgent] = useState<string>(initialAgent);
   const [sessionId] = useState(() => crypto.randomUUID());
   const { toast } = useToast();
+  const { pack } = useIndustryPack();
 
   // Build enriched page context with current date/time so all AI agents have temporal awareness
   const buildEnrichedContext = () => {
@@ -34,7 +37,23 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
     const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     const dateTimeContext = `Current date/time: ${dateStr} at ${timeStr} (user's local time).`;
-    return pageContext ? `${dateTimeContext}\n\n${pageContext}` : dateTimeContext;
+
+    let industryContext = '';
+    if (pack && pack.industry_id !== 'generic') {
+      const cfg = getIndustryServiceConsoleConfig(pack);
+      const lines = [
+        `Industry: ${pack.label} (${pack.industry_id}); cluster: ${pack.cluster}.`,
+        `Terminology — call jobs "${cfg.jobNoun}", customers "${cfg.customerNoun}", staff "${cfg.teamMemberNoun}", providers "${cfg.providerNoun}", rooms "${cfg.roomNoun}".`,
+        `Operating model: ${cfg.fieldRouting ? 'field dispatch (assign + route staff to customer locations)' : 'appointment-based (customers come to provider/room — no truck dispatch)'}.`,
+      ];
+      const isHealthcare = ['dental','chiropractic','medical_office','physical_therapy','optometry','veterinary'].includes(pack.industry_id);
+      if (isHealthcare) {
+        lines.push('HIPAA guardrail: never give clinical advice, diagnosis, medication, or PHI. Stick to non-clinical scheduling, intake, billing, and follow-up.');
+      }
+      industryContext = `\n\nIndustry context:\n${lines.join('\n')}`;
+    }
+    const base = pageContext ? `${dateTimeContext}\n\n${pageContext}` : dateTimeContext;
+    return `${base}${industryContext}`;
   };
 
   const sendMessage = useCallback(async (userMessage: string) => {
