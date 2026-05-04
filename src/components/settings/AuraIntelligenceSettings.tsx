@@ -309,7 +309,7 @@ export function AuraIntelligenceSettings() {
 
 PERSONALITY & TONE:
 - ${brandToneInstructions[config.brand_tone] || brandToneInstructions.professional}
-- Be patient when collecting customer information - never rush callers
+- Take your time when collecting customer information - never rush callers
 - When asking for name, phone number, or address, WAIT for the complete response
 - If the caller pauses to think, say "Take your time" before continuing
 
@@ -368,7 +368,7 @@ ${bookingUrl || paymentUrl || reviewUrl ? `SMART LINKS (send via SMS when releva
 - Leave a Review: ${reviewUrl}` : ''}` : ''}
 
 GUIDELINES:
-- Be conversational, patient, and natural
+- Be conversational, calm, and natural
 - Never ask for formatted dates - always accept natural language
 - Always confirm details before booking
 - If no times available, offer the next available alternatives`;
