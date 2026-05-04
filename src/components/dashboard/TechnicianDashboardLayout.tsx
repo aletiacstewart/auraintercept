@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import logo from '@/assets/aura-intercept-logo.png';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getNavLabels } from '@/lib/industryNavLabels';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
@@ -45,6 +46,9 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   const [showInstallBanner, setShowInstallBanner] = React.useState(true);
   const { pack } = useIndustryPack();
   const navLabels = getNavLabels(pack);
+  const serviceConfig = getIndustryServiceConsoleConfig(pack);
+  const workerTitle = serviceConfig.workerConsoleTitle;
+  const workerLayoutTitle = serviceConfig.workerLayoutTitle;
   const jobPlural = `${navLabels.jobNoun}s`;
 
   const mobileNavItems = [
@@ -57,7 +61,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
 
   const sidebarNavItems = [
     { icon: Home, label: 'Dashboard', path: '/technician' },
-    { icon: Bot, label: 'Field Operations Console', path: '/technician/ai-console' },
+    { icon: Bot, label: workerTitle, path: '/technician/ai-console' },
     { icon: ClipboardList, label: `My ${jobPlural}`, path: '/technician/jobs' },
     { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
     { icon: History, label: `${navLabels.jobNoun} History`, path: '/technician/history' },
@@ -120,7 +124,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
             </div>
             <div>
               <h1 className="font-semibold text-base leading-tight">
-                {mobileNavItems.find(item => isActive(item.path))?.label || 'Field Ops'}
+                {mobileNavItems.find(item => isActive(item.path))?.label || workerLayoutTitle}
               </h1>
               <p className="text-[10px] text-accent/80">Aura Intercept</p>
             </div>
@@ -237,7 +241,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-sm truncate">Field Operations</h1>
+              <h1 className="font-bold text-sm truncate">{workerLayoutTitle}</h1>
               <p className="text-xs text-sidebar-foreground/60 truncate">Aura Intercept</p>
             </div>
           )}
