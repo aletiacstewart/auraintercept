@@ -53,7 +53,7 @@ export function PipelineConsole({ workspace, companyId }: Props) {
       <PageHeader
         icon={TrendingUp}
         title={`${workspace.industryName} — Sales Pipeline`}
-        description="Deal-stage console — no dispatch board, no truck map"
+        description="Deal-stage console for tracking leads through your sales process"
         featureColor="leads"
       />
       <div className="grid gap-4 md:grid-cols-4">
