@@ -402,35 +402,6 @@ const industryCategories = [{
     icon: Bot,
     description: 'Calendar & Scheduling'
   }]
-}, {
-  category: 'Healthcare & Wellness',
-  emoji: '🩺',
-  subtitle: 'Appointments & Insurance',
-  industries: [{
-    name: 'Dental',
-    icon: Stethoscope,
-    description: 'Cleanings & New Patients'
-  }, {
-    name: 'Chiropractic',
-    icon: Activity,
-    description: 'Adjustments & Wellness'
-  }, {
-    name: 'Medical Office',
-    icon: HeartPulse,
-    description: 'Primary Care & Clinics'
-  }, {
-    name: 'Veterinary',
-    icon: PawPrint,
-    description: 'Pet Care & Animal Hospital'
-  }, {
-    name: 'Physical Therapy',
-    icon: Dumbbell,
-    description: 'PT & Rehab Clinics'
-  }, {
-    name: 'Optometry',
-    icon: Eye,
-    description: 'Eye Exams & Vision Care'
-  }]
 }];
 const howItWorks = [{
   step: 1,
