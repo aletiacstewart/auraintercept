@@ -48,6 +48,8 @@ import { RealTimeETASidebar } from './RealTimeETASidebar';
 import { TechnicianAssignmentDialog } from '@/components/appointments/TechnicianAssignmentDialog';
 import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
