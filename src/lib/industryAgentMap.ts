@@ -10,7 +10,6 @@ import {
   Clock,
   CreditCard,
   FileText,
-  HeartPulse,
   Home,
   LucideIcon,
   Map as MapIcon,
@@ -22,7 +21,6 @@ import {
   Scissors,
   Send,
   Sparkles,
-  Stethoscope,
   Truck,
   UserCheck,
   Users,
@@ -409,38 +407,6 @@ const salonLike: PartialConfig = {
   ],
 };
 
-const healthcareBase = (patientNoun = 'Patient'): PartialConfig => ({
-  consoleTitle: 'Care Team Console',
-  consoleBadge: 'Built for appointment flow — no truck dispatch',
-  workerConsoleTitle: 'Care Team Console',
-  workerLayoutTitle: 'Care Team Workspace',
-  installAppLabel: 'Install Care Team App',
-  customerNoun: patientNoun,
-  jobNoun: 'Visit',
-  teamMemberNoun: 'Provider',
-  providerNoun: 'Provider',
-  roomNoun: 'Room',
-  assignmentAgentName: 'Reception Agent',
-  assignmentAgentDescription: 'Confirms visits, captures basic intake, manages no-shows, and routes to staff',
-  routingAgentName: 'Care Flow Agent',
-  routingAgentDescription: 'Coordinates check-in, rooming, provider handoff, completion, and follow-up without clinical advice',
-  contactTeamLabel: 'Contact Front Desk',
-  contactTeamDescription: 'Reach out to the office team for visit or schedule help',
-  quickActions: BOOKING_ACTIONS.map((a) => {
-    if (a.id === 'accept') return { ...a, label: 'Confirm Visit', message: 'Confirm this visit and review basic intake notes.' };
-    if (a.id === 'arrive_start') return { ...a, label: 'Check In / Room', message: 'Check in this visit and mark it ready for the provider.' };
-    if (a.id === 'complete') return { ...a, label: 'Complete Visit', message: 'Mark this visit complete and prepare follow-up reminders.' };
-    if (a.id === 'quote') return { ...a, label: 'Plan Estimate', message: 'Prepare a non-clinical estimate or care-plan cost summary for this visit.' };
-    if (a.id === 'invoice') return { ...a, label: 'Send Statement', message: 'Create and send a statement for this completed visit.' };
-    return a;
-  }),
-  operatives: [
-    { id: 'customer_journey', name: 'Reception Agent', description: 'Handles scheduling, check-ins, reminders, and non-clinical intake', icon: Stethoscope, hsl: '189,100%,65%', status: 'active', metric1Label: 'Visits', metric2Label: 'Checked In' },
-    { id: 'business_finance', name: 'Statements Agent', description: 'Prepares estimates, statements, deposits, and follow-up', icon: Receipt, hsl: '142,72%,55%', status: 'standby', metric1Label: 'Pending', metric2Label: 'Done Today' },
-  ],
-  specialistShow: ['review_responder' as IndustrySpecialistOperative],
-});
-
 const INDUSTRY_OVERRIDES: Record<string, PartialConfig> = {
   hvac: { consoleTitle: 'HVAC Service Delivery Console', workerConsoleTitle: 'HVAC Technician Console' },
   plumbing: { consoleTitle: 'Plumbing Service Delivery Console', workerConsoleTitle: 'Plumber Console' },
@@ -519,33 +485,6 @@ const INDUSTRY_OVERRIDES: Record<string, PartialConfig> = {
   },
   professional: { consoleTitle: 'Client Meeting Console', workerConsoleTitle: 'Consultant Console', workerLayoutTitle: 'Consultant Workspace', teamMemberNoun: 'Consultant', providerNoun: 'Consultant', customerNoun: 'Client', jobNoun: 'Meeting', roomNoun: 'Meeting Room' },
   personal_assistant: { consoleTitle: 'Concierge Task Console', workerConsoleTitle: 'Concierge Console', workerLayoutTitle: 'Concierge Workspace', teamMemberNoun: 'Concierge', providerNoun: 'Concierge', customerNoun: 'Client', jobNoun: 'Task', roomNoun: 'Calendar Block', assignmentAgentName: 'Concierge Agent', routingAgentName: 'Task Flow Agent' },
-  dental: healthcareBase('Patient'),
-  chiropractic: healthcareBase('Patient'),
-  medical_office: healthcareBase('Patient'),
-  physical_therapy: healthcareBase('Patient'),
-  optometry: healthcareBase('Patient'),
-  veterinary: {
-    ...healthcareBase('Pet Parent'),
-    consoleTitle: 'Care Team Console',
-    workerConsoleTitle: 'Veterinary Care Team Console',
-    customerNoun: 'Pet Parent',
-    jobNoun: 'Visit',
-    teamMemberNoun: 'Provider',
-    providerNoun: 'Provider',
-    roomNoun: 'Exam Room',
-    assignmentAgentName: 'Reception Agent',
-    routingAgentName: 'Visit Flow Agent',
-    quickActions: healthcareBase('Pet Parent').quickActions?.map((a) => {
-      if (a.id === 'arrive_start') return { ...a, label: 'Check In Pet', message: 'Check in the pet and pet parent, then mark the visit ready for the provider.' };
-      if (a.id === 'complete') return { ...a, label: 'Complete Visit', message: 'Complete this veterinary visit and prepare recall/reminder follow-up.' };
-      if (a.id === 'reschedule') return { ...a, label: 'Reschedule Visit', message: 'Reschedule this pet visit.' };
-      return a;
-    }),
-    operatives: [
-      { id: 'customer_journey', name: 'Reception Agent', description: 'Handles visit scheduling, pet-parent reminders, check-ins, and non-clinical intake', icon: HeartPulse, hsl: '189,100%,65%', status: 'active', metric1Label: 'Visits', metric2Label: 'Checked In' },
-      { id: 'business_finance', name: 'Invoicing Agent', description: 'Prepares visit estimates, invoices, payments, and recall follow-up', icon: Receipt, hsl: '142,72%,55%', status: 'standby', metric1Label: 'Pending', metric2Label: 'Done Today' },
-    ],
-  },
 };
 
 function applyOverride(base: IndustryServiceConsoleConfig, override?: PartialConfig): IndustryServiceConsoleConfig {
