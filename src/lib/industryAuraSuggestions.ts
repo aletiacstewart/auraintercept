@@ -82,12 +82,12 @@ const BY_INDUSTRY: Record<string, AuraSuggestion[]> = {
     { id: 'services',    label: 'Which services are most popular?',            icon: BarChart3,  category: 'Insights' },
   ],
   restaurants: [
-    { id: 'covers',      label: "What's tonight's reservation count?",         icon: Utensils,   category: 'Today' },
-    { id: 'avg_ticket',  label: 'What is my average ticket this week?',        icon: DollarSign, category: 'Revenue' },
-    { id: 'no_shows',    label: 'How many no-shows this week?',                icon: Clock,      category: 'Quality' },
-    { id: 'top_server',  label: 'Who is my top-performing server?',            icon: Users,      category: 'Performance' },
-    { id: 'menu',        label: 'Which menu items are top sellers?',           icon: BarChart3,  category: 'Menu' },
-    { id: 'forecast',    label: 'What does next weekend look like?',           icon: TrendingUp, category: 'Forecast' },
+    { id: 'menu_links',     label: 'How many menu links did Aura send this week?', icon: Utensils,   category: 'Smart Links' },
+    { id: 'catering',       label: 'How many catering inquiries came in?',         icon: Users,      category: 'Inquiries' },
+    { id: 'missed_recovery',label: 'What is my missed-call recovery rate?',        icon: Clock,      category: 'Recovery' },
+    { id: 'top_questions',  label: 'Show me top inbound questions this week.',     icon: BarChart3,  category: 'Insights' },
+    { id: 'reviews',        label: 'What is my review score this month?',          icon: TrendingUp, category: 'Reviews' },
+    { id: 'top_link',       label: 'Which Smart Link gets clicked most?',          icon: DollarSign, category: 'Smart Links' },
   ],
   fitness: [
     { id: 'classes',     label: "What's today's class schedule?",              icon: Calendar,   category: 'Today' },

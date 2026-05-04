@@ -455,7 +455,7 @@ const INDUSTRY_OVERRIDES: Record<string, PartialConfig> = {
   fitness: { consoleTitle: 'Class & Session Console', workerConsoleTitle: 'Trainer Console', workerLayoutTitle: 'Trainer Workspace', teamMemberNoun: 'Trainer', providerNoun: 'Trainer', customerNoun: 'Member', jobNoun: 'Session', roomNoun: 'Studio', fieldOpsSectionLabel: 'Studio Ops' },
   restaurants: {
     consoleTitle: 'Guest Flow Console',
-    consoleBadge: 'Built for reservations, inquiries, and smart links',
+    consoleBadge: 'Built for inbound calls, Smart Links, and follow-up',
     workerConsoleTitle: 'Host Console',
     workerLayoutTitle: 'Guest Operations',
     fieldOpsSectionLabel: 'Service Floor',

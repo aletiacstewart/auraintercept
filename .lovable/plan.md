@@ -1,80 +1,75 @@
 ## Problem
 
-From the screenshot (construction pack) two mismatches are visible:
+Restaurants are correctly configured at the data layer (`industry_blueprints.restaurants` has `restrictions.booking=false`, `dispatch=false`, and a script override telling Aura to text a booking link). But several user-facing surfaces still imply that we accept reservations / bookings inside the app:
 
-1. **Sidebar item ↔ console title mismatch.** Sidebar item under FIELD OPS is **"Project Crew"** (correct = `workerConsoleTitle` = "Project Crew Console"). Clicking it opens the page titled **"PROJECT OPERATIONS CONSOLE"** (= `consoleTitle`). They don't match because `FieldOpsConsole.tsx` (the Technician/Worker route) is rendering the dispatcher title.
+1. **Voice greeting** (`src/lib/industryVoiceGreetings.ts:32`)
+   `"…would you like a reservation, takeout, or info about an event?"` — implies Aura books reservations.
+2. **Aura suggestions** (`src/lib/industryAuraSuggestions.ts:84-91`)
+   Includes `"What's tonight's reservation count?"` and `"How many no-shows this week?"` — only valid if we owned reservations.
+3. **SMS templates** (`src/lib/industryTemplates.ts:496-499`)
+   `"Your reservation is confirmed for {date} at {time}…"` — we never confirm reservations.
+4. **Demo seed sample appointment** (`supabase/functions/create-demo-trial/index.ts`)
+   Seeds a `Reservation (party of 6)` appointment row for restaurant demos.
+5. **Console title for restaurants** (`industryAgentMap.ts:449`)
+   Currently `"Guest Flow Console"` with badge "Built for reservations, inquiries, and smart links" — drop the "reservations" word.
 
-2. **"FIELD OPS" group label is hardcoded** — every industry sees the same trades-style "Field Ops" section header, even when the rest of the pack is renamed (e.g. construction → Project Ops, salon → Salon Floor, restaurants → Service Floor).
-
-## Root Cause
-
-- `src/pages/ai-consoles/FieldOpsConsole.tsx` (route `/dashboard/ai-consoles/field-ops`) is the **worker / technician** console but uses `serviceConfig.consoleTitle` + `consoleDescription` (the **dispatcher** strings). It should use `workerConsoleTitle` / a worker description.
-- `src/components/dashboard/DashboardLayout.tsx` group label `"Field Ops"` (line 120) is a literal string, not derived from the industry pack.
-
-`industryAgentMap.ts` already exposes both names per industry — we just need to wire the worker page to the worker name and add a per-pack section label.
+The chat portal action `"Book a Table"` is OK because its prompt is `"Send me the link to book a table."` (Smart Link), but the label can be clearer as `"Booking Link"`.
 
 ## Fix
 
-### 1. Worker console uses worker title
-
-In `src/pages/ai-consoles/FieldOpsConsole.tsx`, change the header to the worker variant:
-
+### 1. Voice greeting → Smart Link framing
 ```ts
-title: serviceConfig.workerConsoleTitle,
-description: serviceConfig.workerConsoleDescription
-        ?? serviceConfig.consoleDescription,
+restaurants: 'Thanks for calling {company}. This is Aura — I can text you a link to book a table, view our menu, hours, or catering info. What would you like?',
 ```
 
-Result for construction: page header reads **"Project Crew Console"**, matching the sidebar's "Project Crew". For salon: "Stylist Console" matches "Stylist". For real estate: "Agent Console" matches "Agent".
+### 2. Aura suggestions → reframe to what we DO know
+Replace reservation-centric suggestions with Smart-Link / inbound-traffic metrics:
+- "How many menu links did Aura send this week?"
+- "How many catering inquiries came in?"
+- "What is my missed-call recovery rate?"
+- "Show me top inbound questions this week."
+- "What is my review score this month?"
+- "Which Smart Link gets clicked most?"
 
-`FieldOpsManager.tsx` (the dispatcher page at `/dashboard/dispatch-field-ops`) keeps `consoleTitle` — that one matches the sidebar's dispatch label correctly.
-
-### 2. Add an optional `sectionLabel` to the agent map
-
-Add an optional `fieldOpsSectionLabel` field to `IndustryServiceConsoleConfig` in `src/lib/industryAgentMap.ts`. Populate per industry, with cluster fallback:
-
-```text
-construction        -> "Project Ops"
-roofing / solar     -> "Project Ops"
-landscape           -> "Crew Ops"
-pest_control / pool -> "Route Ops"
-auto_care           -> "Shop Ops"
-appliance_repair    -> "Service Ops"
-salon / beauty      -> "Salon Floor"
-fitness             -> "Studio Ops"
-restaurants         -> "Service Floor"
-real_estate         -> "Showings"
-professional        -> "Client Ops"
-personal_assistant  -> "Concierge Ops"
-trades (default)    -> "Field Ops"
+### 3. SMS templates → Smart Link prompts (no confirmation copy)
+```ts
+sms: [
+  "Hi {name}! Here's the link to book your table: {link}",
+  "Thanks for calling {company}! Menu: {link}",
+],
 ```
 
-### 3. Drive the sidebar group label from the pack
+### 4. Demo seed → swap reservation appointment for a catering inquiry lead
+In `create-demo-trial/index.ts` restaurants entry, drop the `sampleAppointment` (or convert to a `Catering Inquiry` lead so we don't seed a reservation row).
 
-In `src/components/dashboard/DashboardLayout.tsx`:
+### 5. Console badge / wording
+In `src/lib/industryAgentMap.ts` `restaurants` override:
+- `consoleBadge: 'Built for inbound calls, Smart Links, and follow-up'`
+- (Keep `Guest Flow Console` title — it's accurate without booking implication.)
 
-- Add `sectionKey: 'fieldOps'` (optional) to `NavGroup`, set on the Field Ops group.
-- After `navLabels` is computed, when rendering each group, replace the literal `"Field Ops"` with `serviceConfig.fieldOpsSectionLabel` (fallback to `"Field Ops"`).
-- Hide rule and tier rule unchanged.
+### 6. Portal quick-action label
+`PortalQuickActions.tsx`: change restaurants `'Book a Table'` → `'Get Booking Link'` (prompt unchanged — already Smart-Link based).
 
-### 4. Extend the regression test
-
-In `src/lib/__tests__/consoleNamingConsistency.test.ts`, add assertions:
-
-- `getNavLabels(pack).techView === stripConsole(serviceConfig.workerConsoleTitle)`
-- For every industry, `serviceConfig.fieldOpsSectionLabel` is defined OR cluster fallback exists.
-- Test that the worker page title equals the sidebar techView (string comparison via the helpers).
+### 7. Memory update
+Append to `mem://features/industry/restaurants-smart-link-only`:
+- Voice greeting must NOT offer reservations directly.
+- Aura suggestions and SMS templates must reference Smart Links / inbound metrics, not confirmed reservations.
+- Demo seeds must not insert reservation appointments for the restaurants vertical.
 
 ## Files Touched
 
-- `src/pages/ai-consoles/FieldOpsConsole.tsx` — switch to `workerConsoleTitle` / worker description.
-- `src/lib/industryAgentMap.ts` — add `fieldOpsSectionLabel` per industry + cluster default; optional `workerConsoleDescription` where it differs.
-- `src/components/dashboard/DashboardLayout.tsx` — render Field Ops group label from pack.
-- `src/lib/__tests__/consoleNamingConsistency.test.ts` — add new assertions.
+- `src/lib/industryVoiceGreetings.ts`
+- `src/lib/industryAuraSuggestions.ts`
+- `src/lib/industryTemplates.ts`
+- `src/lib/industryAgentMap.ts`
+- `src/components/customer-portal/PortalQuickActions.tsx`
+- `supabase/functions/create-demo-trial/index.ts`
+- `mem://features/industry/restaurants-smart-link-only`
 
 ## Out of Scope
 
-- Renaming routes (`/dashboard/ai-consoles/field-ops`, `/dashboard/dispatch-field-ops`) — labels only.
-- Other group labels (Customers, Business, Marketing) — same pattern can be added later if needed; this task is the Field Ops + console mismatch the user called out.
+- Backend `industry_blueprints.restaurants` row — already correct (`booking: false`).
+- `aura-unified` snippet — already injects the "Do NOT offer to book" instruction.
+- Reservation-related code paths in shared booking/calendar logic — restaurants already short-circuit via `restrictions.booking=false`.
 
 Approve and I'll switch to build mode and apply this in one pass.

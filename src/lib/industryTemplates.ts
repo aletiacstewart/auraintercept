@@ -494,8 +494,8 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
         "How we make our famous [signature dish] 👨‍🍳 #BehindTheScenes #FoodieLife",
       ],
       sms: [
-        "Hi {name}! Your reservation is confirmed for {date} at {time}. Reply YES to confirm.",
-        "Special this week! Reserve your table: {link}",
+        "Hi {name}! Here's the link to book your table: {link}",
+        "Thanks for calling {company}! Menu & hours: {link}",
       ],
     },
   },
