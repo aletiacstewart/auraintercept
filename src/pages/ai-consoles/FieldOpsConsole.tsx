@@ -18,6 +18,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getFieldOpsWorkflows } from '@/lib/industryFieldOpsWorkflows';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 import { isSpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -27,48 +28,29 @@ export default function FieldOpsConsole() {
   const { submitQuery } = useAuraCommand();
   const { pack } = useIndustryPack();
   const workflows = getFieldOpsWorkflows(pack);
+  const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
 
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
   const mode = pack.console_visibility?.field_ops ?? 'full';
 
-  // Title & description per cluster mode
-  const { title, description, icon: TitleIcon, badge } = useMemo(() => {
-    if (mode === 'route_mode') return {
-      title: 'Route Operations Console',
-      description: 'Recurring routes, weather-aware reschedules, and crew scheduling',
-      icon: MapIcon,
-      badge: 'Built for recurring outdoor routes',
-    };
-    if (mode === 'booking_mode') return {
-      title: 'Booking Operations Console',
-      description: "Today's bookings, no-show recovery, and walk-in flow",
-      icon: CalendarCheck,
-      badge: 'Built for in-person bookings — no truck dispatch',
-    };
-    return {
-      title: 'Field Operations Console',
-      description: 'Your intelligent field operations assistant',
-      icon: HardHat,
-      badge: 'Saves ~10 hrs/week on dispatch',
-    };
-  }, [mode]);
+  const { title, description, icon: TitleIcon, badge } = useMemo(() => ({
+    title: serviceConfig.consoleTitle,
+    description: serviceConfig.consoleDescription,
+    icon: serviceConfig.fieldRouting ? (mode === 'route_mode' ? MapIcon : HardHat) : CalendarCheck,
+    badge: serviceConfig.consoleBadge,
+  }), [mode, serviceConfig]);
 
   // Pick the most relevant specialists for this industry pack
   const specialistsForPack = useMemo(() => {
     const inPack = (pack.extra_operatives ?? []).filter(isSpecialistOperative) as IndustrySpecialistOperative[];
     if (inPack.length > 0) return inPack.slice(0, 4);
-    if (mode === 'booking_mode') return ['review_responder'] as IndustrySpecialistOperative[];
+    if (!serviceConfig.fieldRouting) return serviceConfig.specialistShow;
     if (mode === 'route_mode') return ['site_survey'] as IndustrySpecialistOperative[];
     return ['permit_code', 'site_survey', 'diagnostic'] as IndustrySpecialistOperative[];
-  }, [pack.extra_operatives, mode]);
+  }, [pack.extra_operatives, mode, serviceConfig]);
 
-  const specialistSubtitle =
-    mode === 'booking_mode'
-      ? 'Booking-side specialists — drafts, rebook outreach, review responses.'
-      : mode === 'route_mode'
-      ? 'Route-side specialists for surveys, treatments, and chemistry logs.'
-      : 'Field-side specialists for permits, surveys, and diagnostics.';
+  const specialistSubtitle = serviceConfig.specialistSubtitle;
 
   return (
     <DashboardLayout>
