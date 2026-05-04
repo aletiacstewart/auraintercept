@@ -322,8 +322,7 @@ export default function SpecialistOperativesConsole() {
   // Show only specialists in the user's industry pack (platform admin sees all).
   const visibleSpecialists = useMemo(() => {
     if (isPlatformAdmin) return SPECIALISTS;
-    const inPack = SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
-    return inPack.length > 0 ? inPack : SPECIALISTS.slice(0, 4);
+    return SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
   }, [isPlatformAdmin, industrySpecialists]);
 
   const initialTab = searchParams.get('agent') as IndustrySpecialistOperative | null;
