@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { CalendarDays, Users, Repeat, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import type { ResolvedWorkspace } from '@/lib/workspace/types';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 interface Props {
   workspace: ResolvedWorkspace;
@@ -14,6 +16,8 @@ export function AppointmentConsole({ workspace, companyId }: Props) {
   const [today, setToday] = useState<number | null>(null);
   const [week, setWeek] = useState<number | null>(null);
   const [noShows, setNoShows] = useState<number | null>(null);
+  const { pack } = useIndustryPack();
+  const cfg = pack ? getIndustryServiceConsoleConfig(pack) : null;
 
   useEffect(() => {
     const start = new Date(); start.setHours(0, 0, 0, 0);
@@ -40,21 +44,25 @@ export function AppointmentConsole({ workspace, companyId }: Props) {
   }, [companyId]);
 
   const fmt = (v: number | null) => (v === null ? '…' : String(v));
-  const resourceLabel =
+  const resourceLabel = cfg?.providerNoun ??
     (workspace.promptOverrides as { terminology?: { resource?: string } })?.terminology
       ?.resource ?? 'Resource';
+  const jobNounPlural = cfg?.jobNounPlural ?? 'Appointments';
+  const consoleTitle = cfg?.consoleTitle ?? `${workspace.industryName} — Appointments`;
+  const consoleDesc = cfg?.consoleDescription ?? `Calendar-first console for ${workspace.industryName.toLowerCase()} bookings`;
+  const boardDesc = cfg?.appointmentBoardDescription ?? `${jobNounPlural} schedule, recurring bookings, deposit collection, and follow-up.`;
   return (
     <div className="space-y-6">
       <PageHeader
         icon={CalendarDays}
-        title={`${workspace.industryName} — Appointments`}
-        description={`Calendar-first console for ${workspace.industryName.toLowerCase()} bookings`}
+        title={consoleTitle}
+        description={consoleDesc}
         featureColor="appointments"
       />
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="p-4 surface-elevated-dark">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <CalendarDays className="h-4 w-4" /> Appointments today
+            <CalendarDays className="h-4 w-4" /> {jobNounPlural} today
           </div>
           <div className="mt-2 text-3xl font-semibold">{fmt(today)}</div>
         </Card>
@@ -66,7 +74,7 @@ export function AppointmentConsole({ workspace, companyId }: Props) {
         </Card>
         <Card className="p-4 surface-elevated-dark">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Repeat className="h-4 w-4" /> Bookings (last 7d)
+            <Repeat className="h-4 w-4" /> {jobNounPlural} (last 7d)
           </div>
           <div className="mt-2 text-3xl font-semibold">{fmt(week)}</div>
         </Card>
@@ -78,11 +86,7 @@ export function AppointmentConsole({ workspace, companyId }: Props) {
         </Card>
       </div>
       <Card className="p-6 surface-elevated-dark">
-        <p className="text-card-foreground/80">
-          {resourceLabel} schedule, recurring bookings, deposit collection, and no-show recovery
-          will appear here. This console is structurally different from the field dispatch view —
-          no truck map, no dispatch board.
-        </p>
+        <p className="text-card-foreground/80">{boardDesc}</p>
       </Card>
     </div>
   );

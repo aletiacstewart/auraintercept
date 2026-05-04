@@ -56,7 +56,7 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
-import { getAgentStyleForIndustry } from '@/lib/agentStyles';
+import { getAgentStyle, getAgentStyleForIndustry } from '@/lib/agentStyles';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getIndustryServiceConsoleConfig, type ServiceQuickAction, type ServiceActionId } from '@/lib/industryAgentMap';
 import { BusinessQuoteForm, BusinessQuoteData } from '@/components/billing/forms/BusinessQuoteForm';
@@ -913,6 +913,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const FIELDOPS_AGENTS: CyberAgent[] = serviceConfig.operatives.map((agent, index) => ({
     ...agent,
+    status: agent.status === 'idle' ? 'off' : agent.status,
     metric1Value: index === 0 ? (fm?.jobsTotal ?? 0) : (fm?.jobsPending ?? 0),
     metric2Value: index === 0 ? (serviceConfig.fieldRouting ? (fm?.jobsEnRoute ?? 0) : (fm?.jobsPending ?? 0)) : (fm?.jobsCompletedToday ?? 0),
   }));

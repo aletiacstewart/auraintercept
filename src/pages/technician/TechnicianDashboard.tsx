@@ -30,15 +30,16 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getAppointmentRules } from '@/lib/industryFormSchemas';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
-// Aura Intercept themed status styles
-const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string; label: string }> = {
-  pending_acceptance: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', glow: 'shadow-yellow-500/30', label: 'Pending' },
-  accepted: { bg: 'bg-secondary/20', text: 'text-secondary', glow: 'shadow-secondary/30', label: 'Accepted' },
-  en_route: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50', label: 'En Route' },
-  arrived: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50', label: 'On Site' },
-  in_progress: { bg: 'bg-orange-500/20', text: 'text-orange-400', glow: 'shadow-orange-500/30', label: 'In Progress' },
-  completed: { bg: 'bg-green-500/20', text: 'text-green-400', glow: 'shadow-green-500/30', label: 'Completed' },
+// Visual style per status (label is overridden per industry via cfg.statusLabels)
+const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string }> = {
+  pending_acceptance: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', glow: 'shadow-yellow-500/30' },
+  accepted: { bg: 'bg-secondary/20', text: 'text-secondary', glow: 'shadow-secondary/30' },
+  en_route: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50' },
+  arrived: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50' },
+  in_progress: { bg: 'bg-orange-500/20', text: 'text-orange-400', glow: 'shadow-orange-500/30' },
+  completed: { bg: 'bg-green-500/20', text: 'text-green-400', glow: 'shadow-green-500/30' },
 };
 
 export default function TechnicianDashboard() {
@@ -49,6 +50,11 @@ export default function TechnicianDashboard() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { pack } = useIndustryPack();
+  const cfg = pack ? getIndustryServiceConsoleConfig(pack) : null;
+  const isField = cfg?.fieldRouting !== false;
+  const jobNoun = cfg?.jobNoun ?? 'Job';
+  const jobNounPlural = cfg?.jobNounPlural ?? 'Jobs';
+  const statusLabel = (s: string) => cfg?.statusLabels?.[s] ?? s.replace(/_/g, ' ');
   const showAddress = (() => {
     try { return getAppointmentRules(pack)?.address_required !== false; } catch { return true; }
   })();
@@ -147,14 +153,23 @@ export default function TechnicianDashboard() {
     },
   ];
 
-  // Get next action for current job
+  // Get next action for current job (industry-aware)
   const getNextAction = () => {
     if (!currentJob) return null;
+    if (isField) {
+      switch (currentJob.status) {
+        case 'accepted': return { label: 'Start Route', icon: Navigation };
+        case 'en_route': return { label: 'Check In', icon: MapPin };
+        case 'arrived': return { label: `Start ${jobNoun}`, icon: Play };
+        case 'in_progress': return { label: 'Complete', icon: CheckCircle2 };
+        default: return null;
+      }
+    }
+    // Booking / appointment-based
     switch (currentJob.status) {
-      case 'accepted': return { label: 'Start Route', icon: Navigation };
-      case 'en_route': return { label: 'Check In', icon: MapPin };
-      case 'arrived': return { label: 'Start Job', icon: Play };
-      case 'in_progress': return { label: 'Complete', icon: CheckCircle2 };
+      case 'accepted': return { label: 'Check In', icon: Play };
+      case 'arrived': return { label: `Start ${jobNoun}`, icon: Play };
+      case 'in_progress': return { label: `Complete ${jobNoun}`, icon: CheckCircle2 };
       default: return null;
     }
   };
@@ -203,7 +218,7 @@ export default function TechnicianDashboard() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge className={cn("border-0 font-medium", currentStyles?.bg, currentStyles?.text)}>
-                    {currentStyles?.label}
+                    {statusLabel(currentJob.status)}
                   </Badge>
                 {currentJob.estimated_arrival_minutes && currentJob.status === 'en_route' && (
                     <span className="text-xs text-accent">ETA: {currentJob.estimated_arrival_minutes} min</span>
@@ -350,7 +365,7 @@ export default function TechnicianDashboard() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
               <ClipboardList className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-xs font-medium">All Jobs</span>
+            <span className="text-xs font-medium">All {jobNounPlural}</span>
           </Button>
         </div>
 
@@ -393,7 +408,7 @@ export default function TechnicianDashboard() {
           className="w-full justify-between text-white"
           onClick={() => navigate('/technician/jobs')}
         >
-          View all jobs
+          View all {jobNounPlural.toLowerCase()}
           <ArrowRight className="h-4 w-4" />
         </Button>
 
