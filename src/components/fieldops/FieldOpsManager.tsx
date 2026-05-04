@@ -50,6 +50,8 @@ import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 interface JobAssignment {
   id: string;
@@ -140,6 +142,8 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
   const [notifyAutoSend, setNotifyAutoSend] = useState(true);
   const [cancelReason, setCancelReason] = useState('');
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack(companyId);
+  const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
 
   // Fetch all jobs (active and completed) for dispatchers
   const { data: jobs, isLoading, refetch } = useQuery({
@@ -322,6 +326,18 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
       toast.error('Failed to cancel appointment');
     }
   });
+
+  const appointmentStats = useMemo(() => {
+    const today = new Date();
+    const day = today.toISOString().split('T')[0];
+    const todays = appointments.filter((a: any) => String(a.datetime || '').startsWith(day));
+    return {
+      today: todays.length,
+      ready: todays.filter((a: any) => ['confirmed', 'scheduled'].includes(a.status)).length,
+      active: todays.filter((a: any) => ['checked_in', 'arrived', 'in_progress'].includes(a.status)).length,
+      completed: todays.filter((a: any) => a.status === 'completed').length,
+    };
+  }, [appointments]);
 
   // Group jobs by status
   const jobsByStatus = useMemo(() => {
