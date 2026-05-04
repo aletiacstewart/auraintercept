@@ -4,7 +4,6 @@ import {
   Wrench, Flame, Zap, HardHat, TreePine, Building2,
   Settings, Sun, Home, Fence, Waves, Bug,
   Car, Hammer, Shield, UtensilsCrossed, Sparkles, Briefcase,
-  Stethoscope, Activity, HeartPulse, PawPrint, Dumbbell, Eye,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -16,7 +15,7 @@ export interface BusinessTemplate {
   services: string[];
   hours: { weekday: string; weekend: string };
   coreAgents: string[];
-  cluster: 'trades' | 'outdoor' | 'repair' | 'booking' | 'healthcare' | 'other';
+  cluster: 'trades' | 'outdoor' | 'repair' | 'booking' | 'other';
 }
 
 export const BUSINESS_TEMPLATES: BusinessTemplate[] = [
@@ -100,32 +99,6 @@ export const BUSINESS_TEMPLATES: BusinessTemplate[] = [
     hours: { weekday: '8:00-18:00', weekend: 'Closed' },
     coreAgents: ['triage', 'booking'], cluster: 'booking' },
 
-  // Cluster E — Healthcare & Wellness (appointments + insurance verification only)
-  { id: 'dental', label: 'Dental', icon: Stethoscope, description: 'General & family dentistry',
-    services: ['New Patient Exam', 'Cleaning', 'Recall Visit', 'Emergency Toothache', 'Insurance Verification'],
-    hours: { weekday: '8:00-17:00', weekend: 'Closed' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-  { id: 'chiropractic', label: 'Chiropractic', icon: Activity, description: 'Adjustments & wellness care',
-    services: ['New Patient Consult', 'Adjustment', 'Re-Evaluation', 'Massage Add-On', 'Insurance Verification'],
-    hours: { weekday: '8:00-18:00', weekend: 'Closed' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-  { id: 'medical_office', label: 'Medical Office', icon: HeartPulse, description: 'Primary care & clinics',
-    services: ['New Patient Visit', 'Annual Physical', 'Sick Visit', 'Follow-Up', 'Insurance Verification'],
-    hours: { weekday: '8:00-17:00', weekend: 'Closed' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-  { id: 'veterinary', label: 'Veterinary', icon: PawPrint, description: 'Pet care & animal hospital',
-    services: ['Wellness Exam', 'Vaccination', 'Sick Visit', 'Dental Cleaning', 'Insurance Verification'],
-    hours: { weekday: '8:00-18:00', weekend: '9:00-13:00' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-  { id: 'physical_therapy', label: 'Physical Therapy', icon: Dumbbell, description: 'PT & rehab clinics',
-    services: ['Initial Evaluation', 'Therapy Session', 'Re-Evaluation', 'Discharge Visit', 'Insurance Verification'],
-    hours: { weekday: '7:00-19:00', weekend: 'Closed' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-  { id: 'optometry', label: 'Optometry', icon: Eye, description: 'Eye exams & vision care',
-    services: ['Annual Eye Exam', 'Contact Lens Fitting', 'Frame Selection', 'Follow-Up', 'Insurance Verification'],
-    hours: { weekday: '9:00-18:00', weekend: '9:00-14:00' },
-    coreAgents: ['triage', 'booking', 'review'], cluster: 'healthcare' },
-
   // Catch-all
   { id: 'other', label: 'Other', icon: Building2, description: 'Custom business type',
     services: [], hours: { weekday: '9:00-17:00', weekend: 'Closed' },
@@ -137,7 +110,6 @@ const CLUSTER_LABELS: Record<string, string> = {
   outdoor: 'Outdoor & Property',
   repair: 'Repair & Service',
   booking: 'Booking-First',
-  healthcare: 'Healthcare & Wellness',
   other: 'Other',
 };
 
@@ -148,7 +120,7 @@ interface BusinessTypeSelectorProps {
 
 export function BusinessTypeSelector({ selected, onSelect }: BusinessTypeSelectorProps) {
   const clusters: Array<BusinessTemplate['cluster']> = [
-    'trades', 'outdoor', 'repair', 'booking', 'healthcare', 'other',
+    'trades', 'outdoor', 'repair', 'booking', 'other',
   ];
   return (
     <div className="space-y-5">
