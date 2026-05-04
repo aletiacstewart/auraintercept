@@ -364,6 +364,7 @@ const baseConfig = (pack: IndustryPack, fieldRouting: boolean): IndustryServiceC
     openWorkLabel: fieldRouting ? `Open ${pluralize(jobNoun)}` : `Open ${pluralize(jobNoun)}`,
     openWorkHint: fieldRouting ? 'In progress + upcoming' : 'Checked in + upcoming',
     openWorkRoute: fieldRouting ? '/dashboard/dispatch-field-ops' : '/dashboard/appointments',
+    fieldOpsSectionLabel: fieldRouting ? 'Field Ops' : 'Operations',
   };
 };
 
@@ -378,6 +379,7 @@ const CLUSTER_OVERRIDES: Record<IndustryPack['cluster'], PartialConfig> = {
     assignmentAgentName: 'Crew Assignment Agent',
     routingAgentName: 'Route Agent',
     specialistShow: ['site_survey'],
+    fieldOpsSectionLabel: 'Crew Ops',
   },
   repair: {
     consoleTitle: 'Repair Operations Console',
@@ -386,6 +388,7 @@ const CLUSTER_OVERRIDES: Record<IndustryPack['cluster'], PartialConfig> = {
     workerLayoutTitle: 'Repair Operations',
     quickActions: REPAIR_ACTIONS,
     specialistShow: ['diagnostic'],
+    fieldOpsSectionLabel: 'Service Ops',
   },
   booking: {},
 };
