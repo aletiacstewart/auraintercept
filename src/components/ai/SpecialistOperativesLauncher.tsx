@@ -58,11 +58,21 @@ export function SpecialistOperativesLauncher({
   const navigate = useNavigate();
   const { userRole } = useAuth();
   const { subscriptionTier } = useSubscription();
-  const { pack } = useIndustryPack();
+  const { pack, loading } = useIndustryPack();
 
   const isPlatformAdmin = userRole === 'platform_admin';
   const tierUnlocked = isPlatformAdmin || tierAllowsSpecialists(subscriptionTier);
   const industrySet = new Set(pack?.extra_operatives ?? []);
+
+  // Restrict the visible specialists to those opted-in by this industry pack.
+  // Platform admins see the full requested set so they can preview everything.
+  const visible = isPlatformAdmin ? show : show.filter((id) => industrySet.has(id));
+
+  // If the company's industry pack opts into no specialists, hide the launcher
+  // entirely instead of surfacing irrelevant operatives (e.g. SaaS, Professional).
+  if (!isPlatformAdmin && !loading && visible.length === 0) {
+    return null;
+  }
 
   return (
     <Card className={cn('p-4 border-border/60', className)}>
@@ -86,7 +96,7 @@ export function SpecialistOperativesLauncher({
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        {show.map((id) => {
+        {visible.map((id) => {
           const Icon = ICONS[id];
           const inIndustry = isPlatformAdmin || industrySet.has(id);
           const locked = !tierUnlocked;
