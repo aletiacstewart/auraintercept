@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import logo from '@/assets/aura-intercept-logo.png';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getNavLabels } from '@/lib/industryNavLabels';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
@@ -45,6 +46,9 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   const [showInstallBanner, setShowInstallBanner] = React.useState(true);
   const { pack } = useIndustryPack();
   const navLabels = getNavLabels(pack);
+  const serviceConfig = getIndustryServiceConsoleConfig(pack);
+  const workerTitle = serviceConfig.workerConsoleTitle;
+  const workerLayoutTitle = serviceConfig.workerLayoutTitle;
   const jobPlural = `${navLabels.jobNoun}s`;
 
   const mobileNavItems = [
@@ -57,7 +61,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
 
   const sidebarNavItems = [
     { icon: Home, label: 'Dashboard', path: '/technician' },
-    { icon: Bot, label: 'Field Operations Console', path: '/technician/ai-console' },
+    { icon: Bot, label: workerTitle, path: '/technician/ai-console' },
     { icon: ClipboardList, label: `My ${jobPlural}`, path: '/technician/jobs' },
     { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
     { icon: History, label: `${navLabels.jobNoun} History`, path: '/technician/history' },
