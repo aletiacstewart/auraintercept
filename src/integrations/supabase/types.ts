@@ -942,7 +942,6 @@ export type Database = {
           emergency_sms_enabled: boolean | null
           emergency_surcharge: number | null
           followup_call_script: string | null
-          healthcare_compliance: boolean
           id: string
           industry_config: Json
           industry_vertical: string | null
@@ -1079,7 +1078,6 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
-          healthcare_compliance?: boolean
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
@@ -1216,7 +1214,6 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
-          healthcare_compliance?: boolean
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
