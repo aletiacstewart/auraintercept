@@ -1,66 +1,56 @@
-## Goal
-Complete the industry-aware refactor so every console, dashboard widget, KPI tile, and AI agent prompt adapts to the active `industryAgentMap` config — across all 28 verticals (validated end-to-end with the demo accounts).
+# Remove Healthcare Verticals
 
-## What's already done
-- `src/lib/industryAgentMap.ts` — central config with field/booking/repair variants and 18+ industry overrides.
-- `FieldOpsConsole`, `FieldOpsAgentConsole`, `FieldOpsManager`, `FieldOperations` page — read from the map.
+Strip the 6 healthcare industry packs and all related code, prompts, integrations, demo accounts, and docs. Leave every other vertical (trades, outdoor, repair, salon, restaurant, real estate, fitness, beauty, professional, SaaS, personal assistant) untouched.
 
-## Remaining changes
+## Healthcare verticals being removed
 
-### 1. Technician surfaces (mobile workers across all verticals)
-- **`src/pages/technician/TechnicianAIConsole.tsx`** — replace hardcoded "Field Operations Console" title/subtitle with `cfg.workerConsoleTitle` / `workerConsoleDescription` from `industryAgentMap`. Pass industry-aware `show` list to `SpecialistOperativesLauncher`.
-- **`src/pages/technician/TechnicianDashboard.tsx`** —
-  - Replace `STATUS_STYLES` labels (`En Route`, `On Site`, …) with `cfg.statusLabels`.
-  - Replace stat card labels (`Pending` / `Active` / `Done`) and "Active Jobs"/"All Jobs" copy with `cfg.jobNoun` derivatives ("Open Visits", "All Appointments", etc.).
-  - `getNextAction` labels (`Start Route`, `Check In`, `Start Job`, `Complete`) come from a `cfg`-driven map (booking → "Check In Pet/Client", "Start Visit/Service").
-  - "Directions" button hidden when `cfg.fieldRouting === false` (already gated by `showAddress`, but reinforce).
+`medical_office`, `dental`, `veterinary`, `chiropractic`, `optometry`, `physical_therapy`
 
-### 2. Operations consoles (route by `operatingModel`)
-- **`src/pages/operations/AppointmentConsole.tsx`** —
-  - Use `getIndustryServiceConsoleConfig(pack)` for title, KPI labels (`cfg.providerNoun`, `cfg.roomNoun`, `cfg.jobNounPlural`).
-  - Remove the trades-specific footer copy ("no truck map, no dispatch board") in favor of `cfg.appointmentBoardDescription`.
-  - Wire booking-cluster KPIs (no-shows, today, week) to industry copy ("Visits today", "Appointments today", "Showings today").
-- **`src/pages/operations/PipelineConsole.tsx`** — remove "no dispatch board, no truck map" comparative copy; use neutral `cfg`-driven description.
-- **`src/pages/operations/ReceptionistConsole.tsx`** + **`CustomConsole.tsx`** — pass through industry-aware title/description from `cfg`.
+## Database changes (migration)
 
-### 3. Dashboard widgets & KPI strip
-- **`src/components/dashboard/AuraTodayStrip.tsx`** — replace hardcoded "Open Jobs" tile with `cfg.openWorkLabel` + `cfg.openWorkRoute` and adjust the icon (`Wrench` only for field clusters; `CalendarCheck` for booking; `Briefcase` for repair). "Today's Bookings" label uses `cfg.todayLabel`.
-- **`src/components/dashboard/IndustryWidgetGrid.tsx`** — already industry-driven via `pack.dashboard_widgets`; add a guard so any widget whose `cta.route` hits `/dashboard/dispatch-field-ops` is auto-rerouted to `cfg.openWorkRoute` when `cfg.fieldRouting === false` (prevents booking accounts landing on the dispatch map).
+1. `DELETE FROM industry_template_packs WHERE industry_id IN (...6 ids)`
+2. Reset 6 demo companies' `industry_vertical` so they don't render healthcare UI:
+   - Easier path: delete the 6 demo companies + their child rows entirely (cascades to user_roles, leads, jobs, etc.) so the seeder no longer surfaces them.
+   - Companies: Demo Chiropractic, Dental, Medical Office, Optometry, Physical Therapy, Veterinary Clinic.
+3. Delete the matching `auth.users` rows for `*admin@demo.com`, `*employee@demo.com`, `*customer@demo.com` for those 6 verticals (via `auth.admin.deleteUser` from a one-shot edge function — AI cannot directly write `auth.users`).
 
-### 4. AI prompt context (so agents *behave* per industry, not just *look* it)
-- **`src/hooks/useMultiAgentChat.ts`** — extend `buildEnrichedContext()` to inject:
-  - `industry_id`, `industry_label`, `cluster`
-  - `terminology` block (jobNoun, customerNoun, teamMemberNoun, providerNoun, roomNoun)
-  - `fieldRouting` flag and HIPAA/clinical guardrail line for healthcare clusters.
-  Source from `useIndustryPack()` + `getIndustryServiceConsoleConfig()`. Pass through to the `ai-agent-chat` edge function in `pageContext` (no edge changes required; the prompt-injection helper already reads it).
+## Code deletions
 
-### 5. Validation pass
-- Add a small lint script `scripts/audit-industry-strings.ts` (dev-only, not shipped) that grep-fails on any remaining hardcoded "Field Operations", "Technician", "Dispatch", "Truck" strings outside the trades-cluster overrides and `industryAgentMap.ts` itself.
-- Manual smoke-test (using existing demo accounts from the demo registry) for one account per cluster:
-  - **Trades:** `hvacadmin@demo.com`
-  - **Outdoor:** `landscapeadmin@demo.com`
-  - **Repair:** `autocareadmin@demo.com`
-  - **Booking:** `salonadmin@demo.com`
-  - **Healthcare:** `veterinaryadmin@demo.com`, `dentaladmin@demo.com`
-  - **Pro/RE:** `realestateadmin@demo.com`, `professionaladmin@demo.com`
-  - **Restaurants:** `restaurantsadmin@demo.com`
-  Verify: sidebar labels, dashboard KPI strip, widget grid, operations console, technician dashboard, technician AI console, and AI agent greeting all reflect industry terminology.
+- `src/lib/integrations/healthcare/registry.ts` — delete file + folder
+- `src/pages/HealthcareIntegrationsConsole.tsx` — delete file
+- Remove route + nav entry in `src/App.tsx` and any sidebar referencing healthcare integrations console
 
-## Files to edit
-- `src/pages/technician/TechnicianAIConsole.tsx`
-- `src/pages/technician/TechnicianDashboard.tsx`
-- `src/pages/operations/AppointmentConsole.tsx`
-- `src/pages/operations/PipelineConsole.tsx`
-- `src/pages/operations/ReceptionistConsole.tsx`
-- `src/pages/operations/CustomConsole.tsx`
-- `src/components/dashboard/AuraTodayStrip.tsx`
-- `src/components/dashboard/IndustryWidgetGrid.tsx`
-- `src/hooks/useMultiAgentChat.ts`
-- `scripts/audit-industry-strings.ts` (new, dev tool)
+## Code edits (strip healthcare branches)
+
+For each file below, remove only the healthcare-specific cases / IDs / HIPAA logic; keep the rest:
+
+- `src/hooks/useMultiAgentChat.ts` — drop HIPAA guardrail injection
+- `src/lib/industryAgentMap.ts` — remove healthcare console configs (Care Team, Reception Agent overrides, providerNoun, pet/patient terminology)
+- `src/lib/industryIdAliases.ts` — remove healthcare aliases
+- `src/lib/industryHelpPrompts.ts`, `industryHelpContent.ts`, `industryRolePreview.ts`, `industryCapabilities.ts`, `industryFastStartQuestions.ts`, `industryVoiceGreetings.ts`, `industryAnalyticsPresets.ts`, `industryTemplates.ts`, `industryMarketingPlaybooks.ts`, `industryMarketingContent.ts`, `agentStyles.ts`, `documentationConfig.ts` — remove healthcare entries
+- `src/components/onboarding/BusinessTypeSelector.tsx` + `CustomIndustryWizard.tsx` — remove healthcare options
+- `src/components/knowledge/AIContentProfileManager.tsx`, `tutorial/TutorialStep.tsx`, `documentation/IndustryMarketingKitPDF.tsx`, `PlatformDocumentPDF.tsx`, `PlatformFAQPDF.tsx`, `integrations/RecommendedPlanCalculator.tsx` — strip healthcare cases
+- `src/pages/Index.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/TermsOfService.tsx`, `src/pages/PrivacyPolicy.tsx` — remove healthcare marketing copy + HIPAA mentions
+- `supabase/functions/seed-demo-accounts-v2/index.ts` — remove the 6 healthcare seed entries
+- `supabase/functions/_shared/industry-pack.ts` — remove healthcare branches
+
+## Memory cleanup
+
+Delete:
+- `mem://features/industry/healthcare-vertical-pack`
+- `mem://features/integrations/healthcare-integrations-scope`
+
+Update `mem://index.md` to remove those two lines and update Demo Account Registry note (54 → 36 accounts; 18 → 12 industries).
+
+## Validation
+
+- Grep `rg -i "healthcare|hipaa|medical_office|veterinar|chiropract|optometry|physical_therapy|dental"` across `src/` + `supabase/functions/` and confirm only intentional matches remain (e.g. landing-page "no medical records" disclaimers if user wants — otherwise also removed).
+- Run `psql` confirm 6 packs gone, 6 demo companies gone.
+- Smoke-test: log in as `hvacadmin@demo.com` (trades) and `salonadmin@demo.com` (booking) — both consoles still render correctly.
 
 ## Out of scope
-- No DB migrations.
-- No new edge functions (existing `ai-agent-chat` already accepts `pageContext`).
-- No changes to the 28 industry packs themselves — all overrides live in `industryAgentMap.ts`.
 
-Reply **"go"** to execute. Specify any specific demo account you want validated first.
+- No changes to trades, outdoor, repair, salon, restaurant, real estate, fitness, beauty, professional, SaaS, personal assistant verticals.
+- The recent industry-aware console refactor stays in place — it correctly serves the remaining non-trades verticals (salon, restaurant, real estate, etc.).
+
+Reply **go** to execute.
