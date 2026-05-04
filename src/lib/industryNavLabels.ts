@@ -1,4 +1,5 @@
 import type { IndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 export interface IndustryNavLabels {
   /** Label for the field-tech / front-line worker view in the sidebar. */
@@ -178,9 +179,22 @@ const INDUSTRY_OVERRIDES: Record<string, IndustryNavLabels> = {
 };
 
 export function getNavLabels(pack: IndustryPack): IndustryNavLabels {
-  return INDUSTRY_OVERRIDES[pack.industry_id]
-      ?? CLUSTER_DEFAULTS[pack.cluster]
-      ?? CLUSTER_DEFAULTS.trades;
+  // Single source of truth: derive sidebar labels from the same console
+  // config that powers the page headers. This prevents the sidebar from
+  // saying "Technician View" while the page header says "Project Operations
+  // Console" for the same industry.
+  const config = getIndustryServiceConsoleConfig(pack);
+  const fallback =
+    INDUSTRY_OVERRIDES[pack.industry_id] ??
+    CLUSTER_DEFAULTS[pack.cluster] ??
+    CLUSTER_DEFAULTS.trades;
+  const stripConsole = (s: string) => s.replace(/\s+Console$/i, '').trim();
+  return {
+    techView:       stripConsole(config.workerConsoleTitle) || fallback.techView,
+    dispatchView:   stripConsole(config.consoleTitle)       || fallback.dispatchView,
+    teamMemberNoun: config.teamMemberNoun                   || fallback.teamMemberNoun,
+    jobNoun:        config.jobNoun                          || fallback.jobNoun,
+  };
 }
 
 /**
