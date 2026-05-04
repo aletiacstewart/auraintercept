@@ -3,16 +3,25 @@ import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDash
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { useAuth } from '@/contexts/AuthContext';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 
 export default function TechnicianAIConsole() {
   const { companyId, loading } = useAuth();
+  const { pack } = useIndustryPack();
+  const cfg = pack ? getIndustryServiceConsoleConfig(pack) : null;
+  const title = cfg?.workerConsoleTitle ?? 'Service Delivery Console';
+  const subtitle = cfg?.workerConsoleDescription ?? 'Your intelligent operations assistant';
+  const specialists = cfg?.specialistShow ?? ['diagnostic', 'permit_code'];
+  const specialistTitle = cfg?.specialistTitle ?? 'Need a Specialist?';
+  const specialistSubtitle = cfg?.specialistSubtitle ?? 'Quick access to specialist operatives.';
 
   return (
     <TechnicianDashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Field Operations Console</h1>
-          <p className="text-muted-foreground mt-1">Your intelligent field operations assistant</p>
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+          <p className="text-muted-foreground mt-1">{subtitle}</p>
         </div>
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -23,9 +32,9 @@ export default function TechnicianAIConsole() {
             <FieldOpsAgentConsole companyId={companyId} />
             <div className="mt-6">
               <SpecialistOperativesLauncher
-                show={['diagnostic', 'permit_code']}
-                title="Need a Specialist?"
-                subtitle="Quick access to diagnostic and permit/code lookups while on-site."
+                show={specialists}
+                title={specialistTitle}
+                subtitle={specialistSubtitle}
               />
             </div>
           </>
