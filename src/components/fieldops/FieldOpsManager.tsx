@@ -420,10 +420,10 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3">
               <Truck className="h-6 w-6 text-accent" />
-              Dispatch-Field Ops
+              {serviceConfig.consoleTitle}
             </h1>
             <p className="text-card-muted text-sm mt-1">
-              Dispatch, track & manage field operations
+              {serviceConfig.consoleDescription}
             </p>
           </div>
           <div className="flex items-center gap-4 flex-wrap">
