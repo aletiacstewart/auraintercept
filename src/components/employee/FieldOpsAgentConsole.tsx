@@ -164,7 +164,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: serviceConfig.defaultOperative
+    initialAgent: serviceConfig.defaultOperative,
     onAgentChange: (agent) => {
       console.log('[FieldOps] Agent changed to:', agent);
     },
@@ -196,7 +196,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           )
         `)
         .eq('employee_id', user.id)
-        .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'])
+        .in('status', serviceConfig.fieldRouting ? ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'] : ['pending_acceptance', 'accepted', 'arrived', 'in_progress'])
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -265,7 +265,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     await sendMessage(message);
   };
 
-  const handleQuickAction = useCallback(async (action: FieldOpsQuickAction) => {
+  const handleQuickAction = useCallback(async (action: ServiceQuickAction) => {
     // Check if this is an employee-only action and user is not an employee
     const isEmployeeOnlyAction = EMPLOYEE_ONLY_ACTIONS.includes(action.id);
     if (isEmployeeOnlyAction && !canPerformJobActions) {
