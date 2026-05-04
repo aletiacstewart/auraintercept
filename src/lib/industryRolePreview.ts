@@ -3,7 +3,7 @@
  * (RolePreviewRow) on the /for-business marketing page. The 3 cards
  * (Owner Dashboard, Field/Team App, Customer Portal) must reflect the
  * selected industry — never fall through to "Technician / pay invoices /
- * AC repair" copy for healthcare, real estate, restaurants, etc.
+ * AC repair" copy for real estate, restaurants, etc.
  *
  * Resolution: industry override → cluster default → trades fallback.
  * Keyed off the marketing dropdown industry IDs (see industryMarketingContent.ts).
