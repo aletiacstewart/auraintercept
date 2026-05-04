@@ -1,56 +1,50 @@
-# Remove Healthcare Verticals
+## Goal
 
-Strip the 6 healthcare industry packs and all related code, prompts, integrations, demo accounts, and docs. Leave every other vertical (trades, outdoor, repair, salon, restaurant, real estate, fitness, beauty, professional, SaaS, personal assistant) untouched.
+Eliminate every leftover reference to the 6 healthcare verticals (`dental`, `chiropractic`, `medical_office`, `veterinary`, `physical_therapy`, `optometry`) — plus aliases like `medical`, `vet`, `chiro`, etc. — across libs, dropdowns, consoles, dashboards, marketing copy, and documentation generators. Database packs/companies were already cleared in a prior pass; this pass cleans the remaining code paths.
 
-## Healthcare verticals being removed
+## Scope
 
-`medical_office`, `dental`, `veterinary`, `chiropractic`, `optometry`, `physical_therapy`
+Confirmed clean (already removed in prior pass): `industry_template_packs`, demo companies, BusinessTypeSelector, useMultiAgentChat HIPAA logic, HealthcareIntegrationsConsole, Index/PrivacyPolicy/TermsOfService healthcare blocks, seed-demo-accounts-v2, _shared/industry-pack.
 
-## Database changes (migration)
+Files still containing healthcare entries to clean:
 
-1. `DELETE FROM industry_template_packs WHERE industry_id IN (...6 ids)`
-2. Reset 6 demo companies' `industry_vertical` so they don't render healthcare UI:
-   - Easier path: delete the 6 demo companies + their child rows entirely (cascades to user_roles, leads, jobs, etc.) so the seeder no longer surfaces them.
-   - Companies: Demo Chiropractic, Dental, Medical Office, Optometry, Physical Therapy, Veterinary Clinic.
-3. Delete the matching `auth.users` rows for `*admin@demo.com`, `*employee@demo.com`, `*customer@demo.com` for those 6 verticals (via `auth.admin.deleteUser` from a one-shot edge function — AI cannot directly write `auth.users`).
+### Industry config libs (remove all 6 healthcare cases + healthcare cluster/base helpers)
+1. `src/lib/industryAgentMap.ts` — delete `healthcareBase()` helper and the 6 dental/chiropractic/medical_office/physical_therapy/optometry/veterinary entries in `INDUSTRY_OVERRIDES`. Remove `Stethoscope` and `HeartPulse` imports if unused after.
+2. `src/lib/industryRolePreview.ts` — drop `healthcare` from `Cluster` union, remove `healthcare` block in `CLUSTERS`, remove healthcare entries from `INDUSTRY_TO_CLUSTER`, remove `veterinary`/`dental`/`optometry` overrides in `INDUSTRY_OVERRIDES`.
+3. `src/lib/industryIdAliases.ts` — delete healthcare alias block (lines 31–46) and the 6 healthcare IDs from `CANONICAL_INDUSTRY_IDS`.
+4. `src/lib/industryCapabilities.ts` — drop the 6 healthcare IDs from the in-office set; remove healthcare comments.
+5. `src/lib/agentStyles.ts` — delete the 6 healthcare rows in agent style map.
+6. `src/lib/industryVoiceGreetings.ts` — delete the 6 healthcare greeting entries.
+7. `src/lib/industryFastStartQuestions.ts` — delete the 6 healthcare question blocks.
+8. `src/lib/industryHelpPrompts.ts` — remove `HEALTHCARE_*` constants and the 6 healthcare entries.
+9. `src/lib/industryHelpContent.ts` — remove `HEALTHCARE_BASE`, `VETERINARY_OVERRIDE`, and the 6 keys.
+10. `src/lib/industryMarketingPlaybooks.ts` — delete the 6 healthcare playbooks.
+11. `src/lib/industryMarketingContent.ts` — delete the 6 healthcare `make()` blocks (the “Healthcare & Wellness” section).
+12. `src/lib/industryTemplates.ts` — delete the 6 healthcare template blocks.
+13. `src/lib/industryAnalyticsPresets.ts` — drop any healthcare presets if present (verify by reading).
+14. `src/lib/documentationConfig.ts` — remove the “Healthcare verticals” line listing Dental/Chiropractic/etc.
 
-## Code deletions
+### Components / pages
+15. `src/components/knowledge/AIContentProfileManager.tsx` — remove the "Health & Medical" group (Medical Practice, Dental Practice, Chiropractic, Physical Therapy, Veterinary Services).
+16. `src/components/documentation/IndustryMarketingKitPDF.tsx` — remove the 6 healthcare color entries + comment.
+17. `src/components/integrations/RecommendedPlanCalculator.tsx` — change `'Medical, legal, or senior-focused businesses'` to remove "Medical" (use `'Legal or senior-focused businesses'`).
 
-- `src/lib/integrations/healthcare/registry.ts` — delete file + folder
-- `src/pages/HealthcareIntegrationsConsole.tsx` — delete file
-- Remove route + nav entry in `src/App.tsx` and any sidebar referencing healthcare integrations console
+### Intentionally NOT changing (false positives — generic English word "patient", legal "medical/legal/financial advice" disclaimer, etc.)
+- `supabase/functions/voice-handler/index.ts` ("Be patient")
+- `src/components/settings/AuraIntelligenceSettings.tsx` ("be patient when collecting")
+- `src/components/integrations/ElevenLabsSetupGuide.tsx`, `ElevenLabsVoiceSetupGuide.tsx` (ElevenLabs `Patient` eagerness setting — vendor terminology)
+- `src/pages/TermsOfService.tsx` (legal/medical/financial advice disclaimer — standard legal language)
+- `src/pages/PrivacyPolicy.tsx` (no healthcare hits, just substring match)
+- `src/components/tutorial/TutorialStep.tsx` ("Intercept all clicks")
+- `src/pages/DispatchFieldOpsInstall.tsx` (generic comment example mentioning "Patient Schedule" — will rewrite comment to drop it)
+- `src/integrations/supabase/types.ts` (auto-generated)
+- Migration files (historical, immutable record)
 
-## Code edits (strip healthcare branches)
+### Database
+No additional migrations needed — packs and demo companies were already deleted, and zero healthcare rows remain (verified).
 
-For each file below, remove only the healthcare-specific cases / IDs / HIPAA logic; keep the rest:
+## Verification
 
-- `src/hooks/useMultiAgentChat.ts` — drop HIPAA guardrail injection
-- `src/lib/industryAgentMap.ts` — remove healthcare console configs (Care Team, Reception Agent overrides, providerNoun, pet/patient terminology)
-- `src/lib/industryIdAliases.ts` — remove healthcare aliases
-- `src/lib/industryHelpPrompts.ts`, `industryHelpContent.ts`, `industryRolePreview.ts`, `industryCapabilities.ts`, `industryFastStartQuestions.ts`, `industryVoiceGreetings.ts`, `industryAnalyticsPresets.ts`, `industryTemplates.ts`, `industryMarketingPlaybooks.ts`, `industryMarketingContent.ts`, `agentStyles.ts`, `documentationConfig.ts` — remove healthcare entries
-- `src/components/onboarding/BusinessTypeSelector.tsx` + `CustomIndustryWizard.tsx` — remove healthcare options
-- `src/components/knowledge/AIContentProfileManager.tsx`, `tutorial/TutorialStep.tsx`, `documentation/IndustryMarketingKitPDF.tsx`, `PlatformDocumentPDF.tsx`, `PlatformFAQPDF.tsx`, `integrations/RecommendedPlanCalculator.tsx` — strip healthcare cases
-- `src/pages/Index.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/TermsOfService.tsx`, `src/pages/PrivacyPolicy.tsx` — remove healthcare marketing copy + HIPAA mentions
-- `supabase/functions/seed-demo-accounts-v2/index.ts` — remove the 6 healthcare seed entries
-- `supabase/functions/_shared/industry-pack.ts` — remove healthcare branches
-
-## Memory cleanup
-
-Delete:
-- `mem://features/industry/healthcare-vertical-pack`
-- `mem://features/integrations/healthcare-integrations-scope`
-
-Update `mem://index.md` to remove those two lines and update Demo Account Registry note (54 → 36 accounts; 18 → 12 industries).
-
-## Validation
-
-- Grep `rg -i "healthcare|hipaa|medical_office|veterinar|chiropract|optometry|physical_therapy|dental"` across `src/` + `supabase/functions/` and confirm only intentional matches remain (e.g. landing-page "no medical records" disclaimers if user wants — otherwise also removed).
-- Run `psql` confirm 6 packs gone, 6 demo companies gone.
-- Smoke-test: log in as `hvacadmin@demo.com` (trades) and `salonadmin@demo.com` (booking) — both consoles still render correctly.
-
-## Out of scope
-
-- No changes to trades, outdoor, repair, salon, restaurant, real estate, fitness, beauty, professional, SaaS, personal assistant verticals.
-- The recent industry-aware console refactor stays in place — it correctly serves the remaining non-trades verticals (salon, restaurant, real estate, etc.).
+After edits, run `rg -in "medical_office|dental|veterinar|chiropract|optometr|physical_therapy|hipaa|healthcare" src/ --glob '!types.ts'` and expect zero hits except the legal disclaimer in TermsOfService.tsx and vendor "Patient" eagerness label in ElevenLabs guides.
 
 Reply **go** to execute.

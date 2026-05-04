@@ -125,43 +125,6 @@ export const INDUSTRY_FAST_START_QUESTIONS: Record<string, FastStartQuestion[]> 
     { key: 'discovery_call', label: 'Discovery-call process', placeholder: 'e.g. 30 min, then written proposal in 2 days' },
   ],
 
-  // Healthcare — kept generic & HIPAA-safe (no medical specifics)
-  chiropractic: [
-    { key: 'service_radius', label: 'Office location & service area', placeholder: 'e.g. Tempe AZ' },
-    { key: 'insurance_accepted', label: 'Insurance accepted', placeholder: 'e.g. BCBS, Aetna, United, cash plans available' },
-    { key: 'new_patient_flow', label: 'New patient appointment flow', placeholder: 'e.g. 60-min eval, then treatment plan visit' },
-    { key: 'cancellation', label: 'Cancellation policy', placeholder: 'e.g. 24-hr notice required' },
-  ],
-  dental: [
-    { key: 'insurance_accepted', label: 'Insurance accepted', placeholder: 'e.g. most PPOs, in-house membership for uninsured' },
-    { key: 'service_summary', label: 'Services offered', placeholder: 'e.g. general, cosmetic, Invisalign, implants' },
-    { key: 'new_patient_flow', label: 'New patient flow', placeholder: 'e.g. exam + cleaning + X-rays at first visit' },
-    { key: 'after_hours', label: 'After-hours / emergency policy', placeholder: 'e.g. on-call line for active patients' },
-  ],
-  medical_office: [
-    { key: 'service_summary', label: 'Practice type & services', placeholder: 'e.g. family medicine, well-visits, sick-visits' },
-    { key: 'insurance_accepted', label: 'Insurance accepted', placeholder: 'e.g. major commercial + Medicare' },
-    { key: 'new_patient_policy', label: 'New patient acceptance', placeholder: 'e.g. accepting new patients, waitlist 4 weeks' },
-    { key: 'cancellation', label: 'Cancellation / no-show policy', placeholder: 'e.g. $50 fee after 24 hrs notice' },
-  ],
-  optometry: [
-    { key: 'insurance_accepted', label: 'Vision & medical insurance', placeholder: 'e.g. VSP, EyeMed, Davis + most medical' },
-    { key: 'service_summary', label: 'Services offered', placeholder: 'e.g. comprehensive exams, contacts, dry-eye, kids' },
-    { key: 'new_patient_flow', label: 'New patient flow', placeholder: 'e.g. 45-min exam, optical try-on after' },
-    { key: 'cancellation', label: 'Cancellation policy', placeholder: 'e.g. 24-hr notice' },
-  ],
-  physical_therapy: [
-    { key: 'insurance_accepted', label: 'Insurance accepted', placeholder: 'e.g. most plans, cash-pay $90/session' },
-    { key: 'referral_required', label: 'Referral required?', placeholder: 'e.g. yes for most insurance, direct-access OK in our state' },
-    { key: 'service_summary', label: 'Specialties', placeholder: 'e.g. ortho, sports, post-op, pelvic floor' },
-    { key: 'session_length', label: 'Session length & frequency', placeholder: 'e.g. 45 min, 2x/week typical' },
-  ],
-  veterinary: [
-    { key: 'service_summary', label: 'Species & services', placeholder: 'e.g. dogs/cats, wellness + surgery + dental' },
-    { key: 'after_hours', label: 'After-hours / emergency policy', placeholder: 'e.g. refer to BluePearl after 6pm' },
-    { key: 'new_patient_flow', label: 'New patient flow', placeholder: 'e.g. records request, then 30-min new-patient exam' },
-    { key: 'cancellation', label: 'Cancellation policy', placeholder: 'e.g. 24-hr notice, $30 no-show fee' },
-  ],
 };
 
 export const GENERIC_FAST_START_QUESTIONS: FastStartQuestion[] = [

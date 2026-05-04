@@ -35,13 +35,6 @@ const colors = {
   beauty: '#ec4899',
   food: '#f97316',
   personal: '#14b8a6',
-  // Healthcare & Wellness (appointments + insurance verification only)
-  dental: '#0ea5e9',
-  chiropractic: '#10b981',
-  medical: '#3b82f6',
-  veterinary: '#f59e0b',
-  physical_therapy: '#8b5cf6',
-  optometry: '#06b6d4',
 };
 
 const styles = StyleSheet.create({

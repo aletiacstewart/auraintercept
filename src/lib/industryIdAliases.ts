@@ -28,22 +28,6 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   handyman_cleaning: 'handyman',
   // legacy
   general_contractor: 'construction',
-  // Healthcare verticals (appointments + insurance verification only)
-  dentist: 'dental',
-  dentistry: 'dental',
-  chiro: 'chiropractic',
-  chiropractor: 'chiropractic',
-  medical: 'medical_office',
-  medical_practice: 'medical_office',
-  doctor: 'medical_office',
-  vet: 'veterinary',
-  veterinarian: 'veterinary',
-  pt: 'physical_therapy',
-  physio: 'physical_therapy',
-  physiotherapy: 'physical_therapy',
-  optom: 'optometry',
-  optometrist: 'optometry',
-  eye_care: 'optometry',
 };
 
 /**
@@ -70,13 +54,6 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'restaurants',
   'personal_assistant',
   'fencing',
-  // Healthcare (appointments + insurance only — no PHI/EHR/meds)
-  'dental',
-  'chiropractic',
-  'medical_office',
-  'veterinary',
-  'physical_therapy',
-  'optometry',
   'other',
 ]);
 

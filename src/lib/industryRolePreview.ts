@@ -3,7 +3,7 @@
  * (RolePreviewRow) on the /for-business marketing page. The 3 cards
  * (Owner Dashboard, Field/Team App, Customer Portal) must reflect the
  * selected industry — never fall through to "Technician / pay invoices /
- * AC repair" copy for healthcare, real estate, restaurants, etc.
+ * AC repair" copy for real estate, restaurants, etc.
  *
  * Resolution: industry override → cluster default → trades fallback.
  * Keyed off the marketing dropdown industry IDs (see industryMarketingContent.ts).
@@ -23,7 +23,7 @@ export interface RolePreviewCopy {
   loginRoles: string;
 }
 
-type Cluster = 'trades' | 'outdoor' | 'repair' | 'booking' | 'healthcare' | 'realestate' | 'hospitality';
+type Cluster = 'trades' | 'outdoor' | 'repair' | 'booking' | 'realestate' | 'hospitality';
 
 const CLUSTERS: Record<Cluster, RolePreviewCopy> = {
   trades: {
@@ -98,24 +98,6 @@ const CLUSTERS: Record<Cluster, RolePreviewCopy> = {
     },
     loginRoles: 'admin, staff & client',
   },
-  healthcare: {
-    owner: {
-      title: 'Practice Dashboard',
-      description: 'See every call, new patient, appointment, and dollar flowing through your practice — in real time.',
-      highlights: ['Live call & new-patient feed', 'Production analytics', 'Aura command center'],
-    },
-    field: {
-      title: 'Provider App',
-      description: "Mobile app your providers use chairside or in-room. Today's schedule, chart notes, photos — all in one.",
-      highlights: ["Today's appointments", 'One-tap patient lookup', 'Chart notes & photos'],
-    },
-    customer: {
-      title: 'Patient Portal',
-      description: 'What your patients see — book appointments, get reminders, chat with the front desk 24/7.',
-      highlights: ['Self-service booking', 'Appointment reminders', '24/7 AI front desk'],
-    },
-    loginRoles: 'admin, provider & patient',
-  },
   realestate: {
     owner: {
       title: 'Brokerage Dashboard',
@@ -173,35 +155,10 @@ const INDUSTRY_TO_CLUSTER: Record<string, Cluster> = {
   legal: 'booking', accounting: 'booking', cleaning: 'outdoor',
   // Hospitality
   restaurants: 'hospitality', restaurant: 'hospitality',
-  // Healthcare
-  dental: 'healthcare', medical_office: 'healthcare', chiropractic: 'healthcare',
-  physical_therapy: 'healthcare', optometry: 'healthcare', veterinary: 'healthcare',
 };
 
 /** Per-industry overrides for verticals where cluster defaults aren't tight enough. */
 const INDUSTRY_OVERRIDES: Record<string, Partial<RolePreviewCopy>> = {
-  veterinary: {
-    customer: {
-      title: 'Pet Owner Portal',
-      description: 'What pet owners see — book visits, view records, chat with the front desk 24/7.',
-      highlights: ['Self-service booking', 'Visit reminders', '24/7 AI front desk'],
-    },
-    loginRoles: 'admin, vet & pet owner',
-  },
-  dental: {
-    field: {
-      title: 'Hygienist & Provider App',
-      description: "Mobile app your hygienists and dentists use chairside. Today's schedule, charting, photos — all in one.",
-      highlights: ["Today's chair schedule", 'One-tap patient lookup', 'Charting & photos'],
-    },
-  },
-  optometry: {
-    field: {
-      title: 'Optometrist App',
-      description: "Mobile app your providers use exam-side. Today's exams, patient notes, frame & Rx history — all in one.",
-      highlights: ["Today's exams", 'Patient lookup', 'Rx & frame history'],
-    },
-  },
   beauty_wellness: {
     owner: {
       title: 'Salon Dashboard',
