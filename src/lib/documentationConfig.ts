@@ -481,8 +481,6 @@ export const PLATFORM_STATS = {
     'Landscape & Trees', 'Pool & Spa', 'Pest Control', 'Appliance Repair',
     'Handyman & Cleaning', 'Construction', 'Auto Care', 'Security Systems',
     'Real Estate', 'Beauty & Wellness', 'Restaurants', 'Personal Assistant',
-    // Healthcare verticals (appointments + insurance verification only)
-    'Dental', 'Chiropractic', 'Medical Office', 'Veterinary', 'Physical Therapy', 'Optometry',
   ],
 };
 

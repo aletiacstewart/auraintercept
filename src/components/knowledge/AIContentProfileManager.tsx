@@ -79,12 +79,6 @@ const INDUSTRY_OPTIONS = [
   'Web Design & Development',
   'SaaS (Software as a Service)',
   'DaaS (Data as a Service)',
-  // Health & Medical
-  'Medical Practice',
-  'Dental Practice',
-  'Chiropractic',
-  'Physical Therapy',
-  'Veterinary Services',
   // Automotive
   'Auto Repair',
   'Auto Detailing',

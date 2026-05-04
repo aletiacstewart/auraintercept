@@ -33,13 +33,6 @@ const PER_INDUSTRY: Record<string, string> = {
   personal_assistant: 'Thanks for calling {company}. This is Aura — how can I help you today?',
   professional: 'Thanks for calling {company}. This is Aura — how can I direct your call today?',
   saas_platform: 'Thanks for contacting {company}. This is Aura — are you a customer needing support, or exploring our platform?',
-  // Healthcare — HIPAA-aware: never reference clinical specifics in the greeting.
-  dental: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or ask a quick question?',
-  medical_office: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or ask a quick question?',
-  chiropractic: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or ask a quick question?',
-  physical_therapy: 'Thanks for calling {company}. This is Aura — would you like to book, reschedule, or ask a quick question?',
-  optometry: 'Thanks for calling {company}. This is Aura — would you like to book an exam, reschedule, or ask a quick question?',
-  veterinary: 'Thanks for calling {company}. This is Aura — would you like to book a visit, reschedule, or ask a quick question?',
 };
 
 export function getIndustryVoiceGreeting(

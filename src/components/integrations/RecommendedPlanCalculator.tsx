@@ -160,7 +160,7 @@ export function RecommendedPlanCalculator() {
         { email: true, sms: false, voice: true },
         ['Very personal feel', 'High engagement', 'Great for older demographics'],
         ['Higher cost than SMS', 'Some prefer text'],
-        'Medical, legal, or senior-focused businesses'
+        'Legal or senior-focused businesses'
       ),
     ];
   }, [monthlyAppointments, avgServiceValue, currentNoShowRate]);
