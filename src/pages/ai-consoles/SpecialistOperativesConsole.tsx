@@ -375,7 +375,7 @@ export default function SpecialistOperativesConsole() {
             </Alert>
           )}
 
-          {tierUnlocked && !inIndustry && (
+          {tierUnlocked && !inIndustry && visibleSpecialists.length > 0 && (
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
