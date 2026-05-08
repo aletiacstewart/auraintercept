@@ -1,48 +1,39 @@
-# Add Industry Switcher access to Platform Admin Dashboard
+# Add 4 missing industries to the demo seeder
 
 ## Problem
 
-You logged in as `superadmin@auraintercept.ai` but landed on the regular Platform Admin dashboard instead of `/super-switcher`. Two things to fix:
+`industry_template_packs` has **22 active packs**, but the demo seeder (`supabase/functions/seed-demo-accounts-v2/index.ts`) only contains **18 industry definitions**. The 4 missing ones are exactly what you reported:
 
-1. The auto-redirect only fires from one login form (`handleLogin` in `Auth.tsx`). If the session was already active, or you came in through a different path, the redirect is skipped — leaving you on `/dashboard` with no visible way to reach the switcher hub.
-2. There is no persistent UI affordance on the dashboard to open the switcher hub.
+- `fitness` — Fitness Studio
+- `salon` — Salon & Spa
+- `professional` — Professional Services
+- `saas_platform` — SaaS Platform
 
-You asked for **a button on the existing dashboard**, so the fix is presentation-only.
+Because there's no `IndustryDef` for them, the seeder never creates a demo company for those verticals, the Super Switcher cards stay marked **NOT SEEDED**, and the Company / Employee / Customer buttons are disabled.
 
-## What to build
+## Fix
 
-### 1. "Industry & Role Switcher" hero card on the Platform Admin dashboard
-- Visible only when the signed-in user is `superadmin@auraintercept.ai` (or any `platform_admin` — TBD, default to the superadmin email to keep the regular admin dashboard clean).
-- Placed at the top of the Platform Admin dashboard, above the existing "Welcome to the Aura Intercept admin panel" panel.
-- Cyber-Sentry styled card with:
-  - Title: "Demo Switcher Hub"
-  - Subtitle: "Jump into any industry as Company / Employee / Customer without logging out."
-  - Primary button: **"Open Switcher Hub"** → navigates to `/super-switcher`
-  - Secondary inline text showing the last-used industry (read from `aura_super_switcher_industry` localStorage key, if present) with a "Resume" shortcut.
+Add 4 new entries to the `INDUSTRIES` array in `seed-demo-accounts-v2/index.ts`, following the exact same shape as the existing entries (key, label, tier, services, inventory, blog posts, campaigns).
 
-### 2. Persistent header chip
-- Add a small "Switcher" chip next to the "CURRENT PLAN" badge in the top-right of the dashboard header, also gated to the superadmin email.
-- One click → `/super-switcher`.
-- Ensures the entry point is reachable from every screen in the admin shell, not just the dashboard body.
+Proposed tiers (matching the canonical 4-tier model and the type of business):
 
-### 3. Auth redirect hardening (small)
-- In `Auth.tsx`, the existing email check stays. Add one extra guard: when an already-authenticated `superadmin@auraintercept.ai` session lands on `/dashboard`, the new dashboard card is the safety net (no forced redirect — you stay where you are but the switcher is one click away).
+| industry_id     | Label                | Tier  | Inventory? |
+|-----------------|----------------------|-------|------------|
+| `fitness`       | Fitness Studio       | core  | null (service-only) |
+| `salon`         | Salon & Spa          | core  | yes (color, tools) |
+| `professional`  | Professional Services| boost | null (service-only) |
+| `saas_platform` | SaaS Platform        | pro   | null (service-only) |
 
-## Out of scope
+Each entry will include:
+- 5 representative services
+- 3 starter blog posts
+- 2 starter campaigns
+- Inventory rows only where it makes sense (salon)
 
-- No backend / RLS changes.
-- No changes to `useSuperSwitcher` hook or `SwitcherPill` (already mounted globally for active switcher sessions).
-- No edits to the demo seeder.
+## After deploy
 
-## Files to touch
+1. Edge function auto-deploys.
+2. From `/super-switcher` click **"Seed / repair all demos"**.
+3. The 4 cards flip to **LIVE**, with Company / Employee / Customer buttons enabled.
 
-- `src/pages/Dashboard.tsx` (or whichever component renders the "PLATFORM DASHBOARD" panel — confirm during implementation; likely `src/components/dashboard/PlatformAdminDashboard.tsx`).
-- Header component used by the platform admin shell (for the chip).
-- No new routes, no new edge functions.
-
-## Acceptance
-
-- Sign in as `superadmin@auraintercept.ai` → land on `/dashboard` → immediately see a "Demo Switcher Hub" card at the top with an **Open Switcher Hub** button.
-- Click it → arrive at `/super-switcher` with the existing 18-industry grid.
-- Header chip is visible from the dashboard for one-click access.
-- Regular `platform_admin` and `company_admin` users see no change.
+No DB migrations, no schema changes, no UI changes. Pure data added to the seeder function.
