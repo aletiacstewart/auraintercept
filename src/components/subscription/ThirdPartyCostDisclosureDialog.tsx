@@ -97,10 +97,12 @@ interface Props {
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
-  const isProOrElite = tierId === 'performance' || tierId === 'command' || /pro|elite/i.test(tierName);
-  const conciergeFee = isProOrElite ? 697 : 397; // legacy
-  // Use new pricing
-  const conciergePriceLabel = isProOrElite ? '$697' : '$397';
+  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial)
+  const isElite = tierId === 'command' || /elite/i.test(tierName);
+  const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
+  const isBoost = !isElite && !isPro && (tierId === 'connect' || /boost/i.test(tierName));
+  const conciergeFee = isElite ? 2197 : isPro ? 1197 : isBoost ? 697 : 497;
+  const conciergePriceLabel = `$${conciergeFee.toLocaleString()}`;
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);
 

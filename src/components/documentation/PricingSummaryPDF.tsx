@@ -407,7 +407,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$697 implementation fee</FeatureItem>
+        <FeatureItem>$1,197 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$697 implementation fee</FeatureItem>
+        <FeatureItem>$2,197 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
