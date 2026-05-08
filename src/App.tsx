@@ -10,6 +10,7 @@ import { VoiceProvider } from "@/contexts/VoiceContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
+import { SwitcherPill } from "@/components/super-switcher/SwitcherPill";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import { useEffect } from "react";
 import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
@@ -101,6 +102,7 @@ import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
 import PlatformHealth from "./pages/PlatformHealth";
 import DemoAccountSeeder from "./pages/DemoAccountSeeder";
+import SuperSwitcher from "./pages/SuperSwitcher";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
@@ -173,6 +175,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
                 <Route path="/demo/:trialId" element={<DemoAccess />} />
+                <Route path="/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
