@@ -523,8 +523,6 @@ export default function Customers() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Customer Dialog */}
-      <AddCustomerForm open={addCustomerOpen} onOpenChange={setAddCustomerOpen} />
     </DashboardLayout>
   );
 }
