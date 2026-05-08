@@ -1,47 +1,46 @@
+# Plan: Industry-Specific "Dispatch/GPS Console" Naming
 
-## 1. Rename "Dispatch Agent" → "Dispatch/GPS Console"
+## Goal
+For every industry that uses the Dispatch AI agent (technicians/repair people sent to homes/offices), unify naming so that:
+- The **sidebar group label**, the **Dispatch sub-item**, and the **page H1** all match.
+- Each industry gets its own branded title using the pattern:
+  - **Admin/Dispatch view**: `{Industry} Dispatch/GPS Console` (e.g. "HVAC Dispatch/GPS Console", "Plumbing Dispatch/GPS Console")
+  - **Worker/Field view**: `{Industry} Ops Console` (e.g. "Electrician Ops Console", "Plumber Ops Console")
+- Non-dispatch verticals (salon, fitness, restaurant, real estate, professional, personal_assistant, etc.) are **untouched** — they keep current labels.
 
-This is a display/label change only — the internal agent ID stays `dispatch` (no DB or routing changes). Everywhere the user-facing string `"Dispatch Agent"` appears, replace with `"Dispatch/GPS Console"`.
+## Scope: Dispatch industries
+HVAC, Plumbing, Electrical, Appliance Repair, Landscape, Pest Control, Pool & Spa, Roofing, Solar, Fencing, Construction, Handyman, Security Systems, Mobile Mechanic.
 
-Files to update (display strings only):
-- `src/lib/agentStyles.ts` and `src/lib/subscriptionAgentConfig.ts` — agent label map
-- `src/hooks/useAIAgentOrchestrator.ts`, `src/hooks/useRolePermissions.ts` — agent registry name fields
-- `src/pages/Subscription.tsx`, `src/pages/AIAgentsHub.tsx`, `src/pages/AIAgentGuide.tsx`, `src/pages/AgentDetailPage.tsx`, `src/pages/VideoPromptsPage.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/DesignPreview.tsx`
-- `src/components/agents/TierComparisonCards.tsx`, `AgentRequirementCalculator.tsx`, `AgentDependencyDiagram.tsx`, `ConsoleRequirementsDiagram.tsx`
-- `src/components/landing/PricingComparisonTable.tsx`
-- `src/components/audit/RoleMappingSection.tsx`
-- `src/components/aura/AuraEventCard.tsx`
-- `src/components/ai/AIAgentTestSuite.tsx`, `src/components/ai/chat/AgentHowToGuide.tsx`
-- `src/components/documentation/*.tsx` — PDF docs (PlatformDocumentPDF, PlatformFAQPDF, AIAgentGuidesPDF, ComprehensiveGuidesPDF, BrandAssetGuidePDF, VideoScriptsPDF, WebsiteCopyPDF, PricingSummaryPDF)
-- `supabase/functions/ai-orchestrator/index.ts`, `supabase/functions/widget-api/index.ts` (display-only `name` fields, never the `dispatch` key)
+## Changes
 
-Note: `Dispatch Console` (already used in `FieldOpsInstall.tsx`, `DispatchFieldOpsApp.tsx`, `DispatchFieldOpsAppCard.tsx`) becomes `Dispatch/GPS Console` for consistency.
+### 1. `src/lib/industryAgentMap.ts` — single source of truth
+Update `INDUSTRY_SERVICE_CONSOLE_OVERRIDES` for each dispatch industry above so each entry sets:
+- `consoleTitle: "{Industry} Dispatch/GPS Console"` (admin dispatch view)
+- `workerConsoleTitle: "{Worker} Ops Console"` (e.g. "Electrician Ops Console", "Plumber Ops Console", "HVAC Tech Ops Console", "Crew Ops Console", "Pest Tech Ops Console", etc.)
+- `fieldOpsSectionLabel: "Dispatch/GPS"` (sidebar group)
+- Add a new optional field `dispatchSubItemLabel: "Dispatch/GPS Console"` and `workerSubItemLabel: "{Worker} Ops Console"` so the sidebar items match the page H1 exactly.
 
-## 2. Rename "Service Delivery" → "Service Management"
+Generic fallback (`fieldRouting=true`) → `consoleTitle: "Dispatch/GPS Console"`, `workerConsoleTitle: "Field Ops Console"`, `fieldOpsSectionLabel: "Dispatch/GPS"`.
 
-Replace every occurrence of the literal `"Service Delivery"`:
-- `src/lib/industryAgentMap.ts` — consoleTitle / workerConsoleTitle / consoleSubtitle / workerLayoutTitle / welcomeTitle for all verticals (HVAC, Plumbing, Electrical, generic field-routing)
-- `src/pages/technician/TechnicianAIConsole.tsx` — fallback title
-- `src/pages/Index.tsx` — landing copy (3 spots: card name, console name, subtitle rotator, comparison line)
-- `src/components/landing/PricingComparisonTable.tsx` — feature row + tooltip
+Non-dispatch packs are not modified.
 
-## 3. Super Admin Hub button on every demo page
+### 2. `src/components/dashboard/DashboardLayout.tsx`
+- Sidebar group already reads `serviceConfig.fieldOpsSectionLabel` (line 461) — no logic change, new labels flow through automatically.
+- Update the two child items (lines 136-137) to read labels from `serviceConfig.workerSubItemLabel` and `serviceConfig.dispatchSubItemLabel` (with current strings as fallback) so "Technician View"/"Dispatch View" become e.g. "Electrician Ops Console" / "Dispatch/GPS Console" for dispatch industries; non-dispatch industries keep current labels via fallback.
 
-Current `SwitcherPill` is rendered as a `sticky top-0` banner at the App root. On dashboards with their own fixed/sticky header (CompanyAdminDashboard, technician layout, customer portal), the sticky banner sits above the route content but can scroll out of view or be visually covered by app chrome.
+### 3. Page H1s already use `serviceConfig` — verify only
+- `src/pages/ai-consoles/FieldOpsConsole.tsx` already uses `serviceConfig.workerConsoleTitle` (line 38) ✓
+- `src/pages/DispatchFieldOpsApp.tsx` and `src/components/fieldops/FieldOpsConsole.tsx` — confirm they render `serviceConfig.consoleTitle`; if a hard-coded "Dispatch Field Ops" string exists, swap to `serviceConfig.consoleTitle`.
 
-Fix: convert the "Super Admin Hub" exit button into a **fixed floating button** anchored to the top-right of the viewport (`fixed top-2 right-2 z-[70]`), always visible while `isSuperSwitcherActive()` is true — independent of any page's own layout. Keep the role-switch chips in a compact pill anchored to top-left (`fixed top-2 left-2 z-[70]`), so neither relies on sticky parents.
+### 4. Demo seeding
+No DB changes required — labels are derived at render time from each company's `industry_vertical`. Existing demo accounts will pick up new names on next page load.
 
-- Edit `src/components/super-switcher/SwitcherPill.tsx`:
-  - Replace the single sticky banner with two `fixed` containers:
-    - Top-left: small pill with industry + role + role-switch buttons (collapsible on mobile)
-    - Top-right: prominent "Super Admin Hub" button (always shown when active)
-  - Use `pointer-events-auto` on the elements so the rest of the page stays interactive.
-  - Keep `useEffect` listening to the `super-switcher:switching` event so the bar appears immediately after `enter()`.
-
-No other files change for this fix.
+## Out of scope
+- Non-dispatch verticals (salon, fitness, restaurant, real estate, professional services, SaaS, personal assistant, etc.) — labels unchanged.
+- PDFs, docs, marketing pages — already use "Dispatch/GPS Console" from prior pass.
+- Backend/agent IDs — `dispatch` and `field_operations` keys remain unchanged.
 
 ## Verification
-
-- After deploy, log in as super admin, enter a demo from `/super-switcher`. The "Super Admin Hub" button must be visible in the top-right corner on `/dashboard`, `/technician`, `/customer`, and any nested route.
-- Search for "Dispatch Agent" and "Service Delivery" in the repo — should return zero results in user-facing strings.
-- Spot-check Subscription, AIAgentsHub, PricingComparisonTable, and one PDF doc to confirm new labels render.
+1. Switch demo to HVAC → sidebar shows group "Dispatch/GPS", items "HVAC Tech Ops Console" + "Dispatch/GPS Console"; pages render matching H1s.
+2. Switch demo to Plumbing/Electrical/etc. → industry-prefixed titles appear consistently.
+3. Switch demo to Salon/Fitness/Professional → labels unchanged.
