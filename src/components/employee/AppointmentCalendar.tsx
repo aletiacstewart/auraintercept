@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1052,15 +1053,15 @@ export function AppointmentCalendar() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Reschedule Dialog */}
-      <Dialog open={rescheduleDialogOpen} onOpenChange={setRescheduleDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Reschedule Appointment</DialogTitle>
-            <DialogDescription>
-              Choose a new date and time for {selectedAppointment?.customer_name}'s appointment.
-            </DialogDescription>
-          </DialogHeader>
+      {/* Reschedule Form */}
+      <FormShell
+        id="reschedule-appointment"
+        title="Reschedule Appointment"
+        description={selectedAppointment ? `Choose a new date and time for ${selectedAppointment.customer_name}'s appointment.` : undefined}
+        open={rescheduleDialogOpen}
+        onOpenChange={setRescheduleDialogOpen}
+        className="max-w-md"
+      >
           <div className="space-y-4 pt-4">
             <div>
               <p className="text-sm font-medium mb-2">Select Date</p>
@@ -1109,8 +1110,7 @@ export function AppointmentCalendar() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </FormShell>
 
       {selectedAppointment && (
         <TechnicianAssignmentDialog

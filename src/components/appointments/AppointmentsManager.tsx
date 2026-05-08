@@ -6,7 +6,8 @@ import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
 import { AddAppointmentForm } from '@/components/appointments/AddAppointmentForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { Calendar, ClipboardList, History, Briefcase, Plus, X } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getQueueLabels } from '@/lib/industryNavLabels';
@@ -21,6 +22,7 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
   const queueLabels = getQueueLabels(pack);
 
   return (
+    <InlineFormProvider>
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -35,20 +37,22 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Appointment
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
-              <AddAppointmentForm
-                onSuccess={() => setIsAddOpen(false)}
-                onCancel={() => setIsAddOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={() => setIsAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Appointment
+          </Button>
+          <FormShell
+            id="add-appointment"
+            title="Add Appointment"
+            open={isAddOpen}
+            onOpenChange={setIsAddOpen}
+            className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0"
+          >
+            <AddAppointmentForm
+              onSuccess={() => setIsAddOpen(false)}
+              onCancel={() => setIsAddOpen(false)}
+            />
+          </FormShell>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -56,6 +60,8 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
           )}
         </div>
       </div>
+
+      <InlineFormHost />
 
       <Tabs defaultValue="calendar" className="w-full">
         <TabsList>
@@ -90,5 +96,6 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
         </TabsContent>
       </Tabs>
     </div>
+    </InlineFormProvider>
   );
 };

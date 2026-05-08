@@ -8,13 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   Table,
   TableBody,
@@ -444,30 +438,25 @@ export function CompaniesManager() {
         </CardContent>
       </Card>
 
-      {/* Create/Edit Dialog */}
-      <Dialog 
-        open={isCreateOpen || !!editingCompany} 
-        onOpenChange={(open) => { 
-          if (!open) { 
-            setIsCreateOpen(false); 
-            setEditingCompany(null); 
-            resetForm(); 
-          } 
+      {/* Create/Edit Form */}
+      <FormShell
+        id="companies-create-edit"
+        title={createdCredentials ? 'Company Admin Credentials' : editingCompany ? 'Edit Company' : 'Create New Company'}
+        description={
+          createdCredentials
+            ? 'Share these credentials securely with the company admin'
+            : editingCompany ? 'Update company information' : 'Add a new tenant company to the platform'
+        }
+        open={isCreateOpen || !!editingCompany}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsCreateOpen(false);
+            setEditingCompany(null);
+            resetForm();
+          }
         }}
+        className="max-w-lg"
       >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {createdCredentials ? 'Company Admin Credentials' : editingCompany ? 'Edit Company' : 'Create New Company'}
-            </DialogTitle>
-            <DialogDescription>
-              {createdCredentials 
-                ? 'Share these credentials securely with the company admin'
-                : editingCompany ? 'Update company information' : 'Add a new tenant company to the platform'
-              }
-            </DialogDescription>
-          </DialogHeader>
-          
           {createdCredentials ? (
             <div className="space-y-4 pt-4">
               <div className="text-center">
@@ -616,8 +605,7 @@ export function CompaniesManager() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+      </FormShell>
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deletingCompany} onOpenChange={(open) => !open && setDeletingCompany(null)}>

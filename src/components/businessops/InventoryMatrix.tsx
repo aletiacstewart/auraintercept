@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { toast } from 'sonner';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
@@ -271,12 +271,14 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
         </CardContent>
       </Card>
 
-      {/* Edit Quantity Dialog */}
-      <Dialog open={!!editItem} onOpenChange={open => !open && setEditItem(null)}>
-        <DialogContent className="glass-panel border-accent/20">
-          <DialogHeader>
-            <DialogTitle>Update Quantity</DialogTitle>
-          </DialogHeader>
+      {/* Edit Quantity Form */}
+      <FormShell
+        id="inventory-update-quantity"
+        title="Update Quantity"
+        open={!!editItem}
+        onOpenChange={open => !open && setEditItem(null)}
+        className="glass-panel border-accent/20"
+      >
           {editItem && (
             <div className="space-y-4 py-4">
               <p className="font-medium">{editItem.name}</p>
@@ -294,7 +296,7 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
               </p>
             </div>
           )}
-          <DialogFooter>
+          <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
             <Button 
               onClick={handleSaveQuantity} 
@@ -303,9 +305,8 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
             >
               Save
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </FormShell>
     </div>
   );
 }
