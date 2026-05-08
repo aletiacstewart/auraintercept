@@ -448,7 +448,7 @@ export default function Help() {
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                         <div>
                           <p className="font-medium text-card-foreground">Sign Up</p>
-                          <p className="text-sm text-card-foreground/70">Visit the sign-in page and select "Company Sign Up" to create your company account. You'll receive a 90-day free trial with full access to all features.</p>
+                          <p className="text-sm text-card-foreground/70">Visit the sign-in page and select "Company Sign Up" to create your company account. You'll receive a 60-Day Live Trial with full access to all features.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
@@ -639,7 +639,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 90-day free trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 Smart AI Agents, all 7 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 Smart AI Agents, all 7 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>

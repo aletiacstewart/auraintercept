@@ -578,7 +578,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Can I try before I commit?</Text>
-        <Text style={styles.faqAnswer}>Absolutely. We offer a 90-day free trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
+        <Text style={styles.faqAnswer}>Absolutely. We offer a 60-Day Live Trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
       </View>
 
       <View style={styles.faqCard}>
@@ -605,7 +605,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 90 days.
+          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 60 days.
         </Text>
       </View>
 

@@ -298,7 +298,7 @@ export default function Auth() {
       // Create company — honor the tier the user picked at signup (defaults to Core if skipped)
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
-      // and powers useIndustryPack everywhere). 90-day trial regardless of tier.
+      // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
       const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
       if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
         toast({
@@ -454,7 +454,7 @@ export default function Auth() {
 
       toast({ 
         title: 'Welcome! 🎉', 
-        description: 'Your 90-day free trial has started. Enjoy full access to all features!' 
+        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
       });
       navigate('/dashboard');
     }
@@ -655,7 +655,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Start your 90-day free trial',
+          description: 'Start your 60-Day Live Trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -834,10 +834,10 @@ export default function Auth() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">👑</span>
-                      <h3 className="text-sm font-bold text-foreground">90-Day Free Trial — Full Access</h3>
+                      <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your <span className="font-semibold text-foreground">90-day free trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
+                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                 </div>
                 </div>
@@ -851,7 +851,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">a 60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 

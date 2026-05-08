@@ -932,7 +932,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.ctaBox}>
         <Text style={styles.ctaTitle}>Ready to Transform Your Business?</Text>
-        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 90-day free trial today. No credit card required.</Text></Text>
+        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 60-Day Live Trial today. No credit card required.</Text></Text>
       </View>
     </Page>
 
@@ -1262,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Aura Core starts at $197/month — and there's a 90-day free trial with no credit card required."
+          that's $6,000/month in lost revenue. Aura Core starts at $197/month — and there's a 60-Day Live Trial with no credit card required."
         </Text>
       </View>
 
@@ -1275,7 +1275,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 90-day free trial today—no credit card required."</BulletPoint>
+      <BulletPoint>"Let's start your 60-Day Live Trial today—no credit card required."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>
@@ -1361,7 +1361,7 @@ const PlatformDocumentPDF = () => (
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
-          Free 90-day trial. No credit card. Start now"
+          Free 60-day trial. No credit card. Start now"
         </Text>
       </View>
 

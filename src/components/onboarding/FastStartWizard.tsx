@@ -345,7 +345,7 @@ export function FastStartWizard() {
           Welcome to Aura Intercept
         </CardTitle>
         <CardDescription>
-          You're on the <span className="font-semibold text-primary">{tierInfo.label}</span> plan with a 90-day free trial. Pick your business type so Aura can tailor everything.
+          You're on the <span className="font-semibold text-primary">{tierInfo.label}</span> plan with a 60-Day Live Trial. Pick your business type so Aura can tailor everything.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">

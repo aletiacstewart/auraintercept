@@ -304,7 +304,7 @@ export default function Contact() {
                   <CardContent className="pt-6">
                     <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
                     <p className="mb-4 opacity-90">
-                      Start your 90-day free trial and see how AI can transform your business.
+                      Start your 60-Day Live Trial and see how AI can transform your business.
                     </p>
                     <Button 
                       variant="secondary" 
