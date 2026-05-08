@@ -385,8 +385,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               <div ref={messagesEndRef} />
             </div>
           )}
-        </div>
         </InlineFormProvider>
+        </div>
 
         {/* Floating Input */}
         <FloatingInput
