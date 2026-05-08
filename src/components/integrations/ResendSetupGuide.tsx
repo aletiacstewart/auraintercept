@@ -185,20 +185,29 @@ export function ResendSetupGuide() {
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Free Tier: 3,000 emails/month</span>
+                  <span className="font-medium">Bundled in your plan: 3,000 emails/month</span>
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
-                    <span>Pro Plan</span>
-                    <span className="font-medium">$20/month for 50,000 emails</span>
+                    <span>Default daily cap</span>
+                    <span className="font-medium">100 emails/day</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Additional Emails</span>
-                    <span className="font-medium">~$0.001/email</span>
+                    <span>Reset cadence</span>
+                    <span className="font-medium">Monthly</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Overage rate</span>
+                    <span className="font-medium">$0.90 per 1,000 emails</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>High-volume runs (&gt;10,000)</span>
+                    <span className="font-medium">$0.0015 / run</span>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground pt-2 border-t">
-                  Includes delivery tracking, analytics, and dedicated IP options.
+                  Includes delivery tracking and analytics. Bundled allowance covers most appointment-reminder workloads;
+                  overages are invoiced at month-end.
                 </p>
               </div>
             </AccordionContent>

@@ -114,31 +114,36 @@ export function TavilySetupGuide() {
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
                 <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-cyan-500 text-white border-cyan-500">4</Badge>
-                Free Tier (1,000 searches/month)
+                Bundled Allowance (1,000 credits/month)
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Free Tier: 1,000 API calls/month</span>
+                  <span className="font-medium">Bundled in your plan: 1,000 credits/month</span>
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
-                    <span>Free</span>
-                    <span className="font-medium">1,000 searches/month</span>
+                    <span>Search credits</span>
+                    <span className="font-medium">1 credit / query</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Pro Plan</span>
-                    <span className="font-medium">$5 per 1,000 additional</span>
+                    <span>Extract credits</span>
+                    <span className="font-medium">1 credit / URL</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Per Search Cost</span>
-                    <span className="font-medium">~$0.005/search</span>
+                    <span>Map credits</span>
+                    <span className="font-medium">1 credit / call</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Overage rate</span>
+                    <span className="font-medium">$0.008 per credit</span>
                   </div>
                 </div>
                 <p className="text-xs text-foreground/80 pt-2 border-t">
-                  The free tier should cover approximately 900+ social media posts per month.
+                  The bundled allowance covers approximately 900+ social media posts per month. Overages are
+                  invoiced at month-end.
                 </p>
               </div>
             </AccordionContent>

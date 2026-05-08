@@ -165,8 +165,8 @@ export default function TavilyIntegration() {
                     <Zap className="w-5 h-5 text-cyan-500" />
                   </div>
                   <div>
-                    <h3 className="font-medium">1,000 Free Searches</h3>
-                    <p className="text-sm text-muted-foreground">Per month, no credit card required</p>
+                    <h3 className="font-medium">1,000 Credits / mo Bundled</h3>
+                    <p className="text-sm text-muted-foreground">Included in your plan · overage $0.008/credit</p>
                   </div>
                 </div>
               </CardContent>

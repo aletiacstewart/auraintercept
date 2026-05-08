@@ -55,9 +55,10 @@ const PRICING = {
     creatorChars: 100000,
   },
   resend: {
-    freeEmails: 3000,
-    proPrice: 20,
-    proEmails: 50000,
+    freeEmails: 3000,         // bundled allowance per tier
+    overagePer1000: 0.90,     // $0.90 per 1,000 emails over allowance
+    proPrice: 20,             // legacy (kept for back-compat)
+    proEmails: 50000,         // legacy (kept for back-compat)
   },
   stripe: {
     percentFee: 0.029,

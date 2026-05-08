@@ -626,10 +626,10 @@ const AuditQuestionsPages = () => {
 // Integration Requirements Page
 const IntegrationRequirementsPage = () => {
   const integrations = [
-    { name: 'SignalWire', purpose: 'Voice & SMS Communications (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'Resend', purpose: 'Email Delivery (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'Tavily', purpose: 'AI Content Research (BUNDLED, no extra fees)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'SignalWire', purpose: 'Voice & SMS Communications (BUNDLED up to plan limits; overage invoiced)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis (BUNDLED up to plan limits; overage invoiced)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Resend', purpose: 'Email Delivery — 3,000/mo bundled · overage $0.90 per 1,000', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Tavily', purpose: 'AI Content Research — 1,000 credits/mo bundled · overage $0.008/credit', tiers: 'All tiers — Core, Boost, Pro, Elite' },
     { name: 'Stripe', purpose: 'Payment Processing (your own account)', tiers: 'All tiers (Optional)' },
     { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Boost, Pro, Elite (Optional)' },
     { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'Pro, Elite' },
@@ -835,7 +835,7 @@ const GoalsNotesPage = () => (
     </View>
 
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Success Metrics')}</Text>
-    <Text style={styles.paragraph}>{sanitizePdfText('What would success look like in 90 days?')}</Text>
+    <Text style={styles.paragraph}>{sanitizePdfText('What would success look like in 60 days?')}</Text>
     
     <View style={styles.notesLines} />
     <View style={styles.notesLines} />
