@@ -211,6 +211,26 @@ export default function DemoAccountSeeder() {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Crown className="h-5 w-5" /> Super Admin (Switcher Hub)</CardTitle>
+            <CardDescription>
+              Creates <code className="font-mono bg-muted px-2 py-1 rounded">superadmin@auraintercept.ai</code> with platform_admin role.
+              Password is the <code>SUPER_ADMIN_PASSWORD</code> secret. Sign in with that account to land on
+              <code className="ml-1">/super-switcher</code> and jump into any demo company / employee / customer in one click.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={runSeedSuperAdmin} disabled={seedingSuper} size="lg" className="w-full" variant="outline">
+              {seedingSuper ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating super-admin…</>
+              ) : (
+                <><Crown className="mr-2 h-4 w-4" /> Create / Reset Super Admin</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
         {results && (
           <Card>
             <CardHeader>
