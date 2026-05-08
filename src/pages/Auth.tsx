@@ -1393,7 +1393,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-a2p" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required and takes <span className="font-medium text-amber-400">2–4 weeks</span> for carrier approval before SMS works.
+                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required (brand $4.50, campaign fee + monthly maintenance pass-through) and approval takes <span className="font-medium text-amber-400">1–4 weeks</span> before SMS activates.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1404,7 +1404,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">SignalWire, ElevenLabs, and Resend</span> costs are <span className="font-medium text-foreground">separate from my subscription</span> and billed directly by each provider.
+                                I acknowledge that <span className="font-medium text-foreground">A2P 10DLC carrier fees</span> and <span className="font-medium text-foreground">Stripe transaction fees</span> are pass-through and billed directly by those providers, and that overages on bundled providers (Resend, Tavily) are billed at the rates shown above.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1451,16 +1451,16 @@ export default function Auth() {
                               <div className="flex-1">
                                 <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
-                                  Add Concierge Onboarding
+                                  One-Time Onboarding Fee (required)
                                   <span className="ml-auto text-primary font-bold">
-                                    {selectedTier === 'performance' || selectedTier === 'command' ? '$697' : '$397'}
+                                    {selectedTier === 'starter' ? '$497' : selectedTier === 'connect' ? '$697' : selectedTier === 'performance' ? '$1,197' : selectedTier === 'command' ? '$2,197' : '$497–$2,197'}
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of <span className="font-semibold text-foreground">{selectedTier === 'performance' || selectedTier === 'command' ? '$697 (Pro & Elite)' : '$397 (Core & Boost)'}</span>. Assistance from primary owner or manager required for company details.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
-                                   Optional — can also be purchased later from your dashboard.
+                                   Non-refundable once onboarding begins.
                                  </p>
                               </div>
                             </div>
@@ -1479,7 +1479,7 @@ export default function Auth() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '90 days free • No credit card required • Cancel anytime'}
+                              : '60-Day Live Trial • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
                       </form>
@@ -1498,9 +1498,9 @@ export default function Auth() {
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
                   <Headphones className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h4 className="font-semibold text-cyan-400 text-sm mb-2">Concierge Onboarding</h4>
+                <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $397 (Core &amp; Boost) or $697 (Pro &amp; Elite)</span>. Assistance from primary owner or manager required for company details.
+                   Due at start of the <span className="font-bold text-cyan-300">60-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. Covers setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training. Non-refundable once onboarding begins.
                  </p>
               </div>
 
