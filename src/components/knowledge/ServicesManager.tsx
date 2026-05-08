@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1191,16 +1192,16 @@ export function ServicesManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editingService ? 'Edit Service' : 'Add Service'}</DialogTitle>
-            <DialogDescription>
-              {editingService ? 'Update service details' : 'Create a new service offering'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4 max-h-[70vh] overflow-y-auto">
+      {/* Add/Edit Form */}
+      <FormShell
+        id="service-create-edit"
+        title={editingService ? 'Edit Service' : 'Add Service'}
+        description={editingService ? 'Update service details' : 'Create a new service offering'}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        className="max-w-lg"
+      >
+          <div className="space-y-4 pt-2">
             <div className="space-y-2">
               <Label htmlFor="name">Service Name *</Label>
               <Input
@@ -1398,8 +1399,7 @@ export function ServicesManager() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </FormShell>
 
       {/* Import Preview Dialog */}
       <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>

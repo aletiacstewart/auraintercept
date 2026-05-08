@@ -11,13 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   Accordion,
   AccordionContent,
@@ -352,15 +346,14 @@ export function FAQsManager() {
         )}
       </CardContent>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingFaq ? 'Edit FAQ' : 'Add FAQ'}</DialogTitle>
-            <DialogDescription>
-              {editingFaq ? 'Update this FAQ entry' : 'Create a new FAQ for your AI to reference'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
+      <FormShell
+        id="faq-create-edit"
+        title={editingFaq ? 'Edit FAQ' : 'Add FAQ'}
+        description={editingFaq ? 'Update this FAQ entry' : 'Create a new FAQ for your AI to reference'}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      >
+          <div className="space-y-4 pt-2">
             <div className="space-y-2">
               <Label htmlFor="question">Question *</Label>
               <Input
@@ -405,8 +398,7 @@ export function FAQsManager() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </FormShell>
     </Card>
   );
 }

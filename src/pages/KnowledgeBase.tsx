@@ -19,6 +19,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
@@ -45,6 +46,8 @@ export default function KnowledgeBase() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
+        <InlineFormHost className="mb-4" />
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={BookOpen}
@@ -164,6 +167,7 @@ export default function KnowledgeBase() {
           )}
         </Tabs>
       </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

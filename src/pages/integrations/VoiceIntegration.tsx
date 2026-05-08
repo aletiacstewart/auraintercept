@@ -13,13 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { toast } from 'sonner';
 import { Mic, Check, ExternalLink, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -143,6 +138,8 @@ export default function VoiceIntegration() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
+        <InlineFormHost className="mb-4" />
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Mic}
@@ -222,22 +219,15 @@ export default function VoiceIntegration() {
             />
           )}
 
-          {/* Setup Dialog */}
-          <Dialog open={!!selectedIntegration} onOpenChange={() => setSelectedIntegration(null)}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  {selectedIntegration && (
-                    <>
-                      <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', selectedIntegration.color)}>
-                        <selectedIntegration.icon className="w-4 h-4 text-white" />
-                      </div>
-                      Connect {selectedIntegration.name}
-                    </>
-                  )}
-                </DialogTitle>
-                <DialogDescription>Enter your API credentials</DialogDescription>
-              </DialogHeader>
+          {/* Setup Form */}
+          <FormShell
+            id="voice-integration-setup"
+            title={selectedIntegration ? `Connect ${selectedIntegration.name}` : 'Connect Integration'}
+            description="Enter your API credentials"
+            open={!!selectedIntegration}
+            onOpenChange={(open) => { if (!open) setSelectedIntegration(null); }}
+            className="sm:max-w-md"
+          >
               {selectedIntegration && (
                 <div className="space-y-4 pt-4">
                   {selectedIntegration.fields.map((field) => (
@@ -286,9 +276,9 @@ export default function VoiceIntegration() {
                   </div>
                 </div>
               )}
-            </DialogContent>
-          </Dialog>
+          </FormShell>
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
