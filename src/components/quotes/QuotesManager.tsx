@@ -16,6 +16,7 @@ import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm'
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryPlaceholders } from '@/lib/industryPlaceholders';
 
 interface Quote {
   id: string;
@@ -199,7 +200,7 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search..."
+            placeholder={getIndustryPlaceholders(pack).searchQuotes}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-9 h-9"
