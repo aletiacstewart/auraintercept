@@ -281,7 +281,7 @@ function AuraCharacter({ size, connected, speaking, mouthOpen, blink }: Characte
         loading="eager"
         className={cn(
           'absolute inset-[3px] z-10 rounded-full object-cover drop-shadow-lg transition-transform',
-          connected && !speaking && 'animate-[breathe_3s_ease-in-out_infinite]',
+          connected && !speaking && '[animation:aura-breathe_3s_ease-in-out_infinite]',
         )}
         style={{
           width: `calc(100% - 6px)`,
