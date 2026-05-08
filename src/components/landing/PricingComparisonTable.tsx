@@ -169,16 +169,17 @@ const sections: FeatureSection[] = [
   },
   {
     title: 'Bundled 3rd Party Services',
-    subtitle: 'These services are included in your plan price — no separate accounts or carrier fees.',
+    subtitle: 'Bundled providers are included up to the limits shown. Overages and pass-through fees are billed by the provider.',
     features: [
-      { name: 'Resend (Email)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
+      { name: 'Resend (Email)', starter: '3,000/mo · $0.90 per 1,000 over', connect: '3,000/mo · $0.90 per 1,000 over', performance: '3,000/mo · $0.90 per 1,000 over', command: '3,000/mo · $0.90 per 1,000 over' },
       { name: 'SignalWire (SMS & Voice)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
       { name: 'ElevenLabs (Voice)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'A2P 10DLC Compliance', starter: 'Included', connect: 'Included', performance: 'Included', command: 'Included' },
-      { name: 'Tavily (AI Research)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'Calendar Sync (Google / iCal)', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
-      { name: 'Stripe (Payments)', starter: 'Optional', connect: 'Optional', performance: 'Optional', command: 'Optional' },
-      { name: 'Social Media Accounts', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
+      { name: 'A2P 10DLC Compliance', starter: 'Pass-through', connect: 'Pass-through', performance: 'Pass-through', command: 'Pass-through' },
+      { name: 'Tavily (AI Research)', starter: '1,000 cr/mo · $0.008/cr over', connect: '1,000 cr/mo · $0.008/cr over', performance: '1,000 cr/mo · $0.008/cr over', command: '1,000 cr/mo · $0.008/cr over' },
+      { name: 'Google Calendar Sync', starter: 'Free — unlimited', connect: 'Free — unlimited', performance: 'Free — unlimited', command: 'Free — unlimited' },
+      { name: 'Stripe (Payments)', starter: 'Your account · 2.9%+$0.30/txn', connect: 'Your account · 2.9%+$0.30/txn', performance: 'Your account · 2.9%+$0.30/txn', command: 'Required (Invoice Agent)' },
+      { name: 'Social Media (FB/IG/LI/TikTok)', starter: 'Manual Bridge posting', connect: 'Automated · up to 6', performance: 'Automated · up to 6', command: 'Automated · up to 6' },
+      { name: 'Embeddable Chat Widget', starter: 'Free — no usage limits', connect: 'Free — no usage limits', performance: 'Free — no usage limits', command: 'Free — no usage limits' },
     ],
   },
   {
@@ -187,7 +188,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
       { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
       { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
-      { name: 'Implementation Fee', starter: '$397', connect: '$397', performance: '$697', command: '$697' },
+      { name: 'One-Time Onboarding Fee', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
     ],
   },
 ];
