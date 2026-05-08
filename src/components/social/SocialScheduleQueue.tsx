@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   Select,
   SelectContent,
@@ -582,12 +583,14 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Scheduled Post</DialogTitle>
-          </DialogHeader>
+      {/* Edit Form */}
+      <FormShell
+        id="social-edit-scheduled-post"
+        title="Edit Scheduled Post"
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
           {editData && selectedPost && (
             <div className="space-y-4">
               <div>
@@ -666,7 +669,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
               </Tabs>
             </div>
           )}
-          <DialogFooter>
+          <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
               Cancel
             </Button>
@@ -676,9 +679,8 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
             >
               Save Changes
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </FormShell>
 
       {/* Publish Bridge Dialog */}
       {bridgePost && (

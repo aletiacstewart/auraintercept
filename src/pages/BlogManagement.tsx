@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -165,6 +166,7 @@ export default function BlogManagement() {
 
   return (
     <DashboardLayout>
+      <InlineFormProvider>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -184,20 +186,17 @@ export default function BlogManagement() {
                   <Sparkles className="mr-2 h-4 w-4" />
                   Batch Posts
                 </Button>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button onClick={() => resetForm()}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Single Post
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>
-                        {editingPost ? 'Edit Post' : 'Create New Post'}
-                      </DialogTitle>
-                    </DialogHeader>
-                    
+                <Button onClick={() => { resetForm(); setIsDialogOpen(true); }}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Single Post
+                </Button>
+                <FormShell
+                  id="blog-create-edit"
+                  title={editingPost ? 'Edit Post' : 'Create New Post'}
+                  open={isDialogOpen}
+                  onOpenChange={setIsDialogOpen}
+                  className="max-w-2xl max-h-[90vh] overflow-y-auto"
+                >
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {companyId && (
                         <TavilyStatusBadge companyId={companyId} showDisconnected />
@@ -307,12 +306,13 @@ export default function BlogManagement() {
                         </Button>
                       </div>
                     </form>
-                  </DialogContent>
-                </Dialog>
+                </FormShell>
               </>
             )}
           </div>
         </div>
+
+        <InlineFormHost />
 
         <BlogBatchWizard
           open={isBatchWizardOpen}
@@ -410,6 +410,7 @@ export default function BlogManagement() {
           </TabsContent>
         </Tabs>
       </div>
+      </InlineFormProvider>
     </DashboardLayout>
   );
 }
