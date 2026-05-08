@@ -8,6 +8,8 @@ import { AddAppointmentForm } from '@/components/appointments/AddAppointmentForm
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
+import { FormShell } from '@/components/ui/form-shell';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Calendar, ClipboardList, History, Briefcase, Plus } from 'lucide-react';
@@ -23,6 +25,7 @@ export default function EmployeeAppointments() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Calendar}
@@ -30,22 +33,25 @@ export default function EmployeeAppointments() {
             description={apptHeader.description}
             featureColor="fieldops"
             action={
-              <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Appointment
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
-                  <AddAppointmentForm
-                    onSuccess={() => setIsAddOpen(false)}
-                    onCancel={() => setIsAddOpen(false)}
-                  />
-                </DialogContent>
-              </Dialog>
+              <Button onClick={() => setIsAddOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Appointment
+              </Button>
             }
           />
+          <InlineFormHost />
+          <FormShell
+            id="appointment-add"
+            title="Add Appointment"
+            open={isAddOpen}
+            onOpenChange={setIsAddOpen}
+            className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0"
+          >
+            <AddAppointmentForm
+              onSuccess={() => setIsAddOpen(false)}
+              onCancel={() => setIsAddOpen(false)}
+            />
+          </FormShell>
 
           <Tabs defaultValue="calendar" className="w-full">
             <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
@@ -80,6 +86,7 @@ export default function EmployeeAppointments() {
             </TabsContent>
           </Tabs>
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
