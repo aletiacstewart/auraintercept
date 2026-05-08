@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow, differenceInMinutes } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
@@ -484,31 +484,29 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
         </Card>
       )}
 
-      {/* Decline Dialog */}
-      <Dialog open={declineDialogOpen} onOpenChange={setDeclineDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Decline Job</DialogTitle>
-            <DialogDescription>
-              Please provide a reason for declining this job assignment.
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder="Reason for declining..."
-            value={declineReason}
-            onChange={(e) => setDeclineReason(e.target.value)}
-            className="min-h-[100px]"
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeclineDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={confirmDecline}>
-              Decline Job
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Decline Form */}
+      <FormShell
+        id="decline-job"
+        title="Decline Job"
+        description="Please provide a reason for declining this job assignment."
+        open={declineDialogOpen}
+        onOpenChange={setDeclineDialogOpen}
+      >
+        <Textarea
+          placeholder="Reason for declining..."
+          value={declineReason}
+          onChange={(e) => setDeclineReason(e.target.value)}
+          className="min-h-[100px]"
+        />
+        <div className="flex justify-end gap-2 pt-4">
+          <Button variant="outline" onClick={() => setDeclineDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={confirmDecline}>
+            Decline Job
+          </Button>
+        </div>
+      </FormShell>
     </div>
   );
 }
