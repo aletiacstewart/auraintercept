@@ -1,75 +1,129 @@
-## Problem
+# Aura Avatar — Sigmond-style Voice Companion
 
-Restaurants are correctly configured at the data layer (`industry_blueprints.restaurants` has `restrictions.booking=false`, `dispatch=false`, and a script override telling Aura to text a booking link). But several user-facing surfaces still imply that we accept reservations / bookings inside the app:
+Build **Aura**, an animated, stylized character that users can talk to via WebRTC voice. Aura appears as a circular "video tile" with a face that lip-syncs and reacts to audio levels in real time. Same component reused on the public landing page and inside the dashboard.
 
-1. **Voice greeting** (`src/lib/industryVoiceGreetings.ts:32`)
-   `"…would you like a reservation, takeout, or info about an event?"` — implies Aura books reservations.
-2. **Aura suggestions** (`src/lib/industryAuraSuggestions.ts:84-91`)
-   Includes `"What's tonight's reservation count?"` and `"How many no-shows this week?"` — only valid if we owned reservations.
-3. **SMS templates** (`src/lib/industryTemplates.ts:496-499`)
-   `"Your reservation is confirmed for {date} at {time}…"` — we never confirm reservations.
-4. **Demo seed sample appointment** (`supabase/functions/create-demo-trial/index.ts`)
-   Seeds a `Reservation (party of 6)` appointment row for restaurant demos.
-5. **Console title for restaurants** (`industryAgentMap.ts:449`)
-   Currently `"Guest Flow Console"` with badge "Built for reservations, inquiries, and smart links" — drop the "reservations" word.
+## Goals
 
-The chat portal action `"Book a Table"` is OK because its prompt is `"Send me the link to book a table."` (Smart Link), but the label can be clearer as `"Booking Link"`.
+- Brand-forward animated character (not a generic orb, not a photoreal human).
+- Real-time two-way voice via ElevenLabs Conversational AI (WebRTC).
+- Lip-sync + idle animation driven by output audio amplitude.
+- Live captions, "thinking / listening / speaking" status pills.
+- Reusable across `/` (hero + floating widget) and `/dashboard` (inline panel).
 
-## Fix
+## User experience
 
-### 1. Voice greeting → Smart Link framing
-```ts
-restaurants: 'Thanks for calling {company}. This is Aura — I can text you a link to book a table, view our menu, hours, or catering info. What would you like?',
+```text
+┌──────────────────────────────┐
+│   ◉  ●●●●  AURA              │  ← status: Listening / Thinking / Speaking
+│  ╭──────────╮                │
+│  │   ◉  ◉   │  ← eyes blink  │
+│  │    ◡     │  ← mouth lip-  │
+│  ╰──────────╯     syncs      │
+│   ░░▓▓▓▓░░  audio waveform   │
+│  [ Tap to talk ]  [ End ]    │
+│  "How can I help today?"     │  ← live caption
+└──────────────────────────────┘
 ```
 
-### 2. Aura suggestions → reframe to what we DO know
-Replace reservation-centric suggestions with Smart-Link / inbound-traffic metrics:
-- "How many menu links did Aura send this week?"
-- "How many catering inquiries came in?"
-- "What is my missed-call recovery rate?"
-- "Show me top inbound questions this week."
-- "What is my review score this month?"
-- "Which Smart Link gets clicked most?"
+1. User clicks **Talk to Aura** → mic permission prompt with explainer.
+2. Edge function mints an ElevenLabs WebRTC token.
+3. Connection opens; Aura greets with industry-aware first message.
+4. While speaking: mouth opens/closes proportional to `getOutputByteFrequencyData()`, glow ring pulses.
+5. While listening: subtle idle breathing + eye blink loop, ring uses input level.
+6. Captions stream from `user_transcript` and `agent_response` events.
+7. **End** disconnects cleanly; transcript optionally saved to `aura_conversations`.
 
-### 3. SMS templates → Smart Link prompts (no confirmation copy)
-```ts
-sms: [
-  "Hi {name}! Here's the link to book your table: {link}",
-  "Thanks for calling {company}! Menu: {link}",
-],
+## Avatar art
+
+Stylized SVG character, ~3 layers driven by React state:
+
+- **Base** — head/shoulders silhouette (single SVG, themed via `currentColor` so it inherits Cyber-Sentry tokens).
+- **Eyes** — two `<ellipse>` elements; blink = scaleY 1 → 0.05 → 1 every 4–7s (randomized).
+- **Mouth** — morphing `<path>` between closed / mid / open shapes; index chosen from current audio amplitude bucket (0/1/2).
+- **Aura ring** — concentric rings using `--gradient-primary` and `glow-primary`, scale based on volume.
+
+Asset generated with `imagegen` at standard quality, transparent PNG fallback at `src/assets/aura-avatar.png` for static contexts (OG images, email).
+
+## Architecture
+
+```text
+LandingPage / DashboardLayout
+        │
+        ▼
+  <AuraAvatarChat variant="hero|floating|inline">
+        │
+        ├── useAuraConversation()  ← wraps @elevenlabs/react useConversation
+        │       ├─ fetch /elevenlabs-aura-token (edge fn)
+        │       ├─ startSession({ conversationToken, connectionType: 'webrtc' })
+        │       └─ exposes: status, isSpeaking, outputLevel, captions[]
+        │
+        ├── <AuraCharacter level={level} state={state} />   ← SVG
+        ├── <AuraCaptions messages={captions} />
+        └── <AuraControls onStart onEnd onMute />
 ```
 
-### 4. Demo seed → swap reservation appointment for a catering inquiry lead
-In `create-demo-trial/index.ts` restaurants entry, drop the `sampleAppointment` (or convert to a `Catering Inquiry` lead so we don't seed a reservation row).
+### Edge function `elevenlabs-aura-token`
 
-### 5. Console badge / wording
-In `src/lib/industryAgentMap.ts` `restaurants` override:
-- `consoleBadge: 'Built for inbound calls, Smart Links, and follow-up'`
-- (Keep `Guest Flow Console` title — it's accurate without booking implication.)
+- `verify_jwt = false` (public landing must call it; rate-limited by IP).
+- Calls `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=AURA_AGENT_ID` with `ELEVENLABS_API_KEY`.
+- Accepts optional `industry` + `companyId` to pass through as `dynamic_variables` for prompt overrides.
+- Returns `{ token }`.
 
-### 6. Portal quick-action label
-`PortalQuickActions.tsx`: change restaurants `'Book a Table'` → `'Get Booking Link'` (prompt unchanged — already Smart-Link based).
+### ElevenLabs agent config (manual, in ElevenLabs dashboard)
 
-### 7. Memory update
-Append to `mem://features/industry/restaurants-smart-link-only`:
-- Voice greeting must NOT offer reservations directly.
-- Aura suggestions and SMS templates must reference Smart Links / inbound metrics, not confirmed reservations.
-- Demo seeds must not insert reservation appointments for the restaurants vertical.
+- New agent **"Aura"** with system prompt aligned to the platform's master Aura prompt (industry-aware via dynamic variables).
+- Enable WebRTC, overrides for `agent.prompt`, `firstMessage`, `language`.
+- Client tools registered (so Aura can act, not just talk):
+  - `navigate_to(path)` — router push inside dashboard.
+  - `open_console(operative)` — opens the matching console.
+  - `book_demo()` / `start_signup()` — landing-page CTAs.
+  - `show_pricing_tier(tier)` — scrolls to pricing.
 
-## Files Touched
+## Where it appears
 
-- `src/lib/industryVoiceGreetings.ts`
-- `src/lib/industryAuraSuggestions.ts`
-- `src/lib/industryTemplates.ts`
-- `src/lib/industryAgentMap.ts`
-- `src/components/customer-portal/PortalQuickActions.tsx`
-- `supabase/functions/create-demo-trial/index.ts`
-- `mem://features/industry/restaurants-smart-link-only`
+| Surface | Component | Notes |
+|---|---|---|
+| `/` landing hero | `<AuraAvatarChat variant="hero" />` | Replaces or augments existing hero CTA. Sigmond-style large circle. |
+| Landing floating widget | `<AuraAvatarChat variant="floating" />` | Bottom-right; collapses to avatar bubble. Replaces / wraps `FloatingChatWidget`. |
+| `/dashboard/*` | `<AuraAvatarChat variant="inline" />` | Lives inside Aura Command Center next to existing text chat; toggle "Voice mode". |
+| Customer portal | Same `inline` variant | Industry pack drives greeting + tools. |
 
-## Out of Scope
+Industry pack continues to drive prompt + greeting via existing `useIndustryPack` and `industryVoiceGreetings.ts`.
 
-- Backend `industry_blueprints.restaurants` row — already correct (`booking: false`).
-- `aura-unified` snippet — already injects the "Do NOT offer to book" instruction.
-- Reservation-related code paths in shared booking/calendar logic — restaurants already short-circuit via `restrictions.booking=false`.
+## Files (new)
 
-Approve and I'll switch to build mode and apply this in one pass.
+- `src/components/aura/AuraAvatarChat.tsx` — top-level wrapper with variants.
+- `src/components/aura/AuraCharacter.tsx` — animated SVG.
+- `src/components/aura/AuraCaptions.tsx` — caption stream.
+- `src/components/aura/AuraControls.tsx` — start/end/mute buttons.
+- `src/hooks/useAuraConversation.ts` — wraps `useConversation`, audio levels, caption buffer, client-tool router.
+- `src/assets/aura-avatar.png` — static fallback (imagegen).
+- `supabase/functions/elevenlabs-aura-token/index.ts` — token mint.
+
+## Files (edited)
+
+- `src/pages/Index.tsx` (or current landing) — embed hero variant.
+- `src/components/landing/FloatingChatWidget.tsx` — swap to floating variant or extend.
+- `src/components/dashboard/DashboardLayout.tsx` — inline mount point.
+- `supabase/config.toml` — `verify_jwt = false` for the new function.
+
+## Secrets / config
+
+- Reuses existing `ELEVENLABS_API_KEY` (already configured).
+- New env: `AURA_ELEVENLABS_AGENT_ID` (added via secrets tool after the agent is created in ElevenLabs).
+- No DB changes required for v1. Optional v1.1: `aura_conversations` table to persist transcripts.
+
+## Out of scope (v1)
+
+- Photoreal/video avatars (HeyGen/D-ID/Tavus) — can be added later behind the same component API.
+- 3D / Rive — start with SVG; upgrade path is straightforward (swap `AuraCharacter`).
+- Persistent conversation history across sessions.
+
+## Acceptance criteria
+
+- Click "Talk to Aura" on landing → mic prompt → connected within ~2s → Aura greets.
+- Mouth visibly lip-syncs to TTS output; ring pulses with volume.
+- Captions appear for both user and Aura turns.
+- "End" cleanly closes WebRTC and resets UI.
+- Same component renders inline in dashboard with industry-specific greeting.
+- All colors via theme tokens (no hex/rgba), respects Cyber-Sentry standard.
