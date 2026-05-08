@@ -452,20 +452,20 @@ export function InventoryManager() {
         </CardContent>
       </Card>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editItem} onOpenChange={open => !open && setEditItem(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Inventory Item</DialogTitle>
-            <DialogDescription>Update item details.</DialogDescription>
-          </DialogHeader>
-          {inventoryFormFields}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
-            <Button onClick={handleSubmit} disabled={updateMutation.isPending}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Edit form (inline tab when provider present, modal otherwise) */}
+      <FormShell
+        id="inventory-edit"
+        title="Edit Inventory Item"
+        description="Update item details."
+        open={!!editItem}
+        onOpenChange={(open) => !open && setEditItem(null)}
+      >
+        {inventoryFormFields}
+        <div className="flex justify-end gap-2 pt-4">
+          <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={updateMutation.isPending}>Save Changes</Button>
+        </div>
+      </FormShell>
     </div>
   );
 }
