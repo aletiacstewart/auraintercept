@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, Copy, CheckCircle2, Building2 } from 'lucide-react';
+import { Sparkles, Loader2, Copy, CheckCircle2, Building2, Crown } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
@@ -66,6 +66,21 @@ export default function DemoAccountSeeder() {
   const [running, setRunning] = useState(false);
   const [results, setResults] = useState<SeedResult[] | null>(null);
   const [seedingTenant, setSeedingTenant] = useState(false);
+  const [seedingSuper, setSeedingSuper] = useState(false);
+
+  const runSeedSuperAdmin = async () => {
+    setSeedingSuper(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('seed-super-admin');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error ?? 'Failed');
+      toast.success(`Super-admin ready: ${data.email}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setSeedingSuper(false);
+    }
+  };
 
   const runSeed = async () => {
     setRunning(true);
