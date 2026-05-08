@@ -129,6 +129,12 @@ export interface IndustryServiceConsoleConfig {
   /** Sidebar group label for the Field Ops nav section (e.g. "Field Ops",
    * "Project Ops", "Salon Floor"). Derived per industry pack. */
   fieldOpsSectionLabel: string;
+  /** Optional sidebar label for the worker/technician sub-item under the
+   * Field Ops group. Defaults to "Technician View" when unset. */
+  workerSubItemLabel?: string;
+  /** Optional sidebar label for the dispatch/admin sub-item under the
+   * Field Ops group. Defaults to "Dispatch View" when unset. */
+  dispatchSubItemLabel?: string;
 }
 
 type PartialConfig = Partial<Omit<IndustryServiceConsoleConfig, 'quickActions' | 'tabs' | 'operatives' | 'statusLabels' | 'selectorText' | 'specialistShow'>> & {
