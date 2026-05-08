@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import auraAvatarImg from '@/assets/aura-avatar.png';
 
 type Variant = 'hero' | 'floating' | 'inline';
+type Expression = 'neutral' | 'listening' | 'thinking' | 'happy' | 'concerned';
+type Viseme = 'closed' | 'small' | 'mid' | 'wide' | 'o';
 
 interface AuraAvatarChatProps {
   variant?: Variant;
@@ -30,17 +32,32 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
   const [connecting, setConnecting] = useState(false);
   const [captions, setCaptions] = useState<Caption[]>([]);
   const [mouthOpen, setMouthOpen] = useState(0);
+  const [viseme, setViseme] = useState<Viseme>('closed');
   const [blink, setBlink] = useState(false);
+  const [expression, setExpression] = useState<Expression>('neutral');
+  const expressionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
 
+  const flashExpression = useCallback((next: Expression, ms = 1800) => {
+    setExpression(next);
+    if (expressionTimerRef.current) clearTimeout(expressionTimerRef.current);
+    expressionTimerRef.current = setTimeout(() => setExpression('neutral'), ms);
+  }, []);
+
   const conversation = useConversation({
-    onConnect: () => setCaptions((c) => [...c, { who: 'aura', text: 'Connected. Listening…' }]),
+    onConnect: () => {
+      setCaptions((c) => [...c, { who: 'aura', text: 'Connected. Listening…' }]);
+      flashExpression('happy', 1500);
+    },
     onDisconnect: () => {
       setCaptions((c) => [...c, { who: 'aura', text: 'Call ended.' }]);
       setMouthOpen(0);
+      setViseme('closed');
+      setExpression('neutral');
     },
     onError: (e) => {
       console.error('Aura conversation error', e);
+      flashExpression('concerned', 2500);
       toast({
         title: 'Aura call error',
         description: typeof e === 'string' ? e : 'Connection lost.',
@@ -51,13 +68,17 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
       if (msg?.type === 'user_transcript') {
         const text = msg.user_transcription_event?.user_transcript;
         if (text) setCaptions((c) => [...c, { who: 'user', text }]);
+        flashExpression('listening', 1200);
       } else if (msg?.type === 'agent_response') {
         const text = msg.agent_response_event?.agent_response;
         if (text) setCaptions((c) => [...c, { who: 'aura', text }]);
+        flashExpression('happy', 1500);
       } else if (msg?.source === 'user' && typeof msg.message === 'string') {
         setCaptions((c) => [...c, { who: 'user', text: msg.message }]);
+        flashExpression('listening', 1200);
       } else if (msg?.source === 'ai' && typeof msg.message === 'string') {
         setCaptions((c) => [...c, { who: 'aura', text: msg.message }]);
+        flashExpression('happy', 1500);
       }
     },
   });
@@ -65,21 +86,44 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
   const isConnected = conversation.status === 'connected';
   const isSpeaking = conversation.isSpeaking;
 
-  // Lip-sync via output frequency data
+  // Lip-sync via output frequency data — amplitude + viseme from band energy
   useEffect(() => {
     if (!isConnected) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setMouthOpen(0);
+      setViseme('closed');
       return;
     }
     const tick = () => {
       try {
         const data = conversation.getOutputByteFrequencyData?.();
         if (data && data.length) {
-          let sum = 0;
-          for (let i = 0; i < data.length; i++) sum += data[i];
-          const avg = sum / data.length / 255; // 0..1
-          setMouthOpen(Math.min(1, avg * 2.2));
+          const n = data.length;
+          const lowEnd = Math.floor(n * 0.15);
+          const midEnd = Math.floor(n * 0.5);
+          let low = 0, mid = 0, high = 0, sum = 0;
+          for (let i = 0; i < n; i++) {
+            sum += data[i];
+            if (i < lowEnd) low += data[i];
+            else if (i < midEnd) mid += data[i];
+            else high += data[i];
+          }
+          const avg = sum / n / 255;
+          const amp = Math.min(1, avg * 2.4);
+          setMouthOpen(amp);
+
+          // Viseme picker
+          if (amp < 0.06) {
+            setViseme('closed');
+          } else {
+            const lAvg = low / Math.max(1, lowEnd);
+            const mAvg = mid / Math.max(1, midEnd - lowEnd);
+            const hAvg = high / Math.max(1, n - midEnd);
+            if (hAvg > mAvg && hAvg > lAvg && amp > 0.18) setViseme('wide');     // E / I
+            else if (lAvg > mAvg * 1.15 && lAvg > hAvg) setViseme('o');           // O / U
+            else if (amp > 0.35) setViseme('mid');                                 // A
+            else setViseme('small');
+          }
         }
       } catch {/* ignore */}
       rafRef.current = requestAnimationFrame(tick);
@@ -95,11 +139,15 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
     let timer: ReturnType<typeof setTimeout>;
     const loop = () => {
       setBlink(true);
-      setTimeout(() => setBlink(false), 140);
+      setTimeout(() => setBlink(false), 130);
       timer = setTimeout(loop, 2500 + Math.random() * 3000);
     };
     timer = setTimeout(loop, 1500);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => () => {
+    if (expressionTimerRef.current) clearTimeout(expressionTimerRef.current);
   }, []);
 
   const start = useCallback(async () => {
@@ -165,7 +213,9 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
         connected={isConnected}
         speaking={isSpeaking}
         mouthOpen={mouthOpen}
+        viseme={viseme}
         blink={blink}
+        expression={expression}
       />
 
       <div className="text-center">
@@ -236,13 +286,59 @@ interface CharacterProps {
   connected: boolean;
   speaking: boolean;
   mouthOpen: number; // 0..1
+  viseme: Viseme;
   blink: boolean;
+  expression: Expression;
 }
 
-function AuraCharacter({ size, connected, speaking, mouthOpen, blink }: CharacterProps) {
+function AuraCharacter({ size, connected, speaking, mouthOpen, viseme, blink, expression }: CharacterProps) {
   const ringScale = connected ? (speaking ? 1.08 : 1.04) : 1;
-  // 5 EQ bars driven by audio amplitude with phase offsets
-  const bars = [0.6, 0.85, 1, 0.85, 0.6];
+
+  // Face anchor points (% of container) — calibrated to the portrait
+  const FACE = {
+    leftEye:  { cx: 41, cy: 36 },
+    rightEye: { cx: 56, cy: 36 },
+    eyeRx: 4.5, eyeRy: 1.6,
+    brow: { y: 31, leftX: 36, rightX: 60, w: 11, h: 1.4 },
+    mouth: { cx: 49, cy: 51 },
+    blush: { y: 47, leftX: 33, rightX: 64, r: 5 },
+  };
+
+  // Mouth shape per viseme — uses amplitude for height
+  const amp = Math.max(0.05, mouthOpen);
+  const mouthW = (() => {
+    switch (viseme) {
+      case 'wide': return 9 + amp * 3;     // E/I
+      case 'mid':  return 7 + amp * 2;
+      case 'small':return 5 + amp * 1.5;
+      case 'o':    return 4.5 + amp * 1;
+      default:     return 4;
+    }
+  })();
+  const mouthH = (() => {
+    if (viseme === 'closed') return 0.4;
+    if (viseme === 'wide')   return 1 + amp * 2;
+    if (viseme === 'o')      return 4 + amp * 4;
+    return 1.5 + amp * 4;
+  })();
+  const mouthRy = viseme === 'o' ? mouthH : Math.max(0.5, mouthH * 0.55);
+
+  // Brow positioning by expression
+  const browLift = (() => {
+    if (expression === 'happy') return -0.6;
+    if (expression === 'listening') return -1.2;
+    if (expression === 'thinking') return -0.4;
+    if (expression === 'concerned') return 0.6;
+    return 0;
+  })();
+  const browTilt = (() => {
+    if (expression === 'concerned') return 6;   // inner brows up
+    if (expression === 'listening') return -3;  // outer up (curious)
+    return 0;
+  })();
+
+  const showBlush = expression === 'happy' || speaking;
+  const headTilt = expression === 'listening' ? -1.2 : expression === 'thinking' ? 1 : 0;
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -275,52 +371,113 @@ function AuraCharacter({ size, connected, speaking, mouthOpen, blink }: Characte
       </div>
 
       {/* Portrait */}
-      <img
-        src={auraAvatarImg}
-        alt="Aura"
-        loading="eager"
-        className={cn(
-          'absolute inset-[3px] z-10 rounded-full object-cover drop-shadow-lg transition-transform',
-          connected && !speaking && '[animation:aura-breathe_3s_ease-in-out_infinite]',
-        )}
-        style={{
-          width: `calc(100% - 6px)`,
-          height: `calc(100% - 6px)`,
-          transform: speaking ? 'scale(1.03)' : undefined,
-          transitionDuration: '180ms',
-        }}
-      />
-
-      {/* Blink overlay */}
       <div
-        className="absolute left-[18%] right-[18%] z-20 rounded-full bg-foreground/70 pointer-events-none"
+        className="absolute inset-[3px] z-10 overflow-hidden rounded-full drop-shadow-lg"
         style={{
-          top: '36%',
-          height: blink ? '4%' : '0%',
-          opacity: blink ? 0.5 : 0,
-          transition: 'all 80ms ease-out',
-          mixBlendMode: 'multiply',
+          transform: `rotate(${headTilt}deg) ${speaking ? 'scale(1.025)' : 'scale(1)'}`,
+          transition: 'transform 220ms ease-out',
         }}
-      />
+      >
+        <img
+          src={auraAvatarImg}
+          alt="Aura"
+          loading="eager"
+          className={cn(
+            'h-full w-full object-cover',
+            connected && !speaking && '[animation:aura-breathe_3s_ease-in-out_infinite]',
+          )}
+        />
 
-      {/* EQ bars when speaking */}
-      {speaking && (
-        <div
-          className="absolute left-1/2 z-20 flex -translate-x-1/2 items-end gap-[3px]"
-          style={{ bottom: '6%', height: '14%' }}
+        {/* Facial overlay — SVG shapes positioned over the photo */}
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="pointer-events-none absolute inset-0 h-full w-full"
         >
-          {bars.map((w, i) => (
-            <div
-              key={i}
-              className="w-[4px] rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
-              style={{
-                height: `${20 + mouthOpen * w * 100}%`,
-                transition: 'height 60ms linear',
-              }}
+          {/* Blush */}
+          <g
+            style={{
+              opacity: showBlush ? 0.35 : 0,
+              transition: 'opacity 300ms ease-out',
+            }}
+          >
+            <ellipse cx={FACE.blush.leftX} cy={FACE.blush.y} rx={FACE.blush.r} ry={FACE.blush.r * 0.7} fill="#ff6b9d" />
+            <ellipse cx={FACE.blush.rightX} cy={FACE.blush.y} rx={FACE.blush.r} ry={FACE.blush.r * 0.7} fill="#ff6b9d" />
+          </g>
+
+          {/* Brows — drawn on top of existing brows to express */}
+          <g style={{ transition: 'transform 200ms ease-out' }}>
+            <rect
+              x={FACE.brow.leftX}
+              y={FACE.brow.y + browLift}
+              width={FACE.brow.w}
+              height={FACE.brow.h}
+              rx={0.7}
+              fill="#1a3a4a"
+              opacity="0.85"
+              transform={`rotate(${-browTilt} ${FACE.brow.leftX + FACE.brow.w / 2} ${FACE.brow.y + browLift})`}
+              style={{ transition: 'all 200ms ease-out' }}
             />
-          ))}
-        </div>
-      )}
+            <rect
+              x={FACE.brow.rightX}
+              y={FACE.brow.y + browLift}
+              width={FACE.brow.w}
+              height={FACE.brow.h}
+              rx={0.7}
+              fill="#1a3a4a"
+              opacity="0.85"
+              transform={`rotate(${browTilt} ${FACE.brow.rightX + FACE.brow.w / 2} ${FACE.brow.y + browLift})`}
+              style={{ transition: 'all 200ms ease-out' }}
+            />
+          </g>
+
+          {/* Eyelids (blink) — skin-toned bars over the eyes */}
+          <g style={{ opacity: blink ? 1 : 0, transition: 'opacity 60ms ease-out' }}>
+            <ellipse cx={FACE.leftEye.cx} cy={FACE.leftEye.cy} rx={FACE.eyeRx + 0.3} ry={FACE.eyeRy + 0.4} fill="#f3d4c2" />
+            <ellipse cx={FACE.rightEye.cx} cy={FACE.rightEye.cy} rx={FACE.eyeRx + 0.3} ry={FACE.eyeRy + 0.4} fill="#f3d4c2" />
+          </g>
+
+          {/* Mouth — driven by viseme */}
+          {viseme === 'closed' ? (
+            // Closed lips: thin horizontal line
+            <rect
+              x={FACE.mouth.cx - mouthW / 2}
+              y={FACE.mouth.cy - 0.3}
+              width={mouthW}
+              height={0.7}
+              rx={0.3}
+              fill="#8a3a4a"
+              opacity="0.75"
+              style={{ transition: 'all 70ms linear' }}
+            />
+          ) : (
+            <>
+              {/* Inner mouth (dark) */}
+              <ellipse
+                cx={FACE.mouth.cx}
+                cy={FACE.mouth.cy}
+                rx={mouthW / 2}
+                ry={mouthRy}
+                fill="#3a1018"
+                opacity="0.92"
+                style={{ transition: 'all 70ms linear' }}
+              />
+              {/* Lip outline */}
+              <ellipse
+                cx={FACE.mouth.cx}
+                cy={FACE.mouth.cy}
+                rx={mouthW / 2}
+                ry={mouthRy}
+                fill="none"
+                stroke="#a04050"
+                strokeWidth="0.45"
+                opacity="0.7"
+                style={{ transition: 'all 70ms linear' }}
+              />
+            </>
+          )}
+        </svg>
+      </div>
     </div>
   );
 }
