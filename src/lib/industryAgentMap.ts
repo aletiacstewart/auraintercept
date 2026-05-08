@@ -129,6 +129,12 @@ export interface IndustryServiceConsoleConfig {
   /** Sidebar group label for the Field Ops nav section (e.g. "Field Ops",
    * "Project Ops", "Salon Floor"). Derived per industry pack. */
   fieldOpsSectionLabel: string;
+  /** Optional sidebar label for the worker/technician sub-item under the
+   * Field Ops group. Defaults to "Technician View" when unset. */
+  workerSubItemLabel?: string;
+  /** Optional sidebar label for the dispatch/admin sub-item under the
+   * Field Ops group. Defaults to "Dispatch View" when unset. */
+  dispatchSubItemLabel?: string;
 }
 
 type PartialConfig = Partial<Omit<IndustryServiceConsoleConfig, 'quickActions' | 'tabs' | 'operatives' | 'statusLabels' | 'selectorText' | 'specialistShow'>> & {
@@ -415,20 +421,20 @@ const salonLike: PartialConfig = {
 };
 
 const INDUSTRY_OVERRIDES: Record<string, PartialConfig> = {
-  hvac: { consoleTitle: 'HVAC Service Management Console', workerConsoleTitle: 'HVAC Technician Console', fieldOpsSectionLabel: 'Field Ops' },
-  plumbing: { consoleTitle: 'Plumbing Service Management Console', workerConsoleTitle: 'Plumber Console', fieldOpsSectionLabel: 'Field Ops' },
-  electrical: { consoleTitle: 'Electrical Service Management Console', workerConsoleTitle: 'Electrician Console', fieldOpsSectionLabel: 'Field Ops' },
-  appliance_repair: { consoleTitle: 'Appliance Repair Console', workerConsoleTitle: 'Repair Technician Console', fieldOpsSectionLabel: 'Service Ops' },
-  landscape: { consoleTitle: 'Crew Route Console', workerConsoleTitle: 'Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Visit', assignmentAgentName: 'Crew Assignment Agent', fieldOpsSectionLabel: 'Crew Ops' },
-  pest_control: { consoleTitle: 'Treatment Route Console', workerConsoleTitle: 'Pest Tech Console', teamMemberNoun: 'Pest Tech', jobNoun: 'Treatment Visit', assignmentAgentName: 'Route Assignment Agent', fieldOpsSectionLabel: 'Route Ops' },
-  pool_spa: { consoleTitle: 'Pool Route Console', workerConsoleTitle: 'Pool Tech Console', teamMemberNoun: 'Pool Tech', jobNoun: 'Service Visit', assignmentAgentName: 'Route Assignment Agent', fieldOpsSectionLabel: 'Route Ops' },
-  roofing: { consoleTitle: 'Roofing Operations Console', workerConsoleTitle: 'Roofing Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Inspection / Job', specialistShow: ['insurance_claim', 'site_survey'], fieldOpsSectionLabel: 'Project Ops' },
-  solar: { consoleTitle: 'Solar Project Console', workerConsoleTitle: 'Solar Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Install', specialistShow: ['site_survey', 'permit_code'], fieldOpsSectionLabel: 'Project Ops' },
-  fencing: { consoleTitle: 'Install Crew Console', workerConsoleTitle: 'Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Install', fieldOpsSectionLabel: 'Install Ops' },
-  construction: { consoleTitle: 'Project Operations Console', workerConsoleTitle: 'Project Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Project', specialistShow: ['site_survey', 'permit_code'], fieldOpsSectionLabel: 'Project Ops' },
-  handyman: { consoleTitle: 'Handyman Service Console', workerConsoleTitle: 'Service Pro Console', teamMemberNoun: 'Service Pro', jobNoun: 'Task', fieldOpsSectionLabel: 'Service Ops' },
-  security_systems: { consoleTitle: 'Security Install Console', workerConsoleTitle: 'Security Tech Console', teamMemberNoun: 'Security Tech', jobNoun: 'Install', fieldOpsSectionLabel: 'Install Ops' },
-  mobile_mechanic: { consoleTitle: 'Mobile Mechanic Console', workerConsoleTitle: 'Mechanic Console', teamMemberNoun: 'Mechanic', jobNoun: 'Service Call', fieldOpsSectionLabel: 'Route Ops' },
+  hvac: { consoleTitle: 'HVAC Dispatch/GPS Console', workerConsoleTitle: 'HVAC Tech Ops Console', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'HVAC Tech Ops Console' },
+  plumbing: { consoleTitle: 'Plumbing Dispatch/GPS Console', workerConsoleTitle: 'Plumber Ops Console', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Plumber Ops Console' },
+  electrical: { consoleTitle: 'Electrical Dispatch/GPS Console', workerConsoleTitle: 'Electrician Ops Console', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Electrician Ops Console' },
+  appliance_repair: { consoleTitle: 'Appliance Repair Dispatch/GPS Console', workerConsoleTitle: 'Repair Tech Ops Console', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Repair Tech Ops Console' },
+  landscape: { consoleTitle: 'Landscape Dispatch/GPS Console', workerConsoleTitle: 'Crew Ops Console', teamMemberNoun: 'Crew Member', jobNoun: 'Visit', assignmentAgentName: 'Crew Assignment Agent', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Crew Ops Console' },
+  pest_control: { consoleTitle: 'Pest Control Dispatch/GPS Console', workerConsoleTitle: 'Pest Tech Ops Console', teamMemberNoun: 'Pest Tech', jobNoun: 'Treatment Visit', assignmentAgentName: 'Route Assignment Agent', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Pest Tech Ops Console' },
+  pool_spa: { consoleTitle: 'Pool & Spa Dispatch/GPS Console', workerConsoleTitle: 'Pool Tech Ops Console', teamMemberNoun: 'Pool Tech', jobNoun: 'Service Visit', assignmentAgentName: 'Route Assignment Agent', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Pool Tech Ops Console' },
+  roofing: { consoleTitle: 'Roofing Dispatch/GPS Console', workerConsoleTitle: 'Roofing Crew Ops Console', teamMemberNoun: 'Crew Member', jobNoun: 'Inspection / Job', specialistShow: ['insurance_claim', 'site_survey'], fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Roofing Crew Ops Console' },
+  solar: { consoleTitle: 'Solar Dispatch/GPS Console', workerConsoleTitle: 'Solar Crew Ops Console', teamMemberNoun: 'Crew Member', jobNoun: 'Install', specialistShow: ['site_survey', 'permit_code'], fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Solar Crew Ops Console' },
+  fencing: { consoleTitle: 'Fencing Dispatch/GPS Console', workerConsoleTitle: 'Fencing Crew Ops Console', teamMemberNoun: 'Crew Member', jobNoun: 'Install', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Fencing Crew Ops Console' },
+  construction: { consoleTitle: 'Construction Dispatch/GPS Console', workerConsoleTitle: 'Project Crew Ops Console', teamMemberNoun: 'Crew Member', jobNoun: 'Project', specialistShow: ['site_survey', 'permit_code'], fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Project Crew Ops Console' },
+  handyman: { consoleTitle: 'Handyman Dispatch/GPS Console', workerConsoleTitle: 'Service Pro Ops Console', teamMemberNoun: 'Service Pro', jobNoun: 'Task', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Service Pro Ops Console' },
+  security_systems: { consoleTitle: 'Security Dispatch/GPS Console', workerConsoleTitle: 'Security Tech Ops Console', teamMemberNoun: 'Security Tech', jobNoun: 'Install', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Security Tech Ops Console' },
+  mobile_mechanic: { consoleTitle: 'Mobile Mechanic Dispatch/GPS Console', workerConsoleTitle: 'Mechanic Ops Console', teamMemberNoun: 'Mechanic', jobNoun: 'Service Call', fieldOpsSectionLabel: 'Dispatch/GPS', dispatchSubItemLabel: 'Dispatch/GPS Console', workerSubItemLabel: 'Mechanic Ops Console' },
   auto_care: {
     consoleTitle: 'Bay Queue Console',
     consoleBadge: 'Built for bays, repair orders, parts, and customer status loops',
