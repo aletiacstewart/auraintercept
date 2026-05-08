@@ -25,6 +25,8 @@ import { LeadScoreBadge } from '@/components/leads';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryPlaceholders } from '@/lib/industryPlaceholders';
 
 interface Lead {
   id: string;
