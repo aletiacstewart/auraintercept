@@ -259,7 +259,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
       { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
       { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
-      { name: 'Implementation Fee', starter: '$397', connect: '$397', performance: '$697', command: '$697' },
+      { name: 'Onboarding Fee (one-time)', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
     ],
   },
 ];
@@ -736,7 +736,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Implementation Fee: $397 Core &amp; Boost · $697 Pro &amp; Elite</span>
+                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 60-Day Live Trial): Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>
               </div>
             </div>
           </CardContent>

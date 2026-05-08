@@ -62,7 +62,7 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscription plans range from $197 to $1,997 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li><strong className="text-foreground">One-time implementation fee</strong> applies at activation: Aura Core &amp; Aura Boost $397, Aura Pro &amp; Aura Elite $697. Implementation fees are non-refundable once onboarding is completed.</li>
+              <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 60-Day Live Trial: Aura Core $497, Aura Boost $697, Aura Pro $1,197, Aura Elite $2,197. Onboarding fees are non-refundable once onboarding is completed.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
