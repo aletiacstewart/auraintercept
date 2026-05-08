@@ -464,12 +464,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   )}
                   {group.items.map((item) => {
                     const Icon = item.icon;
-                    const isActive =
+                     const isActive =
                       location.pathname + location.search === item.href ||
                       (location.pathname === item.href.split('?')[0] &&
                         item.href.includes('?') &&
                         location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
-                    const displayLabel = item.label;
+                    let displayLabel = item.label;
+                    if (item.href === '/dashboard/ai-consoles/field-ops' && serviceConfig.workerSubItemLabel) {
+                      displayLabel = serviceConfig.workerSubItemLabel;
+                    } else if (item.href === '/dashboard/dispatch-field-ops' && serviceConfig.dispatchSubItemLabel) {
+                      displayLabel = serviceConfig.dispatchSubItemLabel;
+                    }
 
                     const tourId = item.href === '/dashboard' ? 'nav-dashboard'
                       : item.href === '/dashboard/quick-setup' ? 'nav-quick-setup'
