@@ -236,9 +236,9 @@ const PricingSummaryPDF = () => (
         ))}
       </View>
       <View style={styles.infoBox}>
-        <Text style={styles.noticeTitle}>Implementation Fees</Text>
+        <Text style={styles.noticeTitle}>One-Time Onboarding Fee</Text>
         <Text style={styles.noticeText}>
-          Core & Boost: $397 | Pro & Elite: $697. Annual billing = 10x monthly rate.
+          Core $497 · Boost $697 · Pro $1,197 · Elite $2,197. Due at start of the 60-Day Live Trial. Non-refundable once onboarding begins. Annual billing = 10x monthly rate.
         </Text>
       </View>
       <View style={styles.footer}>
@@ -262,7 +262,7 @@ const PricingSummaryPDF = () => (
         {[
           { category: 'Monthly Price', core: '$197', boost: '$497', pro: '$997', elite: '$1,997' },
           { category: 'Annual Price', core: '$1,970', boost: '$4,970', pro: '$9,970', elite: '$19,970' },
-          { category: 'Implementation Fee', core: '$397', boost: '$397', pro: '$697', elite: '$697' },
+          { category: 'One-Time Onboarding Fee', core: '$497', boost: '$697', pro: '$1,197', elite: '$2,197' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
           { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
