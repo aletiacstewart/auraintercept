@@ -20,6 +20,7 @@ import { LeadsManager } from '@/components/leads';
 import { CompaniesManager } from '@/components/businessops/CompaniesManager';
 import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CustomersManager } from '@/components/businessops/CustomersManager';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -287,7 +288,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     >
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-          {/* Inline form host renders any form opened by embedded managers as a tab */}
+        <InlineFormProvider>
+          <InlineFormHost className="mb-4" />
           {showWelcome ? (
             <WelcomeScreen
               companyName={company?.name || 'Business Management Console'}
