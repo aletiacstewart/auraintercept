@@ -9,7 +9,18 @@ export function SwitchingOverlay() {
     setShow(isSuperSwitcherSwitching());
     const onChange = () => setShow(isSuperSwitcherSwitching());
     window.addEventListener('super-switcher:switching', onChange);
-    return () => window.removeEventListener('super-switcher:switching', onChange);
+    // Auto-clear shortly after a fresh page load — by this point the new
+    // session has hydrated and the destination route is mounted.
+    const t = setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('aura_super_switcher_switching');
+        setShow(false);
+      }
+    }, 600);
+    return () => {
+      window.removeEventListener('super-switcher:switching', onChange);
+      clearTimeout(t);
+    };
   }, []);
 
   if (!show) return null;
