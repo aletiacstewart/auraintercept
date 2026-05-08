@@ -384,8 +384,8 @@ export default function Quotes() {
           </DialogContent>
         </Dialog>
       </div>
-      </PageContainer>
       </InlineFormProvider>
+      </PageContainer>
     </DashboardLayout>
   );
 }
