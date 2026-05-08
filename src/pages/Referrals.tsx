@@ -8,14 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -110,6 +104,8 @@ export default function Referrals() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
+        <InlineFormHost className="mb-4" />
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Gift}
@@ -123,13 +119,14 @@ export default function Referrals() {
             }
           />
 
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Generate Referral Code</DialogTitle>
-                <DialogDescription>Create a unique referral code for a customer</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
+          <FormShell
+            id="referral-create"
+            title="Generate Referral Code"
+            description="Create a unique referral code for a customer"
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+          >
+              <div className="space-y-4 pt-2">
                 <div className="space-y-2">
                   <Label>Referrer Name *</Label>
                   <Input
@@ -183,8 +180,7 @@ export default function Referrals() {
                   Generate Code
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+          </FormShell>
 
           {/* Stats */}
           <div className="grid gap-4 md:grid-cols-4">
@@ -281,6 +277,7 @@ export default function Referrals() {
             </div>
           )}
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
