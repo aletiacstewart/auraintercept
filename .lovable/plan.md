@@ -1,75 +1,48 @@
-## Goal
+# Add Industry Switcher access to Platform Admin Dashboard
 
-A single **super-admin login** (`superadmin@auraintercept.ai` / chosen password) that lands on a **Switcher Hub** page. The hub has:
+## Problem
 
-- **Industry dropdown** at top (all 24 seeded industries, e.g. "hvac — Demo HVAC Co").
-- A grid of cards (or a single focused card for the selected industry) with three buttons: **Company**, **Employee**, **Customer**.
-- Clicking a button swaps the active session into that demo user and lands on their dashboard (`/dashboard`, `/technician`, `/customer-portal`) — **same tab, no manual re-login**.
-- A persistent **"Switcher" pill** in the header of every demo dashboard so you can jump back to the hub or switch role/industry instantly.
+You logged in as `superadmin@auraintercept.ai` but landed on the regular Platform Admin dashboard instead of `/super-switcher`. Two things to fix:
 
-This mirrors the AdultLeague Super Switcher Hub UX exactly, mapped onto our 24 industries × 3 roles (= 72 demo accounts already seeded by `seed-demo-accounts-v2`).
+1. The auto-redirect only fires from one login form (`handleLogin` in `Auth.tsx`). If the session was already active, or you came in through a different path, the redirect is skipped — leaving you on `/dashboard` with no visible way to reach the switcher hub.
+2. There is no persistent UI affordance on the dashboard to open the switcher hub.
 
-## How the in-tab swap works
+You asked for **a button on the existing dashboard**, so the fix is presentation-only.
 
-To avoid logout/login friction, the swap reuses the existing demo passwords (all 72 accounts share `aidemo*!`):
+## What to build
 
-1. User clicks **Company** on the "hvac" card.
-2. Client calls `supabase.auth.signOut()` then `supabase.auth.signInWithPassword({ email: 'hvacadmin@demo.com', password: 'aidemo*!' })`.
-3. On success, `localStorage.setItem('aura_super_admin', '1')` is set so the app knows this session is "owned" by the super-admin (shows the Switcher pill in the header, hides Sign Out → replaces with "Back to Switcher").
-4. Router pushes to `/dashboard` (admin), `/technician` (employee), or `/customer-portal` (customer).
+### 1. "Industry & Role Switcher" hero card on the Platform Admin dashboard
+- Visible only when the signed-in user is `superadmin@auraintercept.ai` (or any `platform_admin` — TBD, default to the superadmin email to keep the regular admin dashboard clean).
+- Placed at the top of the Platform Admin dashboard, above the existing "Welcome to the Aura Intercept admin panel" panel.
+- Cyber-Sentry styled card with:
+  - Title: "Demo Switcher Hub"
+  - Subtitle: "Jump into any industry as Company / Employee / Customer without logging out."
+  - Primary button: **"Open Switcher Hub"** → navigates to `/super-switcher`
+  - Secondary inline text showing the last-used industry (read from `aura_super_switcher_industry` localStorage key, if present) with a "Resume" shortcut.
 
-"Back to Switcher" signs out, signs back in as `superadmin@auraintercept.ai`, and routes to `/super-switcher`.
+### 2. Persistent header chip
+- Add a small "Switcher" chip next to the "CURRENT PLAN" badge in the top-right of the dashboard header, also gated to the superadmin email.
+- One click → `/super-switcher`.
+- Ensures the entry point is reachable from every screen in the admin shell, not just the dashboard body.
 
-This is safe because:
-- The super-admin password lives only in the edge function (never in client code).
-- All demo passwords are already public knowledge in our docs.
-- Only `platform_admin` can hit the bootstrap edge function that creates/repairs the super-admin user.
-
-## What gets built
-
-### 1. Super-admin user
-- New auth user `superadmin@auraintercept.ai` with `platform_admin` role.
-- Created/repaired by a one-shot edge function `seed-super-admin` (platform_admin gated). Password set via a Lovable secret `SUPER_ADMIN_PASSWORD`.
-
-### 2. Switcher Hub page — `/super-switcher`
-- Route gated to `platform_admin` role.
-- Header: "Super Switcher Hub — One demo login, every industry, every console."
-- Top bar: industry `<Select>` (24 options, shows industry label + tier badge), persists last choice in localStorage.
-- Below: 24 cards (grouped by cluster: Field Services / Home Services / Healthcare / Specialty), each with:
-  - Industry name, city/region (from seeded company), tier chip, LIVE/SEEDED badge.
-  - Three buttons: **Company**, **Employee**, **Customer**.
-  - Footer chips: "Live console", "Public page" (links to public booking), "Standings" → reuse existing analytics link.
-- Filter input to narrow the grid.
-
-### 3. Switcher pill (header injection)
-- Small pill component rendered in `DashboardLayout`, `TechnicianLayout`, and `CustomerPortalHome` headers when `localStorage.aura_super_admin === '1'`.
-- Shows: current industry + role, dropdown to switch role within same industry, "← All industries" button (back to `/super-switcher`).
-
-### 4. Hook `useSuperSwitcher`
-- `enter(industryKey, role)` → signs out, signs in as the demo user, sets flag, routes.
-- `exit()` → signs out, signs back in as super-admin, routes to `/super-switcher`.
-- `current()` → derives `{ industry, role }` from the signed-in email pattern.
-
-### 5. Auth flow tweak
-- `Auth.tsx` `handleSignIn`: if email = `superadmin@auraintercept.ai` AND user has `platform_admin` role, redirect to `/super-switcher` instead of `/dashboard`.
-
-### 6. Files
-- `supabase/functions/seed-super-admin/index.ts` (new, platform_admin gated, uses `SUPER_ADMIN_PASSWORD` secret).
-- `src/pages/SuperSwitcher.tsx` (new).
-- `src/components/super-switcher/SwitcherPill.tsx` (new) — injected into the 3 layouts.
-- `src/hooks/useSuperSwitcher.ts` (new).
-- `src/App.tsx` — register `/super-switcher` route.
-- `src/pages/Auth.tsx` — redirect rule for super-admin email.
-- `src/components/dashboard/DashboardLayout.tsx`, technician/customer layouts — render `<SwitcherPill />` when flag is set.
-- Memory: update `mem://platform-operations/demo-account-registry` with the super-admin entry + switcher URL.
+### 3. Auth redirect hardening (small)
+- In `Auth.tsx`, the existing email check stays. Add one extra guard: when an already-authenticated `superadmin@auraintercept.ai` session lands on `/dashboard`, the new dashboard card is the safety net (no forced redirect — you stay where you are but the switcher is one click away).
 
 ## Out of scope
 
-- No new seed data — uses the existing 72 demo users.
-- No multi-tab session juggling — single tab, sequential signin/signout.
-- No change to non-demo company behavior.
+- No backend / RLS changes.
+- No changes to `useSuperSwitcher` hook or `SwitcherPill` (already mounted globally for active switcher sessions).
+- No edits to the demo seeder.
 
-## Confirmations needed before I build
+## Files to touch
 
-1. **Email + password**: OK to use `superadmin@auraintercept.ai`? You'll need to add a `SUPER_ADMIN_PASSWORD` secret (I'll prompt when implementing).
-2. **In-tab signout/signin swap is acceptable** (1–2s flash, no manual re-login). If you'd rather see zero flash, we can do magiclink-in-new-tab instead — but it won't match the AdultLeague feel.
+- `src/pages/Dashboard.tsx` (or whichever component renders the "PLATFORM DASHBOARD" panel — confirm during implementation; likely `src/components/dashboard/PlatformAdminDashboard.tsx`).
+- Header component used by the platform admin shell (for the chip).
+- No new routes, no new edge functions.
+
+## Acceptance
+
+- Sign in as `superadmin@auraintercept.ai` → land on `/dashboard` → immediately see a "Demo Switcher Hub" card at the top with an **Open Switcher Hub** button.
+- Click it → arrive at `/super-switcher` with the existing 18-industry grid.
+- Header chip is visible from the dashboard for one-click access.
+- Regular `platform_admin` and `company_admin` users see no change.
