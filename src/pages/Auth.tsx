@@ -145,7 +145,12 @@ export default function Auth() {
 
       toast({ title: 'Welcome back!', description: 'Redirecting...' });
       
-      if (roleData?.role === 'customer') {
+      if (email.toLowerCase() === 'superadmin@auraintercept.ai' && roleData?.role === 'platform_admin') {
+        // Clear any prior switcher session — fresh login means we own this tab
+        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
+        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
+        navigate('/super-switcher');
+      } else if (roleData?.role === 'customer') {
         navigate('/customer');
       } else {
         navigate('/dashboard');

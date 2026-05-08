@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, Copy, CheckCircle2, Building2 } from 'lucide-react';
+import { Sparkles, Loader2, Copy, CheckCircle2, Building2, Crown } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
@@ -66,6 +66,21 @@ export default function DemoAccountSeeder() {
   const [running, setRunning] = useState(false);
   const [results, setResults] = useState<SeedResult[] | null>(null);
   const [seedingTenant, setSeedingTenant] = useState(false);
+  const [seedingSuper, setSeedingSuper] = useState(false);
+
+  const runSeedSuperAdmin = async () => {
+    setSeedingSuper(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('seed-super-admin');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error ?? 'Failed');
+      toast.success(`Super-admin ready: ${data.email}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setSeedingSuper(false);
+    }
+  };
 
   const runSeed = async () => {
     setRunning(true);
@@ -191,6 +206,26 @@ export default function DemoAccountSeeder() {
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding tenant…</>
               ) : (
                 <><Building2 className="mr-2 h-4 w-4" /> Seed Aura Intercept Tenant</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Crown className="h-5 w-5" /> Super Admin (Switcher Hub)</CardTitle>
+            <CardDescription>
+              Creates <code className="font-mono bg-muted px-2 py-1 rounded">superadmin@auraintercept.ai</code> with platform_admin role.
+              Password is the <code>SUPER_ADMIN_PASSWORD</code> secret. Sign in with that account to land on
+              <code className="ml-1">/super-switcher</code> and jump into any demo company / employee / customer in one click.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={runSeedSuperAdmin} disabled={seedingSuper} size="lg" className="w-full" variant="outline">
+              {seedingSuper ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating super-admin…</>
+              ) : (
+                <><Crown className="mr-2 h-4 w-4" /> Create / Reset Super Admin</>
               )}
             </Button>
           </CardContent>
