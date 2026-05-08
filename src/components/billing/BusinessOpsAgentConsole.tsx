@@ -287,6 +287,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     >
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+          {/* Inline form host renders any form opened by embedded managers as a tab */}
           {showWelcome ? (
             <WelcomeScreen
               companyName={company?.name || 'Business Management Console'}
