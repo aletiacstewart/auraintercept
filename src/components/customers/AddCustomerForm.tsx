@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -103,18 +103,14 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5 text-primary" />
-            Add New {customerNoun}
-          </DialogTitle>
-          <DialogDescription>
-            Create a new {customerNoun.toLowerCase()} profile with contact information and communication preferences.
-          </DialogDescription>
-        </DialogHeader>
-
+    <FormShell
+      id="add-customer"
+      title={`Add New ${customerNoun}`}
+      description={`Create a new ${customerNoun.toLowerCase()} profile with contact information and communication preferences.`}
+      open={open}
+      onOpenChange={onOpenChange}
+      className="sm:max-w-md"
+    >
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name fields */}
           <div className="grid grid-cols-2 gap-3">
@@ -268,7 +264,6 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+    </FormShell>
   );
 }
