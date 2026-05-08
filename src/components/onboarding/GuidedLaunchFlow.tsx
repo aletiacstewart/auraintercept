@@ -32,7 +32,7 @@ interface GuidedLaunchFlowProps {
 const ROLE_TO_AGENT: Record<RoleType, { name: string; icon: React.ReactNode }> = {
   receptionist: { name: 'AI Receptionist', icon: <Phone className="h-4 w-4" /> },
   scheduler: { name: 'Booking Agent', icon: <Calendar className="h-4 w-4" /> },
-  dispatcher: { name: 'Dispatch Agent', icon: <Truck className="h-4 w-4" /> },
+  dispatcher: { name: 'Dispatch/GPS Console', icon: <Truck className="h-4 w-4" /> },
   billing: { name: 'Quote & Invoice Agent', icon: <Receipt className="h-4 w-4" /> },
   followup: { name: 'Follow-up Agent', icon: <UserCheck className="h-4 w-4" /> },
   marketing: { name: 'Marketing Agent', icon: <Megaphone className="h-4 w-4" /> },

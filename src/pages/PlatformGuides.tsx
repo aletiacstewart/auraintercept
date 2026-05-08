@@ -227,7 +227,7 @@ const guideCategories = [
           'Presents available time slots to customers',
           'Creates confirmed appointments in the system',
           'Triggers calendar sync if Google Calendar connected',
-          'Hands off to Dispatch Agent for technician assignment',
+          'Hands off to Dispatch/GPS Console for technician assignment',
           'Depends on AI Receptionist being enabled'
         ],
         tips: ['Ensure business hours are configured accurately', 'Set buffer times between appointments in Settings']
@@ -348,7 +348,7 @@ const guideCategories = [
         title: 'Field Operations Agents (4 Agents)',
         duration: '12 min',
         steps: [
-          'Dispatch Agent: Assigns technicians based on skills, zones, workload',
+          'Dispatch/GPS Console: Assigns technicians based on skills, zones, workload',
           'Route Agent: Optimizes travel routes with traffic awareness',
           'ETA Agent: Calculates arrival times, sends customer updates',
           'Check-in Agent: Tracks on-site status with photo documentation',
@@ -421,7 +421,7 @@ const guideCategories = [
           'Booking Agent requires AI Receptionist',
           'Follow-up Agent requires AI Receptionist',
           'Review Agent requires Follow-up Agent',
-          'Dispatch Agent is root for field operations',
+          'Dispatch/GPS Console is root for field operations',
           'Route, ETA, Check-in agents require Dispatch',
           'Web Presence Agent requires Creative Agent',
           'Invoice Agent requires Quoting Agent',

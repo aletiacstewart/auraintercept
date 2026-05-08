@@ -99,9 +99,9 @@ const sections: Section[] = [
       },
       {
         num: 8,
-        name: 'Dispatch Agent',
+        name: 'Dispatch/GPS Console',
         prompt: 'A tactical command screen showing technician avatars being assigned to job pins on a holographic city map. Assignment lines connect dispatchers to field workers with satisfying snap animations. Job cards slide into place with priority indicators. Green and white on dark background, real-time operations feel. 4K.',
-        audioScript: 'The Dispatch Agent assigns the right technician to every job — instantly, intelligently, with no manual coordination required.',
+        audioScript: 'The Dispatch/GPS Console assigns the right technician to every job — instantly, intelligently, with no manual coordination required.',
         imagePrompt: 'Tactical dispatch board UI with technician avatars being assigned to job cards via animated green lines. Priority badges on each card. "DISPATCH AGENT" label. Dark green-and-white tech dashboard style.',
       },
       {

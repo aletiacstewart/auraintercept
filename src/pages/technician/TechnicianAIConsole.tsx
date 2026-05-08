@@ -10,7 +10,7 @@ export default function TechnicianAIConsole() {
   const { companyId, loading } = useAuth();
   const { pack } = useIndustryPack();
   const cfg = pack ? getIndustryServiceConsoleConfig(pack) : null;
-  const title = cfg?.workerConsoleTitle ?? 'Service Delivery Console';
+  const title = cfg?.workerConsoleTitle ?? 'Service Management Console';
   const subtitle = cfg?.workerConsoleDescription ?? 'Your intelligent operations assistant';
   const specialists = cfg?.specialistShow ?? ['diagnostic', 'permit_code'];
   const specialistTitle = cfg?.specialistTitle ?? 'Need a Specialist?';

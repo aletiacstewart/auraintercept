@@ -650,7 +650,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.iconDesc}>Calendar + checkmark. Represents bookings.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.primary }]}>
-            <Text style={styles.iconName}>Dispatch Agent</Text>
+            <Text style={styles.iconName}>Dispatch/GPS Console</Text>
             <Text style={styles.iconDesc}>Radio tower + person. Represents job assignment.</Text>
           </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.secondary }]}>

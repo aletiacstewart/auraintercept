@@ -426,7 +426,7 @@ const CONSOLES = [
     ],
     agents: [
       {
-        name: 'Dispatch Agent',
+        name: 'Dispatch/GPS Console',
         description: 'Assigns technicians to jobs based on skills, location, availability, and workload. Optimizes assignments for efficiency.',
         isCore: true,
         worksAlone: true,
@@ -437,21 +437,21 @@ const CONSOLES = [
         description: 'Plans the best driving routes for technicians. Considers traffic, distance, and appointment times to minimize travel.',
         isCore: false,
         worksAlone: false,
-        requires: ['Dispatch Agent'],
+        requires: ['Dispatch/GPS Console'],
       },
       {
         name: 'ETA Agent',
         description: 'Calculates and communicates arrival times to customers. Automatically updates estimates based on traffic and delays.',
         isCore: false,
         worksAlone: false,
-        requires: ['Dispatch Agent', 'Route Agent'],
+        requires: ['Dispatch/GPS Console', 'Route Agent'],
       },
       {
         name: 'Check-in Agent',
         description: 'Tracks when technicians arrive at jobs and start work. Logs job progress and completion for accountability.',
         isCore: false,
         worksAlone: false,
-        requires: ['Dispatch Agent'],
+        requires: ['Dispatch/GPS Console'],
       },
     ],
   },
@@ -695,7 +695,7 @@ const INTEGRATIONS = [
     cost: 'Free (requires Google account)',
     required: false,
     requiredFor: 'Two-way calendar sync with technician schedules',
-    agentsAffected: ['Booking Agent', 'Dispatch Agent'],
+    agentsAffected: ['Booking Agent', 'Dispatch/GPS Console'],
     whatHappensWithout: 'Manual availability management only - no automatic calendar sync.',
   },
   {
@@ -768,7 +768,7 @@ const TIERS = [
     consoles: [`${SUBSCRIPTION_TIERS.aura_boost?.consoles ?? 5} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_boost?.operatives ?? 12,
     agents: [
-      'All Core Agents', 'Dispatch Agent', 'Route Agent',
+      'All Core Agents', 'Dispatch/GPS Console', 'Route Agent',
       'ETA Agent', 'Check-In Agent',
     ],
     voiceIncluded: SUBSCRIPTION_TIERS.aura_boost?.hasVoice ?? true,

@@ -104,7 +104,7 @@ export default function DispatchFieldOpsApp() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Map className="h-10 w-10 text-primary animate-pulse" />
-          <p className="text-sm text-muted-foreground">Loading Dispatch Console...</p>
+          <p className="text-sm text-muted-foreground">Loading Dispatch/GPS Console...</p>
         </div>
       </div>
     );

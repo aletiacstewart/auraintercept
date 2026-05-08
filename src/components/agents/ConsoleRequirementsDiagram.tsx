@@ -33,7 +33,7 @@ const ConsoleRequirementsDiagram: React.FC = () => {
 flowchart LR
     subgraph Agents["Required Anchor Agents"]
         T["🎧 AI Receptionist"]
-        D["🚚 Dispatch Agent"]
+        D["🚚 Dispatch/GPS Console"]
         AQ["👔 Admin + 💼 Quoting"]
         C["📣 Campaign Agent"]
         SC["✏️ Social Content"]

@@ -17,7 +17,7 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   followup: { name: 'Follow-up Agent', description: 'Customer callbacks & engagement', icon: '📞' },
   review: { name: 'Review Agent', description: 'Reputation management', icon: '⭐' },
   booking: { name: 'Booking Agent', description: 'Online appointment booking', icon: '📅' },
-  dispatch: { name: 'Dispatch Agent', description: 'Job assignment & coordination', icon: '🚚' },
+  dispatch: { name: 'Dispatch/GPS Console', description: 'Job assignment & coordination', icon: '🚚' },
   route: { name: 'Route Agent', description: 'Optimal route planning', icon: '🗺️' },
   eta: { name: 'ETA Agent', description: 'Arrival time tracking', icon: '⏱️' },
   checkin: { name: 'Check-in Agent', description: 'Job status updates', icon: '✅' },

@@ -311,19 +311,19 @@ const baseConfig = (pack: IndustryPack, fieldRouting: boolean): IndustryServiceC
   const teamMemberNoun = term.technician || term.employee || (fieldRouting ? 'Technician' : 'Team Member');
   return {
     industryId: pack.industry_id,
-    consoleTitle: fieldRouting ? 'Service Delivery Console' : 'Appointment Console',
+    consoleTitle: fieldRouting ? 'Service Management Console' : 'Appointment Console',
     consoleDescription: fieldRouting
       ? `Live ${jobNoun.toLowerCase()} assignment, routing, and completion workflows`
       : `Today's ${jobNoun.toLowerCase()}s, check-ins, provider flow, and follow-up`,
     consoleBadge: fieldRouting ? 'Built for mobile service teams' : 'Built for booking-based teams',
-    consoleSubtitle: fieldRouting ? 'Service Delivery — Cyber-Sentry Edition' : 'Appointment Operations — Cyber-Sentry Edition',
-    workerConsoleTitle: fieldRouting ? 'Service Delivery Console' : 'Team Console',
+    consoleSubtitle: fieldRouting ? 'Service Management — Cyber-Sentry Edition' : 'Appointment Operations — Cyber-Sentry Edition',
+    workerConsoleTitle: fieldRouting ? 'Service Management Console' : 'Team Console',
     workerConsoleDescription: fieldRouting
       ? `Manage ${jobNoun.toLowerCase()}s, routes, ETAs, and completion`
       : `Manage ${jobNoun.toLowerCase()}s, check-ins, service notes, and follow-up`,
-    workerLayoutTitle: fieldRouting ? 'Service Delivery' : 'Team Workspace',
+    workerLayoutTitle: fieldRouting ? 'Service Management' : 'Team Workspace',
     installAppLabel: fieldRouting ? 'Install Service App' : 'Install Team App',
-    welcomeTitle: fieldRouting ? 'Service Delivery Ready' : `${jobNoun} Flow Ready`,
+    welcomeTitle: fieldRouting ? 'Service Management Ready' : `${jobNoun} Flow Ready`,
     welcomeSubtitle: fieldRouting
       ? `Manage your ${jobNoun.toLowerCase()}s — accept, navigate, update ETAs, and complete assignments`
       : `Manage your ${jobNoun.toLowerCase()}s — confirm, check in, complete, and follow up`,
@@ -415,9 +415,9 @@ const salonLike: PartialConfig = {
 };
 
 const INDUSTRY_OVERRIDES: Record<string, PartialConfig> = {
-  hvac: { consoleTitle: 'HVAC Service Delivery Console', workerConsoleTitle: 'HVAC Technician Console', fieldOpsSectionLabel: 'Field Ops' },
-  plumbing: { consoleTitle: 'Plumbing Service Delivery Console', workerConsoleTitle: 'Plumber Console', fieldOpsSectionLabel: 'Field Ops' },
-  electrical: { consoleTitle: 'Electrical Service Delivery Console', workerConsoleTitle: 'Electrician Console', fieldOpsSectionLabel: 'Field Ops' },
+  hvac: { consoleTitle: 'HVAC Service Management Console', workerConsoleTitle: 'HVAC Technician Console', fieldOpsSectionLabel: 'Field Ops' },
+  plumbing: { consoleTitle: 'Plumbing Service Management Console', workerConsoleTitle: 'Plumber Console', fieldOpsSectionLabel: 'Field Ops' },
+  electrical: { consoleTitle: 'Electrical Service Management Console', workerConsoleTitle: 'Electrician Console', fieldOpsSectionLabel: 'Field Ops' },
   appliance_repair: { consoleTitle: 'Appliance Repair Console', workerConsoleTitle: 'Repair Technician Console', fieldOpsSectionLabel: 'Service Ops' },
   landscape: { consoleTitle: 'Crew Route Console', workerConsoleTitle: 'Crew Console', teamMemberNoun: 'Crew Member', jobNoun: 'Visit', assignmentAgentName: 'Crew Assignment Agent', fieldOpsSectionLabel: 'Crew Ops' },
   pest_control: { consoleTitle: 'Treatment Route Console', workerConsoleTitle: 'Pest Tech Console', teamMemberNoun: 'Pest Tech', jobNoun: 'Treatment Visit', assignmentAgentName: 'Route Assignment Agent', fieldOpsSectionLabel: 'Route Ops' },

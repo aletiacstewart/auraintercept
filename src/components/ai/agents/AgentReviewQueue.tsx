@@ -41,7 +41,7 @@ interface AgentReviewQueueProps {
 const AGENT_NAMES: Record<string, string> = {
   triage: 'Triage Agent',
   booking: 'Booking Agent',
-  dispatch: 'Dispatch Agent',
+  dispatch: 'Dispatch/GPS Console',
   followup: 'Follow-up Agent',
   invoice: 'Invoice Agent',
   marketing: 'Marketing Agent',

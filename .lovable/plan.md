@@ -1,39 +1,47 @@
-# Add 4 missing industries to the demo seeder
 
-## Problem
+## 1. Rename "Dispatch Agent" → "Dispatch/GPS Console"
 
-`industry_template_packs` has **22 active packs**, but the demo seeder (`supabase/functions/seed-demo-accounts-v2/index.ts`) only contains **18 industry definitions**. The 4 missing ones are exactly what you reported:
+This is a display/label change only — the internal agent ID stays `dispatch` (no DB or routing changes). Everywhere the user-facing string `"Dispatch Agent"` appears, replace with `"Dispatch/GPS Console"`.
 
-- `fitness` — Fitness Studio
-- `salon` — Salon & Spa
-- `professional` — Professional Services
-- `saas_platform` — SaaS Platform
+Files to update (display strings only):
+- `src/lib/agentStyles.ts` and `src/lib/subscriptionAgentConfig.ts` — agent label map
+- `src/hooks/useAIAgentOrchestrator.ts`, `src/hooks/useRolePermissions.ts` — agent registry name fields
+- `src/pages/Subscription.tsx`, `src/pages/AIAgentsHub.tsx`, `src/pages/AIAgentGuide.tsx`, `src/pages/AgentDetailPage.tsx`, `src/pages/VideoPromptsPage.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/DesignPreview.tsx`
+- `src/components/agents/TierComparisonCards.tsx`, `AgentRequirementCalculator.tsx`, `AgentDependencyDiagram.tsx`, `ConsoleRequirementsDiagram.tsx`
+- `src/components/landing/PricingComparisonTable.tsx`
+- `src/components/audit/RoleMappingSection.tsx`
+- `src/components/aura/AuraEventCard.tsx`
+- `src/components/ai/AIAgentTestSuite.tsx`, `src/components/ai/chat/AgentHowToGuide.tsx`
+- `src/components/documentation/*.tsx` — PDF docs (PlatformDocumentPDF, PlatformFAQPDF, AIAgentGuidesPDF, ComprehensiveGuidesPDF, BrandAssetGuidePDF, VideoScriptsPDF, WebsiteCopyPDF, PricingSummaryPDF)
+- `supabase/functions/ai-orchestrator/index.ts`, `supabase/functions/widget-api/index.ts` (display-only `name` fields, never the `dispatch` key)
 
-Because there's no `IndustryDef` for them, the seeder never creates a demo company for those verticals, the Super Switcher cards stay marked **NOT SEEDED**, and the Company / Employee / Customer buttons are disabled.
+Note: `Dispatch Console` (already used in `FieldOpsInstall.tsx`, `DispatchFieldOpsApp.tsx`, `DispatchFieldOpsAppCard.tsx`) becomes `Dispatch/GPS Console` for consistency.
 
-## Fix
+## 2. Rename "Service Delivery" → "Service Management"
 
-Add 4 new entries to the `INDUSTRIES` array in `seed-demo-accounts-v2/index.ts`, following the exact same shape as the existing entries (key, label, tier, services, inventory, blog posts, campaigns).
+Replace every occurrence of the literal `"Service Delivery"`:
+- `src/lib/industryAgentMap.ts` — consoleTitle / workerConsoleTitle / consoleSubtitle / workerLayoutTitle / welcomeTitle for all verticals (HVAC, Plumbing, Electrical, generic field-routing)
+- `src/pages/technician/TechnicianAIConsole.tsx` — fallback title
+- `src/pages/Index.tsx` — landing copy (3 spots: card name, console name, subtitle rotator, comparison line)
+- `src/components/landing/PricingComparisonTable.tsx` — feature row + tooltip
 
-Proposed tiers (matching the canonical 4-tier model and the type of business):
+## 3. Super Admin Hub button on every demo page
 
-| industry_id     | Label                | Tier  | Inventory? |
-|-----------------|----------------------|-------|------------|
-| `fitness`       | Fitness Studio       | core  | null (service-only) |
-| `salon`         | Salon & Spa          | core  | yes (color, tools) |
-| `professional`  | Professional Services| boost | null (service-only) |
-| `saas_platform` | SaaS Platform        | pro   | null (service-only) |
+Current `SwitcherPill` is rendered as a `sticky top-0` banner at the App root. On dashboards with their own fixed/sticky header (CompanyAdminDashboard, technician layout, customer portal), the sticky banner sits above the route content but can scroll out of view or be visually covered by app chrome.
 
-Each entry will include:
-- 5 representative services
-- 3 starter blog posts
-- 2 starter campaigns
-- Inventory rows only where it makes sense (salon)
+Fix: convert the "Super Admin Hub" exit button into a **fixed floating button** anchored to the top-right of the viewport (`fixed top-2 right-2 z-[70]`), always visible while `isSuperSwitcherActive()` is true — independent of any page's own layout. Keep the role-switch chips in a compact pill anchored to top-left (`fixed top-2 left-2 z-[70]`), so neither relies on sticky parents.
 
-## After deploy
+- Edit `src/components/super-switcher/SwitcherPill.tsx`:
+  - Replace the single sticky banner with two `fixed` containers:
+    - Top-left: small pill with industry + role + role-switch buttons (collapsible on mobile)
+    - Top-right: prominent "Super Admin Hub" button (always shown when active)
+  - Use `pointer-events-auto` on the elements so the rest of the page stays interactive.
+  - Keep `useEffect` listening to the `super-switcher:switching` event so the bar appears immediately after `enter()`.
 
-1. Edge function auto-deploys.
-2. From `/super-switcher` click **"Seed / repair all demos"**.
-3. The 4 cards flip to **LIVE**, with Company / Employee / Customer buttons enabled.
+No other files change for this fix.
 
-No DB migrations, no schema changes, no UI changes. Pure data added to the seeder function.
+## Verification
+
+- After deploy, log in as super admin, enter a demo from `/super-switcher`. The "Super Admin Hub" button must be visible in the top-right corner on `/dashboard`, `/technician`, `/customer`, and any nested route.
+- Search for "Dispatch Agent" and "Service Delivery" in the repo — should return zero results in user-facing strings.
+- Spot-check Subscription, AIAgentsHub, PricingComparisonTable, and one PDF doc to confirm new labels render.
