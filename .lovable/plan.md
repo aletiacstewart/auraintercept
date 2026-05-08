@@ -1,38 +1,75 @@
 ## Goal
 
-Stop drawing fake facial features over Aura's portrait. The mouth/brow/blush overlays don't align with the photo and look uncanny. Replace them with subtle, tasteful motion that reacts to audio without trying to fake lip-sync.
+A single **super-admin login** (`superadmin@auraintercept.ai` / chosen password) that lands on a **Switcher Hub** page. The hub has:
 
-## Changes (single file: `src/components/aura/AuraAvatarChat.tsx`)
+- **Industry dropdown** at top (all 24 seeded industries, e.g. "hvac — Demo HVAC Co").
+- A grid of cards (or a single focused card for the selected industry) with three buttons: **Company**, **Employee**, **Customer**.
+- Clicking a button swaps the active session into that demo user and lands on their dashboard (`/dashboard`, `/technician`, `/customer-portal`) — **same tab, no manual re-login**.
+- A persistent **"Switcher" pill** in the header of every demo dashboard so you can jump back to the hub or switch role/industry instantly.
 
-1. **Remove from `AuraCharacter`:**
-   - All SVG mouth shapes (ellipses driven by viseme)
-   - Brow lines and tilt logic
-   - Blush circles
-   - Eyelid blink ellipses (skin-tone ones drawn over her eyes)
-   - `viseme` and `expression` props
+This mirrors the AdultLeague Super Switcher Hub UX exactly, mapped onto our 24 industries × 3 roles (= 72 demo accounts already seeded by `seed-demo-accounts-v2`).
 
-2. **Keep / enhance subtle motion on the portrait itself:**
-   - **Breathing**: gentle 4s scale loop (1.0 → 1.012 → 1.0)
-   - **Speaking pulse**: when `mouthOpen > 0.1`, add a tiny scale boost (up to +1.5%) and brightness shift (filter: brightness 1.0 → 1.06) tied to amplitude — the whole portrait subtly "lifts" with her voice instead of fake mouth movement
-   - **Head sway**: very slight rotation ±0.5° on a 6s loop while speaking, paused when idle
-   - **Idle micro-zoom**: +/- 0.3% on slow loop when listening
+## How the in-tab swap works
 
-3. **Strengthen the audio-reactive ring around her** (already exists as the cyan glow):
-   - Drive the ring's blur/opacity/scale directly from `mouthOpen` amplitude
-   - Add a second softer outer pulse ring that expands on high-amplitude peaks (the "talking" indicator users actually read)
-   - Color shifts subtly with expression state (cyan idle → warmer cyan when speaking)
+To avoid logout/login friction, the swap reuses the existing demo passwords (all 72 accounts share `aidemo*!`):
 
-4. **Keep expression state machine** but use it only to drive ring color/intensity, not facial overlays:
-   - `listening` → steady cyan ring
-   - `speaking` → brighter, audio-pulsing ring
-   - `thinking` → slow rotating gradient on the ring
-   - `concerned` → dimmer, slower pulse
+1. User clicks **Company** on the "hvac" card.
+2. Client calls `supabase.auth.signOut()` then `supabase.auth.signInWithPassword({ email: 'hvacadmin@demo.com', password: 'aidemo*!' })`.
+3. On success, `localStorage.setItem('aura_super_admin', '1')` is set so the app knows this session is "owned" by the super-admin (shows the Switcher pill in the header, hides Sign Out → replaces with "Back to Switcher").
+4. Router pushes to `/dashboard` (admin), `/technician` (employee), or `/customer-portal` (customer).
 
-5. **Cleanup**: remove now-unused `Viseme` type, FACE anchor constants, viseme picker logic in the audio analyzer (keep just the amplitude calculation for the ring + scale).
+"Back to Switcher" signs out, signs back in as `superadmin@auraintercept.ai`, and routes to `/super-switcher`.
 
-## Result
+This is safe because:
+- The super-admin password lives only in the edge function (never in client code).
+- All demo passwords are already public knowledge in our docs.
+- Only `platform_admin` can hit the bootstrap edge function that creates/repairs the super-admin user.
 
-- No fake face fighting the real face
-- Portrait stays photo-real and clean
-- Clear visual feedback she's listening/speaking via the ring + subtle breathing/scale
-- Zero cost, no external services, instant
+## What gets built
+
+### 1. Super-admin user
+- New auth user `superadmin@auraintercept.ai` with `platform_admin` role.
+- Created/repaired by a one-shot edge function `seed-super-admin` (platform_admin gated). Password set via a Lovable secret `SUPER_ADMIN_PASSWORD`.
+
+### 2. Switcher Hub page — `/super-switcher`
+- Route gated to `platform_admin` role.
+- Header: "Super Switcher Hub — One demo login, every industry, every console."
+- Top bar: industry `<Select>` (24 options, shows industry label + tier badge), persists last choice in localStorage.
+- Below: 24 cards (grouped by cluster: Field Services / Home Services / Healthcare / Specialty), each with:
+  - Industry name, city/region (from seeded company), tier chip, LIVE/SEEDED badge.
+  - Three buttons: **Company**, **Employee**, **Customer**.
+  - Footer chips: "Live console", "Public page" (links to public booking), "Standings" → reuse existing analytics link.
+- Filter input to narrow the grid.
+
+### 3. Switcher pill (header injection)
+- Small pill component rendered in `DashboardLayout`, `TechnicianLayout`, and `CustomerPortalHome` headers when `localStorage.aura_super_admin === '1'`.
+- Shows: current industry + role, dropdown to switch role within same industry, "← All industries" button (back to `/super-switcher`).
+
+### 4. Hook `useSuperSwitcher`
+- `enter(industryKey, role)` → signs out, signs in as the demo user, sets flag, routes.
+- `exit()` → signs out, signs back in as super-admin, routes to `/super-switcher`.
+- `current()` → derives `{ industry, role }` from the signed-in email pattern.
+
+### 5. Auth flow tweak
+- `Auth.tsx` `handleSignIn`: if email = `superadmin@auraintercept.ai` AND user has `platform_admin` role, redirect to `/super-switcher` instead of `/dashboard`.
+
+### 6. Files
+- `supabase/functions/seed-super-admin/index.ts` (new, platform_admin gated, uses `SUPER_ADMIN_PASSWORD` secret).
+- `src/pages/SuperSwitcher.tsx` (new).
+- `src/components/super-switcher/SwitcherPill.tsx` (new) — injected into the 3 layouts.
+- `src/hooks/useSuperSwitcher.ts` (new).
+- `src/App.tsx` — register `/super-switcher` route.
+- `src/pages/Auth.tsx` — redirect rule for super-admin email.
+- `src/components/dashboard/DashboardLayout.tsx`, technician/customer layouts — render `<SwitcherPill />` when flag is set.
+- Memory: update `mem://platform-operations/demo-account-registry` with the super-admin entry + switcher URL.
+
+## Out of scope
+
+- No new seed data — uses the existing 72 demo users.
+- No multi-tab session juggling — single tab, sequential signin/signout.
+- No change to non-demo company behavior.
+
+## Confirmations needed before I build
+
+1. **Email + password**: OK to use `superadmin@auraintercept.ai`? You'll need to add a `SUPER_ADMIN_PASSWORD` secret (I'll prompt when implementing).
+2. **In-tab signout/signin swap is acceptable** (1–2s flash, no manual re-login). If you'd rather see zero flash, we can do magiclink-in-new-tab instead — but it won't match the AdultLeague feel.
