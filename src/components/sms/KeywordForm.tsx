@@ -4,13 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Loader2 } from 'lucide-react';
 
 export interface KeywordFormData {
@@ -61,15 +55,15 @@ export function KeywordForm({ open, onOpenChange, initialData, onSubmit, isLoadi
   });
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{initialData?.id ? 'Edit Keyword' : 'Add Keyword'}</DialogTitle>
-          <DialogDescription>
-            Configure an auto-response for when customers text a hashtag keyword
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+    <FormShell
+      id="sms-keyword-form"
+      title={initialData?.id ? 'Edit Keyword' : 'Add Keyword'}
+      description="Configure an auto-response for when customers text a hashtag keyword"
+      open={open}
+      onOpenChange={handleOpenChange}
+      className="sm:max-w-md"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div className="space-y-2">
             <Label htmlFor="keyword">Keyword</Label>
             <div className="relative">
@@ -130,8 +124,7 @@ export function KeywordForm({ open, onOpenChange, initialData, onSubmit, isLoadi
               )}
             </Button>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+      </form>
+    </FormShell>
   );
 }
