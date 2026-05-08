@@ -65,6 +65,8 @@ import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner';
 import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
+import { useSuperSwitcher } from '@/hooks/useSuperSwitcher';
+import { Crown } from 'lucide-react';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
 import { Clapperboard, Video, Sparkles } from 'lucide-react';
@@ -668,6 +670,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 z-10 border-b" style={{ background: "rgba(4,10,20,0.85)", backdropFilter: "blur(20px)", borderColor: "rgba(0,229,255,0.1)" }}>
           <div className="container max-w-7xl flex items-center justify-end gap-2 py-2 px-4">
             <CurrentPlanChip />
+            <SuperAdminHubButton />
             <NotificationBell />
           </div>
         </div>
