@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useIndustryFieldLabel } from '@/lib/industryFieldLabels';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getCustomerIntakeSchema, getAppointmentRules } from '@/lib/industryFormSchemas';
+import { getIndustryPlaceholders } from '@/lib/industryPlaceholders';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 
 interface AddCustomerFormProps {
@@ -29,6 +30,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
   const intakeSchema = getCustomerIntakeSchema(pack);
   const appointmentRules = getAppointmentRules(pack);
   const showAddress = appointmentRules.address_required !== false;
+  const ph = getIndustryPlaceholders(pack);
   
   // Form state
   const [firstName, setFirstName] = useState('');
@@ -122,7 +124,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="John"
+                placeholder={ph.firstName}
                 required
               />
             </div>
@@ -132,7 +134,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Doe"
+                placeholder={ph.lastName}
               />
             </div>
           </div>
@@ -148,7 +150,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="john.doe@example.com"
+              placeholder={ph.email}
               required
             />
           </div>
@@ -164,7 +166,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="(555) 123-4567"
+              placeholder={ph.phone}
             />
           </div>
 
@@ -179,7 +181,7 @@ export function AddCustomerForm({ open, onOpenChange }: AddCustomerFormProps) {
               id="address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="123 Main St, City, State 12345"
+              placeholder={ph.address}
             />
           </div>
           )}
