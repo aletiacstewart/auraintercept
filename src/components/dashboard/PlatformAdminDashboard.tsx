@@ -15,6 +15,7 @@ import { DashboardSetupNav } from './DashboardSetupNav';
 import { AuraCommandCenter } from './AuraCommandCenter';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import { SuperSwitcherCard } from '@/components/super-switcher/SuperSwitcherCard';
 
 interface CompanyStats {
   id: string;
@@ -279,6 +280,9 @@ export function PlatformAdminDashboard() {
         featureColor="overview"
         
       />
+
+      {/* Super Admin: Industry/Role Switcher entry point */}
+      <SuperSwitcherCard />
 
       {/* Setup Navigation & Progress */}
       <DashboardSetupNav />
