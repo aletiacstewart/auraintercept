@@ -277,6 +277,7 @@ export default function Referrals() {
             </div>
           )}
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
