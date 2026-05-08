@@ -665,7 +665,7 @@ const INTEGRATIONS = [
   {
     name: 'Resend',
     purpose: 'Email Notifications & Reminders',
-    cost: 'Free up to 3,000 emails/month, then $20/month for 50,000 emails',
+    cost: 'Bundled in plan: 3,000 emails/month per tier · overage $0.90 per 1,000',
     required: true,
     requiredFor: 'All email features (appointment confirmations, reminders, campaigns)',
     agentsAffected: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],

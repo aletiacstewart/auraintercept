@@ -470,7 +470,7 @@ const companyGuideCategories = [
           'Generate and enter API key',
           'Content Engine uses Tavily for real-time research',
           'Improves social, blog, and campaign content',
-          'Free tier: 1,000 searches/month'
+          'Bundled: 1,000 credits/month per tier; overage $0.008/credit'
         ],
         tips: ['Optional but recommended for content-heavy businesses']
       },

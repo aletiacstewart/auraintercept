@@ -448,7 +448,7 @@ const guideCategories = [
         steps: [
           'Navigate to Integrations → AI Research',
           'Optional integration for enhanced AI content research',
-          'Create Tavily account at tavily.com (1,000 free searches/month)',
+          'Create Tavily account at tavily.com (1,000 credits/month bundled in your plan; overage $0.008/credit)',
           'Generate and enter API key',
           'Content Engine uses Tavily for real-time industry research',
           'Improves accuracy of social, blog, and campaign content',

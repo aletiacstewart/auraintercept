@@ -240,9 +240,14 @@ export function SignalWireSetupGuide() {
                 </p>
               </div>
 
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 space-y-2">
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
-                  <strong>⏱️ Timeline:</strong> Full registration typically takes 3-10 business days. Plan ahead before launching SMS features.
+                  <strong>⏱️ Timeline:</strong> Full A2P 10DLC approval typically takes <strong>1–4 weeks</strong>. Plan ahead before launching SMS features.
+                </p>
+                <p className="text-amber-600 dark:text-amber-400 text-xs">
+                  <strong>💵 Customer pass-through fees:</strong> Brand registration <strong>$4.50</strong> (one-time) ·
+                  Variable campaign fees billed by carriers (first <strong>3 months upfront</strong>) ·
+                  <strong> $250/mo T-Mobile</strong> fee for inactive campaigns. Aura Intercept does not mark these up — they are charged by SignalWire / the carriers directly.
                 </p>
               </div>
 

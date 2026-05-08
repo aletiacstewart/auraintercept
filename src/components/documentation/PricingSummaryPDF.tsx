@@ -332,7 +332,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>$397 implementation fee</FeatureItem>
+        <FeatureItem>$497 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -370,7 +370,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$397 implementation fee</FeatureItem>
+        <FeatureItem>$697 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -407,7 +407,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$697 implementation fee</FeatureItem>
+        <FeatureItem>$1,197 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$697 implementation fee</FeatureItem>
+        <FeatureItem>$2,197 one-time onboarding fee (due at start of 60-Day Live Trial)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -578,10 +578,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$397', includes: 'Guided setup' },
-          { tier: 'Aura Boost', fee: '$397', includes: 'Onboarding, setup, training' },
-          { tier: 'Aura Pro', fee: '$697', includes: 'Onboarding, setup, training, industry tuning' },
-          { tier: 'Aura Elite', fee: '$697', includes: 'Enterprise onboarding, custom setup' },
+          { tier: 'Aura Core', fee: '$497', includes: 'Guided setup (due at start of 60-Day Live Trial)' },
+          { tier: 'Aura Boost', fee: '$697', includes: 'Onboarding, setup, training (due at start of 60-Day Live Trial)' },
+          { tier: 'Aura Pro', fee: '$1,197', includes: 'Onboarding, setup, training, industry tuning (due at start of 60-Day Live Trial)' },
+          { tier: 'Aura Elite', fee: '$2,197', includes: 'Enterprise onboarding, custom setup (due at start of 60-Day Live Trial)' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>

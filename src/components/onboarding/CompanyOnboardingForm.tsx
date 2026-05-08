@@ -1049,7 +1049,7 @@ export function CompanyOnboardingForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="successGoals">What would success look like in 90 days?</Label>
+            <Label htmlFor="successGoals">What would success look like in 60 days?</Label>
             <Textarea
               id="successGoals"
               value={formData.successGoals}

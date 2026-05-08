@@ -404,7 +404,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
         <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
-          All plans include a 60-Day Live Trial. Implementation fees: $199 (Core), $399 (Boost), $599 (Pro), $799 (Elite).
+          All plans include a 60-Day Live Trial. One-time onboarding fees (due at start of trial): $497 (Core), $697 (Boost), $1,197 (Pro), $2,197 (Elite).
         </p>
       </div>
     </div>

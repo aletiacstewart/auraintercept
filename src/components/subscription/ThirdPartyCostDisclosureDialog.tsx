@@ -29,7 +29,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Shield className="h-4 w-4 text-amber-500" />,
     name: 'A2P 10DLC Registration',
     purpose: 'SMS Compliance — required by carriers to send business SMS',
-    estimatedCost: 'Bundled in plan · standard registration included',
+    estimatedCost: 'Customer pass-through · $4.50 brand fee + variable campaign fees (3 mo upfront) · $250/mo T-Mobile inactive-campaign fee',
     required: true,
     learnMoreUrl: 'https://signalwire.com/resources/guides/a2p-10dlc-overview',
   },
@@ -56,7 +56,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Mail className="h-4 w-4 text-green-500" />,
     name: 'Resend',
     purpose: 'Transactional Email Notifications',
-    estimatedCost: 'Bundled · base: 3,000 emails/mo per tier',
+    estimatedCost: 'Bundled · 3,000 emails/mo per tier · overage $0.90 per 1,000',
     required: true,
     learnMoreUrl: 'https://resend.com/pricing',
   },
@@ -74,7 +74,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Search className="h-4 w-4 text-amber-500" />,
     name: 'Tavily AI Research',
     purpose: 'AI Web Research for Enhanced Content',
-    estimatedCost: 'Bundled · base: 1,000 searches/mo per tier',
+    estimatedCost: 'Bundled · 1,000 credits/mo per tier · overage $0.008 per credit',
     required: false,
     learnMoreUrl: 'https://tavily.com/#pricing',
   },
@@ -97,10 +97,12 @@ interface Props {
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
-  const isProOrElite = tierId === 'performance' || tierId === 'command' || /pro|elite/i.test(tierName);
-  const conciergeFee = isProOrElite ? 697 : 397; // legacy
-  // Use new pricing
-  const conciergePriceLabel = isProOrElite ? '$697' : '$397';
+  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial)
+  const isElite = tierId === 'command' || /elite/i.test(tierName);
+  const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
+  const isBoost = !isElite && !isPro && (tierId === 'connect' || /boost/i.test(tierName));
+  const conciergeFee = isElite ? 2197 : isPro ? 1197 : isBoost ? 697 : 497;
+  const conciergePriceLabel = `$${conciergeFee.toLocaleString()}`;
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);
 
