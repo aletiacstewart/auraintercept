@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -302,25 +303,23 @@ export function InventoryManager() {
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           {companyId && <InventoryUploadDialog companyId={companyId} />}
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Item
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Inventory Item</DialogTitle>
-                <DialogDescription>Add a new part or supply to your inventory.</DialogDescription>
-              </DialogHeader>
-              {inventoryFormFields}
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                <Button onClick={handleSubmit} disabled={addMutation.isPending}>Add Item</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button onClick={() => { resetForm(); setIsAddOpen(true); }}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Item
+          </Button>
+          <FormShell
+            id="inventory-add"
+            title="Add Inventory Item"
+            description="Add a new part or supply to your inventory."
+            open={isAddOpen}
+            onOpenChange={setIsAddOpen}
+          >
+            {inventoryFormFields}
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+              <Button onClick={handleSubmit} disabled={addMutation.isPending}>Add Item</Button>
+            </div>
+          </FormShell>
         </div>
       </div>
 
