@@ -37,13 +37,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
@@ -187,6 +182,7 @@ export default function PlatformIssues() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
           <PageHeader
             icon={AlertCircle}
@@ -383,17 +379,16 @@ export default function PlatformIssues() {
           </CardContent>
         </Card>
 
-        {/* Issue Detail Dialog */}
-        <Dialog open={!!selectedIssue} onOpenChange={() => setSelectedIssue(null)}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{selectedIssue?.title}</DialogTitle>
-              <DialogDescription>
-                {selectedIssue && issueTypeConfig[selectedIssue.issue_type].label} •{' '}
-                {selectedIssue && format(new Date(selectedIssue.created_at), 'PPpp')}
-              </DialogDescription>
-            </DialogHeader>
-
+        <InlineFormHost className="mb-4" />
+        {/* Issue Detail */}
+        <FormShell
+          id="platform-issue-detail"
+          title={selectedIssue?.title || 'Issue'}
+          description={selectedIssue ? `${issueTypeConfig[selectedIssue.issue_type].label} • ${format(new Date(selectedIssue.created_at), 'PPpp')}` : undefined}
+          open={!!selectedIssue}
+          onOpenChange={(open) => !open && setSelectedIssue(null)}
+          className="max-w-2xl"
+        >
             {selectedIssue && (
               <div className="space-y-4">
                 <div className="flex gap-2">
@@ -497,9 +492,9 @@ export default function PlatformIssues() {
                 </div>
               </div>
             )}
-          </DialogContent>
-        </Dialog>
+        </FormShell>
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
