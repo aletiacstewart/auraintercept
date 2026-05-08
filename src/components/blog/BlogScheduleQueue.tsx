@@ -474,12 +474,14 @@ export function BlogScheduleQueue() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Scheduled Post</DialogTitle>
-          </DialogHeader>
+      {/* Edit Form */}
+      <FormShell
+        id="blog-edit-scheduled-post"
+        title="Edit Scheduled Post"
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
           {editData && selectedPost && (
             <div className="space-y-4">
               <div>
@@ -533,7 +535,7 @@ export function BlogScheduleQueue() {
               </div>
             </div>
           )}
-          <DialogFooter>
+          <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
             <Button 
               onClick={() => selectedPost && updateMutation.mutate({ postId: selectedPost.id, data: editData })}
@@ -541,9 +543,8 @@ export function BlogScheduleQueue() {
             >
               Save Changes
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </FormShell>
     </div>
   );
 }
