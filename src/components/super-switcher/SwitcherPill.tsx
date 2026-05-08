@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Building2, Users, UserCircle, Crown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSuperSwitcher, isSuperSwitcherActive, emailToIndustry, type SwitchRole } from '@/hooks/useSuperSwitcher';
+import { useSuperSwitcher, isSuperSwitcherActive, emailToIndustry, type SwitchRole, SUPER_FLAG_KEY } from '@/hooks/useSuperSwitcher';
 
 export function SwitcherPill() {
   const { user } = useAuth();
@@ -11,7 +11,17 @@ export function SwitcherPill() {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    const refresh = () => setActive(isSuperSwitcherActive());
+    const refresh = () => {
+      // Auto-activate for any @demo.com session so the Super Admin Hub
+      // button is always reachable during live demos, even if the flag
+      // wasn't set (e.g. user signed in directly).
+      if (user?.email?.endsWith('@demo.com')) {
+        if (typeof window !== 'undefined') localStorage.setItem(SUPER_FLAG_KEY, '1');
+        setActive(true);
+        return;
+      }
+      setActive(isSuperSwitcherActive());
+    };
     refresh();
     window.addEventListener('super-switcher:switching', refresh);
     window.addEventListener('storage', refresh);

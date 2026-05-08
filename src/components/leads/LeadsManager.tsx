@@ -25,6 +25,8 @@ import { LeadScoreBadge } from '@/components/leads';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryPlaceholders } from '@/lib/industryPlaceholders';
 
 interface Lead {
   id: string;
@@ -60,6 +62,8 @@ interface LeadsManagerProps {
 }
 
 export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
+  const { pack } = useIndustryPack();
+  const ph = getIndustryPlaceholders(pack);
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
@@ -193,7 +197,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search leads..."
+            placeholder={ph.searchLeads}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 h-9"

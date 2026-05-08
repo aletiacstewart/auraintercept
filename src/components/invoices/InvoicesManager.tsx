@@ -16,6 +16,7 @@ import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryPlaceholders } from '@/lib/industryPlaceholders';
 
 interface Invoice {
   id: string;
@@ -181,7 +182,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search..."
+            placeholder={getIndustryPlaceholders(pack).searchInvoices}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-9 h-9"
