@@ -281,7 +281,7 @@ export default function Subscription() {
   const trialDaysRemaining = trialEndsAt 
     ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
-  const trialProgressPercent = Math.min(((90 - trialDaysRemaining) / 90) * 100, 100);
+  const trialProgressPercent = Math.min(((60 - trialDaysRemaining) / 60) * 100, 100);
 
   // Check for success/canceled params
   useEffect(() => {
@@ -725,7 +725,7 @@ export default function Subscription() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-center">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-card-foreground font-medium">90-day free trial</span>
+                <span className="text-card-foreground font-medium">60-Day Live Trial</span>
                 <span className="text-muted-foreground">No credit card required</span>
               </div>
               <span className="text-muted-foreground">•</span>
@@ -792,7 +792,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                When your 90-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
+                When your 60-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
               </p>
             </div>
             <div>

@@ -68,9 +68,9 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>New accounts receive a <strong className="text-foreground">90-day free trial</strong> with full platform access. No credit card is required to start.</li>
+              <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
               <li>Trial usage is subject to your selected tier's monthly allowances for SMS, voice, email, and AI search.</li>
-              <li>You may cancel any time during the 90-day trial at no charge.</li>
+              <li>You may cancel any time during the 60-day trial at no charge.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Bundled Usage & Overages</h3>
@@ -90,7 +90,7 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Refund Policy</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 90-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
+              <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 60-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
               <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable once onboarding has been completed.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
               <li><strong className="text-foreground">Overage Charges:</strong> End-of-month overage charges are non-refundable.</li>

@@ -298,7 +298,7 @@ export default function Auth() {
       // Create company — honor the tier the user picked at signup (defaults to Core if skipped)
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
-      // and powers useIndustryPack everywhere). 90-day trial regardless of tier.
+      // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
       const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
       if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
         toast({
@@ -313,7 +313,7 @@ export default function Auth() {
       const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
         ? selectedTier
         : 'starter';
-      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+      const trialEndsAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -454,7 +454,7 @@ export default function Auth() {
 
       toast({ 
         title: 'Welcome! 🎉', 
-        description: 'Your 90-day free trial has started. Enjoy full access to all features!' 
+        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
       });
       navigate('/dashboard');
     }
@@ -655,7 +655,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Start your 90-day free trial',
+          description: 'Start your 60-Day Live Trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -834,10 +834,10 @@ export default function Auth() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">👑</span>
-                      <h3 className="text-sm font-bold text-foreground">90-Day Free Trial — Full Access</h3>
+                      <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your <span className="font-semibold text-foreground">90-day free trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
+                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                 </div>
                 </div>
@@ -851,7 +851,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">a 60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 
@@ -860,9 +860,9 @@ export default function Auth() {
                   <div className="flex items-start gap-2">
                     <Shield className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-[11px] font-semibold text-warning mb-1">SMS — FCC 10DLC Compliance</h4>
+                      <h4 className="text-[11px] font-semibold text-warning mb-1">A2P 10DLC — US SMS Compliance (pass-through fees)</h4>
                       <p className="text-[10px] text-muted-foreground leading-relaxed">
-                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-foreground">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once registration is approved (typically 2-4 weeks). <span className="font-medium text-foreground">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
+                        We file your A2P 10DLC registration on your behalf. <span className="font-medium text-foreground">Pass-through fees:</span> brand registration <span className="font-medium text-foreground">$4.50 (one-time)</span> · standard campaign fee <span className="font-medium text-foreground">varies by use case</span> (first 3 months charged upfront) · monthly campaign maintenance fee. T-Mobile also charges <span className="font-medium text-foreground">$250/mo</span> for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-foreground">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-foreground">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
                       </p>
                     </div>
                   </div>
@@ -994,14 +994,14 @@ export default function Auth() {
                       {/* Cost table */}
                       <div className="space-y-1 mb-3">
                         {[
-                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4+$15 one-time · $10/mo', limit: 'Base: 1 brand + 1 campaign', note: '⚠ 2–4 wk approval', color: 'text-amber-400' },
-                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Included in tier', limit: 'Base: ~$2/mo number + bundled minutes/SMS per tier', note: 'Boost+', color: 'text-green-400' },
-                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Included in tier', limit: 'Free tier: 10k chars/mo (~10 min TTS)', note: 'Boost+', color: 'text-purple-400' },
-                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend', cost: 'Included in tier', limit: 'Free tier: 3,000 emails/mo · 100/day', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free', limit: '1M API requests/day (free)', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe', cost: '2.9% + $0.30/txn', limit: 'No free tier — per-transaction only', note: 'Elite', color: 'text-amber-400' },
-                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free (OAuth)', limit: 'Per-platform API rate limits apply', note: 'Pro+', color: 'text-pink-400' },
-                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily AI', cost: 'Included in tier', limit: 'Free tier: 1,000 searches/mo', note: 'All tiers', color: 'text-orange-400' },
+                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4.50 brand + campaign + monthly maint.', limit: 'Pass-through · first 3 mo of campaign upfront · T-Mobile $250/mo if inactive 60+ days', note: '⚠ 1–4 wk approval', color: 'text-amber-400' },
+                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Bundled in tier', limit: 'SMS + voice minutes included per tier', note: 'All tiers', color: 'text-green-400' },
+                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Bundled in tier', limit: 'AI voice minutes included per tier', note: 'Boost+', color: 'text-purple-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: '3,000/mo bundled · $0.90 / 1,000 over', limit: '100 emails/day · automations 10k free then $0.0015/run · custom domain recommended', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free — unlimited', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: '2.9% + $0.30 / successful txn', limit: 'No free tier · paid directly to Stripe · volume discount via stripe.com/contact/sales', note: 'Required on Elite (Invoicing)', color: 'text-amber-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free OAuth — your business pages', limit: 'Core: manual Bridge posting · Boost/Pro/Elite: automated Social Scheduler (up to 6)', note: 'All tiers', color: 'text-pink-400' },
+                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: '1,000 credits/mo bundled · $0.008/credit over', limit: 'Search 1–2 / Extract 1–2 per 5 URLs / Map 1 per 10 URLs / Crawl = Map+Extract', note: 'All tiers', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, limit, note, color }) => (
                           <div key={name} className="py-1 border-b border-border/20 last:border-0">
                             <div className="flex items-center justify-between text-[9px]">
@@ -1050,8 +1050,8 @@ export default function Auth() {
                                 </div>
                                 <div>
                                   <p className="font-semibold text-cyan-400 mb-0.5">Resend</p>
-                                  <p>• Verified sending domain</p>
-                                  <p>• API key</p>
+                                  <p>• Verified sending domain (recommended)</p>
+                                  <p>• Company credit card on file (overage / automation runs)</p>
                                 </div>
                                 <div>
                                   <p className="font-semibold text-primary mb-0.5">AI Knowledge Base</p>
@@ -1393,7 +1393,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-a2p" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required and takes <span className="font-medium text-amber-400">2–4 weeks</span> for carrier approval before SMS works.
+                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required (brand $4.50, campaign fee + monthly maintenance pass-through) and approval takes <span className="font-medium text-amber-400">1–4 weeks</span> before SMS activates.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1404,7 +1404,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">SignalWire, ElevenLabs, and Resend</span> costs are <span className="font-medium text-foreground">separate from my subscription</span> and billed directly by each provider.
+                                I acknowledge that <span className="font-medium text-foreground">A2P 10DLC carrier fees</span> and <span className="font-medium text-foreground">Stripe transaction fees</span> are pass-through and billed directly by those providers, and that overages on bundled providers (Resend, Tavily) are billed at the rates shown above.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1451,16 +1451,16 @@ export default function Auth() {
                               <div className="flex-1">
                                 <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
-                                  Add Concierge Onboarding
+                                  One-Time Onboarding Fee (required)
                                   <span className="ml-auto text-primary font-bold">
-                                    {selectedTier === 'performance' || selectedTier === 'command' ? '$697' : '$397'}
+                                    {selectedTier === 'starter' ? '$497' : selectedTier === 'connect' ? '$697' : selectedTier === 'performance' ? '$1,197' : selectedTier === 'command' ? '$2,197' : '$497–$2,197'}
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a one-time fee of <span className="font-semibold text-foreground">{selectedTier === 'performance' || selectedTier === 'command' ? '$697 (Pro & Elite)' : '$397 (Core & Boost)'}</span>. Assistance from primary owner or manager required for company details.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
-                                   Optional — can also be purchased later from your dashboard.
+                                   Non-refundable once onboarding begins.
                                  </p>
                               </div>
                             </div>
@@ -1479,7 +1479,7 @@ export default function Auth() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '90 days free • No credit card required • Cancel anytime'}
+                              : '60-Day Live Trial • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
                       </form>
@@ -1498,9 +1498,9 @@ export default function Auth() {
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
                   <Headphones className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h4 className="font-semibold text-cyan-400 text-sm mb-2">Concierge Onboarding</h4>
+                <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   We'll configure all Aura Intercept setup &amp; 3rd party integrations for a <span className="font-bold text-cyan-300">one-time fee of $397 (Core &amp; Boost) or $697 (Pro &amp; Elite)</span>. Assistance from primary owner or manager required for company details.
+                   Due at start of the <span className="font-bold text-cyan-300">60-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. Covers setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training. Non-refundable once onboarding begins.
                  </p>
               </div>
 

@@ -925,7 +925,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms (voice, SMS, email, chat) bundled — no extra fees</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$497</span></p>
               </CardContent>
             </Card>
 
@@ -957,7 +957,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · Stripe + Calendar optional</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$697</span></p>
               </CardContent>
             </Card>
 
@@ -988,7 +988,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · Stripe + Calendar optional</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$1,197</span></p>
               </CardContent>
             </Card>
 
@@ -1018,7 +1018,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms + advanced compliance bundled</p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$2,197</span></p>
               </CardContent>
             </Card>
           </div>
@@ -1037,10 +1037,11 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>90-day free trial • No credit card required</p>
+            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>60-Day Live Trial • No credit card required for the trial</p>
             <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Implementation Fee: <span className="font-medium">$397 Core &amp; Boost • $697 Pro &amp; Elite</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Onboarding Fee (due at start of 60-Day Live Trial): <span className="font-medium">Core $497 • Boost $697 • Pro $1,197 • Elite $2,197</span></p>
+            <p className="text-[11px] italic" style={{ color: "rgba(255,255,255,0.7)" }}>Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.</p>
           </div>
 
           {/* Beta Testing Announcement */}
@@ -1055,8 +1056,8 @@ export default function Index() {
                   <h3 className="text-lg font-bold text-primary">We're in Beta!</h3>
                 </div>
                 <p className="text-sm text-white leading-relaxed">
-                  We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive{' '}
-                  <span className="font-semibold text-primary">90 days of free access</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                  We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
+                  <span className="font-semibold text-primary">60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
                 {/* FCC 10DLC Notice */}
@@ -1066,7 +1067,7 @@ export default function Index() {
                     <div className="space-y-1">
                       <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
                       <p className="text-xs text-white leading-relaxed">
-                        Our SMS system is currently undergoing FCC approval. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS. Without 10DLC registration, messages sent over standard long-code numbers are likely to be filtered or blocked by carriers. SMS features will be fully activated once our registration is approved (typically 2-4 weeks). <span className="font-medium text-white">Company Requirement:</span> Each company must provide their EIN, DBA, and LLC or Inc documentation so we can register your business for FCC 10DLC approval.
+                        Our platform handles A2P 10DLC registration on your behalf. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees:</span> brand registration <span className="font-medium">$4.50 (one-time)</span>, standard campaign fee varies by use case (first 3 months charged upfront), plus a monthly campaign maintenance fee. T-Mobile also charges a <span className="font-medium">$250/month</span> pass-through fee for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-white">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-white">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
                       </p>
                     </div>
                   </div>
@@ -1094,9 +1095,9 @@ export default function Index() {
                   <Calendar className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="font-semibold text-xs text-cyan-400">Google Calendar</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">Calendar Sync</p>
-                <p className="text-[10px] text-white font-medium">Free - Unlimited</p>
-                <p className="text-[10px] text-white">Required for: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Scheduling Sync (OAuth, bidirectional)</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Free — unlimited, all tiers</p>
+                <p className="text-[10px] text-white">Multiple team-member calendars · iCal supported</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1104,9 +1105,10 @@ export default function Index() {
                   <Mail className="w-3.5 h-3.5 text-channel-email" />
                   <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">Email Notifications</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
-                <p className="text-[10px] text-white">Included on: All tiers</p>
+                <p className="text-[10px] text-white mb-1">Email Delivery</p>
+                <p className="text-[10px] text-emerald-400 font-medium">3,000 emails/mo bundled · 100/day</p>
+                <p className="text-[10px] text-white">Overage: $0.90 / 1,000 emails · Automations: 10,000 runs free, then $0.0015/run</p>
+                <p className="text-[10px] text-white">Custom domain recommended · Valid company credit card required</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1131,12 +1133,13 @@ export default function Index() {
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <Shield className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="font-semibold text-xs text-cyan-400">A2P 10DLC Compliance</span>
+                  <Shield className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="font-semibold text-xs text-amber-400">A2P 10DLC Compliance</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Handled & paid by Aura Intercept</p>
-                <p className="text-[10px] text-white">Included on: All tiers</p>
+                <p className="text-[10px] text-amber-300 font-medium">Brand $4.50 one-time · Campaign fee varies (first 3 mo upfront) · Monthly maintenance</p>
+                <p className="text-[10px] text-white">T-Mobile $250/mo for inactive campaigns (60+ days)</p>
+                <p className="text-[10px] text-white">Approval: 1–4 weeks · Required on all tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1144,10 +1147,10 @@ export default function Index() {
                   <DollarSign className="w-3.5 h-3.5 text-amber-400" />
                   <span className="font-semibold text-xs text-amber-400">Stripe (Your Account)</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">Invoice Payments</p>
-                <p className="text-[10px] text-white font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-[10px] text-white">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white">Required for: Elite (Invoicing)</p>
+                <p className="text-[10px] text-white mb-1">Payment Processing</p>
+                <p className="text-[10px] text-white font-medium">2.9% + $0.30 per successful transaction</p>
+                <p className="text-[10px] text-white">Fees paid directly to Stripe — no free tier</p>
+                <p className="text-[10px] text-white">Required for Invoice Agent on Elite · Volume discounts &gt;$80K/mo via stripe.com/contact/sales</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1156,9 +1159,9 @@ export default function Index() {
                   <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-white font-medium">Free - Your Business Pages</p>
-                <p className="text-[10px] text-white">OAuth connection to your existing accounts</p>
-                <p className="text-[10px] text-white">Required for: Pro, Elite • Optional for: Boost</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Free OAuth — connect your existing pages</p>
+                <p className="text-[10px] text-white">Core: manual Bridge posting · Boost/Pro/Elite: automated via Social Scheduler (up to 6 platforms)</p>
+                <p className="text-[10px] text-white">Admin access to your business pages required</p>
               </div>
 
 
@@ -1168,14 +1171,14 @@ export default function Index() {
                   <span className="font-semibold text-xs text-orange-400">Tavily</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-white font-medium">Included in your tier</p>
-                <p className="text-[10px] text-white">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-[10px] text-white">Available on: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-emerald-400 font-medium">1,000 credits/mo bundled (no rollover)</p>
+                <p className="text-[10px] text-white">Overage: $0.008/credit · Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
+                <p className="text-[10px] text-white">API key configured during onboarding · Valid company credit card required</p>
               </div>
             </div>
 
             <p className="text-[10px] text-white italic text-center mt-4">
-              Usage of bundled providers (SignalWire, ElevenLabs, Resend, Tavily) is included in your subscription. A2P 10DLC and Stripe transaction fees are paid directly to those providers.
+              Bundled providers (SignalWire, ElevenLabs, Resend, Tavily) are included up to the limits shown. Overages, A2P 10DLC pass-through fees, and Stripe transaction fees are billed directly by those providers and require a valid company credit card on file.
             </p>
           </div>
         </div>
