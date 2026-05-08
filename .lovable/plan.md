@@ -1,45 +1,66 @@
-# Plan: Replace pop-up forms with inline console tabs
+# Continue Inline Form Tabs Rollout
 
-## Goal
-Across every dashboard console/page, convert `<Dialog>` / `<Sheet>` create+edit forms into **inline tabs** opened in the same console. No more modal pop-ups for forms.
+Phase 1 (Customers) shipped the shared `InlineFormProvider` + `FormShell` primitive. This plan covers the remaining consoles.
 
-## Tab behavior (default — confirm if different)
-- A console keeps its existing tab bar.
-- Clicking a `+ Add / New / Edit` button opens a **dynamic tab** ("New Customer", "Edit Lead #123", etc.) with a close (×).
-- Submit/Cancel closes the dynamic tab and returns to the list tab. Multiple edits can stack as separate tabs.
-- Confirm-only dialogs (Delete?, "Are you sure?") and pickers (date picker, command menu) **stay** as small modals — only **forms with input fields** are converted.
+## Pattern (per console)
 
-## Shared primitive
-Create one reusable component used everywhere:
+For every page that hosts create/edit forms today via `<Dialog>` / `<Sheet>`:
 
-`src/components/ui/inline-form-tabs.tsx`
-- `<InlineFormTabsProvider>` wraps a console.
-- `useInlineForms()` hook exposes `openForm({ id, title, render })` and `closeForm(id)`.
-- `<InlineFormTabsHost>` renders a Tabs UI with the console's static tabs plus any open dynamic form tabs.
-- A small `<OpenFormButton form={...}>` replaces today's `<Button onClick={() => setOpen(true)}>`.
+1. Wrap page content in `<InlineFormProvider>`.
+2. Mount `<InlineFormHost className="mt-4" />` directly under the page header (above the existing `<Tabs>`).
+3. Replace the form component's `<Dialog>` wrapper with `<FormShell id="…" title="…" open onOpenChange>`. Keep `open` / `onOpenChange` API unchanged.
+4. Leave confirmation dialogs, date pickers, command palettes, AI/Aura modals, and onboarding wizards as real dialogs.
 
-This lets each manager swap `<Dialog>{form}</Dialog>` → `openForm({ render: () => form })` with minimal code change.
+## Phases
 
-## Phased rollout (one PR per phase, same shared primitive)
-1. **Foundation** — build `InlineFormTabs` primitive, polish styling against Cyber-Sentry tokens, write one example (Customers).
-2. **Customer / CRM consoles** — Customers, Leads, Quotes, Invoices, Appointments, Jobs.
-3. **Field Ops + Dispatch** — New Job, Edit Job, Assign Tech forms in `dispatch-field-ops`, `field-ops` consoles.
-4. **Business Mgt + Employees** — Add/Edit Employee, Roles, Payroll, Inventory.
-5. **Marketing + Social** — New Campaign, New Post, New Template.
-6. **Configuration / Integrations / Settings** — any remaining `<Dialog>` form (auth-gated settings, integrations setup wizards stay as their existing flows; only inline-form-shaped dialogs convert).
-7. **Cleanup pass** — `rg "<Dialog"` audit; anything left is a confirm/picker. Document the rule in memory: *"All entity create/edit UI uses InlineFormTabs, never `<Dialog>`."*
+**Phase 2 — CRM core consoles**
+- Leads: `AddLeadForm`, `EditLeadDialog` → `src/pages/Leads.tsx` (or `src/components/leads/*`)
+- Quotes: `QuotesManager` new/edit quote dialogs → `src/pages/Quotes.tsx`
+- Invoices: `InvoicesManager` new/edit invoice dialogs → `src/pages/Invoices.tsx`
+- Appointments: new/edit appointment dialog → `src/pages/operations/AppointmentConsole.tsx` and `src/components/appointments/*`
+- Inventory: `InventoryReportForm`, `InventoryUploadDialog` → `src/pages/Inventory.tsx`
 
-## Out of scope
-- AI/Aura command modals (chat overlays).
-- Confirmations (`AlertDialog`), date pickers, command palettes, install-on-phone QR popovers.
-- Onboarding wizards that intentionally take over the whole screen.
-- Public/marketing pages (no console context).
+**Phase 3 — Field Ops + Dispatch**
+- New/Edit Job, Assign Technician, Dispatch notes → `src/pages/FieldOperations.tsx`, `src/components/fieldops/*`, `DispatchFieldOpsApp`
+- Keep mobile technician PWA dialogs as-is on small viewports (host still works inline).
 
-## Technical notes
-- Each console already uses `<Tabs>` from `components/ui/tabs.tsx`; the primitive will mount alongside, not replace it.
-- Form submission keeps existing react-hook-form + Supabase mutation logic; only the wrapper changes.
-- Dynamic tab labels come from the form spec (`title: "New Customer"`).
-- On mobile (<640px), the dynamic tab full-screens within the console area instead of sitting next to other tabs.
+**Phase 4 — Business Mgt + Employees**
+- Add/Edit Employee, Roles, Availability → `src/pages/Employees.tsx`, `src/pages/EmployeeDetail.tsx`, `src/components/employee/*`
+- Payroll, Business Ops forms → `BusinessOpsAgentConsole`, `src/components/businessops/*`, `src/components/billing/forms/*`
 
-## Verification
-For each phase: open the console, click `+ Add`, confirm the form opens as a tab (not a modal), submit successfully, tab closes, list refreshes. Confirm `rg "<Dialog"` count trends to zero in converted files.
+**Phase 5 — Marketing, Social, Content**
+- Campaigns: new campaign → `src/pages/Campaigns.tsx`, `src/components/marketing/*`
+- Social: new post / template → `src/pages/ai-consoles/SocialMediaConsole.tsx`, `src/components/social/*`
+- Content Engine: new content → `ContentEngineConsole`, `ContentEngineDashboard`
+- Blog: new/edit post → `src/pages/BlogManagement.tsx`, `src/components/blog/*`
+
+**Phase 6 — Communication / SMS / Voice / Knowledge**
+- SMS keywords: `KeywordForm` inside `SMSKeywordsSection` → `src/pages/SMSLogs.tsx` host
+- Outbound call form: `OutboundCallDialog` (keep as small modal — action trigger, not a record form) — verify and document exception
+- Knowledge base entry forms → `src/components/knowledge/*`, `src/pages/KnowledgeBase.tsx`
+
+**Phase 7 — Settings + Integrations + Cleanup**
+- Settings sub-forms → `src/pages/Settings.tsx`, `src/components/settings/*`
+- Integration setup forms (Calendar, Email, SMS, Tavily, Voice) under `src/pages/integrations/*`
+- Final audit: `rg -n "<Dialog" src` and `rg -n "<Sheet" src` to confirm only allowed exceptions remain.
+- Add a memory rule documenting the inline-form standard + exceptions.
+
+## Out of scope (stay as dialogs)
+
+- Confirmation / destructive-action dialogs
+- Date / time / emoji pickers, command palettes
+- AI/Aura command modals, voice overlays, switching overlays
+- Onboarding wizards, tutorials, PWA install prompts
+- Public marketing pages, landing chat widget
+- Customer-portal lightweight action sheets
+
+## Acceptance per phase
+
+- Each form opens as a tab in the parent console (not a centered modal).
+- Tab is closable via the × on the tab and via successful submit/cancel.
+- No regressions in submit handlers, validation, or Supabase mutations.
+- `rg "<Dialog" <files-touched>` returns no remaining create/edit forms.
+
+## Execution
+
+Phases land sequentially in separate messages so you can sanity-check UX between each (same primitive, same code shape). I'll start Phase 2 (Leads → Quotes → Invoices → Appointments → Inventory) on approval.
