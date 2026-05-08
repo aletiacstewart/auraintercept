@@ -23,7 +23,7 @@ const QUICK_REFERENCE_DATA = [
   },
   { 
     agent: 'ETA Agent', 
-    requires: ['Dispatch Agent', 'Route Agent'], 
+    requires: ['Dispatch/GPS Console', 'Route Agent'], 
     tier: 'Aura Boost', 
     cost: '$497/mo', 
     notes: 'Full field ops chain' 
@@ -147,7 +147,7 @@ const AIAgentGuide: React.FC = () => {
                   Control Centers (Consoles) are unified interfaces that group related operatives together. Each center requires an "anchor operative" to unlock.
                 </p>
                 <p>
-                  For example, enabling the <strong className="text-card-foreground">Dispatch Agent</strong> automatically unlocks access to the <strong className="text-card-foreground">Field Operations</strong> console, which includes Route, ETA, and Check-in operatives.
+                  For example, enabling the <strong className="text-card-foreground">Dispatch/GPS Console</strong> automatically unlocks access to the <strong className="text-card-foreground">Field Operations</strong> console, which includes Route, ETA, and Check-in operatives.
                 </p>
               </CardContent>
             </Card>

@@ -138,7 +138,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   dispatch: {
-    name: 'Dispatch Agent',
+    name: 'Dispatch/GPS Console',
     description: 'Assigns jobs to field workers based on skills, location, and availability.',
     category: 'field_operations',
     phase: 1,

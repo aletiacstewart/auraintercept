@@ -356,7 +356,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included Smart AI Agents (12)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Everything in Core (8 agents), plus:</FeatureItem>
-        <FeatureItem>Dispatch Agent - Smart job assignment by skills and proximity</FeatureItem>
+        <FeatureItem>Dispatch/GPS Console - Smart job assignment by skills and proximity</FeatureItem>
         <FeatureItem>Route Agent - Optimal route planning</FeatureItem>
         <FeatureItem>ETA Agent - Real-time arrival estimates</FeatureItem>
         <FeatureItem>Check-In Agent - Job status tracking and photo documentation</FeatureItem>

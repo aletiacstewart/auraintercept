@@ -391,7 +391,7 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>Goodbye, calendar chaos. AI books appointments based on availability, location, and job requirements.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Dispatch Agent</Text>
+            <Text style={styles.agentName}>Dispatch/GPS Console</Text>
             <Text style={styles.agentDesc}>Right tech, right job, right time. Intelligent assignment based on skills, location, and workload.</Text>
           </View>
           <View style={styles.agentCard}>

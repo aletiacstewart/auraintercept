@@ -15,7 +15,7 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   outreach: 'Outreach Agent',
-  dispatch: 'Dispatch Agent',
+  dispatch: 'Dispatch/GPS Console',
   route: 'Route Agent',
   eta: 'ETA Agent',
   checkin: 'Check-In Agent',

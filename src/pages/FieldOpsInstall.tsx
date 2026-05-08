@@ -67,7 +67,7 @@ export default function FieldOpsInstall() {
                 </Button>
               </div>
               <div className="p-4 rounded-lg border border-border/50 bg-card">
-                <h4 className="font-medium mb-1 text-card-foreground">Dispatch Console</h4>
+                <h4 className="font-medium mb-1 text-card-foreground">Dispatch/GPS Console</h4>
                 <p className="text-sm text-card-foreground/70 mb-3">
                   Admin view for dispatching and managing field operations
                 </p>
@@ -77,7 +77,7 @@ export default function FieldOpsInstall() {
                   onClick={() => navigate('/dashboard/dispatch-field-ops')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Open Dispatch Console
+                  Open Dispatch/GPS Console
                 </Button>
               </div>
             </div>

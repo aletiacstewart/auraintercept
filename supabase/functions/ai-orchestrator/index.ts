@@ -39,7 +39,7 @@ const AGENT_TYPES = {
   customer_journey: { name: 'Customer Journey Agent', category: 'customer_portal', phase: 2 },
 
   // Field Operations (2 agents)
-  dispatch: { name: 'Dispatch Agent', category: 'field_operations', phase: 2 },
+  dispatch: { name: 'Dispatch/GPS Console', category: 'field_operations', phase: 2 },
   field_navigation: { name: 'Field Navigation Agent', category: 'field_operations', phase: 2 },
 
   // Business Operations (2 agents)

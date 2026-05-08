@@ -60,7 +60,7 @@ flowchart TB
     
     subgraph BOOST["🔵 BOOST — $497/mo"]
         direction TB
-        Dispatch["🚚 Dispatch Agent"]
+        Dispatch["🚚 Dispatch/GPS Console"]
         Route["🗺️ Route Agent"]
         ETA["⏱️ ETA Agent"]
         Checkin["✅ Check-in Agent"]

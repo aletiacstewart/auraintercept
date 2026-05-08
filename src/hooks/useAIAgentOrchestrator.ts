@@ -52,7 +52,7 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   { type: 'customer_journey', name: 'Customer Journey Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
   // Field Operations (2 agents)
-  { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 1, is_enabled: false, settings: {} },
+  { type: 'dispatch', name: 'Dispatch/GPS Console', category: 'field_operations', phase: 1, is_enabled: false, settings: {} },
   { type: 'field_navigation', name: 'Field Navigation Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
   // Business Operations (2 agents)
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 1, is_enabled: false, settings: {} },

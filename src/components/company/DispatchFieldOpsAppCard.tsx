@@ -50,7 +50,7 @@ export function DispatchFieldOpsAppCard() {
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
-  // Point to the standalone Dispatch Field Ops App (lightweight Dispatch Console PWA)
+  // Point to the standalone Dispatch Field Ops App (lightweight Dispatch/GPS Console PWA)
   const installUrl = `${baseUrl}/dispatch-field-ops-app?source=qr&v=${buildVersion}`;
 
   const handleCopyLink = async () => {
@@ -72,7 +72,7 @@ export function DispatchFieldOpsAppCard() {
               Dispatch-Field Ops App Install
             </CardTitle>
             <CardDescription className="mt-1 text-white/80">
-              Quick-access Dispatch Console for field operations managers
+              Quick-access Dispatch/GPS Console for field operations managers
             </CardDescription>
           </div>
           <Badge variant="outline" className="bg-blue-500/10 text-cyan-400 border-blue-500/30">

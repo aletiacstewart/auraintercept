@@ -483,7 +483,7 @@ const agents = {
   ],
   fieldOperations: [
     { name: 'Booking Agent', desc: 'Natural language appointment scheduling with real-time availability checks and instant confirmations.' },
-    { name: 'Dispatch Agent', desc: 'Smart job assignment based on skills, location, and availability. Optimizes technician utilization.' },
+    { name: 'Dispatch/GPS Console', desc: 'Smart job assignment based on skills, location, and availability. Optimizes technician utilization.' },
     { name: 'Route Agent', desc: 'Real-time route optimization saves fuel and increases daily job capacity by 20%.' },
     { name: 'ETA Agent', desc: 'Accurate arrival predictions with automatic customer notifications. Improves satisfaction scores.' },
     { name: 'Check-in Agent', desc: 'Digital job tracking with photo documentation. Creates audit trails automatically.' },
@@ -626,7 +626,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.paragraph}>
         Unlike generic CRMs or answering services, Aura Intercept uses 24 Smart AI Agents that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
-        classifies the urgency, Booking Agent books the appointment, Dispatch Agent assigns the 
+        classifies the urgency, Booking Agent books the appointment, Dispatch/GPS Console assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
       </Text>
     </Page>

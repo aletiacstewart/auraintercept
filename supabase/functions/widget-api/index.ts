@@ -397,7 +397,7 @@ serve(async (req) => {
       if (lastUserMessage.includes('emergency') || lastUserMessage.includes('urgent') || lastUserMessage.includes('broken') || lastUserMessage.includes('leak')) {
         agentContext = 'dispatch';
         agentInstructions = `
-You are the Emergency Dispatch Agent. The customer has an urgent situation.
+You are the Emergency Dispatch/GPS Console. The customer has an urgent situation.
 - Acknowledge the emergency immediately
 - Ask for their location/address if not provided
 - Ask what equipment/system is affected

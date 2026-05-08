@@ -41,7 +41,7 @@ const AGENT_NAMES: Record<string, string> = {
   booking: 'Booking Agent',
   followup: 'Follow-up Agent',
   review: 'Review Agent',
-  dispatch: 'Dispatch Agent',
+  dispatch: 'Dispatch/GPS Console',
   route: 'Route Agent',
   eta: 'ETA Agent',
   checkin: 'Check-in Agent',

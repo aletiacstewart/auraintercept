@@ -72,7 +72,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     highlights: [
       'Everything in Aura Core',
       'Channels included: Voice calls, SMS, Email, Web chat (bundled)',
-      'Dispatch Agent (Smart job assignment)',
+      'Dispatch/GPS Console (Smart job assignment)',
       'Route Agent + ETA Agent + Check-In Agent',
       'Field Operations Console',
       'Social Media Console',
@@ -246,7 +246,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   // Field Operations Console - 2 operatives
   {
     id: 'dispatch',
-    name: 'Dispatch Agent',
+    name: 'Dispatch/GPS Console',
     description: 'Assigns technicians to jobs based on skills, location, availability, and workload. Optimizes assignments for efficiency.',
     console: 'field_operations',
     tier: 'aura_boost',

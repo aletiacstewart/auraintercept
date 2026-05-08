@@ -87,7 +87,7 @@ export const FEATURE_TOOLTIPS = {
       tooltip: 'Collects customer feedback and directs satisfied customers to leave reviews on Google, Yelp, or Facebook.',
     },
     dispatch: {
-      label: 'Dispatch Agent',
+      label: 'Dispatch/GPS Console',
       tooltip: 'Assigns jobs to technicians based on location, skills, and availability.',
     },
     quoting: {

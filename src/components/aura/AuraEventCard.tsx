@@ -30,7 +30,7 @@ interface AuraEventCardProps {
 
 const AGENT_CONFIG: Record<string, { icon: typeof Calendar; label: string; color: string }> = {
   booking: { icon: Calendar, label: 'Booking Agent', color: 'text-feature-appointments' },
-  dispatch: { icon: Truck, label: 'Dispatch Agent', color: 'text-feature-fieldops' },
+  dispatch: { icon: Truck, label: 'Dispatch/GPS Console', color: 'text-feature-fieldops' },
   route: { icon: Route, label: 'Route Agent', color: 'text-feature-fieldops' },
   invoice: { icon: Receipt, label: 'Billing Agent', color: 'text-feature-invoices' },
   quoting: { icon: FileText, label: 'Quoting Agent', color: 'text-feature-quotes' },
@@ -57,7 +57,7 @@ function getHumanizedMessage(event: AuraEventCardProps['event']): string {
   
   // Dispatch/Route events
   if (source_agent === 'dispatch' || source_agent === 'route' || event_type.includes('dispatch') || event_type.includes('route')) {
-    return `Teamwork in action: Dispatch Agent optimized ${techName}'s route to beat the afternoon traffic.`;
+    return `Teamwork in action: Dispatch/GPS Console optimized ${techName}'s route to beat the afternoon traffic.`;
   }
   
   // Invoice events

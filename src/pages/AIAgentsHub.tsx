@@ -171,7 +171,7 @@ const AGENT_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
   customer_journey: 'Customer Journey Agent',
   // Field Operations (2)
-  dispatch: 'Dispatch Agent',
+  dispatch: 'Dispatch/GPS Console',
   field_navigation: 'Field Navigation Agent',
   // Business Operations (2)
   admin: 'Admin Agent',

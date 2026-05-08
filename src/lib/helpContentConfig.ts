@@ -28,7 +28,7 @@ export interface ConsoleHelpConfig {
 export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   triage: 'AI Receptionist',
   customer_journey: 'Customer Journey Agent',
-  dispatch: 'Dispatch Agent',
+  dispatch: 'Dispatch/GPS Console',
   field_navigation: 'Field Navigation Agent',
   admin: 'Admin Agent',
   business_finance: 'Business Finance Agent',
@@ -99,11 +99,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'field_operations',
     title: 'Field Operations',
     icon: Truck,
-    description: 'Mobile-optimized console powered by Dispatch Agent + Field Navigation Agent covering GPS routing, real-time ETA updates, and one-tap job check-in.',
+    description: 'Mobile-optimized console powered by Dispatch/GPS Console + Field Navigation Agent covering GPS routing, real-time ETA updates, and one-tap job check-in.',
     requiredTier: 'connect',
     tabs: ['Accept Job', 'Get Directions', 'Mark En Route', 'Update ETA', 'Arrive & Start', 'Complete Job', 'Generate Quote', 'Generate Invoice', 'Contact Dispatch'],
     agents: [
-      { name: 'Dispatch Agent', tier: 'connect' },
+      { name: 'Dispatch/GPS Console', tier: 'connect' },
       { name: 'Field Navigation Agent', tier: 'connect' },
     ],
     features: [
@@ -400,7 +400,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     description: '12 AI Agents with dispatch, routing & field operations.',
     highlights: [
       'Everything in Aura Core',
-      'Dispatch Agent + Route Agent + ETA Agent + Check-In Agent',
+      'Dispatch/GPS Console + Route Agent + ETA Agent + Check-In Agent',
       'Field Operations Console',
       'Social Media Console',
       'Full Communication: Text, Voice, Email, SMS',

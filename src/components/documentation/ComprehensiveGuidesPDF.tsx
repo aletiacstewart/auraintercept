@@ -285,7 +285,7 @@ const guideCategories = [
           'Checks business hours and employee availability',
           'Presents available time slots to customers',
           'Creates confirmed appointments in the system',
-          'Hands off to Dispatch Agent for technician assignment'
+          'Hands off to Dispatch/GPS Console for technician assignment'
         ],
         tips: ['Ensure business hours are configured accurately']
       },
@@ -305,7 +305,7 @@ const guideCategories = [
         title: 'Field Operations Agents',
         duration: '12 min',
         steps: [
-          'Dispatch Agent: Assigns technicians based on skills/zones',
+          'Dispatch/GPS Console: Assigns technicians based on skills/zones',
           'Route Agent: Optimizes travel routes',
           'ETA Agent: Sends real-time arrival updates',
           'Check-in Agent: On-site status with photo documentation',

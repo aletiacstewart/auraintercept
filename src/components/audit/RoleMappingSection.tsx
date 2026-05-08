@@ -62,7 +62,7 @@ const ROLE_QUESTIONS: RoleQuestion[] = [
     role: 'dispatcher',
     question: 'Who dispatches technicians to jobs?',
     icon: <Truck className="h-5 w-5" />,
-    agentName: 'Dispatch Agent',
+    agentName: 'Dispatch/GPS Console',
     description: 'Technician assignment, route optimization',
   },
   {

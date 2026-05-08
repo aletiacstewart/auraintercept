@@ -557,7 +557,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the Field Operations agents?"
-          answer="Field Operations includes 4 specialized agents: Dispatch Agent (assigns technicians to jobs), Route Agent (plans optimal driving routes), ETA Agent (communicates arrival times), and Check-in Agent (tracks job progress). These agents work together for efficient field service management."
+          answer="Field Operations includes 4 specialized agents: Dispatch/GPS Console (assigns technicians to jobs), Route Agent (plans optimal driving routes), ETA Agent (communicates arrival times), and Check-in Agent (tracks job progress). These agents work together for efficient field service management."
         />
         
         <FAQItem 
@@ -594,7 +594,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Can I enable/disable specific operatives?"
-          answer="Yes! Each AI Operative can be individually enabled or disabled from the AI Operatives Hub. Some operatives have dependencies (e.g., Route Agent requires Dispatch Agent), which the system enforces automatically. Core operatives for your tier are enabled by default."
+          answer="Yes! Each AI Operative can be individually enabled or disabled from the AI Operatives Hub. Some operatives have dependencies (e.g., Route Agent requires Dispatch/GPS Console), which the system enforces automatically. Core operatives for your tier are enabled by default."
         />
         
         <FAQItem 
@@ -604,7 +604,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How do operative dependencies work?"
-          answer="Some operatives require others to function. For example, the ETA Agent needs both the Dispatch Agent and Route Agent to calculate accurate arrival times. The system shows these dependencies in the Operative Dependency Graph and prevents enabling agents without their required dependencies."
+          answer="Some operatives require others to function. For example, the ETA Agent needs both the Dispatch/GPS Console and Route Agent to calculate accurate arrival times. The system shows these dependencies in the Operative Dependency Graph and prevents enabling agents without their required dependencies."
         />
 
         <View style={styles.infoBox}>

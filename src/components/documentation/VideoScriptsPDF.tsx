@@ -455,7 +455,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:25-0:45</Text>
-          <Text style={styles.timestampContent}>[Features] "AI Receptionist answers calls naturally. Booking Agent books appointments instantly. Dispatch Agent optimizes your routes. Review Agent collects 5-star feedback. All working together, all the time."</Text>
+          <Text style={styles.timestampContent}>[Features] "AI Receptionist answers calls naturally. Booking Agent books appointments instantly. Dispatch/GPS Console optimizes your routes. Review Agent collects 5-star feedback. All working together, all the time."</Text>
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:45-0:55</Text>
@@ -518,7 +518,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:25-0:55</Text>
-          <Text style={styles.timestampContent}>[Solution] "Field Ops console: Dispatch Agent assigns jobs by skill and location. Route Agent optimizes paths in real-time. ETA Agent keeps customers informed automatically. Check-in Agent tracks job progress."</Text>
+          <Text style={styles.timestampContent}>[Solution] "Field Ops console: Dispatch/GPS Console assigns jobs by skill and location. Route Agent optimizes paths in real-time. ETA Agent keeps customers informed automatically. Check-in Agent tracks job progress."</Text>
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:55-1:15</Text>
