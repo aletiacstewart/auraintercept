@@ -361,6 +361,62 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Bathroom Remodel Special', promo_code: 'BATH1500', discount_value: 1500, message: '$1,500 off any full bathroom remodel signed this quarter.', subject: 'Bathroom Remodel — $1,500 Off' },
     ],
   ),
+  industry('fitness', 'Fitness Studio', 'core',
+    ['Personal Training','Group Class','Nutrition Consult','Body Composition Scan','Recovery Session'],
+    null,
+    [
+      { title: 'Strength vs Cardio: How to Split Your Week', excerpt: 'A balanced template that actually fits real schedules.', content: '## Weekly split\n\n3 strength days, 2 conditioning days, 1 mobility, 1 rest.' },
+      { title: 'Why Body Composition Beats the Scale', excerpt: 'Two clients, same weight, very different bodies.', content: '## What we measure\n\nLean mass, fat mass, hydration — tracked monthly.' },
+      { title: 'Recovery: The Hidden Multiplier', excerpt: 'Sleep, mobility, and active recovery sessions.', content: '## Stack\n\n7+ hours sleep, weekly mobility, foam rolling, contrast therapy.' },
+    ],
+    [
+      { name: 'New Member Special', promo_code: 'FIT0', discount_value: 0, message: 'First class free + free body comp scan when you join.', subject: 'Free Class + Body Scan — Welcome' },
+      { name: 'Refer a Friend', promo_code: 'FIT25', discount_value: 25, message: 'Refer a friend, both get 25% off next month.', subject: 'Train Together — 25% Off' },
+    ],
+  ),
+  industry('salon', 'Salon & Spa', 'core',
+    ['Haircut & Style','Color & Highlights','Blowout','Manicure & Pedicure','Spa Facial'],
+    [
+      { name: 'Color Developer (qt)', sku: 'SAL-CD-QT', quantity: 16, min_quantity: 6, unit_cost: 22.0, category: 'Color' },
+      { name: 'Foils 5"x11" (500pk)', sku: 'SAL-FOIL', quantity: 12, min_quantity: 4, unit_cost: 28.0, category: 'Color' },
+      { name: 'Gel Polish (12pk)', sku: 'SAL-GP-12', quantity: 10, min_quantity: 4, unit_cost: 96.0, category: 'Nails' },
+    ],
+    [
+      { title: 'Balayage vs Highlights — Which Lasts Longer?', excerpt: 'Lower maintenance, softer grow-out.', content: '## Quick take\n\nBalayage = 3–4 month touch-ups. Foils = 6–8 weeks.' },
+      { title: 'Bridal Hair: When to Book Your Trial', excerpt: 'Two months out is the sweet spot.', content: '## Timeline\n\nTrial 8 weeks before, color refresh 1 week before, day-of styling.' },
+      { title: 'Glow-Up Facial Plan for the Season', excerpt: 'Three facials, visible results.', content: '## Plan\n\nDeep clean → enzyme peel → hydration boost over 6 weeks.' },
+    ],
+    [
+      { name: 'New Guest 20% Off', promo_code: 'SALON20', discount_value: 20, message: 'Welcome! Enjoy 20% off your first service.', subject: 'Your First Visit — 20% Off' },
+      { name: 'Refer a Friend', promo_code: 'SALONREF', discount_value: 15, message: 'Refer a friend — both get 15% off.', subject: 'Bring a Friend, Save Together' },
+    ],
+  ),
+  industry('professional', 'Professional Services', 'boost',
+    ['Discovery Call','Strategy Session','Project Engagement','Monthly Retainer','Workshop'],
+    null,
+    [
+      { title: 'How to Scope a 4-Week Engagement', excerpt: 'Outcomes, not deliverables, drive momentum.', content: '## Template\n\nDiscovery → strategy → execution sprint → handoff doc.' },
+      { title: 'Retainers vs Project Work', excerpt: 'When to switch and how to price both.', content: '## Rule of thumb\n\nRetainer when work is recurring monthly; project when scoped and finite.' },
+      { title: 'Running a Workshop That Sells', excerpt: 'Teach value, then offer a clear next step.', content: '## Format\n\n45 min teach → 15 min Q&A → 1:1 strategy call offer.' },
+    ],
+    [
+      { name: 'Free Discovery Call', promo_code: 'PROCALL', discount_value: 0, message: 'Book a free 30-min discovery call this week.', subject: 'Free 30-Min Discovery Call' },
+      { name: 'Q1 Strategy Special', promo_code: 'PRO250', discount_value: 250, message: '$250 off any strategy engagement booked this quarter.', subject: 'Strategy Sessions — $250 Off' },
+    ],
+  ),
+  industry('saas_platform', 'SaaS Platform', 'pro',
+    ['Product Demo','Onboarding','Implementation','Customer Success Review','Technical Support'],
+    null,
+    [
+      { title: 'Cutting Time-to-Value in Half', excerpt: 'Onboarding is product, not support.', content: '## Playbook\n\nDay 0 setup, day 3 first win, day 14 expansion conversation.' },
+      { title: 'PLG vs Sales-Led: Pick Your Lane', excerpt: 'Hybrid is fine, but be intentional.', content: '## Quick take\n\nPLG = self-serve, $-low. Sales-led = high ACV. Hybrid = clear ICP gates.' },
+      { title: 'Reducing Churn With Health Scores', excerpt: 'Three signals, one weekly review.', content: '## Signals\n\nProduct usage, support sentiment, exec sponsor engagement.' },
+    ],
+    [
+      { name: 'Free 14-Day Trial', promo_code: 'SAAS14', discount_value: 0, message: 'Start a free 14-day trial — no card required.', subject: 'Try It Free for 14 Days' },
+      { name: 'Annual Plan Discount', promo_code: 'SAASYEAR', discount_value: 20, message: 'Save 20% when you upgrade to an annual plan.', subject: 'Annual Plans — 20% Off' },
+    ],
+  ),
 ];
 
 function industry(
