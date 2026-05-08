@@ -216,5 +216,6 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
         </Accordion>
       </TabsContent>
     </Tabs>
+    </InlineFormProvider>
   );
 }
