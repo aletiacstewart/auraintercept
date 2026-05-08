@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
 import { IntakeDataSearch } from '@/components/search/IntakeDataSearch';
@@ -203,6 +204,7 @@ export default function Customers() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
         {/* Header */}
         <PageHeader
@@ -311,6 +313,10 @@ export default function Customers() {
         </Card>
 
         </div>
+        <InlineFormHost className="mt-4" />
+        {/* Add Customer Form — renders as inline tab when provider is present, falls back to dialog otherwise */}
+        <AddCustomerForm open={addCustomerOpen} onOpenChange={setAddCustomerOpen} />
+        </InlineFormProvider>
       </PageContainer>
       {/* Customer Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -517,8 +523,6 @@ export default function Customers() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Customer Dialog */}
-      <AddCustomerForm open={addCustomerOpen} onOpenChange={setAddCustomerOpen} />
     </DashboardLayout>
   );
 }

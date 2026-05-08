@@ -1,46 +1,45 @@
-# Plan: Industry-Specific "Dispatch/GPS Console" Naming
+# Plan: Replace pop-up forms with inline console tabs
 
 ## Goal
-For every industry that uses the Dispatch AI agent (technicians/repair people sent to homes/offices), unify naming so that:
-- The **sidebar group label**, the **Dispatch sub-item**, and the **page H1** all match.
-- Each industry gets its own branded title using the pattern:
-  - **Admin/Dispatch view**: `{Industry} Dispatch/GPS Console` (e.g. "HVAC Dispatch/GPS Console", "Plumbing Dispatch/GPS Console")
-  - **Worker/Field view**: `{Industry} Ops Console` (e.g. "Electrician Ops Console", "Plumber Ops Console")
-- Non-dispatch verticals (salon, fitness, restaurant, real estate, professional, personal_assistant, etc.) are **untouched** — they keep current labels.
+Across every dashboard console/page, convert `<Dialog>` / `<Sheet>` create+edit forms into **inline tabs** opened in the same console. No more modal pop-ups for forms.
 
-## Scope: Dispatch industries
-HVAC, Plumbing, Electrical, Appliance Repair, Landscape, Pest Control, Pool & Spa, Roofing, Solar, Fencing, Construction, Handyman, Security Systems, Mobile Mechanic.
+## Tab behavior (default — confirm if different)
+- A console keeps its existing tab bar.
+- Clicking a `+ Add / New / Edit` button opens a **dynamic tab** ("New Customer", "Edit Lead #123", etc.) with a close (×).
+- Submit/Cancel closes the dynamic tab and returns to the list tab. Multiple edits can stack as separate tabs.
+- Confirm-only dialogs (Delete?, "Are you sure?") and pickers (date picker, command menu) **stay** as small modals — only **forms with input fields** are converted.
 
-## Changes
+## Shared primitive
+Create one reusable component used everywhere:
 
-### 1. `src/lib/industryAgentMap.ts` — single source of truth
-Update `INDUSTRY_SERVICE_CONSOLE_OVERRIDES` for each dispatch industry above so each entry sets:
-- `consoleTitle: "{Industry} Dispatch/GPS Console"` (admin dispatch view)
-- `workerConsoleTitle: "{Worker} Ops Console"` (e.g. "Electrician Ops Console", "Plumber Ops Console", "HVAC Tech Ops Console", "Crew Ops Console", "Pest Tech Ops Console", etc.)
-- `fieldOpsSectionLabel: "Dispatch/GPS"` (sidebar group)
-- Add a new optional field `dispatchSubItemLabel: "Dispatch/GPS Console"` and `workerSubItemLabel: "{Worker} Ops Console"` so the sidebar items match the page H1 exactly.
+`src/components/ui/inline-form-tabs.tsx`
+- `<InlineFormTabsProvider>` wraps a console.
+- `useInlineForms()` hook exposes `openForm({ id, title, render })` and `closeForm(id)`.
+- `<InlineFormTabsHost>` renders a Tabs UI with the console's static tabs plus any open dynamic form tabs.
+- A small `<OpenFormButton form={...}>` replaces today's `<Button onClick={() => setOpen(true)}>`.
 
-Generic fallback (`fieldRouting=true`) → `consoleTitle: "Dispatch/GPS Console"`, `workerConsoleTitle: "Field Ops Console"`, `fieldOpsSectionLabel: "Dispatch/GPS"`.
+This lets each manager swap `<Dialog>{form}</Dialog>` → `openForm({ render: () => form })` with minimal code change.
 
-Non-dispatch packs are not modified.
-
-### 2. `src/components/dashboard/DashboardLayout.tsx`
-- Sidebar group already reads `serviceConfig.fieldOpsSectionLabel` (line 461) — no logic change, new labels flow through automatically.
-- Update the two child items (lines 136-137) to read labels from `serviceConfig.workerSubItemLabel` and `serviceConfig.dispatchSubItemLabel` (with current strings as fallback) so "Technician View"/"Dispatch View" become e.g. "Electrician Ops Console" / "Dispatch/GPS Console" for dispatch industries; non-dispatch industries keep current labels via fallback.
-
-### 3. Page H1s already use `serviceConfig` — verify only
-- `src/pages/ai-consoles/FieldOpsConsole.tsx` already uses `serviceConfig.workerConsoleTitle` (line 38) ✓
-- `src/pages/DispatchFieldOpsApp.tsx` and `src/components/fieldops/FieldOpsConsole.tsx` — confirm they render `serviceConfig.consoleTitle`; if a hard-coded "Dispatch Field Ops" string exists, swap to `serviceConfig.consoleTitle`.
-
-### 4. Demo seeding
-No DB changes required — labels are derived at render time from each company's `industry_vertical`. Existing demo accounts will pick up new names on next page load.
+## Phased rollout (one PR per phase, same shared primitive)
+1. **Foundation** — build `InlineFormTabs` primitive, polish styling against Cyber-Sentry tokens, write one example (Customers).
+2. **Customer / CRM consoles** — Customers, Leads, Quotes, Invoices, Appointments, Jobs.
+3. **Field Ops + Dispatch** — New Job, Edit Job, Assign Tech forms in `dispatch-field-ops`, `field-ops` consoles.
+4. **Business Mgt + Employees** — Add/Edit Employee, Roles, Payroll, Inventory.
+5. **Marketing + Social** — New Campaign, New Post, New Template.
+6. **Configuration / Integrations / Settings** — any remaining `<Dialog>` form (auth-gated settings, integrations setup wizards stay as their existing flows; only inline-form-shaped dialogs convert).
+7. **Cleanup pass** — `rg "<Dialog"` audit; anything left is a confirm/picker. Document the rule in memory: *"All entity create/edit UI uses InlineFormTabs, never `<Dialog>`."*
 
 ## Out of scope
-- Non-dispatch verticals (salon, fitness, restaurant, real estate, professional services, SaaS, personal assistant, etc.) — labels unchanged.
-- PDFs, docs, marketing pages — already use "Dispatch/GPS Console" from prior pass.
-- Backend/agent IDs — `dispatch` and `field_operations` keys remain unchanged.
+- AI/Aura command modals (chat overlays).
+- Confirmations (`AlertDialog`), date pickers, command palettes, install-on-phone QR popovers.
+- Onboarding wizards that intentionally take over the whole screen.
+- Public/marketing pages (no console context).
+
+## Technical notes
+- Each console already uses `<Tabs>` from `components/ui/tabs.tsx`; the primitive will mount alongside, not replace it.
+- Form submission keeps existing react-hook-form + Supabase mutation logic; only the wrapper changes.
+- Dynamic tab labels come from the form spec (`title: "New Customer"`).
+- On mobile (<640px), the dynamic tab full-screens within the console area instead of sitting next to other tabs.
 
 ## Verification
-1. Switch demo to HVAC → sidebar shows group "Dispatch/GPS", items "HVAC Tech Ops Console" + "Dispatch/GPS Console"; pages render matching H1s.
-2. Switch demo to Plumbing/Electrical/etc. → industry-prefixed titles appear consistently.
-3. Switch demo to Salon/Fitness/Professional → labels unchanged.
+For each phase: open the console, click `+ Add`, confirm the form opens as a tab (not a modal), submit successfully, tab closes, list refreshes. Confirm `rg "<Dialog"` count trends to zero in converted files.
