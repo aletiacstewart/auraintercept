@@ -7,6 +7,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPageHeader } from '@/lib/industryNavLabels';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 
 export default function Inventory() {
   const { pack } = useIndustryPack();
@@ -14,6 +15,7 @@ export default function Inventory() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
           <PageHeader
             icon={Package}
@@ -23,8 +25,10 @@ export default function Inventory() {
             showAuraBar
             action={<HowToUseModal {...HOW_TO_USE.inventoryTab} />}
           />
+          <InlineFormHost />
           <InventoryManager />
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

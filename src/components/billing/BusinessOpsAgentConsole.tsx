@@ -20,6 +20,7 @@ import { LeadsManager } from '@/components/leads';
 import { CompaniesManager } from '@/components/businessops/CompaniesManager';
 import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CustomersManager } from '@/components/businessops/CustomersManager';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -287,6 +288,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     >
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+        <InlineFormProvider>
+          <InlineFormHost className="mb-4" />
           {showWelcome ? (
             <WelcomeScreen
               companyName={company?.name || 'Business Management Console'}
@@ -382,6 +385,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               <div ref={messagesEndRef} />
             </div>
           )}
+        </InlineFormProvider>
         </div>
 
         {/* Floating Input */}

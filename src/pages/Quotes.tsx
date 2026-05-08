@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
+import { FormShell } from '@/components/ui/form-shell';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -152,6 +154,7 @@ export default function Quotes() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
         <PageHeader
           icon={FileText}
@@ -160,31 +163,31 @@ export default function Quotes() {
           featureColor="quotes"
           showAuraBar
           action={
-            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Quote
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Create Quote</DialogTitle>
-                  <DialogDescription>Create a new quote for a customer.</DialogDescription>
-                </DialogHeader>
-                {companyId && (
-                  <BusinessQuoteForm
-                    companyId={companyId}
-                    mode="direct"
-                    showBackButton={false}
-                    onSuccess={() => setIsAddOpen(false)}
-                    onCancel={() => setIsAddOpen(false)}
-                  />
-                )}
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => setIsAddOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Quote
+            </Button>
           }
         />
+        <InlineFormHost />
+        <FormShell
+          id="quote-create"
+          title="Create Quote"
+          description="Create a new quote for a customer."
+          open={isAddOpen}
+          onOpenChange={setIsAddOpen}
+          className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        >
+          {companyId && (
+            <BusinessQuoteForm
+              companyId={companyId}
+              mode="direct"
+              showBackButton={false}
+              onSuccess={() => setIsAddOpen(false)}
+              onCancel={() => setIsAddOpen(false)}
+            />
+          )}
+        </FormShell>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -381,6 +384,7 @@ export default function Quotes() {
           </DialogContent>
         </Dialog>
       </div>
+      </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

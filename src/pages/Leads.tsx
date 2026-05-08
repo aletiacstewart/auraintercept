@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
+import { FormShell } from '@/components/ui/form-shell';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
@@ -152,6 +154,7 @@ export default function Leads() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
         <PageHeader
           icon={Users}
@@ -160,28 +163,31 @@ export default function Leads() {
           featureColor="leads"
           showAuraBar
           action={
-            <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
-              <DialogTrigger asChild>
-                <Button data-voice-label="New Lead">
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Lead
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
-                {companyId && (
-                  <LeadForm
-                    companyId={companyId}
-                    onCancel={() => setIsAddLeadOpen(false)}
-                    onSuccess={() => {
-                      setIsAddLeadOpen(false);
-                      queryClient.invalidateQueries({ queryKey: ['leads'] });
-                    }}
-                  />
-                )}
-              </DialogContent>
-            </Dialog>
+            <Button data-voice-label="New Lead" onClick={() => setIsAddLeadOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Lead
+            </Button>
           }
         />
+        <InlineFormHost />
+        <FormShell
+          id="lead-create"
+          title="New Lead"
+          open={isAddLeadOpen}
+          onOpenChange={setIsAddLeadOpen}
+          className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0"
+        >
+          {companyId && (
+            <LeadForm
+              companyId={companyId}
+              onCancel={() => setIsAddLeadOpen(false)}
+              onSuccess={() => {
+                setIsAddLeadOpen(false);
+                queryClient.invalidateQueries({ queryKey: ['leads'] });
+              }}
+            />
+          )}
+        </FormShell>
 
         {/* Analytics Section */}
         <LeadAnalyticsSection />
@@ -464,6 +470,7 @@ export default function Leads() {
           </CardContent>
         </Card>
       </div>
+      </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

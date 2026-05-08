@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { 
@@ -132,26 +133,28 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
           <p className="text-sm text-foreground/70">Manage and follow up on potential customers</p>
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" data-voice-label="New Lead">
-                <Plus className="w-4 h-4 mr-2" />
-                New Lead
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
-              {companyId && (
-                <LeadForm
-                  companyId={companyId}
-                  onCancel={() => setIsAddLeadOpen(false)}
-                  onSuccess={() => {
-                    setIsAddLeadOpen(false);
-                    queryClient.invalidateQueries({ queryKey: ['leads'] });
-                  }}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" data-voice-label="New Lead" onClick={() => setIsAddLeadOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Lead
+          </Button>
+          <FormShell
+            id="lead-create"
+            title="New Lead"
+            open={isAddLeadOpen}
+            onOpenChange={setIsAddLeadOpen}
+            className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0"
+          >
+            {companyId && (
+              <LeadForm
+                companyId={companyId}
+                onCancel={() => setIsAddLeadOpen(false)}
+                onSuccess={() => {
+                  setIsAddLeadOpen(false);
+                  queryClient.invalidateQueries({ queryKey: ['leads'] });
+                }}
+              />
+            )}
+          </FormShell>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
