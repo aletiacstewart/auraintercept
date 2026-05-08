@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -182,20 +182,17 @@ export function BlogManagementTab() {
                 <Sparkles className="mr-2 h-4 w-4" />
                 Batch Posts
               </Button>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button onClick={() => resetForm()}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Single Post
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingPost ? 'Edit Post' : 'Create New Post'}
-                    </DialogTitle>
-                  </DialogHeader>
-                  
+              <Button onClick={() => { resetForm(); setIsDialogOpen(true); }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Single Post
+              </Button>
+              <FormShell
+                id="blog-tab-create-edit"
+                title={editingPost ? 'Edit Post' : 'Create New Post'}
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                className="max-w-2xl max-h-[90vh] overflow-y-auto"
+              >
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {companyId && (
                       <TavilyStatusBadge companyId={companyId} showDisconnected />
@@ -305,8 +302,7 @@ export function BlogManagementTab() {
                       </Button>
                     </div>
                   </form>
-                </DialogContent>
-              </Dialog>
+              </FormShell>
             </>
           )}
         </div>

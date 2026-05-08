@@ -9,14 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import {
   Select,
   SelectContent,
@@ -168,6 +162,7 @@ export default function Campaigns() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         {showSeriesWizard && companyId ? (
           <CampaignSeriesWizard
             companyId={companyId}
@@ -186,15 +181,17 @@ export default function Campaigns() {
               <Button variant="outline" onClick={() => setShowSeriesWizard(true)}>
                 <Layers className="h-4 w-4 mr-2" /> Batch Series
               </Button>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
-                </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Create Campaign</DialogTitle>
-                <DialogDescription>Set up a new marketing campaign</DialogDescription>
-              </DialogHeader>
+              <Button onClick={() => setDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" /> New Campaign
+              </Button>
+              <FormShell
+                id="create-campaign"
+                title="Create Campaign"
+                description="Set up a new marketing campaign"
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                className="max-w-lg"
+              >
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Campaign Name *</Label>
@@ -316,11 +313,11 @@ export default function Campaigns() {
                   Create Campaign
                 </Button>
               </div>
-            </DialogContent>
-            </Dialog>
+              </FormShell>
             </div>
           }
         />
+        <InlineFormHost />
 
         {/* Stats */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
@@ -428,6 +425,7 @@ export default function Campaigns() {
         )}
       </div>
         )}
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

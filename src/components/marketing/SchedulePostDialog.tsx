@@ -2,14 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   Select,
   SelectContent,
@@ -74,22 +67,14 @@ export function SchedulePostDialog({
   const minDate = format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-card-foreground/20 max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-card-foreground flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-feature-marketing" />
-            Schedule Post
-          </DialogTitle>
-          <DialogDescription className="text-card-foreground/60">
-            Choose when you want this post to be published.
-            {platforms.length > 0 && (
-              <span className="block mt-1 text-xs">
-                Platforms: {platforms.join(', ')}
-              </span>
-            )}
-          </DialogDescription>
-        </DialogHeader>
+    <FormShell
+      id="schedule-post"
+      title={<span className="text-card-foreground flex items-center gap-2"><Calendar className="h-5 w-5 text-feature-marketing" />Schedule Post</span>}
+      description={`Choose when you want this post to be published.${platforms.length > 0 ? ` Platforms: ${platforms.join(', ')}` : ''}`}
+      open={open}
+      onOpenChange={onOpenChange}
+      className="bg-card border-card-foreground/20 max-w-md"
+    >
 
         <div className="space-y-4 py-4">
           {/* Quick Options */}
@@ -170,7 +155,7 @@ export function SchedulePostDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-2">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
@@ -195,8 +180,7 @@ export function SchedulePostDialog({
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+    </FormShell>
   );
 }
