@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import {
   Table,
   TableBody,
@@ -526,18 +527,15 @@ export function SmartLinksManager() {
         )}
       </CardContent>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {editingLink ? 'Edit Smart Link' : 'Add Smart Link'}
-            </DialogTitle>
-            <DialogDescription>
-              Configure a URL that Aura can share based on customer intent
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <FormShell
+        id="smart-link-create-edit"
+        title={editingLink ? 'Edit Smart Link' : 'Add Smart Link'}
+        description="Configure a URL that Aura can share based on customer intent"
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        className="max-w-lg"
+      >
+          <form onSubmit={handleSubmit} className="space-y-4 pt-2">
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select
@@ -652,8 +650,7 @@ export function SmartLinksManager() {
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+      </FormShell>
 
       {/* QR Code Dialog */}
       <Dialog open={!!qrLink} onOpenChange={(o) => !o && setQrLink(null)}>
