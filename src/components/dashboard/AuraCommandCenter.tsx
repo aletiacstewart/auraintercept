@@ -10,11 +10,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AuraLiveStream } from '@/components/aura/AuraLiveStream';
+import { AuraAvatarChat } from '@/components/aura/AuraAvatarChat';
 import {
   Mic,
   MicOff,
   Send,
   Sparkles,
+  Video,
 } from 'lucide-react';
 
 export function AuraCommandCenter() {
@@ -29,6 +31,7 @@ export function AuraCommandCenter() {
   // Quick actions resolve from the company's industry pack so a real-estate
   // company sees showings/listings instead of HVAC emergency calls.
   const quickActions = getIndustryQuickActions(pack);
+  const [voiceMode, setVoiceMode] = useState(false);
 
   // Auto-populate first command after Fast Start onboarding
   useEffect(() => {
@@ -68,7 +71,23 @@ export function AuraCommandCenter() {
             <h2 className="text-lg font-semibold text-foreground">
               {t('command.heading')}
             </h2>
+            <Button
+              size="sm"
+              variant={voiceMode ? 'default' : 'ghost'}
+              className="ml-auto h-7 px-2 text-xs"
+              onClick={() => setVoiceMode((v) => !v)}
+              aria-pressed={voiceMode}
+            >
+              <Video className="h-3.5 w-3.5 mr-1" />
+              {voiceMode ? 'Voice mode on' : 'Voice mode'}
+            </Button>
           </div>
+
+          {voiceMode && (
+            <div className="pt-3">
+              <AuraAvatarChat variant="inline" />
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <Input

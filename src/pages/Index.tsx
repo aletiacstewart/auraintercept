@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { AuraAvatarFloating } from '@/components/aura/AuraAvatarFloating';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 
 const agentCategories = [{
@@ -1184,6 +1185,7 @@ export default function Index() {
       
       {/* Floating Chat Widget */}
       <FloatingChatWidget />
+      <AuraAvatarFloating />
     </div>
   );
 }
