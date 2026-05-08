@@ -344,7 +344,7 @@ function resolveTargetRoute(id: string): string | undefined {
   if (id === 'change-order' || id === 'parts-repair' || id === 'intake-diagnose' ||
       id === 'equipment-repair' || id === 'drain-clog' || id === 'service-call' ||
       id === 'warranty-check' || id === 'permit-check' || id === 'insurance-claim') {
-    return '/dashboard/jobs';
+    return '/dashboard/dispatch-field-ops';
   }
   // Field ops dispatch surface
   if (id === 'punch-list' || id === 'dispatch-complete' || id.startsWith('emergency') ||
@@ -357,7 +357,7 @@ function resolveTargetRoute(id: string): string | undefined {
   // Lead pipeline
   if (id === 'lead-to-booking' || id === 'lead-to-showing' || id === 'no-show-recovery' ||
       id === 'rebook-loop') {
-    return '/dashboard/lead-pipeline';
+    return '/dashboard/leads';
   }
   // Appointments / daily prep
   if (id === 'daily-prep' || id === 'daily-brief' || id === 'reservations-prep') {
@@ -368,15 +368,15 @@ function resolveTargetRoute(id: string): string | undefined {
     return '/dashboard/messages';
   }
   // Reputation
-  if (id === 'review-pulse') return '/dashboard/reputation';
+  if (id === 'review-pulse') return '/dashboard/ai-consoles/social-media';
   // Social
-  if (id === 'listing-launch') return '/dashboard/social-media';
+  if (id === 'listing-launch') return '/dashboard/ai-consoles/social-media';
   // Customers / recurring plans
   if (id === 'maintenance-renewal' || id === 'recurring-clean' || id === 'inspection-plan') {
     return '/dashboard/customers';
   }
   // Calendar / travel
-  if (id === 'travel-coord') return '/dashboard/calendar';
+  if (id === 'travel-coord') return '/dashboard/appointments';
   return undefined;
 }
 
