@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import auraAvatarImg from '@/assets/aura-avatar.png';
 
 type Variant = 'hero' | 'floating' | 'inline';
 
@@ -239,9 +240,9 @@ interface CharacterProps {
 }
 
 function AuraCharacter({ size, connected, speaking, mouthOpen, blink }: CharacterProps) {
-  // Mouth height grows with audio amplitude
-  const mouthH = 4 + mouthOpen * 18;
   const ringScale = connected ? (speaking ? 1.08 : 1.04) : 1;
+  // 5 EQ bars driven by audio amplitude with phase offsets
+  const bars = [0.6, 0.85, 1, 0.85, 0.6];
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -258,67 +259,68 @@ function AuraCharacter({ size, connected, speaking, mouthOpen, blink }: Characte
           transform: `scale(${ringScale})`,
         }}
       />
-      {/* Avatar SVG */}
-      <svg
-        viewBox="0 0 200 200"
-        width={size}
-        height={size}
-        className="relative z-10 drop-shadow-lg"
-      >
-        <defs>
-          <radialGradient id="auraHead" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0.85" />
-          </radialGradient>
-          <linearGradient id="auraVisor" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--background))" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.4" />
-          </linearGradient>
-        </defs>
-
-        {/* Head */}
-        <circle cx="100" cy="100" r="78" fill="url(#auraHead)" />
-        {/* Visor */}
-        <ellipse cx="100" cy="92" rx="56" ry="34" fill="url(#auraVisor)" />
-
-        {/* Eyes */}
-        <g fill="hsl(var(--primary-foreground))">
-          <ellipse
-            cx="80"
-            cy="92"
-            rx="6"
-            ry={blink ? 0.6 : 6}
-            style={{ transition: 'all 80ms ease-out' }}
-          />
-          <ellipse
-            cx="120"
-            cy="92"
-            rx="6"
-            ry={blink ? 0.6 : 6}
-            style={{ transition: 'all 80ms ease-out' }}
-          />
-        </g>
-
-        {/* Mouth */}
-        <rect
-          x={88}
-          y={130 - mouthH / 2}
-          width={24}
-          height={mouthH}
-          rx={6}
-          fill="hsl(var(--primary-foreground))"
-          opacity={0.9}
-          style={{ transition: 'all 60ms linear' }}
-        />
-
-        {/* Cheek glow when speaking */}
-        {speaking && (
-          <>
-            <circle cx="62" cy="118" r="8" fill="hsl(var(--accent))" opacity="0.4" />
-            <circle cx="138" cy="118" r="8" fill="hsl(var(--accent))" opacity="0.4" />
-          </>
+      {/* Rotating gradient ring (when live) */}
+      <div
+        className={cn(
+          'absolute inset-0 rounded-full p-[3px]',
+          connected && 'animate-spin',
         )}
-      </svg>
+        style={{
+          background: 'conic-gradient(from 0deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)))',
+          opacity: connected ? 0.9 : 0.5,
+          animationDuration: '6s',
+        }}
+      >
+        <div className="h-full w-full rounded-full bg-card" />
+      </div>
+
+      {/* Portrait */}
+      <img
+        src={auraAvatarImg}
+        alt="Aura"
+        loading="eager"
+        className={cn(
+          'absolute inset-[3px] z-10 rounded-full object-cover drop-shadow-lg transition-transform',
+          connected && !speaking && '[animation:aura-breathe_3s_ease-in-out_infinite]',
+        )}
+        style={{
+          width: `calc(100% - 6px)`,
+          height: `calc(100% - 6px)`,
+          transform: speaking ? 'scale(1.03)' : undefined,
+          transitionDuration: '180ms',
+        }}
+      />
+
+      {/* Blink overlay */}
+      <div
+        className="absolute left-[18%] right-[18%] z-20 rounded-full bg-foreground/70 pointer-events-none"
+        style={{
+          top: '36%',
+          height: blink ? '4%' : '0%',
+          opacity: blink ? 0.5 : 0,
+          transition: 'all 80ms ease-out',
+          mixBlendMode: 'multiply',
+        }}
+      />
+
+      {/* EQ bars when speaking */}
+      {speaking && (
+        <div
+          className="absolute left-1/2 z-20 flex -translate-x-1/2 items-end gap-[3px]"
+          style={{ bottom: '6%', height: '14%' }}
+        >
+          {bars.map((w, i) => (
+            <div
+              key={i}
+              className="w-[4px] rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
+              style={{
+                height: `${20 + mouthOpen * w * 100}%`,
+                transition: 'height 60ms linear',
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
