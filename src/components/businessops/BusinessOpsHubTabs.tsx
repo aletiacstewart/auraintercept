@@ -9,6 +9,7 @@ import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { CompaniesManager } from '@/components/businessops/CompaniesManager';
 import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CustomersManager } from '@/components/businessops/CustomersManager';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 
 interface BusinessOpsHubTabsProps {
   defaultTab?: string;
@@ -16,6 +17,8 @@ interface BusinessOpsHubTabsProps {
 
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
+    <InlineFormProvider>
+    <InlineFormHost className="mb-4" />
     <Tabs defaultValue={defaultTab} className="w-full">
       <TabsList>
         <TabsTrigger value="sales" className="flex items-center gap-1.5">
