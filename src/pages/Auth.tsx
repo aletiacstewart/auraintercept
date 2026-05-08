@@ -313,7 +313,7 @@ export default function Auth() {
       const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
         ? selectedTier
         : 'starter';
-      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+      const trialEndsAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: companyData, error: companyError } = await supabase
         .from('companies')

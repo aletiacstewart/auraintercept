@@ -281,7 +281,7 @@ export default function Subscription() {
   const trialDaysRemaining = trialEndsAt 
     ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
-  const trialProgressPercent = Math.min(((90 - trialDaysRemaining) / 90) * 100, 100);
+  const trialProgressPercent = Math.min(((60 - trialDaysRemaining) / 60) * 100, 100);
 
   // Check for success/canceled params
   useEffect(() => {
