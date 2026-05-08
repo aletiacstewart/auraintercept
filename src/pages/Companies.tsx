@@ -11,14 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import {
   Table,
   TableBody,
@@ -336,6 +330,8 @@ export default function Companies() {
     return (
       <DashboardLayout>
         <PageContainer>
+          <InlineFormProvider>
+          <InlineFormHost className="mb-4" />
           <div className="space-y-6 animate-fade-in">
           <div className="flex items-center justify-between">
             <div>
@@ -416,13 +412,15 @@ export default function Companies() {
             </Card>
           </div>
 
-          {/* Edit Dialog */}
-          <Dialog open={!!editingCompany} onOpenChange={(open) => { if (!open) { setEditingCompany(null); resetForm(); } }}>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Edit Company</DialogTitle>
-                <DialogDescription>Update your company information</DialogDescription>
-              </DialogHeader>
+          {/* Edit Form */}
+          <FormShell
+            id="company-admin-edit"
+            title="Edit Company"
+            description="Update your company information"
+            open={!!editingCompany}
+            onOpenChange={(open) => { if (!open) { setEditingCompany(null); resetForm(); } }}
+            className="max-w-lg"
+          >
               <CompanyForm
                 formData={formData}
                 setFormData={setFormData}
@@ -433,9 +431,9 @@ export default function Companies() {
                 isEdit
                 hideAdminFields
               />
-            </DialogContent>
-          </Dialog>
+          </FormShell>
           </div>
+          </InlineFormProvider>
         </PageContainer>
       </DashboardLayout>
     );
@@ -445,6 +443,8 @@ export default function Companies() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
+        <InlineFormHost className="mb-4" />
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Building2}
@@ -460,20 +460,15 @@ export default function Companies() {
           }
         />
 
-        {/* Create Company Dialog */}
-        <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>
-                {createdCredentials ? 'Company Admin Credentials' : 'Create New Company'}
-              </DialogTitle>
-              <DialogDescription>
-                {createdCredentials 
-                  ? 'Share these credentials securely with the company admin'
-                  : 'Add a new tenant company to the platform'
-                }
-              </DialogDescription>
-            </DialogHeader>
+        {/* Create Company Form */}
+        <FormShell
+          id="company-create"
+          title={createdCredentials ? 'Company Admin Credentials' : 'Create New Company'}
+          description={createdCredentials ? 'Share these credentials securely with the company admin' : 'Add a new tenant company to the platform'}
+          open={isCreateOpen}
+          onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}
+          className="max-w-lg"
+        >
             {createdCredentials ? (
               <CredentialsDisplay 
                 credentials={createdCredentials} 
@@ -489,8 +484,7 @@ export default function Companies() {
                 generateSlug={generateSlug}
               />
             )}
-          </DialogContent>
-        </Dialog>
+        </FormShell>
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-3">
@@ -659,15 +653,14 @@ export default function Companies() {
         </Card>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingCompany} onOpenChange={() => { setEditingCompany(null); resetForm(); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Company</DialogTitle>
-            <DialogDescription>
-              Update company details
-            </DialogDescription>
-          </DialogHeader>
+      {/* Edit Form */}
+      <FormShell
+        id="company-platform-edit"
+        title="Edit Company"
+        description="Update company details"
+        open={!!editingCompany}
+        onOpenChange={(open) => { if (!open) { setEditingCompany(null); resetForm(); } }}
+      >
           <CompanyForm
             formData={formData}
             setFormData={setFormData}
@@ -677,8 +670,7 @@ export default function Companies() {
             generateSlug={generateSlug}
             isEdit
           />
-        </DialogContent>
-      </Dialog>
+      </FormShell>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deletingCompany} onOpenChange={() => setDeletingCompany(null)}>
@@ -709,6 +701,7 @@ export default function Companies() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
