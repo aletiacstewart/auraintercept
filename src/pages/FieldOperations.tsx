@@ -12,6 +12,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 
 const DISPATCH_WORKFLOWS: WorkflowChain[] = [
   {
@@ -73,6 +74,7 @@ export default function FieldOperations() {
   return (
     <DashboardLayout>
       <PageContainer>
+        <InlineFormProvider>
         <div className="space-y-6">
           <PageHeader
             icon={isDispatch ? Truck : CalendarCheck}
@@ -86,6 +88,7 @@ export default function FieldOperations() {
             showAuraBar
             action={<InstallOnPhoneButton to="/dashboard/dispatch-field-ops-install" />}
           />
+          <InlineFormHost />
           {isDispatch && (
             <WorkflowChainButtons
               chains={DISPATCH_WORKFLOWS}
@@ -99,6 +102,7 @@ export default function FieldOperations() {
             <FieldOpsManager companyId={companyId} />
           </div>
         </div>
+        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );

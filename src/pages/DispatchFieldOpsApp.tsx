@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { FieldOpsConsole } from '@/components/fieldops/FieldOpsConsole';
 import { z } from 'zod';
+import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address'),
@@ -255,7 +256,10 @@ export default function DispatchFieldOpsApp() {
       {/* Dispatch Field Ops Console - Full height minus header */}
       <main className="flex-1 flex flex-col min-h-0">
         {companyId ? (
-          <FieldOpsConsole companyId={companyId} />
+          <InlineFormProvider>
+            <InlineFormHost className="px-4 pt-3" />
+            <FieldOpsConsole companyId={companyId} />
+          </InlineFormProvider>
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground">
             No company associated with your account

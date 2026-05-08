@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
@@ -568,17 +568,13 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
       )}
 
       {/* Notify Customer Dialog */}
-      <Dialog open={showNotifyDialog} onOpenChange={setShowNotifyDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-accent" />
-              Notify Customer
-            </DialogTitle>
-            <DialogDescription>
-              Send an update to {selectedJob?.appointments?.customer_name || 'the customer'}
-            </DialogDescription>
-          </DialogHeader>
+      <FormShell
+        id="fieldops-notify"
+        title={<span className="flex items-center gap-2"><Bell className="h-5 w-5 text-accent" />Notify Customer</span>}
+        description={`Send an update to ${selectedJob?.appointments?.customer_name || 'the customer'}`}
+        open={showNotifyDialog}
+        onOpenChange={setShowNotifyDialog}
+      >
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Message</Label>
@@ -612,7 +608,7 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               </div>
             </div>
           </div>
-          <DialogFooter>
+          <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowNotifyDialog(false)}>
               Cancel
             </Button>
@@ -624,23 +620,17 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               <Send className="h-4 w-4 mr-2" />
               Send Both
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </FormShell>
 
       {/* Cancel Appointment Dialog */}
-      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <XCircle className="h-5 w-5" />
-              Cancel Appointment
-            </DialogTitle>
-            <DialogDescription>
-              This will cancel the appointment for {selectedJob?.appointments?.customer_name || 'the customer'}.
-              The assigned technician will be notified.
-            </DialogDescription>
-          </DialogHeader>
+      <FormShell
+        id="fieldops-cancel"
+        title={<span className="flex items-center gap-2 text-destructive"><XCircle className="h-5 w-5" />Cancel Appointment</span>}
+        description={`This will cancel the appointment for ${selectedJob?.appointments?.customer_name || 'the customer'}. The assigned technician will be notified.`}
+        open={showCancelDialog}
+        onOpenChange={setShowCancelDialog}
+      >
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Cancellation Reason (optional)</Label>
@@ -652,7 +642,7 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               />
             </div>
           </div>
-          <DialogFooter>
+          <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowCancelDialog(false)}>
               Keep Appointment
             </Button>
@@ -668,9 +658,8 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               )}
               Cancel Appointment
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </FormShell>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -225,14 +225,13 @@ export function TechnicianAssignmentDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {existingAssignment ? 'Reassign Technician' : 'Assign Technician'}
-          </DialogTitle>
-        </DialogHeader>
-
+    <FormShell
+      id="assign-technician"
+      title={existingAssignment ? 'Reassign Technician' : 'Assign Technician'}
+      open={open}
+      onOpenChange={onOpenChange}
+      className="sm:max-w-lg max-h-[85vh] overflow-y-auto"
+    >
         <div className="space-y-4 py-4">
           {/* Appointment Summary */}
           <div className="rounded-lg bg-muted p-3 text-sm">
@@ -387,7 +386,7 @@ export function TechnicianAssignmentDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
@@ -398,8 +397,7 @@ export function TechnicianAssignmentDialog({
             {assignMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {existingAssignment ? 'Reassign' : 'Assign'}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+    </FormShell>
   );
 }
