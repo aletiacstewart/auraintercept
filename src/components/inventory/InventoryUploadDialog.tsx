@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -113,24 +114,19 @@ export function InventoryUploadDialog({ companyId }: InventoryUploadDialogProps)
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Upload className="w-4 h-4 mr-2" />
-          Import from Document
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Import Inventory from Document
-          </DialogTitle>
-          <DialogDescription>
-            Upload a CSV/TXT file or paste your inventory data. Our AI will extract and import the items.
-          </DialogDescription>
-        </DialogHeader>
-
+    <>
+      <Button variant="outline" onClick={() => setIsOpen(true)}>
+        <Upload className="w-4 h-4 mr-2" />
+        Import from Document
+      </Button>
+      <FormShell
+        id="inventory-import"
+        title="Import Inventory from Document"
+        description="Upload a CSV/TXT file or paste your inventory data. Our AI will extract and import the items."
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        className="max-w-3xl max-h-[90vh] overflow-y-auto"
+      >
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="upload">Upload / Paste Data</TabsTrigger>
@@ -289,7 +285,7 @@ Capacitor, CAP-355, 25, Electrical"
           </TabsContent>
         </Tabs>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-2 pt-4">
           <Button variant="outline" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
@@ -309,8 +305,8 @@ Capacitor, CAP-355, 25, Electrical"
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </FormShell>
+    </>
   );
 }
