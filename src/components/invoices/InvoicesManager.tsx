@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FormShell } from '@/components/ui/form-shell';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -126,29 +127,28 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
           <p className="text-sm text-foreground/70">Create and manage customer {invoicePlural.toLowerCase()}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                New {invoiceNoun}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create {invoiceNoun}</DialogTitle>
-                <DialogDescription>Create a new {invoiceNoun.toLowerCase()} for a customer.</DialogDescription>
-              </DialogHeader>
-              {companyId && (
-                <InvoiceForm
-                  companyId={companyId}
-                  mode="direct"
-                  showBackButton={false}
-                  onSuccess={() => setIsAddOpen(false)}
-                  onCancel={() => setIsAddOpen(false)}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={() => setIsAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New {invoiceNoun}
+          </Button>
+          <FormShell
+            id="invoice-create"
+            title={`Create ${invoiceNoun}`}
+            description={`Create a new ${invoiceNoun.toLowerCase()} for a customer.`}
+            open={isAddOpen}
+            onOpenChange={setIsAddOpen}
+            className="max-w-2xl max-h-[90vh] overflow-y-auto"
+          >
+            {companyId && (
+              <InvoiceForm
+                companyId={companyId}
+                mode="direct"
+                showBackButton={false}
+                onSuccess={() => setIsAddOpen(false)}
+                onCancel={() => setIsAddOpen(false)}
+              />
+            )}
+          </FormShell>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
