@@ -169,6 +169,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
             <ScrollToTop />
             <VoiceProvider>
               {!isEmbedMode && <AuraVoiceOverlay />}
+              {!isEmbedMode && <SwitcherPill />}
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
