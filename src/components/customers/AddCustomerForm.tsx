@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, UserPlus, Mail, Phone, MapPin, MessageSquare, PhoneCall } from 'lucide-react';
+import { Loader2, Mail, Phone, MapPin, MessageSquare, PhoneCall } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIndustryFieldLabel } from '@/lib/industryFieldLabels';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
