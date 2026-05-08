@@ -11,6 +11,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import { SwitcherPill } from "@/components/super-switcher/SwitcherPill";
+import { SwitchingOverlay } from "@/components/super-switcher/SwitchingOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import { useEffect } from "react";
 import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
@@ -170,6 +171,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
             <VoiceProvider>
               {!isEmbedMode && <AuraVoiceOverlay />}
               {!isEmbedMode && <SwitcherPill />}
+              {!isEmbedMode && <SwitchingOverlay />}
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />

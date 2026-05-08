@@ -7,6 +7,7 @@ export const SUPER_ADMIN_EMAIL = 'superadmin@auraintercept.ai';
 export const DEMO_PASSWORD = 'aidemo*!';
 export const SUPER_FLAG_KEY = 'aura_super_switcher_active';
 export const SUPER_LAST_INDUSTRY = 'aura_super_switcher_industry';
+export const SUPER_SWITCHING_KEY = 'aura_super_switcher_switching';
 const SUPER_SESSION_KEY = 'aura_super_switcher_session';
 
 export type SwitchRole = 'company' | 'employee' | 'customer';
@@ -46,13 +47,19 @@ export function useSuperSwitcher() {
           refresh_token: current.refresh_token,
         }));
       }
-      await supabase.auth.signOut();
+      // Show switching overlay to mask any auth-state flicker
+      sessionStorage.setItem(SUPER_SWITCHING_KEY, '1');
+      window.dispatchEvent(new Event('super-switcher:switching'));
+      // Do NOT sign out first — signInWithPassword replaces the session atomically
+      // and avoids the brief unauthenticated render that flashes the /auth page.
       const { error } = await supabase.auth.signInWithPassword({ email, password: DEMO_PASSWORD });
       if (error) throw error;
       localStorage.setItem(SUPER_FLAG_KEY, '1');
       localStorage.setItem(SUPER_LAST_INDUSTRY, industryKey);
       window.location.assign(ROLE_PATH[role]);
     } catch (e) {
+      sessionStorage.removeItem(SUPER_SWITCHING_KEY);
+      window.dispatchEvent(new Event('super-switcher:switching'));
       const msg = e instanceof Error ? e.message : 'Switch failed';
       toast({ title: 'Could not switch', description: `${email}: ${msg}`, variant: 'destructive' });
     }
@@ -60,9 +67,10 @@ export function useSuperSwitcher() {
 
   const exit = useCallback(async () => {
     try {
-      await supabase.auth.signOut();
       const stashed = localStorage.getItem(SUPER_SESSION_KEY);
       localStorage.removeItem(SUPER_FLAG_KEY);
+      sessionStorage.setItem(SUPER_SWITCHING_KEY, '1');
+      window.dispatchEvent(new Event('super-switcher:switching'));
       if (stashed) {
         const { access_token, refresh_token } = JSON.parse(stashed);
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
@@ -72,9 +80,14 @@ export function useSuperSwitcher() {
           return;
         }
       }
+      // No stashed session — sign out and ask for re-login
+      await supabase.auth.signOut();
+      sessionStorage.removeItem(SUPER_SWITCHING_KEY);
       // Fallback: ask for re-login
       navigate('/auth?mode=platform_admin&tab=login');
     } catch (e) {
+      sessionStorage.removeItem(SUPER_SWITCHING_KEY);
+      window.dispatchEvent(new Event('super-switcher:switching'));
       const msg = e instanceof Error ? e.message : 'Exit failed';
       toast({ title: 'Could not exit', description: msg, variant: 'destructive' });
     }
@@ -86,4 +99,9 @@ export function useSuperSwitcher() {
 export function isSuperSwitcherActive(): boolean {
   if (typeof window === 'undefined') return false;
   return localStorage.getItem(SUPER_FLAG_KEY) === '1';
+}
+
+export function isSuperSwitcherSwitching(): boolean {
+  if (typeof window === 'undefined') return false;
+  return sessionStorage.getItem(SUPER_SWITCHING_KEY) === '1';
 }
