@@ -34,7 +34,11 @@ export function DashboardSetupNav() {
   }, []);
 
   useEffect(() => {
-    if (!companyId) return;
+    if (!companyId) {
+      setSections([]);
+      setLoading(false);
+      return;
+    }
 
     const checkSectionProgress = async () => {
       setLoading(true);
