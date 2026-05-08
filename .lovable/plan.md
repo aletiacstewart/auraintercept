@@ -1,74 +1,38 @@
 ## Goal
-Make the Aura portrait look like she's talking and reacting — no third-party services, no recurring cost — by overlaying animated mouth/eye/brow shapes on top of the existing photo, driven by the audio + agent events we already have.
 
-## How it works
-The portrait stays as a base layer. We position transparent overlays (mouth, eyelids, brows, blush) over the face area and swap/animate them in real time using:
-- `getOutputByteFrequencyData()` from the existing ElevenLabs `useConversation` hook → mouth openness + shape
-- `isSpeaking`, `onMessage` (`agent_response`, `user_transcript`), `onError` → expressions
+Stop drawing fake facial features over Aura's portrait. The mouth/brow/blush overlays don't align with the photo and look uncanny. Replace them with subtle, tasteful motion that reacts to audio without trying to fake lip-sync.
 
-## Steps
+## Changes (single file: `src/components/aura/AuraAvatarChat.tsx`)
 
-### 1. Generate overlay assets (one-time, free via Lovable AI image gen)
-Create transparent PNGs aligned to the face, all 512×512 with the mouth/eye region in the same coordinates as the portrait:
-- `mouth-closed.png`, `mouth-small.png`, `mouth-mid.png`, `mouth-wide.png`, `mouth-o.png`, `mouth-smile.png`
-- `eyes-open.png` (default — already in the photo, used only when we need a "wide eyes" surprised look), `eyelid-closed.png` (for blink)
-- `brow-neutral.png`, `brow-raised.png`, `brow-concerned.png`
-- `blush.png` (soft pink cheek glow for "happy/speaking" state)
+1. **Remove from `AuraCharacter`:**
+   - All SVG mouth shapes (ellipses driven by viseme)
+   - Brow lines and tilt logic
+   - Blush circles
+   - Eyelid blink ellipses (skin-tone ones drawn over her eyes)
+   - `viseme` and `expression` props
 
-Save to `src/assets/aura/`. Use `imagegen--generate_image` with `transparent_background: true`.
+2. **Keep / enhance subtle motion on the portrait itself:**
+   - **Breathing**: gentle 4s scale loop (1.0 → 1.012 → 1.0)
+   - **Speaking pulse**: when `mouthOpen > 0.1`, add a tiny scale boost (up to +1.5%) and brightness shift (filter: brightness 1.0 → 1.06) tied to amplitude — the whole portrait subtly "lifts" with her voice instead of fake mouth movement
+   - **Head sway**: very slight rotation ±0.5° on a 6s loop while speaking, paused when idle
+   - **Idle micro-zoom**: +/- 0.3% on slow loop when listening
 
-### 2. Build viseme picker (audio → mouth shape)
-In `AuraAvatarChat.tsx`, extend the existing rAF loop:
-- Compute overall amplitude (already done → `mouthOpen`)
-- Compute low/mid/high band ratios from the same frequency array
-  - High energy + wide spread → "E/I" (mouth-wide)
-  - Low energy dominant → "O/U" (mouth-o)
-  - Mid balanced → "A" (mouth-mid)
-  - Low amplitude → mouth-small
-  - Silence → mouth-closed
-- Smooth with a small (~80ms) cross-fade between shapes to avoid flicker
+3. **Strengthen the audio-reactive ring around her** (already exists as the cyan glow):
+   - Drive the ring's blur/opacity/scale directly from `mouthOpen` amplitude
+   - Add a second softer outer pulse ring that expands on high-amplitude peaks (the "talking" indicator users actually read)
+   - Color shifts subtly with expression state (cyan idle → warmer cyan when speaking)
 
-### 3. Expression state machine
-Track an `expression` state: `neutral | listening | thinking | happy | concerned | surprised`.
-- `onConnect` → happy (1.5s) → neutral
-- `user_transcript` arriving → listening (brow-raised slightly, head tilt 2°)
-- Pause >800ms after user finishes → thinking (brow-neutral, eyes glance up via translate)
-- `agent_response` start → happy (subtle smile sprite + blush)
-- `onError` → concerned (brow-concerned, mouth-small)
+4. **Keep expression state machine** but use it only to drive ring color/intensity, not facial overlays:
+   - `listening` → steady cyan ring
+   - `speaking` → brighter, audio-pulsing ring
+   - `thinking` → slow rotating gradient on the ring
+   - `concerned` → dimmer, slower pulse
 
-### 4. Idle micro-motion
-- Random blink every 2.5–6s (already implemented — switch from CSS bar to `eyelid-closed.png` overlay, 140ms)
-- Subtle head bob: wrap portrait in a div with a 4s ease-in-out keyframe rotating ±0.8° and translating ±1px
-- Pupil drift: occasional 2–3px translate on an "eye-shine" overlay every 4–7s
+5. **Cleanup**: remove now-unused `Viseme` type, FACE anchor constants, viseme picker logic in the audio analyzer (keep just the amplitude calculation for the ring + scale).
 
-### 5. Component structure
-Refactor `AuraCharacter` in `src/components/aura/AuraAvatarChat.tsx`:
-```
-<div idle-bob>
-  <img portrait />            ← base layer
-  <img current-mouth />       ← absolute, positioned over mouth
-  <img current-brow />        ← absolute, over brow
-  <img blush /> (when happy)  ← absolute, low opacity
-  <img eyelid-closed /> (blink only)
-  <eq-bars /> (existing, kept as accent ring at bottom)
-</div>
-```
-All overlays use `position: absolute`, `pointer-events: none`, with percentage-based positioning calibrated to the portrait. Cross-fade between mouth shapes via `opacity` + `transition: opacity 60ms`.
+## Result
 
-### 6. Performance & accessibility
-- Preload all sprite PNGs once on first render
-- `prefers-reduced-motion` → skip blink, head bob, expression swaps; just show base portrait + amplitude-only mouth
-- Total asset weight target: <400KB (transparent PNGs at 512×512 compress well)
-
-## What's intentionally NOT in scope
-- No third-party talking-head video (Simli/HeyGen/D-ID) — that's the paid path
-- No phoneme-accurate alignment from text — keeps complexity low; the audio-band heuristic looks convincing for conversational speech
-- No Rive/Lottie rig — that needs an art pass
-
-## Files touched
-- `src/components/aura/AuraAvatarChat.tsx` (rewrite `AuraCharacter`)
-- `src/assets/aura/*.png` (new sprite folder)
-- `src/index.css` (one new keyframe `aura-head-bob` if not already present)
-
-## Out of scope
-ElevenLabs config, edge functions, routing, other components.
+- No fake face fighting the real face
+- Portrait stays photo-real and clean
+- Clear visual feedback she's listening/speaking via the ring + subtle breathing/scale
+- Zero cost, no external services, instant
