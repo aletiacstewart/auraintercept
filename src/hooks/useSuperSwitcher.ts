@@ -7,6 +7,7 @@ export const SUPER_ADMIN_EMAIL = 'superadmin@auraintercept.ai';
 export const DEMO_PASSWORD = 'aidemo*!';
 export const SUPER_FLAG_KEY = 'aura_super_switcher_active';
 export const SUPER_LAST_INDUSTRY = 'aura_super_switcher_industry';
+const SUPER_SESSION_KEY = 'aura_super_switcher_session';
 
 export type SwitchRole = 'company' | 'employee' | 'customer';
 
@@ -37,6 +38,14 @@ export function useSuperSwitcher() {
   const enter = useCallback(async (industryKey: string, role: SwitchRole) => {
     const email = industryToEmail(industryKey, role);
     try {
+      // Capture current super-admin session so we can restore it on exit (no password needed)
+      const { data: { session: current } } = await supabase.auth.getSession();
+      if (current && current.user?.email === SUPER_ADMIN_EMAIL) {
+        localStorage.setItem(SUPER_SESSION_KEY, JSON.stringify({
+          access_token: current.access_token,
+          refresh_token: current.refresh_token,
+        }));
+      }
       await supabase.auth.signOut();
       const { error } = await supabase.auth.signInWithPassword({ email, password: DEMO_PASSWORD });
       if (error) throw error;
@@ -49,11 +58,21 @@ export function useSuperSwitcher() {
     }
   }, [toast]);
 
-  const exit = useCallback(async (password?: string) => {
+  const exit = useCallback(async () => {
     try {
       await supabase.auth.signOut();
+      const stashed = localStorage.getItem(SUPER_SESSION_KEY);
       localStorage.removeItem(SUPER_FLAG_KEY);
-      // Without the super-admin password client-side, send back to /auth and ask user to log in once
+      if (stashed) {
+        const { access_token, refresh_token } = JSON.parse(stashed);
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+        localStorage.removeItem(SUPER_SESSION_KEY);
+        if (!error) {
+          window.location.assign('/super-switcher');
+          return;
+        }
+      }
+      // Fallback: ask for re-login
       navigate('/auth?mode=platform_admin&tab=login');
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Exit failed';
