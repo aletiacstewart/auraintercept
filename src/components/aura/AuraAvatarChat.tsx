@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import auraAvatarImg from '@/assets/aura-avatar.png';
 
 type Variant = 'hero' | 'floating' | 'inline';
+type Expression = 'neutral' | 'listening' | 'thinking' | 'happy' | 'concerned';
+type Viseme = 'closed' | 'small' | 'mid' | 'wide' | 'o';
 
 interface AuraAvatarChatProps {
   variant?: Variant;
@@ -30,17 +32,32 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
   const [connecting, setConnecting] = useState(false);
   const [captions, setCaptions] = useState<Caption[]>([]);
   const [mouthOpen, setMouthOpen] = useState(0);
+  const [viseme, setViseme] = useState<Viseme>('closed');
   const [blink, setBlink] = useState(false);
+  const [expression, setExpression] = useState<Expression>('neutral');
+  const expressionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
 
+  const flashExpression = useCallback((next: Expression, ms = 1800) => {
+    setExpression(next);
+    if (expressionTimerRef.current) clearTimeout(expressionTimerRef.current);
+    expressionTimerRef.current = setTimeout(() => setExpression('neutral'), ms);
+  }, []);
+
   const conversation = useConversation({
-    onConnect: () => setCaptions((c) => [...c, { who: 'aura', text: 'Connected. Listening…' }]),
+    onConnect: () => {
+      setCaptions((c) => [...c, { who: 'aura', text: 'Connected. Listening…' }]);
+      flashExpression('happy', 1500);
+    },
     onDisconnect: () => {
       setCaptions((c) => [...c, { who: 'aura', text: 'Call ended.' }]);
       setMouthOpen(0);
+      setViseme('closed');
+      setExpression('neutral');
     },
     onError: (e) => {
       console.error('Aura conversation error', e);
+      flashExpression('concerned', 2500);
       toast({
         title: 'Aura call error',
         description: typeof e === 'string' ? e : 'Connection lost.',
@@ -51,13 +68,17 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
       if (msg?.type === 'user_transcript') {
         const text = msg.user_transcription_event?.user_transcript;
         if (text) setCaptions((c) => [...c, { who: 'user', text }]);
+        flashExpression('listening', 1200);
       } else if (msg?.type === 'agent_response') {
         const text = msg.agent_response_event?.agent_response;
         if (text) setCaptions((c) => [...c, { who: 'aura', text }]);
+        flashExpression('happy', 1500);
       } else if (msg?.source === 'user' && typeof msg.message === 'string') {
         setCaptions((c) => [...c, { who: 'user', text: msg.message }]);
+        flashExpression('listening', 1200);
       } else if (msg?.source === 'ai' && typeof msg.message === 'string') {
         setCaptions((c) => [...c, { who: 'aura', text: msg.message }]);
+        flashExpression('happy', 1500);
       }
     },
   });
@@ -65,21 +86,44 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
   const isConnected = conversation.status === 'connected';
   const isSpeaking = conversation.isSpeaking;
 
-  // Lip-sync via output frequency data
+  // Lip-sync via output frequency data — amplitude + viseme from band energy
   useEffect(() => {
     if (!isConnected) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setMouthOpen(0);
+      setViseme('closed');
       return;
     }
     const tick = () => {
       try {
         const data = conversation.getOutputByteFrequencyData?.();
         if (data && data.length) {
-          let sum = 0;
-          for (let i = 0; i < data.length; i++) sum += data[i];
-          const avg = sum / data.length / 255; // 0..1
-          setMouthOpen(Math.min(1, avg * 2.2));
+          const n = data.length;
+          const lowEnd = Math.floor(n * 0.15);
+          const midEnd = Math.floor(n * 0.5);
+          let low = 0, mid = 0, high = 0, sum = 0;
+          for (let i = 0; i < n; i++) {
+            sum += data[i];
+            if (i < lowEnd) low += data[i];
+            else if (i < midEnd) mid += data[i];
+            else high += data[i];
+          }
+          const avg = sum / n / 255;
+          const amp = Math.min(1, avg * 2.4);
+          setMouthOpen(amp);
+
+          // Viseme picker
+          if (amp < 0.06) {
+            setViseme('closed');
+          } else {
+            const lAvg = low / Math.max(1, lowEnd);
+            const mAvg = mid / Math.max(1, midEnd - lowEnd);
+            const hAvg = high / Math.max(1, n - midEnd);
+            if (hAvg > mAvg && hAvg > lAvg && amp > 0.18) setViseme('wide');     // E / I
+            else if (lAvg > mAvg * 1.15 && lAvg > hAvg) setViseme('o');           // O / U
+            else if (amp > 0.35) setViseme('mid');                                 // A
+            else setViseme('small');
+          }
         }
       } catch {/* ignore */}
       rafRef.current = requestAnimationFrame(tick);
@@ -95,11 +139,15 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
     let timer: ReturnType<typeof setTimeout>;
     const loop = () => {
       setBlink(true);
-      setTimeout(() => setBlink(false), 140);
+      setTimeout(() => setBlink(false), 130);
       timer = setTimeout(loop, 2500 + Math.random() * 3000);
     };
     timer = setTimeout(loop, 1500);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => () => {
+    if (expressionTimerRef.current) clearTimeout(expressionTimerRef.current);
   }, []);
 
   const start = useCallback(async () => {
@@ -165,7 +213,9 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
         connected={isConnected}
         speaking={isSpeaking}
         mouthOpen={mouthOpen}
+        viseme={viseme}
         blink={blink}
+        expression={expression}
       />
 
       <div className="text-center">
