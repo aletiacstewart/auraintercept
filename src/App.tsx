@@ -133,6 +133,7 @@ import {
 import IntegrationDocs from "./pages/IntegrationDocs";
 import PlatformGuides from "./pages/PlatformGuides";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
+import EmailLimits from "./pages/settings/EmailLimits";
 import AIAgentFlowDemo from "./pages/AIAgentFlowDemo";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import DesignPreview from "./pages/DesignPreview";
@@ -251,6 +252,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
                 <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                 <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
+                <Route path="/dashboard/email-limits" element={<ProtectedRoute><EmailLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/architecture" element={<ProtectedRoute requiredRole="platform_admin"><Architecture /></ProtectedRoute>} />
                 <Route path="/dashboard/calculators" element={<ProtectedRoute requiredRole="platform_admin"><Calculators /></ProtectedRoute>} />
                 <Route path="/dashboard/export-docs" element={<ProtectedRoute requiredRole="platform_admin"><ExportDocumentation /></ProtectedRoute>} />
