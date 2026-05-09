@@ -260,22 +260,31 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    // Send email
-    const { data: emailResult, error: emailError } = await resend.emails.send({
+    // Send email through guard (enforces 100/day + 3,000/mo cap)
+    const guardResult = await sendGuardedEmail({
+      supabase,
+      resendApiKey: integrations.resend_api_key,
+      companyId: appointment.company_id,
+      to: appointment.customer_email,
       from: `${companyName} <onboarding@resend.dev>`,
-      to: [appointment.customer_email],
       subject,
       html,
+      template: `appointment_${type}`,
+      priority: type === 'cancellation' ? 'critical' : 'normal',
     });
 
-    if (emailError) {
-      console.error('Email send error:', emailError);
+    if (!guardResult.sent) {
+      console.warn('Email blocked or failed:', guardResult.reason);
       return new Response(
-        JSON.stringify({ error: 'Failed to send email', details: emailError }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({
+          success: false, blocked: true, reason: guardResult.reason,
+          dailyCount: guardResult.dailyCount, monthlyCount: guardResult.monthlyCount,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    const emailResult = guardResult.data;
     console.log('Email sent successfully:', emailResult);
 
     // Track subscription usage for emails
