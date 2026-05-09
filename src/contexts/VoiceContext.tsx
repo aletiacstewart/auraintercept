@@ -389,6 +389,23 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
   }, [handleCommand, navigate, processWithAI]);
 
   const handleError = useCallback((error: string) => {
+    const lower = error.toLowerCase();
+    const isMicBlocked =
+      lower.includes('microphone') ||
+      lower.includes('not-allowed') ||
+      lower.includes('permission') ||
+      lower.includes('no microphone') ||
+      lower.includes('audio') ||
+      lower.includes('unavailable');
+
+    if (isMicBlocked) {
+      // Auto-disable so the toggle visually turns off and stops retrying
+      setIsVoiceModeEnabled(false);
+      try { localStorage.setItem(VOICE_MODE_KEY, 'false'); } catch { /* ignore */ }
+      toast.error(`${error} Voice mode turned off.`, { duration: 4000, id: 'voice-mic-error' });
+      return;
+    }
+
     toast.error(error, { duration: 3000 });
   }, []);
 

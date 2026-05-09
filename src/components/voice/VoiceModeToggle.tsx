@@ -14,12 +14,13 @@ interface VoiceModeToggleProps {
 
 export const VoiceModeToggle = forwardRef<HTMLButtonElement, VoiceModeToggleProps>(
   function VoiceModeToggle({ className, showLabel = false, size = 'default' }, ref) {
-    const { isVoiceModeEnabled, isListening, isSupported, toggleVoiceMode } = useVoice();
+    const { isVoiceModeEnabled, isListening, isSupported, toggleVoiceMode, error } = useVoice();
 
     if (!isSupported) return null;
 
     const iconSize = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
     const buttonSize = size === 'sm' ? 'h-8 w-8' : size === 'lg' ? 'h-12 w-12' : 'h-10 w-10';
+    const hasMicError = !!error;
 
     return (
       <Tooltip>
@@ -32,11 +33,14 @@ export const VoiceModeToggle = forwardRef<HTMLButtonElement, VoiceModeToggleProp
             className={cn(
               buttonSize,
               "relative transition-all duration-300",
-              isVoiceModeEnabled && "bg-aura-emerald/10 hover:bg-aura-emerald/20",
+              isVoiceModeEnabled && !hasMicError && "bg-aura-emerald/10 hover:bg-aura-emerald/20",
+              hasMicError && "bg-destructive/10 hover:bg-destructive/20",
               className
             )}
           >
-            {isVoiceModeEnabled ? (
+            {hasMicError ? (
+              <MicOff className={cn(iconSize, "text-destructive")} />
+            ) : isVoiceModeEnabled ? (
               <>
                 <Mic className={cn(iconSize, "text-aura-emerald", isListening && "aura-breathing")} />
                 {isListening && (
@@ -52,17 +56,17 @@ export const VoiceModeToggle = forwardRef<HTMLButtonElement, VoiceModeToggleProp
             
             {showLabel && (
               <span className="ml-2 text-sm">
-                {isVoiceModeEnabled ? 'Voice On' : 'Voice Off'}
+                {hasMicError ? 'Mic Blocked' : isVoiceModeEnabled ? 'Voice On' : 'Voice Off'}
               </span>
             )}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="flex flex-col gap-1">
           <span className="font-medium">
-            {isVoiceModeEnabled ? 'Disable Ask Aura' : 'Enable Ask Aura'}
+            {hasMicError ? 'Microphone unavailable' : isVoiceModeEnabled ? 'Disable Ask Aura' : 'Enable Ask Aura'}
           </span>
           <span className="text-xs text-muted-foreground">
-            Ctrl+Shift+V
+            {hasMicError ? error : 'Ctrl+Shift+V'}
           </span>
         </TooltipContent>
       </Tooltip>

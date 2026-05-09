@@ -74,6 +74,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}) {
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const stoppedRef = useRef<boolean>(false);
 
   // Check for browser support
   useEffect(() => {
@@ -97,10 +98,11 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}) {
 
     recognition.onend = () => {
       setState(prev => ({ ...prev, isListening: false }));
-      
-      // Auto-restart if continuous mode
-      if (continuous && recognitionRef.current) {
+
+      // Auto-restart if continuous mode and not intentionally stopped / errored
+      if (continuous && recognitionRef.current && !stoppedRef.current) {
         restartTimeoutRef.current = setTimeout(() => {
+          if (stoppedRef.current || !recognitionRef.current) return;
           try {
             recognitionRef.current?.start();
           } catch (e) {
@@ -160,17 +162,42 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}) {
     }
 
     try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+      // Probe permission first (where supported) to fail fast
+      try {
+        if (navigator.permissions && (navigator.permissions as any).query) {
+          const status = await (navigator.permissions as any).query({ name: 'microphone' as PermissionName });
+          if (status.state === 'denied') {
+            const msg = 'Microphone blocked. Enable it in your browser settings.';
+            setState(prev => ({ ...prev, error: msg, isListening: false }));
+            onError?.(msg);
+            return false;
+          }
+        }
+      } catch { /* Safari ignores microphone permission query */ }
+
+      // Request microphone permission / device
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Release the probe stream — SpeechRecognition opens its own
+      stream.getTracks().forEach(t => t.stop());
+
+      stoppedRef.current = false;
+      setState(prev => ({ ...prev, error: null }));
+
       if (!recognitionRef.current) {
         recognitionRef.current = initRecognition();
       }
-      
+
       recognitionRef.current?.start();
       return true;
-    } catch (error) {
-      const errorMessage = 'Microphone access denied. Please enable microphone permissions.';
+    } catch (error: any) {
+      let errorMessage = 'Microphone unavailable. Please check your audio device.';
+      if (error?.name === 'NotAllowedError') {
+        errorMessage = 'Microphone permission denied. Allow it in your browser settings.';
+      } else if (error?.name === 'NotFoundError') {
+        errorMessage = 'No microphone found on this device.';
+      } else if (error?.name === 'NotReadableError') {
+        errorMessage = 'Microphone is in use by another app.';
+      }
       setState(prev => ({ ...prev, error: errorMessage }));
       onError?.(errorMessage);
       return false;
@@ -179,12 +206,15 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}) {
 
   // Stop listening
   const stop = useCallback(() => {
+    stoppedRef.current = true;
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
     }
-    recognitionRef.current?.stop();
+    const rec = recognitionRef.current;
     recognitionRef.current = null;
-    setState(prev => ({ ...prev, isListening: false, interimTranscript: '' }));
+    try { rec?.abort(); } catch { /* ignore */ }
+    setState(prev => ({ ...prev, isListening: false, interimTranscript: '', error: null }));
   }, []);
 
   // Toggle listening
