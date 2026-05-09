@@ -1,39 +1,90 @@
-# Fix: Voice toggle stuck after "Microphone unavailable"
+## Goal
+Enforce Resend send caps platform-wide: **3,000 emails/month** and **100 emails/day**, with graceful fallback + admin notifications.
 
-## Problem
-When the browser blocks the mic (permission denied, no device, or another tab holding it), the Voice toggle keeps pulsing and clicking it does not disable voice mode. Two root causes:
+## Approach
+Centralize all outbound email through a single edge function (`send-email-guarded`) that checks usage counters before calling Resend. Every existing email-sending function (`send-appointment-email`, `weekly-digest`, `monthly-digest`, `quarterly-digest`, `send-job-notification`, `send-review-request`, `cost-alerts`, `trial-reminders`, `appointment-reminders`, etc.) routes through it.
 
-1. `useVoiceInput.start()` shows the error but `isVoiceModeEnabled` stays `true` in `VoiceContext`, so the `useEffect([isVoiceModeEnabled])` keeps trying to start again on every re-render that re-creates `start`.
-2. `useVoiceInput`'s `onend` auto-restart fires a 100ms `setTimeout` that can re-call `recognition.start()` even after the user toggled off, because the timeout is queued before `stop()` clears the ref.
+## Database (new migration)
 
-The button itself looks "blinking" because the ping ring keys off `isListening`, which flickers true→false→true as the recognition loop retries.
+`email_usage_counters` table:
+- `id` (uuid pk)
+- `company_id` (uuid, nullable — null = platform-wide)
+- `period_type` ('day' | 'month')
+- `period_key` (text, e.g. `2026-05-09` or `2026-05`)
+- `count` (int, default 0)
+- `cap` (int)
+- `created_at`, `updated_at`
+- unique(company_id, period_type, period_key)
 
-## Fix
+`email_send_attempts` table (audit log):
+- id, company_id, to_email, template, status ('sent'|'blocked_daily'|'blocked_monthly'|'failed'), reason, created_at
 
-### 1. `src/contexts/VoiceContext.tsx`
-- In `handleError`, when the message matches mic-unavailable / not-allowed / no-microphone, auto-disable voice mode:
-  - `setIsVoiceModeEnabled(false)` and write `'false'` to `localStorage` immediately so it does not re-enable on reload.
-  - Show a single sticky toast: "Microphone unavailable — voice mode turned off. Enable mic permissions and try again."
-- Guard the start/stop effect so it does not re-run `start()` while an `error` is present.
+RPC `increment_email_usage(company_id, daily_cap, monthly_cap)`:
+- Atomic upsert + check; returns `{ allowed: bool, reason: text, daily_count, monthly_count }`
+- SECURITY DEFINER
 
-### 2. `src/hooks/useVoiceInput.ts`
-- `stop()` should:
-  - clear `restartTimeoutRef` first,
-  - null out `recognitionRef.current` BEFORE calling `.abort()` (use `abort`, not `stop`, to drop pending results),
-  - reset `error` to `null` so the next user-initiated start is clean.
-- `onend` auto-restart guard: also skip restart if `state.error` is set or if `recognitionRef.current` was nulled.
-- `start()`: if `getUserMedia` throws `NotAllowedError` / `NotFoundError` / `NotReadableError`, return distinct error messages and do not create a recognition instance.
-- Ensure `getUserMedia` runs synchronously inside the user-gesture click (already is via toggle handler — keep as-is, just add the permission probe with `navigator.permissions.query({ name: 'microphone' })` when available, to fail fast without prompting again).
+RLS: only platform_admin can read counters via UI; service role full access.
 
-### 3. `src/components/voice/VoiceModeToggle.tsx`
-- When `error` from `useVoice()` is set, render the icon in a muted/destructive state and stop the ping animation, so the button visually reflects "off / blocked" instead of pulsing.
-- Tooltip shows the error reason when present.
+## Edge function: `send-email-guarded`
+Inputs: `{ to, subject, html, template, company_id?, priority? ('critical'|'normal') }`
+Logic:
+1. Read caps from env (`RESEND_DAILY_CAP=100`, `RESEND_MONTHLY_CAP=3000`) — overridable per-company in `companies.email_caps` JSONB.
+2. Call `increment_email_usage` RPC.
+3. If blocked:
+   - Log attempt as `blocked_*`
+   - If `priority='critical'` → still send (overrides cap, logs warning)
+   - Else → return `{ sent: false, reason }`
+   - Trigger `cost-alerts` notification at 80% / 95% / 100% thresholds (once per period)
+4. If allowed → call Resend, log `sent`.
 
-## Out of scope
-- No changes to `voice-navigator` edge function or AI flow.
-- No changes to ElevenLabs / browser-TTS fallback (separate cost-savings track).
+## Refactor existing email functions
+Each existing function replaces its direct Resend `fetch` with `supabase.functions.invoke('send-email-guarded', {...})`. Critical transactional emails (password reset, OTP, payment receipts) tagged `priority: 'critical'`. Marketing/digests stay `normal`.
+
+## Frontend additions
+
+**Settings → Notifications & Limits page** (platform_admin only):
+- Show current month/day usage with progress bars
+- Show cap settings (read-only env-driven default, editable per-company)
+- Show recent blocked sends
+- Toggle: "When email cap reached, notify admins via SMS instead"
+
+**Notification triggers** (reuse existing `useStaffNotifications`):
+- 80% daily/monthly → in-app + email warning to platform_admin
+- 100% → in-app + SMS via SignalWire (uses existing notification system)
+- Blocked send → bell badge
+
+## Fallback strategy when capped
+- Customer-facing flows: show "Email temporarily unavailable — we'll text you instead" + auto-fallback to SMS when phone present
+- Internal notifications: queue to in-app bell only
+- Critical (auth, payments): always send (override flag)
+
+## Files to add
+- `supabase/migrations/<ts>_email_usage_caps.sql`
+- `supabase/functions/send-email-guarded/index.ts`
+- `src/pages/settings/EmailLimits.tsx`
+- `src/hooks/useEmailUsage.ts`
+
+## Files to edit (route through guard)
+- `supabase/functions/send-appointment-email/index.ts`
+- `supabase/functions/send-job-notification/index.ts`
+- `supabase/functions/send-review-request/index.ts`
+- `supabase/functions/weekly-digest/index.ts`
+- `supabase/functions/monthly-digest/index.ts`
+- `supabase/functions/quarterly-digest/index.ts`
+- `supabase/functions/trial-reminders/index.ts`
+- `supabase/functions/appointment-reminders/index.ts`
+- `supabase/functions/cost-alerts/index.ts`
+- `supabase/functions/lead-follow-up-reminders/index.ts`
+- `supabase/functions/check-unsubscribe-alerts/index.ts`
+- `src/pages/Settings.tsx` (add Email Limits tab)
 
 ## Verification
-- Toggle voice on with mic blocked in browser → expect single toast, toggle visibly turns off, no pulsing.
-- Toggle voice on with mic granted → works as before.
-- Toggle off mid-session → recognition stops within 200ms, no auto-restart.
+- Manually call `send-email-guarded` 101 times with same `company_id` → 101st returns `blocked_daily`
+- Check `email_send_attempts` shows correct status
+- Check progress bar in Settings
+- Trigger 80% threshold → verify staff notification fires once
+
+## Out of scope
+- SignalWire SMS caps (separate request — same pattern would apply)
+- ElevenLabs minute caps (already discussed earlier)
+- Per-recipient rate limiting (e.g. don't email same user 10x/hr)

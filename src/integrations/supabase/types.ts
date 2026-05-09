@@ -936,6 +936,7 @@ export type Database = {
           dispatch_phone: string | null
           elevenlabs_voice_id_es: string | null
           email: string | null
+          email_caps: Json | null
           emergency_keywords: string[] | null
           emergency_notification_emails: string[] | null
           emergency_phone: string | null
@@ -1072,6 +1073,7 @@ export type Database = {
           dispatch_phone?: string | null
           elevenlabs_voice_id_es?: string | null
           email?: string | null
+          email_caps?: Json | null
           emergency_keywords?: string[] | null
           emergency_notification_emails?: string[] | null
           emergency_phone?: string | null
@@ -1208,6 +1210,7 @@ export type Database = {
           dispatch_phone?: string | null
           elevenlabs_voice_id_es?: string | null
           email?: string | null
+          email_caps?: Json | null
           emergency_keywords?: string[] | null
           emergency_notification_emails?: string[] | null
           emergency_phone?: string | null
@@ -2385,6 +2388,54 @@ export type Database = {
           },
         ]
       }
+      email_send_attempts: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          id: string
+          priority: string
+          reason: string | null
+          status: string
+          template: string | null
+          to_email: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          reason?: string | null
+          status: string
+          template?: string | null
+          to_email: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          reason?: string | null
+          status?: string
+          template?: string | null
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_send_attempts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_send_attempts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           company_id: string
@@ -2429,6 +2480,54 @@ export type Database = {
           },
           {
             foreignKeyName: "email_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_usage_counters: {
+        Row: {
+          cap: number
+          company_id: string | null
+          count: number
+          created_at: string
+          id: string
+          period_key: string
+          period_type: string
+          updated_at: string
+        }
+        Insert: {
+          cap: number
+          company_id?: string | null
+          count?: number
+          created_at?: string
+          id?: string
+          period_key: string
+          period_type: string
+          updated_at?: string
+        }
+        Update: {
+          cap?: number
+          company_id?: string | null
+          count?: number
+          created_at?: string
+          id?: string
+          period_key?: string
+          period_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_usage_counters_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_usage_counters_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
@@ -6964,6 +7063,21 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_email_usage: {
+        Args: {
+          p_company_id: string
+          p_daily_cap: number
+          p_monthly_cap: number
+        }
+        Returns: {
+          allowed: boolean
+          daily_cap: number
+          daily_count: number
+          monthly_cap: number
+          monthly_count: number
+          reason: string
+        }[]
       }
       increment_keyword_hit: {
         Args: { keyword_id: string }
