@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Search, Eye, EyeOff, Loader2, Check, ExternalLink, Zap } from 'lucide-react';
+import { Search, Eye, EyeOff, Loader2, Check, ExternalLink, Zap, Gauge } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
 import { TavilySetupGuide } from '@/components/integrations/TavilySetupGuide';
 
@@ -93,6 +94,12 @@ export default function TavilyIntegration() {
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Tavily Dashboard
                 </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/dashboard/tavily-limits">
+                  <Gauge className="w-4 h-4 mr-2" />
+                  Usage & Limits
+                </Link>
               </Button>
             </div>
           </div>
