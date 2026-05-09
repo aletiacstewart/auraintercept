@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { guardedTavilyFetch } from '../_shared/tavily-guard.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 
@@ -99,17 +100,16 @@ serve(async (req) => {
       console.log("[generate-social-variations] Tavily connected, researching trends...");
       try {
         const searchQuery = `${topic} marketing trends social media`;
-        const tavilyResponse = await fetch("https://api.tavily.com/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            api_key: integrations.tavily_api_key,
-            query: searchQuery,
+        const tavilyResponse = await guardedTavilyFetch({
+            supabase, companyId,
+            apiKey: integrations.tavily_api_key,
+            source: 'generate-social-variations',
+            body: { query: searchQuery,
             search_depth: "basic",
             max_results: 3,
-            include_answer: true,
-          }),
-        });
+            include_answer: true },
+          });
+          if (tavilyResponse === null) { /* Tavily skipped: cap reached or unavailable */ } else
 
         if (tavilyResponse.ok) {
           const tavilyData = await tavilyResponse.json();
