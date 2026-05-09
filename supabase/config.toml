@@ -51,6 +51,9 @@ verify_jwt = false
 [functions.resend-webhook]
 verify_jwt = false
 
+[functions.send-email-guarded]
+verify_jwt = false
+
 [functions.elevenlabs-conversation-token]
 verify_jwt = true
 
