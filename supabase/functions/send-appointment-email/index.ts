@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
 import { getCompanyTerminology } from '../_shared/terminology.ts';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -82,8 +83,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Initialize Resend with company's API key
-    const resend = new Resend(integrations.resend_api_key);
     const company = appointment.companies;
     const companyName = company?.name || 'Our Business';
     const primaryColor = company?.primary_color || '#0EA5E9';
