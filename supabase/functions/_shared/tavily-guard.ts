@@ -240,7 +240,8 @@ export async function tavilyExtract(args: TavilyExtractArgs): Promise<TavilyGuar
 export interface GuardedTavilyResponse {
   ok: boolean;
   status: number;
-  json: () => Promise<unknown>;
+  // deno-lint-ignore no-explicit-any
+  json: () => Promise<any>;
   text: () => Promise<string>;
 }
 
