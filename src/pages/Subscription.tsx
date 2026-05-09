@@ -233,9 +233,8 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Integration & Support',
+    title: 'Support',
     features: [
-      { name: 'Calendar Sync', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'API Access', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Priority Support', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
     ],
