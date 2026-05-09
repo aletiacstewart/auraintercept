@@ -1,4 +1,4 @@
-import { useWorkspace } from "@/hooks/useWorkspace";
+import { useAuth } from "@/contexts/AuthContext";
 import { useEmailUsage } from "@/hooks/useEmailUsage";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, Mail, Shield } from "lucide-react";
 
 export default function EmailLimits() {
-  const { workspace } = useWorkspace();
-  const companyId = workspace?.companyId ?? null;
+  const { companyId } = useAuth();
   const { daily, monthly, recent, loading, refresh } = useEmailUsage(companyId);
 
   const dailyPct = daily ? Math.min(100, Math.round((daily.count / Math.max(1, daily.cap)) * 100)) : 0;
