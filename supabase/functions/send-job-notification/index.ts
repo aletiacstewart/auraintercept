@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -247,28 +248,23 @@ Deno.serve(async (req) => {
         
         if (emailEnabled) {
           try {
-            const emailResponse = await fetch('https://api.resend.com/emails', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${integrations.resend_api_key}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                from: `${companyName} <onboarding@resend.dev>`,
-                to: [emailAddress],
-                subject: messages.emailSubject,
-                html: messages.emailHtml,
-              }),
+            const guarded = await sendGuardedEmail({
+              supabase,
+              resendApiKey: integrations.resend_api_key,
+              companyId: appointment.company_id,
+              from: `${companyName} <onboarding@resend.dev>`,
+              to: [emailAddress],
+              subject: messages.emailSubject,
+              html: messages.emailHtml,
+              template: `job_${notificationType}_${recipientType}`,
+              priority: 'normal',
             });
-
-            const emailResult = await emailResponse.json();
-
-            if (emailResponse.ok) {
-              results.email = { success: true, id: emailResult.id };
-              console.log(`[Job Notification] Email sent successfully to ${recipientType}:`, emailResult.id);
+            if (guarded.sent) {
+              results.email = { success: true, id: (guarded.data as { id?: string })?.id };
+              console.log(`[Job Notification] Email sent successfully to ${recipientType}`);
             } else {
-              results.email = { success: false, error: emailResult };
-              console.error('[Job Notification] Resend error:', emailResult);
+              results.email = { success: false, error: guarded.reason || guarded.error };
+              console.error('[Job Notification] Email blocked/failed:', guarded.reason);
             }
           } catch (emailError) {
             console.error('[Job Notification] Email send error:', emailError);
