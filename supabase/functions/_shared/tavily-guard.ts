@@ -234,3 +234,78 @@ export async function tavilyExtract(args: TavilyExtractArgs): Promise<TavilyGuar
              monthlyCredits: g.monthlyCredits, monthlyCap: g.monthlyCap };
   }
 }
+
+// Compatibility shim: returns a Response-like object so existing code that
+// reads `.ok` and `.json()` keeps working. Returns null if blocked by cap.
+export interface GuardedTavilyResponse {
+  ok: boolean;
+  status: number;
+  json: () => Promise<unknown>;
+  text: () => Promise<string>;
+}
+
+export async function guardedTavilyFetch(opts: {
+  // deno-lint-ignore no-explicit-any
+  supabase: any;
+  apiKey: string;
+  companyId: string | null;
+  body: Record<string, unknown>;
+  source?: string;
+  endpoint?: 'search' | 'extract';
+}): Promise<GuardedTavilyResponse | null> {
+  const { supabase, apiKey, companyId, body, source, endpoint = 'search' } = opts;
+  const depth = (body.search_depth as TavilyDepth) ?? (body.extract_depth as TavilyDepth) ?? 'basic';
+  let credits = depth === 'advanced' ? 2 : 1;
+  let urlCount: number | undefined;
+  if (endpoint === 'extract') {
+    const urls = (body.urls as string[]) ?? [];
+    urlCount = urls.length;
+    const per5 = depth === 'advanced' ? 2 : 1;
+    credits = Math.max(1, Math.ceil(urls.length / 5)) * per5;
+  }
+  if (!apiKey) {
+    await logAttempt(supabase, {
+      company_id: companyId, operation: endpoint, depth,
+      url_count: urlCount, credits: 0, status: 'failed',
+      reason: 'missing_api_key', source,
+    });
+    return null;
+  }
+  const g = await gate(supabase, companyId, credits);
+  if (!g.allowed) {
+    await logAttempt(supabase, {
+      company_id: companyId, operation: endpoint, depth,
+      url_count: urlCount, credits: 0, status: 'blocked_monthly',
+      reason: g.reason, source,
+    });
+    console.warn(`[tavily-guard] ${source ?? 'unknown'} blocked: ${g.reason} (${g.monthlyCredits}/${g.monthlyCap})`);
+    return null;
+  }
+  try {
+    const res = await fetch(`https://api.tavily.com/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...body, api_key: apiKey }),
+    });
+    const status = res.status;
+    const ok = res.ok;
+    const buf = await res.text();
+    await logAttempt(supabase, {
+      company_id: companyId, operation: endpoint, depth,
+      url_count: urlCount, credits, status: ok ? 'sent' : 'failed',
+      reason: ok ? undefined : `tavily_${status}`, source,
+    });
+    return {
+      ok, status,
+      json: async () => JSON.parse(buf),
+      text: async () => buf,
+    };
+  } catch (e) {
+    await logAttempt(supabase, {
+      company_id: companyId, operation: endpoint, depth,
+      url_count: urlCount, credits, status: 'failed',
+      reason: String(e), source,
+    });
+    throw e;
+  }
+}
