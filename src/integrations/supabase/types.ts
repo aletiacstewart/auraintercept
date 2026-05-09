@@ -1009,6 +1009,7 @@ export type Database = {
           stripe_customer_id: string | null
           subscription_tier: string | null
           supported_modules: Json
+          tavily_caps: Json | null
           trial_ends_at: string | null
           trial_expired_sent: boolean | null
           trial_reminder_1d_sent: boolean | null
@@ -1146,6 +1147,7 @@ export type Database = {
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           supported_modules?: Json
+          tavily_caps?: Json | null
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null
@@ -1283,6 +1285,7 @@ export type Database = {
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           supported_modules?: Json
+          tavily_caps?: Json | null
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null
@@ -6089,6 +6092,108 @@ export type Database = {
           },
         ]
       }
+      tavily_usage_attempts: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          credits: number
+          depth: string | null
+          id: string
+          operation: string
+          reason: string | null
+          source: string | null
+          status: string
+          url_count: number | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          credits?: number
+          depth?: string | null
+          id?: string
+          operation: string
+          reason?: string | null
+          source?: string | null
+          status: string
+          url_count?: number | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          credits?: number
+          depth?: string | null
+          id?: string
+          operation?: string
+          reason?: string | null
+          source?: string | null
+          status?: string
+          url_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tavily_usage_attempts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tavily_usage_attempts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tavily_usage_counters: {
+        Row: {
+          cap: number
+          company_id: string | null
+          created_at: string
+          credits: number
+          id: string
+          period_key: string
+          period_type: string
+          updated_at: string
+        }
+        Insert: {
+          cap: number
+          company_id?: string | null
+          created_at?: string
+          credits?: number
+          id?: string
+          period_key: string
+          period_type: string
+          updated_at?: string
+        }
+        Update: {
+          cap?: number
+          company_id?: string | null
+          created_at?: string
+          credits?: number
+          id?: string
+          period_key?: string
+          period_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tavily_usage_counters_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tavily_usage_counters_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       technician_service_assignments: {
         Row: {
           assigned_at: string
@@ -7086,6 +7191,15 @@ export type Database = {
       increment_site_metric: {
         Args: { p_metric: string; p_website_id: string }
         Returns: undefined
+      }
+      increment_tavily_usage: {
+        Args: { p_company_id: string; p_credits: number; p_monthly_cap: number }
+        Returns: {
+          allowed: boolean
+          monthly_cap: number
+          monthly_credits: number
+          reason: string
+        }[]
       }
       intake_field_completeness: {
         Args: { p_source: string }
