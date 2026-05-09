@@ -1,50 +1,39 @@
-# Continue: Remaining PDFs & Integration Guides
+# Fix: Voice toggle stuck after "Microphone unavailable"
 
-## Canonical values (already approved)
-- Onboarding (one-time, due at start of 60-Day Live Trial): Core $497 · Boost $697 · Pro $1,197 · Elite $2,197
-- Trial: 60-Day Live Trial (math `(60 - daysRemaining)/60`)
-- Resend: 3,000 emails/mo bundled · $0.90 per 1,000 overage · 100/day default cap · monthly reset · $0.0015/run only when >10,000 runs
-- Tavily: 1,000 credits/mo bundled · $0.008/credit overage (Search/Extract/Map credits)
-- A2P 10DLC (customer pass-through): $4.50 brand fee · variable campaign fees (3 months upfront) · $250/mo T-Mobile inactive-campaign fee · 1–4 week approval
-- Google Calendar: free, bidirectional, iCal
-- Stripe: customer's own account, 2.9%+$0.30, volume discounts
-- Chat Widget: all tiers, no usage limits
+## Problem
+When the browser blocks the mic (permission denied, no device, or another tab holding it), the Voice toggle keeps pulsing and clicking it does not disable voice mode. Two root causes:
 
-## Files to update
+1. `useVoiceInput.start()` shows the error but `isVoiceModeEnabled` stays `true` in `VoiceContext`, so the `useEffect([isVoiceModeEnabled])` keeps trying to start again on every re-render that re-creates `start`.
+2. `useVoiceInput`'s `onend` auto-restart fires a 100ms `setTimeout` that can re-call `recognition.start()` even after the user toggled off, because the timeout is queued before `stop()` clears the ref.
 
-### PDFs
-- `src/components/documentation/ComprehensiveGuidesPDF.tsx` — Resend section (3,000/mo bundled + $0.90/1k overage), Tavily section (1,000 credits + $0.008 overage)
-- `src/components/documentation/CompanyOnboardingPDF.tsx` — replace "BUNDLED, no extra fees" lines with bundled limits + overage; change "90 days" copy to "60 days"
-- `src/components/documentation/CompanyGuidesPDF.tsx` — Resend + Tavily sections (limits, overage, monthly reset)
-- `src/components/documentation/AIAgentGuidesPDF.tsx` — sweep for stale onboarding fees / 90-day / Resend / Tavily strings
+The button itself looks "blinking" because the ping ring keys off `isListening`, which flickers true→false→true as the recognition loop retries.
 
-### Integration setup guides
-- `src/components/integrations/ResendSetupGuide.tsx` — bundled 3,000/mo, $0.90/1k overage, 100/day cap, monthly reset, $0.0015/run >10k
-- `src/components/integrations/TavilySetupGuide.tsx` — bundled 1,000 credits/mo, $0.008/credit overage, credit types (Search/Extract/Map)
-- `src/components/integrations/SignalWireSetupGuide.tsx` — A2P 10DLC: customer pass-through; $4.50 brand, variable campaign fees (3 mo upfront), $250/mo T-Mobile inactive, 1–4 week approval
-- `src/components/integrations/CostCalculator.tsx` + `CostCalculatorHelp.tsx` — update Resend constants (3,000 free, $0.90/1k overage); ensure Tavily 1,000 credits + $0.008
-- `src/components/subscription/ThirdPartyCostDisclosureDialog.tsx` — refresh Resend/Tavily/A2P entries with new numbers and pass-through framing
+## Fix
 
-### Integration pages
-- `src/pages/integrations/EmailIntegration.tsx` — bundled limits + overage hint
-- `src/pages/integrations/TavilyIntegration.tsx` — change "1,000 Free Searches" card to "1,000 Credits/mo Bundled" + overage line
-- `src/pages/integrations/CalendarIntegration.tsx` — confirm free/bidirectional copy
-- `src/pages/Integrations.tsx` — note line for Tavily ("1,000 credits/mo bundled · $0.008/credit overage")
-- `src/pages/PlatformGuides.tsx` — Resend + Tavily list items
+### 1. `src/contexts/VoiceContext.tsx`
+- In `handleError`, when the message matches mic-unavailable / not-allowed / no-microphone, auto-disable voice mode:
+  - `setIsVoiceModeEnabled(false)` and write `'false'` to `localStorage` immediately so it does not re-enable on reload.
+  - Show a single sticky toast: "Microphone unavailable — voice mode turned off. Enable mic permissions and try again."
+- Guard the start/stop effect so it does not re-run `start()` while an `error` is present.
 
-### Misc sweeps
-- Run `rg` for `90[- ]day`, `$397`, `$697 onboarding`, `Free up to 3,000`, `1,000 free searches`, `1,000 searches/month` and patch any stragglers in `Help.tsx`, `Architecture.tsx`, `PlatformGuides.tsx`, `TermsOfService.tsx`, `PrivacyPolicy.tsx`, `demoFeatureStatus.ts`.
+### 2. `src/hooks/useVoiceInput.ts`
+- `stop()` should:
+  - clear `restartTimeoutRef` first,
+  - null out `recognitionRef.current` BEFORE calling `.abort()` (use `abort`, not `stop`, to drop pending results),
+  - reset `error` to `null` so the next user-initiated start is clean.
+- `onend` auto-restart guard: also skip restart if `state.error` is set or if `recognitionRef.current` was nulled.
+- `start()`: if `getUserMedia` throws `NotAllowedError` / `NotFoundError` / `NotReadableError`, return distinct error messages and do not create a recognition instance.
+- Ensure `getUserMedia` runs synchronously inside the user-gesture click (already is via toggle handler — keep as-is, just add the permission probe with `navigator.permissions.query({ name: 'microphone' })` when available, to fail fast without prompting again).
 
-## Memory updates
-- `mem://product/trial-period-standard` → 60-Day Live Trial
-- `mem://legal/third-party-fee-disclaimer` → A2P 10DLC + Stripe are customer pass-through; Resend/Tavily/SignalWire/ElevenLabs bundled up to limits, then overage
-- `mem://marketing/pricing/canonical-four-tier-model` → onboarding fee constants ($497/$697/$1,197/$2,197)
-- Update `mem://index.md` Core lines on Trial and 3rd-Party Usage (currently say "90-day" and "no extra fees")
+### 3. `src/components/voice/VoiceModeToggle.tsx`
+- When `error` from `useVoice()` is set, render the icon in a muted/destructive state and stop the ping animation, so the button visually reflects "off / blocked" instead of pulsing.
+- Tooltip shows the error reason when present.
 
 ## Out of scope
-- Stripe price recreation, edge functions, billing logic, DB schema
+- No changes to `voice-navigator` edge function or AI flow.
+- No changes to ElevenLabs / browser-TTS fallback (separate cost-savings track).
 
 ## Verification
-- `rg` sweeps for: `90-day`, `90 day`, `$397`, `Free up to 3,000`, `1,000 free`, `1,000 searches`, `Aura pays 100%` → expect zero stale matches
-- Spot-check `/dashboard/integrations/email`, `/dashboard/integrations/tavily`, `/dashboard/integrations/sms` in preview
-- Regenerate ComprehensiveGuides PDF via `/export-docs` and visually QA cover, pricing, and integration sections
+- Toggle voice on with mic blocked in browser → expect single toast, toggle visibly turns off, no pulsing.
+- Toggle voice on with mic granted → works as before.
+- Toggle off mid-session → recognition stops within 200ms, no auto-restart.
