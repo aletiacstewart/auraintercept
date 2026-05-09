@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { getCompanyTerminology } from '../_shared/terminology.ts';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -260,28 +261,23 @@ The ${companyName} Team`;
 
       if (emailAddress) {
         try {
-          const emailResponse = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${integrations.resend_api_key}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: `${companyName} <onboarding@resend.dev>`,
-              to: [emailAddress],
-              subject: emailSubject,
-              html: emailHtml,
-            }),
+          const guarded = await sendGuardedEmail({
+            supabase,
+            resendApiKey: integrations.resend_api_key,
+            companyId: appointment.company_id,
+            from: `${companyName} <onboarding@resend.dev>`,
+            to: [emailAddress],
+            subject: emailSubject,
+            html: emailHtml,
+            template: 'review_request',
+            priority: 'normal',
           });
-
-          const emailResult = await emailResponse.json();
-
-          if (emailResponse.ok) {
-            results.email = { success: true, id: emailResult.id };
-            console.log(`[Review Request] Email sent successfully:`, emailResult.id);
+          if (guarded.sent) {
+            results.email = { success: true, id: (guarded.data as { id?: string })?.id };
+            console.log('[Review Request] Email sent successfully');
           } else {
-            results.email = { success: false, error: emailResult };
-            console.error('[Review Request] Resend error:', emailResult);
+            results.email = { success: false, error: guarded.reason || guarded.error };
+            console.error('[Review Request] Email blocked/failed:', guarded.reason);
           }
         } catch (emailError) {
           console.error('[Review Request] Email send error:', emailError);

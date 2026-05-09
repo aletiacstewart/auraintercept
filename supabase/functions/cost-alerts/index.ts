@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -110,12 +111,15 @@ serve(async (req) => {
           continue;
         }
 
-        const resend = new Resend(integration.resend_api_key);
-
-        const { error: emailError } = await resend.emails.send({
+        const guarded = await sendGuardedEmail({
+          supabase,
+          resendApiKey: integration.resend_api_key,
+          companyId: company.id,
           from: "Cost Alerts <alerts@resend.dev>",
           to: [company.cost_alert_email],
           subject: `⚠️ Cost Alert: Budget exceeded by ${variancePercent.toFixed(0)}%`,
+          template: 'cost_alert',
+          priority: 'critical',
           html: `
             <h2>Cost Alert for ${company.name}</h2>
             <p>Your actual costs this month have exceeded your estimated budget by <strong>${variancePercent.toFixed(1)}%</strong>.</p>
@@ -154,8 +158,8 @@ serve(async (req) => {
           `,
         });
 
-        if (emailError) {
-          console.error(`Error sending email to ${company.name}:`, emailError);
+        if (!guarded.sent) {
+          console.error(`Error sending email to ${company.name}:`, guarded.reason || guarded.error);
           continue;
         }
 

@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -87,8 +88,6 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        const resend = new Resend(integrations.resend_api_key);
-
         // Get breakdown by channel
         const { data: channelBreakdown } = await supabase
           .from('subscription_events')
@@ -102,11 +101,16 @@ Deno.serve(async (req) => {
         const emailCount = channelBreakdown?.filter(e => e.channel === 'email').length || 0;
         const callCount = channelBreakdown?.filter(e => e.channel === 'call').length || 0;
 
-        // Send alert email
-        const { error: emailError } = await resend.emails.send({
+        // Send alert email (critical priority - compliance/operational)
+        const guarded = await sendGuardedEmail({
+          supabase,
+          resendApiKey: integrations.resend_api_key,
+          companyId: company.id,
           from: `${company.name} Alerts <onboarding@resend.dev>`,
           to: [company.unsubscribe_alert_email],
           subject: `⚠️ High Unsubscribe Rate Alert - ${unsubscribeCount} opt-outs in 24 hours`,
+          template: 'unsubscribe_alert',
+          priority: 'critical',
           html: `
             <!DOCTYPE html>
             <html>
@@ -146,8 +150,8 @@ Deno.serve(async (req) => {
           `,
         });
 
-        if (emailError) {
-          console.error(`Failed to send alert email for ${company.name}:`, emailError);
+        if (!guarded.sent) {
+          console.error(`Failed to send alert email for ${company.name}:`, guarded.reason || guarded.error);
           continue;
         }
 

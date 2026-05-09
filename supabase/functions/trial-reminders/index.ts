@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -94,22 +95,20 @@ serve(async (req) => {
 
       if (shouldSendReminder) {
         try {
-          // Send email via Resend
-          const emailResponse = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${PLATFORM_RESEND_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: FROM_ADDRESS,
-              to: adminEmail,
-              subject: getEmailSubject(reminderType, company.name),
-              html: getEmailHtml(reminderType, company.name, daysRemaining),
-            }),
+          // 1-day reminder is critical (last chance to convert before trial ends)
+          const priority = reminderType === '1-day' ? 'critical' : 'normal';
+          const guarded = await sendGuardedEmail({
+            supabase: supabaseClient,
+            resendApiKey: PLATFORM_RESEND_KEY,
+            companyId: company.id,
+            from: FROM_ADDRESS,
+            to: adminEmail,
+            subject: getEmailSubject(reminderType, company.name),
+            html: getEmailHtml(reminderType, company.name, daysRemaining),
+            template: `trial_reminder_${reminderType}`,
+            priority,
           });
-
-          if (emailResponse.ok) {
+          if (guarded.sent) {
             // Update the reminder sent flag
             await supabaseClient
               .from('companies')
@@ -123,8 +122,7 @@ serve(async (req) => {
             });
             remindersSent++;
           } else {
-            const errorText = await emailResponse.text();
-            logStep("Failed to send email", { companyId: company.id, error: errorText });
+            logStep("Failed to send email", { companyId: company.id, reason: guarded.reason });
           }
         } catch (emailError) {
           logStep("Email send error", { 
@@ -151,18 +149,16 @@ serve(async (req) => {
       if (!admins?.[0]?.email) continue;
 
       try {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${PLATFORM_RESEND_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: FROM_ADDRESS,
-            to: admins[0].email,
-            subject: `Your free trial has ended - ${company.name}`,
-            html: getExpiredEmailHtml(company.name),
-          }),
+        await sendGuardedEmail({
+          supabase: supabaseClient,
+          resendApiKey: PLATFORM_RESEND_KEY,
+          companyId: company.id,
+          from: FROM_ADDRESS,
+          to: admins[0].email,
+          subject: `Your free trial has ended - ${company.name}`,
+          html: getExpiredEmailHtml(company.name),
+          template: 'trial_expired',
+          priority: 'critical',
         });
 
         await supabaseClient

@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -159,25 +160,22 @@ serve(async (req) => {
                 );
 
                 try {
-                  const emailResponse = await fetch('https://api.resend.com/emails', {
-                    method: 'POST',
-                    headers: {
-                      'Authorization': `Bearer ${resendApiKey}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      from: `${companyName} <noreply@auraintercept.ai>`,
-                      to: [lead.email],
-                      subject,
-                      text: message,
-                    }),
+                  const guarded = await sendGuardedEmail({
+                    supabase,
+                    resendApiKey,
+                    companyId: followUp.company_id,
+                    from: `${companyName} <noreply@auraintercept.ai>`,
+                    to: [lead.email],
+                    subject,
+                    text: message,
+                    html: `<pre style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; white-space: pre-wrap;">${message.replace(/</g, '&lt;')}</pre>`,
+                    template: 'lead_follow_up',
+                    priority: 'normal',
                   });
-
-                  if (emailResponse.ok) {
+                  if (guarded.sent) {
                     sent = true;
                   } else {
-                    const emailError = await emailResponse.json();
-                    errorMessage = emailError.message || 'Failed to send email';
+                    errorMessage = guarded.reason || String((guarded.error as { message?: string })?.message ?? 'Failed to send email');
                   }
                 } catch (e: unknown) {
                   errorMessage = `Email error: ${e instanceof Error ? e.message : 'Unknown error'}`;

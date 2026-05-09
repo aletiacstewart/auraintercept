@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -324,8 +325,6 @@ Deno.serve(async (req) => {
         resubscribes: calcChange(subscriptionStats.resubscribes, prevSubscriptionStats.resubscribes)
       };
 
-      const resend = new Resend(integrations.resend_api_key);
-      
       const successRate = reminderStats.total > 0 
         ? Math.round((reminderStats.sent / reminderStats.total) * 100) 
         : 100;
@@ -471,26 +470,32 @@ Deno.serve(async (req) => {
           </html>
         `;
 
-      const emailResult = await sendWithRetry(resend, {
+      const emailResult = await sendGuardedEmail({
+        supabase,
+        resendApiKey: integrations.resend_api_key,
+        companyId: company.id,
         from: `${company.name} <onboarding@resend.dev>`,
         to: [company.weekly_digest_email],
         subject: `📊 Weekly Performance Digest - ${formatDate(periodStart)} to ${formatDate(periodEnd)}`,
         html: emailHtml,
+        template: 'weekly_digest',
+        priority: 'normal',
       });
 
-      if (!emailResult.success) {
-        console.error(`Failed to send digest for ${company.name} after ${emailResult.attempts} attempts:`, emailResult.error);
+      if (!emailResult.sent) {
+        const reasonStr = emailResult.reason || (emailResult.error ? String((emailResult.error as { message?: string })?.message ?? emailResult.error) : 'unknown');
+        console.error(`Failed to send digest for ${company.name}: ${reasonStr}`);
         // Log failed delivery with retry info
         await supabase.from('digest_delivery_logs').insert({
           company_id: company.id,
           digest_type: 'weekly',
           recipient_email: company.weekly_digest_email,
-          status: 'failed',
-          error_message: `Failed after ${emailResult.attempts} attempts: ${emailResult.error}`,
+          status: emailResult.reason?.startsWith('blocked') ? 'blocked' : 'failed',
+          error_message: reasonStr,
         });
         if (isTestMode) {
           return new Response(
-            JSON.stringify({ success: false, error: `Email failed after ${emailResult.attempts} attempts: ${emailResult.error}` }),
+            JSON.stringify({ success: false, error: reasonStr }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
@@ -503,7 +508,7 @@ Deno.serve(async (req) => {
         digest_type: 'weekly',
         recipient_email: company.weekly_digest_email,
         status: 'sent',
-        error_message: emailResult.attempts > 1 ? `Succeeded after ${emailResult.attempts} attempts` : null,
+        error_message: null,
       });
 
       // Only update timestamp in non-test mode

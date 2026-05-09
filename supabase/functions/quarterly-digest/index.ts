@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@4.0.0';
+import { sendGuardedEmail } from '../_shared/email-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -357,8 +358,6 @@ Deno.serve(async (req) => {
       const completionRate = appointmentStats.total > 0 ? Math.round((appointmentStats.completed / appointmentStats.total) * 100) : 0;
       const avgPerWeek = Math.round(appointmentStats.total / 13);
 
-      const resend = new Resend(integrations.resend_api_key);
-
       // Get preferences with defaults
       const includeAppointments = company.quarterly_digest_include_appointments !== false;
       const includeReminders = company.quarterly_digest_include_reminders !== false;
@@ -563,22 +562,28 @@ Deno.serve(async (req) => {
           </html>
         `;
 
-      const emailResult = await sendWithRetry(resend, {
+      const emailResult = await sendGuardedEmail({
+        supabase,
+        resendApiKey: integrations.resend_api_key,
+        companyId: company.id,
         from: `${company.name} <onboarding@resend.dev>`,
         to: [company.quarterly_digest_email],
         subject: `📊 Quarterly Business Review - ${formatQuarter(lastQuarterStart)}`,
         html: emailHtml,
+        template: 'quarterly_digest',
+        priority: 'normal',
       });
 
-      if (!emailResult.success) {
-        console.error(`Failed to send digest to ${company.name} after ${emailResult.attempts} attempts:`, emailResult.error);
+      if (!emailResult.sent) {
+        const reasonStr = emailResult.reason || String((emailResult.error as { message?: string })?.message ?? emailResult.error ?? 'unknown');
+        console.error(`Failed to send digest to ${company.name}: ${reasonStr}`);
         // Log failed delivery with retry info
         await supabase.from('digest_delivery_logs').insert({
           company_id: company.id,
           digest_type: 'quarterly',
           recipient_email: company.quarterly_digest_email,
-          status: 'failed',
-          error_message: `Failed after ${emailResult.attempts} attempts: ${emailResult.error}`,
+          status: emailResult.reason?.startsWith('blocked') ? 'blocked' : 'failed',
+          error_message: reasonStr,
         });
         continue;
       }
@@ -589,7 +594,7 @@ Deno.serve(async (req) => {
         digest_type: 'quarterly',
         recipient_email: company.quarterly_digest_email,
         status: 'sent',
-        error_message: emailResult.attempts > 1 ? `Succeeded after ${emailResult.attempts} attempts` : null,
+        error_message: null,
       });
 
       if (!isTestMode) {
