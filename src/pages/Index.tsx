@@ -1192,10 +1192,10 @@ export default function Index() {
         </div>
       </section>
 
+      </main>
       <PublicFooter />
       
       {/* Floating Chat Widget */}
-      </main>
       <FloatingChatWidget />
       <AuraAvatarFloating />
     </div>
