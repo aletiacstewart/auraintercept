@@ -1,0 +1,19 @@
+# Aura Intercept
+
+> AI operatives that automate customer engagement, field operations, billing, marketing, and analytics for service businesses.
+
+Aura Intercept deploys 24 specialized AI operatives across 7 consoles (Customer Portal, Field Ops, Business Management, Marketing & Sales, Social Media, Analytics, Specialists) on a 4-tier subscription (Core, Boost, Pro, Elite) with a 60-day live trial.
+
+## Pages
+
+- [Home](/): Product overview, agent catalog, and pricing.
+- [For Your Industry](/for-business): Industry-specific demos and value props (HVAC, plumbing, salons, restaurants, and more).
+- [Free AI Opportunity Audit](/audit): Personalized AI readiness audit for service businesses.
+- [About](/about): Mission, values, and team behind Aura Intercept.
+- [Blog](/blog): Articles on AI automation for service businesses.
+- [Contact](/contact): Reach the Aura Intercept team.
+
+## Optional
+
+- [Privacy Policy](/privacy-policy)
+- [Terms of Service](/terms-of-service)
