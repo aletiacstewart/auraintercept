@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Send, MessageSquare, Mic } from 'lucide-react';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { SEO } from '@/components/seo/SEO';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -69,6 +70,18 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title="Contact Aura Intercept | Talk to Our Team"
+        description="Questions about AI automation for your service business? Reach the Aura Intercept team by message, email, or phone."
+        path="/contact"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "Aura Intercept",
+          url: "https://auraintercept.ai",
+          address: { "@type": "PostalAddress", addressLocality: "Austin", addressRegion: "TX", addressCountry: "US" },
+        }}
+      />
       <PublicHeader />
       
       <main className="flex-1">
