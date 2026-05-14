@@ -12,6 +12,7 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { AuraAvatarFloating } from '@/components/aura/AuraAvatarFloating';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
+import { SEO } from '@/components/seo/SEO';
 
 const agentCategories = [{
   id: 'customer',
