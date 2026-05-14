@@ -474,6 +474,13 @@ export default function Index() {
       `}</style>
       <PublicHeader showHomeLink={false} />
 
+      <SEO
+        title="Aura Intercept | AI Operatives for Service Businesses"
+        description="24 specialized AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
+        path="/"
+      />
+
+      <main>
       {/* ── CINEMATIC HERO ── */}
       <section style={{ position: "relative", overflow: "hidden", minHeight: "92vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
         {/* Background image */}
