@@ -14,6 +14,7 @@ import {
   MapPin
 } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
+import { SEO } from '@/components/seo/SEO';
 
 const coreValues = [
   {
