@@ -1195,6 +1195,7 @@ export default function Index() {
       <PublicFooter />
       
       {/* Floating Chat Widget */}
+      </main>
       <FloatingChatWidget />
       <AuraAvatarFloating />
     </div>
