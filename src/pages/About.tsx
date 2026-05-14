@@ -14,6 +14,7 @@ import {
   MapPin
 } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
+import { SEO } from '@/components/seo/SEO';
 
 const coreValues = [
   {
@@ -43,6 +44,11 @@ export default function About() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title="About Aura Intercept | AI for Service Businesses"
+        description="Aura Intercept democratizes AI automation for appointment-based service businesses with 24 specialized operatives."
+        path="/about"
+      />
       <PublicHeader />
       
       <main className="flex-1">

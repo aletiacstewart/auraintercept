@@ -14,6 +14,7 @@ import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
 import { Link } from 'react-router-dom';
+import { SEO } from '@/components/seo/SEO';
 
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
@@ -58,6 +59,11 @@ export default function ForBusiness() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO
+        title="Aura Intercept for Your Industry | Live Demo"
+        description="Pick your industry to preview a tailored AI receptionist, dispatcher, and marketer with a 48-hour live demo."
+        path="/for-business"
+      />
       <PublicHeader />
       {/* Dynamic Demo Page header */}
       <div className="sticky top-[64px] z-40 bg-background/95 backdrop-blur border-b border-border/40">

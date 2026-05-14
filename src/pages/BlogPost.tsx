@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { format } from 'date-fns';
 import DOMPurify from 'dompurify';
+import { SEO } from '@/components/seo/SEO';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -70,6 +71,21 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title={`${post.title} | Aura Intercept Blog`}
+        description={post.excerpt || post.title}
+        path={`/blog/${post.slug}`}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          description: post.excerpt || undefined,
+          image: post.featured_image_url || undefined,
+          datePublished: post.published_at || undefined,
+          author: { "@type": "Organization", name: "Aura Intercept" },
+        }}
+      />
       <PublicHeader />
       
       <main className="flex-1 container max-w-4xl mx-auto px-6 py-16">

@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
+import { SEO } from '@/components/seo/SEO';
 
 export default function Blog() {
   const navigate = useNavigate();
@@ -27,6 +28,11 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title="Blog | Aura Intercept"
+        description="Insights, tips, and news about AI automation for service businesses."
+        path="/blog"
+      />
       <PublicHeader />
       
       <main className="flex-1">
