@@ -1,10 +1,16 @@
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { AgentOpportunityAudit } from "@/components/audit/AgentOpportunityAudit";
+import { SEO } from "@/components/seo/SEO";
 
 export default function OpportunityAudit() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title="Free AI Opportunity Audit | Aura Intercept"
+        description="Get a personalized AI opportunity audit for your service business in minutes — no signup required."
+        path="/audit"
+      />
       <PublicHeader />
       <main
         className="flex-1 relative"
