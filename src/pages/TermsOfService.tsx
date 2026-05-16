@@ -69,16 +69,16 @@ export default function TermsOfService() {
             <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
-              <li>Trial usage is subject to your selected tier's monthly allowances for SMS, voice, email, and AI search.</li>
+              <li>Trial covers the Aura platform only. SMS, voice, email, and AI research require your own accounts at SignalWire, ElevenLabs, Resend, and Tavily — those providers will bill you directly for any usage during or after the trial.</li>
               <li>You may cancel any time during the 60-day trial at no charge.</li>
             </ul>
 
-            <h3 className="text-xl font-semibold mt-4 mb-3">Bundled Usage & Overages</h3>
+            <h3 className="text-xl font-semibold mt-4 mb-3">Third-Party Provider Accounts (billed separately)</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>SMS messages, voice minutes, AI-generated voice, transactional email, and AI-powered web search are <strong className="text-foreground">bundled into your Platform Plan</strong> up to your tier's monthly allowance.</li>
-              <li>Usage above your monthly allowance is <strong className="text-foreground">billed separately on a single overage invoice at the end of each billing month</strong>.</li>
-              <li>Aura Intercept does not pass through SignalWire, ElevenLabs, Resend, or Tavily fees as separate line items — third-party provider costs are absorbed into your Platform Plan and overage rate.</li>
-              <li>Current allowances and overage rates are published on the pricing page and may be updated with at least 30 days' notice.</li>
+              <li>Your Aura subscription covers the <strong className="text-foreground">Aura platform only</strong>. It does not include any third-party provider usage.</li>
+              <li>For compliance and account ownership, you are required to maintain your own active accounts at each provider you use — including <strong className="text-foreground">SignalWire</strong> (SMS, voice, A2P 10DLC), <strong className="text-foreground">ElevenLabs</strong> (AI voice), <strong className="text-foreground">Resend</strong> (email), <strong className="text-foreground">Tavily</strong> (AI research), <strong className="text-foreground">Stripe</strong> (payments, if applicable), and any social network APIs you publish to.</li>
+              <li>You must keep a <strong className="text-foreground">valid credit card on file</strong> with each provider. Each provider will invoice you <strong className="text-foreground">directly and separately</strong> from your Aura plan fee, at the rates set by that provider.</li>
+              <li>Aura Intercept does not resell, mark up, or invoice third-party usage and is not a billing intermediary for any provider. Provider pricing may change at any time at the provider's discretion.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Auto-Renewal</h3>
@@ -193,7 +193,7 @@ export default function TermsOfService() {
               <li>You may disconnect integrations at any time through your settings.</li>
             </ul>
             <p className="mt-4 text-sm text-muted-foreground">
-              Costs for these providers are bundled into your Platform Plan; see Section 3 for details on allowances and overage billing.
+              You are required to maintain your own account with a valid credit card at each provider listed above. Each provider invoices you directly and separately from your Aura plan fee; see Section 3 for details.
             </p>
           </section>
 
