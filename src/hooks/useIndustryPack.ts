@@ -88,6 +88,13 @@ const DEFAULT_PACK: IndustryPack = {
   invoice_template: {},
 };
 
+// Module-level caches keyed by companyId. They survive component remounts
+// (e.g. when navigating between dashboard routes), so the sidebar/labels
+// don't briefly fall back to generic defaults and "flash" before the next
+// fetch resolves.
+const packCache = new Map<string, IndustryPack>();
+const publicPackCache = new Map<string, IndustryPack>();
+
 /**
  * Resolves the current company's industry template pack.
  * Returns the generic default pack if the company has no industry set
@@ -96,8 +103,12 @@ const DEFAULT_PACK: IndustryPack = {
 export function useIndustryPack(companyIdOverride?: string | null) {
   const { companyId: authCompanyId } = useAuth();
   const companyId = companyIdOverride ?? authCompanyId;
-  const [pack, setPack] = useState<IndustryPack>(DEFAULT_PACK);
-  const [loading, setLoading] = useState<boolean>(!!companyId);
+  const [pack, setPack] = useState<IndustryPack>(
+    () => (companyId && packCache.get(companyId)) || DEFAULT_PACK
+  );
+  const [loading, setLoading] = useState<boolean>(
+    !!companyId && !packCache.has(companyId)
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -106,19 +117,27 @@ export function useIndustryPack(companyIdOverride?: string | null) {
       setLoading(false);
       return;
     }
-    setLoading(true);
+    const cached = packCache.get(companyId);
+    if (cached) {
+      setPack(cached);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     (async () => {
       const { data, error } = await supabase
         .rpc('get_company_industry_pack', { p_company_id: companyId });
       if (cancelled) return;
       if (error || !data) {
-        setPack(DEFAULT_PACK);
+        if (!packCache.has(companyId)) setPack(DEFAULT_PACK);
       } else {
         const row = Array.isArray(data) ? data[0] : data;
         if (row && row.industry_id) {
-          setPack({ ...DEFAULT_PACK, ...row } as IndustryPack);
+          const next = { ...DEFAULT_PACK, ...row } as IndustryPack;
+          packCache.set(companyId, next);
+          setPack(next);
         } else {
-          setPack(DEFAULT_PACK);
+          if (!packCache.has(companyId)) setPack(DEFAULT_PACK);
         }
       }
       setLoading(false);
@@ -136,8 +155,12 @@ export function useIndustryPack(companyIdOverride?: string | null) {
  * terminology) — no prompt deltas or tier gating data.
  */
 export function usePublicIndustryPack(companyId: string | null | undefined) {
-  const [pack, setPack] = useState<IndustryPack>(DEFAULT_PACK);
-  const [loading, setLoading] = useState<boolean>(!!companyId);
+  const [pack, setPack] = useState<IndustryPack>(
+    () => (companyId && publicPackCache.get(companyId)) || DEFAULT_PACK
+  );
+  const [loading, setLoading] = useState<boolean>(
+    !!companyId && !publicPackCache.has(companyId)
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -146,19 +169,27 @@ export function usePublicIndustryPack(companyId: string | null | undefined) {
       setLoading(false);
       return;
     }
-    setLoading(true);
+    const cached = publicPackCache.get(companyId);
+    if (cached) {
+      setPack(cached);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     (async () => {
       const { data, error } = await supabase
         .rpc('get_public_industry_pack', { p_company_id: companyId });
       if (cancelled) return;
       if (error || !data) {
-        setPack(DEFAULT_PACK);
+        if (!publicPackCache.has(companyId)) setPack(DEFAULT_PACK);
       } else {
         const row = Array.isArray(data) ? data[0] : data;
         if (row && row.industry_id) {
-          setPack({ ...DEFAULT_PACK, ...(row as unknown as Partial<IndustryPack>) } as IndustryPack);
+          const next = { ...DEFAULT_PACK, ...(row as unknown as Partial<IndustryPack>) } as IndustryPack;
+          publicPackCache.set(companyId, next);
+          setPack(next);
         } else {
-          setPack(DEFAULT_PACK);
+          if (!publicPackCache.has(companyId)) setPack(DEFAULT_PACK);
         }
       }
       setLoading(false);
