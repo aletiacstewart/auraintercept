@@ -13,6 +13,17 @@ const SEVERITY_TONE: Record<Severity, string> = {
   P3: "bg-muted text-muted-foreground border-border",
 };
 
+const STATUS_TONE: Record<string, string> = {
+  open: "bg-orange-500/15 text-orange-500 border-orange-500/40",
+  fixed: "bg-emerald-500/15 text-emerald-500 border-emerald-500/40",
+  false_positive: "bg-muted text-muted-foreground border-border",
+};
+const STATUS_LABEL: Record<string, string> = {
+  open: "open",
+  fixed: "fixed",
+  false_positive: "not an issue",
+};
+
 const ALL_AREAS = Array.from(new Set(AUDIT_FINDINGS.map((f) => f.area))) as Area[];
 
 export default function AuditReport() {
@@ -119,6 +130,11 @@ function FindingCard({ f }: { f: AuditFinding }) {
             <Badge variant="outline" className={SEVERITY_TONE[f.severity]}>{f.severity}</Badge>
             <Badge variant="outline" className="text-xs">{f.area}</Badge>
             <Badge variant="outline" className="text-xs">fix: {f.fixSize}</Badge>
+            {f.status && (
+              <Badge variant="outline" className={`text-xs ${STATUS_TONE[f.status]}`}>
+                {STATUS_LABEL[f.status]}
+              </Badge>
+            )}
           </div>
           <h3 className="font-medium leading-snug">{f.title}</h3>
         </div>
