@@ -29,7 +29,7 @@ export default function KpiDashboardPage() {
             />
           ) : (
             <div className="flex items-center justify-center h-64">
-              <p className="text-white">No company associated with your account.</p>
+              <p className="text-foreground">No company associated with your account.</p>
             </div>
           )}
         </div>
