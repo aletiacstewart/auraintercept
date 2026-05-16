@@ -32,6 +32,9 @@ const INDUSTRIES_BY_TIER: Record<string, Array<{ key: string; label: string }>> 
     { key: 'restaurants', label: 'Restaurants' },
     { key: 'real_estate', label: 'Real Estate' },
     { key: 'personal_assistant', label: 'Personal Assistant' },
+    { key: 'physical_therapy', label: 'Physical Therapy' },
+    { key: 'occupational_therapy', label: 'Occupational Therapy' },
+    { key: 'hospice', label: 'Hospice Care' },
   ],
   boost: [
     { key: 'handyman', label: 'Handyman & Cleaning' },
