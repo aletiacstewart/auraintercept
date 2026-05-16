@@ -897,9 +897,9 @@ export default function Auth() {
                 <div className="space-y-1">
                   {[
                     { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$497',   annualPrice: '$164', annualTotal: '$1,970', savings: '$394',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$697',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,197',   annualPrice: '$831', annualTotal: '$9,970', savings: '$1,994', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$2,197', annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'amber', popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$697',   annualPrice: '$581', annualTotal: '$6,970', savings: '$1,394',   color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,197',   annualPrice: '$998', annualTotal: '$11,970', savings: '$2,394', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$2,197', annualPrice: '$1,831', annualTotal: '$21,970', savings: '$4,394', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -963,7 +963,7 @@ export default function Auth() {
                 )}
                 {isAnnualBilling && !selectedTier && (
                   <p className="text-xs text-center text-green-500">
-                    💰 Billed annually — save up to $3,994/year
+                    💰 Billed annually — save up to $4,394/year
                   </p>
                 )}
 

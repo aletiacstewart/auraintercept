@@ -12,7 +12,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// 4-TIER STRUCTURE: Core ($697), Boost ($697), Pro ($1,197), Elite ($2,197)
+// 4-TIER STRUCTURE: Core ($497), Boost ($697), Pro ($1,197), Elite ($2,197)
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
   // Canonical 4 tiers
   starter: {

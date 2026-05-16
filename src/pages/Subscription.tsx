@@ -75,9 +75,9 @@ const TIERS = [
   {
     id: 'starter',
     name: 'Aura Core',
-    monthlyPrice: '$697',
-    annualPrice: '$1,970',
-    annualSavings: 'Save ~$394',
+    monthlyPrice: '$497',
+    annualPrice: '$4,970',
+    annualSavings: 'Save ~$994',
     description: 'Solo operators, restaurants, single-location',
     popular: false,
     agentCount: 8,
@@ -95,8 +95,8 @@ const TIERS = [
     id: 'connect',
     name: 'Aura Boost',
     monthlyPrice: '$697',
-    annualPrice: '$4,970',
-    annualSavings: 'Save ~$994',
+    annualPrice: '$6,970',
+    annualSavings: 'Save ~$1,394',
     description: 'HVAC, plumbing, field service teams',
     popular: true,
     agentCount: 12,
@@ -114,8 +114,8 @@ const TIERS = [
     id: 'performance',
     name: 'Aura Pro',
     monthlyPrice: '$1,197',
-    annualPrice: '$9,970',
-    annualSavings: 'Save ~$1,994',
+    annualPrice: '$11,970',
+    annualSavings: 'Save ~$2,394',
     description: 'Growing companies with field teams',
     popular: false,
     agentCount: 16,
@@ -132,8 +132,8 @@ const TIERS = [
     id: 'command',
     name: 'Aura Elite',
     monthlyPrice: '$2,197',
-    annualPrice: '$19,970',
-    annualSavings: 'Save ~$3,994',
+    annualPrice: '$21,970',
+    annualSavings: 'Save ~$4,394',
     description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
@@ -255,9 +255,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$697', connect: '$697', performance: '$1,197', command: '$2,197' },
-      { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
+      { name: 'Monthly Price', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$6,970/year', performance: '$11,970/year', command: '$21,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,394', performance: 'Save ~$2,394', command: 'Save ~$4,394' },
       { name: 'Onboarding Fee (one-time)', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
     ],
   },
@@ -785,7 +785,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($697/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($697/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,197/mo) adds campaign, outreach, social media, and industry-specific specialist agents (Diagnostic, Permit & Code, Site Survey, Insurance Claim). Elite ($2,197/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams.
+                Core ($497/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($697/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,197/mo) adds campaign, outreach, social media, and industry-specific specialist agents (Diagnostic, Permit & Code, Site Survey, Insurance Claim). Elite ($2,197/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams.
               </p>
             </div>
             <div>
