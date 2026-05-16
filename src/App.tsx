@@ -60,6 +60,7 @@ import AskAura from "./pages/AskAura";
 import OperationsRouter from "./pages/operations/OperationsRouter";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AIAgentGuide from "./pages/AIAgentGuide";
+import AuditReport from "./pages/AuditReport";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import ContentEngineConsole from "./pages/ContentEngineConsole";
 import Widget from "./pages/Widget";
