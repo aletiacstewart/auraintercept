@@ -243,7 +243,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
                 setIntakeData({}); // reset intake when switching services
               }}
             >
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-background text-foreground border-border">
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
@@ -278,8 +278,8 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal bg-white text-slate-900 border-border",
-                      !date && "text-slate-400"
+                      "w-full justify-start text-left font-normal bg-background text-foreground border-border",
+                      !date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -301,7 +301,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="space-y-2">
               <Label className="text-foreground/70">Time *</Label>
               <Select value={time} onValueChange={setTime}>
-                <SelectTrigger className="bg-white text-slate-900 border-border">
+                <SelectTrigger className="bg-background text-foreground border-border">
                   <SelectValue placeholder="Select time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -319,7 +319,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           <div className="space-y-2">
             <Label className="text-foreground/70">Duration (minutes)</Label>
             <Select value={duration.toString()} onValueChange={(v) => setDuration(Number(v))}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-background text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -337,34 +337,34 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           <div className="space-y-3">
             <Label className="text-foreground/70">Customer Information</Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={`${customerField.label} *`}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                className="pl-10 bg-background text-foreground border-border placeholder:text-muted-foreground"
                 required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Phone"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                  className="pl-10 bg-background text-foreground border-border placeholder:text-muted-foreground"
                   type="tel"
                 />
               </div>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Email"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                  className="pl-10 bg-background text-foreground border-border placeholder:text-muted-foreground"
                   type="email"
                 />
               </div>
@@ -372,12 +372,12 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
 
             {showAddress && (
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={addressField.label}
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
-                  className="pl-10 bg-white text-slate-900 border-border placeholder:text-slate-400"
+                  className="pl-10 bg-background text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
             )}
@@ -388,7 +388,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
             <div className="space-y-2">
               <Label className="text-foreground/70">Assign {getNavLabels(pack!).teamMemberNoun} (optional)</Label>
               <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
-                <SelectTrigger className="bg-white text-slate-900 border-border">
+                <SelectTrigger className="bg-background text-foreground border-border">
                   <SelectValue placeholder="Unassigned" />
                 </SelectTrigger>
                 <SelectContent>
@@ -411,7 +411,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+              className="bg-background text-foreground border-border placeholder:text-muted-foreground"
             />
           </div>
 
