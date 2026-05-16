@@ -1,53 +1,36 @@
 ## Goal
-Add a new **Home Health Care** industry cluster with three verticals — **Physical Therapy**, **Occupational Therapy**, **Hospices** — under the **Core** plan, wired through every place an industry pack is enumerated (signup, switcher hub, demo seeder, admin, templates, prompts).
+Make the new Home Health demos actually appear as LIVE in `/super-switcher`:
+- Physical Therapy
+- Occupational Therapy
+- Hospice Care
 
-## Current model
-- Clusters today (4): `trades`, `outdoor`, `repair`, `booking`. 22 packs live in `industry_template_packs`.
-- Canonical industry IDs registered in `src/lib/industryIdAliases.ts`. Signup dropdown reads from `INDUSTRY_TEMPLATES` (19 entries) in `src/lib/industryTemplates.ts`.
-- Demo seeder lives in `supabase/functions/seed-demo-accounts-v2/index.ts` and `/dashboard/demo-seeder` (Super Switcher → Demo). Tier rotation file lists 18 demo industries grouped by tier.
+## Findings
+- The Home Health industry template packs exist and are active.
+- `/super-switcher` is correctly reading active packs and demo companies.
+- The new demo auth users and demo companies do not exist yet in the live backend.
+- Recent seeder logs show boot activity only, with no evidence that the updated Home Health seed blocks executed.
 
-## Changes
+## Plan
+1. **Deploy the updated demo seeder**
+   - Deploy `seed-demo-accounts-v2` so the live backend is running the current 21-industry code, not the older 18-industry version.
 
-### 1. Database — new cluster + 3 packs
-Migration adds 3 rows to `industry_template_packs` with `cluster = 'home_health'`:
+2. **Run the seeder from the backend tool**
+   - Invoke `seed-demo-accounts-v2` directly as the current platform-admin session.
+   - Capture the response and verify the result includes the three Home Health industries.
 
-| industry_id | label | icon |
-|---|---|---|
-| `physical_therapy` | Physical Therapy | `Activity` |
-| `occupational_therapy` | Occupational Therapy | `HandHelping` |
-| `hospice` | Hospice Care | `HeartPulse` |
+3. **Validate database records**
+   - Confirm these demo companies now exist with `is_demo = true`:
+     - `physical_therapy`
+     - `occupational_therapy`
+     - `hospice`
+   - Confirm the 9 demo users exist:
+     - `physicaltherapyadmin@demo.com`, `physicaltherapyemployee@demo.com`, `physicaltherapycustomer@demo.com`
+     - `occupationaltherapyadmin@demo.com`, `occupationaltherapyemployee@demo.com`, `occupationaltherapycustomer@demo.com`
+     - `hospiceadmin@demo.com`, `hospiceemployee@demo.com`, `hospicecustomer@demo.com`
 
-Each pack:
-- `cluster='home_health'`, `is_active=true`
-- terminology: `{ job: 'Visit', customer: 'Patient', appointment: 'Visit' }`
-- `appointment_rules`: in-home visit, 45–60 min default, recurring schedule support
-- `console_visibility`: `field_ops='route_mode'`, `route_map=true`, `truck_inventory=false`, `dispatch_map=true`
-- `service_catalog`: PT (eval, mobility, post-op), OT (ADL training, home safety eval, hand therapy), Hospice (RN visit, aide visit, bereavement, chaplain)
-- `kb_seed_documents`: HIPAA basics, plan-of-care template, intake & consent
-- `agent_prompt_deltas`: empathetic clinical tone; never give medical advice; HIPAA-aware
-- `quote_template`/`invoice_template`: per-visit billing with CPT code field
+4. **If invocation still fails**
+   - Read the specific seeder error from function logs.
+   - Patch only the failing seeder logic, redeploy, rerun, and revalidate.
 
-### 2. Code touchpoints (frontend)
-- `src/hooks/useIndustryPack.ts` — extend cluster union to include `'home_health'`.
-- `src/pages/admin/IndustryPacksAdmin.tsx` — add `'home_health'` to `CLUSTERS`.
-- `src/lib/industryIdAliases.ts` — add `physical_therapy`, `occupational_therapy`, `hospice` to `CANONICAL_INDUSTRY_IDS`; alias `pt → physical_therapy`, `ot → occupational_therapy`, `hospices → hospice`.
-- `src/lib/industryTemplates.ts` — add 3 `INDUSTRY_TEMPLATES` entries (Instagram/Facebook/LinkedIn/TikTok/SMS copy tuned for in-home clinical services, HIPAA-safe).
-- `src/lib/industryMarketingContent.ts` — add matching marketing blurbs/hero copy for `/for-business` deep links.
-- `src/pages/DemoAccountSeeder.tsx` — append the 3 keys to `INDUSTRIES_BY_TIER.core`.
-
-### 3. Demo seeder edge function
-`supabase/functions/seed-demo-accounts-v2/index.ts`:
-- Add 3 `industry(...)` blocks at the Core tier with realistic services, light inventory (gloves, PPE, mobility aids), 1–2 blog posts, and 1 email campaign each.
-- Update the header comment from "18 industries" → "21 industries" and CORE bucket from 4 → 7.
-- Resulting demo accounts: `physicaltherapyadmin@demo.com` / `…employee@demo.com` / `…customer@demo.com` (same `aidemo*!` password) and same pattern for OT and Hospice.
-
-### 4. Super Switcher hub
-No code change needed — the hub renders whatever the seeder produces. Once new demo companies exist they appear under the Core tier rail automatically.
-
-### 5. Memory updates
-Update `mem://platform-operations/demo-account-registry` (54 → 63 accounts; 18 → 21 industries; 4 → 5 clusters incl. `home_health`) and add a one-line entry to `mem://index.md` Memories list pointing to a new `mem://architecture/home-health-cluster` note describing the cluster, the 3 verticals, HIPAA-aware prompt deltas, and Core-plan placement.
-
-## Out of scope
-- No new operatives or tier changes — Home Health uses standard Core agents.
-- No HIPAA BAA workflow; pack only sets prompt guardrails + terminology.
-- No billing/CPT integration beyond a template field.
+5. **Switcher confirmation**
+   - Verify `/super-switcher` can now mark the three cards as LIVE because it matches `industry_template_packs.industry_id` to `companies.industry_vertical`.

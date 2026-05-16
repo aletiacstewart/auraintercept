@@ -855,12 +855,34 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Cleanup stale tier-based demo users from previous schema
-    await deleteStaleDemoUsers(admin);
+    let requestedIndustryKeys: string[] | null = null;
+    try {
+      const body = await req.json();
+      if (Array.isArray(body?.industries)) {
+        requestedIndustryKeys = body.industries.filter((key: unknown): key is string => typeof key === 'string');
+      }
+    } catch (_) {
+      requestedIndustryKeys = null;
+    }
 
-    // Seed all 18 industries
+    const industriesToSeed = requestedIndustryKeys?.length
+      ? INDUSTRIES.filter((ind) => requestedIndustryKeys!.includes(ind.key))
+      : INDUSTRIES;
+
+    if (requestedIndustryKeys?.length && industriesToSeed.length === 0) {
+      return new Response(JSON.stringify({ error: 'No matching demo industries found' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Cleanup stale tier-based demo users from previous schema
+    if (!requestedIndustryKeys?.length) {
+      await deleteStaleDemoUsers(admin);
+    }
+
+    // Seed all demos, or only the requested industries when repairing a subset.
     const results = [];
-    for (const ind of INDUSTRIES) {
+    for (const ind of industriesToSeed) {
       try {
         const r = await seedIndustry(admin, ind);
         results.push({ ok: true, ...r });
