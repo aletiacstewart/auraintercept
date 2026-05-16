@@ -492,7 +492,7 @@ export default function Subscription() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/20 text-primary">
-                      Free Trial
+                      Live Trial
                     </span>
                     {trialDaysRemaining <= 3 && (
                       <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600">
@@ -501,7 +501,7 @@ export default function Subscription() {
                     )}
                   </div>
                   <p className="font-medium text-card-foreground">
-                    {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining in your free trial
+                    {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining in your 90-day live trial
                   </p>
                   <div className="mt-2 space-y-1">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -535,7 +535,7 @@ export default function Subscription() {
                     }
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Current plan: <span className="font-semibold text-primary capitalize">{currentTier?.replace('_', '-') || 'Free'}</span>
+                    Current plan: <span className="font-semibold text-primary capitalize">{currentTier?.replace('_', '-') || 'None'}</span>
                     {isEmployee && ' • Contact your company administrator for billing questions'}
                   </p>
                 </div>

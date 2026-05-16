@@ -855,7 +855,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-10">
             <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
-              <Building2 className="inline w-4 h-4 mr-2" />START YOUR FREE TRIAL →
+              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 90-DAY LIVE TRIAL →
             </button>
           </div>
         </div>
@@ -915,7 +915,7 @@ export default function Index() {
               Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
-              We offer a free audit to help determine which plans best fit your business needs →
+              We offer a complimentary audit to help determine which plans best fit your business needs →
             </Link>
           </div>
 
@@ -946,7 +946,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">HIPAA-aware intake for Physical Therapy, Occupational Therapy & Hospice</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=starter')}>
-                  Start Free Trial
+                  Start 90-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -978,7 +978,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=connect')}>
-                  <Zap className="w-3 h-3 mr-1" />Start Free Trial
+                  <Zap className="w-3 h-3 mr-1" />Start 90-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1009,7 +1009,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=performance')}>
-                  Start Free Trial
+                  Start 90-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1039,7 +1039,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>
                 </div>
                 <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/auth?mode=company&tab=signup&tier=command')}>
-                  Start Free Trial
+                  Start 90-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1085,19 +1085,6 @@ export default function Index() {
                   We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
                   <span className="font-semibold text-primary">90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
-
-                {/* FCC 10DLC Notice */}
-                <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-4">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
-                      <p className="text-xs text-white leading-relaxed">
-                        Our platform handles A2P 10DLC registration on your behalf. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees:</span> brand registration <span className="font-medium">$4.50 (one-time)</span>, standard campaign fee varies by use case (first 3 months charged upfront), plus a monthly campaign maintenance fee. T-Mobile also charges a <span className="font-medium">$250/month</span> pass-through fee for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-white">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-white">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -1114,6 +1101,19 @@ export default function Index() {
               </p>
             </div>
 
+            {/* SMS System — FCC 10DLC Compliance (moved from Beta panel) */}
+            <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 p-4">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
+                  <p className="text-xs text-white leading-relaxed">
+                    Our platform handles A2P 10DLC registration on your behalf. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees:</span> brand registration <span className="font-medium">$4.50 (one-time)</span>, standard campaign fee varies by use case (first 3 months charged upfront), plus a monthly campaign maintenance fee. T-Mobile also charges a <span className="font-medium">$250/month</span> pass-through fee for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-white">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-white">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Ordered from lowest to highest cost */}
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1122,7 +1122,7 @@ export default function Index() {
                   <span className="font-semibold text-xs text-cyan-400">Google Calendar</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Scheduling Sync (OAuth, bidirectional)</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Free — unlimited, all tiers</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Included — unlimited, all tiers</p>
                 <p className="text-[10px] text-white">Multiple team-member calendars · iCal supported</p>
               </div>
 
@@ -1175,7 +1175,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">Payment Processing</p>
                 <p className="text-[10px] text-white font-medium">2.9% + $0.30 per successful transaction</p>
-                <p className="text-[10px] text-white">Fees paid directly to Stripe — no free tier</p>
+                <p className="text-[10px] text-white">Fees paid directly to Stripe</p>
                 <p className="text-[10px] text-white">Required for Invoice Agent on Elite · Volume discounts &gt;$80K/mo via stripe.com/contact/sales</p>
               </div>
 
@@ -1185,7 +1185,7 @@ export default function Index() {
                   <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Free OAuth — connect your existing pages</p>
+                <p className="text-[10px] text-emerald-400 font-medium">OAuth — connect your existing pages</p>
                 <p className="text-[10px] text-white">Core: manual Bridge posting · Boost/Pro/Elite: automated via Social Scheduler (up to 6 platforms)</p>
                 <p className="text-[10px] text-white">Admin access to your business pages required</p>
               </div>

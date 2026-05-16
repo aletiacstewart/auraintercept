@@ -175,10 +175,10 @@ const sections: FeatureSection[] = [
       { name: 'ElevenLabs (Voice)', starter: 'Your account · billed by ElevenLabs', connect: 'Your account · billed by ElevenLabs', performance: 'Your account · billed by ElevenLabs', command: 'Your account · billed by ElevenLabs' },
       { name: 'A2P 10DLC Compliance', starter: 'Your SignalWire account', connect: 'Your SignalWire account', performance: 'Your SignalWire account', command: 'Your SignalWire account' },
       { name: 'Tavily (AI Research)', starter: 'Your account · billed by Tavily', connect: 'Your account · billed by Tavily', performance: 'Your account · billed by Tavily', command: 'Your account · billed by Tavily' },
-      { name: 'Google Calendar Sync', starter: 'Your Google acct · free OAuth', connect: 'Your Google acct · free OAuth', performance: 'Your Google acct · free OAuth', command: 'Your Google acct · free OAuth' },
+      { name: 'Google Calendar Sync', starter: 'Your Google acct · OAuth', connect: 'Your Google acct · OAuth', performance: 'Your Google acct · OAuth', command: 'Your Google acct · OAuth' },
       { name: 'Stripe (Payments)', starter: 'Your account · billed by Stripe', connect: 'Your account · billed by Stripe', performance: 'Your account · billed by Stripe', command: 'Your account · billed by Stripe' },
       { name: 'Social Media (FB/IG/LI/TikTok)', starter: 'Your business pages · billed by each network', connect: 'Your business pages · billed by each network', performance: 'Your business pages · billed by each network', command: 'Your business pages · billed by each network' },
-      { name: 'Embeddable Chat Widget', starter: 'Free — no usage limits', connect: 'Free — no usage limits', performance: 'Free — no usage limits', command: 'Free — no usage limits' },
+      { name: 'Embeddable Chat Widget', starter: 'Included — no usage limits', connect: 'Included — no usage limits', performance: 'Included — no usage limits', command: 'Included — no usage limits' },
     ],
   },
   {
