@@ -60,7 +60,7 @@ export default function TermsOfService() {
             
             <h3 className="text-xl font-semibold mt-4 mb-3">Billing & Subscription</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Subscription plans range from $697 to $2,197 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
+              <li>Subscription plans range from $497 to $2,197 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
               <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 90-Day Live Trial: Aura Core $497, Aura Boost $697, Aura Pro $1,197, Aura Elite $2,197. Onboarding fees are non-refundable once onboarding is completed.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
