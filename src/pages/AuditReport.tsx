@@ -33,7 +33,7 @@ export default function AuditReport() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SEO title="Platform Audit Report — Aura Intercept" description="Internal audit findings across consoles, agents, help, CSS and integrations." />
+      <SEO path="/dashboard/audit-report" title="Platform Audit Report — Aura Intercept" description="Internal audit findings across consoles, agents, help, CSS and integrations." />
 
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         <header className="space-y-2">
