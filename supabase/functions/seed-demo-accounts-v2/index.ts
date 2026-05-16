@@ -57,8 +57,8 @@ const TIER_COLORS: Record<TierKey, [string, string]> = {
   elite: ['#EF4444', '#F87171'],
 };
 
-// 18 industries — tier mapping curated so each demo showcases the correct console for its industry:
-//   CORE  (4): beauty_wellness, restaurants, real_estate, personal_assistant
+// 21 industries — tier mapping curated so each demo showcases the correct console for its industry:
+//   CORE  (7): beauty_wellness, restaurants, real_estate, personal_assistant, physical_therapy, occupational_therapy, hospice
 //   BOOST (5): handyman, auto_care, appliance_repair, pest_control, fencing
 //   PRO   (4): security_systems, pool_spa, landscape, solar
 //   ELITE (5): hvac, electrical, plumbing, roofing, construction
