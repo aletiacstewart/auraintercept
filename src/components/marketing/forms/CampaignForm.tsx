@@ -297,7 +297,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
               value={formData.campaignType}
               onValueChange={(value) => setFormData(prev => ({ ...prev, campaignType: value }))}
             >
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-background text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -351,7 +351,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                       placeholder="Click generate to create a code"
                       value={formData.referralCode}
                       onChange={(e) => setFormData(prev => ({ ...prev, referralCode: e.target.value.toUpperCase() }))}
-                      className="font-mono text-lg tracking-wider bg-white text-slate-900 border-border placeholder:text-slate-400"
+                      className="font-mono text-lg tracking-wider bg-background text-foreground border-border placeholder:text-muted-foreground"
                     />
                     <Button
                       type="button"
@@ -387,7 +387,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     placeholder="John Smith"
                     value={formData.referrerName}
                     onChange={(e) => setFormData(prev => ({ ...prev, referrerName: e.target.value }))}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -398,7 +398,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                       placeholder="john@email.com"
                       value={formData.referrerEmail}
                       onChange={(e) => setFormData(prev => ({ ...prev, referrerEmail: e.target.value }))}
-                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                      className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
@@ -407,7 +407,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                       placeholder="(555) 123-4567"
                       value={formData.referrerPhone}
                       onChange={(e) => setFormData(prev => ({ ...prev, referrerPhone: e.target.value }))}
-                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                      className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
@@ -421,7 +421,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     placeholder="Jane Doe"
                     value={formData.referredName}
                     onChange={(e) => setFormData(prev => ({ ...prev, referredName: e.target.value }))}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -432,7 +432,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                       placeholder="jane@email.com"
                       value={formData.referredEmail}
                       onChange={(e) => setFormData(prev => ({ ...prev, referredEmail: e.target.value }))}
-                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                      className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
@@ -441,7 +441,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                       placeholder="(555) 987-6543"
                       value={formData.referredPhone}
                       onChange={(e) => setFormData(prev => ({ ...prev, referredPhone: e.target.value }))}
-                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                      className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
@@ -454,7 +454,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     value={formData.rewardType}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, rewardType: value }))}
                   >
-                    <SelectTrigger className="bg-white text-slate-900 border-border">
+                    <SelectTrigger className="bg-background text-foreground border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -471,7 +471,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     placeholder="10"
                     value={formData.rewardValue}
                     onChange={(e) => setFormData(prev => ({ ...prev, rewardValue: e.target.value }))}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
@@ -488,7 +488,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   placeholder="e.g., Q1 Win-Back Campaign"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                  className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -501,7 +501,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   value={formData.inactivePeriod}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, inactivePeriod: value }))}
                 >
-                  <SelectTrigger className="bg-white text-slate-900 border-border">
+                  <SelectTrigger className="bg-background text-foreground border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -530,7 +530,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   placeholder="e.g., Summer Sale 2024"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                  className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -540,7 +540,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   value={formData.targetSegment}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, targetSegment: value }))}
                 >
-                  <SelectTrigger className="bg-white text-slate-900 border-border">
+                  <SelectTrigger className="bg-background text-foreground border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -566,7 +566,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     placeholder="SUMMER20"
                     value={formData.promoCode}
                     onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value.toUpperCase() }))}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -575,7 +575,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     value={formData.discountType}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, discountType: value }))}
                   >
-                    <SelectTrigger className="bg-white text-slate-900 border-border">
+                    <SelectTrigger className="bg-background text-foreground border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -591,7 +591,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     placeholder={formData.discountType === 'percent' ? '20' : '50'}
                     value={formData.discountValue}
                     onChange={(e) => setFormData(prev => ({ ...prev, discountValue: e.target.value }))}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
@@ -613,7 +613,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                  className="bg-white text-slate-900 border-border"
+                  className="bg-background text-foreground border-border"
                 />
               </div>
               <div className="space-y-2">
@@ -625,7 +625,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                  className="bg-white text-slate-900 border-border"
+                  className="bg-background text-foreground border-border"
                 />
               </div>
             </div>
@@ -687,7 +687,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 placeholder="Don't miss our special offer!"
                 value={formData.emailSubject}
                 onChange={(e) => setFormData(prev => ({ ...prev, emailSubject: e.target.value }))}
-                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                className="bg-background text-foreground border-border placeholder:text-muted-foreground"
               />
             </div>
           )}
@@ -718,7 +718,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 value={formData.messageTemplate}
                 onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
                 rows={3}
-                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                className="bg-background text-foreground border-border placeholder:text-muted-foreground"
               />
               <p className="text-xs text-muted-foreground">
                 Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
