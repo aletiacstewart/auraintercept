@@ -95,5 +95,9 @@ export default defineConfig(({ mode }) => ({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  esbuild: {
+    // Strip console.log / console.debug in production builds; keep warn/error.
+    pure: mode === "production" ? ["console.log", "console.debug"] : [],
+  },
 }));
 
