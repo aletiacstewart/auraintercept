@@ -200,8 +200,8 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     status: "open",
     title: "768 raw text-white/bg-black/text-black/bg-white usages",
     observed:
-      "Bulk rg sweep reports 768 hits. Spot-reads on marketing landing pages, FloatingChatWidget, PDF export components and dialog overlays confirm the majority are legitimate (white-on-gradient hero CTAs, on-image badges, PDF/print, tenant-branded chat widget). A targeted Cyber-Sentry violation pass is needed inside `src/pages/ai-consoles/*` and `src/components/dashboard/*` rather than a global codemod, which would break marketing surfaces.",
-    expected: "Scoped pass on app-shell surfaces only; PDF/print/marketing exempt. Run after explicit user scope sign-off.",
+      "Scoped pass on `src/pages/ai-consoles/*` complete — all 7 violations (identical 'No company associated…' empty-state) replaced with `text-foreground`. Marketing pages, PDF/print components, FloatingChatWidget and on-image badges remain intentionally raw. Next scopes (open): `src/components/dashboard/*`, `src/pages/operations/*`, `src/pages/technician/*`.",
+    expected: "Per-scope sweeps; ai-consoles done.",
     files: [{ path: "src/pages/" }, { path: "src/components/" }],
     memoryRef: "mem://style/cyber-sentry-design-standard",
     fixSize: "L",
@@ -213,8 +213,8 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     status: "open",
     title: "107 internal scrollbars outside allowed chat exception",
     observed:
-      "Inventory: 107 `overflow-y-auto` / `overflow-scroll` usages. Spot-check shows the bulk live inside Radix primitives (ScrollArea, Select, Popover, Sheet, Dialog content) which are implicitly allowed. Native admin/console scrollers (e.g. KnowledgeBase doc lists, EmployeeAvailability week grid) need targeted refactor to page-level scroll. Per-console tickets recommended over a sweep.",
-    expected: "Only chat surface (max-h-[60vh]) and Radix primitives may scroll internally. Per-console refactor for native scroll containers.",
+      "ai-consoles scope is clean (0 violations). Remaining 107 hits live elsewhere — bulk inside Radix primitives (allowed), with a few native admin/console scrollers (KnowledgeBase doc lists, EmployeeAvailability week grid) needing per-console refactor.",
+    expected: "ai-consoles done. Open: native scrollers in admin/dashboard/technician scopes.",
     files: [{ path: "src/pages/" }, { path: "src/components/" }],
     memoryRef: "mem://style/cyber-sentry-design-standard",
     fixSize: "L",
