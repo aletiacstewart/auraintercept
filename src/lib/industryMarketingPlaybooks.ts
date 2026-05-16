@@ -58,6 +58,18 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
         command: 'Find this week’s slow windows and draft a flash-offer campaign to fill them, and queue for approval' },
     ],
   },
+  home_health: {
+    tagline: 'Trusted, compassionate patient growth',
+    description: 'AI-powered referral and patient-education campaigns for home health and hospice',
+    campaigns: [
+      { title: 'Referral Partner Outreach', description: 'Stay top-of-mind with referring physicians and discharge planners',
+        command: 'Build a referral-partner outreach campaign to physicians, SNFs, and case managers, and queue for approval' },
+      { title: 'Patient Education Series', description: 'Educate patients and families with HIPAA-safe content',
+        command: 'Build a 4-week patient education content series (fall prevention, home safety, recovery tips) and queue for approval' },
+      { title: 'Family Caregiver Support', description: 'Support families with resources and check-ins',
+        command: 'Build a family caregiver support campaign with resources and gentle check-ins, and queue for approval' },
+    ],
+  },
 };
 
 const OVERRIDES: Record<string, Partial<MarketingPlaybook>> = {

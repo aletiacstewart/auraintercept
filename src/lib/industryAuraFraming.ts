@@ -53,6 +53,12 @@ const BY_CLUSTER: Record<IndustryPack['cluster'], Partial<AuraFraming>> = {
     appointmentsHeader: 'Upcoming Bookings',
     emptyAppointments: 'No bookings on the calendar.',
   },
+  home_health: {
+    jobsHeader: 'Today\u2019s Visits',
+    emptyJobs: 'No patient visits scheduled today.',
+    appointmentsHeader: 'Upcoming Visits',
+    emptyAppointments: 'No upcoming patient visits.',
+  },
 };
 
 const BY_INDUSTRY: Record<string, Partial<AuraFraming>> = {

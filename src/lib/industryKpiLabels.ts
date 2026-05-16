@@ -16,6 +16,7 @@ const CLUSTER: Record<IndustryPack['cluster'], KpiLabelMap> = {
   outdoor: { Appointments: 'Visits Scheduled', Customers: 'Properties' },
   repair:  { Appointments: 'Tickets Open' },
   booking: { Appointments: 'Bookings', Customers: 'Clients', Employees: 'Team' },
+  home_health: { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Therapists' },
 };
 
 const OVERRIDES: Record<string, KpiLabelMap> = {
@@ -65,6 +66,7 @@ const SIMPLE_KPI_BY_CLUSTER: Record<IndustryPack['cluster'], CanonicalKpiTitle[]
   outdoor: ['Appointments', 'Customers', 'Open Quotes', 'Revenue (Month)', 'Leads'],
   repair:  ['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Customers'],
   booking: ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Leads'],
+  home_health: ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Outstanding'],
 };
 
 const SIMPLE_KPI_BY_INDUSTRY: Record<string, CanonicalKpiTitle[]> = {

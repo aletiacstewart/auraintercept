@@ -50,6 +50,14 @@ const CLUSTER: Record<IndustryPack['cluster'], PortalCopy> = {
     portalHeaderLabel: 'Client Portal',
     welcomeSubtitle: 'Book appointments and message your team anytime.',
   },
+  home_health: {
+    title: 'Patient & Family Portal',
+    description: 'AI-powered portal for patients and family caregivers',
+    specialistSubtitle: 'Patient-facing specialists for scheduling, insurance, and care questions.',
+    customerNoun: 'Patient', requestNoun: 'Visit Request',
+    portalHeaderLabel: 'Patient Portal',
+    welcomeSubtitle: 'Schedule visits, message your care team, and view your plan of care.',
+  },
 };
 
 const OVERRIDES: Record<string, Partial<PortalCopy>> = {

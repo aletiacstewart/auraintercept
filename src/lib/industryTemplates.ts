@@ -559,6 +559,82 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
+  physical_therapy: {
+    id: 'physical_therapy',
+    label: 'Physical Therapy',
+    icon: '🧑‍⚕️',
+    color: '#0EA5E9',
+    templates: {
+      instagram: [
+        "🦵 Recovering from surgery or injury? Our licensed physical therapists come to you. #PhysicalTherapy #HomeHealth",
+        "🚶 Better balance, fewer falls. Ask about our in-home PT program for seniors. #FallPrevention",
+        "💪 Personalized plans of care, delivered at home. Move better, live better.",
+      ],
+      facebook: [
+        "Our therapists work with your physician on a personalized plan of care — all from the comfort of your home. Most insurance plans accepted.",
+        "Tip: After surgery, the first 30 days of PT are critical. Call us to start your at-home recovery program.",
+      ],
+      linkedin: [
+        "Evidence-based outpatient and in-home physical therapy. Our team partners with referring physicians, surgeons, and case managers to deliver measurable functional outcomes.",
+      ],
+      tiktok: [
+        "3 simple post-op exercises your PT will love 💪 (always check with your therapist first!)",
+      ],
+      sms: [
+        "Hi {name}, your PT visit is scheduled for {date} at {time}. Reply YES to confirm.",
+        "Reminder: please have a clear walking path ready for your therapist today. Questions? Call us.",
+      ],
+    },
+  },
+  occupational_therapy: {
+    id: 'occupational_therapy',
+    label: 'Occupational Therapy',
+    icon: '🤲',
+    color: '#8B5CF6',
+    templates: {
+      instagram: [
+        "🏠 Home safety check: grab bars, lighting, and clear paths can prevent falls. Ask about our OT home evaluation.",
+        "🍳 Cooking, dressing, bathing — our OTs help patients regain independence in daily life.",
+      ],
+      facebook: [
+        "Occupational therapy helps you (or a loved one) live more independently after illness, injury, or with chronic conditions. We bring OT to your home.",
+      ],
+      linkedin: [
+        "Occupational therapy focused on ADLs, IADLs, hand therapy, and home modifications. Trusted by referring physicians, case managers, and discharge planners.",
+      ],
+      tiktok: [
+        "OT vs PT — what's the difference? Both help you move, OT helps you do.",
+      ],
+      sms: [
+        "Hi {name}, your OT visit is scheduled for {date} at {time}. Reply YES to confirm.",
+        "Reminder: your home safety evaluation is on {date}. We'll review fall risks together.",
+      ],
+    },
+  },
+  hospice: {
+    id: 'hospice',
+    label: 'Hospice Care',
+    icon: '🤍',
+    color: '#64748B',
+    templates: {
+      instagram: [
+        "🤍 Comfort, dignity, and support — for patients and the families who love them.",
+        "Our interdisciplinary team includes nurses, aides, social workers, chaplains, and bereavement counselors.",
+      ],
+      facebook: [
+        "Hospice is about living as fully as possible. Our team provides medical, emotional, and spiritual support wherever you call home.",
+        "Bereavement support continues for 13 months after a loss. You are not alone.",
+      ],
+      linkedin: [
+        "A Medicare-certified hospice agency providing interdisciplinary end-of-life care. We partner with hospitals, SNFs, and physicians for seamless transitions.",
+      ],
+      tiktok: [],
+      sms: [
+        "Hi {name}, your hospice nurse visit is scheduled for {date} at {time}. Please call us anytime.",
+        "Our 24/7 hospice line is always available. Call us anytime, day or night.",
+      ],
+    },
+  },
 };
 
 export const INDUSTRY_LIST = Object.values(INDUSTRY_TEMPLATES);

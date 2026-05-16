@@ -97,6 +97,27 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       command: 'Find all outstanding invoices and pending commissions, draft friendly reminders, and show them for my approval',
     },
   ],
+
+  home_health: [
+    {
+      id: 'referral-to-visit', label: 'Referral → Visit → Plan of Care',
+      description: 'Turn a new referral into a scheduled visit and start a plan of care',
+      icon: Home, steps: ['Referral', 'Verify Insurance', 'Schedule Visit', 'Open POC'],
+      command: 'Take my newest referral: verify insurance, schedule the first visit, and open a plan of care',
+    },
+    {
+      id: 'visit-route', label: 'Build Today\u2019s Visit Route',
+      description: 'Sequence patient visits for the day and notify therapists',
+      icon: Phone, steps: ['Pull Visits', 'Optimize Route', 'Notify Therapists'],
+      command: 'Build today\u2019s optimized visit route and send each therapist their stops',
+    },
+    {
+      id: 'statement-followup', label: 'Statement / Copay Follow-Up',
+      description: 'Chase outstanding patient balances after insurance adjudication',
+      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
+      command: 'Find all outstanding patient statements, draft compassionate reminders, and show them for my approval',
+    },
+  ],
 };
 
 /** Resolve workflow chains for the given pack, applying terminology substitutions. */
