@@ -785,7 +785,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       >
         {!isUser && (
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
-            <Bot className="w-4 h-4 text-white" />
+            <Bot className="w-4 h-4 text-muted-foreground" />
           </div>
         )}
         <div
@@ -1091,7 +1091,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             <div className="mb-3 p-2.5 rounded-lg" style={{ background: 'rgba(0,229,255,0.05)', border: '1px solid rgba(0,229,255,0.15)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForReschedule.status))} />
-                <span className="font-medium text-sm text-white">{selectedJobForReschedule.appointments?.customer_name}</span>
+                <span className="font-medium text-sm text-foreground">{selectedJobForReschedule.appointments?.customer_name}</span>
                 <Badge className="text-[9px] px-1.5 py-0" style={{ background: 'rgba(255,255,255,0.08)', color: '#FFFFFF', border: 'none' }}>
                   {selectedJobForReschedule.status.replace('_', ' ')}
                 </Badge>
@@ -1138,7 +1138,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               <Loader2 className="h-5 w-5 animate-spin text-white" />
             </div>
           ) : filteredJobs.length === 0 ? (
-            <div className="text-center py-4 text-sm text-white">
+            <div className="text-center py-4 text-sm text-foreground">
               {selectorConfig.emptyMessage}
             </div>
           ) : (
@@ -1173,7 +1173,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                             {job.status.replace('_', ' ')}
                           </Badge>
                         </div>
-                        <p className="text-xs text-white truncate">
+                        <p className="text-xs text-muted-foreground truncate">
                           {appointment?.service_type || 'Service'}
                         </p>
                         {address ? (
@@ -1242,15 +1242,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <h3 className="font-semibold text-foreground">Update ETA</h3>
-              <p className="text-sm text-white">Select a {jobNounLower} to update the estimated arrival time</p>
+              <p className="text-sm text-foreground">Select a {jobNounLower} to update the estimated arrival time</p>
             </div>
 
             {jobsLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-white" />
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             ) : assignedJobs.filter(j => ['accepted', 'en_route'].includes(j.status)).length === 0 ? (
-              <div className="text-center py-8 text-sm text-white">
+              <div className="text-center py-8 text-sm text-foreground">
                 No {jobNounLower}s currently en route or accepted
               </div>
             ) : (
@@ -1282,7 +1282,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                                 {job.status.replace('_', ' ')}
                               </Badge>
                             </div>
-                            <p className="text-xs text-white truncate">
+                            <p className="text-xs text-muted-foreground truncate">
                               {appointment?.service_type || serviceConfig.serviceNoun}
                             </p>
                             {address && (
@@ -1353,7 +1353,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               <Phone className="w-8 h-8 text-white" />
             </div>
             <h3 className="font-semibold text-foreground mb-1">{serviceConfig.contactTeamLabel}</h3>
-            <p className="text-sm text-white max-w-xs mx-auto mb-6">
+            <p className="text-sm text-foreground max-w-xs mx-auto mb-6">
               {serviceConfig.contactTeamDescription}
             </p>
             {companyData?.dispatch_phone ? (
@@ -1369,7 +1369,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 {serviceConfig.contactTeamLabel.replace(/^Contact /, 'Call ')}
               </Button>
             ) : (
-              <p className="text-sm text-white">No team phone number configured</p>
+              <p className="text-sm text-foreground">No team phone number configured</p>
             )}
           </div>
         </div>

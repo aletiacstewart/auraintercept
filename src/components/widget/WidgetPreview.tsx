@@ -36,8 +36,8 @@ export const WidgetPreview = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(2,8,18,0.97)', border: '1px solid rgba(0,229,255,0.15)', borderTop: '3px solid rgba(0,229,255,0.6)' }}>
         <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(0,229,255,0.1)' }}>
           <div>
-            <h2 className="text-lg font-bold text-white/90">Live Preview</h2>
-            <p className="text-white/40 text-sm">
+            <h2 className="text-lg font-bold text-foreground">Live Preview</h2>
+            <p className="text-muted-foreground text-sm">
               Test your AI Agent Virtual Assistant before adding it to your website
             </p>
           </div>
@@ -62,7 +62,7 @@ export const WidgetPreview = forwardRef<HTMLDivElement>((_, ref) => {
                 allow="microphone"
               />
             ) : (
-              <div className="flex items-center justify-center h-[600px] text-white/40">
+              <div className="flex items-center justify-center h-[600px] text-muted-foreground">
                 Loading preview...
               </div>
             )}

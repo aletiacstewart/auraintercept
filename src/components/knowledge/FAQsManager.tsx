@@ -244,7 +244,7 @@ export function FAQsManager() {
             <HelpCircle className="w-5 h-5" />
             FAQs
           </CardTitle>
-          <CardDescription className="text-white/70">Common questions your AI can answer</CardDescription>
+          <CardDescription className="text-muted-foreground">Common questions your AI can answer</CardDescription>
         </div>
         <div className="flex gap-2">
           <input

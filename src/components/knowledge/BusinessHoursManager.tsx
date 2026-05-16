@@ -568,7 +568,7 @@ export function BusinessHoursManager() {
                   className="gap-1 py-1 px-2"
                 >
                   {format(new Date(closure.closure_date + 'T00:00:00'), 'MMM d, yyyy')}
-                  {closure.name && <span className="text-white/60">- {closure.name}</span>}
+                  {closure.name && <span className="text-muted-foreground">- {closure.name}</span>}
                   <button
                     onClick={() => closure.id && removeClosureMutation.mutate(closure.id)}
                     className="ml-1 hover:text-destructive"
@@ -594,7 +594,7 @@ export function BusinessHoursManager() {
               <Clock className="w-5 h-5" />
               Business Hours
             </CardTitle>
-            <CardDescription className="text-white/70">Set your operating hours for different scenarios</CardDescription>
+            <CardDescription className="text-muted-foreground">Set your operating hours for different scenarios</CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-muted-foreground" />
