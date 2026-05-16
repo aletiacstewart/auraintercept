@@ -73,7 +73,7 @@ export function generateAppointmentICS(appointment: {
   const endDate = new Date(startDate.getTime() + (appointment.duration_minutes || 60) * 60 * 1000);
   const createdDate = appointment.created_at ? new Date(appointment.created_at) : new Date();
 
-  lines.push(`UID:${appointment.id}@lovable.app`);
+  lines.push(`UID:${appointment.id}@auraintercept.ai`);
   lines.push(`DTSTAMP:${formatDateToICS(createdDate)}`);
   lines.push(`DTSTART:${formatDateToICS(startDate)}`);
   lines.push(`DTEND:${formatDateToICS(endDate)}`);
