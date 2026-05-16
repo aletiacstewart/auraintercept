@@ -1085,6 +1085,12 @@ export default function Index() {
                   We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
                   <span className="font-semibold text-primary">90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
+
+                <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3">
+                  <p className="text-xs text-white leading-relaxed">
+                    <span className="font-semibold text-warning">Heads up:</span> while we're in Beta, documents, content, and data inside help menus, guides, how-to's, and tutorials may not be 100% accurate or up to date. Please refer to the <span className="font-semibold text-primary">Homepage content only</span> for the most current information on pricing, plans, trials, and 3rd-party requirements.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
