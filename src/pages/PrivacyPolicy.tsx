@@ -245,14 +245,16 @@ export default function PrivacyPolicy() {
           <section className="border-t border-border pt-8 mt-12">
             <h2 className="text-2xl font-semibold mb-4">14. Platform Privacy Policy</h2>
             <p>
-              This application is hosted on Lovable Cloud (powered by Supabase). For information about how the underlying platform handles your data, please review the{' '}
-              <a 
-                href="https://lovable.dev/privacy" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              Aura Intercept operates on a managed cloud backend. Infrastructure
+              providers process data strictly as sub-processors under our
+              instructions, and never use Customer Data for their own purposes.
+              For questions about sub-processors or to request our current
+              vendor list, contact{' '}
+              <a
+                href="mailto:privacy@auraintercept.ai"
                 className="text-primary hover:underline"
               >
-                Lovable Privacy Policy
+                privacy@auraintercept.ai
               </a>.
             </p>
           </section>

@@ -837,7 +837,7 @@ export default function Auth() {
                       <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, control centers, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
+                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                 </div>
                 </div>
