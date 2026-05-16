@@ -130,7 +130,9 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
               <p className="text-[10px] text-accent/80">Aura Intercept</p>
             </div>
           </div>
-          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <div className="flex items-center gap-2">
+            <SuperHubInlineButton />
+            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-sidebar-foreground hover:bg-sidebar-accent">
                 <Menu className="h-5 w-5" />
