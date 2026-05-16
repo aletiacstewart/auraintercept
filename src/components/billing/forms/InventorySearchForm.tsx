@@ -101,11 +101,11 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or SKU..."
-              className="pl-9 h-9 text-sm bg-white text-slate-900 border-border placeholder:text-slate-400"
+              className="pl-9 h-9 text-sm bg-background text-foreground border-border placeholder:text-muted-foreground"
             />
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-9 text-sm bg-white text-slate-900 border-border">
+            <SelectTrigger className="h-9 text-sm bg-background text-foreground border-border">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -118,7 +118,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
         </div>
 
         {/* Results */}
-        <div className="border border-border rounded-lg max-h-80 overflow-y-auto bg-white">
+        <div className="border border-border rounded-lg max-h-80 overflow-y-auto bg-background">
           {isLoading ? (
             <div className="p-4 text-center text-sm text-foreground/70">Loading...</div>
           ) : inventoryItems.length === 0 ? (
