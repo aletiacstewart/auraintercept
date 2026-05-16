@@ -855,7 +855,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-10">
             <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
-              <Building2 className="inline w-4 h-4 mr-2" />START YOUR FREE TRIAL →
+              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 90-DAY LIVE TRIAL →
             </button>
           </div>
         </div>
