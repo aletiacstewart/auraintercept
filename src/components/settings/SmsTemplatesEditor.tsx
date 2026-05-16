@@ -276,7 +276,7 @@ export function SmsTemplatesEditor() {
                     onChange={(e) => updateField(e.target.value)}
                     placeholder="Enter SMS message..."
                     rows={4}
-                    className="font-mono text-sm bg-white text-slate-900"
+                    className="font-mono text-sm bg-background text-foreground"
                   />
                 </div>
               </div>

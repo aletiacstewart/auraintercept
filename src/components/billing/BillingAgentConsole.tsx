@@ -811,7 +811,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
         <div className="grid grid-cols-2 gap-3">
           <Card>
             <CardHeader className="pb-2 p-3">
-              <CardTitle className="text-xs font-medium text-white">Total Invoices</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground">Total Invoices</CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
               <div className="text-xl font-bold">{allInvoices.length}</div>
@@ -819,7 +819,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
           </Card>
           <Card>
             <CardHeader className="pb-2 p-3">
-              <CardTitle className="text-xs font-medium text-white">Total Paid</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground">Total Paid</CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
               <div className="text-xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
@@ -827,7 +827,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
           </Card>
           <Card>
             <CardHeader className="pb-2 p-3">
-              <CardTitle className="text-xs font-medium text-white">Outstanding</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground">Outstanding</CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
               <div className="text-xl font-bold">${totalOutstanding.toFixed(2)}</div>
@@ -835,7 +835,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
           </Card>
           <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
             <CardHeader className="pb-2 p-3">
-              <CardTitle className="text-xs font-medium text-white">Overdue</CardTitle>
+              <CardTitle className="text-xs font-medium text-muted-foreground">Overdue</CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
               <div className="text-xl font-bold text-destructive">{overdueCount}</div>

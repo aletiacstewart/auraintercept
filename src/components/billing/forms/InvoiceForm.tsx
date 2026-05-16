@@ -519,12 +519,12 @@ export function InvoiceForm({
                       >
                         {isSelected ? <Check className="h-3 w-3" /> : null}
                       </span>
-                      <User className="h-3.5 w-3.5 text-slate-500" />
-                      <span className="font-medium text-slate-900">{apt.customer_name}</span>
+                      <User className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="font-medium text-foreground">{apt.customer_name}</span>
                     </div>
                     <span className="text-xs text-green-600 font-medium">{apt.status}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 ml-6">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1 ml-6">
                     <Calendar className="h-3 w-3" />
                     {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
                   </div>
@@ -533,7 +533,7 @@ export function InvoiceForm({
             })}
           </div>
         )}
-        {searchingJobs && <p className="text-xs text-slate-500">Searching...</p>}
+        {searchingJobs && <p className="text-xs text-muted-foreground">Searching...</p>}
       </div>
 
       <div className="space-y-3">
