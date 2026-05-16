@@ -327,7 +327,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                 placeholder="e.g., High Value Customers"
                 value={segmentName}
                 onChange={(e) => setSegmentName(e.target.value)}
-                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                className="bg-background text-foreground border-border placeholder:text-muted-foreground"
               />
             </div>
 
@@ -346,7 +346,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     Last Service Within
                   </Label>
                   <Select value={lastServiceDays} onValueChange={setLastServiceDays}>
-                    <SelectTrigger className="bg-white text-slate-900 border-border">
+                    <SelectTrigger className="bg-background text-foreground border-border">
                       <SelectValue placeholder="Select period" />
                     </SelectTrigger>
                     <SelectContent>
@@ -365,7 +365,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     Customer Status
                   </Label>
                   <Select value={customerStatus} onValueChange={setCustomerStatus}>
-                    <SelectTrigger className="bg-white text-slate-900 border-border">
+                    <SelectTrigger className="bg-background text-foreground border-border">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -389,7 +389,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     placeholder="0"
                     value={minSpend}
                     onChange={(e) => setMinSpend(e.target.value)}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -402,7 +402,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     placeholder="No limit"
                     value={maxSpend}
                     onChange={(e) => setMaxSpend(e.target.value)}
-                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+                    className="bg-background text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
