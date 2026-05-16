@@ -1,20 +1,25 @@
 ## Goal
+Make `superadmin@auraintercept.ai` always land on the Super Switcher hub (`/super-switcher`) instead of the platform admin dashboard, regardless of how they arrive (login, direct nav to `/dashboard`, or refresh).
 
-Regenerate `/mnt/documents/platform-audit-2026-05-16.md` from the now-current `src/lib/auditFindings.ts` so the markdown artifact matches the live `/audit` page (zero open items).
+## Current behavior
+- `Auth.tsx` login already redirects this email to `/super-switcher` ✅
+- But visiting `/` → "Go to dashboard", `/dashboard`, or refreshing on `/dashboard` renders `PlatformAdminDashboard` because `Dashboard.tsx` only branches on `userRole`, not on this specific super-admin identity.
 
-## Steps
+## Change
+In `src/pages/Dashboard.tsx`, add a redirect effect: if the signed-in user's email equals `SUPER_ADMIN_EMAIL` (`superadmin@auraintercept.ai`), `navigate('/super-switcher', { replace: true })` and render nothing.
 
-1. Write a small Node/Bun script (`/tmp/render-audit.ts`) that:
-   - Imports `AUDIT_FINDINGS` + `AUDIT_DATE` from `src/lib/auditFindings.ts`
-   - Groups findings by `status` (open → fixed → false_positive) then by severity
-   - Renders a Markdown report with: header, summary counts, per-finding sections (severity, area, title, observed, expected, files, memoryRef, fixSize)
+```ts
+import { SUPER_ADMIN_EMAIL } from '@/hooks/useSuperSwitcher';
+...
+useEffect(() => {
+  if (!loading && user?.email?.toLowerCase() === SUPER_ADMIN_EMAIL) {
+    navigate('/super-switcher', { replace: true });
+  }
+}, [loading, user, navigate]);
+```
 
-2. Run it with `bun run /tmp/render-audit.ts > /mnt/documents/platform-audit-2026-05-16.md`.
-
-3. Verify by counting `🟠 open` occurrences in the new markdown — must be zero.
-
-4. Emit the updated `<presentation-artifact>` so the user can re-open it.
+Place it next to the existing technician-redirect effect, and short-circuit `renderDashboard` for that email so the platform dashboard never flashes.
 
 ## Out of scope
-
-- No source-code changes. The data is already correct in `auditFindings.ts`; this is purely a re-export of the same data to a markdown file.
+- Other platform_admins (e.g. `ai@auraintercept.ai`) keep their normal dashboard.
+- No changes to `Auth.tsx` (already correct) or to route guards.
