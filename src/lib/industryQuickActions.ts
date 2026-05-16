@@ -114,6 +114,24 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
       route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
   ],
+
+  home_health: [
+    { key: 'scheduleVisit', icon: CalendarPlus, label: 'Schedule a patient visit',
+      description: 'Opens the visit scheduler pre-filled for the next available slot.',
+      route: '/dashboard/appointments?new=1' },
+    { key: 'newReferrals', icon: Phone, label: 'New referrals to follow up',
+      description: 'Shows referrals from the last 24h and drafts personalized intake messages.',
+      route: '/dashboard/leads' },
+    { key: 'todaysRoute', icon: Map, label: "Open today's visit route",
+      description: 'Shows today\u2019s patient visits across the team.',
+      route: '/dashboard/appointments' },
+    { key: 'overdueStatements', icon: FileText, label: 'Chase overdue statements',
+      description: 'Jumps to patient statements filtered to overdue.',
+      route: '/dashboard/invoices?status=overdue' },
+    { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
+      description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
+      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+  ],
 };
 
 /* ----------------------------------------------------------------------------
