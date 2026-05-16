@@ -111,7 +111,7 @@ Aura Intercept is an AI-powered business automation platform with 24 Smart AI Ag
 - **Aura Core ($197/mo)**: 8 agents, 3 consoles, 10 employees — Solo operators, restaurants, single-location
 - **Aura Boost ($497/mo)**: 12 agents, 5 consoles, 25 employees — HVAC, plumbing, field service
 - **Aura Pro ($997/mo)**: 16 agents, 5 consoles, 50 employees — Growing companies, industry specialist agents
-- **Aura Elite ($1,997/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, Unlimited employees — Full suite, enterprise
+- **Aura Elite ($1,997/mo)**: All 24 agents, all 7 consoles + AI Operatives Hub, unlimited employees — full Aura suite
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup

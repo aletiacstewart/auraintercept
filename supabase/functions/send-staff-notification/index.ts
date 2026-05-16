@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { sendGuardedEmail } from "../_shared/email-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -154,49 +155,48 @@ serve(async (req) => {
       }
     }
 
-    // 3. Send email notifications
+    // 3. Send email notifications via the shared guard so quotas aggregate per-company
+    let emailsActuallySent = 0;
     if (resendApiKey && emailRecipients.length > 0) {
-      // Get company info for branding
       const { data: company } = await supabase
         .from('companies')
         .select('name')
         .eq('id', companyId)
         .single();
-
       const companyName = company?.name || 'Your Company';
 
-      try {
-        const emailResponse = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${resendApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: `${companyName} Alerts <onboarding@resend.dev>`,
-            to: emailRecipients,
-            subject: `[Alert] ${title}`,
-            html: `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #1a1a1a;">${title}</h2>
-                <p style="color: #4a4a4a; line-height: 1.6;">${message}</p>
-                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-                <p style="color: #888; font-size: 12px;">
-                  This is an automated alert from ${companyName}. 
-                  You can manage your notification preferences in the dashboard.
-                </p>
-              </div>
-            `,
-          }),
+      // Critical alerts bypass the daily cap (missed call, job update can be safety-relevant).
+      const isCritical = notificationType === 'missed_call' || notificationType === 'job_update';
+
+      const html = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1a1a1a;">${title}</h2>
+          <p style="color: #4a4a4a; line-height: 1.6;">${message}</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="color: #888; font-size: 12px;">
+            This is an automated alert from ${companyName}.
+            You can manage your notification preferences in the dashboard.
+          </p>
+        </div>
+      `;
+
+      for (const recipient of emailRecipients) {
+        const result = await sendGuardedEmail({
+          supabase,
+          resendApiKey,
+          companyId,
+          to: recipient,
+          from: `${companyName} Alerts <onboarding@resend.dev>`,
+          subject: `[Alert] ${title}`,
+          html,
+          template: `staff_${notificationType}`,
+          priority: isCritical ? 'critical' : 'normal',
         });
-        
-        if (emailResponse.ok) {
-          console.log(`Email sent to ${emailRecipients.length} recipients`);
+        if (result.sent) {
+          emailsActuallySent += 1;
         } else {
-          console.error('Email send failed:', await emailResponse.text());
+          console.warn(`Staff email skipped (${recipient}): ${result.reason}`);
         }
-      } catch (emailError) {
-        console.error('Error sending email:', emailError);
       }
     }
 
@@ -247,10 +247,11 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         notificationId: notification.id,
-        emailsSent: emailRecipients.length,
+        emailsSent: emailsActuallySent,
+        emailsRequested: emailRecipients.length,
         smsSent: smsRecipients.length,
       }),
       { 
