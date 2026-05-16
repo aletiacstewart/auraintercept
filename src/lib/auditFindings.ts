@@ -200,8 +200,8 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     status: "open",
     title: "768 raw text-white/bg-black/text-black/bg-white usages",
     observed:
-      "Scoped passes complete: `src/pages/ai-consoles/*` (7→0) and `src/components/dashboard/*` (32→2). Remaining 2 dashboard hits live in TechnicianDashboardLayout's cyan-gradient PWA install banner — legitimate (white text on saturated gradient). `text-white/70` was migrated to `text-muted-foreground`, plain `text-white` to `text-foreground`. Marketing pages, PDF/print, FloatingChatWidget and on-image badges intentionally raw. Next scopes (open): `src/pages/operations/*`, `src/pages/technician/*`, `src/components/agents/*`.",
-    expected: "Per-scope sweeps; ai-consoles + dashboard done.",
+      "Scoped passes complete: ai-consoles (7→0), components/dashboard (32→2 intentional), pages/operations (0), pages/technician (17→4 intentional). All remaining hits are on saturated gradients (cyan PWA install banner, purple AI bot icon), green active-state buttons, or the QR-code white card — legitimate per Cyber-Sentry exception for chromatic surfaces. Next scopes (open): components/agents, components/marketing, components/customer-portal.",
+    expected: "Per-scope sweeps; ai-consoles + dashboard + operations + technician done.",
     files: [{ path: "src/pages/" }, { path: "src/components/" }],
     memoryRef: "mem://style/cyber-sentry-design-standard",
     fixSize: "L",
