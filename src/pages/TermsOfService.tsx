@@ -93,7 +93,7 @@ export default function TermsOfService() {
               <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 60-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
               <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable once onboarding has been completed.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
-              <li><strong className="text-foreground">Overage Charges:</strong> End-of-month overage charges are non-refundable.</li>
+              <li><strong className="text-foreground">Third-Party Provider Charges:</strong> Charges billed directly by SignalWire, ElevenLabs, Resend, Tavily, Stripe, or any other provider are governed by that provider's terms and are not refundable by Aura Intercept.</li>
             </ul>
           </section>
 
