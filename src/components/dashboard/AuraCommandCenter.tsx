@@ -101,7 +101,7 @@ export function AuraCommandCenter() {
             <Button
               size="icon"
               variant="ghost"
-              className="h-12 w-12 shrink-0 text-white hover:text-primary"
+              className="h-12 w-12 shrink-0 text-foreground hover:text-primary"
               onClick={toggleVoiceMode}
               aria-label={isListening ? t('command.voiceStop') : t('command.voiceStart')}
             >
@@ -126,7 +126,7 @@ export function AuraCommandCenter() {
           <h3 className="text-sm font-semibold text-foreground">
             {t('suggestions.sectionTitle')}
           </h3>
-          <p className="text-xs text-white">
+          <p className="text-xs text-foreground">
             {t('suggestions.sectionHint')}
           </p>
         </div>
@@ -154,7 +154,7 @@ export function AuraCommandCenter() {
                   <p className="text-sm font-medium text-card-foreground leading-tight">
                     {cmd.label}
                   </p>
-                  <p className="text-xs text-white leading-snug">
+                  <p className="text-xs text-foreground leading-snug">
                     {cmd.description}
                   </p>
                 </div>
