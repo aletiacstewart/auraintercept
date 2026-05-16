@@ -754,7 +754,7 @@ const TIERS = [
   {
     name: SUBSCRIPTION_TIERS.aura_core?.name ?? 'Aura Core',
     price: `$${(SUBSCRIPTION_TIERS.aura_core?.price ?? 197).toLocaleString()}/month`,
-    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_core?.annualPrice ?? 6970).toLocaleString()}/year`,
+    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_core?.annualPrice ?? 4970).toLocaleString()}/year`,
     consoles: [`${SUBSCRIPTION_TIERS.aura_core?.consoles ?? 3} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_core?.operatives ?? 8,
     agents: ['AI Receptionist (Triage)', 'Booking Agent', 'Follow-Up Agent', 'Review Agent', 'Creative Content Agent', 'Web Presence Agent', 'Lead Agent', 'Marketing Agent'],
