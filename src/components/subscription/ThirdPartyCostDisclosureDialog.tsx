@@ -29,7 +29,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Shield className="h-4 w-4 text-amber-500" />,
     name: 'A2P 10DLC Registration',
     purpose: 'SMS Compliance — required by carriers to send business SMS',
-    estimatedCost: 'Customer pass-through · $4.50 brand fee + variable campaign fees (3 mo upfront) · $250/mo T-Mobile inactive-campaign fee',
+    estimatedCost: 'Your SignalWire account · billed by SignalWire to your card · $4.50 brand fee + variable campaign fees (3 mo upfront) · $250/mo T-Mobile inactive-campaign fee',
     required: true,
     learnMoreUrl: 'https://signalwire.com/resources/guides/a2p-10dlc-overview',
   },
@@ -38,7 +38,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Phone className="h-4 w-4 text-cyan-400" />,
     name: 'SignalWire',
     purpose: 'SMS & Voice Calls (Talk to Aura + Message Aura)',
-    estimatedCost: 'Bundled · base: 1 number + included voice/SMS minutes per tier',
+    estimatedCost: 'Your own SignalWire account required · valid credit card on file · billed directly by SignalWire, separate from your Aura plan',
     required: true,
     learnMoreUrl: 'https://signalwire.com/pricing',
   },
@@ -47,7 +47,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Zap className="h-4 w-4 text-purple-500" />,
     name: 'ElevenLabs',
     purpose: 'AI Voice Synthesis (Voice Conversations)',
-    estimatedCost: 'Bundled · base: ~10k chars/mo (≈10 min TTS) per tier',
+    estimatedCost: 'Your own ElevenLabs account required · valid credit card on file · billed directly by ElevenLabs, separate from your Aura plan',
     required: true,
     learnMoreUrl: 'https://elevenlabs.io/pricing',
   },
@@ -56,7 +56,7 @@ const COST_ITEMS: CostItem[] = [
     icon: <Mail className="h-4 w-4 text-green-500" />,
     name: 'Resend',
     purpose: 'Transactional Email Notifications',
-    estimatedCost: 'Bundled · 3,000 emails/mo per tier · overage $0.90 per 1,000',
+    estimatedCost: 'Your own Resend account required · valid credit card on file · billed directly by Resend, separate from your Aura plan',
     required: true,
     learnMoreUrl: 'https://resend.com/pricing',
   },
@@ -64,9 +64,9 @@ const COST_ITEMS: CostItem[] = [
     id: 'stripe',
     icon: <CreditCard className="h-4 w-4 text-cyan-400" />,
     name: 'Stripe',
-    purpose: 'Invoice Payments (Elite tier)',
-    estimatedCost: '2.9% + $0.30 per transaction',
-    required: false,
+    purpose: 'Invoice & Payment Processing (required if collecting customer payments)',
+    estimatedCost: 'Your own Stripe account required · valid credit card / payout account · 2.9% + $0.30/txn billed directly by Stripe',
+    required: true,
     learnMoreUrl: 'https://stripe.com/pricing',
   },
   {
@@ -74,16 +74,16 @@ const COST_ITEMS: CostItem[] = [
     icon: <Search className="h-4 w-4 text-amber-500" />,
     name: 'Tavily AI Research',
     purpose: 'AI Web Research for Enhanced Content',
-    estimatedCost: 'Bundled · 1,000 credits/mo per tier · overage $0.008 per credit',
-    required: false,
+    estimatedCost: 'Your own Tavily account required · valid credit card on file · billed directly by Tavily, separate from your Aura plan',
+    required: true,
     learnMoreUrl: 'https://tavily.com/#pricing',
   },
   {
     id: 'social',
     icon: <Share2 className="h-4 w-4 text-pink-500" />,
     name: 'Social Media APIs',
-    purpose: 'Social Posting (Pro+ tiers)',
-    estimatedCost: 'Free with your own API credentials',
+    purpose: 'Social Posting (required only if using social publishing)',
+    estimatedCost: 'Your own business pages + API credentials · any platform fees billed directly by each network',
     required: false,
   },
 ];
@@ -116,13 +116,13 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            Included Services & Plan Limits — {tierName}
+            Required 3rd-Party Accounts — {tierName}
           </DialogTitle>
           <DialogDescription>
-            SMS, voice, email, and AI research are <strong>bundled in your {tierName} plan</strong> at
-            the base limits listed below — no separate vendor bills. If usage exceeds these base limits,
-            the overage is invoiced at the end of the month in addition to your plan fee. 3rd-party
-            vendor pricing may change at any time and could affect overage rates.
+            Your <strong>{tierName} plan covers the Aura platform only</strong>. For compliance and
+            account ownership, you must hold your own account at each provider below, with a valid
+            credit card on file. Each provider invoices you <strong>directly and separately</strong> from
+            your Aura plan fee. Provider pricing is set by each vendor and may change at any time.
           </DialogDescription>
         </DialogHeader>
 
@@ -204,7 +204,7 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
                 <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">{conciergePriceLabel} flat fee</Badge>
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
-                We configure all 3rd-party integrations (SignalWire, ElevenLabs, Resend, A2P 10DLC) for you. Includes onboarding call + AI knowledge base setup.
+                We create and configure each 3rd-party account (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) on your behalf using your login and credit card. You remain the account owner and billing contact at every provider. Includes onboarding call + AI knowledge base setup.
               </p>
               <p className="text-[10px] text-muted-foreground/70 mt-1 italic">
                 ✦ You can also purchase Concierge Onboarding later from your dashboard if you decide you need it.
@@ -215,11 +215,12 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
 
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 space-y-1.5">
           <p>
-            <strong>Plan limits apply.</strong> Each item above lists the base allowance bundled in your plan.
-            Usage above those limits is metered and billed at the end of the month in addition to your plan fee.
+            <strong>Billed separately by each provider.</strong> Aura does not resell, mark up, or
+            invoice 3rd-party usage. You will receive invoices directly from each provider on the card
+            you place on file with them, in addition to your Aura plan fee.
           </p>
           <p className="italic text-[10px] opacity-80">
-            3rd-party vendor pricing is set by each provider (SignalWire, ElevenLabs, Resend, Tavily) and may change at any time, which could affect overage rates.
+            3rd-party vendor pricing is set by each provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe) and may change at any time.
           </p>
         </div>
 

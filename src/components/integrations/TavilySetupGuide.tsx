@@ -114,14 +114,14 @@ export function TavilySetupGuide() {
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
                 <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-cyan-500 text-white border-cyan-500">4</Badge>
-                Bundled Allowance (1,000 credits/month)
+                Your Tavily Account & Billing
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Bundled in your plan: 1,000 credits/month</span>
+                  <span className="font-medium">Your own Tavily account · valid credit card on file · billed directly by Tavily</span>
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
@@ -137,13 +137,12 @@ export function TavilySetupGuide() {
                     <span className="font-medium">1 credit / call</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Overage rate</span>
-                    <span className="font-medium">$0.008 per credit</span>
+                    <span>Billing</span>
+                    <span className="font-medium">Direct from Tavily · separate from Aura plan</span>
                   </div>
                 </div>
                 <p className="text-xs text-foreground/80 pt-2 border-t">
-                  The bundled allowance covers approximately 900+ social media posts per month. Overages are
-                  invoiced at month-end.
+                  Tavily invoices your card on file directly at the provider's published rates. Aura does not resell or mark up Tavily usage.
                 </p>
               </div>
             </AccordionContent>

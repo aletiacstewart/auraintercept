@@ -626,11 +626,11 @@ const AuditQuestionsPages = () => {
 // Integration Requirements Page
 const IntegrationRequirementsPage = () => {
   const integrations = [
-    { name: 'SignalWire', purpose: 'Voice & SMS Communications (BUNDLED up to plan limits; overage invoiced)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis (BUNDLED up to plan limits; overage invoiced)', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'Resend', purpose: 'Email Delivery — 3,000/mo bundled · overage $0.90 per 1,000', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'Tavily', purpose: 'AI Content Research — 1,000 credits/mo bundled · overage $0.008/credit', tiers: 'All tiers — Core, Boost, Pro, Elite' },
-    { name: 'Stripe', purpose: 'Payment Processing (your own account)', tiers: 'All tiers (Optional)' },
+    { name: 'SignalWire', purpose: 'Voice & SMS Communications — your own account · valid card · billed directly by SignalWire', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'ElevenLabs', purpose: 'AI Voice Synthesis — your own account · valid card · billed directly by ElevenLabs', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Resend', purpose: 'Email Delivery — your own account · valid card · billed directly by Resend', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Tavily', purpose: 'AI Content Research — your own account · valid card · billed directly by Tavily', tiers: 'All tiers — Core, Boost, Pro, Elite' },
+    { name: 'Stripe', purpose: 'Payment Processing — your own account · billed directly by Stripe', tiers: 'All tiers — required if collecting payments' },
     { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Boost, Pro, Elite (Optional)' },
     { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'Pro, Elite' },
   ];

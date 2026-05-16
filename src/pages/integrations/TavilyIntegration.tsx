@@ -172,8 +172,8 @@ export default function TavilyIntegration() {
                     <Zap className="w-5 h-5 text-cyan-500" />
                   </div>
                   <div>
-                    <h3 className="font-medium">1,000 Credits / mo Bundled</h3>
-                    <p className="text-sm text-muted-foreground">Included in your plan · overage $0.008/credit</p>
+                    <h3 className="font-medium">Your Tavily Account</h3>
+                    <p className="text-sm text-muted-foreground">Valid credit card required · billed directly by Tavily, separate from your Aura plan</p>
                   </div>
                 </div>
               </CardContent>

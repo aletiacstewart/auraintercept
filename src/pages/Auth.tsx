@@ -981,27 +981,27 @@ export default function Auth() {
                       <div className="flex items-center gap-1.5">
                         <DollarSign className="w-3.5 h-3.5 text-amber-400" />
                         <span>3rd-Party Costs & Required Setup</span>
-                        <span className="ml-1 text-[9px] font-normal text-muted-foreground">(est. $29–$211/mo separate)</span>
+                        <span className="ml-1 text-[9px] font-normal text-muted-foreground">(your accounts · billed separately by each provider)</span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-3 pb-3">
                       {/* Base/Free Limits Notice */}
                       <div className="mb-2 p-2 rounded bg-amber-500/10 border border-amber-500/30">
                         <p className="text-[9px] text-amber-300 leading-relaxed">
-                          <span className="font-semibold">⚠ All plans have base limits.</span> Limits below reflect each provider's free/intro tier (bundled into your plan). Any usage <span className="font-semibold">over these limits</span> is billed at the end of each month <span className="font-semibold">in addition to</span> your plan fee. 3rd-party fees may change at any time at the provider's discretion.
+                          <span className="font-semibold">⚠ Aura plan = platform only.</span> Every provider below requires <span className="font-semibold">your own account with a valid credit card on file</span>. Each provider invoices you <span className="font-semibold">directly and separately</span> from your Aura plan fee. Provider pricing is set by each vendor and may change at any time.
                         </p>
                       </div>
                       {/* Cost table */}
                       <div className="space-y-1 mb-3">
                         {[
-                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: '$4.50 brand + campaign + monthly maint.', limit: 'Pass-through · first 3 mo of campaign upfront · T-Mobile $250/mo if inactive 60+ days', note: '⚠ 1–4 wk approval', color: 'text-amber-400' },
-                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Bundled in tier', limit: 'SMS + voice minutes included per tier', note: 'All tiers', color: 'text-green-400' },
-                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Bundled in tier', limit: 'AI voice minutes included per tier', note: 'Boost+', color: 'text-purple-400' },
-                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: '3,000/mo bundled · $0.90 / 1,000 over', limit: '100 emails/day · automations 10k free then $0.0015/run · custom domain recommended', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Free — unlimited', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
-                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: '2.9% + $0.30 / successful txn', limit: 'No free tier · paid directly to Stripe · volume discount via stripe.com/contact/sales', note: 'Required on Elite (Invoicing)', color: 'text-amber-400' },
-                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Free OAuth — your business pages', limit: 'Core: manual Bridge posting · Boost/Pro/Elite: automated Social Scheduler (up to 6)', note: 'All tiers', color: 'text-pink-400' },
-                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: '1,000 credits/mo bundled · $0.008/credit over', limit: 'Search 1–2 / Extract 1–2 per 5 URLs / Map 1 per 10 URLs / Crawl = Map+Extract', note: 'All tiers', color: 'text-orange-400' },
+                          { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: 'Your SignalWire account · billed by SignalWire', limit: '$4.50 brand + variable campaign + $250/mo T-Mobile inactive-campaign fee', note: '⚠ 1–4 wk approval', color: 'text-amber-400' },
+                          { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Your account · valid card · billed by SignalWire', limit: 'SMS + voice usage invoiced directly by SignalWire', note: 'Required', color: 'text-green-400' },
+                          { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Your account · valid card · billed by ElevenLabs', limit: 'AI voice usage invoiced directly by ElevenLabs', note: 'Required', color: 'text-purple-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: 'Your account · valid card · billed by Resend', limit: 'Email volume + custom domain invoiced directly by Resend', note: 'Required', color: 'text-cyan-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Your Google account · free OAuth', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: 'Your account · billed by Stripe', limit: '2.9% + $0.30/txn · payouts to your bank · invoiced directly by Stripe', note: 'Required if collecting payments', color: 'text-amber-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Your business pages + OAuth', limit: 'Any platform fees billed directly by each network', note: 'Required if posting', color: 'text-pink-400' },
+                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: 'Your account · valid card · billed by Tavily', limit: 'AI research credits invoiced directly by Tavily', note: 'Required', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, limit, note, color }) => (
                           <div key={name} className="py-1 border-b border-border/20 last:border-0">
                             <div className="flex items-center justify-between text-[9px]">
@@ -1393,7 +1393,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-a2p" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required (brand $4.50, campaign fee + monthly maintenance pass-through) and approval takes <span className="font-medium text-amber-400">1–4 weeks</span> before SMS activates.
+                                I understand <span className="font-medium text-foreground">A2P 10DLC SMS registration</span> is required on my own SignalWire account (brand $4.50 + campaign + monthly maintenance, billed by SignalWire to my card) and approval takes <span className="font-medium text-amber-400">1–4 weeks</span> before SMS activates.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1404,7 +1404,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">A2P 10DLC carrier fees</span> and <span className="font-medium text-foreground">Stripe transaction fees</span> are pass-through and billed directly by those providers, and that overages on bundled providers (Resend, Tavily) are billed at the rates shown above.
+                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider invoices me directly and separately</span> from my Aura plan fee.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">

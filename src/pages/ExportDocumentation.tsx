@@ -54,7 +54,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>24 Smart AI Agent Descriptions</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
-                  <li>3rd Party Integration Guide (SignalWire, ElevenLabs, Resend, Tavily — bundled)</li>
+                  <li>3rd Party Integration Guide (SignalWire, ElevenLabs, Resend, Tavily — your own accounts, billed separately by each provider)</li>
                   <li>4-Tier Subscription Access (Core / Boost / Pro / Elite)</li>
                 </ul>
               </div>

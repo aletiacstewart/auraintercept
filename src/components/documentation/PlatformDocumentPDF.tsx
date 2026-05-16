@@ -1224,7 +1224,7 @@ const PlatformDocumentPDF = () => (
           - Full social media content creation (6 platforms){"\n"}
           - 22 industry packs covering trades, outdoor, repair, and booking-first verticals that auto-tune the platform on signup.{"\n"}
           - Built specifically for service businesses{"\n"}
-          - SignalWire, ElevenLabs, Resend, and Tavily bundled — no extra usage fees
+          - Customer holds own accounts at SignalWire, ElevenLabs, Resend, Tavily, and Stripe (billed directly by each provider, separate from the Aura plan fee)
         </Text>
       </View>
     </Page>

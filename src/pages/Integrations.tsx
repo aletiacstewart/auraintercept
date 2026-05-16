@@ -136,7 +136,7 @@ const INTEGRATIONS: Integration[] = [
       { key: 'tavily_api_key', label: 'API Key', placeholder: 'tvly-...', type: 'password', required: true, helpText: 'Get from app.tavily.com' },
     ],
     checkConnection: (data) => !!data.tavily_api_key,
-    note: '💡 1,000 credits/mo bundled · overage $0.008/credit. Enhances social content with current trends.',
+    note: '💡 Your own Tavily account required · valid card on file · billed directly by Tavily (separate from your Aura plan). Enhances social content with current trends.',
   },
 ];
 

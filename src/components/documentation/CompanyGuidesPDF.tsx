@@ -470,7 +470,7 @@ const companyGuideCategories = [
           'Generate and enter API key',
           'Content Engine uses Tavily for real-time research',
           'Improves social, blog, and campaign content',
-          'Bundled: 1,000 credits/month per tier; overage $0.008/credit'
+          'Your own Tavily account with a valid credit card on file — billed directly by Tavily, separate from your Aura plan'
         ],
         tips: ['Optional but recommended for content-heavy businesses']
       },

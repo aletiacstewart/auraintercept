@@ -938,7 +938,7 @@ export default function Index() {
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents + Industry Specialists</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (bundled)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (your provider accounts)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers (Field Ops, Social, Analytics included)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Triage + Booking + Follow-Up + Review</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Creative Content + Web Presence</span></div>
@@ -951,7 +951,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$497</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$497</span></p>
               </CardContent>
             </Card>
 
@@ -971,7 +971,7 @@ export default function Index() {
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents + Industry Specialists</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (bundled)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Voice + SMS + Email + Web Chat (your provider accounts)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">7 Control Centers</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Dispatch + Route + ETA + Check-In</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">Service Management + Social Media + Analytics</span></div>
@@ -983,7 +983,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$697</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$697</span></p>
               </CardContent>
             </Card>
 
@@ -1014,7 +1014,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$1,197</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$1,197</span></p>
               </CardContent>
             </Card>
 
@@ -1044,7 +1044,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">All comms bundled · One-time onboarding fee: <span className="font-semibold">$2,197</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$2,197</span></p>
               </CardContent>
             </Card>
           </div>
@@ -1132,9 +1132,9 @@ export default function Index() {
                   <span className="font-semibold text-xs text-channel-email">Resend</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Email Delivery</p>
-                <p className="text-[10px] text-emerald-400 font-medium">3,000 emails/mo bundled · 100/day</p>
-                <p className="text-[10px] text-white">Overage: $0.90 / 1,000 emails · Automations: 10,000 runs free, then $0.0015/run</p>
-                <p className="text-[10px] text-white">Custom domain recommended · Valid company credit card required</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
+                <p className="text-[10px] text-white">Email volume & automations invoiced at Resend's published rates</p>
+                <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1143,8 +1143,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-purple-400">ElevenLabs</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no extra fees</p>
-                <p className="text-[10px] text-white">Included on: All tiers</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own ElevenLabs account · billed directly by ElevenLabs</p>
+                <p className="text-[10px] text-white">Valid credit card required on your ElevenLabs account · all tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1153,8 +1153,8 @@ export default function Index() {
                   <span className="font-semibold text-xs text-green-400">SignalWire</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Bundled — no carrier or per-message fees</p>
-                <p className="text-[10px] text-white">Included on: All tiers</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own SignalWire account · billed directly by SignalWire</p>
+                <p className="text-[10px] text-white">Valid credit card required on your SignalWire account · all tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1197,14 +1197,14 @@ export default function Index() {
                   <span className="font-semibold text-xs text-orange-400">Tavily</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Research Engine</p>
-                <p className="text-[10px] text-emerald-400 font-medium">1,000 credits/mo bundled (no rollover)</p>
-                <p className="text-[10px] text-white">Overage: $0.008/credit · Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
-                <p className="text-[10px] text-white">API key configured during onboarding · Valid company credit card required</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own Tavily account · billed directly by Tavily</p>
+                <p className="text-[10px] text-white">Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
+                <p className="text-[10px] text-white">API key configured during onboarding · Valid credit card required on your Tavily account</p>
               </div>
             </div>
 
             <p className="text-[10px] text-white italic text-center mt-4">
-              Bundled providers (SignalWire, ElevenLabs, Resend, Tavily) are included up to the limits shown. Overages, A2P 10DLC pass-through fees, and Stripe transaction fees are billed directly by those providers and require a valid company credit card on file.
+              Every 3rd-party provider above (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires your own account with a valid credit card on file. Each provider invoices you directly and separately from your Aura plan fee.
             </p>
           </div>
         </div>

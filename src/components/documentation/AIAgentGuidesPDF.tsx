@@ -665,7 +665,7 @@ const INTEGRATIONS = [
   {
     name: 'Resend',
     purpose: 'Email Notifications & Reminders',
-    cost: 'Bundled in plan: 3,000 emails/month per tier · overage $0.90 per 1,000',
+    cost: 'Your own Resend account · valid card · billed directly by Resend (separate from Aura plan)',
     required: true,
     requiredFor: 'All email features (appointment confirmations, reminders, campaigns)',
     agentsAffected: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
