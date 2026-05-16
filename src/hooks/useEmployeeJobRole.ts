@@ -43,9 +43,16 @@ function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
 
 export function useEmployeeJobRole() {
   const { user, userRole } = useAuth();
-  const [jobTypes, setJobTypes] = useState<JobRoleType[]>([]);
-  const [primaryJobType, setPrimaryJobType] = useState<JobRoleType | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cacheKey = user?.id ? `${user.id}:${userRole}` : null;
+  const [jobTypes, setJobTypes] = useState<JobRoleType[]>(
+    () => (cacheKey && jobTypesCache.get(cacheKey)?.types) || []
+  );
+  const [primaryJobType, setPrimaryJobType] = useState<JobRoleType | null>(
+    () => (cacheKey && jobTypesCache.get(cacheKey)?.primary) || null
+  );
+  const [loading, setLoading] = useState(
+    !!cacheKey && !jobTypesCache.has(cacheKey)
+  );
 
   useEffect(() => {
     async function fetchJobTypes() {
@@ -67,9 +74,11 @@ export function useEmployeeJobRole() {
           setJobTypes(types);
           // Primary is the first assigned job type
           setPrimaryJobType(types[0]);
+          if (cacheKey) jobTypesCache.set(cacheKey, { types, primary: types[0] });
         } else {
           setJobTypes([]);
           setPrimaryJobType(null);
+          if (cacheKey) jobTypesCache.set(cacheKey, { types: [], primary: null });
         }
       } catch (err) {
         console.error('Error fetching job types:', err);
