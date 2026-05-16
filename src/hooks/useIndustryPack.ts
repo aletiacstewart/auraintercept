@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export interface IndustryPack {
   id: string;
   industry_id: string;
-  cluster: 'trades' | 'outdoor' | 'repair' | 'booking';
+  cluster: 'trades' | 'outdoor' | 'repair' | 'booking' | 'home_health';
   label: string;
   icon: string | null;
   description: string | null;
