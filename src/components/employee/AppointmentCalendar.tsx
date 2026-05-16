@@ -766,7 +766,7 @@ export function AppointmentCalendar() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <CalendarIcon className="w-12 h-12 mx-auto text-white/40 mb-3" />
+              <CalendarIcon className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
               <p className="text-foreground">No appointments on this day</p>
               <p className="text-sm text-white">Select another date or enjoy your day off!</p>
             </div>

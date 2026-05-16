@@ -164,7 +164,7 @@ export function CommunicationLogs() {
               <MessageSquare className="w-5 h-5" />
               Communication Logs
             </CardTitle>
-            <CardDescription className="text-white/70">
+            <CardDescription className="text-muted-foreground">
               View your call, SMS, and email history with customers
             </CardDescription>
           </div>
