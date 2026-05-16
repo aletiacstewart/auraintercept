@@ -8,7 +8,7 @@ export default function TechnicianHistory() {
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Job History</h1>
-          <p className="text-white mt-1">View your completed jobs and performance</p>
+          <p className="text-foreground mt-1">View your completed jobs and performance</p>
         </div>
         <CompletedJobsHistory />
       </div>
