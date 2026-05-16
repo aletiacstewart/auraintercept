@@ -14,11 +14,20 @@ interface UseWorkspaceResult {
   error: string | null;
 }
 
+// Module-level cache keyed by companyId so navigation between dashboard
+// routes doesn't briefly reset workspace to null (which would flicker
+// industry-aware sidebar labels back to generic defaults).
+const workspaceCache = new Map<string, ResolvedWorkspace>();
+
 export function useWorkspace(companyIdOverride?: string | null): UseWorkspaceResult {
   const { companyId: authCompanyId } = useAuth();
   const companyId = companyIdOverride ?? authCompanyId;
-  const [workspace, setWorkspace] = useState<ResolvedWorkspace | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [workspace, setWorkspace] = useState<ResolvedWorkspace | null>(
+    () => (companyId && workspaceCache.get(companyId)) || null
+  );
+  const [loading, setLoading] = useState<boolean>(
+    !!companyId && !workspaceCache.has(companyId)
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,7 +37,13 @@ export function useWorkspace(companyIdOverride?: string | null): UseWorkspaceRes
       setLoading(false);
       return;
     }
-    setLoading(true);
+    const cached = workspaceCache.get(companyId);
+    if (cached) {
+      setWorkspace(cached);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     (async () => {
       try {
         const { data: company, error: cErr } = await supabase
@@ -52,9 +67,12 @@ export function useWorkspace(companyIdOverride?: string | null): UseWorkspaceRes
         }
 
         if (cancelled) return;
-        setWorkspace(
-          resolveCompanyWorkspace(company as CompanyForResolver, blueprint),
+        const resolved = resolveCompanyWorkspace(
+          company as CompanyForResolver,
+          blueprint,
         );
+        workspaceCache.set(companyId, resolved);
+        setWorkspace(resolved);
         setError(null);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
