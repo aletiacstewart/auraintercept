@@ -276,7 +276,7 @@ export default function Leads() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="text-center py-8 text-white/70">Loading leads...</div>
+              <div className="text-center py-8 text-muted-foreground">Loading leads...</div>
             ) : filteredLeads.length === 0 ? (
               <IndustryEmptyState surface="leads" />
             ) : (
@@ -310,7 +310,7 @@ export default function Leads() {
                                   {priorityConfig.label}
                                 </Badge>
                               </div>
-                              <div className="flex flex-wrap items-center gap-3 text-sm text-white/70">
+                              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                                 {lead.phone && (
                                   <span className="flex items-center gap-1">
                                     <Phone className="h-3 w-3" /> {lead.phone}
@@ -329,7 +329,7 @@ export default function Leads() {
                               </div>
                               {lead.service_interest && (
                                 <p className="text-sm mt-1">
-                                  <span className="text-white/70">Interest:</span> {lead.service_interest}
+                                  <span className="text-muted-foreground">Interest:</span> {lead.service_interest}
                                 </p>
                               )}
                             </div>
@@ -337,7 +337,7 @@ export default function Leads() {
                               <Badge className={`${statusConfig.color} text-white`}>
                                 {statusConfig.label}
                               </Badge>
-                              <span className="text-xs text-white/70">
+                              <span className="text-xs text-muted-foreground">
                                 {format(new Date(lead.created_at), 'MMM d, h:mm a')}
                               </span>
                             </div>
@@ -369,36 +369,36 @@ export default function Leads() {
                               </div>
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <label className="text-sm text-white/70">Name</label>
+                                  <label className="text-sm text-muted-foreground">Name</label>
                                   <p className="font-medium">{lead.name || '-'}</p>
                                 </div>
                                 <div>
-                                  <label className="text-sm text-white/70">Phone</label>
+                                  <label className="text-sm text-muted-foreground">Phone</label>
                                   <p className="font-medium">{lead.phone || '-'}</p>
                                 </div>
                                 <div>
-                                  <label className="text-sm text-white/70">Email</label>
+                                  <label className="text-sm text-muted-foreground">Email</label>
                                   <p className="font-medium">{lead.email || '-'}</p>
                                 </div>
                                 <div>
-                                  <label className="text-sm text-white/70">Source</label>
+                                  <label className="text-sm text-muted-foreground">Source</label>
                                   <p className="font-medium capitalize">{lead.source}</p>
                                 </div>
                               </div>
                               {lead.service_interest && (
                                 <div>
-                                  <label className="text-sm text-white/70">Service Interest</label>
+                                  <label className="text-sm text-muted-foreground">Service Interest</label>
                                   <p className="font-medium">{lead.service_interest}</p>
                                 </div>
                               )}
                               {lead.notes && (
                                 <div>
-                                  <label className="text-sm text-white/70">Notes</label>
+                                  <label className="text-sm text-muted-foreground">Notes</label>
                                   <p className="text-sm bg-muted p-2 rounded">{lead.notes}</p>
                                 </div>
                               )}
                               <div>
-                                <label className="text-sm text-white/70 mb-2 block">Update Status</label>
+                                <label className="text-sm text-muted-foreground mb-2 block">Update Status</label>
                                 <Select value={newStatus} onValueChange={setNewStatus}>
                                   <SelectTrigger>
                                     <SelectValue />
@@ -413,7 +413,7 @@ export default function Leads() {
                                 </Select>
                               </div>
                               <div>
-                                <label className="text-sm text-white/70 mb-2 block">Follow-up Notes</label>
+                                <label className="text-sm text-muted-foreground mb-2 block">Follow-up Notes</label>
                                 <Textarea
                                   placeholder="Add notes about this lead..."
                                   value={followUpNotes}
