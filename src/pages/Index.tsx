@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2 } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -403,6 +403,23 @@ const industryCategories = [{
     name: 'Personal Assistant',
     icon: Bot,
     description: 'Calendar & Scheduling'
+  }]
+}, {
+  category: 'Home Health & Therapy',
+  emoji: '🩺',
+  subtitle: 'Care Services',
+  industries: [{
+    name: 'Physical Therapy',
+    icon: Stethoscope,
+    description: 'Outpatient & In-Home Visits'
+  }, {
+    name: 'Occupational Therapy',
+    icon: HeartHandshake,
+    description: 'Rehab & Daily Living Support'
+  }, {
+    name: 'Hospice Care',
+    icon: HeartPulse,
+    description: 'Medicare-Certified End-of-Life Care'
   }]
 }];
 const howItWorks = [{
@@ -912,7 +929,7 @@ export default function Index() {
                 <Badge className="mb-2 bg-teal-500/20 text-teal-400 border-teal-500/30 text-[10px]">Entry Level</Badge>
                 <h3 className="text-lg font-bold mb-1 text-teal-400">Aura Core</h3>
                 <p className="text-[10px] text-white mb-1">Core booking & web presence</p>
-                <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses.</p>
+                <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses, and home-health / therapy practices.</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-teal-400">$197</span>
                   <span className="text-white text-sm">/month</span>
@@ -926,6 +943,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Triage + Booking + Follow-Up + Review</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">Creative Content + Web Presence</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">10 Employee Accounts</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">HIPAA-aware intake for Physical Therapy, Occupational Therapy & Hospice</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=starter')}>
                   Start Free Trial
