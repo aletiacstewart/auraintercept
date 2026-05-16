@@ -217,10 +217,10 @@ export function GoogleCalendarSettings() {
             <Badge variant="secondary" className="text-xs">
               Two-Way Sync
             </Badge>
-            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+            <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">
               Instant Updates
             </Badge>
-            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+            <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">
               Requires Setup
             </Badge>
           </div>

@@ -61,7 +61,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
               <div className="flex items-center gap-2 mb-2">
                 <MessageSquare className="w-4 h-4 text-red-600" />
                 <span className="font-medium">SMS Text Reminders</span>
-                <Badge variant="outline" className="text-xs text-white/70 border-white/30">~1¢ per text</Badge>
+                <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">~1¢ per text</Badge>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Phone number rental: <strong>$1.15/month</strong> (required for sending texts)</li>
@@ -75,7 +75,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
               <div className="flex items-center gap-2 mb-2">
                 <Phone className="w-4 h-4 text-cyan-400" />
                 <span className="font-medium">Voice Call Reminders</span>
-                <Badge variant="outline" className="text-xs text-white/70 border-white/30">~12¢ per call</Badge>
+                <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">~12¢ per call</Badge>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Phone number rental: <strong>$1.15/month</strong></li>
