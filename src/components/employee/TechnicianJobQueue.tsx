@@ -668,14 +668,14 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
             {travelTimeMinutes !== null && (
               <div className="flex items-center gap-1">
                 <Car className="w-3 h-3" />
-                <span className="text-white">Travel:</span>
+                <span className="text-muted-foreground">Travel:</span>
                 <span className="font-medium">{travelTimeMinutes} min</span>
               </div>
             )}
             {workTimeMinutes !== null && (
               <div className="flex items-center gap-1">
                 <Wrench className="w-3 h-3" />
-                <span className="text-white">Work:</span>
+                <span className="text-muted-foreground">Work:</span>
                 <span className="font-medium">{workTimeMinutes} min{!job.completed_at && ' (ongoing)'}</span>
               </div>
             )}
