@@ -84,7 +84,7 @@ const TIERS = [
     consoleCount: 7,
     highlights: [
       '8 Smart AI Agents + Industry Specialists',
-      'Voice + SMS + Email + Web Chat (bundled)',
+      'Voice + SMS + Email + Web Chat (your provider accounts)',
       '7 Control Centers',
       'Triage + Booking + Follow-Up + Review',
       'Creative Content + Web Presence + Social Media',
@@ -103,7 +103,7 @@ const TIERS = [
     consoleCount: 7,
     highlights: [
       '12 Smart AI Agents + Industry Specialists',
-      'Voice + SMS + Email + Web Chat (bundled)',
+      'Voice + SMS + Email + Web Chat (your provider accounts)',
       '7 Control Centers',
       'Dispatch + Route + ETA + Check-In',
       'Field Operations + Social Media + Analytics',
@@ -215,7 +215,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Communication Channels (bundled in every plan)',
+    title: 'Communication Channels (your provider accounts — billed separately)',
     features: [
       { name: 'Message Aura (Text)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Talk to Aura (Voice)', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
@@ -240,14 +240,14 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Bundled 3rd Party Services',
+    title: 'Required 3rd-Party Accounts (billed separately by each provider)',
     features: [
-      { name: 'Resend (Email)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'SignalWire (SMS & Voice)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'ElevenLabs (Voice)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'A2P 10DLC Compliance', starter: 'Included', connect: 'Included', performance: 'Included', command: 'Included' },
-      { name: 'Tavily (AI Research)', starter: 'Bundled', connect: 'Bundled', performance: 'Bundled', command: 'Bundled' },
-      { name: 'Stripe (Payments)', starter: 'Optional', connect: 'Optional', performance: 'Optional', command: 'Optional' },
+      { name: 'Resend (Email)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
+      { name: 'SignalWire (SMS & Voice)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
+      { name: 'ElevenLabs (Voice)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
+      { name: 'A2P 10DLC Compliance', starter: 'Your SignalWire acct', connect: 'Your SignalWire acct', performance: 'Your SignalWire acct', command: 'Your SignalWire acct' },
+      { name: 'Tavily (AI Research)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
+      { name: 'Stripe (Payments)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
       { name: 'Calendar Sync (Google / iCal)', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
       { name: 'Social Media Accounts', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
     ],
