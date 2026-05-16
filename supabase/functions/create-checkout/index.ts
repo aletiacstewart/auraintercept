@@ -18,7 +18,7 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   starter: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700, // $697 in cents
+    price: 49700, // $497 in cents
   },
   connect: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
@@ -39,7 +39,7 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   scheduling: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700,
+    price: 49700, // $497 in cents
   },
   growth: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
@@ -59,22 +59,22 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   express: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700,
+    price: 49700, // $497 in cents
   },
   aura_flow: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700,
+    price: 49700, // $497 in cents
   },
   halo: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700,
+    price: 49700, // $497 in cents
   },
   core: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 69700,
+    price: 49700, // $497 in cents
   },
   single_point: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
