@@ -189,7 +189,7 @@ const PricingSummaryPDF = () => (
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BOOST</Text>
-          <Text style={styles.summaryPrice}>$497</Text>
+          <Text style={styles.summaryPrice}>$697</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>12 AI Agents</Text>
         </View>
@@ -386,7 +386,7 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>GROWTH</Text>
         <Text style={styles.pricingTierName}>Aura Pro</Text>
         <Text style={styles.pricingPrice}>$1,197/month</Text>
-        <Text style={styles.pricingAnnual}>or $9,970/year (billed annually)</Text>
+        <Text style={styles.pricingAnnual}>or $11,970/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save ~$2,394 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{pro.bestFor}</Text>
@@ -423,7 +423,7 @@ const PricingSummaryPDF = () => (
         <Text style={{ fontSize: 9, color: colors.primary, fontWeight: 700, marginBottom: 4 }}>ENTERPRISE</Text>
         <Text style={styles.pricingTierName}>Aura Elite</Text>
         <Text style={styles.pricingPrice}>$2,197/month</Text>
-        <Text style={styles.pricingAnnual}>or $19,970/year (billed annually)</Text>
+        <Text style={styles.pricingAnnual}>or $21,970/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save ~$4,394 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{command.bestFor}</Text>
