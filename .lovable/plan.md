@@ -1,39 +1,50 @@
-## Goal
+# Trial Copy + FREE Cleanup + Beta/FCC Restructure
 
-Two global changes across the platform:
+## 1. Trial period — ensure "90-Day Live Trial" everywhere
 
-1. **Monthly plan prices** now equal the current onboarding fees:
-   - Core: $197/mo → **$497/mo**
-   - Boost: $497/mo → **$697/mo**
-   - Pro: $997/mo → **$1,197/mo**
-   - Elite: $1,997/mo → **$2,197/mo**
-   - Onboarding fees themselves stay as-is ($497 / $697 / $1,197 / $2,197).
-2. **Trial length**: 60-Day Live Trial → **90-Day Live Trial** (everywhere — copy, math, reminders, progress bar denominator).
+The codebase was already updated to 90 days, but user's screenshot shows "60-Day Live Trial" still appearing (likely a cached/published surface, but I'll re-sweep to be safe).
 
-## Scope
+Verify and fix any remaining "60-day" / "60 day" trial references in:
+- `src/pages/Index.tsx`, `src/pages/Auth.tsx`, `src/pages/Subscription.tsx`, `src/pages/TermsOfService.tsx`
+- `src/components/dashboard/TrialBanner.tsx`, `src/components/landing/*`
+- `supabase/functions/trial-reminders/index.ts`, `supabase/functions/check-subscription/index.ts`
+- Doc PDF generators under `src/components/documentation/`
 
-Frontend / presentation only. No Stripe price ID changes, no DB migrations, no edge function billing logic changes in this pass.
+Leave unrelated "60 days" references alone (campaign lookbacks, OAuth token expiry, T-Mobile inactive-campaign rule, "success in 60 days" onboarding question, social token TTL, etc.).
 
-### Files to sweep (price strings + trial day count)
+## 2. Remove the word "FREE" from user-facing content
 
-- Pricing surfaces: `src/pages/Index.tsx`, `src/pages/Auth.tsx`, `src/pages/Subscription.tsx`, `src/components/landing/PricingComparisonTable.tsx`, any plan card / tier card components.
-- Calculators / outreach: `src/pages/Calculators.tsx`, ROI components, outreach PDF generators if they list prices.
-- Documentation PDFs: `src/components/documentation/*PDF.tsx` (CompanyOnboarding, PlatformDocument, Comprehensive, CompanyGuides, AIAgentGuides, PlatformFAQ).
-- Tier constants / maps: `src/lib/` tier definitions, `LEGACY_TIER_MAP`, `demoFeatureStatus.ts`, `documentationConfig.ts`.
-- Trial logic: progress bar `(60 - daysRemaining)/60` → `(90 - daysRemaining)/90`; trial reminder copy; "60-Day Live Trial" label everywhere.
-- Memory: update `mem://index.md` Core rule and `mem://product/trial-period-standard`.
+Replace marketing copy that uses "Free" / "FREE" with neutral wording. Mapping:
 
-### Approach
+| Current | Replace with |
+|---|---|
+| `START YOUR FREE TRIAL →` (hero CTA, Index.tsx:858) | `START YOUR 90-DAY LIVE TRIAL →` |
+| `Start Free Trial` (plan card CTAs, Index.tsx ×4) | `Start 90-Day Live Trial` |
+| `Start Free Trial` (Auth.tsx submit button) | `Start 90-Day Live Trial` |
+| `Free Trial` badge (Subscription.tsx:495) | `Live Trial` |
+| `…remaining in your free trial` (Subscription.tsx:504) | `…remaining in your 90-day live trial` |
+| `We offer a free audit…` (Index.tsx:918) | `We offer a complimentary audit…` |
+| `Customer accounts are always free` (Auth.tsx ×2) | `Customer accounts are always complimentary` |
+| `Free — unlimited, all tiers` (Google Calendar card) | `Included — unlimited, all tiers` |
+| `Free OAuth — connect your existing pages` (Social card) | `OAuth — connect your existing pages` |
+| `Your Google acct · free OAuth` (PricingComparisonTable + Auth) | `Your Google acct · OAuth` |
+| `Free — no usage limits` (PricingComparisonTable Chat Widget) | `Included — no usage limits` |
+| `Fees paid directly to Stripe — no free tier` (Stripe card) | `Fees paid directly to Stripe` |
+| `…free-tier limits are set by each vendor…` (Auth.tsx:1022) | `…included limits are set by each vendor…` |
 
-1. `rg` for `\$197|\$497|\$697|\$997|\$1,197|\$1,997|\$2,197` and `60.?[dD]ay|60 days|sixty.day` to enumerate every hit.
-2. Apply price + trial replacements file by file.
-3. Update `LEGACY_TIER_MAP` / tier constant objects so any tier lookup returns the new monthly value.
-4. Update trial math constants and progress denominator.
-5. Update memory Core lines.
-6. Final `rg` sweep to confirm no stragglers.
+Leave technical/code identifiers untouched: `tier: 'free'`, `currentTier || 'free'`, `replace('_', '-') || 'Free'` label fallback (this is for users on no tier — change display fallback to `'None'`).
 
-### Out of scope
+## 3. Restructure Beta box and FCC notice (`src/pages/Index.tsx` lines 1073–1103)
 
-- Stripe product/price IDs and backend subscription records (call out to user separately if they want those updated via Stripe tools).
-- Changing onboarding fee amounts.
-- Refactoring tier structure or feature gates.
+Currently the "We're in Beta!" panel contains a nested "SMS System — FCC 10DLC Compliance" sub-card. The 3rd-Party Integrations grid directly below already has its own `A2P 10DLC Compliance` card covering the same info.
+
+- **Keep** the "We're in Beta!" panel above the plans/3rd-party section, but **remove the nested FCC 10DLC sub-card** so the beta panel only shows beta + 90-Day Live Trial messaging.
+- **Keep / expand** the existing A2P 10DLC card inside the "3rd Party Integration Costs + Usage Fees" grid (already present at lines 1160–1169) — promote it to a full-width row above the grid with the longer compliance copy (EIN/DBA, approval timeline, pass-through fees) merged in from the removed sub-card, so no information is lost.
+
+Same restructure mirrored on `src/pages/Auth.tsx` Beta Notice block (lines 845–855) if it has a similar nested FCC sub-card — verified it does not, so only Index.tsx needs the move.
+
+## Out of scope
+
+- Stripe price IDs, DB migrations, backend billing logic
+- Touching unrelated "60 days" business-logic constants (campaign windows, token TTLs)
+- Onboarding/marketing PDFs that don't surface "Free Trial" wording
