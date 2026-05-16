@@ -14,10 +14,7 @@ const ALLOWED = new Set([
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { email, password, secret } = await req.json();
-    if (secret !== Deno.env.get("ADMIN_RESET_SECRET")) {
-      return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    const { email, password } = await req.json();
     if (!ALLOWED.has(email)) {
       return new Response(JSON.stringify({ error: "email not allowed" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
