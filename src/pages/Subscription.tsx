@@ -535,7 +535,7 @@ export default function Subscription() {
                     }
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Current plan: <span className="font-semibold text-primary capitalize">{currentTier?.replace('_', '-') || 'Free'}</span>
+                    Current plan: <span className="font-semibold text-primary capitalize">{currentTier?.replace('_', '-') || 'None'}</span>
                     {isEmployee && ' • Contact your company administrator for billing questions'}
                   </p>
                 </div>
