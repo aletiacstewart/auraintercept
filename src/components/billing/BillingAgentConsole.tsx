@@ -970,7 +970,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
             Billing AI Console
           </CardTitle>
           {viewMode === 'chat' && currentAgent && (
-            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+            <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">
               {BILLING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
           )}
