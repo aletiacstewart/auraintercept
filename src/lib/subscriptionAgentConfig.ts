@@ -41,7 +41,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Core',
-    price: '$697/mo',
+    price: '$497/mo',
     description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included',
   },
   connect: {
