@@ -200,8 +200,8 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     status: "open",
     title: "768 raw text-white/bg-black/text-black/bg-white usages",
     observed:
-      "Scoped pass on `src/pages/ai-consoles/*` complete — all 7 violations (identical 'No company associated…' empty-state) replaced with `text-foreground`. Marketing pages, PDF/print components, FloatingChatWidget and on-image badges remain intentionally raw. Next scopes (open): `src/components/dashboard/*`, `src/pages/operations/*`, `src/pages/technician/*`.",
-    expected: "Per-scope sweeps; ai-consoles done.",
+      "Scoped passes complete: `src/pages/ai-consoles/*` (7→0) and `src/components/dashboard/*` (32→2). Remaining 2 dashboard hits live in TechnicianDashboardLayout's cyan-gradient PWA install banner — legitimate (white text on saturated gradient). `text-white/70` was migrated to `text-muted-foreground`, plain `text-white` to `text-foreground`. Marketing pages, PDF/print, FloatingChatWidget and on-image badges intentionally raw. Next scopes (open): `src/pages/operations/*`, `src/pages/technician/*`, `src/components/agents/*`.",
+    expected: "Per-scope sweeps; ai-consoles + dashboard done.",
     files: [{ path: "src/pages/" }, { path: "src/components/" }],
     memoryRef: "mem://style/cyber-sentry-design-standard",
     fixSize: "L",
