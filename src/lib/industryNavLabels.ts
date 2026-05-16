@@ -160,6 +160,7 @@ const CLUSTER_DEFAULTS: Record<IndustryPack['cluster'], IndustryNavLabels> = {
   outdoor: { techView: 'Crew View',       dispatchView: 'Route View',    teamMemberNoun: 'Crew Member', jobNoun: 'Stop' },
   repair:  { techView: 'Technician View', dispatchView: 'Shop Queue',    teamMemberNoun: 'Technician', jobNoun: 'Ticket' },
   booking: { techView: 'Agent View',      dispatchView: 'Schedule View', teamMemberNoun: 'Team Member', jobNoun: 'Appointment' },
+  home_health: { techView: 'Therapist View', dispatchView: 'Visit Schedule', teamMemberNoun: 'Therapist',  jobNoun: 'Visit' },
 };
 
 const INDUSTRY_OVERRIDES: Record<string, IndustryNavLabels> = {
