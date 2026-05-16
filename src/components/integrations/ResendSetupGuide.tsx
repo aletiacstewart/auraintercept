@@ -185,7 +185,7 @@ export function ResendSetupGuide() {
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Bundled in your plan: 3,000 emails/month</span>
+                  <span className="font-medium">Your own Resend account · valid credit card on file · billed directly by Resend</span>
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
@@ -206,8 +206,7 @@ export function ResendSetupGuide() {
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground pt-2 border-t">
-                  Includes delivery tracking and analytics. Bundled allowance covers most appointment-reminder workloads;
-                  overages are invoiced at month-end.
+                  Includes delivery tracking and analytics. Resend invoices your card on file directly at the provider's published rates — separate from your Aura plan fee.
                 </p>
               </div>
             </AccordionContent>
