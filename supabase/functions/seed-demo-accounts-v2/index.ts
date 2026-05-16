@@ -417,6 +417,52 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Annual Plan Discount', promo_code: 'SAASYEAR', discount_value: 20, message: 'Save 20% when you upgrade to an annual plan.', subject: 'Annual Plans — 20% Off' },
     ],
   ),
+  // HOME HEALTH CARE (3) — Core tier
+  industry('physical_therapy', 'Physical Therapy', 'core',
+    ['Initial Evaluation','Follow-up Treatment','Post-Op Rehab','Gait & Balance Training','Re-Evaluation'],
+    [
+      { name: 'Nitrile Gloves (box)', sku: 'PPE-GLV', quantity: 24, min_quantity: 10, unit_cost: 12.0, category: 'PPE' },
+      { name: 'Resistance Band Set', sku: 'PT-BAND', quantity: 18, min_quantity: 5, unit_cost: 22.0, category: 'Therapy Bands' },
+      { name: 'Gait Belt', sku: 'PT-BELT', quantity: 12, min_quantity: 4, unit_cost: 18.0, category: 'Assistive Devices' },
+    ],
+    [
+      { title: 'After Surgery: Why the First 30 Days of PT Matter', excerpt: 'Early movement protects long-term function.', content: '## Why early matters\n\nReduces scar tissue, prevents stiffness, restores range of motion before compensation patterns set in.' },
+      { title: 'Fall Prevention at Home', excerpt: 'Five simple changes that lower fall risk.', content: '## Quick wins\n\nGrab bars in the bathroom, remove throw rugs, brighter night lighting, sturdy footwear, daily balance practice.' },
+    ],
+    [
+      { name: 'Free Phone Screen', promo_code: 'PT0', discount_value: 0, message: 'Free 15-minute phone screen with a licensed PT — see if home PT is right for you.', subject: 'Free 15-min Phone Screen With a Physical Therapist' },
+    ],
+  ),
+  industry('occupational_therapy', 'Occupational Therapy', 'core',
+    ['Initial OT Evaluation','ADL Training','Home Safety Evaluation','Hand Therapy','Adaptive Equipment Training'],
+    [
+      { name: 'Nitrile Gloves (box)', sku: 'PPE-GLV', quantity: 24, min_quantity: 10, unit_cost: 12.0, category: 'PPE' },
+      { name: 'Reacher / Grabber', sku: 'OT-REACH', quantity: 15, min_quantity: 5, unit_cost: 16.0, category: 'Adaptive Equipment' },
+      { name: 'Sock Aid', sku: 'OT-SOCK', quantity: 12, min_quantity: 4, unit_cost: 9.5, category: 'Adaptive Equipment' },
+    ],
+    [
+      { title: 'OT vs PT: What\'s the Difference?', excerpt: 'Both help you move — OT helps you do.', content: '## In plain English\n\nPT restores movement and strength. OT helps you perform daily tasks (bathing, dressing, cooking) safely and independently.' },
+      { title: 'Home Safety in 10 Minutes', excerpt: 'A quick checklist any family can run.', content: '## Walkthrough\n\nLighting, clear paths, bathroom grab bars, kitchen reach, stair handrails, smoke / CO detectors.' },
+    ],
+    [
+      { name: 'Free Home Safety Check', promo_code: 'OT0', discount_value: 0, message: 'Schedule a complimentary home-safety walkthrough with one of our OTs.', subject: 'Free In-Home Safety Walkthrough' },
+    ],
+  ),
+  industry('hospice', 'Hospice Care', 'core',
+    ['RN Case Manager Visit','Hospice Aide Visit','Social Work Visit','Chaplain Visit','Bereavement Follow-up'],
+    [
+      { name: 'Nitrile Gloves (box)', sku: 'PPE-GLV', quantity: 30, min_quantity: 10, unit_cost: 12.0, category: 'PPE' },
+      { name: 'Wound Care Kit', sku: 'HOS-WND', quantity: 12, min_quantity: 4, unit_cost: 28.0, category: 'Wound Care' },
+      { name: 'Comfort Care Pack', sku: 'HOS-CMF', quantity: 20, min_quantity: 6, unit_cost: 35.0, category: 'Personal Care' },
+    ],
+    [
+      { title: 'What Hospice Is — And Isn\'t', excerpt: 'Comfort, dignity, and presence in the final chapter.', content: '## What hospice provides\n\nNursing, aide visits, social work, chaplain support, bereavement care, 24/7 phone access.' },
+      { title: 'Bereavement Support After a Loss', excerpt: 'You are not alone — support continues for 13 months.', content: '## What\'s offered\n\nPhone check-ins, mailings, support groups, and individual counseling at no cost to the family.' },
+    ],
+    [
+      { name: 'Family Information Visit', promo_code: 'HOS0', discount_value: 0, message: 'Schedule a no-cost family information visit to learn how hospice can help.', subject: 'Compassionate Care — Free Information Visit' },
+    ],
+  ),
 ];
 
 function industry(
