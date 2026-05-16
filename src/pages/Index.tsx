@@ -404,6 +404,23 @@ const industryCategories = [{
     icon: Bot,
     description: 'Calendar & Scheduling'
   }]
+}, {
+  category: 'Home Health & Therapy',
+  emoji: '🩺',
+  subtitle: 'Care Services',
+  industries: [{
+    name: 'Physical Therapy',
+    icon: Stethoscope,
+    description: 'Outpatient & In-Home Visits'
+  }, {
+    name: 'Occupational Therapy',
+    icon: HeartHandshake,
+    description: 'Rehab & Daily Living Support'
+  }, {
+    name: 'Hospice Care',
+    icon: HeartPulse,
+    description: 'Medicare-Certified End-of-Life Care'
+  }]
 }];
 const howItWorks = [{
   step: 1,
