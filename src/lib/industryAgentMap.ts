@@ -397,6 +397,16 @@ const CLUSTER_OVERRIDES: Record<IndustryPack['cluster'], PartialConfig> = {
     fieldOpsSectionLabel: 'Service Ops',
   },
   booking: {},
+  home_health: {
+    consoleTitle: 'Visit Operations Console',
+    consoleBadge: 'Built for in-home patient visits and routes',
+    workerConsoleTitle: 'Therapist Console',
+    workerLayoutTitle: 'Visit Operations',
+    installAppLabel: 'Install Therapist App',
+    assignmentAgentName: 'Visit Assignment Agent',
+    routingAgentName: 'Route Agent',
+    fieldOpsSectionLabel: 'Visit Ops',
+  },
 };
 
 const salonLike: PartialConfig = {
