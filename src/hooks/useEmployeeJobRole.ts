@@ -41,6 +41,14 @@ function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
   }
 }
 
+// Module-level cache survives component remounts so navigation between
+// dashboard routes doesn't briefly hide role-gated sidebar items while the
+// employee's job assignments re-fetch.
+const jobTypesCache = new Map<
+  string,
+  { types: JobRoleType[]; primary: JobRoleType | null }
+>();
+
 export function useEmployeeJobRole() {
   const { user, userRole } = useAuth();
   const cacheKey = user?.id ? `${user.id}:${userRole}` : null;
