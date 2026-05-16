@@ -361,9 +361,9 @@ export default function Campaigns() {
         ) : campaigns?.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <Megaphone className="h-12 w-12 text-white/70 mb-4" />
+              <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium">No campaigns yet</h3>
-              <p className="text-white/70 text-sm">Create your first marketing campaign</p>
+              <p className="text-muted-foreground text-sm">Create your first marketing campaign</p>
             </CardContent>
           </Card>
         ) : (
@@ -386,29 +386,29 @@ export default function Campaigns() {
                           {getStatusBadge(campaign.status)}
                           {getChannelIcons(campaign.channels || [])}
                         </div>
-                        <p className="text-sm text-white/70 capitalize">
+                        <p className="text-sm text-muted-foreground capitalize">
                           {campaign.campaign_type} • {campaign.target_segment}
                         </p>
                       </div>
-                      <div className="text-right text-sm text-white/70">
+                      <div className="text-right text-sm text-muted-foreground">
                         {format(new Date(campaign.created_at), 'MMM d, yyyy')}
                       </div>
                     </div>
                     <div className="grid grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-white/70">Sent</p>
+                        <p className="text-muted-foreground">Sent</p>
                         <p className="font-medium">{campaign.total_sent || 0}</p>
                       </div>
                       <div>
-                        <p className="text-white/70">Open Rate</p>
+                        <p className="text-muted-foreground">Open Rate</p>
                         <p className="font-medium">{openRate}%</p>
                       </div>
                       <div>
-                        <p className="text-white/70">Click Rate</p>
+                        <p className="text-muted-foreground">Click Rate</p>
                         <p className="font-medium">{clickRate}%</p>
                       </div>
                       <div>
-                        <p className="text-white/70">Conversions</p>
+                        <p className="text-muted-foreground">Conversions</p>
                         <p className="font-medium">{campaign.total_converted || 0}</p>
                       </div>
                     </div>

@@ -363,17 +363,17 @@ export default function Companies() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-white/70 text-sm">Company Slug</Label>
+                  <Label className="text-muted-foreground text-sm">Company Slug</Label>
                   <Badge variant="outline" className="font-mono text-sm ml-2">
                     {company.slug}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-white/70 text-sm">Created</Label>
+                  <Label className="text-muted-foreground text-sm">Created</Label>
                   <p className="text-sm">{format(new Date(company.created_at), 'MMMM d, yyyy')}</p>
                 </div>
                 <div>
-                  <Label className="text-white/70 text-sm">Last Updated</Label>
+                  <Label className="text-muted-foreground text-sm">Last Updated</Label>
                   <p className="text-sm">{format(new Date(company.updated_at), 'MMMM d, yyyy')}</p>
                 </div>
               </CardContent>
@@ -383,12 +383,12 @@ export default function Companies() {
             <Card className="border-border/50">
               <CardHeader>
                 <CardTitle>Branding</CardTitle>
-                <CardDescription className="text-white/70">Your company's brand colors</CardDescription>
+                <CardDescription className="text-muted-foreground">Your company's brand colors</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div>
-                    <Label className="text-white/70 text-sm">Primary Color</Label>
+                    <Label className="text-muted-foreground text-sm">Primary Color</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <div 
                         className="w-8 h-8 rounded-md border"
@@ -398,7 +398,7 @@ export default function Companies() {
                     </div>
                   </div>
                   <div>
-                    <Label className="text-white/70 text-sm">Secondary Color</Label>
+                    <Label className="text-muted-foreground text-sm">Secondary Color</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <div 
                         className="w-8 h-8 rounded-md border"
@@ -582,7 +582,7 @@ export default function Companies() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs text-white border-white/30">
+                          <Badge variant="outline" className="font-mono text-xs text-white border-border">
                             {company.slug}
                           </Badge>
                         </TableCell>
