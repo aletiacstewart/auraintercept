@@ -820,7 +820,7 @@ export default function Auth() {
                 {/* Free Account Note */}
                 <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                   <p className="text-xs text-center text-foreground">
-                    <span className="font-medium text-green-600">Customer accounts are always free</span> — one account works with all registered companies!
+                    <span className="font-medium text-green-600">Customer accounts are always complimentary</span> — one account works with all registered companies!
                   </p>
                 </div>
               </div>
@@ -970,7 +970,7 @@ export default function Auth() {
                 {/* Customer Info */}
                 <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
                   <p className="text-[10px] text-center text-foreground">
-                    <span className="font-medium text-green-600">Customers get free accounts</span> to engage with registered companies!
+                    <span className="font-medium text-green-600">Customers get complimentary accounts</span> to engage with registered companies!
                   </p>
                 </div>
 
@@ -998,7 +998,7 @@ export default function Auth() {
                           { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Your account · valid card · billed by SignalWire', limit: 'SMS + voice usage invoiced directly by SignalWire', note: 'Required', color: 'text-green-400' },
                           { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Your account · valid card · billed by ElevenLabs', limit: 'AI voice usage invoiced directly by ElevenLabs', note: 'Required', color: 'text-purple-400' },
                           { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: 'Your account · valid card · billed by Resend', limit: 'Email volume + custom domain invoiced directly by Resend', note: 'Required', color: 'text-cyan-400' },
-                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Your Google account · free OAuth', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
+                          { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Your Google account · OAuth', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
                           { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: 'Your account · billed by Stripe', limit: '2.9% + $0.30/txn · payouts to your bank · invoiced directly by Stripe', note: 'Required if collecting payments', color: 'text-amber-400' },
                           { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Your business pages + OAuth', limit: 'Any platform fees billed directly by each network', note: 'Required if posting', color: 'text-pink-400' },
                           { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: 'Your account · valid card · billed by Tavily', limit: 'AI research credits invoiced directly by Tavily', note: 'Required', color: 'text-orange-400' },
@@ -1019,7 +1019,7 @@ export default function Auth() {
                         ))}
                       </div>
                       <p className="mb-3 text-[8px] italic text-muted-foreground/70 leading-relaxed">
-                        Over-limit usage on any 3rd-party service will be invoiced at month-end in addition to your Aura plan fee. Provider fees and free-tier limits are set by each vendor and may change at any time.
+                        Over-limit usage on any 3rd-party service will be invoiced at month-end in addition to your Aura plan fee. Provider fees and included limits are set by each vendor and may change at any time.
                       </p>
 
                       {/* Setup docs — nested accordion */}
@@ -1472,7 +1472,7 @@ export default function Auth() {
                           disabled={isLoading || !termsAgreed || (mode === 'company' && (!setupAcknowledged.a2p || !setupAcknowledged.costs || !setupAcknowledged.knowledgeBase))}
                         >
                           {isLoading ? 'Creating account...' : mode === 'company' 
-                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start Free Trial')
+                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start 90-Day Live Trial')
                             : 'Create Account'}
                         </Button>
                         {mode === 'company' && (
