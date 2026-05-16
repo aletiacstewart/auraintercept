@@ -47,7 +47,7 @@ export function DashboardViewToggle({ className }: DashboardViewToggleProps) {
                     'h-7 px-3 rounded-full text-xs font-medium gap-1.5 transition-all',
                     active
                       ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary hover:text-primary-foreground'
-                      : 'text-white hover:text-foreground',
+                      : 'text-foreground hover:text-foreground',
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />

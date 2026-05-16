@@ -190,7 +190,7 @@ export function EmployeeDashboard() {
               <h1 className="text-3xl font-bold tracking-tight">
                 Welcome, {profile?.full_name?.split(' ')[0] || 'Team Member'}
               </h1>
-              <p className="text-white mt-1">
+              <p className="text-foreground mt-1">
                 {company?.name} • {primaryJobType ? primaryJobType.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Employee'}
               </p>
             </>
@@ -240,7 +240,7 @@ export function EmployeeDashboard() {
               ) : (
                 <div className={`text-3xl font-bold ${stat.highlight ? 'text-yellow-600' : ''}`}>{stat.value}</div>
               )}
-              <p className="text-xs text-white mt-1">{stat.description}</p>
+              <p className="text-xs text-foreground mt-1">{stat.description}</p>
             </CardContent>
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
@@ -254,7 +254,7 @@ export function EmployeeDashboard() {
             <Settings className="w-5 h-5 text-primary" />
             Quick Actions
           </CardTitle>
-          <CardDescription className="text-white">Access your most used features</CardDescription>
+          <CardDescription className="text-foreground">Access your most used features</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
@@ -279,8 +279,8 @@ export function EmployeeDashboard() {
       {jobTypes.length > 0 && (
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle className="text-white">Your Roles</CardTitle>
-            <CardDescription className="text-white">Your assigned job responsibilities</CardDescription>
+            <CardTitle className="text-foreground">Your Roles</CardTitle>
+            <CardDescription className="text-foreground">Your assigned job responsibilities</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">

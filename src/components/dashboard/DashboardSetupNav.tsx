@@ -188,7 +188,7 @@ export function DashboardSetupNav() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-4">
-        <Loader2 className="h-5 w-5 animate-spin text-white" />
+        <Loader2 className="h-5 w-5 animate-spin text-foreground" />
       </div>
     );
   }
@@ -200,7 +200,7 @@ export function DashboardSetupNav() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold text-card-foreground">Overall Setup Progress</h3>
-            <p className="text-xs text-white">
+            <p className="text-xs text-foreground">
               {completedCount} of {sections.length} sections completed
             </p>
           </div>
@@ -228,7 +228,7 @@ export function DashboardSetupNav() {
                   ? 'bg-background text-foreground shadow-sm'
                   : section.completed
                     ? 'bg-primary/10 text-primary hover:bg-primary/20'
-                    : 'text-white hover:text-foreground hover:bg-muted/50'
+                    : 'text-foreground hover:text-foreground hover:bg-muted/50'
               )}
             >
               {section.completed ? (
@@ -241,7 +241,7 @@ export function DashboardSetupNav() {
                 'text-[10px] px-1 py-0.5 rounded',
                 section.completed 
                   ? 'bg-primary/20 text-primary' 
-                  : 'bg-muted text-white'
+                  : 'bg-muted text-foreground'
               )}>
                 {Math.round(section.progress)}%
               </span>
