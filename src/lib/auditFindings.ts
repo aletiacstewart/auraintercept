@@ -200,7 +200,7 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     status: "open",
     title: "768 raw text-white/bg-black/text-black/bg-white usages",
     observed:
-      "Scoped passes complete: ai-consoles (7→0), components/dashboard (32→2 intentional), pages/operations (0), pages/technician (17→4 intentional), components/agents (3→3 intentional badge text on saturated bg), components/marketing (22→2 intentional brand-gradient buttons), components/customer-portal (0). All remaining hits are saturated gradient/badge surfaces — legitimate per Cyber-Sentry exception. Next scopes (open): components/ai, components/aura, components/fieldops.",
+      "Scoped passes complete: ai-consoles (7→0), components/dashboard (32→2 intentional), pages/operations (0), pages/technician (17→4 intentional), components/agents (3→3 intentional), components/marketing (22→2 intentional), components/customer-portal (0), components/ai (~75→~70 intentional icons on gradients/glass headers), components/aura (~10→~10 intentional sparkle/bot icons on primary gradient), components/fieldops (~13→~13 intentional status buttons & glass headers). Remaining hits are saturated gradient surfaces, status buttons, or icons on colored backgrounds — legitimate per Cyber-Sentry exception. Next scopes (open): components/businessops, components/social, components/integrations.",
     expected: "Per-scope sweeps; ai-consoles + dashboard + operations + technician + agents + marketing + customer-portal done.",
     files: [{ path: "src/pages/" }, { path: "src/components/" }],
     memoryRef: "mem://style/cyber-sentry-design-standard",
