@@ -1085,19 +1085,6 @@ export default function Index() {
                   We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
                   <span className="font-semibold text-primary">90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
-
-                {/* FCC 10DLC Notice */}
-                <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-4">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
-                      <p className="text-xs text-white leading-relaxed">
-                        Our platform handles A2P 10DLC registration on your behalf. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees:</span> brand registration <span className="font-medium">$4.50 (one-time)</span>, standard campaign fee varies by use case (first 3 months charged upfront), plus a monthly campaign maintenance fee. T-Mobile also charges a <span className="font-medium">$250/month</span> pass-through fee for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-white">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-white">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -1112,6 +1099,19 @@ export default function Index() {
               <p className="text-xs text-white italic mt-1">
                 All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
               </p>
+            </div>
+
+            {/* SMS System — FCC 10DLC Compliance (moved from Beta panel) */}
+            <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 p-4">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
+                  <p className="text-xs text-white leading-relaxed">
+                    Our platform handles A2P 10DLC registration on your behalf. <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees:</span> brand registration <span className="font-medium">$4.50 (one-time)</span>, standard campaign fee varies by use case (first 3 months charged upfront), plus a monthly campaign maintenance fee. T-Mobile also charges a <span className="font-medium">$250/month</span> pass-through fee for any inactive campaign (no SMS in 60+ days). <span className="font-medium text-white">Approval timeline:</span> brand 1–3 days, campaign 3–15 business days. <span className="font-medium text-white">You provide:</span> EIN, DBA (if applicable), and LLC/Inc documentation.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
