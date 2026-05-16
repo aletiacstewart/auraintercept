@@ -111,14 +111,15 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
   {
     id: "workflow-multi-location-ghost",
     area: "Workflow handoffs",
-    severity: "P1",
-    status: "open",
-    title: "Multi-location ghost fields still in DB schema",
-    observed: "google_business_location_id column visible in 3 generated type slots.",
-    expected: "Multi-location is forbidden; drop the column via migration (requires user approval).",
+    severity: "P3",
+    status: "false_positive",
+    title: "Multi-location ghost fields — actually single-location Google Business identifiers",
+    observed:
+      "Verified: `google_business_location_id` is the Google Business Profile location identifier (one per company) used by publish-social-content/index.ts when posting to Google Business. `location_updated_at` is the technician GPS-ping timestamp used by FieldOpsManager and TechnicianLocationSettings. Neither implies multi-location business support.",
+    expected: "Keep both columns; they are not multi-location infrastructure.",
     files: [{ path: "src/integrations/supabase/types.ts", lines: "6275, 6334, 6393" }],
     memoryRef: "mem://product/multi-location-scope-exclusion",
-    fixSize: "M",
+    fixSize: "S",
   },
 
   // ── Settings & integrations ─────────────────────────────────
@@ -140,13 +141,15 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     id: "help-two-surfaces",
     area: "Help / guides",
     severity: "P1",
-    status: "open",
-    title: "Two parallel help surfaces with drifting content",
-    observed: "Help.tsx (49 KB) and AIHelpCenter.tsx (27 KB) duplicate pricing/tier/console copy.",
+    status: "fixed",
+    title: "Help.tsx and AIHelpCenter share a single content source",
+    observed:
+      "FIXED — extracted helpSystemPrompt.ts which derives the AI Help Center's SYSTEM_PROMPT (console list + tier section) from the same CONSOLE_HELP_CONFIG + TIER_HELP_DESCRIPTIONS the Help page renders. Tier names, pricing, console roster now have one source of truth.",
     expected: "Single content source rendered by both surfaces.",
     files: [
       { path: "src/pages/Help.tsx" },
       { path: "src/components/help/AIHelpCenter.tsx" },
+      { path: "src/lib/helpSystemPrompt.ts" },
     ],
     fixSize: "M",
   },
