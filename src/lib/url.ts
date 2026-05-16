@@ -11,10 +11,8 @@ export function normalizePublicBaseUrl(input: string): string | null {
 }
 
 export function isLovablePreviewOrigin(origin: string): boolean {
-  // Lovable preview environments use:
-  // 1. *.lovableproject.com (legacy)
-  // 2. id-preview--*.lovable.app (current)
-  // Published apps typically use *.lovable.app (without id-preview--) or a custom domain.
+  // Preview / staging environments used during development. Production
+  // traffic is served from auraintercept.ai (see published-domain standard).
   try {
     const host = new URL(origin).host;
     return host.endsWith('.lovableproject.com') || host.startsWith('id-preview--');
