@@ -40,7 +40,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included.',
     bestFor: 'Solo operators, restaurants, single-location service businesses.',
     highlights: [
-      'Channels included: Voice calls, SMS, Email, Web chat (bundled — no carrier passthrough)',
+      'Channels included: Voice calls, SMS, Email, Web chat (your own SignalWire / ElevenLabs / Resend accounts — billed separately by each provider)',
       'AI Receptionist (Triage) for 24/7 customer engagement',
       'Message Aura (Text) + Email Reminders',
       'Booking Agent + Follow-Up Agent + Review Agent',
@@ -71,7 +71,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     bestFor: 'Small service teams (HVAC, plumbing, electrical, field service).',
     highlights: [
       'Everything in Aura Core',
-      'Channels included: Voice calls, SMS, Email, Web chat (bundled)',
+      'Channels included: Voice calls, SMS, Email, Web chat (your own provider accounts — billed separately)',
       'Dispatch/GPS Console (Smart job assignment)',
       'Route Agent + ETA Agent + Check-In Agent',
       'Field Operations Console',
