@@ -30,6 +30,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getNavLabels } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
 
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
