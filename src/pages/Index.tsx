@@ -931,7 +931,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Core booking & web presence</p>
                 <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses, and home-health / therapy practices.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-teal-400">$197</span>
+                  <span className="text-3xl font-bold text-teal-400">$497</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$1,970/year (Save ~20%)</p>
@@ -996,7 +996,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Full business management</p>
                 <p className="text-[10px] text-white italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-purple-400">$997</span>
+                  <span className="text-3xl font-bold text-purple-400">$1,197</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$9,970/year (Save ~20%)</p>
@@ -1027,7 +1027,7 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-amber-400">$1,997</span>
+                  <span className="text-3xl font-bold text-amber-400">$2,197</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$19,970/year (Save ~20%)</p>
@@ -1063,10 +1063,10 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>60-Day Live Trial • No credit card required for the trial</p>
+            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>90-Day Live Trial • No credit card required for the trial</p>
             <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Onboarding Fee (due at start of 60-Day Live Trial): <span className="font-medium">Core $497 • Boost $697 • Pro $1,197 • Elite $2,197</span></p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Onboarding Fee (due at start of 90-Day Live Trial): <span className="font-medium">Core $497 • Boost $697 • Pro $1,197 • Elite $2,197</span></p>
             <p className="text-[11px] italic" style={{ color: "rgba(255,255,255,0.7)" }}>Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.</p>
           </div>
 
@@ -1083,7 +1083,7 @@ export default function Index() {
                 </div>
                 <p className="text-sm text-white leading-relaxed">
                   We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
-                  <span className="font-semibold text-primary">60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                  <span className="font-semibold text-primary">90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
                 {/* FCC 10DLC Notice */}

@@ -298,7 +298,7 @@ export default function Auth() {
       // Create company — honor the tier the user picked at signup (defaults to Core if skipped)
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
-      // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
+      // and powers useIndustryPack everywhere). 90-day trial regardless of tier.
       const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
       if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
         toast({
@@ -313,7 +313,7 @@ export default function Auth() {
       const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
         ? selectedTier
         : 'starter';
-      const trialEndsAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
+      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -454,7 +454,7 @@ export default function Auth() {
 
       toast({ 
         title: 'Welcome! 🎉', 
-        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
+        description: 'Your 90-Day Live Trial has started. Enjoy full access to all features!' 
       });
       navigate('/dashboard');
     }
@@ -655,7 +655,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Start your 60-Day Live Trial',
+          description: 'Start your 90-Day Live Trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -834,10 +834,10 @@ export default function Auth() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">👑</span>
-                      <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
+                      <h3 className="text-sm font-bold text-foreground">90-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
+                      Your <span className="font-semibold text-foreground">90-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                 </div>
                 </div>
@@ -851,7 +851,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">a 60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">a 90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 
@@ -896,10 +896,10 @@ export default function Auth() {
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$197',   annualPrice: '$164', annualTotal: '$1,970', savings: '$394',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$497',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$997',   annualPrice: '$831', annualTotal: '$9,970', savings: '$1,994', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$1,997', annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$697',   annualPrice: '$164', annualTotal: '$1,970', savings: '$394',   color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$697',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,197',   annualPrice: '$831', annualTotal: '$9,970', savings: '$1,994', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$2,197', annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -1457,7 +1457,7 @@ export default function Auth() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
@@ -1479,7 +1479,7 @@ export default function Auth() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '60-Day Live Trial • No credit card required for the trial • Cancel anytime'}
+                              : '90-Day Live Trial • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
                       </form>
@@ -1500,7 +1500,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">60-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. Covers setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training. Non-refundable once onboarding begins.
+                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. Covers setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training. Non-refundable once onboarding begins.
                  </p>
               </div>
 

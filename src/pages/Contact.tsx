@@ -184,10 +184,10 @@ export default function Contact() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="starter">Aura Core — $197/mo</SelectItem>
-                                <SelectItem value="connect">Aura Boost — $497/mo</SelectItem>
-                                <SelectItem value="performance">Aura Pro — $997/mo</SelectItem>
-                                <SelectItem value="command">Aura Elite — $1,997/mo</SelectItem>
+                                <SelectItem value="starter">Aura Core — $697/mo</SelectItem>
+                                <SelectItem value="connect">Aura Boost — $697/mo</SelectItem>
+                                <SelectItem value="performance">Aura Pro — $1,197/mo</SelectItem>
+                                <SelectItem value="command">Aura Elite — $2,197/mo</SelectItem>
                                 <SelectItem value="other">Other / Not Sure</SelectItem>
                               </SelectContent>
                             </Select>
@@ -317,7 +317,7 @@ export default function Contact() {
                   <CardContent className="pt-6">
                     <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
                     <p className="mb-4 opacity-90">
-                      Start your 60-Day Live Trial and see how AI can transform your business.
+                      Start your 90-Day Live Trial and see how AI can transform your business.
                     </p>
                     <Button 
                       variant="secondary" 

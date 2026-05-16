@@ -127,10 +127,10 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Core ($197/mo): 8 AI Agents — Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing',
-          'Aura Boost ($497/mo): 12 AI Agents — All Core + Dispatch, Route, ETA, Check-In',
-          'Aura Pro ($997/mo): 16 AI Agents — All Boost + Campaign, Outreach, Social Scheduler Agent, Social Analytics',
-          'Aura Elite ($1,997/mo): All 24 AI Agents + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
+          'Aura Core ($697/mo): 8 AI Agents — Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing',
+          'Aura Boost ($697/mo): 12 AI Agents — All Core + Dispatch, Route, ETA, Check-In',
+          'Aura Pro ($1,197/mo): 16 AI Agents — All Boost + Campaign, Outreach, Social Scheduler Agent, Social Analytics',
+          'Aura Elite ($2,197/mo): All 24 AI Agents + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
           'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
           'All tiers include API Access and Chat Widget'

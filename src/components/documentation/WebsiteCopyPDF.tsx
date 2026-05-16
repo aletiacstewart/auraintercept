@@ -490,7 +490,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Complete copy for all subscription tiers</Text>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Core - $197/mo</Text>
+        <Text style={styles.copyLabel}>Aura Core - $697/mo</Text>
         <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
           Your AI-powered business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
@@ -504,7 +504,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Boost - $497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Boost - $697/mo</Text>
         <Text style={styles.copyHeadline}>Field Operations Power</Text>
         <Text style={styles.copyBody}>
           Built for service teams that dispatch. HVAC, plumbing, and field service businesses scale with intelligent routing.{'\n\n'}
@@ -524,7 +524,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro - $997/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro - $1,197/mo</Text>
         <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
           Scale your brand with campaigns, social media, and industry-specific specialist agents for growing companies.{'\n\n'}
@@ -538,7 +538,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Elite - $1,997/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $2,197/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 24-agent suite handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
@@ -578,12 +578,12 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Can I try before I commit?</Text>
-        <Text style={styles.faqAnswer}>Absolutely. We offer a 60-Day Live Trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
+        <Text style={styles.faqAnswer}>Absolutely. We offer a 90-Day Live Trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
       </View>
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 60-Day Live Trial: $497 Core, $697 Boost, $1,197 Pro, $2,197 Elite. This covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 90-Day Live Trial: $497 Core, $697 Boost, $1,197 Pro, $2,197 Elite. This covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>
@@ -605,7 +605,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 60 days.
+          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 90 days.
         </Text>
       </View>
 
@@ -621,7 +621,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $197/mo. 24 Smart AI Agents, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
+          Meta: Plans from $697/mo. 24 Smart AI Agents, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
         </Text>
       </View>
 

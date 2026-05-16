@@ -12,13 +12,13 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// 4-TIER STRUCTURE: Core ($197), Boost ($497), Pro ($997), Elite ($1,997)
+// 4-TIER STRUCTURE: Core ($697), Boost ($697), Pro ($1,197), Elite ($2,197)
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
   // Canonical 4 tiers
   starter: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 19700, // $197 in cents
+    price: 19700, // $497 in cents
   },
   connect: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
@@ -28,12 +28,12 @@ const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price
   performance: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Pro",
-    price: 99700, // $997 in cents
+    price: 99700, // $1,197 in cents
   },
   command: {
     price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
     name: "Aura Elite",
-    price: 199700, // $1,997 in cents
+    price: 199700, // $2,197 in cents
   },
   // Legacy tier aliases → map to canonical 4 tiers
   scheduling: {

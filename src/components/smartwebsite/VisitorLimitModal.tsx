@@ -30,21 +30,21 @@ const tierLimits = {
 const tierUpgrades = {
   connect: {
     name: 'Boost',
-    price: '$497/mo',
+    price: '$697/mo',
     limit: '2,000',
     icon: TrendingUp,
     features: ['4x more visitors', '5 Control Centers', 'Field Operations'],
   },
   performance: {
     name: 'Pro',
-    price: '$997/mo',
+    price: '$1,197/mo',
     limit: '10,000',
     icon: TrendingUp,
     features: ['20x more visitors', '5 Control Centers', 'Industry Specialist Agents'],
   },
   command: {
     name: 'Elite',
-    price: '$1,997/mo',
+    price: '$2,197/mo',
     limit: '25,000',
     icon: Crown,
     features: ['50x more visitors', 'All 7 Centers + AI Hub', 'Unlimited employees'],
