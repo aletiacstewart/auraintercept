@@ -448,7 +448,7 @@ export default function Help() {
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                         <div>
                           <p className="font-medium text-card-foreground">Sign Up</p>
-                          <p className="text-sm text-card-foreground/70">Visit the sign-in page and select "Company Sign Up" to create your company account. You'll receive a 60-Day Live Trial with full access to all features.</p>
+                          <p className="text-sm text-card-foreground/70">Visit the sign-in page and select "Company Sign Up" to create your company account. You'll receive a 90-Day Live Trial with full access to all features.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
@@ -639,7 +639,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 Smart AI Agents, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 90-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 Smart AI Agents, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>
@@ -675,19 +675,19 @@ export default function Help() {
                         <div className="text-card-foreground/70 space-y-3">
                           <ul className="space-y-3 text-sm">
                             <li>
-                              <strong className="text-card-foreground">Aura Core ($197/mo):</strong>
+                              <strong className="text-card-foreground">Aura Core ($497/mo):</strong>
                               <p className="mt-1">8 AI Agents: Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing. Perfect for solo operators.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Boost ($497/mo):</strong>
+                              <strong className="text-card-foreground">Aura Boost ($697/mo):</strong>
                               <p className="mt-1">12 AI Agents: All Core agents + Dispatch, Route, ETA, Check-In. Adds field operations and advanced scheduling.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Pro ($997/mo):</strong>
+                              <strong className="text-card-foreground">Aura Pro ($1,197/mo):</strong>
                               <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Scheduler Agent, Social Analytics. Full marketing and outreach automation.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Elite ($1,997/mo):</strong>
+                              <strong className="text-card-foreground">Aura Elite ($2,197/mo):</strong>
                               <p className="mt-1">Full suite of 24 agents including Invoice, Inventory, Insights, Performance, Revenue, Forecast + Predictive AI Hub.</p>
                             </li>
                           </ul>

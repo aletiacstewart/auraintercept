@@ -59,10 +59,10 @@ const INDUSTRIES_BY_TIER: Record<string, Array<{ key: string; label: string }>> 
 };
 
 const TIER_META: Record<string, { name: string; price: string; color: string }> = {
-  core:  { name: 'Aura Core',  price: '$197/mo',   color: 'bg-sky-500/10 text-sky-600 border-sky-500/30' },
-  boost: { name: 'Aura Boost', price: '$497/mo',   color: 'bg-violet-500/10 text-violet-600 border-violet-500/30' },
-  pro:   { name: 'Aura Pro',   price: '$997/mo',   color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
-  elite: { name: 'Aura Elite', price: '$1,997/mo', color: 'bg-red-500/10 text-red-600 border-red-500/30' },
+  core:  { name: 'Aura Core',  price: '$497/mo',   color: 'bg-sky-500/10 text-sky-600 border-sky-500/30' },
+  boost: { name: 'Aura Boost', price: '$697/mo',   color: 'bg-violet-500/10 text-violet-600 border-violet-500/30' },
+  pro:   { name: 'Aura Pro',   price: '$1,197/mo',   color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
+  elite: { name: 'Aura Elite', price: '$2,197/mo', color: 'bg-red-500/10 text-red-600 border-red-500/30' },
 };
 
 export default function DemoAccountSeeder() {

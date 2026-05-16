@@ -498,7 +498,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>1:10-1:30</Text>
-          <Text style={styles.timestampContent}>[CTA] "Transform your customer experience today. Start with Aura Core at just $197/month. Every call answered. Every customer impressed."</Text>
+          <Text style={styles.timestampContent}>[CTA] "Transform your customer experience today. Start with Aura Core at just $497/month. Every call answered. Every customer impressed."</Text>
         </View>
       </View>
 
@@ -582,7 +582,7 @@ export const VideoScriptsPDF: React.FC = () => (
             → Every lead gets followed up{'\n'}
             → Every job gets scheduled efficiently{'\n'}
             → Every customer gets a great experience{'\n\n'}
-            Starting at $197/month. Most customers see ROI in week one.{'\n\n'}
+            Starting at $697/month. Most customers see ROI in week one.{'\n\n'}
             Ready to see this with your own data?"
           </Text>
         </View>

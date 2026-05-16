@@ -347,7 +347,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Core ($197/mo) for solo operators and restaurants, Aura Boost ($497/mo) for small service teams with field operations, Aura Pro ($997/mo) for growing companies with multiple technicians, and Aura Elite ($1,997/mo) for large service teams and enterprise operations. All tiers include voice, SMS, and email communication channels."
+          answer="Choose based on your business needs: Aura Core ($497/mo) for solo operators and restaurants, Aura Boost ($697/mo) for small service teams with field operations, Aura Pro ($1,197/mo) for growing companies with multiple technicians, and Aura Elite ($2,197/mo) for large service teams and enterprise operations. All tiers include voice, SMS, and email communication channels."
         />
         
         <FAQItem 
@@ -373,7 +373,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a free trial available?"
-          answer="Yes! All new company registrations include a 60-Day Live Trial. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
+          answer="Yes! All new company registrations include a 90-Day Live Trial. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
         />
         
         <FAQItem 
@@ -455,12 +455,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer={`One-time onboarding fees are due at the start of your 60-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 497}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 697}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 1197}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 2197}). This covers initial setup, configuration, and training.`}
+          answer={`One-time onboarding fees are due at the start of your 90-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 497}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 697}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 1197}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 2197}). This covers initial setup, configuration, and training.`}
         />
         
         <FAQItem 
           question="Are there annual billing discounts?"
-          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $19,970/year (saving ~$3,994 vs monthly). Annual plans are billed upfront and include priority support."
+          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $21,970/year (saving ~$4,394 vs monthly). Annual plans are billed upfront and include priority support."
         />
         
         <FAQItem 

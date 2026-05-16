@@ -184,9 +184,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$197', connect: '$497', performance: '$997', command: '$1,997' },
-      { name: 'Annual Price', starter: '$1,970/year', connect: '$4,970/year', performance: '$9,970/year', command: '$19,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$394', connect: 'Save ~$994', performance: 'Save ~$1,994', command: 'Save ~$3,994' },
+      { name: 'Monthly Price', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$6,970/year', performance: '$11,970/year', command: '$21,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,394', performance: 'Save ~$2,394', command: 'Save ~$4,394' },
       { name: 'One-Time Onboarding Fee', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
     ],
   },
@@ -313,19 +313,19 @@ export const PricingComparisonTable = () => {
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-2 font-semibold bg-teal-500/20 border-x border-teal-400/30 text-xs">
               <div className="text-teal-300">Aura Core</div>
-              <div className="text-[10px] font-normal text-teal-300/70">$197/mo · 8 agents</div>
+              <div className="text-[10px] font-normal text-teal-300/70">$697/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
               <div className="text-cyan-300">Aura Boost</div>
-              <div className="text-[10px] font-normal text-cyan-300/70">$497/mo · 12 agents</div>
+              <div className="text-[10px] font-normal text-cyan-300/70">$697/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Pro</div>
-              <div className="text-[10px] font-normal text-purple-300/70">$997/mo · 16 agents</div>
+              <div className="text-[10px] font-normal text-purple-300/70">$1,197/mo · 16 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
               <div className="text-amber-300">Aura Elite</div>
-              <div className="text-[10px] font-normal text-amber-300/70">$1,997/mo · 24</div>
+              <div className="text-[10px] font-normal text-amber-300/70">$2,197/mo · 24</div>
             </th>
           </tr>
         </thead>

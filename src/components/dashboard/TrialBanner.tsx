@@ -114,7 +114,7 @@ export function TrialBanner() {
           <p className="text-sm text-foreground mt-1">
             {isCritical 
               ? "Subscribe now to keep your AI Operatives and all premium features."
-              : "You have full access to every Aura Elite feature during your 60-day trial."
+              : "You have full access to every Aura Elite feature during your 90-day trial."
             }
           </p>
 

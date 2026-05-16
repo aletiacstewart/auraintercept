@@ -60,17 +60,17 @@ export default function TermsOfService() {
             
             <h3 className="text-xl font-semibold mt-4 mb-3">Billing & Subscription</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Subscription plans range from $197 to $1,997 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
+              <li>Subscription plans range from $497 to $2,197 per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite).</li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 60-Day Live Trial: Aura Core $497, Aura Boost $697, Aura Pro $1,197, Aura Elite $2,197. Onboarding fees are non-refundable once onboarding is completed.</li>
+              <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 90-Day Live Trial: Aura Core $497, Aura Boost $697, Aura Pro $1,197, Aura Elite $2,197. Onboarding fees are non-refundable once onboarding is completed.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
+              <li>New accounts receive a <strong className="text-foreground">90-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
               <li>Trial covers the Aura platform only. SMS, voice, email, and AI research require your own accounts at SignalWire, ElevenLabs, Resend, and Tavily — those providers will bill you directly for any usage during or after the trial.</li>
-              <li>You may cancel any time during the 60-day trial at no charge.</li>
+              <li>You may cancel any time during the 90-day trial at no charge.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Third-Party Provider Accounts (billed separately)</h3>
@@ -90,7 +90,7 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Refund Policy</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 60-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
+              <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 90-day trial at no charge — no refund is needed because no payment is taken during the trial.</li>
               <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable once onboarding has been completed.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
               <li><strong className="text-foreground">Third-Party Provider Charges:</strong> Charges billed directly by SignalWire, ElevenLabs, Resend, Tavily, Stripe, or any other provider are governed by that provider's terms and are not refundable by Aura Intercept.</li>

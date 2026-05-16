@@ -301,7 +301,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   CORE: {
     tier: 'CORE',
     label: 'Aura Core',
-    price: '$197/mo',
+    price: '$697/mo',
     description: '8 Smart AI Agents that staff your Front Desk 24/7 — perfect for solo operators, restaurants, salons & personal services.',
     keyFeatures: [
       'Front Desk: 24/7 voice, text & email triage',
@@ -319,7 +319,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   BOOST: {
     tier: 'BOOST',
     label: 'Aura Boost',
-    price: '$497/mo',
+    price: '$697/mo',
     description: '12 Smart AI Agents that add On The Way (dispatch, routing & ETAs) for small service teams in the field.',
     keyFeatures: [
       'Everything in Core, plus:',
@@ -336,7 +336,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   PRO: {
     tier: 'PRO',
     label: 'Aura Pro',
-    price: '$997/mo',
+    price: '$1,197/mo',
     description: '16 Smart AI Agents adding full Marketing automation, Outreach & deeper Reports for scaling field teams.',
     keyFeatures: [
       'Everything in Boost, plus:',
@@ -353,7 +353,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   ELITE: {
     tier: 'ELITE',
     label: 'Aura Elite',
-    price: '$1,997/mo',
+    price: '$2,197/mo',
     description: 'Full 24-agent suite — adds Billing (quotes, invoices, inventory) and full Reports for large teams & enterprise operations.',
     keyFeatures: [
       'Everything in Pro, plus:',

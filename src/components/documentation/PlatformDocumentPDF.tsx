@@ -932,7 +932,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.ctaBox}>
         <Text style={styles.ctaTitle}>Ready to Transform Your Business?</Text>
-        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 60-Day Live Trial today. No credit card required.</Text></Text>
+        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 90-Day Live Trial today. No credit card required.</Text></Text>
       </View>
     </Page>
 
@@ -1146,50 +1146,50 @@ const PlatformDocumentPDF = () => (
       
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Core</Text>
-        <Text style={styles.pricingPrice}>$197/month</Text>
+        <Text style={styles.pricingPrice}>$697/month</Text>
         <Text style={styles.pricingFeature}>- 8 Smart AI Agents + 3 Consoles</Text>
         <Text style={styles.pricingFeature}>- AI Receptionist, Booking, Follow-Up, Review</Text>
         <Text style={styles.pricingFeature}>- Creative Content, Web Presence, Lead, Marketing</Text>
         <Text style={styles.pricingFeature}>- 10 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $497 one-time onboarding fee (due at start of 60-Day Live Trial)</Text>
+        <Text style={styles.pricingFeature}>- $497 one-time onboarding fee (due at start of 90-Day Live Trial)</Text>
       </View>
 
 
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Boost</Text>
-        <Text style={styles.pricingPrice}>$497/month</Text>
+        <Text style={styles.pricingPrice}>$697/month</Text>
         <Text style={styles.pricingFeature}>- 12 Smart AI Agents + 5 Consoles</Text>
         <Text style={styles.pricingFeature}>- All Core agents + Dispatch, Route, ETA, Check-In</Text>
         <Text style={styles.pricingFeature}>- Field Operations & Social Media</Text>
         <Text style={styles.pricingFeature}>- 25 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $697 one-time onboarding fee (due at start of 60-Day Live Trial)</Text>
+        <Text style={styles.pricingFeature}>- $697 one-time onboarding fee (due at start of 90-Day Live Trial)</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Aura Pro (Growth)</Text>
-        <Text style={styles.pricingPrice}>$997/month</Text>
+        <Text style={styles.pricingPrice}>$1,197/month</Text>
         <Text style={styles.pricingFeature}>- 16 Smart AI Agents + 5 Consoles</Text>
         <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Social</Text>
         <Text style={styles.pricingFeature}>- Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim)</Text>
         <Text style={styles.pricingFeature}>- 50 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $1,197 one-time onboarding fee (due at start of 60-Day Live Trial)</Text>
+        <Text style={styles.pricingFeature}>- $1,197 one-time onboarding fee (due at start of 90-Day Live Trial)</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$1,997/month</Text>
+        <Text style={styles.pricingPrice}>$2,197/month</Text>
         <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + 7 Consoles + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $2,197 one-time onboarding fee (due at start of 60-Day Live Trial)</Text>
+        <Text style={styles.pricingFeature}>- $2,197 one-time onboarding fee (due at start of 90-Day Live Trial)</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>
       <Text style={styles.paragraph}>
         Average service business with 10 missed calls/week × $300 avg job = $12,000/month in lost revenue.
-        Aura Intercept captures 100% of these calls. Platform cost: $497. Net ROI: $11,503/month.
+        Aura Intercept captures 100% of these calls. Platform cost: $697. Net ROI: $11,503/month.
       </Text>
     </Page>
 
@@ -1205,7 +1205,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
 
       <Text style={styles.subsectionTitle}>vs. Answering Services (Ruby, AnswerConnect)</Text>
-      <BulletPoint>$197-$1,997/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
+      <BulletPoint>$697-$2,197/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
       <BulletPoint>Unlimited calls vs. per-minute pricing</BulletPoint>
       <BulletPoint>Books appointments directly vs. just takes messages</BulletPoint>
       <BulletPoint>Full business automation vs. phone only</BulletPoint>
@@ -1262,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Aura Core starts at $197/month — and there's a 60-Day Live Trial with no credit card required."
+          that's $6,000/month in lost revenue. Aura Core starts at $497/month — and there's a 90-Day Live Trial with no credit card required."
         </Text>
       </View>
 
@@ -1275,7 +1275,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 60-Day Live Trial today—no credit card required."</BulletPoint>
+      <BulletPoint>"Let's start your 90-Day Live Trial today—no credit card required."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>
@@ -1361,7 +1361,7 @@ const PlatformDocumentPDF = () => (
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
-          Free 60-day trial. No credit card. Start now"
+          Free 90-day trial. No credit card. Start now"
         </Text>
       </View>
 

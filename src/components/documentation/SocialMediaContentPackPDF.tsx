@@ -580,7 +580,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
           "I almost quit my HVAC business. Then I found this..."{'\n\n'}
           [Show before: stressed, missing calls]{'\n'}
           [Show after: AI handling everything, owner relaxed]{'\n\n'}
-          "Best $197 I ever spent."
+          "Best $497 I ever spent."
         </Text>
       </View>
 
