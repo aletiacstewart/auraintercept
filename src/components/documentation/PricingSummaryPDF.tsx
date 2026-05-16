@@ -478,7 +478,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Savings</Text>
         </View>
         {[
-          { tier: 'Aura Core', monthly: '$697', yearlyPath: '$2,364', annual: '$1,970', savings: '$394' },
+          { tier: 'Aura Core', monthly: '$497', yearlyPath: '$2,364', annual: '$1,970', savings: '$394' },
           { tier: 'Aura Boost', monthly: '$697', yearlyPath: '$5,964', annual: '$4,970', savings: '$994' },
           { tier: 'Aura Pro', monthly: '$1,197', yearlyPath: '$11,964', annual: '$9,970', savings: '$1,994' },
           { tier: 'Aura Elite', monthly: '$2,197', yearlyPath: '$23,964', annual: '$19,970', savings: '$3,994' },

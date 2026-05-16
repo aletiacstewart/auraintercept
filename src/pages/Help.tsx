@@ -675,7 +675,7 @@ export default function Help() {
                         <div className="text-card-foreground/70 space-y-3">
                           <ul className="space-y-3 text-sm">
                             <li>
-                              <strong className="text-card-foreground">Aura Core ($697/mo):</strong>
+                              <strong className="text-card-foreground">Aura Core ($497/mo):</strong>
                               <p className="mt-1">8 AI Agents: Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing. Perfect for solo operators.</p>
                             </li>
                             <li>

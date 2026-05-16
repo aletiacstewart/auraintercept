@@ -15,7 +15,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Map price IDs to 3 canonical tiers: connect, performance, command
 const PRICE_TO_TIER: Record<string, string> = {
   // === CANONICAL 4-TIER PRICE IDS ===
-  // Aura Core - $697/mo
+  // Aura Core - $497/mo
   "price_1T0285J9fo9y8fGHURkfEnLp": "starter",
   // Aura Boost - $697/mo
   "price_1T02XqJ9fo9y8fGHMDDvQxR3": "connect",

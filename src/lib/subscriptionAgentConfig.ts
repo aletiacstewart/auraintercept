@@ -27,7 +27,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($697/mo): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
+    // Aura Core ($497/mo): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
     // industry specialists (auto-activated by industry pack). 10 employees.
     agents: [
       'triage',

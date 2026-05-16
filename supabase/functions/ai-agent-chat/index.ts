@@ -3339,7 +3339,7 @@ serve(async (req) => {
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Core ($697/mo): 8 agents — AI receptionist, customer journey, outreach, creative
+      // Aura Core ($497/mo): 8 agents — AI receptionist, customer journey, outreach, creative
       starter: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales

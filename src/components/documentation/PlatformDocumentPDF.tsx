@@ -1262,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Aura Core starts at $697/month — and there's a 90-Day Live Trial with no credit card required."
+          that's $6,000/month in lost revenue. Aura Core starts at $497/month — and there's a 90-Day Live Trial with no credit card required."
         </Text>
       </View>
 

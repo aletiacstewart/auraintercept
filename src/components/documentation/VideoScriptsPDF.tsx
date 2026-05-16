@@ -498,7 +498,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>1:10-1:30</Text>
-          <Text style={styles.timestampContent}>[CTA] "Transform your customer experience today. Start with Aura Core at just $697/month. Every call answered. Every customer impressed."</Text>
+          <Text style={styles.timestampContent}>[CTA] "Transform your customer experience today. Start with Aura Core at just $497/month. Every call answered. Every customer impressed."</Text>
         </View>
       </View>
 

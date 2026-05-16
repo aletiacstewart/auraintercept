@@ -745,7 +745,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 2, title: 'Table of Contents', desc: 'Document navigation' },
                   { page: 3, title: 'Executive Summary', desc: 'Pricing overview and quick comparison' },
                   { page: 4, title: 'Tier Comparison', desc: 'Full feature matrix by tier' },
-                  { page: 5, title: 'Core Details', desc: '$697/mo tier breakdown' },
+                  { page: 5, title: 'Core Details', desc: '$497/mo tier breakdown' },
                   { page: 6, title: 'Boost Details', desc: '$697/mo tier breakdown' },
                   { page: 7, title: 'Pro Details', desc: '$1,197/mo tier breakdown' },
                   { page: 8, title: 'Elite Details', desc: '$2,197/mo tier breakdown' },

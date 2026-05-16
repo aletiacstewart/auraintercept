@@ -671,7 +671,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionText}>"It's too expensive for my small business."</Text>
         <Text style={styles.responseLabel}>Response</Text>
         <Text style={styles.responseText}>
-          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Core tier starts at just $697/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
+          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Core tier starts at just $497/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
         </Text>
       </View>
 

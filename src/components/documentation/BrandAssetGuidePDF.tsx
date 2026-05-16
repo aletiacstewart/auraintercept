@@ -497,7 +497,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
               color="#14b8a6" 
               name="Aura Core Teal" 
               hex="#14b8a6" 
-              usage="Aura Core tier ($697/mo)"
+              usage="Aura Core tier ($497/mo)"
             />
             <ColorSwatch 
               color="#3b82f6" 

@@ -490,7 +490,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Complete copy for all subscription tiers</Text>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Core - $697/mo</Text>
+        <Text style={styles.copyLabel}>Aura Core - $497/mo</Text>
         <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
           Your AI-powered business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
