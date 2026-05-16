@@ -147,7 +147,7 @@ export function CompletedJobsHistory() {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
-          <RefreshCw className="h-6 w-6 animate-spin text-white" />
+          <RefreshCw className="h-6 w-6 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
@@ -163,7 +163,7 @@ export function CompletedJobsHistory() {
               <CheckCircle className="h-5 w-5 text-green-500" />
               <div>
                 <p className="text-2xl font-bold">{totalJobs}</p>
-                <p className="text-xs text-white">Jobs Completed</p>
+                <p className="text-xs text-muted-foreground">Jobs Completed</p>
               </div>
             </div>
           </CardContent>
@@ -174,7 +174,7 @@ export function CompletedJobsHistory() {
               <Wrench className="h-5 w-5 text-orange-500" />
               <div>
                 <p className="text-2xl font-bold">{Math.round(totalWorkMinutes / 60 * 10) / 10}h</p>
-                <p className="text-xs text-white">Work Time</p>
+                <p className="text-xs text-muted-foreground">Work Time</p>
               </div>
             </div>
           </CardContent>
@@ -185,7 +185,7 @@ export function CompletedJobsHistory() {
               <Car className="h-5 w-5 text-purple-500" />
               <div>
                 <p className="text-2xl font-bold">{Math.round(totalTravelMinutes / 60 * 10) / 10}h</p>
-                <p className="text-xs text-white">Travel Time</p>
+                <p className="text-xs text-muted-foreground">Travel Time</p>
               </div>
             </div>
           </CardContent>
@@ -197,7 +197,7 @@ export function CompletedJobsHistory() {
         <CardContent className="pt-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by customer, service, notes..."
                 value={searchTerm}
@@ -282,7 +282,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
           </div>
           <div>
             <p className="font-semibold">{appointment.service_type}</p>
-            <p className="text-sm text-white flex items-center gap-1">
+            <p className="text-sm text-foreground flex items-center gap-1">
               <User className="w-3 h-3" />
               {appointment.customer_name}
             </p>
@@ -293,7 +293,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
             <p className="font-medium">
               {job.completed_at && format(new Date(job.completed_at), 'MMM d, yyyy')}
             </p>
-            <p className="text-xs text-white">
+            <p className="text-xs text-muted-foreground">
               {job.completed_at && format(new Date(job.completed_at), 'h:mm a')}
             </p>
           </div>
@@ -306,19 +306,19 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
       {/* Quick Stats - Always visible */}
       <div className="flex gap-4 mt-3 text-xs">
         {travelTimeMinutes !== null && (
-          <div className="flex items-center gap-1 text-white">
+          <div className="flex items-center gap-1 text-foreground">
             <Car className="w-3 h-3" />
             <span>{travelTimeMinutes} min travel</span>
           </div>
         )}
         {workTimeMinutes !== null && (
-          <div className="flex items-center gap-1 text-white">
+          <div className="flex items-center gap-1 text-foreground">
             <Wrench className="w-3 h-3" />
             <span>{workTimeMinutes} min work</span>
           </div>
         )}
         {job.parts_used && (
-          <div className="flex items-center gap-1 text-white">
+          <div className="flex items-center gap-1 text-foreground">
             <Package className="w-3 h-3" />
             <span>Parts used</span>
           </div>
@@ -330,7 +330,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
         <div className="mt-4 pt-4 border-t border-border/50 space-y-4">
           {/* Customer Info */}
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-2 text-foreground">
               <Clock className="w-4 h-4" />
               <span>Scheduled: {format(parseUTCDateTime(appointment.datetime), 'MMM d, h:mm a')}</span>
             </div>
@@ -344,7 +344,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
               </a>
             )}
             {job.customer_address && (
-              <div className="flex items-center gap-2 text-white col-span-2">
+              <div className="flex items-center gap-2 text-foreground col-span-2">
                 <MapPin className="w-4 h-4" />
                 <span>{job.customer_address}</span>
               </div>
@@ -353,7 +353,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
 
           {/* Time Tracking Details */}
           <div className="bg-muted/50 p-3 rounded-lg space-y-2">
-            <p className="text-xs font-medium text-white uppercase tracking-wide flex items-center gap-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1">
               <Timer className="w-3 h-3" />
               Time Tracking
             </p>
@@ -362,7 +362,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-purple-500" />
                   <div>
-                    <p className="text-xs text-white">Travel Started</p>
+                    <p className="text-xs text-muted-foreground">Travel Started</p>
                     <p className="font-medium">{format(new Date(job.en_route_at), 'h:mm a')}</p>
                   </div>
                 </div>
@@ -371,7 +371,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-cyan-400" />
                   <div>
-                    <p className="text-xs text-white">Arrived</p>
+                    <p className="text-xs text-muted-foreground">Arrived</p>
                     <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
                   </div>
                 </div>
@@ -380,7 +380,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
                 <div className="flex items-center gap-2">
                   <Play className="w-4 h-4 text-orange-500" />
                   <div>
-                    <p className="text-xs text-white">Job Started</p>
+                    <p className="text-xs text-muted-foreground">Job Started</p>
                     <p className="font-medium">{format(new Date(job.started_at), 'h:mm a')}</p>
                   </div>
                 </div>
@@ -389,7 +389,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   <div>
-                    <p className="text-xs text-white">Completed</p>
+                    <p className="text-xs text-muted-foreground">Completed</p>
                     <p className="font-medium">{format(new Date(job.completed_at), 'h:mm a')}</p>
                   </div>
                 </div>
@@ -416,7 +416,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
           {/* Notes */}
           {job.notes && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs font-medium text-white uppercase tracking-wide flex items-center gap-1 mb-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1 mb-2">
                 <FileText className="w-3 h-3" />
                 Job Notes
               </p>
@@ -427,7 +427,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
           {/* Parts Used */}
           {job.parts_used && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs font-medium text-white uppercase tracking-wide flex items-center gap-1 mb-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1 mb-2">
                 <Package className="w-3 h-3" />
                 Parts Used
               </p>
@@ -438,10 +438,10 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
           {/* Customer Notes (if any) */}
           {appointment.notes && (
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs font-medium text-white uppercase tracking-wide mb-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
                 Customer Notes
               </p>
-              <p className="text-sm text-white">{appointment.notes}</p>
+              <p className="text-sm text-foreground">{appointment.notes}</p>
             </div>
           )}
         </div>
