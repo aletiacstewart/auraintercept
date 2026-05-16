@@ -1091,6 +1091,18 @@ export default function Index() {
                     <span className="font-semibold text-warning">Heads up:</span> while we're in Beta, documents, content, and data inside help menus, guides, how-to's, and tutorials may not be 100% accurate or up to date. Please refer to the <span className="font-semibold text-primary">Homepage content only</span> for the most current information on pricing, plans, trials, and 3rd-party requirements.
                   </p>
                 </div>
+
+                <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
+                  <p className="text-xs text-white leading-relaxed">
+                    <span className="font-semibold text-primary">Why an onboarding fee?</span> Due to the amount of setup and hours it takes to onboard each company, we do require a one-time onboarding fee.
+                  </p>
+                  <p className="text-xs text-white leading-relaxed">
+                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial):</span> Core <span className="font-semibold text-primary">$497</span> • Boost <span className="font-semibold text-primary">$697</span> • Pro <span className="font-semibold text-primary">$1,197</span> • Elite <span className="font-semibold text-primary">$2,197</span>
+                  </p>
+                  <p className="text-[11px] italic text-white/70 leading-relaxed">
+                    Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
