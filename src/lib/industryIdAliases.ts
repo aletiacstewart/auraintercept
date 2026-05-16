@@ -28,6 +28,11 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   handyman_cleaning: 'handyman',
   // legacy
   general_contractor: 'construction',
+  // home health aliases
+  pt: 'physical_therapy',
+  ot: 'occupational_therapy',
+  hospices: 'hospice',
+  home_health: 'physical_therapy',
 };
 
 /**
@@ -54,6 +59,9 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'restaurants',
   'personal_assistant',
   'fencing',
+  'physical_therapy',
+  'occupational_therapy',
+  'hospice',
   'other',
 ]);
 
