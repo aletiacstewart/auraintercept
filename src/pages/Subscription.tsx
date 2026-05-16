@@ -668,7 +668,7 @@ export default function Subscription() {
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Core</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
                         <div className="text-primary">Boost</div>
