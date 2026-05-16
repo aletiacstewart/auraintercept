@@ -185,6 +185,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </header>
 
         {/* Main Content */}
