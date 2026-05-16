@@ -31,7 +31,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     id: 'aura_core',
     name: 'Aura Core',
     price: 197,
-    annualPrice: 6970,
+    annualPrice: 4970,
     annualSavings: 394,
     implementationFee: 497,
     employees: 10,
