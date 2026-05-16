@@ -452,28 +452,28 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
             <TabsList className="bg-slate-700/80 border border-slate-600/50">
               <TabsTrigger 
                 value="map" 
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
               >
                 <Map className="h-4 w-4 mr-2" />
                 Map View
               </TabsTrigger>
               <TabsTrigger 
                 value="agenda"
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
               >
                 <List className="h-4 w-4 mr-2" />
                 Agenda View
               </TabsTrigger>
               <TabsTrigger 
                 value="calendar"
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Calendar
               </TabsTrigger>
               <TabsTrigger 
                 value="jobs"
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
               >
                 <ClipboardList className="h-4 w-4 mr-2" />
                 Job Status

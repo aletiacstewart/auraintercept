@@ -281,7 +281,7 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
                 <div className={cn("p-1.5 rounded-lg", config.bgColor)}>
                   <Icon className={cn("h-4 w-4", config.iconColor)} />
                 </div>
-                <h3 className="font-semibold text-lg text-white/90">{config.label}</h3>
+                <h3 className="font-semibold text-lg text-foreground">{config.label}</h3>
                 <Badge variant="outline" className="border-cyan-400/50 text-cyan-400">
                   {statusJobs.length}
                 </Badge>
@@ -323,7 +323,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
           {/* Job Details */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold truncate text-white/90">
+              <span className="font-semibold truncate text-foreground">
                 {job.appointments?.service_type || 'Service'}
               </span>
               <Badge 
@@ -400,7 +400,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-white/60 hover:text-white hover:bg-white/10"
+                  className="h-8 w-8 p-0 text-muted-foreground hover:text-white hover:bg-white/10"
                   onClick={() => window.open(`tel:${job.employee?.phone_number}`)}
                 >
                   <Users className="h-4 w-4" />

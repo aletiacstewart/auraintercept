@@ -221,7 +221,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
               {statusInfo.icon}
               <div className="flex-1">
                 {statusInfo.badge}
-                <p className="text-sm text-white mt-1">{statusInfo.message}</p>
+                <p className="text-sm text-foreground mt-1">{statusInfo.message}</p>
               </div>
             </div>
           </CardContent>
@@ -322,7 +322,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                 {job.accepted_at && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-blue-500" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       Technician assigned: {format(new Date(job.accepted_at), 'h:mm a')}
                     </span>
                   </div>
@@ -330,7 +330,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                 {job.en_route_at && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-amber-500" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       Started driving: {format(new Date(job.en_route_at), 'h:mm a')}
                     </span>
                   </div>
@@ -338,7 +338,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                 {job.arrived_at && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       Arrived: {format(new Date(job.arrived_at), 'h:mm a')}
                     </span>
                   </div>
@@ -346,7 +346,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                 {job.started_at && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-purple-500" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       Work started: {format(new Date(job.started_at), 'h:mm a')}
                     </span>
                   </div>
@@ -354,7 +354,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                 {job.completed_at && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-green-600" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       Completed: {format(new Date(job.completed_at), 'h:mm a')}
                     </span>
                   </div>
@@ -397,7 +397,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
           placeholder="Enter your name or phone number..."
           className="h-9 text-sm"
         />
-        <p className="text-xs text-white mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           We'll look up your appointments and show you the status.
         </p>
       </div>
@@ -405,12 +405,12 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
       {/* Results */}
       <div className="border rounded-lg max-h-80 overflow-y-auto">
         {searchQuery.length < 2 ? (
-          <div className="p-6 text-center text-sm text-white">
+          <div className="p-6 text-center text-sm text-muted-foreground">
             <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
             Enter at least 2 characters to search
           </div>
         ) : searchLoading ? (
-          <div className="p-4 text-center text-sm text-white">Searching...</div>
+          <div className="p-4 text-center text-sm text-muted-foreground">Searching...</div>
         ) : appointments.length === 0 ? (
           <AuraEmptyState
             icon={MapPin}
@@ -432,7 +432,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">{apt.service_type}</span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-white">
+                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
                       {format(parseUTCDateTime(apt.datetime), 'MMM d, yyyy h:mm a')}
                     </div>
