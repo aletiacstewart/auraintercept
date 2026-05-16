@@ -64,6 +64,20 @@ const CLUSTER: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       icon: Calendar, steps: ['Pull Schedule', 'Prep Notes', 'Brief'],
       command: 'Brief me on today’s appointments with any prep notes, prior visit history, and known preferences for each customer' },
   ],
+  home_health: [
+    { id: 'referral-intake', label: 'Referral → First Visit',
+      description: 'Verify insurance and schedule the first patient visit',
+      icon: Calendar, steps: ['Referral', 'Verify Insurance', 'Schedule'],
+      command: 'Take my newest referral: verify insurance/auth, schedule the first visit, and confirm with the patient' },
+    { id: 'visit-route', label: 'Build Today\u2019s Visit Route',
+      description: 'Sequence patient visits and notify therapists',
+      icon: Route, steps: ['Pull Visits', 'Optimize', 'Notify'],
+      command: 'Build today\u2019s optimized patient-visit route and send each therapist their stops with prep notes' },
+    { id: 'recert-sweep', label: 'Plan-of-Care Recert Sweep',
+      description: 'Find plans of care due for re-eval and queue updates',
+      icon: AlertCircle, steps: ['Find Due', 'Schedule Re-Eval', 'Update POC'],
+      command: 'Find every plan of care due for recertification this month and queue re-evaluation visits' },
+  ],
 };
 
 /* Per-industry overrides — covers ALL 18 packs explicitly. */
