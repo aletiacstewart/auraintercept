@@ -60,7 +60,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
                 'flex flex-col items-center gap-0.5 py-2 px-3 min-w-[56px] text-[9px] font-medium transition-all duration-200 relative whitespace-nowrap rounded-lg',
                 isActive 
                   ? 'text-white' 
-                  : 'text-white/60',
+                  : 'text-muted-foreground',
                 tab.variant === 'destructive' && isActive && 'text-destructive'
               )}
               onMouseEnter={e => {

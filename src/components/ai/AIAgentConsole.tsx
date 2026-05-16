@@ -642,7 +642,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                       {isOpen ? 'Open Now' : 'Closed'}
                     </span>
                   </div>
-                  <p className="text-[10px] text-white">{getTodayHours()}</p>
+                  <p className="text-[10px] text-foreground">{getTodayHours()}</p>
                 </>
               );
             })()}
@@ -651,23 +651,23 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           {/* Contact Info */}
           {(company?.contact_phone || company?.phone || company?.contact_email || company?.email || company?.contact_address || company?.address) && (
             <div className="px-3 py-2.5 border-b space-y-1.5" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1.5">Contact</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">Contact</p>
               {(company?.contact_phone || company?.phone) && (
                 <div className="flex items-center gap-2">
                   <Phone className="h-3 w-3 text-cyan-400/60 shrink-0" />
-                  <span className="text-[10px] text-white truncate">{company.contact_phone || company.phone}</span>
+                  <span className="text-[10px] text-foreground truncate">{company.contact_phone || company.phone}</span>
                 </div>
               )}
               {(company?.contact_email || company?.email) && (
                 <div className="flex items-center gap-2">
                   <Mail className="h-3 w-3 text-cyan-400/60 shrink-0" />
-                  <span className="text-[10px] text-white truncate">{company.contact_email || company.email}</span>
+                  <span className="text-[10px] text-foreground truncate">{company.contact_email || company.email}</span>
                 </div>
               )}
               {(company?.contact_address || company?.address) && (
                 <div className="flex items-start gap-2">
                   <MapPin className="h-3 w-3 text-cyan-400/60 shrink-0 mt-0.5" />
-                  <span className="text-[10px] text-white leading-tight">{company.contact_address || company.address}</span>
+                  <span className="text-[10px] text-foreground leading-tight">{company.contact_address || company.address}</span>
                 </div>
               )}
             </div>
@@ -676,15 +676,15 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           {/* Services */}
           {services && services.length > 0 && (
             <div className="px-3 py-2.5 border-b flex-1" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1.5">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                 Services ({services.length})
               </p>
               <div className="space-y-1">
                 {services.slice(0, 4).map((svc) => (
                   <div key={svc.id} className="flex items-center justify-between">
-                    <span className="text-[10px] text-white truncate max-w-[130px]">• {svc.name}</span>
+                    <span className="text-[10px] text-foreground truncate max-w-[130px]">• {svc.name}</span>
                     {svc.duration_minutes && (
-                      <span className="text-[9px] text-white/30 shrink-0 ml-1">{svc.duration_minutes}m</span>
+                      <span className="text-[9px] text-muted-foreground shrink-0 ml-1">{svc.duration_minutes}m</span>
                     )}
                   </div>
                 ))}
@@ -702,7 +702,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
           {/* Active Assistant */}
           <div className="px-3 py-2.5 border-b" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Active Assistant</p>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Active Assistant</p>
             <div
               className="flex items-center gap-2 px-2 py-1.5 rounded-lg"
               style={{ background: agentInfo.bgColor, border: `1px solid ${agentInfo.color}40` }}
@@ -714,18 +714,18 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
           {/* Session Metrics Footer */}
           <div className="p-3 border-t mt-auto" style={{ borderColor: 'rgba(0,229,255,0.08)' }}>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Session</p>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Session</p>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white">Status</span>
+                <span className="text-[10px] text-foreground">Status</span>
                 <span className="text-[10px] font-bold text-cyan-400">Live</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white">Response</span>
+                <span className="text-[10px] text-foreground">Response</span>
                 <span className="text-[10px] font-bold text-orange-400">&lt;1s</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-white">Satisfaction</span>
+                <span className="text-[10px] text-foreground">Satisfaction</span>
                 <span className="text-[10px] font-bold text-emerald-400">98.4%</span>
               </div>
             </div>
@@ -823,7 +823,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 return (
                   <React.Fragment key={index}>
                     {showHandoffIndicator && (
-                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-white animate-fade-in">
+                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground animate-fade-in">
                         <div className="h-px flex-1 bg-border" />
                         <span className="flex items-center gap-1 px-2 py-1 rounded-full glass-panel">
                           → Transferred to {msgAgentInfo?.label}
@@ -877,7 +877,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
           <div className="flex-1 overflow-y-auto p-4">
             <h3 className="font-semibold text-lg mb-4 gradient-text">Our Services</h3>
             {services?.length === 0 ? (
-              <p className="text-center text-white py-8">
+              <p className="text-center text-muted-foreground py-8">
                 No services configured yet
               </p>
             ) : (
@@ -895,11 +895,11 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                           {service.name}
                         </h4>
                         {service.description && (
-                          <p className="text-sm text-white mt-1 line-clamp-2">
+                          <p className="text-sm text-foreground mt-1 line-clamp-2">
                             {service.description}
                           </p>
                         )}
-                        <div className="flex items-center gap-3 mt-2 text-xs text-white">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {service.duration_minutes} min
@@ -911,7 +911,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                           )}
                         </div>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-white group-hover:text-primary transition-colors" />
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                     </div>
                   </button>
                 ))}
@@ -1153,7 +1153,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 <Label htmlFor="voice-test-mode" className="flex items-center gap-1.5 text-sm cursor-pointer">
                   <TestTube2 className="h-4 w-4" />
                   Text Mode
-                  <span className="text-xs text-white">(saves credits)</span>
+                  <span className="text-xs text-muted-foreground">(saves credits)</span>
                 </Label>
               </div>
             </div>

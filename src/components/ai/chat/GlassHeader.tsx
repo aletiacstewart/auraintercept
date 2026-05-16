@@ -87,7 +87,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
+                    className="h-8 w-8 p-0 text-foreground hover:text-white hover:bg-white/20 rounded-full shrink-0"
                     onClick={onBackClick}
                   >
                     <ArrowLeft className="h-4 w-4" />
@@ -181,7 +181,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
+                  className="h-8 w-8 p-0 text-foreground rounded-full transition-all duration-200"
                   onClick={onPhoneClick}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement;
@@ -208,7 +208,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 w-8 p-0 text-white/90 rounded-full transition-all duration-200"
+                  className="h-8 w-8 p-0 text-foreground rounded-full transition-all duration-200"
                   onClick={onVoiceClick}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement;
