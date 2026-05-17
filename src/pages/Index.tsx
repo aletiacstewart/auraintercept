@@ -1066,8 +1066,6 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>90-Day Live Trial • No credit card required for the trial</p>
             <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>One-Time Onboarding Fee (due at start of 90-Day Live Trial): <span className="font-medium">Core $497 • Boost $697 • Pro $1,197 • Elite $2,197</span></p>
-            <p className="text-[11px] italic" style={{ color: "rgba(255,255,255,0.7)" }}>Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.</p>
           </div>
 
           {/* Beta Testing Announcement */}
