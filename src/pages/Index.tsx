@@ -1088,7 +1088,7 @@ export default function Index() {
 
                 <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3">
                   <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-warning">Heads up:</span> while we're in Beta, documents, content, and data inside help menus, guides, how-to's, and tutorials may not be 100% accurate or up to date. Please refer to the <span className="font-semibold text-primary">Homepage content only</span> for the most current information on pricing, plans, trials, and 3rd-party requirements.
+                    <span className="font-semibold text-warning">Beta Notice:</span> as we refine the platform, help docs, guides, and tutorials may occasionally be out of step with the latest changes. We push updates continuously based on feedback from beta testers like you. For the most current details on pricing, plans, trials, and 3rd-party requirements, always check the <span className="font-semibold text-primary">Homepage</span> first. Thank you for helping us build something great.
                   </p>
                 </div>
 
