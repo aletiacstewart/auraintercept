@@ -168,7 +168,7 @@ const sections: FeatureSection[] = [
   },
   {
     title: 'Required 3rd-Party Accounts',
-    subtitle: 'Every provider below requires your own account with a valid credit card on file. Each provider invoices you directly and separately from your Aura plan fee.',
+    subtitle: 'Every provider below requires your own account with a valid credit card on file. Each provider bills you directly through automatic billing on your card, separately from your Aura plan fee.',
     features: [
       { name: 'Resend (Email)', starter: 'Your account · billed by Resend', connect: 'Your account · billed by Resend', performance: 'Your account · billed by Resend', command: 'Your account · billed by Resend' },
       { name: 'SignalWire (SMS & Voice)', starter: 'Your account · billed by SignalWire', connect: 'Your account · billed by SignalWire', performance: 'Your account · billed by SignalWire', command: 'Your account · billed by SignalWire' },
