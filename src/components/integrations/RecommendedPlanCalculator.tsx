@@ -143,7 +143,7 @@ export function RecommendedPlanCalculator() {
         'Email + SMS - best bang for your buck',
         { email: true, sms: true, voice: false },
         ['98% SMS open rate', 'Dual touchpoints', 'Affordable'],
-        ['Requires phone number ($1.15/mo)', 'SMS costs add up at scale'],
+        ['Requires phone number (~$0.50/mo)', 'SMS costs add up at scale'],
         'Growing businesses ready to scale'
       ),
       generatePlan(

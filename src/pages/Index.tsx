@@ -1182,7 +1182,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
                 <p className="text-[10px] text-amber-300 font-medium">Brand $4.50 one-time · Campaign fee varies (first 3 mo upfront) · Monthly maintenance</p>
                 <p className="text-[10px] text-white">T-Mobile $250/mo for inactive campaigns (60 consecutive days)</p>
-                <p className="text-[10px] text-white">Approval: 1–4 weeks · Required on all tiers</p>
+                <p className="text-[10px] text-white">Approval: 3–5 business days when clean · up to 1–2+ weeks with revisions · Required on all tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>

@@ -189,6 +189,18 @@ export function ResendSetupGuide() {
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
+                    <span>Free tier</span>
+                    <span className="font-medium">3,000 emails/month · 100/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Pro plan</span>
+                    <span className="font-medium">$20/month (50,000 emails)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Scale plan</span>
+                    <span className="font-medium">$90+/month (100K+ emails)</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span>Default daily cap</span>
                     <span className="font-medium">100 emails/day</span>
                   </div>

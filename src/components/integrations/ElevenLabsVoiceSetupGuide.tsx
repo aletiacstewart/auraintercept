@@ -204,7 +204,7 @@ export function ElevenLabsVoiceSetupGuide() {
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Free Tier: 10,000 characters/month</span>
+                  <span className="font-medium">Free Tier: ~15 min/month (10K credits) — no card required</span>
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
@@ -216,8 +216,16 @@ export function ElevenLabsVoiceSetupGuide() {
                     <span className="font-medium">$22/month (100K chars)</span>
                   </div>
                   <div className="flex justify-between">
+                    <span>Pro Plan</span>
+                    <span className="font-medium">$99/month (500K chars)</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span>Cost per 1K chars</span>
                     <span className="font-medium">~$0.18-0.30</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Pay-as-you-go</span>
+                    <span className="font-medium">Available — billed directly by ElevenLabs</span>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground pt-2 border-t">

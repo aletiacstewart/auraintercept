@@ -491,7 +491,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Do I need to pay for integrations separately?"
-          answer="Yes, third-party integrations have their own costs: SignalWire ($1.15/number + usage), ElevenLabs ($0-99+/month), Resend ($0-20+/month), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
+          answer="Yes, third-party integrations have their own costs, billed directly by each provider on your own account with a valid credit card on file: SignalWire (~$0.50/number + SMS $0.00415/segment + Voice $0.0066/min in / $0.008/min out + AI Agent $0.16/min), A2P 10DLC ($4.50 brand one-time + campaign $1.50–$30/mo + DCA $7.50/submission + $250/mo T-Mobile if inactive 60 consecutive days), ElevenLabs (Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go), Resend (Free 3,000/mo · Pro $20 · Scale $90+ · overage ~$0.90/1,000), Tavily (Free 1,000 credits/mo · $0.008/credit · Project plans from ~$30/mo), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
         />
 
         <FAQItem 
@@ -526,7 +526,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Message Aura vs Talk to Aura?"
-          answer="Message Aura (Text) is AI-powered chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and SignalWire. Voice is available on ALL paid tiers (Starter through Command)."
+          answer="Message Aura (Text) is AI-powered chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and SignalWire. Voice is available on ALL paid tiers (Core through Elite)."
         />
         
         <FAQItem 
@@ -736,7 +736,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="How do I set up SignalWire for voice calls?"
-          answer="1) Create a SignalWire account at signalwire.com, 2) Get a phone number ($1.15/month), 3) Copy your Project ID and API Token, 4) Add credentials in Settings > Integrations > SignalWire, 5) Configure voice settings and test. Required for Talk to Aura voice functionality."
+          answer="1) Create a SignalWire account at signalwire.com with a valid credit card on file, 2) Get a local US phone number (~$0.50/month), 3) Copy your Project ID and API Token, 4) Add credentials in Settings > Integrations > SignalWire, 5) Complete A2P 10DLC registration (brand $4.50 one-time + campaign $1.50–$30/mo) — approval typically 3–5 business days when clean, up to 1–2+ weeks with revisions, 6) Configure voice settings and test. Required for Talk to Aura voice functionality."
         />
 
         <FAQItem 

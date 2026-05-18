@@ -64,7 +64,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
                 <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">~1¢ per text</Badge>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Phone number rental: <strong>$1.15/month</strong> (required for sending texts)</li>
+                <li>• Phone number rental: <strong>~$0.50/month</strong> (required for sending texts)</li>
                 <li>• Each text message: <strong>~$0.0079</strong> (less than a penny)</li>
                 <li>• Your current estimate: {totalReminders} texts = <strong>{formatCurrency(costs.sms)}</strong></li>
               </ul>
@@ -78,7 +78,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
                 <Badge variant="outline" className="text-xs text-muted-foreground border-white/30">~12¢ per call</Badge>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Phone number rental: <strong>$1.15/month</strong></li>
+                <li>• Phone number rental: <strong>~$0.50/month</strong></li>
                 <li>• Call time: <strong>$0.014/minute</strong> (avg call is 30 seconds)</li>
                 <li>• AI Voice generation: <strong>varies by provider</strong> (see comparison below)</li>
                 <li>• Your current estimate: {totalReminders} calls = <strong>{formatCurrency(costs.voice)}</strong></li>
