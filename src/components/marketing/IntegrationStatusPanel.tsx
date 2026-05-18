@@ -13,7 +13,7 @@ export function IntegrationStatusPanel() {
             What is live — and what is mocked
           </h2>
           <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
-            What runs end-to-end vs. what's mocked in the 48-hour demo.
+            What runs end-to-end vs. what's mocked in the 24-hour demo.
           </p>
         </div>
 
