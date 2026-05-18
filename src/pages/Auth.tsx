@@ -150,6 +150,10 @@ export default function Auth() {
         try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
         try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
         navigate('/super-switcher');
+      } else if (roleData?.role === 'demo_rep') {
+        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
+        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
+        navigate('/super-switcher');
       } else if (roleData?.role === 'customer') {
         navigate('/customer');
       } else {
