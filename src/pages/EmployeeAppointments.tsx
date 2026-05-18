@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AppointmentCalendar } from '@/components/employee/AppointmentCalendar';
 import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
@@ -12,15 +13,47 @@ import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-
 import { FormShell } from '@/components/ui/form-shell';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { Calendar, ClipboardList, History, Briefcase, Plus } from 'lucide-react';
+import { Calendar, ClipboardList, History, Briefcase, Plus, Link2 } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPageHeader, getQueueLabels } from '@/lib/industryNavLabels';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function EmployeeAppointments() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { pack } = useIndustryPack();
   const apptHeader = getPageHeader('appointments', pack);
   const queueLabels = getQueueLabels(pack);
+  const { userRole } = useAuth();
+  const navigate = useNavigate();
+  const isRestaurant = pack?.industry_id === 'restaurants';
+  const isPlatformAdmin = userRole === 'platform_admin';
+
+  if (isRestaurant && !isPlatformAdmin) {
+    return (
+      <DashboardLayout>
+        <PageContainer>
+          <div className="space-y-6 animate-fade-in">
+            <PageHeader
+              icon={Link2}
+              title="Reservations are handled via Smart Links"
+              description="Aura texts guests a link to your booking page, menu, hours, or catering form."
+              featureColor="fieldops"
+            />
+            <div className="rounded-lg border border-border/50 bg-muted/20 p-8 text-center space-y-4">
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                This platform does not manage in-app restaurant reservations. Configure your
+                external booking link, menu, hours, and catering form in the Customer Portal,
+                and Aura will share them via voice and chat.
+              </p>
+              <Button onClick={() => navigate('/dashboard/ai-consoles/customer-portal')}>
+                Configure Smart Links
+              </Button>
+            </div>
+          </div>
+        </PageContainer>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

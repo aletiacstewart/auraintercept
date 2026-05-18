@@ -212,7 +212,12 @@ export function CompanyAdminDashboard() {
   const simpleCanonicalTitles = blueprintTitles.length >= 3
     ? blueprintTitles
     : getSimpleModeKpis(pack);
-  const tierFilteredCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+  // Restaurants do not use the in-app reservation system — hide the
+  // Appointments KPI/quick-action; Aura sends Smart Links instead.
+  const isRestaurant = pack?.industry_id === 'restaurants' && !isPlatformAdmin;
+  const tierFilteredCards = allStatCards
+    .filter(card => hasTierAccess(card.requiredTier))
+    .filter(card => !(isRestaurant && card.href === '/dashboard/appointments'));
   const statCards = isSimple
     ? simpleCanonicalTitles
         .map(t => tierFilteredCards.find(c => c.title === relabelKpi(pack, t)))
@@ -231,7 +236,9 @@ export function CompanyAdminDashboard() {
     { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-foreground', href: '/dashboard/3rd-party-overview' },
   ];
 
-  const quickActions = allQuickActions.filter(action => hasTierAccess(action.requiredTier));
+  const quickActions = allQuickActions
+    .filter(action => hasTierAccess(action.requiredTier))
+    .filter(action => !(isRestaurant && action.href === '/dashboard/appointments'));
 
   return (
     <PageContainer>
