@@ -20,12 +20,14 @@ import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { AuditChecklistPDF } from "./AuditChecklistPDF";
+import { getIndustryContent } from "@/lib/industryMarketingContent";
 
 interface AuditResultsProps {
   tierPercentages: TierScores;
   recommendedTier: TierType;
   onRestart: () => void;
   answers?: Record<string, string>;
+  industryId?: string | null;
 }
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
@@ -59,11 +61,12 @@ const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered:
   ELITE: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
 };
 
-export function AuditResults({ tierPercentages, recommendedTier, onRestart, answers = {} }: AuditResultsProps) {
+export function AuditResults({ tierPercentages, recommendedTier, onRestart, answers = {}, industryId = null }: AuditResultsProps) {
   const navigate = useNavigate();
   const recommendation = TIER_RECOMMENDATIONS[recommendedTier];
   const roiEstimate = TIER_ROI_ESTIMATES[recommendedTier];
   const fitScore = tierPercentages[recommendedTier];
+  const industry = getIndustryContent(industryId);
   
   // Calculate scaled hours based on fit percentage
   const avgFit = tierPercentages[recommendedTier];
@@ -120,6 +123,12 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <p className="text-muted-foreground">
             Recommended plan: <span className="text-cyan-300 font-semibold">{recommendation.label}</span>
           </p>
+          {industryId && industryId !== 'other' && (
+            <p className="text-xs text-muted-foreground mt-2 inline-flex items-center gap-1.5">
+              <span>{industry.emoji}</span>
+              <span>Tailored for {industry.label}</span>
+            </p>
+          )}
         </div>
 
         {/* Hero Result Card */}
@@ -356,9 +365,10 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                       recommendedTier={recommendedTier}
                       fitScore={fitScore}
                       answers={answers}
+                      industryId={industryId}
                     />
                   }
-                  fileName={`aura-setup-plan-${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
+                  fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
                 >
                   {({ loading }) => (
                     <Button size="lg" className="gap-2" disabled={loading}>

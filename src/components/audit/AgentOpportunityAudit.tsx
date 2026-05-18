@@ -3,13 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AuditQuestion } from "./AuditQuestion";
 import { AuditResults } from "./AuditResults";
-import { QUESTIONS, SECTION_ORDER, TierType, TierScores } from "./types";
+import { AuditIndustryPicker } from "./AuditIndustryPicker";
+import { UNIVERSAL_QUESTIONS, buildSectionOrder, TierType, TierScores } from "./types";
+import { getQuestionsForIndustry } from "@/lib/auditIndustryQuestions";
+import { getIndustryContent } from "@/lib/industryMarketingContent";
 
 const STORAGE_KEY = 'aura_audit_progress';
 
 interface SavedProgress {
   currentStep: number;
   answers: Record<string, string>;
+  selectedIndustry: string | null;
   savedAt: number;
 }
 
@@ -17,6 +21,13 @@ export function AgentOpportunityAudit() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+
+  const QUESTIONS = useMemo(
+    () => [...UNIVERSAL_QUESTIONS, ...getQuestionsForIndustry(selectedIndustry)],
+    [selectedIndustry],
+  );
+  const SECTION_ORDER = useMemo(() => buildSectionOrder(QUESTIONS), [QUESTIONS]);
 
   // Load saved progress on mount
   useEffect(() => {
@@ -28,6 +39,7 @@ export function AgentOpportunityAudit() {
         if (Date.now() - progress.savedAt < dayInMs) {
           setCurrentStep(progress.currentStep);
           setAnswers(progress.answers);
+          if (progress.selectedIndustry) setSelectedIndustry(progress.selectedIndustry);
         } else {
           localStorage.removeItem(STORAGE_KEY);
         }
@@ -39,11 +51,12 @@ export function AgentOpportunityAudit() {
 
   // Save progress on change
   useEffect(() => {
-    if (Object.keys(answers).length > 0 && !showResults) {
+    if (selectedIndustry && !showResults) {
       try {
         const progress: SavedProgress = {
           currentStep,
           answers,
+          selectedIndustry,
           savedAt: Date.now(),
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
@@ -51,7 +64,7 @@ export function AgentOpportunityAudit() {
         console.error('Failed to save audit progress:', e);
       }
     }
-  }, [currentStep, answers, showResults]);
+  }, [currentStep, answers, showResults, selectedIndustry]);
 
   const handleSelect = (option: string) => {
     setAnswers((prev) => ({
@@ -79,7 +92,23 @@ export function AgentOpportunityAudit() {
     setCurrentStep(0);
     setAnswers({});
     setShowResults(false);
+    setSelectedIndustry(null);
     localStorage.removeItem(STORAGE_KEY);
+  };
+
+  const handleChangeIndustry = () => {
+    // Drop industry-specific answers when switching; keep universal answers.
+    const universalIds = new Set(UNIVERSAL_QUESTIONS.map((q) => q.id));
+    setAnswers((prev) => {
+      const kept: Record<string, string> = {};
+      for (const [k, v] of Object.entries(prev)) {
+        if (universalIds.has(k)) kept[k] = v;
+      }
+      return kept;
+    });
+    setSelectedIndustry(null);
+    setCurrentStep(0);
+    setShowResults(false);
   };
 
   // Calculate tier fit percentages for all 4 tiers
@@ -133,6 +162,11 @@ export function AgentOpportunityAudit() {
   const currentSection = currentQuestion?.section || '';
   const sectionIndex = SECTION_ORDER.indexOf(currentSection);
 
+  // Step 0: Industry picker before any questions
+  if (!selectedIndustry) {
+    return <AuditIndustryPicker onSelect={setSelectedIndustry} />;
+  }
+
   if (showResults) {
     return (
       <AuditResults
@@ -140,9 +174,12 @@ export function AgentOpportunityAudit() {
         recommendedTier={recommendedTier}
         onRestart={handleRestart}
         answers={answers}
+        industryId={selectedIndustry}
       />
     );
   }
+
+  const industry = getIndustryContent(selectedIndustry);
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -177,6 +214,18 @@ export function AgentOpportunityAudit() {
           <p className="text-muted-foreground">
             Discover which automation tier fits your business needs
           </p>
+          {/* Industry chip */}
+          <div className="flex justify-center mt-4">
+            <button
+              type="button"
+              onClick={handleChangeIndustry}
+              className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30 hover:bg-muted/60 transition-colors text-foreground/80"
+            >
+              <span>{industry.emoji}</span>
+              <span className="font-medium">{industry.label}</span>
+              <span className="text-muted-foreground">— change</span>
+            </button>
+          </div>
         </div>
 
         {/* Section Badge */}

@@ -7,6 +7,7 @@ import {
 } from '@react-pdf/renderer';
 import { sanitizePdfText, SAFE_BULLET } from '@/components/documentation/pdfSanitize';
 import { TierType, TIER_RECOMMENDATIONS } from './types';
+import { getIndustryContent } from '@/lib/industryMarketingContent';
 
 const colors = {
   primary: '#6366f1',
@@ -230,19 +231,22 @@ interface AuditChecklistPDFProps {
   recommendedTier: TierType;
   fitScore: number;
   answers: Record<string, string>;
+  industryId?: string | null;
 }
 
 const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
 
 // ----- Cover Page -----
-const CoverPage = ({ tier, fitScore }: { tier: TierType; fitScore: number }) => {
+const CoverPage = ({ tier, fitScore, industryLabel }: { tier: TierType; fitScore: number; industryLabel?: string | null }) => {
   const rec = TIER_RECOMMENDATIONS[tier];
   return (
     <Page size="LETTER" style={styles.coverPage}>
       <Text style={styles.brand}>{t('AURA INTERCEPT')}</Text>
-      <Text style={styles.coverTitle}>{t('Your Aura Intercept Setup Plan')}</Text>
+      <Text style={styles.coverTitle}>{t(industryLabel ? `Your Aura Intercept Setup Plan for ${industryLabel}` : 'Your Aura Intercept Setup Plan')}</Text>
       <Text style={styles.coverSubtitle}>
-        {t('Personalized 30-day launch checklist based on your AI Opportunity Audit')}
+        {t(industryLabel
+          ? `Personalized 30-day launch checklist tailored for ${industryLabel}`
+          : 'Personalized 30-day launch checklist based on your AI Opportunity Audit')}
       </Text>
 
       <View style={styles.coverTierBox}>
@@ -635,9 +639,12 @@ const NextStepsPage = ({ tier }: { tier: TierType }) => (
   </Page>
 );
 
-export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers }: AuditChecklistPDFProps) => (
+export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers, industryId = null }: AuditChecklistPDFProps) => {
+  const industry = getIndustryContent(industryId);
+  const industryLabel = industryId && industryId !== 'other' ? industry.label : null;
+  return (
   <Document>
-    <CoverPage tier={recommendedTier} fitScore={fitScore} />
+    <CoverPage tier={recommendedTier} fitScore={fitScore} industryLabel={industryLabel} />
     <PlanContentsPage tier={recommendedTier} />
     <DocumentsPage tier={recommendedTier} />
     <ThirdPartyPage tier={recommendedTier} />
@@ -647,5 +654,6 @@ export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers }: AuditC
     <NextStepsPage tier={recommendedTier} />
   </Document>
 );
+};
 
 export default AuditChecklistPDF;

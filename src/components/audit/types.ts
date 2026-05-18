@@ -34,10 +34,10 @@ export interface TierRecommendation {
   implementationFee: string;
 }
 
-// 20 Questions across 9 sections — refreshed with plain-English outcome language
-// (Front Desk / On The Way / Billing / Marketing / Reports)
-export const QUESTIONS: AuditQuestion[] = [
-  // Section 1: Business Basics (2)
+// Universal questions — apply to every industry. Industry-specific questions
+// are appended at runtime via getQuestionsForIndustry().
+export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
+  // Section 1: Business Basics
   {
     id: 'employee_count',
     question: 'How many people work in your business (including you)?',
@@ -48,32 +48,6 @@ export const QUESTIONS: AuditQuestion[] = [
       { label: '3-5 people', tierScores: { CORE: 70, BOOST: 90, PRO: 60, ELITE: 30 } },
       { label: '6-10 people', tierScores: { CORE: 40, BOOST: 80, PRO: 90, ELITE: 60 } },
       { label: '11+ people', tierScores: { CORE: 15, BOOST: 50, PRO: 80, ELITE: 95 } },
-    ],
-  },
-  {
-    id: 'industry_type',
-    question: 'What type of business do you run?',
-    description: 'Different industries lean on different parts of Aura',
-    section: 'Business Basics',
-    options: [
-      { label: 'Restaurant, cafe, or food service', tierScores: { CORE: 95, BOOST: 45, PRO: 25, ELITE: 20 } },
-      { label: 'Salon, spa, wellness, or personal services', tierScores: { CORE: 95, BOOST: 60, PRO: 35, ELITE: 25 } },
-      { label: 'Home / field services (HVAC, plumbing, cleaning, etc.)', tierScores: { CORE: 40, BOOST: 90, PRO: 95, ELITE: 85 } },
-      { label: 'Multi-trade or large service company', tierScores: { CORE: 20, BOOST: 60, PRO: 85, ELITE: 95 } },
-    ],
-  },
-
-  // Section 2: Industry & Services (1)
-  {
-    id: 'service_location',
-    question: 'Where do you mostly deliver your services?',
-    description: 'Drives whether you need On The Way / Field Ops tools',
-    section: 'Industry & Services',
-    options: [
-      { label: 'At my business location only', tierScores: { CORE: 95, BOOST: 75, PRO: 45, ELITE: 30 } },
-      { label: 'At customer locations (field service)', tierScores: { CORE: 35, BOOST: 90, PRO: 95, ELITE: 90 } },
-      { label: 'Mix of both', tierScores: { CORE: 60, BOOST: 85, PRO: 85, ELITE: 80 } },
-      { label: 'Virtual / remote', tierScores: { CORE: 95, BOOST: 65, PRO: 45, ELITE: 35 } },
     ],
   },
 
@@ -129,7 +103,7 @@ export const QUESTIONS: AuditQuestion[] = [
     ],
   },
 
-  // Section 5: Scheduling & Operations (3)
+  // Section 5: Scheduling & Operations
   {
     id: 'booking_process',
     question: 'How do customers book appointments today?',
@@ -140,30 +114,6 @@ export const QUESTIONS: AuditQuestion[] = [
       { label: 'Call / email — we schedule manually', tierScores: { CORE: 85, BOOST: 75, PRO: 62, ELITE: 55 } },
       { label: 'Lots of back-and-forth to confirm', tierScores: { CORE: 90, BOOST: 90, PRO: 82, ELITE: 75 } },
       { label: 'Phone tag is a major issue', tierScores: { CORE: 95, BOOST: 95, PRO: 92, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'dispatch_routing',
-    question: 'How do you dispatch and route your team today?',
-    description: 'On The Way (Boost+) handles smart assignment + routing',
-    section: 'Scheduling & Operations',
-    options: [
-      { label: 'Not applicable — services at our location', tierScores: { CORE: 90, BOOST: 65, PRO: 35, ELITE: 20 } },
-      { label: 'Manual assignment based on availability', tierScores: { CORE: 50, BOOST: 90, PRO: 85, ELITE: 80 } },
-      { label: 'Basic scheduling tools, some optimization', tierScores: { CORE: 50, BOOST: 75, PRO: 65, ELITE: 60 } },
-      { label: 'First-available, no route optimization', tierScores: { CORE: 50, BOOST: 92, PRO: 95, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'customer_eta',
-    question: 'How do customers know when you are on the way?',
-    description: 'On The Way sends automated ETA texts on Boost+',
-    section: 'Scheduling & Operations',
-    options: [
-      { label: 'Not applicable — customers come to us', tierScores: { CORE: 90, BOOST: 60, PRO: 35, ELITE: 20 } },
-      { label: 'Automated ETA texts already', tierScores: { CORE: 55, BOOST: 60, PRO: 52, ELITE: 50 } },
-      { label: 'We call when we leave for the job', tierScores: { CORE: 50, BOOST: 85, PRO: 78, ELITE: 70 } },
-      { label: 'They wait — no ETA communication', tierScores: { CORE: 55, BOOST: 92, PRO: 95, ELITE: 85 } },
     ],
   },
 
@@ -219,31 +169,6 @@ export const QUESTIONS: AuditQuestion[] = [
     ],
   },
 
-  // Section 8: Business Operations (3)
-  {
-    id: 'quoting_process',
-    question: 'How do you create quotes / estimates for customers?',
-    description: 'Billing (Elite) includes AI Quoting + Invoicing',
-    section: 'Business Operations',
-    options: [
-      { label: 'Fixed pricing — no quotes needed', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
-      { label: 'Professional quoting software', tierScores: { CORE: 45, BOOST: 55, PRO: 55, ELITE: 55 } },
-      { label: 'Manual calculation, paper / basic docs', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 80 } },
-      { label: 'Field techs need to quote on-site', tierScores: { CORE: 40, BOOST: 85, PRO: 95, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'inventory_tracking',
-    question: 'Do you track inventory or parts / materials?',
-    description: 'Billing (Elite) includes Inventory Management',
-    section: 'Business Operations',
-    options: [
-      { label: 'No inventory to track', tierScores: { CORE: 85, BOOST: 70, PRO: 48, ELITE: 35 } },
-      { label: 'Yes — already on inventory software', tierScores: { CORE: 45, BOOST: 55, PRO: 58, ELITE: 60 } },
-      { label: 'Spreadsheets or manual tracking', tierScores: { CORE: 40, BOOST: 65, PRO: 80, ELITE: 90 } },
-      { label: 'Need better inventory management', tierScores: { CORE: 35, BOOST: 60, PRO: 82, ELITE: 95 } },
-    ],
-  },
   {
     id: 'marketing_automation',
     question: 'How do you currently run marketing campaigns?',
@@ -257,7 +182,7 @@ export const QUESTIONS: AuditQuestion[] = [
     ],
   },
 
-  // Section 9: Setup & Integrations (3)  — drives PDF personalization
+  // Section 9: Setup & Integrations
   {
     id: 'existing_integrations',
     question: 'Which of these do you already have set up?',
@@ -268,18 +193,6 @@ export const QUESTIONS: AuditQuestion[] = [
       { label: 'Google Calendar (or similar) only', tierScores: { CORE: 80, BOOST: 78, PRO: 72, ELITE: 68 } },
       { label: 'Google Calendar + social media accounts', tierScores: { CORE: 70, BOOST: 75, PRO: 82, ELITE: 78 } },
       { label: 'Calendar + social + Stripe / payments', tierScores: { CORE: 60, BOOST: 70, PRO: 80, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'phone_setup',
-    question: "What's your business phone setup today?",
-    description: 'We will tailor your SignalWire / number setup steps in the PDF',
-    section: 'Setup & Integrations',
-    options: [
-      { label: 'I want to keep my existing number (port it in)', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
-      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
-      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
-      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
     ],
   },
   {
@@ -295,6 +208,9 @@ export const QUESTIONS: AuditQuestion[] = [
     ],
   },
 ];
+
+// Back-compat alias for any callers that still import QUESTIONS.
+export const QUESTIONS = UNIVERSAL_QUESTIONS;
 
 // Tier recommendations matching canonical 4-tier model — refreshed plain-English copy
 export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
@@ -369,10 +285,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
 };
 
-// Section labels for progress display (9 sections)
+// Section labels for progress display. Now derived dynamically from the
+// composed question list so industry-specific sections (e.g. "Industry Specifics")
+// appear in the right place.
 export const SECTION_ORDER = [
   'Business Basics',
-  'Industry & Services',
+  'Industry Specifics',
   'Lead Intake & Response',
   'Communication Preferences',
   'Scheduling & Operations',
@@ -381,3 +299,15 @@ export const SECTION_ORDER = [
   'Business Operations',
   'Setup & Integrations',
 ];
+
+export function buildSectionOrder(questions: AuditQuestion[]): string[] {
+  const seen = new Set<string>();
+  const order: string[] = [];
+  for (const q of questions) {
+    if (!seen.has(q.section)) {
+      seen.add(q.section);
+      order.push(q.section);
+    }
+  }
+  return order;
+}
