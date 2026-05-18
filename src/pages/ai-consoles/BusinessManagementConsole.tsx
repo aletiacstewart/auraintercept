@@ -18,6 +18,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getBusinessWorkflows } from '@/lib/industryWorkflows';
+import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
 export default function BusinessManagementConsole() {
   const { userRole } = useAuth();
@@ -27,6 +28,14 @@ export default function BusinessManagementConsole() {
   // Workflow chains are derived from the company's industry pack so terminology
   // (Showing vs Job, Buyer vs Customer) and the chain set match the vertical.
   const businessWorkflows = useMemo(() => getBusinessWorkflows(pack), [pack]);
+  // Surface only the admin-relevant specialists actually opted-in by the
+  // company's industry pack — e.g. trades get insurance_claim/permit_code,
+  // real estate gets offer_drafter, restaurants get review_responder, etc.
+  // The launcher hides itself if the resolved list is empty.
+  const adminSpecialists = useMemo(
+    () => (pack?.extra_operatives ?? []) as IndustrySpecialistOperative[],
+    [pack],
+  );
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
@@ -72,10 +81,12 @@ export default function BusinessManagementConsole() {
 
             <BusinessOpsAgentConsole />
 
-            <SpecialistOperativesLauncher
-              show={['insurance_claim', 'permit_code']}
-              subtitle="Admin specialists for claim review and permit verification."
-            />
+            {adminSpecialists.length > 0 && (
+              <SpecialistOperativesLauncher
+                show={adminSpecialists}
+                subtitle="Industry-specific admin specialists for your vertical."
+              />
+            )}
           </div>
         </FeatureGate>
       </PageContainer>
