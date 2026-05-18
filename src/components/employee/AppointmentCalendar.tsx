@@ -511,8 +511,8 @@ export function AppointmentCalendar() {
     const labels: Record<string, string> = {
       pending_acceptance: 'Pending',
       accepted: 'Accepted',
-      en_route: 'En Route',
-      arrived: 'Arrived',
+      en_route: isFieldDispatch ? 'En Route' : 'Ready',
+      arrived: isFieldDispatch ? 'Arrived' : 'Checked In',
       in_progress: 'In Progress',
       completed: 'Completed',
     };
