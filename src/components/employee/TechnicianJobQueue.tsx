@@ -407,7 +407,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
                 <CardTitle className="text-lg">Active Job</CardTitle>
               </div>
               <Badge variant="default" className="text-sm">
-                {STATUS_CONFIG[activeJob.status].label}
+                {getJobStatusLabel(activeJob.status, isFieldDispatch, STATUS_CONFIG[activeJob.status].label)}
               </Badge>
             </div>
           </CardHeader>
@@ -420,6 +420,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
               onStartJob={handleStartJob}
               onCompleteJob={handleCompleteJob}
               onUpdateNotes={handleUpdateNotes}
+              isFieldDispatch={isFieldDispatch}
               ref={(el) => { jobRefs.current[activeJob.id] = el; }}
               autoExpandPhotoUpload={highlightedJobId === activeJob.id ? autoExpandPhotoUpload : null}
             />
@@ -445,6 +446,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
                 job={job}
                 onAccept={handleAccept}
                 onDecline={handleDecline}
+                isFieldDispatch={isFieldDispatch}
                 ref={(el) => { jobRefs.current[job.id] = el; }}
                 autoExpandPhotoUpload={highlightedJobId === job.id ? autoExpandPhotoUpload : null}
               />
@@ -470,6 +472,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
                 key={job.id}
                 job={job}
                 onEnRoute={handleEnRoute}
+                isFieldDispatch={isFieldDispatch}
                 ref={(el) => { jobRefs.current[job.id] = el; }}
                 autoExpandPhotoUpload={highlightedJobId === job.id ? autoExpandPhotoUpload : null}
               />
@@ -519,6 +522,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
 interface JobCardProps {
   job: JobAssignment;
   isActive?: boolean;
+  isFieldDispatch?: boolean;
   onAccept?: (job: JobAssignment) => void;
   onDecline?: (job: JobAssignment) => void;
   onEnRoute?: (job: JobAssignment) => void;
@@ -532,6 +536,7 @@ interface JobCardProps {
 const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
   job,
   isActive,
+  isFieldDispatch = true,
   onAccept,
   onDecline,
   onEnRoute,
@@ -553,6 +558,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
 
   const statusConfig = STATUS_CONFIG[job.status];
   const StatusIcon = statusConfig?.icon || Clock;
+  const statusLabel = getJobStatusLabel(job.status, isFieldDispatch, statusConfig?.label || job.status);
 
   // Calculate time tracking
   const travelTimeMinutes = job.en_route_at && job.arrived_at 
@@ -597,7 +603,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
         </div>
         <Badge variant={isActive ? 'default' : 'secondary'} className="flex items-center gap-1">
           <StatusIcon className="w-3 h-3" />
-          {statusConfig?.label || job.status}
+          {statusLabel}
         </Badge>
       </div>
 
@@ -644,7 +650,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-cyan-400" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Arrived</p>
+                  <p className="text-xs text-muted-foreground">{isFieldDispatch ? 'Arrived' : 'Checked In'}</p>
                   <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
                 </div>
               </div>
