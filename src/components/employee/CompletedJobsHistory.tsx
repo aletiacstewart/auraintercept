@@ -364,7 +364,7 @@ function CompletedJobCard({ job, isExpanded, onToggle, isFieldDispatch = true }:
               Time Tracking
             </p>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              {job.en_route_at && (
+              {job.en_route_at && isFieldDispatch && (
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-purple-500" />
                   <div>
@@ -377,7 +377,7 @@ function CompletedJobCard({ job, isExpanded, onToggle, isFieldDispatch = true }:
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-cyan-400" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Arrived</p>
+                    <p className="text-xs text-muted-foreground">{isFieldDispatch ? 'Arrived' : 'Checked In'}</p>
                     <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
                   </div>
                 </div>
