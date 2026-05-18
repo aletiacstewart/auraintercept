@@ -331,7 +331,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                     </span>
                   </div>
                 )}
-                {job.en_route_at && (
+                {job.en_route_at && isFieldDispatch && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-amber-500" />
                     <span className="text-foreground">
@@ -343,7 +343,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-foreground">
-                      Arrived: {format(new Date(job.arrived_at), 'h:mm a')}
+                      {isFieldDispatch ? 'Arrived' : 'Checked in'}: {format(new Date(job.arrived_at), 'h:mm a')}
                     </span>
                   </div>
                 )}
