@@ -85,7 +85,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     label: 'Aura Pro',
     price: '$1,197/mo',
-    description: '16 Smart AI Agents with social media, campaigns, and industry specialist agents',
+    description: '16 Smart AI Agents with social media and campaigns (industry specialists included on every plan)',
   },
   command: {
     // Aura Elite ($2,197/mo): All 10 consolidated operatives + industry specialists,
