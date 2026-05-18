@@ -64,6 +64,8 @@ interface Appointment {
 
 export function AppointmentCalendar() {
   const { user, userRole, companyId } = useAuth();
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'company_admin' || userRole === 'platform_admin';
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
