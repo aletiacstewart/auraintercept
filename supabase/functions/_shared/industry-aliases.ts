@@ -18,6 +18,13 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   landscape_trees: 'landscape',
   handyman_cleaning: 'handyman',
   general_contractor: 'construction',
+  pt: 'physical_therapy',
+  ot: 'occupational_therapy',
+  hospices: 'hospice',
+  homehealth: 'home_health',
+  home_care: 'home_health',
+  homecare: 'home_health',
+  home_health_care: 'home_health',
 };
 
 export const CANONICAL_INDUSTRY_IDS = new Set<string>([
@@ -25,6 +32,7 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'pool_spa', 'pest_control', 'appliance_repair', 'handyman', 'construction',
   'auto_care', 'security_systems', 'real_estate', 'beauty_wellness',
   'restaurants', 'personal_assistant', 'fencing',
+  'physical_therapy', 'occupational_therapy', 'hospice', 'home_health',
 ]);
 
 export function toCanonicalIndustryId(

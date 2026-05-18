@@ -32,7 +32,10 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   pt: 'physical_therapy',
   ot: 'occupational_therapy',
   hospices: 'hospice',
-  home_health: 'physical_therapy',
+  homehealth: 'home_health',
+  home_care: 'home_health',
+  homecare: 'home_health',
+  home_health_care: 'home_health',
 };
 
 /**
@@ -62,6 +65,7 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'physical_therapy',
   'occupational_therapy',
   'hospice',
+  'home_health',
   'other',
 ]);
 
