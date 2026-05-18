@@ -354,7 +354,9 @@ const baseConfig = (pack: IndustryPack, fieldRouting: boolean): IndustryServiceC
     noAddressLabel: fieldRouting ? 'No address available' : 'No location needed',
     notifyAudience: customerNoun,
     quickActions: fieldRouting ? TRADES_ACTIONS : BOOKING_ACTIONS,
-    tabs: fieldRouting ? BASE_TABS : BASE_TABS.filter((t) => !t.fieldOnly),
+    tabs: (fieldRouting ? BASE_TABS : BASE_TABS.filter((t) => !t.fieldOnly)).map((t) =>
+      t.id === 'arrive_start' ? { ...t, label: fieldRouting ? 'Arrive' : 'Check In' } : t,
+    ),
     operatives: fieldRouting ? fieldOperatives(jobNoun, teamMemberNoun) : bookingOperatives(jobNoun),
     statusLabels: fieldRouting ? STATUS_FIELD : STATUS_BOOKING,
     selectorText: fieldRouting ? FIELD_SELECTOR : BOOKING_SELECTOR,
