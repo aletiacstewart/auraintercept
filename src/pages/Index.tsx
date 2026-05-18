@@ -1124,7 +1124,7 @@ export default function Index() {
                 <div className="space-y-1">
                   <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
                   <p className="text-xs text-white leading-relaxed">
-                    Our platform handles A2P 10DLC registration on your behalf via SignalWire (your CSP). <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees (billed directly by SignalWire / The Campaign Registry):</span> brand registration <span className="font-medium">$4 (one-time)</span> · campaign <span className="font-medium">$1.50–$10/month</span> depending on use case (first 3 months charged upfront) · DCA vetting <span className="font-medium">$7.50 per submission</span> (re-charged if a campaign is rejected and re-submitted) · optional brand vetting <span className="font-medium">$40</span> to raise T-Mobile throughput caps. Typical all-in: <span className="font-medium">$16–$42</span> to go live. T-Mobile also charges a <span className="font-medium">$250</span> non-use fee for any campaign with no SMS to a T-Mobile handset in 59+ days. <span className="font-medium text-white">Approval timeline:</span> typically 3–5 business days end-to-end when the submission is clean, but it can take 1–2+ weeks if SignalWire's review team or the Direct Connect Aggregator (DCA) requires changes and re-vetting — there is no guaranteed turnaround. <span className="font-medium text-white">You provide:</span> EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc documentation, a valid brand website, opt-in / opt-out language, accurate sample messages, and a help message.
+                    Our platform handles A2P 10DLC registration on your behalf via SignalWire (your CSP). <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees (billed directly by SignalWire / The Campaign Registry):</span> brand registration <span className="font-medium">$4.50 (one-time)</span> · campaign <span className="font-medium">$1.50–$30/month</span> depending on use case (first 3 months charged upfront) · DCA vetting <span className="font-medium">$7.50 per submission</span> (re-charged if a campaign is rejected and re-submitted) · optional brand vetting <span className="font-medium">$40</span> to raise T-Mobile throughput caps. Typical all-in: <span className="font-medium">$16–$42</span> to go live. T-Mobile also charges a <span className="font-medium">$250</span> non-use fee for any campaign with no SMS to a T-Mobile handset in 60 consecutive days. <span className="font-medium text-white">Approval timeline:</span> typically 3–5 business days end-to-end when the submission is clean, but it can take 1–2+ weeks if SignalWire's review team or the Direct Connect Aggregator (DCA) requires changes and re-vetting — there is no guaranteed turnaround. <span className="font-medium text-white">You provide:</span> EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc documentation, a valid brand website, opt-in / opt-out language, accurate sample messages, and a help message.
                   </p>
                 </div>
               </div>
@@ -1149,7 +1149,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">Email Delivery</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
-                <p className="text-[10px] text-white">Email volume & automations invoiced at Resend's published rates</p>
+                <p className="text-[10px] text-white">Free 3,000/mo · Pro $20 (50k) · Scale $90+ · overage ~$0.90 per 1,000</p>
                 <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
               </div>
 
@@ -1160,6 +1160,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own ElevenLabs account · billed directly by ElevenLabs</p>
+                <p className="text-[10px] text-white">Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go available</p>
                 <p className="text-[10px] text-white">Valid credit card required on your ElevenLabs account · all tiers</p>
               </div>
 
@@ -1170,6 +1171,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own SignalWire account · billed directly by SignalWire</p>
+                <p className="text-[10px] text-white">Local number $0.50/mo · SMS $0.00415/segment · Voice $0.0066/min in / $0.008/min out · AI Agent $0.16/min</p>
                 <p className="text-[10px] text-white">Valid credit card required on your SignalWire account · all tiers</p>
               </div>
 
@@ -1180,7 +1182,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
                 <p className="text-[10px] text-amber-300 font-medium">Brand $4.50 one-time · Campaign fee varies (first 3 mo upfront) · Monthly maintenance</p>
-                <p className="text-[10px] text-white">T-Mobile $250/mo for inactive campaigns (60+ days)</p>
+                <p className="text-[10px] text-white">T-Mobile $250/mo for inactive campaigns (60 consecutive days)</p>
                 <p className="text-[10px] text-white">Approval: 1–4 weeks · Required on all tiers</p>
               </div>
 
@@ -1214,6 +1216,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Research Engine</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Tavily account · billed directly by Tavily</p>
+                <p className="text-[10px] text-white">Free 1,000 credits/mo · $0.008/credit overage · Project plans from ~$30/mo</p>
                 <p className="text-[10px] text-white">Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
                 <p className="text-[10px] text-white">API key configured during onboarding · Valid credit card required on your Tavily account</p>
               </div>
