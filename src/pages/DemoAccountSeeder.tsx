@@ -48,6 +48,7 @@ const INDUSTRIES_BY_TIER: Record<string, Array<{ key: string; label: string }>> 
     { key: 'pool_spa', label: 'Pool & Spa' },
     { key: 'landscape', label: 'Landscape & Trees' },
     { key: 'solar', label: 'Solar' },
+    { key: 'home_health', label: 'Home Health Care' },
   ],
   elite: [
     { key: 'hvac', label: 'HVAC' },
@@ -127,14 +128,14 @@ export default function DemoAccountSeeder() {
         <PageHeader
           icon={Sparkles}
           title="Demo Account Seeder"
-          description="Recreate the 18-industry demo environment: 18 companies × (admin + employee + customer) = 54 accounts, with industry-specific demo data per company."
+          description="Recreate the 26-industry demo environment: 26 companies × (admin + employee + customer) = 78 accounts, with industry-specific demo data per company."
         />
 
         <Card>
           <CardHeader>
             <CardTitle>What this creates</CardTitle>
             <CardDescription>
-              Universal password for all 54 accounts: <code className="font-mono bg-muted px-2 py-1 rounded">{PASSWORD}</code>
+              Universal password for all 78 accounts: <code className="font-mono bg-muted px-2 py-1 rounded">{PASSWORD}</code>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -176,7 +177,7 @@ export default function DemoAccountSeeder() {
 
             <Button onClick={runSeed} disabled={running} size="lg" className="w-full">
               {running ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding 18 industries…</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Seeding 26 industries…</>
               ) : (
                 <><Sparkles className="mr-2 h-4 w-4" /> Seed All Demo Accounts</>
               )}
