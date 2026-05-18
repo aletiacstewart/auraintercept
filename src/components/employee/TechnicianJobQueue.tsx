@@ -3,6 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getJobStatusLabel } from '@/lib/jobStatusLabels';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -83,6 +86,8 @@ interface TechnicianJobQueueProps {
 
 export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'New job assignments will appear here' }: TechnicianJobQueueProps = {}) {
   const { user } = useAuth();
+  const { pack } = useIndustryPack();
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
