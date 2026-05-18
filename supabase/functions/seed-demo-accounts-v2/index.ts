@@ -463,6 +463,21 @@ const INDUSTRIES: IndustryDef[] = [
       { name: 'Family Information Visit', promo_code: 'HOS0', discount_value: 0, message: 'Schedule a no-cost family information visit to learn how hospice can help.', subject: 'Compassionate Care — Free Information Visit' },
     ],
   ),
+  industry('home_health', 'Home Health Care', 'pro',
+    ['Skilled Nursing Visit','Home Health Aide Visit','Medication Management','Wound Care Visit','Therapy Coordination'],
+    [
+      { name: 'Nitrile Gloves (box)', sku: 'PPE-GLV', quantity: 30, min_quantity: 10, unit_cost: 12.0, category: 'PPE' },
+      { name: 'Wound Care Kit', sku: 'HH-WND', quantity: 15, min_quantity: 5, unit_cost: 28.0, category: 'Wound Care' },
+      { name: 'Blood Pressure Cuff', sku: 'HH-BP', quantity: 10, min_quantity: 3, unit_cost: 32.0, category: 'Vitals Equipment' },
+    ],
+    [
+      { title: 'When to Consider Home Health Care', excerpt: 'Signs a loved one may benefit from skilled care at home.', content: '## Common triggers\n\nRecent hospital discharge, new diagnosis, wound care needs, medication complexity, fall risk, or difficulty with daily activities.' },
+      { title: 'Medicare Coverage for Home Health: The Basics', excerpt: 'What\'s covered, what\'s not, and how to qualify.', content: '## Eligibility in plain English\n\nA doctor must certify the patient is homebound and needs skilled nursing or therapy. Covered visits include nursing, PT/OT/ST, and home health aide support tied to the skilled plan.' },
+    ],
+    [
+      { name: 'Free In-Home Assessment', promo_code: 'HH0', discount_value: 0, message: 'Schedule a no-cost in-home assessment with one of our nurses to see if home health is right for your family.', subject: 'Free In-Home Nursing Assessment' },
+    ],
+  ),
 ];
 
 function industry(
