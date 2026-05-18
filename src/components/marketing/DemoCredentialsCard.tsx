@@ -77,7 +77,7 @@ export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
           <h4 className="font-semibold text-sm text-foreground">Your demo link</h4>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Share this link to open your 48-hour demo from any device. The page below also lets you launch each role with one tap.
+          Share this link to open your 24-hour demo from any device. The page below also lets you launch each role with one tap.
         </p>
         <div className="flex items-center gap-2">
           <Input
@@ -157,7 +157,7 @@ export function DemoCredentialsCard({ result }: DemoCredentialsCardProps) {
         ) : (
           <>Tip: copy the demo link above and open it on your phone to test the technician + customer mobile views.</>
         )}
-        <br />After 48 hours the demo company is automatically deleted.
+        <br />After 24 hours the demo company is automatically deleted.
       </p>
     </div>
   );
