@@ -1404,7 +1404,7 @@ export default function Auth() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider invoices me directly and separately</span> from my Aura plan fee.
+                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">

@@ -193,7 +193,7 @@ export default function TermsOfService() {
               <li>You may disconnect integrations at any time through your settings.</li>
             </ul>
             <p className="mt-4 text-sm text-muted-foreground">
-              You are required to maintain your own account with a valid credit card at each provider listed above. Each provider invoices you directly and separately from your Aura plan fee; see Section 3 for details.
+              You are required to maintain your own account with a valid credit card at each provider listed above. Each provider automatically bills your card directly and separately from your Aura plan fee; see Section 3 for details.
             </p>
           </section>
 
