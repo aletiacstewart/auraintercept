@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -56,6 +58,8 @@ interface CompletedJob {
 
 export function CompletedJobsHistory() {
   const { user } = useAuth();
+  const { pack } = useIndustryPack();
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState('this-month');
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
