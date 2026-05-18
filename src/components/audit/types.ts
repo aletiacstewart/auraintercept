@@ -285,10 +285,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
 };
 
-// Section labels for progress display (9 sections)
+// Section labels for progress display. Now derived dynamically from the
+// composed question list so industry-specific sections (e.g. "Industry Specifics")
+// appear in the right place.
 export const SECTION_ORDER = [
   'Business Basics',
-  'Industry & Services',
+  'Industry Specifics',
   'Lead Intake & Response',
   'Communication Preferences',
   'Scheduling & Operations',
@@ -297,3 +299,15 @@ export const SECTION_ORDER = [
   'Business Operations',
   'Setup & Integrations',
 ];
+
+export function buildSectionOrder(questions: AuditQuestion[]): string[] {
+  const seen = new Set<string>();
+  const order: string[] = [];
+  for (const q of questions) {
+    if (!seen.has(q.section)) {
+      seen.add(q.section);
+      order.push(q.section);
+    }
+  }
+  return order;
+}
