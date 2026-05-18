@@ -332,8 +332,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       }
       // Platform admin sees everything, skip tier check
       if (isPlatformAdmin) return true;
-      // Check group-level tier requirement (trial honors selected tier)
-      if (group.requiredTier && !isAtLeastTier(group.requiredTier)) {
+      // Check group-level tier requirement (trial honors selected tier).
+      // Skip the check while subscriptionTier is still resolving — otherwise
+      // every gated nav item flashes hidden on first paint.
+      if (group.requiredTier && subscriptionTier && !isAtLeastTier(group.requiredTier)) {
         return false;
       }
       return true;
@@ -368,8 +370,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         // Platform admin sees all items
         if (isPlatformAdmin) return true;
         
-        // Check item-level tier requirement (trial honors selected tier)
-        if (item.requiredTier && !isAtLeastTier(item.requiredTier)) {
+        // Check item-level tier requirement (trial honors selected tier).
+        // Skip while tier is unresolved so the sidebar doesn't briefly
+        // collapse to an empty AI Consoles group.
+        if (item.requiredTier && subscriptionTier && !isAtLeastTier(item.requiredTier)) {
           return false;
         }
         
