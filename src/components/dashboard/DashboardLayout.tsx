@@ -364,6 +364,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )) {
           return false;
         }
+        // Restaurants do not use the in-app reservation system — Aura only
+        // sends Smart Links via voice/chat. Hide the Schedule/Reservations
+        // route for restaurant company admins and employees.
+        if (
+          !isPlatformAdmin &&
+          industryPack?.industry_id === 'restaurants' &&
+          item.href === '/dashboard/appointments'
+        ) {
+          return false;
+        }
         // Check basic role permission
         if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
         
