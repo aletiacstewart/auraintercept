@@ -242,12 +242,10 @@ export function SignalWireSetupGuide() {
 
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 space-y-2">
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
-                  <strong>⏱️ Timeline:</strong> Full A2P 10DLC approval typically takes <strong>1–4 weeks</strong>. Plan ahead before launching SMS features.
+                  <strong>⏱️ Timeline:</strong> A2P 10DLC approval typically takes <strong>3–5 business days end-to-end</strong> when the submission is clean, but can extend to <strong>1–2+ weeks</strong> if SignalWire's review team or the DCA requires changes and re-vetting. There is no guaranteed turnaround.
                 </p>
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
-                  <strong>💵 Customer pass-through fees:</strong> Brand registration <strong>$4.50</strong> (one-time) ·
-                  Variable campaign fees billed by carriers (first <strong>3 months upfront</strong>) ·
-                  <strong> $250/mo T-Mobile</strong> fee for inactive campaigns. Aura Intercept does not mark these up — they are charged by SignalWire / the carriers directly.
+                  <strong>💵 Customer pass-through fees (billed by SignalWire / The Campaign Registry):</strong> Brand registration <strong>$4.50</strong> (one-time) · Campaign <strong>$1.50–$30/month</strong> depending on use case (first <strong>3 months charged upfront</strong>) · DCA vetting <strong>$7.50/submission</strong> (re-charged on rejection) · Optional brand vetting <strong>$40</strong> for T-Mobile throughput boost. Typical all-in: <strong>$16–$42</strong> to go live. T-Mobile also charges <strong>$250/mo</strong> for any campaign with no SMS to a T-Mobile handset in <strong>60 consecutive days</strong>. Aura Intercept does not mark these up — they are charged by SignalWire / the carriers directly.
                 </p>
               </div>
 
@@ -286,7 +284,7 @@ export function SignalWireSetupGuide() {
                 <li>In Dashboard, go to <strong className="text-foreground">Phone Numbers → Buy</strong></li>
                 <li>Search for a number in your desired area code</li>
                 <li>Ensure the number has <Badge variant="outline" className="mx-1 text-foreground">Voice</Badge> and <Badge variant="outline" className="mx-1 text-foreground">SMS</Badge> capabilities</li>
-                <li>Purchase the number (~$2.00/month)</li>
+                <li>Purchase the number (~$0.50/month for local US numbers)</li>
               </ol>
               
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
