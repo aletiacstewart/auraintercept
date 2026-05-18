@@ -318,6 +318,11 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
 
       {/* Main Content */}
       <main className="dashboard-main flex-1 overflow-auto">
+        {user?.email?.endsWith('@demo.com') && (
+          <div className="sticky top-0 z-40 flex items-center justify-end gap-2 px-6 py-2 border-b border-border bg-background/80 backdrop-blur">
+            <SuperHubInlineButton />
+          </div>
+        )}
         <div className="container max-w-7xl py-8 px-6">
           {children}
         </div>

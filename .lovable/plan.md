@@ -1,49 +1,37 @@
-## What the "Custom Workspace" card means
+## Why it's missing
 
-It's the **fallback** the Operations console shows when the system can't determine what kind of business you are. It only appears for the Salon demo because **there is no `salon` row in the `industry_blueprints` table**.
+The "Super Admin Hub" return button is rendered in two places:
 
-### Root cause
+1. **Floating pill** (`SwitcherPill`) — mounted globally in `App.tsx`, shows top-left/right for any `@demo.com` session.
+2. **Inline header button** (`SuperHubInlineButton`) — placed directly in each dashboard's top bar so it can't be missed.
 
-The Operations link (`/dashboard/dispatch-field-ops`) routes through `OperationsRouter`, which picks a console based on `workspace.operatingModel`:
+The company admin dashboard has the inline button in its desktop header. The technician and customer demos are missing it on the surfaces you're hitting:
 
-- `field_dispatch` → live truck map (HVAC, plumbing, etc.)
-- `appointment_booking` → bookings/chairs/no-shows console (what Salon should see)
-- `pipeline_sales` → real estate / solar pipeline
-- `receptionist_only` → restaurant front-of-house
-- `custom` → the gray placeholder you saw
+- `TechnicianDashboardLayout.tsx` — the inline button is only inside the **mobile header** (line 134). The **desktop layout has no header at all**, just a sidebar, so on 1286px viewport you see nothing. That's exactly what your screenshot shows.
+- `CustomerPortalHome.tsx` — has the inline button, but `CustomerCompanyPortal.tsx` and `CustomerDashboard.tsx` (the other two customer entry pages) do not.
 
-`resolveCompanyWorkspace` looks the model up from `industry_blueprints` by slug. The DB has 25 blueprint rows but is missing **7 verticals that exist as industry packs**:
-
-| Missing slug | Should be |
-|---|---|
-| salon | appointment_booking |
-| fitness | appointment_booking |
-| professional | appointment_booking |
-| home_health | field_dispatch |
-| occupational_therapy | appointment_booking |
-| hospice | field_dispatch |
-| saas_platform | pipeline_sales |
-
-For any of these, the resolver falls through to `'custom'`, so the Operations page shows the placeholder instead of the proper console.
+The floating `SwitcherPill` should still auto-activate for `@demo.com` users, but it's small and easy to miss / can collide with browser chrome — the inline button is the dependable path.
 
 ## Fix
 
-One data-insert into `industry_blueprints` adding those 7 rows with:
+Single surface: add an always-visible inline "Super Admin Hub" button in the headers of every demo-facing dashboard.
 
-- the correct `operating_model` (above)
-- sensible `default_consoles` (booking-cluster gets customer_portal + business_mgmt + marketing_sales; field_dispatch ones add field_operations; saas gets analytics)
-- cluster-appropriate `primary_records` and `default_kpis` (e.g. `appointments_today`, `revenue_mtd`, `pipeline_value`)
-- empty `agent_actions`, `prompt_overrides`, `restrictions` (the industry pack already supplies these)
+1. **`TechnicianDashboardLayout.tsx` (desktop branch)** — there is currently no top bar. Add a slim sticky header strip above `<main>` (only when `user.email` ends with `@demo.com`) that renders `<SuperHubInlineButton />` flush right. No change to the mobile branch (already has it).
+2. **`CustomerCompanyPortal.tsx`** — drop `<SuperHubInlineButton />` into the existing top header row.
+3. **`CustomerDashboard.tsx`** — same treatment in its top header row.
+4. **`SwitcherPill`** — leave as-is. Auto-activation already covers `@demo.com`.
+
+The button itself self-hides when the user isn't a `@demo.com` account, so the strip becomes a no-op for real customers/technicians.
 
 ## Verification
 
-1. Salon demo → `/dashboard/dispatch-field-ops` renders the **appointment console** (Today / This Week / No-shows KPIs).
-2. Home Health & Hospice demos → render the field-dispatch map.
-3. SaaS demo → renders the pipeline console.
-4. HVAC, dental, real-estate, restaurants → unchanged (their rows already exist).
+1. Log into `appliancerepairemployee@demo.com` → `/technician` on desktop shows "Super Admin Hub" button in a thin top bar, clicks return to `/super-switcher`.
+2. Same email on mobile width → existing mobile header button still works (no regression).
+3. Log into any `…customer@demo.com` → both `/customer` (CustomerCompanyPortal) and `/customer/dashboard` (CustomerDashboard) show the button.
+4. Log into a non-demo customer/tech → no button (self-hides).
 
 ## Out of scope
 
-- No code changes — pure data insert.
-- Sidebar label ("SALON FLOOR → Operations") stays as-is.
-- The "Custom Workspace" fallback stays for the genuinely-custom `other` slug.
+- No changes to `SwitcherPill` floating logic.
+- No changes to the super-switcher auth flow.
+- No styling changes to existing headers beyond adding the button slot.
