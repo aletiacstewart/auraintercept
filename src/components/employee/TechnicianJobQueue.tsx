@@ -791,17 +791,24 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
           </>
         )}
 
-        {job.status === 'accepted' && (
+        {job.status === 'accepted' && isFieldDispatch && (
           <Button size="sm" onClick={() => onEnRoute?.(job)}>
             <Navigation className="w-4 h-4 mr-1" />
             Start Driving
           </Button>
         )}
 
-        {job.status === 'en_route' && (
+        {job.status === 'en_route' && isFieldDispatch && (
           <Button size="sm" onClick={() => onArrived?.(job)}>
             <MapPin className="w-4 h-4 mr-1" />
             I've Arrived
+          </Button>
+        )}
+
+        {job.status === 'accepted' && !isFieldDispatch && (
+          <Button size="sm" onClick={() => onStartJob?.(job)}>
+            <Play className="w-4 h-4 mr-1" />
+            Check In &amp; Start
           </Button>
         )}
 
