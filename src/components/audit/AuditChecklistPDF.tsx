@@ -237,14 +237,16 @@ interface AuditChecklistPDFProps {
 const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
 
 // ----- Cover Page -----
-const CoverPage = ({ tier, fitScore }: { tier: TierType; fitScore: number }) => {
+const CoverPage = ({ tier, fitScore, industryLabel }: { tier: TierType; fitScore: number; industryLabel?: string | null }) => {
   const rec = TIER_RECOMMENDATIONS[tier];
   return (
     <Page size="LETTER" style={styles.coverPage}>
       <Text style={styles.brand}>{t('AURA INTERCEPT')}</Text>
-      <Text style={styles.coverTitle}>{t('Your Aura Intercept Setup Plan')}</Text>
+      <Text style={styles.coverTitle}>{t(industryLabel ? `Your Aura Intercept Setup Plan for ${industryLabel}` : 'Your Aura Intercept Setup Plan')}</Text>
       <Text style={styles.coverSubtitle}>
-        {t('Personalized 30-day launch checklist based on your AI Opportunity Audit')}
+        {t(industryLabel
+          ? `Personalized 30-day launch checklist tailored for ${industryLabel}`
+          : 'Personalized 30-day launch checklist based on your AI Opportunity Audit')}
       </Text>
 
       <View style={styles.coverTierBox}>
