@@ -1,12 +1,12 @@
 ---
-name: Demo Account Registry v5
-description: 72 demo accounts (24 industries × admin/employee/customer) including 6 healthcare verticals. Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
+name: Demo Account Registry v6
+description: 78 demo accounts (26 industries × admin/employee/customer) including home_health + 5 other healthcare verticals. Universal password aidemo*!. Reseed at /dashboard/demo-seeder.
 type: feature
 ---
 
-# Demo Account Registry v5 — 24 Industries
+# Demo Account Registry v6 — 26 Industries
 
-The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI) creates **24 demo companies** — one per active row in `industry_template_packs` — with **3 user accounts each (admin / employee / customer)** for a total of **72 demo accounts**. Universal password: `aidemo*!`.
+The seeder (`seed-demo-accounts-v2` edge function + `/dashboard/demo-seeder` UI) creates **26 demo companies** — one per active row in `industry_template_packs` — with **3 user accounts each (admin / employee / customer)** for a total of **78 demo accounts**. Universal password: `aidemo*!`.
 
 ## Email convention
 
@@ -25,7 +25,7 @@ CORE  (7): beauty_wellness, restaurants, real_estate, personal_assistant,
            chiropractic, physical_therapy, optometry
 BOOST (7): handyman, auto_care, appliance_repair, pest_control, fencing,
            dental, veterinary
-PRO   (5): security_systems, pool_spa, landscape, solar, medical_office
+PRO   (6): security_systems, pool_spa, landscape, solar, medical_office, home_health
 ELITE (5): hvac, electrical, plumbing, roofing, construction
 ```
 
