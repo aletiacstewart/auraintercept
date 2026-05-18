@@ -1,4 +1,4 @@
-import { ArrowRightLeft, ClipboardList, Receipt, Home, PenTool, Phone, Wrench, Map } from 'lucide-react';
+import { ArrowRightLeft, ClipboardList, Receipt, Home, PenTool, Phone, Wrench, Map, Link2, MessageSquare, Star } from 'lucide-react';
 import type { WorkflowChain } from '@/components/ui/workflow-chain-buttons';
 import type { IndustryPack } from '@/hooks/useIndustryPack';
 
@@ -120,9 +120,45 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
   ],
 };
 
+/**
+ * Per-industry overrides. Keyed by `industry_id`. When present, completely
+ * replaces the cluster default (so e.g. restaurants don't see real-estate
+ * listing / commission workflows from the shared `booking` cluster).
+ */
+const INDUSTRY_WORKFLOWS: Partial<Record<string, WorkflowChain[]>> = {
+  restaurants: [
+    {
+      id: 'smart-link-send', label: 'Inbound → Smart Link',
+      description: 'Text guests a link to your booking page, menu, hours, or catering form',
+      icon: Link2, steps: ['Detect Intent', 'Pick Link', 'Send SMS'],
+      command: 'For the latest inbound call or chat, detect what the guest wants and text them the right Smart Link (booking, menu, hours, or catering)',
+    },
+    {
+      id: 'missed-call-recovery', label: 'Missed Call Recovery',
+      description: 'Auto-text guests who hung up before reaching us',
+      icon: Phone, steps: ['Find Missed', 'Draft SMS', 'Send Smart Link'],
+      command: 'Find recent missed calls and text each guest a friendly recovery message with our booking and menu Smart Links',
+    },
+    {
+      id: 'review-pulse', label: 'Review Pulse',
+      description: 'Reply to new Google reviews and request more from happy guests',
+      icon: Star, steps: ['Pull Reviews', 'Draft Replies', 'Request More'],
+      command: 'Pull the latest Google reviews, draft replies for each, and text recent happy guests a review request link',
+    },
+    {
+      id: 'catering-inquiry', label: 'Catering / Private Event Inquiry',
+      description: 'Capture catering and private-event leads from voice & chat',
+      icon: MessageSquare, steps: ['Capture Lead', 'Send Catering Link', 'Follow-Up'],
+      command: 'For new catering or private-event inquiries, capture the lead, send the catering Smart Link, and queue a follow-up',
+    },
+  ],
+};
+
 /** Resolve workflow chains for the given pack, applying terminology substitutions. */
 export function getBusinessWorkflows(pack: IndustryPack): WorkflowChain[] {
-  const base = CLUSTER_WORKFLOWS[pack.cluster] ?? CLUSTER_WORKFLOWS.trades;
+  const base = INDUSTRY_WORKFLOWS[pack.industry_id]
+    ?? CLUSTER_WORKFLOWS[pack.cluster]
+    ?? CLUSTER_WORKFLOWS.trades;
   return base.map(w => ({
     ...w,
     label: applyTerminology(w.label, pack),
