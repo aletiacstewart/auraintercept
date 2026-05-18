@@ -22,6 +22,10 @@ import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CustomersManager } from '@/components/businessops/CustomersManager';
 import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { getAgentStyle } from '@/lib/agentStyles';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import {
+  usesQuotes, usesLeads, usesInventory, usesCompaniesB2B, usesAppointments,
+} from '@/lib/industryCapabilities';
 import { 
   FileText, 
   Receipt, 
@@ -60,8 +64,26 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const { companyId: authCompanyId, user, userRole } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   const isPlatformAdmin = userRole === 'platform_admin';
-  
-  const QUICK_ACTIONS = BASE_QUICK_ACTIONS;
+  const { pack } = useIndustryPack();
+
+  // Industry-aware tab filtering. Platform admin sees everything so they can QA
+  // any vertical. For real tenants we hide tabs that don't apply to the vertical
+  // (e.g. Quote/Inventory/Lead/Companies for restaurants, real estate, beauty).
+  const allowedActionIds = new Set<string>([
+    'employees', 'customers', // always relevant
+    ...(usesQuotes(pack) ? ['quote'] : []),
+    'invoice', // every vertical can bill
+    ...(usesLeads(pack) ? ['lead'] : []),
+    ...(usesAppointments(pack) ? ['appointments'] : []),
+    ...(usesInventory(pack) ? ['inventory'] : []),
+    ...(usesCompaniesB2B(pack) ? ['companies'] : []),
+  ]);
+  const QUICK_ACTIONS = isPlatformAdmin
+    ? BASE_QUICK_ACTIONS
+    : BASE_QUICK_ACTIONS.filter(a => allowedActionIds.has(a.id));
+  const VISIBLE_TABS = isPlatformAdmin
+    ? TABS
+    : TABS.filter(t => t.id === 'chat' || t.id === 'aura-live' || allowedActionIds.has(t.id));
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
