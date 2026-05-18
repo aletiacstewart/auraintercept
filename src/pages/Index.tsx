@@ -1172,7 +1172,6 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">SMS & Voice Calls</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own SignalWire account · billed directly by SignalWire</p>
                 <p className="text-[10px] text-white">Local number $0.50/mo · SMS $0.00415/segment · Voice $0.0066/min in / $0.008/min out · AI Agent $0.16/min</p>
-                <p className="text-[10px] text-white">Valid credit card required on your SignalWire account · all tiers</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1222,7 +1221,7 @@ export default function Index() {
               </div>
             </div>
 
-            <p className="text-[10px] text-white italic text-center mt-4">
+            <p className="text-[10px] text-white italic font-bold text-center mt-4">
               Every 3rd-party provider above (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires your own account with a valid credit card on file. Each provider invoices you directly and separately from your Aura plan fee.
             </p>
           </div>
