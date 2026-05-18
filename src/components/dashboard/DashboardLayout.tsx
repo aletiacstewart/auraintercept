@@ -284,7 +284,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     (userRole === 'employee' && jobTypes.some(jt => ['manager', 'customer_service'].includes(jt)));
 
   // Get subscription tier for tier-based filtering
-  const { isAtLeastTier, inTrial } = useSubscription();
+  const { isAtLeastTier, inTrial, subscriptionTier } = useSubscription();
 
   // Industry-aware sidebar labels: a real-estate company sees "Agent View"
   // instead of "Technician View", a salon sees "Stylist View", etc.
@@ -332,8 +332,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       }
       // Platform admin sees everything, skip tier check
       if (isPlatformAdmin) return true;
-      // Check group-level tier requirement (trial honors selected tier)
-      if (group.requiredTier && !isAtLeastTier(group.requiredTier)) {
+      // Check group-level tier requirement (trial honors selected tier).
+      // Skip the check while subscriptionTier is still resolving — otherwise
+      // every gated nav item flashes hidden on first paint.
+      if (group.requiredTier && subscriptionTier && !isAtLeastTier(group.requiredTier)) {
         return false;
       }
       return true;
@@ -368,8 +370,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         // Platform admin sees all items
         if (isPlatformAdmin) return true;
         
-        // Check item-level tier requirement (trial honors selected tier)
-        if (item.requiredTier && !isAtLeastTier(item.requiredTier)) {
+        // Check item-level tier requirement (trial honors selected tier).
+        // Skip while tier is unresolved so the sidebar doesn't briefly
+        // collapse to an empty AI Consoles group.
+        if (item.requiredTier && subscriptionTier && !isAtLeastTier(item.requiredTier)) {
           return false;
         }
         
