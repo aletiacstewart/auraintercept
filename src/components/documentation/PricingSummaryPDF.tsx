@@ -225,7 +225,7 @@ const PricingSummaryPDF = () => (
           { feature: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
           { feature: 'Online Booking', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
           { feature: 'Field Operations', core: '-', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
-          { feature: 'Industry Specialist Agents', core: '-', boost: '-', pro: 'Yes', elite: 'Yes' },
+          { feature: 'Industry Specialist Agents', core: 'By industry', boost: 'By industry', pro: 'By industry', elite: 'By industry' },
           { feature: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
@@ -404,7 +404,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Consoles (5)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Same 5 consoles as Boost</FeatureItem>
-        <FeatureItem>Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim)</FeatureItem>
+        <FeatureItem>Industry Specialist Agents auto-activate by industry on every plan</FeatureItem>
       </View>
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
