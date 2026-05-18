@@ -4,6 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const SUPER_ADMIN_EMAIL = 'superadmin@auraintercept.ai';
+export const SALES_REP_EMAILS = new Set<string>([
+  'michael@auraintercept.ai',
+  'charles@auraintercept.ai',
+  'ryelee@auraintercept.ai',
+]);
+
+export function isSwitcherHostEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const e = email.toLowerCase();
+  return e === SUPER_ADMIN_EMAIL || SALES_REP_EMAILS.has(e);
+}
 export const DEMO_PASSWORD = 'aidemo*!';
 export const SUPER_FLAG_KEY = 'aura_super_switcher_active';
 export const SUPER_LAST_INDUSTRY = 'aura_super_switcher_industry';
@@ -41,7 +52,7 @@ export function useSuperSwitcher() {
     try {
       // Capture current super-admin session so we can restore it on exit (no password needed)
       const { data: { session: current } } = await supabase.auth.getSession();
-      if (current && current.user?.email === SUPER_ADMIN_EMAIL) {
+      if (current && isSwitcherHostEmail(current.user?.email)) {
         localStorage.setItem(SUPER_SESSION_KEY, JSON.stringify({
           access_token: current.access_token,
           refresh_token: current.refresh_token,

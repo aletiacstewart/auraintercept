@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRef } from 'react';
+import { isSuperSwitcherActive } from '@/hooks/useSuperSwitcher';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -42,6 +43,16 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   if (requiredRole && userRole !== requiredRole) {
     // If user doesn't have required role, redirect to their appropriate dashboard
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // Sales-rep demo accounts: only allowed in /super-switcher unless they've switched
+  // into a demo tenant (then they're authenticated as that demo user, not demo_rep).
+  if (
+    userRole === 'demo_rep' &&
+    !isSuperSwitcherActive() &&
+    location.pathname !== '/super-switcher'
+  ) {
+    return <Navigate to="/super-switcher" replace />;
   }
 
   return <>{children}</>;
