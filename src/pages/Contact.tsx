@@ -323,7 +323,7 @@ export default function Contact() {
                       variant="secondary" 
                       onClick={() => navigate('/auth?mode=company')}
                     >
-                      Start Free Trial
+                      90-Day Live Trial
                     </Button>
                   </CardContent>
                 </Card>
