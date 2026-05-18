@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { LogOut } from 'lucide-react';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
+import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
 import logo from '@/assets/aura-intercept-logo.png';
 
 interface Company {
@@ -99,6 +100,7 @@ export default function CustomerCompanyPortal() {
             <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
           </div>
           <div className="flex items-center gap-2">
+            <SuperHubInlineButton />
             <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>
