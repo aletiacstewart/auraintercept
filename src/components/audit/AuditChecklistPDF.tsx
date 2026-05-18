@@ -7,6 +7,7 @@ import {
 } from '@react-pdf/renderer';
 import { sanitizePdfText, SAFE_BULLET } from '@/components/documentation/pdfSanitize';
 import { TierType, TIER_RECOMMENDATIONS } from './types';
+import { getIndustryContent } from '@/lib/industryMarketingContent';
 
 const colors = {
   primary: '#6366f1',
@@ -230,6 +231,7 @@ interface AuditChecklistPDFProps {
   recommendedTier: TierType;
   fitScore: number;
   answers: Record<string, string>;
+  industryId?: string | null;
 }
 
 const TIER_ORDER: TierType[] = ['CORE', 'BOOST', 'PRO', 'ELITE'];
@@ -635,7 +637,10 @@ const NextStepsPage = ({ tier }: { tier: TierType }) => (
   </Page>
 );
 
-export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers }: AuditChecklistPDFProps) => (
+export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers, industryId = null }: AuditChecklistPDFProps) => {
+  const industry = getIndustryContent(industryId);
+  const industryLabel = industryId && industryId !== 'other' ? industry.label : null;
+  return (
   <Document>
     <CoverPage tier={recommendedTier} fitScore={fitScore} />
     <PlanContentsPage tier={recommendedTier} />
