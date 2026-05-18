@@ -1,44 +1,42 @@
-## Goal
+# Add Healthcare Demos to Dynamic Demo Page
 
-Update the dynamic demo pages: replace the hero subtitle and change every "48 hours / 48-hour" reference to "24 hours / 24-hour".
+The dynamic demo page (`/for-business`) drives its dropdown, hero, role previews, and the "Start 24-hour Demo" flow off of `INDUSTRY_CONTENT` + `INDUSTRY_GROUPS` in `src/lib/industryMarketingContent.ts`. Dashboards/consoles for a demo company are driven by the `industry_template_packs` row matched to the selected `industry_id` via `useIndustryPack`.
 
-## Hero copy change (`src/pages/ForBusiness.tsx:76`)
+## Current state
 
-- Before: `Pick your industry — page & 48-hour demo update instantly.`
-- After: `Pick Your Industry from the dropdown and start a 24-hour demo.`
+- **Industry packs in DB (already power dashboards/consoles):** `physical_therapy`, `occupational_therapy`, `hospice` (all cluster=`home_health`). No `home_health` pack yet.
+- **Marketing content (powers `/for-business` dropdown + demo):** Zero healthcare entries. No Healthcare group in `INDUSTRY_GROUPS`.
+- **Aliases:** `pt → physical_therapy`, `ot → occupational_therapy`, `hospices → hospice`, and currently `home_health → physical_therapy` (wrong — user wants home_health distinct).
 
-## 48 → 24 across demo surfaces
+## Changes
 
-Update every occurrence in dynamic-demo files:
+### 1. Add a `home_health` industry pack (DB)
+New migration inserting an `industry_template_packs` row for `home_health` (cluster `home_health`, label "Home Health Care") so its dashboard/consoles render properly. Seed: dashboard_widgets, service_catalog (skilled nursing visit, medication management, wound care, vitals check), terminology (job→visit, customer→patient, technician→caregiver), appointment_rules (in-home, 60-min default, recurring weekly), customer_intake_schema (DOB, primary diagnosis, mobility, allergies, emergency contact), quote_template/invoice_template (per-visit billing, insurance + private pay), agent_prompt_deltas for receptionist/dispatch.
 
-1. `src/pages/ForBusiness.tsx`
-   - L64 meta description: `48-hour live demo` → `24-hour live demo`
-   - L147: `48 hours. Full access...` → `24 hours. Full access...`
-   - L151 CTA: `Start your 48-hour demo` → `Start your 24-hour demo`
+### 2. Fix alias for `home_health`
+In `src/lib/industryIdAliases.ts`:
+- Remove `home_health: 'physical_therapy'`.
+- Add `'home_health'` to `CANONICAL_INDUSTRY_IDS`.
+- Add convenience aliases: `homehealth`, `home_care`, `homecare → home_health`.
 
-2. `src/components/marketing/IndustryHero.tsx:37` — `Full access for 48 hours.` → `Full access for 24 hours.`
+### 3. Add 4 marketing content entries
+In `src/lib/industryMarketingContent.ts`, add `home_health`, `physical_therapy`, `occupational_therapy`, `hospice` entries to `INDUSTRY_CONTENT` using the existing `make(...)` helper. Each gets:
+- Industry-appropriate headline + subheadline (e.g. PT: "Keep your schedule full. Keep recovery on track.")
+- 3 value props (call answering / intake & insurance verification / visit reminders + recurring scheduling)
+- Sample inbound messages ("I need to schedule my mom's first PT visit", "Following up on my hospice intake referral", etc.)
+- Service types (Initial Eval, Follow-up Visit, Re-eval, etc. tuned per vertical)
+- Sample appointment + lead seed
+- City + brand color pair (clinical blue/teal palette)
 
-3. `src/components/marketing/IntegrationStatusPanel.tsx:16` — `48-hour demo` → `24-hour demo`
+### 4. Add a Healthcare group to `INDUSTRY_GROUPS`
+Append: `{ group: 'Healthcare', emoji: '🩺', ids: ['home_health', 'physical_therapy', 'occupational_therapy', 'hospice'] }` so they show in the dropdown picker on `/for-business`.
 
-4. `src/components/marketing/StartDemoDialog.tsx`
-   - L66 toast: `48-hour trial just started` → `24-hour trial just started`
-   - L97 dialog title: `Your 48-hour demo is ready` → `Your 24-hour demo is ready`
-   - L109 button: `Start your 48-hour {industryLabel} demo` → `Start your 24-hour {industryLabel} demo`
-   - L186: `...stay active for 48 hours.` → `...stay active for 24 hours.`
+### 5. Verify downstream
+- `useIndustryPack` already resolves these IDs → consoles/dashboards render automatically once steps 1–2 are in.
+- `create-demo-trial` edge function uses `_shared/industry-aliases.ts` — mirror the `home_health` canonical update there as well.
+- `industryEmptyStates`, `industryPortalCopy`, `industryNavLabels` already have hospice/PT/OT entries (per `rg` earlier); add `home_health` analogues where each file expects one (will detect during implementation and add minimal entries — caregiver/patient/visit terminology).
 
-5. `src/components/marketing/DemoCredentialsCard.tsx`
-   - L80: `your 48-hour demo` → `your 24-hour demo`
-   - L160: `After 48 hours the demo company is automatically deleted.` → `After 24 hours the demo company is automatically deleted.`
+## Out of scope
 
-## Out of scope (untouched)
-
-These also contain "48 hours" but are not dynamic-demo copy:
-- `SalesPitchDataPDF.tsx`, `WebsiteCopyPDF.tsx` ("24–48 hours" implementation timeline)
-- `ResendSetupGuide.tsx` (DNS verification)
-- `IndustryMarketingKitPDF.tsx`, `industryTemplates.ts` (industry copy examples)
-- `SmartWebsiteManager.tsx` (DNS propagation)
-- `ReminderSettings.tsx` (48h reminder preset)
-
-## Note
-
-This does not change the actual demo lifetime in code/backend — only copy. If you also want the demo to actually auto-delete after 24 h instead of 48 h, flag that and I'll add the backend change separately.
+- No changes to the actual demo lifetime (still 24h), pricing tiers, or seeded demo accounts.
+- No new operative agents — uses existing `home_health` cluster operatives.
