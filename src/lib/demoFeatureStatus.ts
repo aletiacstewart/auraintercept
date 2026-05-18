@@ -13,20 +13,20 @@ export const DEMO_FEATURE_STATUS: DemoFeatureRow[] = [
   {
     id: 'dashboard',
     feature: 'Owner dashboard, jobs, leads, customers, analytics',
-    status: 'live',
-    description: 'Fully functional. Every action writes to your isolated demo company in real time.',
+    status: 'mock',
+    description: 'Pre-seeded mock data in an isolated demo company. Every action writes to demo records only — no real customer data.',
   },
   {
     id: 'aura_chat',
     feature: 'Message Aura (text chat)',
-    status: 'live',
-    description: 'Real AI conversations powered by the Lovable AI gateway. Try booking a job from the customer portal.',
+    status: 'mock',
+    description: 'AI replies run against mock demo data only. Bookings and customers created during the demo are simulated, not real.',
   },
   {
     id: 'image_gen',
     feature: 'AI image generation (social posts, content)',
-    status: 'live',
-    description: 'Real image generation via google/gemini-2.5-flash-image.',
+    status: 'mock',
+    description: 'Images generate in the demo environment for preview only — not published anywhere live.',
   },
   {
     id: 'voice_inbound',
@@ -73,4 +73,4 @@ export const DEMO_FEATURE_STATUS: DemoFeatureRow[] = [
 ];
 
 export const DEMO_FEATURE_DISCLAIMER =
-  'Third-party services (SignalWire, ElevenLabs, Resend, Stripe, Google, social platforms) are billed separately by their providers. Aura Intercept does not mark up these fees.';
+  'Every demo runs entirely on mock data in an isolated demo company — no real customers, calls, texts, emails, or charges. Third-party services (SignalWire, ElevenLabs, Resend, Stripe, Google, social platforms) only activate after signup with your own accounts and are billed separately by each provider.';
