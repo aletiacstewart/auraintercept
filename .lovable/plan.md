@@ -1,60 +1,66 @@
-# Sales-Rep Demo Logins for Super Switcher
+## Goal
+Turn the single-flow Free AI Opportunity Audit at `/audit` into an industry-aware audit. User picks their industry first, then the audit asks a mix of universal + industry-specific questions and produces an industry-specific recommendation and PDF.
 
-Add three demo-only logins for Aura sales reps that can use the Super Switcher Hub to demo any industry, but cannot edit platform settings, run seeders, or reach platform-admin pages.
+## UX Flow
 
-## Accounts to create
+```
+/audit  →  [Industry Picker Step]  →  [Audit Questions]  →  [Results + PDF]
+                ↑ change industry chip persists in header during the flow
+```
 
-| Email | Password | Role |
-|---|---|---|
-| `michael@auraintercept.ai` | `aidemo*!` | `demo_rep` |
-| `charles@auraintercept.ai` | `aidemo*!` | `demo_rep` |
-| `ryelee@auraintercept.ai` | `aidemo*!` | `demo_rep` |
+1. **Step 0 — Industry Picker** (new). Full-page card with a dropdown (or grid) listing all 28 packs grouped by cluster (Essential Trades, Property & Estate, Wellness & Personal, Healthcare, etc.) using `INDUSTRY_LIST` / `INDUSTRY_GROUPS` from `src/lib/industryMarketingContent.ts`. "Not sure / Other" option falls back to the current generic flow.
+2. **Steps 1..N — Questions.** Renders `[…universalQuestions, …industryQuestions[selectedIndustry]]`. Section badge + progress bar already handle variable lengths.
+3. **Change-industry chip** in the audit header lets the user switch industries mid-flow (clears industry-specific answers, keeps universal ones).
+4. **Results page** shows the recommended tier + industry name + industry-tinted hero, and the PDF filename + intro include the industry label.
 
-Email auto-confirmed. No `companies` row, no `profiles` company link — these accounts only exist to enter the Super Switcher and impersonate the existing demo tenants.
+## Question Model Changes (`src/components/audit/types.ts`)
 
-## Changes
+- Keep existing `QUESTIONS` array but split it:
+  - `UNIVERSAL_QUESTIONS` — the 11 questions that apply to everyone (employee_count, after_hours_calls, lead_volume, ai_interaction_mode, missed_calls, booking_process, review_collection, appointment_reminders, social_media_activity, website_status, launch_timeline).
+  - Remove `industry_type` (replaced by the picker step).
+  - Remove `service_location`, `dispatch_routing`, `customer_eta`, `quoting_process`, `inventory_tracking`, `marketing_automation`, `existing_integrations`, `phone_setup` from universal — they become industry-conditional.
+- New `INDUSTRY_QUESTIONS: Record<string, AuditQuestion[]>` keyed by canonical industry id from `industry-id-canonical-standard`. Each pack gets 4–6 industry-specific questions reusing the existing `TierScores` shape so the tier-fit math is unchanged.
 
-### 1. Database (migration)
-- Add `'demo_rep'` value to `public.app_role` enum.
-- No new tables; reuse `user_roles`.
+### Industry question buckets (examples — full set in new file)
 
-### 2. Edge function — `seed-sales-rep-accounts`
-One-shot, idempotent, service-role:
-- For each of the 3 emails: find user via `admin.listUsers`; if missing, `admin.createUser({ email, password, email_confirm: true })`; if present, `admin.updateUserById({ password, email_confirm: true })`.
-- Upsert `user_roles (user_id, role='demo_rep')`.
-- Returns `{ ok, created: [...], updated: [...] }`.
-- Allow-list the 3 emails inside the function (same pattern as `admin-reset-password`).
-- Invoked once from the Super Switcher page by an existing platform_admin via a small "Provision sales-rep logins" button (kept in the existing header toolbar, hidden from `demo_rep`).
+- **hvac / plumbing / electrical / roofing / appliance_repair / handyman / fencing / pool_spa / pest_control / landscape / solar / construction / auto_care / security_systems** (field trades): dispatch_routing, customer_eta, quoting_process, inventory_tracking, phone_setup, emergency_after_hours.
+- **real_estate**: listing_volume, open_house_followup, commission_pipeline, lead_source_mix, showing_scheduling, crm_integration.
+- **restaurants**: reservation_volume, takeout_delivery_mix, online_ordering, review_volume, waitlist_management, menu_update_cadence.
+- **beauty_wellness**: booking_density, rebooking_rate, package_sales, no_show_rate, retail_inventory, intake_forms.
+- **personal_assistant**: client_count, retainer_vs_hourly, task_channel_mix, calendar_integration.
+- **home_health / physical_therapy / occupational_therapy / hospice**: visit_volume, payer_mix, intake_documentation, scheduling_complexity, compliance_followup. (No quoting/inventory in healthcare bucket — replaced by intake + compliance.)
 
-### 3. Gating
+Each bucket lives in a new file `src/lib/auditIndustryQuestions.ts` exporting `INDUSTRY_QUESTIONS` plus a small `INDUSTRY_SECTION_ORDER` map so `SECTION_ORDER` rebuilds dynamically per industry.
 
-`src/pages/SuperSwitcher.tsx`
-- Allow access when `userRole === 'platform_admin' || userRole === 'demo_rep'`.
-- Hide platform-admin-only controls from `demo_rep`:
-  - "Seed / repair all demos" button
-  - "Demo seeder console" link
-  - "Provision sales-rep logins" button
+## Files to add / change
 
-`src/hooks/useSuperSwitcher.ts`
-- `enter()`: stash current session when email is `SUPER_ADMIN_EMAIL` **or** belongs to `SALES_REP_EMAILS` (new exported `Set`). This way `exit()` restores the rep session instead of bouncing to `/auth`.
-- No change to switched-in behavior — reps land in the demo tenant as `company_admin`/`employee`/`customer` and can edit demo data freely (answer to Q3).
+**New**
+- `src/lib/auditIndustryQuestions.ts` — `INDUSTRY_QUESTIONS` map (all 28 ids + `other` fallback) and `getQuestionsForIndustry(id)`.
+- `src/components/audit/AuditIndustryPicker.tsx` — first-step picker UI (dropdown grouped by cluster, with emoji + label, "Not sure" option).
 
-`src/contexts/AuthContext.tsx` (or a new top-level `<DemoRepGuard>` mounted in `App.tsx`)
-- When `userRole === 'demo_rep'` AND no active switch (`!isSuperSwitcherActive()`) AND current path is not `/super-switcher` or `/auth`, `Navigate` to `/super-switcher`.
-- Post-login redirect for `demo_rep` → `/super-switcher` (update the existing post-login routing logic that currently sends `platform_admin` → `/super-switcher`).
+**Edit**
+- `src/components/audit/types.ts` — split into `UNIVERSAL_QUESTIONS`; keep `TIER_RECOMMENDATIONS` and `SECTION_ORDER` types; export a helper `buildSectionOrder(industryId)`.
+- `src/components/audit/AgentOpportunityAudit.tsx`
+  - New state: `selectedIndustry: string | null` (persisted in the same `localStorage` blob).
+  - Render `<AuditIndustryPicker>` when `selectedIndustry === null`.
+  - Compose `questions = useMemo(() => [...UNIVERSAL_QUESTIONS, ...getQuestionsForIndustry(selectedIndustry)], [selectedIndustry])`.
+  - Re-derive `progress`, `currentSection`, `sectionIndex` from this dynamic list.
+  - Header now shows an "Industry: {emoji} {label} — change" chip.
+- `src/components/audit/AuditResults.tsx` — accept `industryId`, show industry label + emoji in hero, pass through to PDF.
+- `src/components/audit/AuditChecklistPDF.tsx` — accept `industryId`, include industry name in title page + tailor the "What's included" intro line using `getIndustryContent(id)`.
+- `src/pages/OpportunityAudit.tsx` — SEO title remains generic; no other changes.
 
-### 4. Sign-out / exit
-`useSuperSwitcher.exit()` already restores the stashed session — with the change above, reps will be restored to their `demo_rep` session and land back on `/super-switcher`. Header "Sign out" button works as-is.
+## Scoring & tier math
+
+Unchanged. Industry-specific questions use the same `TierScores` shape, so the average-based `tierPercentages` calculation in `AgentOpportunityAudit.tsx` keeps working with a variable question count.
+
+## Persistence
+
+Extend `SavedProgress` with `selectedIndustry`. Same 24-hour expiry. `handleRestart` clears industry too.
 
 ## Out of scope
-- No changes to switched-in demo tenants (full editing allowed, as requested).
-- No RLS rewrites — `demo_rep` has no company link so existing tenant-scoped RLS naturally returns nothing for them outside a switch.
-- No UI for managing rep accounts beyond the one-shot provision button.
 
-## Files touched
-- New: `supabase/migrations/<ts>_add_demo_rep_role.sql`
-- New: `supabase/functions/seed-sales-rep-accounts/index.ts`
-- Edit: `src/hooks/useSuperSwitcher.ts` (add `SALES_REP_EMAILS`, broaden stash check)
-- Edit: `src/pages/SuperSwitcher.tsx` (gate by role, hide admin controls)
-- Edit: `src/contexts/AuthContext.tsx` or `src/App.tsx` (demo_rep redirect guard + post-login route)
-- Memory: append rep account list to `mem://platform-operations/demo-account-registry`
+- No backend / DB changes — the audit remains fully client-side, anonymous, no signup.
+- No changes to `auditFindings.ts` (internal QA doc).
+- No marketing page / pricing changes.
+- Tier recommendation copy stays generic; only the framing + PDF intro mention the chosen industry.
