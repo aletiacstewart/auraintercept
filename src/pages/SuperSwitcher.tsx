@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Crown, Building2, Users, UserCircle, ArrowLeftRight, ExternalLink, RefreshCcw } from 'lucide-react';
+import { Loader2, Crown, Building2, Users, UserCircle, ArrowLeftRight, ExternalLink, RefreshCcw, KeyRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSuperSwitcher, SUPER_LAST_INDUSTRY } from '@/hooks/useSuperSwitcher';
@@ -42,6 +42,8 @@ export default function SuperSwitcher() {
   const [selected, setSelected] = useState<string>(() => localStorage.getItem(SUPER_LAST_INDUSTRY) || '');
   const [loadingData, setLoadingData] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const [provisioning, setProvisioning] = useState(false);
+  const isAdmin = userRole === 'platform_admin';
 
   useEffect(() => { document.title = 'Super Switcher · Aura Intercept'; }, []);
 
@@ -91,10 +93,26 @@ export default function SuperSwitcher() {
     }
   };
 
+  const handleProvisionReps = async () => {
+    setProvisioning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('seed-sales-rep-accounts', { body: {} });
+      if (error) throw error;
+      const created = (data?.created || []).length;
+      const updated = (data?.updated || []).length;
+      toast({ title: 'Sales-rep logins ready', description: `${created} created, ${updated} refreshed.` });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Provisioning failed';
+      toast({ title: 'Provisioning failed', description: msg, variant: 'destructive' });
+    } finally {
+      setProvisioning(false);
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
   }
-  if (userRole !== 'platform_admin') {
+  if (userRole !== 'platform_admin' && userRole !== 'demo_rep') {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -107,7 +125,9 @@ export default function SuperSwitcher() {
             <h1 className="text-lg font-bold text-foreground">Super Switcher Hub</h1>
             <p className="text-xs text-muted-foreground">One demo login, every industry, every console.</p>
           </div>
-          <Badge variant="outline" className="gap-1"><Crown className="w-3 h-3" /> super_admin</Badge>
+          <Badge variant="outline" className="gap-1">
+            <Crown className="w-3 h-3" /> {isAdmin ? 'super_admin' : 'sales_rep'}
+          </Badge>
           <Button variant="ghost" size="sm" onClick={() => supabase.auth.signOut().then(() => window.location.assign('/auth'))}>Sign out</Button>
         </div>
       </header>
@@ -143,13 +163,21 @@ export default function SuperSwitcher() {
         <div className="flex flex-wrap items-center gap-3">
           <Input placeholder="Filter industries…" value={filter} onChange={(e) => setFilter(e.target.value)} className="max-w-xs" />
           <Button variant="ghost" size="sm" onClick={load} disabled={loadingData}><RefreshCcw className={`w-3.5 h-3.5 mr-1 ${loadingData ? 'animate-spin' : ''}`} />Refresh</Button>
-          <Button variant="outline" size="sm" onClick={handleSeedAll} disabled={seeding}>
-            {seeding ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : null}
-            Seed / repair all demos
-          </Button>
-          <Link to="/dashboard/demo-seeder" className="text-xs text-primary hover:underline ml-auto inline-flex items-center gap-1">
-            Demo seeder console <ExternalLink className="w-3 h-3" />
-          </Link>
+          {isAdmin && (
+            <>
+              <Button variant="outline" size="sm" onClick={handleSeedAll} disabled={seeding}>
+                {seeding ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : null}
+                Seed / repair all demos
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleProvisionReps} disabled={provisioning}>
+                {provisioning ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <KeyRound className="w-3.5 h-3.5 mr-1" />}
+                Provision sales-rep logins
+              </Button>
+              <Link to="/dashboard/demo-seeder" className="text-xs text-primary hover:underline ml-auto inline-flex items-center gap-1">
+                Demo seeder console <ExternalLink className="w-3 h-3" />
+              </Link>
+            </>
+          )}
         </div>
 
         {loadingData ? (

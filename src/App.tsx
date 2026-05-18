@@ -181,7 +181,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
                 <Route path="/demo/:trialId" element={<DemoAccess />} />
-                <Route path="/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
+                <Route path="/super-switcher" element={<ProtectedRoute><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
