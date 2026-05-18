@@ -125,6 +125,18 @@ export function TavilySetupGuide() {
                 </div>
                 <div className="space-y-2 pt-2 border-t">
                   <div className="flex justify-between">
+                    <span>Free tier</span>
+                    <span className="font-medium">1,000 credits/month — no card required</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Overage rate</span>
+                    <span className="font-medium">$0.008 / credit</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Project plans</span>
+                    <span className="font-medium">From ~$30/month</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span>Search credits</span>
                     <span className="font-medium">1 credit / query</span>
                   </div>
