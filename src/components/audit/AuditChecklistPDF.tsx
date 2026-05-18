@@ -642,7 +642,7 @@ export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers, industry
   const industryLabel = industryId && industryId !== 'other' ? industry.label : null;
   return (
   <Document>
-    <CoverPage tier={recommendedTier} fitScore={fitScore} />
+    <CoverPage tier={recommendedTier} fitScore={fitScore} industryLabel={industryLabel} />
     <PlanContentsPage tier={recommendedTier} />
     <DocumentsPage tier={recommendedTier} />
     <ThirdPartyPage tier={recommendedTier} />
@@ -652,5 +652,6 @@ export const AuditChecklistPDF = ({ recommendedTier, fitScore, answers, industry
     <NextStepsPage tier={recommendedTier} />
   </Document>
 );
+};
 
 export default AuditChecklistPDF;
