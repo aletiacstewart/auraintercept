@@ -20,12 +20,14 @@ import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { AuditChecklistPDF } from "./AuditChecklistPDF";
+import { getIndustryContent } from "@/lib/industryMarketingContent";
 
 interface AuditResultsProps {
   tierPercentages: TierScores;
   recommendedTier: TierType;
   onRestart: () => void;
   answers?: Record<string, string>;
+  industryId?: string | null;
 }
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
@@ -59,11 +61,12 @@ const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered:
   ELITE: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },
 };
 
-export function AuditResults({ tierPercentages, recommendedTier, onRestart, answers = {} }: AuditResultsProps) {
+export function AuditResults({ tierPercentages, recommendedTier, onRestart, answers = {}, industryId = null }: AuditResultsProps) {
   const navigate = useNavigate();
   const recommendation = TIER_RECOMMENDATIONS[recommendedTier];
   const roiEstimate = TIER_ROI_ESTIMATES[recommendedTier];
   const fitScore = tierPercentages[recommendedTier];
+  const industry = getIndustryContent(industryId);
   
   // Calculate scaled hours based on fit percentage
   const avgFit = tierPercentages[recommendedTier];
