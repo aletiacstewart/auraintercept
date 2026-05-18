@@ -284,7 +284,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     (userRole === 'employee' && jobTypes.some(jt => ['manager', 'customer_service'].includes(jt)));
 
   // Get subscription tier for tier-based filtering
-  const { isAtLeastTier, inTrial, subscriptionTier } = useSubscription();
+  const { isAtLeastTier, inTrial } = useSubscription();
 
   // Industry-aware sidebar labels: a real-estate company sees "Agent View"
   // instead of "Technician View", a salon sees "Stylist View", etc.
