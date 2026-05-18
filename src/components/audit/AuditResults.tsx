@@ -123,6 +123,12 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
           <p className="text-muted-foreground">
             Recommended plan: <span className="text-cyan-300 font-semibold">{recommendation.label}</span>
           </p>
+          {industryId && industryId !== 'other' && (
+            <p className="text-xs text-muted-foreground mt-2 inline-flex items-center gap-1.5">
+              <span>{industry.emoji}</span>
+              <span>Tailored for {industry.label}</span>
+            </p>
+          )}
         </div>
 
         {/* Hero Result Card */}
@@ -359,9 +365,10 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                       recommendedTier={recommendedTier}
                       fitScore={fitScore}
                       answers={answers}
+                      industryId={industryId}
                     />
                   }
-                  fileName={`aura-setup-plan-${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
+                  fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
                 >
                   {({ loading }) => (
                     <Button size="lg" className="gap-2" disabled={loading}>
