@@ -159,7 +159,7 @@ serve(async (req) => {
     if (companyId) {
       const { data: company } = await supabaseClient
         .from('companies')
-        .select('id, name, subscription_tier, trial_ends_at, stripe_customer_id')
+        .select('id, name, subscription_tier, trial_ends_at, stripe_customer_id, is_demo')
         .eq('id', companyId)
         .single();
       
@@ -167,7 +167,23 @@ serve(async (req) => {
       logStep("Company data fetched", { 
         companyId: company?.id, 
         tier: company?.subscription_tier,
-        stripeCustomerId: company?.stripe_customer_id 
+        stripeCustomerId: company?.stripe_customer_id,
+        isDemo: (company as any)?.is_demo,
+      });
+    }
+
+    // Demo companies always preview the full platform regardless of tier/trial state.
+    if ((companyData as any)?.is_demo === true) {
+      logStep("Demo company detected, granting full-preview command tier");
+      return new Response(JSON.stringify({
+        subscribed: true,
+        tier: "command",
+        in_trial: true,
+        trial_ends_at: companyData?.trial_ends_at ?? null,
+        subscription_end: companyData?.trial_ends_at ?? null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
       });
     }
 
