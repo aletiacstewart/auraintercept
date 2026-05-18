@@ -1,29 +1,26 @@
-## Fix all 3rd-party pricing inconsistencies on landing page
+## Goal
 
-All edits are copy-only in `src/pages/Index.tsx`. No business logic.
+Replace "invoices ... directly" wording with "automatic billing" language in the 3rd-party acknowledgement copy across the app.
 
-### 1. SMS Compliance block (line 1127)
-- `brand registration $4 (one-time)` → `$4.50 (one-time)` (reconcile with A2P card)
-- `campaign $1.50–$10/month` → `$1.50–$30/month` (Agents & Franchises use case tops at $30)
-- `no SMS to a T-Mobile handset in 59+ days` → `in 60 consecutive days`
+## Edits (copy-only, 4 files)
 
-### 2. A2P 10DLC card (line 1183)
-- `T-Mobile $250/mo for inactive campaigns (60+ days)` → `(60 consecutive days)`
+1. **`src/pages/Auth.tsx:1407`** (signup checkbox)
+   - Before: `...each provider invoices me directly and separately from my Aura plan fee.`
+   - After: `...each provider bills me directly through automatic billing on my card, separately from my Aura plan fee.`
 
-### 3. SignalWire card (lines 1166–1174)
-Add per-usage rate detail line:
-- `Local number $0.50/mo · SMS $0.00415/segment · Voice $0.0066/min in / $0.008/min out · AI Agent $0.16/min`
+2. **`src/pages/Index.tsx:1225`** (pricing disclaimer)
+   - Before: `Each provider invoices you directly and separately from your Aura plan fee.`
+   - After: `Each provider bills you directly through automatic billing on your card, separately from your Aura plan fee.`
 
-### 4. ElevenLabs card (lines 1156–1164)
-Add tier line:
-- `Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go available`
+3. **`src/components/landing/PricingComparisonTable.tsx:171`** (table subtitle)
+   - Same swap: `invoices you directly and separately` → `bills you directly through automatic billing on your card, separately`.
 
-### 5. Resend card (lines 1145–1154)
-Add concrete tiers:
-- `Free 3,000/mo · Pro $20 (50k) · Scale $90+ · overage ~$0.90 per 1,000`
+4. **`src/pages/TermsOfService.tsx:196`** (legal)
+   - Before: `Each provider invoices you directly and separately from your Aura plan fee...`
+   - After: `Each provider automatically bills your card directly and separately from your Aura plan fee...`
 
-### 6. Tavily card (lines 1210–1219)
-Add concrete pricing:
-- `Free 1,000 credits/mo · $0.008/credit overage · Project plans from ~$30/mo`
+No logic, schema, or component structure changes. Bold spans and surrounding markup preserved.
 
-No other files touched.
+## Out of scope
+
+- Other "invoice" usages in the app (customer invoices, billing module). Only the 3rd-party-provider acknowledgement copy is touched.
