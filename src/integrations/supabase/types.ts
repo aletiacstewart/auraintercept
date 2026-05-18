@@ -7354,7 +7354,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "platform_admin" | "company_admin" | "employee" | "customer"
+      app_role:
+        | "platform_admin"
+        | "company_admin"
+        | "employee"
+        | "customer"
+        | "demo_rep"
       compliance_doc_status: "pending" | "approved" | "rejected"
       compliance_doc_type: "dba" | "ein" | "formation" | "other"
       crm_connection_status:
@@ -7542,7 +7547,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["platform_admin", "company_admin", "employee", "customer"],
+      app_role: [
+        "platform_admin",
+        "company_admin",
+        "employee",
+        "customer",
+        "demo_rep",
+      ],
       compliance_doc_status: ["pending", "approved", "rejected"],
       compliance_doc_type: ["dba", "ein", "formation", "other"],
       crm_connection_status: [
