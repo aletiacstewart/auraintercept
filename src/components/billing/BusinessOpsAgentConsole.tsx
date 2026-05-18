@@ -265,7 +265,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       agentBgColor={agentStyle.bgColor}
       subtitle="Business Management — Cyber-Sentry Edition"
       companyCreatedAt={companyCreatedAt}
-      tabs={TABS}
+      tabs={VISIBLE_TABS}
       activeTab={activeTab}
       onTabChange={(tabId) => {
         setActiveTab(tabId);
