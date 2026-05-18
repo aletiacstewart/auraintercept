@@ -22,6 +22,8 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 
 interface Appointment {
   id: string;
@@ -68,6 +70,8 @@ interface AppointmentTrackingViewProps {
 }
 
 export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrackingViewProps) {
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   
@@ -143,15 +147,15 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
         };
       case 'en_route':
         return { 
-          badge: <Badge className="bg-amber-100 text-amber-700">On The Way</Badge>,
+          badge: <Badge className="bg-amber-100 text-amber-700">{isFieldDispatch ? 'On The Way' : 'Ready'}</Badge>,
           icon: <Truck className="h-5 w-5 text-amber-600 animate-pulse" />,
-          message: 'Your technician is on the way!'
+          message: isFieldDispatch ? 'Your technician is on the way!' : 'Your appointment is ready'
         };
       case 'arrived':
         return { 
-          badge: <Badge className="bg-green-100 text-green-700">Arrived</Badge>,
+          badge: <Badge className="bg-green-100 text-green-700">{isFieldDispatch ? 'Arrived' : 'Checked In'}</Badge>,
           icon: <MapPin className="h-5 w-5 text-green-600" />,
-          message: 'Your technician has arrived'
+          message: isFieldDispatch ? 'Your technician has arrived' : "You're checked in"
         };
       case 'in_progress':
         return { 
@@ -327,7 +331,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                     </span>
                   </div>
                 )}
-                {job.en_route_at && (
+                {job.en_route_at && isFieldDispatch && (
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-amber-500" />
                     <span className="text-foreground">
@@ -339,7 +343,7 @@ export function AppointmentTrackingView({ companyId, onCancel }: AppointmentTrac
                   <div className="flex items-center gap-3 text-sm">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-foreground">
-                      Arrived: {format(new Date(job.arrived_at), 'h:mm a')}
+                      {isFieldDispatch ? 'Arrived' : 'Checked in'}: {format(new Date(job.arrived_at), 'h:mm a')}
                     </span>
                   </div>
                 )}

@@ -28,6 +28,8 @@ import {
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus, CalendarClock } from 'lucide-react';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
@@ -64,6 +66,8 @@ interface Appointment {
 
 export function AppointmentCalendar() {
   const { user, userRole, companyId } = useAuth();
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'company_admin' || userRole === 'platform_admin';
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -507,8 +511,8 @@ export function AppointmentCalendar() {
     const labels: Record<string, string> = {
       pending_acceptance: 'Pending',
       accepted: 'Accepted',
-      en_route: 'En Route',
-      arrived: 'Arrived',
+      en_route: isFieldDispatch ? 'En Route' : 'Ready',
+      arrived: isFieldDispatch ? 'Arrived' : 'Checked In',
       in_progress: 'In Progress',
       completed: 'Completed',
     };

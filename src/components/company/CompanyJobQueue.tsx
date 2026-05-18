@@ -2,6 +2,9 @@ import { forwardRef, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getJobStatusLabel } from '@/lib/jobStatusLabels';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -74,6 +77,8 @@ interface CompanyJobQueueProps {
 export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Job assignments will appear here when created' }: CompanyJobQueueProps = {}) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
 
   // Fetch all active job assignments for the company
   const { data: jobs, isLoading, refetch } = useQuery({
@@ -246,7 +251,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {activeJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -261,7 +266,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {pendingJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -276,7 +281,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {acceptedJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -330,9 +335,10 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
   );
 }
 
-const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref) => {
+const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment; isFieldDispatch?: boolean }>(({ job, isFieldDispatch = true }, ref) => {
   const statusConfig = STATUS_CONFIG[job.status] || STATUS_CONFIG.pending_acceptance;
   const StatusIcon = statusConfig.icon;
+  const statusLabel = getJobStatusLabel(job.status, isFieldDispatch, statusConfig.label);
 
   return (
     <div
@@ -354,7 +360,7 @@ const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref)
             {job.appointments?.service_type || 'Service'}
           </Badge>
           <Badge className={`text-xs ${statusConfig.bgColor} ${statusConfig.color} border-0`}>
-            {statusConfig.label}
+            {statusLabel}
           </Badge>
         </div>
 

@@ -1,81 +1,81 @@
-# Fix: Console links disappear on demo dashboards
+## Goal
 
-## What's happening
+1. Hide field-travel UI ("Arrive", "On The Way", "En Route", "Directions") on employee + company consoles for industries that don't dispatch to a customer location (restaurants, salon, beauty_wellness, fitness, real_estate, professional, personal_assistant, and the entire booking cluster).
+2. Audit and update remaining marketing/docs/pricing copy so Industry Specialist Operatives are clearly stated as **active on every plan, gated by industry only** — not by tier. (The runtime gating already works; the static content lags behind.)
 
-On the demo dashboard screenshot you sent, the top chip reads **"CURRENT PLAN: FREE"** and the sidebar is missing every console link (Customer Portal, Technician/Stylist View, Business Management, Analytics & Reports, Specialist Operatives, Outreach & Sales, Social Media).
+---
 
-Those links are gated by tier in `src/components/dashboard/DashboardLayout.tsx`:
+## Part 1 — Hide "Arrive" / travel actions for non-field industries
 
-```
-Customer Portal        requiredTier: 'starter'
-Technician View        requiredTier: 'connect'
-Business Management    requiredTier: 'performance'
-Analytics & Reports    requiredTier: 'command'
-Specialist Operatives  requiredTier: 'performance'
-Outreach & Sales       requiredTier: 'starter'
-Social Media           requiredTier: 'connect'
-```
+Use existing `hasFieldTechnicians(pack)` from `src/lib/industryCapabilities.ts` (already returns false for booking-cluster + the 7 listed industries).
 
-The filter calls `isAtLeastTier(...)`. When the resolved tier is `'free'`, every one of those items is removed and the whole "Workspaces / AI Consoles" group collapses (the group only renders if `items.length > 0`), which is exactly the symptom.
+### Files to edit
 
-## Why the tier is resolving to "free"
+**`src/components/employee/FieldOpsAgentConsole.tsx`**
+- Read `pack` via `useIndustryPack()` and compute `const isFieldDispatch = hasFieldTechnicians(pack)`.
+- In the quick-action list that produces `directions`, `enroute`, `eta`, `arrive_start`, `dispatch`: when `!isFieldDispatch`, drop `directions`, `enroute`, `eta`, `arrive_start`, `dispatch` and instead surface a single `start` action (status → `in_progress` directly) plus existing `complete`, `reschedule`, `quote`, `invoice`, `accept`, `decline`.
+- Add a `handleSelectJobForStart` (status `in_progress` only, no `arrived_at`, no arrival SMS) and a `selectorMode === 'start'` config.
+- Reuse `serviceConfig.fieldRouting` only as a secondary signal; primary gate is `isFieldDispatch`.
 
-The Demo Salon & Spa company in the DB is correctly set up:
+**`src/components/employee/TechnicianJobQueue.tsx`**
+- Accept `isFieldDispatch` (derive from `useIndustryPack` inside, since this component already self-fetches).
+- When false: hide the "I've Arrived" button (keep "Start"), hide the "Arrived" KPI tile, and remove the `arrived` step from the status timeline.
 
-- `companies.subscription_tier = 'starter'`
-- `companies.trial_ends_at = 2026-06-07` (active trial)
-- The demo admin's `profiles.company_id` points at the demo company
-- `user_roles.role = 'company_admin'`
+**`src/components/company/CompanyJobQueue.tsx`**
+- Same: hide `arrived` status chip + filter for non-field industries.
 
-So `check-subscription` should return `tier: 'starter'`, `in_trial: true`. But the UI is rendering "FREE" with no trial chip — meaning `AuthContext.subscriptionTier` is sitting at `'free'` and `inTrial` is `false`.
+**`src/components/ai/AppointmentTrackingView.tsx`**
+- Hide the "On The Way" and "Arrived" badge variants when `!isFieldDispatch`; collapse to "Scheduled → In Progress → Complete".
 
-That happens in two real scenarios for demo dashboards:
+**`src/components/ai/agents/JobStatusMonitor.tsx`** and **`src/components/employee/AppointmentCalendar.tsx`** and **`src/components/employee/CompletedJobsHistory.tsx`**
+- Conditionally skip the `arrived` row/label when `!isFieldDispatch`.
 
-1. **Platform admin viewing a demo via Super Switcher.** The signed-in user is `ai@auraintercept.ai`. `check-subscription` short-circuits at the `platform_admin` branch and returns `tier: 'command'` — but only after the first successful call. Until then (and after a refresh on the demo URL where the session token isn't ready), the chip flashes `'free'` and the sidebar renders empty. The platform_admin branch is fine; the issue is the no-token early-exit path returns `tier: "free"`.
-2. **Demo trial users (`demo-admin-*@auraintercept.ai`)** where `check-subscription` early-exits with `tier: "free"` because `getClaims`/`getUser` failed once, or where `is_demo = true` companies aren't being recognized as automatically full-access for preview purposes.
+**`src/components/fieldops/RealTimeETASidebar.tsx`** and **`src/components/fieldops/DispatcherMapView.tsx`**
+- These are already gated at the page level via `hasFieldTechnicians` in `src/pages/FieldOperations.tsx`. No change needed beyond confirming the page-level guard still hides the whole sidebar.
 
-In both cases the sidebar permanently hides the consoles for the rest of the session, because nothing re-fires `checkSubscription` after the token settles, and the filter has no "demo company" override.
+**`src/components/ai/chat/AgentHowToGuide.tsx`**
+- The "Arrive & Start Job" how-to entry: filter it out of the guide list when `!isFieldDispatch`.
 
-## The fix
+### Out of scope
+- The underlying `job_assignments.status='arrived'` column stays in the DB (data model unchanged). We just hide the UI affordances for non-field verticals.
 
-Two small, surgical changes — no schema work, no new tables.
+---
 
-### 1. Treat any `is_demo` company as a full-preview tier in `check-subscription`
+## Part 2 — Specialist Operatives copy alignment
 
-`supabase/functions/check-subscription/index.ts`
+Runtime is already correct (`SPECIALIST_MIN_TIER='free'`, `tierAllowsSpecialists()` always true, pack-driven activation). These static surfaces still imply gating and need updating:
 
-- After fetching `companyData`, if `companyData.is_demo === true`, return immediately:
-  ```
-  subscribed: true,
-  tier: 'command',
-  in_trial: true,
-  trial_ends_at: companyData.trial_ends_at,
-  ```
-- Add `is_demo` to the `companies` select list.
-- This guarantees every demo dashboard — whether viewed by the seeded demo admin, a Super-Switcher impersonator, or a brand-new 24-hour trial — sees the full console set, which is the entire point of the demo.
+**`src/pages/Subscription.tsx`** — line 788 paragraph: rewrite to drop "Pro adds…industry-specific specialist agents" and instead say something like *"Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Style Consultant, Menu Writer, etc.) auto-activate based on the industry you choose at signup — included on every plan, including the 90-Day Live Trial."* Keep the per-tier highlight lines as they already say "+ Industry Specialists".
 
-### 2. Stop the "free flash" in the sidebar before subscription resolves
+**`src/components/documentation/PricingSummaryPDF.tsx`**
+- Line 228: change the comparison row from `core: '-', boost: '-', pro: 'Yes', elite: 'Yes'` to `'Included (by industry)'` across all four tiers.
+- Line 407 (Pro tier section): demote "Industry Specialist Agents (Diagnostic, …)" from Pro-exclusive bullet to a generic note that they're included on all plans.
+- Line 455 (Elite): change "All Industry Specialist Agents included" → "All Industry Specialist Agents (same as every plan, industry-gated)".
 
-`src/components/dashboard/DashboardLayout.tsx`
+**`src/components/documentation/WebsiteCopyPDF.tsx`** — line 530/535: remove "Industry Specialist Agents" from the Pro tier exclusives bullet; add a universal note in the intro or Core tier block that specialists ship on every plan.
 
-- Pull `subscriptionTier` from `useSubscription()` and, while it is still `null` (initial load) **or** while `is_demo` company is detected via `useWorkspace()/useIndustryPack` company metadata, skip tier filtering on the AI console items (treat them as visible).
-- Concretely: change the filter to `if (item.requiredTier && subscriptionTier && !isAtLeastTier(item.requiredTier)) return false;` so an unresolved tier doesn't hide everything.
-- Mirror the same guard at the group level (`group.requiredTier`).
+**`src/components/documentation/SalesPitchDataPDF.tsx`** — line 798: rephrase "Industry Specialist Agents included" so it doesn't read like a Pro-only perk (or add the same bullet to Core/Boost blocks).
 
-This eliminates the "links briefly appear, then vanish" behavior and is also the correct behavior generally — we shouldn't hide nav based on a not-yet-known tier.
+**`src/lib/howToUseContent.ts` / `src/lib/helpContentConfig.ts` / `src/lib/documentationConfig.ts`** — search for any remaining "available on Pro and above" or "performance/command-only" specialist phrasing and adjust to "available on all plans, activated by your industry".
 
-### 3. (Optional polish) Force a re-check after Super Switcher hop
+**`src/lib/subscriptionAgentConfig.ts`** — update the tier `description` strings on `performance` ("…and industry specialist agents") and the comment on line 91 ("All 10 consolidated operatives + industry specialists") to clarify specialists are not what makes Pro/Elite distinct.
 
-`src/hooks/useSuperSwitcher.ts` already dispatches `super-switcher:switching`. In `AuthContext`, listen for that event and call `checkSubscription()` once the new session settles. One-liner safety net so the chip and sidebar refresh together after impersonating into a demo.
+**Memory** — `.lovable/memory/features/ai-operatives/specialists-all-plans.md` is already correct; no change.
 
-## Out of scope
+---
 
-- No changes to pricing tiers, trial length, demo seeding, or RLS.
-- No new database columns; `companies.is_demo` already exists.
-- No UI redesign of the sidebar.
+## Verification
 
-## How we'll verify
+1. Sign in as a demo **Salon** or **Restaurant** company → open Service Management Console → no "Arrive & Start", "En Route", "Directions", "ETA" buttons; "Start" + "Complete" + "Reschedule" remain. No "Arrived" badge/column in job queue or appointment tracking.
+2. Sign in as a demo **HVAC** or **Plumbing** company → full field-ops actions still render (regression).
+3. Visit `/subscription` → all four tier cards still show "+ Industry Specialists" and the paragraph copy reads consistently across tiers.
+4. Open the generated Pricing Summary PDF preview → Specialist row shows "Included (by industry)" across all four columns.
+5. `npm test` (existing vitest suite) stays green.
 
-1. Load `/dashboard` on the Demo Salon & Spa account → chip shows `Starter` (or `Command` after the demo override) and the AI Consoles group renders all 7 links.
-2. Super-Switcher hop into another demo industry (e.g. Plumbing, Home Health) → consoles stay visible, no flash to empty sidebar.
-3. Non-demo Free signup → sidebar still correctly hides the gated consoles (regression check).
+---
+
+## Technical notes (engineer-only)
+
+- `hasFieldTechnicians()` already returns false for: booking cluster + `restaurants`, `real_estate`, `beauty_wellness`, `salon`, `fitness`, `professional`, `personal_assistant`. Healthcare packs added recently (`home_health`, `physical_therapy`, `occupational_therapy`, `hospice`) DO travel to patient — confirm they're NOT in the NO_TECH set (they aren't, so they keep Arrive actions — correct for home health).
+- No DB migration required.
+- No edge-function changes required.

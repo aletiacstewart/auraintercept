@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -56,6 +58,8 @@ interface CompletedJob {
 
 export function CompletedJobsHistory() {
   const { user } = useAuth();
+  const { pack } = useIndustryPack();
+  const isFieldDispatch = hasFieldTechnicians(pack);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState('this-month');
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
@@ -242,6 +246,7 @@ export function CompletedJobsHistory() {
                 job={job} 
                 isExpanded={expandedJob === job.id}
                 onToggle={() => setExpandedJob(expandedJob === job.id ? null : job.id)}
+                isFieldDispatch={isFieldDispatch}
               />
             ))
           )}
@@ -255,9 +260,10 @@ interface CompletedJobCardProps {
   job: CompletedJob;
   isExpanded: boolean;
   onToggle: () => void;
+  isFieldDispatch?: boolean;
 }
 
-function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) {
+function CompletedJobCard({ job, isExpanded, onToggle, isFieldDispatch = true }: CompletedJobCardProps) {
   const appointment = job.appointments;
   if (!appointment) return null;
 
@@ -358,7 +364,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
               Time Tracking
             </p>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              {job.en_route_at && (
+              {job.en_route_at && isFieldDispatch && (
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-purple-500" />
                   <div>
@@ -371,7 +377,7 @@ function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) 
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-cyan-400" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Arrived</p>
+                    <p className="text-xs text-muted-foreground">{isFieldDispatch ? 'Arrived' : 'Checked In'}</p>
                     <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
                   </div>
                 </div>

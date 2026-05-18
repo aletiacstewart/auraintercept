@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow, format } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getJobStatusLabel } from '@/lib/jobStatusLabels';
 import {
   Activity,
   Clock,
@@ -67,6 +70,8 @@ interface JobStatusMonitorProps {
 
 export function JobStatusMonitor({ companyId }: JobStatusMonitorProps) {
   const [selectedTab, setSelectedTab] = useState<'active' | 'completed' | 'all'>('active');
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
 
   const { data: jobs, isLoading, refetch } = useQuery({
     queryKey: ['job-monitor', companyId, selectedTab],
@@ -198,8 +203,8 @@ export function JobStatusMonitor({ companyId }: JobStatusMonitorProps) {
                 </div>
               ) : jobs && jobs.length > 0 ? (
                 <div className="space-y-3">
-                  {jobs.map((job) => (
-                    <JobCard key={job.id} job={job} />
+                   {jobs.map((job) => (
+                    <JobCard key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
                   ))}
                 </div>
               ) : (
@@ -216,10 +221,14 @@ export function JobStatusMonitor({ companyId }: JobStatusMonitorProps) {
   );
 }
 
-function JobCard({ job }: { job: JobAssignment }) {
+function JobCard({ job, isFieldDispatch = true }: { job: JobAssignment; isFieldDispatch?: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const statusConfig = STATUS_CONFIG[job.status] || STATUS_CONFIG.pending_acceptance;
   const StatusIcon = statusConfig.icon;
+  const statusLabel = getJobStatusLabel(job.status, isFieldDispatch, statusConfig.label);
+  const orderedStatuses = isFieldDispatch
+    ? STATUS_ORDER
+    : STATUS_ORDER.filter((s) => s !== 'en_route');
   const appointment = job.appointments;
   const employee = job.employee;
 
@@ -239,7 +248,7 @@ function JobCard({ job }: { job: JobAssignment }) {
           <div className="flex items-center gap-2">
             <span className="font-medium truncate">{appointment?.service_type || 'Unknown Service'}</span>
             <Badge variant="outline" className={`${statusConfig.color} border-current`}>
-              {statusConfig.label}
+              {statusLabel}
             </Badge>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -275,11 +284,11 @@ function JobCard({ job }: { job: JobAssignment }) {
         <div className="mt-3 pt-3 border-t">
           {/* Status Timeline */}
           <div className="flex items-center gap-1 mb-3 overflow-x-auto pb-2">
-            {STATUS_ORDER.map((status, index) => {
+            {orderedStatuses.map((status, index) => {
               const config = STATUS_CONFIG[status];
               const Icon = config.icon;
               const isActive = job.status === status;
-              const isPast = STATUS_ORDER.indexOf(job.status) > index;
+              const isPast = orderedStatuses.indexOf(job.status) > index;
               const timestamp = getStatusTimestamp(job, status);
 
               return (
@@ -298,7 +307,7 @@ function JobCard({ job }: { job: JobAssignment }) {
                       </span>
                     )}
                   </div>
-                  {index < STATUS_ORDER.length - 1 && (
+                  {index < orderedStatuses.length - 1 && (
                     <div className={`w-4 h-0.5 ${isPast ? 'bg-green-300' : 'bg-gray-200'}`} />
                   )}
                 </div>
