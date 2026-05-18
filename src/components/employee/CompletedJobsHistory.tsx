@@ -246,6 +246,7 @@ export function CompletedJobsHistory() {
                 job={job} 
                 isExpanded={expandedJob === job.id}
                 onToggle={() => setExpandedJob(expandedJob === job.id ? null : job.id)}
+                isFieldDispatch={isFieldDispatch}
               />
             ))
           )}
@@ -259,9 +260,10 @@ interface CompletedJobCardProps {
   job: CompletedJob;
   isExpanded: boolean;
   onToggle: () => void;
+  isFieldDispatch?: boolean;
 }
 
-function CompletedJobCard({ job, isExpanded, onToggle }: CompletedJobCardProps) {
+function CompletedJobCard({ job, isExpanded, onToggle, isFieldDispatch = true }: CompletedJobCardProps) {
   const appointment = job.appointments;
   if (!appointment) return null;
 
