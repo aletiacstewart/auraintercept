@@ -2,6 +2,9 @@ import { forwardRef, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { getJobStatusLabel } from '@/lib/jobStatusLabels';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -74,6 +77,8 @@ interface CompanyJobQueueProps {
 export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Job assignments will appear here when created' }: CompanyJobQueueProps = {}) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const { pack } = useIndustryPack(companyId);
+  const isFieldDispatch = hasFieldTechnicians(pack);
 
   // Fetch all active job assignments for the company
   const { data: jobs, isLoading, refetch } = useQuery({
