@@ -383,6 +383,75 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'referral', intent: 'booking', serviceInterest: 'Strategy Session', priority: 'high', score: 80 },
     AUSTIN, { primary: '#6366F1', secondary: '#A5B4FC' },
   ),
+  // ─── Healthcare ───────────────────────────────────────────────────
+  home_health: make(
+    'home_health', 'Home Health Care', '🏠', 'Healthcare',
+    {
+      headline: 'Every referral answered. Every visit on the schedule.',
+      subheadline: 'Aura intakes new patients, verifies insurance, and books skilled nursing and aide visits — 24/7, HIPAA-aware.',
+    },
+    [
+      { title: 'Never miss a referral', description: 'Aura answers discharge planners, families, and physicians instantly — even after hours.' },
+      { title: 'Insurance + intake in one call', description: 'Captures diagnosis, payer, physician orders, and emergency contact before the call ends.' },
+      { title: 'Visit reminders that stick', description: 'Caregivers and patients get automatic SMS reminders the day before and morning of each visit.' },
+    ],
+    ['I need to set up home health for my mom after her hospital discharge.', 'Following up on the referral from Dr. Patel.', 'Can the nurse come tomorrow for wound care?'],
+    ['Skilled Nursing Visit', 'Home Health Aide Visit', 'Medication Management', 'Wound Care', 'Vitals & Assessment'],
+    { service: 'Skilled Nursing Visit', whenOffsetHours: 22, notes: 'New patient intake — post-discharge wound care, Medicare verified.' },
+    { source: 'referral', intent: 'booking', serviceInterest: 'Skilled Nursing Visit', priority: 'hot', score: 92 },
+    ORLANDO, { primary: '#0EA5E9', secondary: '#7DD3FC' },
+  ),
+  physical_therapy: make(
+    'physical_therapy', 'Physical Therapy', '🦵', 'Healthcare',
+    {
+      headline: 'Keep the schedule full. Keep recovery on track.',
+      subheadline: 'Aura books initial evals, runs insurance verification, and sends visit reminders so patients show up and progress stays on plan.',
+    },
+    [
+      { title: 'Fill cancellations automatically', description: 'When a slot opens, Aura offers it to waitlisted patients by text within minutes.' },
+      { title: 'Verify benefits before the first visit', description: 'Captures referral, diagnosis, and payer info — flags auth requirements upfront.' },
+      { title: 'Reduce no-shows', description: 'Multi-touch reminders and easy reschedule links cut no-shows without front-desk overhead.' },
+    ],
+    ['I need to schedule a physical therapy evaluation for my knee.', 'Do you take Blue Cross? My doctor referred me.', 'I need to reschedule my Thursday appointment.'],
+    ['Initial Evaluation', 'Follow-Up Visit', 'Re-Evaluation', 'Manual Therapy', 'Therapeutic Exercise'],
+    { service: 'Initial Evaluation', whenOffsetHours: 26, notes: 'Post-op ACL — referring physician sent script, insurance verified.' },
+    { source: 'voice', intent: 'booking', serviceInterest: 'Initial Evaluation', priority: 'high', score: 85 },
+    DALLAS, { primary: '#0891B2', secondary: '#67E8F9' },
+  ),
+  occupational_therapy: make(
+    'occupational_therapy', 'Occupational Therapy', '✋', 'Healthcare',
+    {
+      headline: 'More therapy hours. Less phone tag.',
+      subheadline: 'Aura takes referrals, books evaluations, and keeps families informed — so therapists stay focused on patient care.',
+    },
+    [
+      { title: 'Pediatric and adult intake', description: 'Aura adapts intake questions to age and diagnosis — sensory profiles, ADL goals, hand therapy.' },
+      { title: 'Insurance verification on the call', description: 'Captures payer, plan, and authorization status before booking the first session.' },
+      { title: 'Caregiver-friendly reminders', description: 'Parents and caregivers get clear SMS reminders with location, parking, and what to bring.' },
+    ],
+    ['I need to set up OT for my son — his school recommended it.', 'My hand surgeon referred me for therapy.', 'What\'s your earliest pediatric eval opening?'],
+    ['Initial Evaluation', 'Pediatric OT Session', 'Hand Therapy', 'ADL Training', 'Sensory Integration'],
+    { service: 'Pediatric OT Session', whenOffsetHours: 30, notes: 'Sensory processing eval — referring pediatrician, parents booked first 4 visits.' },
+    { source: 'chat', intent: 'booking', serviceInterest: 'Pediatric Evaluation', priority: 'high', score: 82 },
+    PHOENIX, { primary: '#14B8A6', secondary: '#5EEAD4' },
+  ),
+  hospice: make(
+    'hospice', 'Hospice Care', '🕊', 'Healthcare',
+    {
+      headline: 'Compassionate intake. Coordinated care.',
+      subheadline: 'Aura answers families and hospitals 24/7, captures election details, and dispatches nursing, aide, social work, and chaplain visits.',
+    },
+    [
+      { title: 'Always available for families', description: 'Calls and texts to your hospice line are answered instantly — day, night, weekends, holidays.' },
+      { title: 'Election + benefit capture', description: 'Aura gathers diagnosis, attending physician, medical director, and Medicare hospice benefit details.' },
+      { title: 'Interdisciplinary scheduling', description: 'Books RN case manager, aide, social work, and chaplain visits with the right cadence per patient.' },
+    ],
+    ['We need to start hospice for my father — the hospital is discharging him today.', 'Following up on the referral from Sunrise Hospital.', 'Can the chaplain come this week?'],
+    ['RN Case Manager Visit', 'Hospice Aide Visit', 'Social Work Visit', 'Chaplain Visit', 'Bereavement Follow-up'],
+    { service: 'RN Case Manager Visit', whenOffsetHours: 18, notes: 'New admission — election signed, Medicare hospice benefit verified, family briefed.' },
+    { source: 'referral', intent: 'booking', serviceInterest: 'RN Case Manager Visit', priority: 'hot', score: 95 },
+    HOUSTON, { primary: '#6366F1', secondary: '#A5B4FC' },
+  ),
   // ─── Catch-all ────────────────────────────────────────────────────
   other: make(
     'other', 'Other', '🏢', 'Other',
