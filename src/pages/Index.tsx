@@ -1222,7 +1222,7 @@ export default function Index() {
             </div>
 
             <p className="text-[10px] text-white italic font-bold text-center mt-4">
-              Every 3rd-party provider above (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires your own account with a valid credit card on file. Each provider invoices you directly and separately from your Aura plan fee.
+              Every 3rd-party provider above (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires your own account with a valid credit card on file. Each provider bills you directly through automatic billing on your card, separately from your Aura plan fee.
             </p>
           </div>
         </div>
