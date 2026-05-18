@@ -10,10 +10,10 @@ export function IntegrationStatusPanel() {
         <div className="text-center mb-4">
           <Badge variant="outline" className="mb-1">Demo Transparency</Badge>
           <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-            What is live — and what is mocked
+            Every demo is 100% mock data
           </h2>
           <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
-            What runs end-to-end vs. what's mocked in the 24-hour demo.
+            No real customers, calls, texts, emails, or charges. Everything below runs against your isolated 24-hour demo company.
           </p>
         </div>
 
@@ -32,8 +32,8 @@ export function IntegrationStatusPanel() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <h3 className="font-semibold text-xs text-foreground leading-tight">{row.feature}</h3>
-                        <Badge variant={isLive ? 'default' : 'secondary'} className="text-[9px] px-1.5 py-0">
-                          {isLive ? 'LIVE' : 'MOCK DEMO'}
+                        <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                          MOCK DEMO
                         </Badge>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">{row.description}</p>
