@@ -251,7 +251,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {activeJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -266,7 +266,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {pendingJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -281,7 +281,7 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
             </h3>
             <div className="space-y-2">
               {acceptedJobs.map((job) => (
-                <JobRow key={job.id} job={job} />
+               <JobRow key={job.id} job={job} isFieldDispatch={isFieldDispatch} />
               ))}
             </div>
           </div>
@@ -335,9 +335,10 @@ export function CompanyJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 'Jo
   );
 }
 
-const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref) => {
+const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment; isFieldDispatch?: boolean }>(({ job, isFieldDispatch = true }, ref) => {
   const statusConfig = STATUS_CONFIG[job.status] || STATUS_CONFIG.pending_acceptance;
   const StatusIcon = statusConfig.icon;
+  const statusLabel = getJobStatusLabel(job.status, isFieldDispatch, statusConfig.label);
 
   return (
     <div
@@ -359,7 +360,7 @@ const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref)
             {job.appointments?.service_type || 'Service'}
           </Badge>
           <Badge className={`text-xs ${statusConfig.bgColor} ${statusConfig.color} border-0`}>
-            {statusConfig.label}
+            {statusLabel}
           </Badge>
         </div>
 
