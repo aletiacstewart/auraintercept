@@ -20,6 +20,9 @@ type: feature
 - Demo seed data that inserts a sample reservation appointment row.
 
 **Affected files:**
+- `src/components/dashboard/DashboardLayout.tsx` — sidebar hides `/dashboard/appointments` for restaurant company_admin/employee (platform_admin still sees it).
+- `src/pages/EmployeeAppointments.tsx` — restaurant + non-platform-admin renders Smart-Link-only empty state, CTA → `/dashboard/ai-consoles/customer-portal`. No Add Appointment form.
+- `src/components/dashboard/CompanyAdminDashboard.tsx` — Appointments KPI card and quick action hidden for restaurants.
 - `src/components/customer-portal/PortalQuickActions.tsx` — restaurant actions are Get Booking Link / Menu Link / Hours / Catering, all Smart Link prompts.
 - `src/pages/ai-consoles/MarketingSalesConsole.tsx` and `CustomerPortalConsole.tsx` — restaurants specialist list = `['menu_writer', 'review_responder']`.
 - `src/lib/industryFieldOpsWorkflows.ts` — restaurants workflows are Menu/Hours Update, Missed-Call Recovery (Smart Link), Review Pulse.
