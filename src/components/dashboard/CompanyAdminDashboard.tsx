@@ -28,6 +28,9 @@ import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
 import { relabelKpi, getSimpleModeKpis, blueprintKpisToCanonical } from '@/lib/industryKpiLabels';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import {
+  usesQuotes, usesLeads, usesInventory, usesCompaniesB2B, usesAppointments,
+} from '@/lib/industryCapabilities';
 
 export function CompanyAdminDashboard() {
   const { companyId, userRole } = useAuth();
@@ -214,10 +217,19 @@ export function CompanyAdminDashboard() {
     : getSimpleModeKpis(pack);
   // Restaurants do not use the in-app reservation system — hide the
   // Appointments KPI/quick-action; Aura sends Smart Links instead.
-  const isRestaurant = pack?.industry_id === 'restaurants' && !isPlatformAdmin;
+  // Industry-aware hiding. Platform admin sees every card; tenants only see
+  // KPIs that actually exist in their vertical (no Quotes for restaurants /
+  // real estate, no Inventory for salons, no Leads for restaurants, etc.).
+  const industryHiddenHrefs = new Set<string>();
+  if (!isPlatformAdmin) {
+    if (!usesAppointments(pack)) industryHiddenHrefs.add('/dashboard/appointments');
+    if (!usesQuotes(pack)) industryHiddenHrefs.add('/dashboard/quotes');
+    if (!usesLeads(pack)) industryHiddenHrefs.add('/dashboard/leads');
+    if (!usesInventory(pack)) industryHiddenHrefs.add('/dashboard/inventory');
+  }
   const tierFilteredCards = allStatCards
     .filter(card => hasTierAccess(card.requiredTier))
-    .filter(card => !(isRestaurant && card.href === '/dashboard/appointments'));
+    .filter(card => !industryHiddenHrefs.has(card.href));
   const statCards = isSimple
     ? simpleCanonicalTitles
         .map(t => tierFilteredCards.find(c => c.title === relabelKpi(pack, t)))
@@ -238,7 +250,7 @@ export function CompanyAdminDashboard() {
 
   const quickActions = allQuickActions
     .filter(action => hasTierAccess(action.requiredTier))
-    .filter(action => !(isRestaurant && action.href === '/dashboard/appointments'));
+    .filter(action => !industryHiddenHrefs.has(action.href));
 
   return (
     <PageContainer>
