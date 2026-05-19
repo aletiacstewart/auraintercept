@@ -6,7 +6,7 @@ type: constraint
 
 # Trial honors the selected tier
 
-A company in an active 90-day trial keeps the plan it picked at signup. Trial = "free use of the chosen tier for 90 days," NOT "free Elite for 90 days."
+A company in an active 90-day trial keeps the plan it picked at signup. Trial = "free use of the chosen tier for 90 days," NOT "free Elite for 90 days." The first 30 days of the trial are the onboarding window; the remaining 60 days are full live use. Feature gating is identical across both periods.
 
 ## Rules
 

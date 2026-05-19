@@ -843,6 +843,9 @@ export default function Auth() {
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Your <span className="font-semibold text-foreground">90-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
+                      <span className="font-semibold text-foreground">First 30 days = onboarding.</span> Account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training happen during the onboarding window — so the remaining 60 days are spent fully live.
+                    </p>
                 </div>
                 </div>
 
@@ -855,7 +858,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">a 90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">a 90-Day Live Trial</span> for testing — the <span className="font-semibold text-foreground">first 30 days are dedicated to onboarding</span>, then 60 days of full live use. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 
@@ -1461,7 +1464,7 @@ export default function Auth() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
@@ -1483,7 +1486,7 @@ export default function Auth() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '90-Day Live Trial • No credit card required for the trial • Cancel anytime'}
+                              : '90-Day Live Trial (first 30 days = onboarding) • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
                       </form>
@@ -1504,7 +1507,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. Covers setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training. Non-refundable once onboarding begins.
+                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
                  </p>
               </div>
 

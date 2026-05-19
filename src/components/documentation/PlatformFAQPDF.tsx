@@ -373,7 +373,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a free trial available?"
-          answer="Yes! All new company registrations include a 90-Day Live Trial. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
+          answer="Yes! All new company registrations include a 90-Day Live Trial. The first 30 days of the trial are your onboarding window — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — and the remaining 60 days are spent fully live. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
         />
         
         <FAQItem 
@@ -455,7 +455,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer={`One-time onboarding fees are due at the start of your 90-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 497}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 697}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 1197}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 2197}). This covers initial setup, configuration, and training.`}
+          answer={`One-time onboarding fees are due at the start of your 90-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 497}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 697}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 1197}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 2197}). The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — so the remaining 60 days are spent fully live.`}
         />
         
         <FAQItem 
