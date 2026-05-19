@@ -189,6 +189,9 @@ export default function About() {
                 Contact Us
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              First 30 days = onboarding · then 60 days of full live use
+            </p>
           </div>
         </section>
       </main>
