@@ -61,7 +61,7 @@ Reports · Website. Customer-facing rollups for chat & dashboards.
 
 ## Trial & Pricing Copy
 
-- 90-day free trial, no credit card. **Trial honors the selected tier** (no
+- 90-Day Live Trial, no credit card. **First 30 days = onboarding window, remaining 60 days = full live use.** **Trial honors the selected tier** (no
   Elite preview). Reminders at 30/7/1 days remaining.
 - 3rd-party usage (SignalWire/ElevenLabs/Resend/Tavily) = "Included in your tier".
 - A2P 10DLC and Stripe transaction fees = paid directly to provider.
