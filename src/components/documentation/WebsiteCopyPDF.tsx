@@ -578,12 +578,12 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Can I try before I commit?</Text>
-        <Text style={styles.faqAnswer}>Absolutely. We offer a 90-Day Live Trial with full access to your chosen tier. No credit card required to start. Most customers see ROI within the first week—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
+        <Text style={styles.faqAnswer}>Absolutely. We offer a 90-Day Live Trial with full access to your chosen tier. The first 30 days are dedicated to onboarding — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — then 60 days of full live use. No credit card required to start. Most customers see ROI within the first week of going live—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
       </View>
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 90-Day Live Trial: $497 Core, $697 Boost, $1,197 Pro, $2,197 Elite. This covers setup, training, and customization. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 90-Day Live Trial: $497 Core, $697 Boost, $1,197 Pro, $2,197 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 60 days of full live use. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>
