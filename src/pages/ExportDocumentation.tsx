@@ -20,6 +20,7 @@ import BrandAssetGuidePDF from '@/components/documentation/BrandAssetGuidePDF';
 import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
 import IndustryMarketingKitPDF from '@/components/documentation/IndustryMarketingKitPDF';
 import PlatformFAQPDF from '@/components/documentation/PlatformFAQPDF';
+import MarketingSalesMasterPDF from '@/components/documentation/MarketingSalesMasterPDF';
 
 const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
@@ -37,6 +38,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* AI Agent Guide PDF */}
           <Card className="border-accent/20">
+            {/* (existing card kept below) */}
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bot className="h-5 w-5 text-accent" />
