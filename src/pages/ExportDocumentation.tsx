@@ -36,6 +36,61 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Marketing & Sales Master Guide */}
+          <Card className="border-primary/40">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-primary" />
+                Marketing & Sales Master Guide
+              </CardTitle>
+              <CardDescription>
+                One sales-ready PDF covering every AI operative, feature, dashboard, and console
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>4-Tier Pricing & Inclusions</li>
+                  <li>10 AI Operatives (capabilities + use cases)</li>
+                  <li>Industry Specialists overview</li>
+                  <li>Platform Feature Catalog</li>
+                  <li>Dashboards & 7 Consoles + AI Hub</li>
+                  <li>3rd-Party Stack Disclosure</li>
+                  <li>Trial structure & Sales Talking Points</li>
+                </ul>
+              </div>
+              <PDFDownloadLink
+                document={<MarketingSalesMasterPDF />}
+                fileName={`marketing-sales-master-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+                  return (
+                    <Button className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Master Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
           {/* AI Agent Guide PDF */}
           <Card className="border-accent/20">
             {/* (existing card kept below) */}
