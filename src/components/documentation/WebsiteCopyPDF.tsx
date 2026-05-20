@@ -284,13 +284,13 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copySubhead}>Your AI-powered team answers every call, books every lead, and runs your business operations 24/7.</Text>
         <View style={styles.ctaCard}>
           <Text style={styles.ctaLabel}>CTA</Text>
-          <Text style={styles.ctaText}>Start Your Free Trial</Text>
+          <Text style={styles.ctaText}>Start Your 90-Day Live Trial</Text>
         </View>
       </View>
 
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Hero Variation 2 - Solution-Focused</Text>
-        <Text style={styles.copyHeadline}>24 Smart AI Agents. One Mission: Grow Your Business.</Text>
+        <Text style={styles.copyHeadline}>10 AI Operatives. One Mission: Grow Your Business.</Text>
         <Text style={styles.copySubhead}>From answering calls to dispatching technicians, Aura Intercept handles every operational task while you focus on what matters.</Text>
       </View>
 
@@ -541,8 +541,8 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Aura Elite - $2,197/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 24-agent suite handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
-          - All 24 Smart AI Agents{'\n'}
+          Full command of your business. The complete 10 AI Operatives suite (24 underlying specialist agents) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
+          - All 10 AI Operatives{'\n'}
           - All 7 Control Centers + AI Operatives Hub{'\n'}
           - Admin, Quoting, Invoice & Inventory{'\n'}
           - Revenue, Forecast & Advanced Analytics{'\n'}
@@ -605,7 +605,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 24 Smart AI Agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 90 days.
+          Meta: 10 AI Operatives handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start your 90-Day Live Trial.
         </Text>
       </View>
 
@@ -621,7 +621,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $697/mo. 24 Smart AI Agents, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
+          Meta: Plans from $497/mo. 10 AI Operatives, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your 90-Day Live Trial today.
         </Text>
       </View>
 
