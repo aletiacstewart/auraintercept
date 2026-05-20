@@ -337,7 +337,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Aura Intercept?"
-          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 Smart AI Agents and 7 Control Centers designed for service businesses."
+          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 10 AI Operatives and 7 Control Centers designed for service businesses."
         />
         
         <FAQItem 
