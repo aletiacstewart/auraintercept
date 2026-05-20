@@ -5,7 +5,9 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { Button } from '@/components/ui/button';
-import { Cpu, Megaphone } from 'lucide-react';
+import { Cpu, Megaphone, Download, Loader2 } from 'lucide-react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import MarketingSalesMasterPDF from '@/components/documentation/MarketingSalesMasterPDF';
 import { ValueBadge } from '@/components/ui/value-badge';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
@@ -57,6 +59,21 @@ export default function MarketingSalesConsole() {
               action={
                 <div className="flex items-center gap-2">
                   <HowToUseModal {...HOW_TO_USE.outreachSalesConsole} />
+                  <PDFDownloadLink
+                    document={<MarketingSalesMasterPDF />}
+                    fileName={`marketing-sales-master-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button variant="outline" size="sm" disabled={loading}>
+                        {loading ? (
+                          <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                        ) : (
+                          <Download className="h-3.5 w-3.5 mr-1.5" />
+                        )}
+                        Master Guide PDF
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
                   {canManageSettings && (
                     <Button
                       variant="outline"
