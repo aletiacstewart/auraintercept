@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink, HelpCircle } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink, HelpCircle, Megaphone } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
