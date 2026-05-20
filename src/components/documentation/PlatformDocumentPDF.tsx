@@ -521,8 +521,8 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.coverTagline}>"Your Business. Always On. Always Growing."</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>24</Text>
-          <Text style={styles.coverStatLabel}>Smart AI Agents</Text>
+          <Text style={styles.coverStatNumber}>10</Text>
+          <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>7</Text>
@@ -582,7 +582,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
           Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
-          With 24 Smart AI Agents, we handle everything from answering calls and booking appointments 
+          With 10 AI Operatives, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
         </Text>
@@ -624,7 +624,7 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Key Differentiator</Text>
       <Text style={styles.paragraph}>
-        Unlike generic CRMs or answering services, Aura Intercept uses 24 Smart AI Agents that 
+        Unlike generic CRMs or answering services, Aura Intercept uses 10 AI Operatives that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
         classifies the urgency, Booking Agent books the appointment, Dispatch/GPS Console assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
@@ -684,7 +684,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.solutionCard}>
         <Text style={styles.solutionTitle}>The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
-          Our 24 Smart AI Agents work 24/7 to answer every call, book every appointment, remind every customer, 
+          Our 10 AI Operatives work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment - automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
@@ -825,7 +825,7 @@ const PlatformDocumentPDF = () => (
     {/* AI Agent Ecosystem - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
-      <Text style={styles.sectionTitle}>24 Smart AI Agents Working Together</Text>
+      <Text style={styles.sectionTitle}>10 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
         Each agent is specialized for a specific task but seamlessly hands off to others when needed.
         This creates an intelligent, always-on workforce that handles your entire operation.
@@ -1179,7 +1179,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$2,197/month</Text>
-        <Text style={styles.pricingFeature}>- All 24 Smart AI Agents + 7 Consoles + AI Hub</Text>
+        <Text style={styles.pricingFeature}>- All 10 AI Operatives + 7 Consoles + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
@@ -1199,7 +1199,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Why Aura Intercept Wins</Text>
       
       <Text style={styles.subsectionTitle}>vs. Generic CRMs (ServiceTitan, Housecall Pro)</Text>
-      <BulletPoint>24 Smart AI Agents vs. basic automation rules</BulletPoint>
+      <BulletPoint>10 AI Operatives vs. basic automation rules</BulletPoint>
       <BulletPoint>True 24/7 AI voice answering vs. voicemail or expensive call centers</BulletPoint>
       <BulletPoint>Intelligent agent handoffs vs. siloed features</BulletPoint>
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
@@ -1219,7 +1219,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.highlightBox}>
         <Text style={styles.highlightTitle}>Only Platform With:</Text>
         <Text style={styles.highlightText}>
-          - 24 Smart AI Agents organized as 10 Operatives that work together{"\n"}
+          - 10 AI Operatives organized as 10 Operatives that work together{"\n"}
           - True voice AI (not just IVR or voicemail){"\n"}
           - Full social media content creation (6 platforms){"\n"}
           - 22 industry packs covering trades, outdoor, repair, and booking-first verticals that auto-tune the platform on signup.{"\n"}
@@ -1291,7 +1291,7 @@ const PlatformDocumentPDF = () => (
           Hook: "Every missed call costs your business $300-$500."{"\n"}
           Problem: Show phone ringing, going to voicemail, competitor getting the job.{"\n"}
           Solution: Aura AI answers instantly, books appointment, sends confirmation.{"\n"}
-          CTA: "Never miss a lead again. Free trial at AuraIntercept.com"
+          CTA: "Never miss a lead again. Start your 90-Day Live Trial at AuraIntercept.com"
         </Text>
       </View>
 
@@ -1369,7 +1369,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Slide 1: "19 AI Agents for Your Service Business"</BulletPoint>
       <BulletPoint>Slide 2-7: One agent per slide with icon and benefit</BulletPoint>
       <BulletPoint>Slide 8: "All working together 24/7"</BulletPoint>
-      <BulletPoint>Slide 9: CTA with free trial offer</BulletPoint>
+      <BulletPoint>Slide 9: CTA with 90-Day Live Trial offer</BulletPoint>
 
       <Text style={styles.subsectionTitle}>Hashtags</Text>
       <Text style={styles.paragraph}>
@@ -1449,8 +1449,8 @@ const PlatformDocumentPDF = () => (
           <Text style={styles.coverStatLabel}>To Start</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>14</Text>
-          <Text style={styles.coverStatLabel}>Day Free Trial</Text>
+          <Text style={styles.coverStatNumber}>90</Text>
+          <Text style={styles.coverStatLabel}>Day Live Trial</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>0</Text>

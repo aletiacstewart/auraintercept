@@ -100,15 +100,15 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
             <CardDescription>
-                Complete guide to all 24 Smart AI Agents, 7 Control Centers, communication channels & integrations
+                Complete guide to all 10 AI Operatives across 7 Consoles + AI Operatives Hub, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm text-card-foreground/70">
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>7 Console Overviews</li>
-                  <li>24 Smart AI Agent Descriptions</li>
+                  <li>7 Console Overviews + AI Operatives Hub (Elite)</li>
+                  <li>10 AI Operative Descriptions (24 underlying specialist agents)</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide (SignalWire, ElevenLabs, Resend, Tavily — your own accounts, billed separately by each provider)</li>

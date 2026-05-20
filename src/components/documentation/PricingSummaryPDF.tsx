@@ -205,7 +205,7 @@ const PricingSummaryPDF = () => (
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
           <Text style={styles.summaryPrice}>$2,197</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 24 AI Agents</Text>
+          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 10 AI Operatives</Text>
         </View>
       </View>
 
@@ -437,9 +437,9 @@ const PricingSummaryPDF = () => (
           enterprise operations. Custom implementation and onboarding included.
         </Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (All 10)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 24 Smart AI Agents: everything in Pro plus Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, and Forecast agents.
+        Full access to all 10 AI Operatives (24 underlying specialist agents): everything in Pro plus Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, and Forecast capabilities.
       </Text>
       <Text style={styles.subsectionTitle}>Consoles (All 7 + AI Operatives Hub)</Text>
       <View style={styles.featureList}>

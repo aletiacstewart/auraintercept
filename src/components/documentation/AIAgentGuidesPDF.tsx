@@ -638,7 +638,7 @@ const CONSOLES = [
     name: 'AI Operatives Hub',
     color: colors.blue,
     colorLight: colors.blueLight,
-    description: 'Central management console for configuring, monitoring, and analyzing all 24 Smart AI Agents.',
+    description: 'Central management console for configuring, monitoring, and analyzing all 10 AI Operatives.',
     features: [
       'Operative configuration and activation',
       'Quick Start batch activation',
@@ -792,7 +792,7 @@ const TIERS = [
     agentCount: SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24,
     agents: [`All ${SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24} AI Agents`],
     voiceIncluded: SUBSCRIPTION_TIERS.aura_elite?.hasVoice ?? true,
-    note: SUBSCRIPTION_TIERS.aura_elite?.description ?? '24 Smart AI Agents — full suite with business operations, analytics & AI Hub.',
+    note: SUBSCRIPTION_TIERS.aura_elite?.description ?? '10 AI Operatives — full suite with business operations, analytics & AI Hub.',
   },
 ];
 
