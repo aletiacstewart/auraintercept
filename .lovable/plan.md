@@ -1,50 +1,55 @@
-## Goal
-Wherever the app/docs reference the **90-Day Live Trial**, add a clarifier that **the first 30 days are used for onboarding** (so customers understand the cadence: 30 days onboarding → 60 days live use).
+## Marketing & Sales Master PDF
 
-## Standard clarifier copy
-- Short form (buttons/badges, where space is tight): `(first 30 days = onboarding)`
-- Long form (paragraphs, FAQs, PDFs): `The first 30 days of your 90-Day Live Trial are dedicated to onboarding — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — so the remaining 60 days are spent fully live.`
-- Spanish (common.json): keep button label as-is; add tooltip-style note where used in paragraphs.
+Create a single comprehensive sales-enablement PDF that a rep (or prospect) can download from the platform. It covers every AI operative, every platform feature, all dashboards, and all hubs/consoles — branded in Cyber-Sentry style and aligned with canonical pricing.
 
-Buttons/CTAs themselves stay as "90-Day Live Trial" — clarifier appears as adjacent helper text, not inside the button label.
+### New file
+`src/components/documentation/MarketingSalesMasterPDF.tsx` — React + `@react-pdf/renderer` component (same pattern as `PlatformDocumentPDF.tsx` / `SalesPitchDataPDF.tsx`).
 
-## Files to update
+### PDF Structure (sections)
 
-### Auth / signup
-- `src/pages/Auth.tsx`
-  - Line ~841 "90-Day Live Trial — Full Access" header block: append long-form clarifier sentence.
-  - Line ~858 beta-period paragraph: append clarifier.
-  - Line ~1464 onboarding-fee tooltip: prepend the onboarding-window framing ("First 30 days of the trial are your onboarding window…").
-  - Line ~1486 helper text under CTA: add short-form "(first 30 days = onboarding)".
-  - Line ~1507 cyan helper text: append clarifier.
+1. **Cover** — Aura Intercept badge, title "Marketing & Sales Master Guide", tagline, version/date.
+2. **Executive Summary** — what Aura is, who it's for, the 4-tier model at a glance, 90-Day Live Trial note (first 30 days = onboarding).
+3. **Pricing & Tiers** — Core / Boost / Pro / Elite cards: monthly price, onboarding fee, employee cap, included operatives & consoles. Pulled from `TIER_AGENT_CONFIG`.
+4. **The 10 AI Operatives** — one section per operative (Triage/AI Receptionist, Customer Journey, Outreach, Creative Content, Web Presence, Dispatch, Field Navigation, Business Finance, Analytics Intelligence, Admin). Each entry: what it does, key capabilities, customer-facing label, tier availability, sample use cases. Sourced from `subscriptionAgentConfig.ts` + `agentStyles.ts`.
+5. **Industry Specialists** — overview of the 18-industry pack system and how specialists auto-activate.
+6. **Platform Features** — grouped catalog:
+   - Communication: Voice (SignalWire/ElevenLabs), SMS (keywords, auto-responder), Email (Resend), Web Chat, Missed-call automation
+   - Scheduling & Booking: unified booking, Google Calendar OAuth, public booking widget
+   - Field Operations: dispatch, route/ETA, check-in, technician PWA
+   - Business Finance: quotes, invoices, inventory, Stripe
+   - Marketing & Outreach: campaigns, lead capture & scoring, content engine, social media adapters
+   - Web Presence: Smart Website, blog management, chat widget install, custom domains
+   - Analytics & Reports: NLP analytics, KPI dashboard, demand forecast, revenue analysis
+   - Knowledge & AI: Tavily research, knowledge base, conversational intelligence
+   - Customer Portal: unified customer portal, public company listing
+7. **Dashboards** — Aura Command Center (hero), Company Admin Dashboard (Simple/Pro modes), Technician Dashboard, Customer Portal Home — what each shows and who uses it.
+8. **Consoles & Hubs (7 + 1)** — Customer Portal · Field Operations · Business Management · Outreach & Sales · Social Media · Creative & Web Presence · Analytics & Reports · AI Operatives Hub (Elite). One block per console: purpose, primary operatives, tier required, screenshots-of-record (text descriptions only).
+9. **3rd-Party Stack Disclosure** — SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social — each requires customer's own account + card; Concierge Onboarding configures on their behalf. Standard legal disclaimer.
+10. **Trial & Onboarding** — 90-Day Live Trial structure (30d onboarding / 60d live), onboarding fee per tier, what's delivered during onboarding.
+11. **Sales Talking Points / Objection Handling** — short reusable snippets reps can paste.
+12. **Contact & Next Steps** — CTAs (Book Demo, Start Trial, Audit), URLs (`auraintercept.ai`).
 
-### Dashboard / in-app
-- `src/components/dashboard/TrialBanner.tsx` (line 117): expand line to mention "First 30 days are onboarding; remaining 60 days are full live use."
-- `src/components/onboarding/FastStartWizard.tsx` (line 348): append short-form clarifier after "90-Day Live Trial".
-- `src/components/subscription/ThirdPartyCostDisclosureDialog.tsx` (line 100 comment + nearby UI string if present): update comment + any user-visible string.
+### Data sources (read-only, no logic changes)
+- `src/lib/subscriptionAgentConfig.ts` — tiers, operatives, consoles
+- `src/lib/agentStyles.ts` — plain-English customer labels
+- `src/lib/industryCapabilities.ts` + `industryPackSchema.ts` — feature gating context
+- Existing PDFs for tone reference: `SalesPitchDataPDF.tsx`, `PlatformDocumentPDF.tsx`, `PricingSummaryPDF.tsx`
+- Memory: canonical-four-tier-model, canonical-naming-registry, trial-period-standard, third-party-fee-disclaimer
 
-### Audit / results
-- `src/components/audit/AuditResults.tsx` (line 417): add clarifier sentence after the trial mention.
-- `src/components/audit/AuditChecklistPDF.tsx` (lines 308, 599, 614): append clarifier sentence to the paragraph forms; bullet at 308 becomes "90-Day Live Trial included (first 30 days = onboarding)".
+### Wiring (download entry point)
+Add a "Marketing & Sales Master Guide" download button alongside the existing PDF downloads in **`src/pages/ai-consoles/MarketingSalesConsole.tsx`** (and surface it on the platform-admin Export Docs page at `/export-docs` if it exists). Uses `@react-pdf/renderer`'s `pdf().toBlob()` → triggers download (same pattern as other PDFs in `documentation/`).
 
-### Marketing pages
-- `src/pages/About.tsx` (line 185): keep button label, add small helper text below CTA: "First 30 days = onboarding".
-- `src/pages/Contact.tsx` (if 90-Day Live Trial CTA present): same treatment.
+### Style
+- Cyber-Sentry theme via theme CSS vars only (no hex/rgba) — match existing PDFs' styled stylesheet.
+- Heading hierarchy, section dividers, callout boxes for tier/disclaimer.
+- Page numbers + footer with "Aura Intercept · auraintercept.ai · {date}".
 
-### PDFs / documentation
-- `src/components/documentation/PlatformDocumentPDF.tsx` (lines 935, 1154, 1166, 1176, 1186, 1265, 1278, 1364): append clarifier to each trial mention; for the per-tier onboarding-fee bullets, change to `"$XXX one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days dedicated to onboarding)"`.
-- `src/components/documentation/PlatformFAQPDF.tsx` (lines 376, 458): expand answers to explain the 30-day onboarding window.
-- `src/components/documentation/PricingSummaryPDF.tsx` (lines 243, 337, 375, 412, 456, 583–586): append clarifier to each line.
-- `src/components/documentation/SalesPitchDataPDF.tsx` (lines 817, 853): append clarifier.
-- `src/components/documentation/WebsiteCopyPDF.tsx` (lines 581, 586): expand FAQ answers.
+### Out of scope
+- No pricing/tier math changes.
+- No backend/edge-function changes.
+- No new routes — reuses existing console pages for the download trigger.
+- No copy changes to other PDFs.
 
-### Memory (update standard so future copy stays consistent)
-- `.lovable/memory/product/trial-period-standard.md`: replace stale "60-Day" content with the current 90-day standard **plus** the new rule: "First 30 days of the 90-Day Live Trial are onboarding; remaining 60 days are full live use."
-- `.lovable/memory/marketing/pricing/canonical-four-tier-model.md`: same clarifier added to the onboarding-fee paragraph.
-- `.lovable/memory/architecture/canonical-naming-registry.md` (line 64) and `.lovable/memory/architecture/trial-honors-selected-tier.md`: add the onboarding-window note.
-- `.lovable/memory/index.md` Core entry for trial: update one-liner to include "first 30d = onboarding".
-
-## Out of scope
-- No changes to trial **length** (still 90 days) or fee math.
-- No changes to backend reminder cadence in `supabase/functions/trial-reminders` (still 7d/3d/1d/expired).
-- Button labels are not changed.
+### Verification
+- `npm run build` clean.
+- Manual: open MarketingSalesConsole → click button → PDF downloads → spot-check every section renders, page breaks clean, no overflow, all 10 operatives + 8 consoles + 4 tiers present.
