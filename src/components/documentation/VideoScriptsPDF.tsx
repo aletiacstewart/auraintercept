@@ -451,7 +451,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:15-0:25</Text>
-          <Text style={styles.timestampContent}>[Solution Intro] "Aura Intercept is your AI-powered business command center. 24 Smart AI Agents working 24/7 to capture every lead and keep your business running."</Text>
+          <Text style={styles.timestampContent}>[Solution Intro] "Aura Intercept is your AI-powered business command center. 10 AI Operatives working 24/7 to capture every lead and keep your business running."</Text>
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:25-0:45</Text>
@@ -463,7 +463,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:55-1:00</Text>
-          <Text style={styles.timestampContent}>[CTA] "Start your free trial today. Your AI team is ready."</Text>
+          <Text style={styles.timestampContent}>[CTA] "Start your 90-Day Live Trial today. Your AI team is ready."</Text>
         </View>
       </View>
 
