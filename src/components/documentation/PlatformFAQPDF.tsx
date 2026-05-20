@@ -352,7 +352,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="How long does implementation take?"
-          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Starter and Aura Boost tiers can be live within 3-5 business days. Performance and Aura Elite tiers with field operations may take 2-3 weeks for full configuration and technician training."
+          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Aura Core and Aura Boost tiers can be live within 3-5 business days. Aura Pro and Aura Elite tiers with field operations may take 2-3 weeks for full configuration and technician training. The first 30 days of the 90-Day Live Trial are dedicated to this onboarding window."
         />
         
         <FAQItem 
@@ -627,7 +627,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What consoles are included in my plan?"
-          answer={`Console access varies by tier: Starter (0), Connect (1), Growth (3), Presence (4), Logistics (6), Performance (7), Command (all ${PLATFORM_STATS.totalConsoles} + AI Operatives Hub). Check your tier details for specific console access.`}
+          answer={`Console access varies by tier: Aura Core (7 consoles), Aura Boost (7 consoles + Field Operations agents), Aura Pro (7 consoles + Business Management), Aura Elite (all ${PLATFORM_STATS.totalConsoles} consoles + AI Operatives Hub). All tiers include access to the core consoles; higher tiers unlock additional agents and the AI Operatives Hub.`}
         />
         
         <FAQItem 
