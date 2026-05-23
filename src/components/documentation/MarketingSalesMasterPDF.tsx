@@ -59,6 +59,17 @@ const Footer = ({ page, total }: { page: number; total: number }) => (
   </View>
 );
 
+// Auto-paginated footer using react-pdf's render prop.
+const AutoFooter = () => (
+  <View style={s.footer} fixed>
+    <Text style={s.footerText}>Aura Intercept · Marketing & Sales Master Guide</Text>
+    <Text
+      style={s.footerText}
+      render={({ pageNumber, totalPages }) => `auraintercept.ai · Page ${pageNumber} of ${totalPages}`}
+    />
+  </View>
+);
+
 // --- Data ---
 
 const OPERATIVES: Array<{
