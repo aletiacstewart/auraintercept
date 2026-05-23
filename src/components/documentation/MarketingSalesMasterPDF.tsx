@@ -577,7 +577,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         Every AI operative, platform feature, dashboard, and console — in one
         sales-ready reference. Built for reps, partners, and prospects.
       </Text>
-      <Text style={s.coverMeta}>Version 1.0 · {today}</Text>
+      <Text style={s.coverMeta}>Version 2.0 · {today}</Text>
       <Text style={s.coverMeta}>auraintercept.ai</Text>
     </Page>
 
@@ -625,7 +625,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
           remaining 60 days are full live operation. Onboarding fee is due at trial start.
         </Text>
       </View>
-      <Footer page={2} total={12} />
+      <AutoFooter />
     </Page>
 
     {/* Pricing & Tiers */}
@@ -636,7 +636,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
       {TIERS.map(t => {
         const cfg = TIER_AGENT_CONFIG[t.key];
         return (
-          <View key={t.key} style={s.card}>
+          <View key={t.key} style={s.card} wrap={false}>
             <Text style={s.h3}>{cfg.label} · {cfg.price} · {t.onboarding} · {t.employees}</Text>
             <Text style={s.p}>{cfg.description}</Text>
             <Text style={s.dim}>Operatives ({cfg.agents.length})</Text>
@@ -650,63 +650,136 @@ const MarketingSalesMasterPDF: React.FC = () => (
           </View>
         );
       })}
-      <Footer page={3} total={12} />
+      <AutoFooter />
     </Page>
 
-    {/* Operatives — split across pages */}
-    {[OPERATIVES.slice(0, 5), OPERATIVES.slice(5, 10)].map((batch, batchIdx) => (
-      <Page key={`op-${batchIdx}`} size="LETTER" style={s.page}>
-        <Text style={s.h1}>The 10 AI Operatives {batchIdx === 0 ? '(1–5)' : '(6–10)'}</Text>
-        <Text style={s.dim}>Consolidated operatives that run the business. Customer-facing labels in parentheses.</Text>
+    {/* Operatives — one detailed profile per page */}
+    {OPERATIVES.map((op, i) => (
+      <Page key={`op-${op.id}`} size="LETTER" style={s.page}>
+        <Text style={s.h1}>{op.name}</Text>
+        <Text style={s.dim}>Operative {i + 1} of 10  ·  Customer-facing: "{op.customerLabel}"  ·  Min tier: {op.minTier}</Text>
         <View style={s.divider} />
-        {batch.map(op => (
-          <View key={op.id} style={s.card}>
-            <Text style={s.h3}>{op.name}  ·  <Text style={{ color: c.textDim }}>"{op.customerLabel}"</Text></Text>
-            <Text style={s.p}>{op.oneLiner}</Text>
-            <Text style={s.dim}>Key capabilities</Text>
-            {op.capabilities.map((cap, i) => <Bullet key={i}>{cap}</Bullet>)}
-            <Text style={[s.dim, { marginTop: 4 }]}>Sample use cases</Text>
-            <View style={s.rowWrap}>
-              {op.useCases.map((u, i) => <Text key={i} style={s.pill}>{u}</Text>)}
-            </View>
-          </View>
-        ))}
-        <Footer page={4 + batchIdx} total={12} />
+        <View style={s.card}>
+          <Text style={s.p}>{op.oneLiner}</Text>
+        </View>
+
+        <Text style={s.h2}>Key capabilities</Text>
+        {op.capabilities.map((cap, k) => <Bullet key={k}>{cap}</Bullet>)}
+
+        <Text style={s.h2}>Channels</Text>
+        <View style={s.rowWrap}>
+          {op.channels.map((ch, k) => <Text key={k} style={s.pillPrimary}>{ch}</Text>)}
+        </View>
+
+        <Text style={s.h2}>Underlying agents</Text>
+        <View style={s.rowWrap}>
+          {op.underlyingAgents.map((a, k) => <Text key={k} style={s.pill}>{a}</Text>)}
+        </View>
+
+        <Text style={s.h2}>Triggers &amp; handoffs</Text>
+        <Text style={s.p}>{op.handoffs}</Text>
+
+        <Text style={s.h2}>KPIs it moves</Text>
+        <View style={s.rowWrap}>
+          {op.kpis.map((k2, k) => <Text key={k} style={s.pill}>{k2}</Text>)}
+        </View>
+
+        <Text style={s.h2}>3rd-party dependencies</Text>
+        <View style={s.rowWrap}>
+          {op.thirdParty.map((tp, k) => <Text key={k} style={s.pill}>{tp}</Text>)}
+        </View>
+
+        <Text style={s.h2}>Sample interaction</Text>
+        <View style={s.cardAlt}>
+          {op.sampleTranscript.map((line, k) => (
+            <Text key={k} style={s.p}><Text style={{ color: c.primary }}>{line.from}: </Text>{line.line}</Text>
+          ))}
+        </View>
+
+        <Text style={s.h2}>Sample use cases</Text>
+        <View style={s.rowWrap}>
+          {op.useCases.map((u, k) => <Text key={k} style={s.pill}>{u}</Text>)}
+        </View>
+        <AutoFooter />
       </Page>
     ))}
 
-    {/* Industry Specialists */}
+    {/* Industry Specialists - expanded */}
     <Page size="LETTER" style={s.page}>
       <Text style={s.h1}>Industry Specialists</Text>
       <Text style={s.dim}>Auto-activated by industry pack on every plan.</Text>
       <View style={s.divider} />
       <View style={s.card}>
         <Text style={s.p}>
-          Aura ships with 18 industry packs across 4 clusters (Trades, Outdoor,
+          Aura ships with 22 industry packs across 4 clusters (Trades, Outdoor,
           Repair, Booking). Selecting an industry at signup activates that pack's
-          terminology, quote/invoice templates, KPI presets, marketing playbooks,
-          and specialist operatives — without changing tier or pricing.
+          terminology, quote/invoice templates, KPI presets, marketing playbooks, and
+          specialist operatives — without changing tier or pricing. 14 specialists
+          ship today.
         </Text>
       </View>
-      <Text style={s.h2}>Example specialists</Text>
-      <Bullet>Real Estate — Listing Writer, Comp Analyst</Bullet>
-      <Bullet>Beauty & Wellness — Style Consultant, Loyalty Coach</Bullet>
-      <Bullet>Restaurants — Menu Writer, Review Responder</Bullet>
-      <Bullet>Trades (HVAC / Plumbing / Electrical) — Diagnostic, Site Survey, Insurance Claim</Bullet>
-      <Bullet>Personal Assistant — Task Triager, Calendar Optimizer</Bullet>
-      <Text style={s.h2}>What changes per industry</Text>
+      <Text style={s.h2}>All 14 specialists</Text>
+      <View style={s.tableHead}>
+        <Text style={[s.th, { width: '22%' }]}>Specialist</Text>
+        <Text style={[s.th, { width: '38%' }]}>What it does</Text>
+        <Text style={[s.th, { width: '40%' }]}>Auto-activates for</Text>
+      </View>
+      {SPECIALISTS.map(sp => (
+        <View key={sp.name} style={s.tableRow}>
+          <Text style={[s.td, { width: '22%' }]}>{sp.name}</Text>
+          <Text style={[s.td, { width: '38%' }]}>{sp.what}</Text>
+          <Text style={[s.td, { width: '40%' }]}>{sp.industries}</Text>
+        </View>
+      ))}
+      <Text style={s.h2}>What changes per industry pack</Text>
       <Bullet>Operative system prompts (industry prompt injection)</Bullet>
-      <Bullet>Quote/invoice line-item templates and terminology</Bullet>
+      <Bullet>Quote/invoice line-item templates + terminology</Bullet>
       <Bullet>KPI labels and analytics presets</Bullet>
-      <Bullet>Empty-state copy and quick actions</Bullet>
-      <Bullet>Voice greeting and marketing playbook</Bullet>
-      <Footer page={6} total={12} />
+      <Bullet>Empty-state copy + quick actions</Bullet>
+      <Bullet>Voice greeting + marketing playbook</Bullet>
+      <AutoFooter />
     </Page>
 
-    {/* Platform Features */}
+    {/* Specialist sample outputs */}
     <Page size="LETTER" style={s.page}>
-      <Text style={s.h1}>Platform Features</Text>
-      <Text style={s.dim}>Grouped capability catalog.</Text>
+      <Text style={s.h1}>Specialist Sample Outputs</Text>
+      <Text style={s.dim}>What each specialist actually returns.</Text>
+      <View style={s.divider} />
+      {SPECIALISTS.map(sp => (
+        <View key={sp.name} style={s.cardAlt} wrap={false}>
+          <Text style={s.h3}>{sp.name}</Text>
+          <Text style={s.p}>{sp.sample}</Text>
+        </View>
+      ))}
+      <AutoFooter />
+    </Page>
+
+    {/* Platform Features — detailed per-feature */}
+    {FEATURES_DETAIL.map(group => (
+      <Page key={`feat-${group.area}`} size="LETTER" style={s.page}>
+        <Text style={s.h1}>{group.area}</Text>
+        <Text style={s.dim}>Feature detail — value, route, tier, audience, dependencies.</Text>
+        <View style={s.divider} />
+        {group.items.map(it => (
+          <View key={it.name} style={s.card} wrap={false}>
+            <Text style={s.h3}>{it.name}</Text>
+            <Text style={s.p}>{it.value}</Text>
+            <View style={s.rowWrap}>
+              <Text style={s.pillPrimary}>Tier: {it.tier}</Text>
+              <Text style={s.pill}>Who: {it.who}</Text>
+              {it.route && <Text style={s.pill}>Route: {it.route}</Text>}
+              {it.dep && <Text style={s.pill}>Needs: {it.dep}</Text>}
+            </View>
+          </View>
+        ))}
+        <AutoFooter />
+      </Page>
+    ))}
+
+    {/* Feature catalog (legacy quick view) */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>Feature Catalog (Quick View)</Text>
+      <Text style={s.dim}>One-glance grouped capability list.</Text>
       <View style={s.divider} />
       {FEATURE_GROUPS.map(g => (
         <View key={g.group} style={s.cardAlt}>
@@ -716,24 +789,26 @@ const MarketingSalesMasterPDF: React.FC = () => (
           </View>
         </View>
       ))}
-      <Footer page={7} total={12} />
+      <AutoFooter />
     </Page>
 
-    {/* Dashboards */}
+    {/* Dashboards — overview */}
     <Page size="LETTER" style={s.page}>
       <Text style={s.h1}>Dashboards</Text>
-      <Text style={s.dim}>Where each role lives day-to-day.</Text>
+      <Text style={s.dim}>Overview of every dashboard surface.</Text>
       <View style={s.divider} />
       <View style={s.tableHead}>
-        <Text style={[s.th, { width: '30%' }]}>Dashboard</Text>
+        <Text style={[s.th, { width: '32%' }]}>Dashboard</Text>
         <Text style={[s.th, { width: '20%' }]}>Audience</Text>
-        <Text style={[s.th, { width: '50%' }]}>What it shows</Text>
+        <Text style={[s.th, { width: '28%' }]}>Route</Text>
+        <Text style={[s.th, { width: '20%' }]}>Tier</Text>
       </View>
-      {DASHBOARDS.map(d => (
+      {DASHBOARDS_DETAIL.map(d => (
         <View key={d.name} style={s.tableRow}>
-          <Text style={[s.td, { width: '30%' }]}>{d.name}</Text>
+          <Text style={[s.td, { width: '32%' }]}>{d.name}</Text>
           <Text style={[s.td, { width: '20%' }]}>{d.who}</Text>
-          <Text style={[s.td, { width: '50%' }]}>{d.what}</Text>
+          <Text style={[s.td, { width: '28%' }]}>{d.route}</Text>
+          <Text style={[s.td, { width: '20%' }]}>{d.tier}</Text>
         </View>
       ))}
       <View style={s.callout}>
@@ -743,24 +818,79 @@ const MarketingSalesMasterPDF: React.FC = () => (
           list rather than a chart wall.
         </Text>
       </View>
-      <Footer page={8} total={12} />
+      <AutoFooter />
     </Page>
 
-    {/* Consoles & Hubs */}
+    {/* Per-dashboard detail */}
+    {DASHBOARDS_DETAIL.map(d => (
+      <Page key={`dash-${d.name}`} size="LETTER" style={s.page}>
+        <Text style={s.h1}>{d.name}</Text>
+        <Text style={s.dim}>{d.who}  ·  {d.route}  ·  Tier: {d.tier}</Text>
+        <View style={s.divider} />
+        <Text style={s.h2}>Widgets</Text>
+        {d.widgets.map((w, i) => <Bullet key={i}>{w}</Bullet>)}
+        <Text style={s.h2}>Primary actions</Text>
+        {d.actions.map((a, i) => <Bullet key={i}>{a}</Bullet>)}
+        <AutoFooter />
+      </Page>
+    ))}
+
+    {/* Consoles & Hubs — overview */}
     <Page size="LETTER" style={s.page}>
       <Text style={s.h1}>Consoles &amp; Hubs</Text>
       <Text style={s.dim}>7 consoles plus the AI Operatives Hub (Elite).</Text>
       <View style={s.divider} />
-      {CONSOLES.map(co => (
-        <View key={co.id} style={s.card}>
+      {CONSOLES_DETAIL.map(co => (
+        <View key={co.id} style={s.card} wrap={false}>
           <Text style={s.h3}>{co.name}  ·  <Text style={{ color: c.primary }}>{co.tier}</Text></Text>
+          <Text style={s.dim}>{co.route}</Text>
           <Text style={s.p}>{co.purpose}</Text>
-          <View style={s.rowWrap}>
-            {co.operatives.map(op => <Text key={op} style={s.pill}>{opName(op)}</Text>)}
-          </View>
         </View>
       ))}
-      <Footer page={9} total={12} />
+      <AutoFooter />
+    </Page>
+
+    {/* Per-console detail */}
+    {CONSOLES_DETAIL.map(co => (
+      <Page key={`con-${co.id}`} size="LETTER" style={s.page}>
+        <Text style={s.h1}>{co.name}</Text>
+        <Text style={s.dim}>{co.route}  ·  Min tier: {co.tier}</Text>
+        <View style={s.divider} />
+        <View style={s.card}>
+          <Text style={s.p}>{co.purpose}</Text>
+        </View>
+        <Text style={s.h2}>Tabs / sub-views</Text>
+        <View style={s.rowWrap}>
+          {co.tabs.map((t, i) => <Text key={i} style={s.pillPrimary}>{t}</Text>)}
+        </View>
+        <Text style={s.h2}>Operatives surfaced</Text>
+        <View style={s.rowWrap}>
+          {co.operatives.map(op => <Text key={op} style={s.pill}>{opName(op)}</Text>)}
+        </View>
+        <Text style={s.h2}>Headline KPIs</Text>
+        {co.kpis.map((k, i) => <Bullet key={i}>{k}</Bullet>)}
+        <AutoFooter />
+      </Page>
+    ))}
+
+    {/* Industry Packs Appendix */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>Industry Packs Appendix</Text>
+      <Text style={s.dim}>Every shipping pack and its marketing tagline.</Text>
+      <View style={s.divider} />
+      <View style={s.tableHead}>
+        <Text style={[s.th, { width: '28%' }]}>Pack</Text>
+        <Text style={[s.th, { width: '18%' }]}>Cluster</Text>
+        <Text style={[s.th, { width: '54%' }]}>Marketing tagline</Text>
+      </View>
+      {INDUSTRY_PACKS.map(p => (
+        <View key={p.id} style={s.tableRow}>
+          <Text style={[s.td, { width: '28%' }]}>{p.id}</Text>
+          <Text style={[s.td, { width: '18%' }]}>{p.cluster}</Text>
+          <Text style={[s.td, { width: '54%' }]}>{p.tagline}</Text>
+        </View>
+      ))}
+      <AutoFooter />
     </Page>
 
     {/* 3rd-Party Stack */}
@@ -787,7 +917,57 @@ const MarketingSalesMasterPDF: React.FC = () => (
           Aura plan fee = platform only; never resells or marks up third-party usage.
         </Text>
       </View>
-      <Footer page={10} total={12} />
+      <AutoFooter />
+    </Page>
+
+    {/* Sales Rep Toolkit — pitch */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>Sales Rep Toolkit</Text>
+      <Text style={s.dim}>Pitch, discovery, demo flow, and tier-fit guide.</Text>
+      <View style={s.divider} />
+      <Text style={s.h2}>60-second elevator pitch</Text>
+      <View style={s.cardAlt}><Text style={s.p}>{ELEVATOR_PITCH}</Text></View>
+
+      <Text style={s.h2}>Discovery questions</Text>
+      {DISCOVERY_QUESTIONS.map((q, i) => <Bullet key={i}>{q}</Bullet>)}
+
+      <Text style={s.h2}>3-minute demo flow</Text>
+      {DEMO_FLOW.map((d, i) => <Bullet key={i}>{d}</Bullet>)}
+
+      <Text style={s.h2}>Tier-fit decision guide</Text>
+      <View style={s.tableHead}>
+        <Text style={[s.th, { width: '60%' }]}>Profile</Text>
+        <Text style={[s.th, { width: '40%' }]}>Recommended tier</Text>
+      </View>
+      {TIER_FIT.map(t => (
+        <View key={t.tier} style={s.tableRow}>
+          <Text style={[s.td, { width: '60%' }]}>{t.who}</Text>
+          <Text style={[s.td, { width: '40%' }]}>{t.tier}</Text>
+        </View>
+      ))}
+      <AutoFooter />
+    </Page>
+
+    {/* Outreach templates */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>Outreach Templates</Text>
+      <Text style={s.dim}>Drop-in email and SMS templates.</Text>
+      <View style={s.divider} />
+      <Text style={s.h2}>Email</Text>
+      {EMAIL_TEMPLATES.map(t => (
+        <View key={t.name} style={s.card} wrap={false}>
+          <Text style={s.h3}>{t.name}</Text>
+          <Text style={s.p}>{t.body}</Text>
+        </View>
+      ))}
+      <Text style={s.h2}>SMS</Text>
+      {SMS_TEMPLATES.map(t => (
+        <View key={t.name} style={s.cardAlt} wrap={false}>
+          <Text style={s.h3}>{t.name}</Text>
+          <Text style={s.p}>{t.body}</Text>
+        </View>
+      ))}
+      <AutoFooter />
     </Page>
 
     {/* Trial & Onboarding + Talking Points */}
@@ -802,12 +982,50 @@ const MarketingSalesMasterPDF: React.FC = () => (
 
       <Text style={s.h2}>Talking points / objection handling</Text>
       {TALKING_POINTS.map((t, i) => (
-        <View key={i} style={s.cardAlt}>
+        <View key={i} style={s.cardAlt} wrap={false}>
           <Text style={s.h3}>{t.q}</Text>
           <Text style={s.p}>{t.a}</Text>
         </View>
       ))}
-      <Footer page={11} total={12} />
+      {OBJECTIONS_EXTRA.map((t, i) => (
+        <View key={`x-${i}`} style={s.cardAlt} wrap={false}>
+          <Text style={s.h3}>{t.q}</Text>
+          <Text style={s.p}>{t.a}</Text>
+        </View>
+      ))}
+      <AutoFooter />
+    </Page>
+
+    {/* Compliance & legal one-pager */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>Compliance &amp; Legal Summary</Text>
+      <View style={s.divider} />
+      <Text style={s.h2}>3rd-party billing disclosure</Text>
+      <View style={s.card}><Text style={s.p}>
+        Every 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe,
+        A2P 10DLC carriers, social platforms) requires the customer's own account
+        and a valid credit card on file. Each provider invoices the customer
+        directly and separately from the Aura plan fee. Aura Intercept does not
+        resell, mark up, or absorb 3rd-party usage.
+      </Text></View>
+      <Text style={s.h2}>A2P 10DLC (US SMS)</Text>
+      <View style={s.card}><Text style={s.p}>
+        US business SMS requires brand + campaign registration with The Campaign
+        Registry via the carrier/aggregator. Customer pays one-time + monthly
+        registry fees directly. Aura assists with submission during concierge
+        onboarding.
+      </Text></View>
+      <Text style={s.h2}>Trial terms</Text>
+      <Bullet>90-Day Live Trial — 30-day concierge onboarding + 60-day full live operation.</Bullet>
+      <Bullet>Onboarding fee (equal to one month of the chosen tier) is due at trial start and is non-refundable.</Bullet>
+      <Bullet>Monthly subscription billing begins on day 91.</Bullet>
+      <Bullet>Cancel any time during the trial; only the onboarding fee applies.</Bullet>
+      <Text style={s.h2}>Data &amp; security</Text>
+      <Bullet>RLS-protected database; SECURITY DEFINER RPCs for any public read.</Bullet>
+      <Bullet>Customer secrets stored in encrypted vault; never logged.</Bullet>
+      <Bullet>DOMPurify sanitization on all rendered AI output.</Bullet>
+      <Bullet>No data resold or pooled across tenants.</Bullet>
+      <AutoFooter />
     </Page>
 
     {/* Contact / Next Steps */}
@@ -829,7 +1047,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
       <View style={s.callout}>
         <Text style={s.p}>Aura Intercept · auraintercept.ai · Generated {today}</Text>
       </View>
-      <Footer page={12} total={12} />
+      <AutoFooter />
     </Page>
   </Document>
 );
