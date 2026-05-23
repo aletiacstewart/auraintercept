@@ -286,6 +286,267 @@ const THIRD_PARTY = [
   { name: 'Social platforms', purpose: 'OAuth posting', model: "Customer's own pages/accounts." },
 ];
 
+// --- Industry Specialists (expanded) ---
+const SPECIALISTS: Array<{ name: string; what: string; industries: string; sample: string }> = [
+  { name: 'Diagnostic', what: 'Photo + symptom analysis with likely-fix and parts list.', industries: 'HVAC, Plumbing, Electrical, Appliance Repair, Auto Care', sample: '"Photo shows corroded contactor + low refrigerant. Likely cause: capacitor failure. Parts: 45/5 MFD cap, R-410A."' },
+  { name: 'Permit & Code', what: 'Local code lookups, permit determinations, pull-process guidance.', industries: 'Electrical, Plumbing, Construction, Roofing, Solar', sample: '"Fulton County requires panel-upgrade permit ($165). Schedule inspection within 30 days of pull."' },
+  { name: 'Site Survey & Quote', what: 'Pre-install survey, measurements, takeoff math.', industries: 'Roofing, Solar, Fencing, Landscape, Construction', sample: '"3,200 sq ft roof, 2 layers tear-off. Material: $9.4k, labor: $6.8k, dump: $1.1k."' },
+  { name: 'Insurance Claim', what: 'Damage documentation and claim-ready reports.', industries: 'Roofing, Auto Care, Pool/Spa, Plumbing', sample: '"Hail dents on slopes 1 + 3, 47 hits/100sf, photo evidence packaged for State Farm submission."' },
+  { name: 'Listing Writer', what: 'Listing descriptions, headlines, feature highlights.', industries: 'Real Estate', sample: '"\'Light-filled 3BR Buckhead bungalow with chef\'s kitchen and walkable Beltline access.\'"' },
+  { name: 'Offer Drafter', what: 'Offer letters, counter-offers, contingency language.', industries: 'Real Estate', sample: '"$485k offer, 14-day inspection, 30-day close, FHA contingency. Ready for review."' },
+  { name: 'Comp Analyst', what: 'Comparable sales/rentals + pricing position summary.', industries: 'Real Estate', sample: '"6 comps within 0.4 mi · median $/sf $312. Subject is priced 4% above market — recommend $475k."' },
+  { name: 'Style Consultant', what: 'Cuts/colors/treatments based on client photo + history.', industries: 'Beauty & Wellness, Salon', sample: '"Based on last 3 visits + current photo: balayage refresh + olaplex bond builder."' },
+  { name: 'Loyalty Coach', what: 'Identifies repeat-visit risk + drafts rebook outreach.', industries: 'Beauty & Wellness, Salon, Fitness, Auto Care', sample: '"42 clients last visited >9 weeks ago. Drafted personal rebook SMS for each."' },
+  { name: 'Menu Writer', what: 'Menu copy, daily specials, dietary callouts.', industries: 'Restaurants', sample: '"Today\'s special: Pan-seared snapper with citrus beurre blanc. GF · pescatarian."' },
+  { name: 'Reservation Optimizer', what: 'Reshuffles bookings to maximize covers, minimize gaps.', industries: 'Restaurants', sample: '"Move 7:00 4-top to 7:15 → opens 6:45 2-top window. +1 cover."' },
+  { name: 'Task Triager', what: 'Sorts inbound client tasks by urgency, owner, due date.', industries: 'Personal Assistant, Professional Services', sample: '"3 urgent: flight change (today), gift order (Fri), tax doc (Mon). Routed to you, assistant, vendor."' },
+  { name: 'Calendar Optimizer', what: 'Slot consolidation + travel-aware scheduling fixes.', industries: 'Personal Assistant, Beauty, Fitness, Real Estate', sample: '"Combining 2 Buckhead showings saves 38 min drive time. Suggested order: 2pm → 2:45pm."' },
+  { name: 'Review Responder', what: 'On-brand responses to Google/Yelp/Facebook reviews.', industries: 'All (auto-enabled in every pack)', sample: '"\'Thanks Maria — we\'ll let Jose know! Glad the system\'s running cool.\'"' },
+];
+
+// --- Feature detail catalog ---
+const FEATURES_DETAIL: Array<{
+  area: string;
+  items: Array<{ name: string; value: string; route?: string; tier: string; who: string; dep?: string }>;
+}> = [
+  { area: 'Voice & Telephony', items: [
+    { name: 'AI Voice Receptionist', value: 'Answers, qualifies, and routes calls 24/7.', route: '/dashboard/integrations/voice', tier: 'Core', who: 'Caller / Admin', dep: 'SignalWire + ElevenLabs' },
+    { name: 'Call History & Recording', value: 'Searchable call log with transcripts.', route: '/dashboard/calls', tier: 'Core', who: 'Admin', dep: 'SignalWire' },
+    { name: 'CFNA (Call Forward No-Answer)', value: 'Forward existing number to Aura on missed calls.', tier: 'Core', who: 'Admin', dep: 'Phone provider' },
+    { name: 'Missed-Call Auto-Followup', value: 'Instant SMS recovery for missed calls.', tier: 'Core', who: 'Caller', dep: 'SignalWire' },
+  ]},
+  { area: 'SMS & Messaging', items: [
+    { name: 'AI SMS Handler', value: 'Two-way SMS with intent routing.', route: '/dashboard/messages', tier: 'Core', who: 'Customer / Admin', dep: 'SignalWire + A2P 10DLC' },
+    { name: 'Keyword Auto-Responder', value: 'Hashtag triggers bypass AI for instant replies.', route: '/dashboard/integrations/sms', tier: 'Core', who: 'Admin' },
+    { name: 'SMS Logs', value: 'Per-conversation history, deliverability stats.', route: '/dashboard/sms-logs', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Email', items: [
+    { name: 'Transactional Email', value: 'Confirmations, receipts, alerts.', tier: 'Core', who: 'Customer / Admin', dep: 'Resend' },
+    { name: 'Marketing Email', value: 'Campaigns from Outreach operative.', route: '/dashboard/campaigns', tier: 'Core', who: 'Admin', dep: 'Resend' },
+    { name: 'Email Logs + Send-Cap Guard', value: 'Daily/monthly caps prevent runaway sends.', route: '/dashboard/email-logs', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Web Chat & Smart Website', items: [
+    { name: 'Smart Website Builder', value: 'Industry-tuned website with editable sections.', route: '/dashboard/smart-website', tier: 'Core', who: 'Admin' },
+    { name: 'Blog Management', value: 'Per-company blog with public reading + AI drafts.', route: '/dashboard/blog', tier: 'Core', who: 'Admin' },
+    { name: 'Embeddable Chat Widget', value: '3 install methods: script tag, iframe, React component.', tier: 'Core', who: 'Visitor / Admin' },
+    { name: 'Custom Domain', value: 'CNAME + TXT verification for white-label hosting.', tier: 'Core', who: 'Admin', dep: 'DNS' },
+  ]},
+  { area: 'Social Media', items: [
+    { name: 'Multi-Platform Posting', value: 'OAuth (FB, IG, GBP, LI, X, TT) + manual fallback.', route: '/dashboard/social-media', tier: 'Core', who: 'Admin', dep: 'Social OAuth' },
+    { name: 'Scheduling & Queue', value: 'Calendar view with reschedule + bulk.', tier: 'Core', who: 'Admin' },
+    { name: 'Content Engine', value: 'Unified AI generation → schedule → publish.', route: '/dashboard/content-engine', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Scheduling & Booking', items: [
+    { name: 'Unified Booking Engine', value: '14-day scan, pending-status loop, calendar sync.', route: '/dashboard/appointments', tier: 'Core', who: 'Customer / Admin' },
+    { name: 'Google Calendar Sync', value: 'OAuth two-way sync of staff calendars.', tier: 'Core', who: 'Admin', dep: 'Google Calendar' },
+    { name: 'Public Booking Page', value: '/book/{company-slug} branded booking flow.', tier: 'Core', who: 'Customer' },
+    { name: 'Per-Industry Appointment Rules', value: 'Duration, prep-time, technician requirements from industry pack.', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Field Operations', items: [
+    { name: 'Dispatch Board', value: 'Real-time job board with skill-based assign.', route: '/dashboard/field-operations', tier: 'Boost', who: 'Dispatcher' },
+    { name: 'Route Optimization', value: 'Travel-time-aware ordering.', tier: 'Boost', who: 'Dispatcher / Tech' },
+    { name: 'Technician PWA', value: 'Mobile app for jobs, voice input, check-in/out.', route: '/technician', tier: 'Boost', who: 'Technician' },
+    { name: 'Live ETA Broadcast', value: 'Customer-facing SMS + tracking link.', tier: 'Boost', who: 'Customer', dep: 'SignalWire' },
+  ]},
+  { area: 'Quotes / Invoices / Payments', items: [
+    { name: 'Quote Templates', value: 'Per-industry line items pre-filled.', route: '/dashboard/quotes', tier: 'Pro', who: 'Admin / Tech' },
+    { name: 'Invoice Templates', value: 'Per-industry invoice + payment links.', route: '/dashboard/invoices', tier: 'Pro', who: 'Admin / Tech' },
+    { name: 'Stripe Payment Links', value: 'Customer-connected Stripe account.', tier: 'Pro', who: 'Customer / Admin', dep: 'Stripe' },
+    { name: 'Inventory Tracking', value: 'Stock + reorder thresholds.', route: '/dashboard/inventory', tier: 'Pro', who: 'Admin' },
+  ]},
+  { area: 'Lead Capture & Scoring', items: [
+    { name: 'Lead Capture (multi-source)', value: 'Web, chat, SMS, voice, social → unified pipeline.', route: '/dashboard/leads', tier: 'Core', who: 'Admin' },
+    { name: 'AI Lead Scoring', value: '0–100 score from channel, intent, history.', tier: 'Core', who: 'Admin' },
+    { name: 'Campaign Manager', value: 'Drip flows + A/B + segmentation.', route: '/dashboard/campaigns', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Customer Portal', items: [
+    { name: 'Unified Portal', value: 'Bookings, status, invoices, messages per company.', route: '/customer-portal', tier: 'Core', who: 'Customer' },
+    { name: 'Public Company Directory', value: 'Cross-company discovery (opt-in).', tier: 'Core', who: 'Customer' },
+    { name: 'Portal PWA Install', value: 'Customer-facing installable app.', tier: 'Core', who: 'Customer' },
+  ]},
+  { area: 'Analytics & Reports', items: [
+    { name: 'NLP Analytics', value: 'Ask Aura questions; get charts + actions.', route: '/dashboard/analytics', tier: 'Pro', who: 'Owner / Admin' },
+    { name: 'KPI Dashboard', value: 'Per-industry preset KPIs.', tier: 'Pro', who: 'Admin' },
+    { name: 'Revenue Analysis', value: 'Trend, mix, drivers.', tier: 'Pro', who: 'Owner' },
+    { name: 'Demand Forecast', value: '30/60/90 day projection.', tier: 'Pro', who: 'Owner' },
+  ]},
+  { area: 'AI Operatives & Hub', items: [
+    { name: 'AI Operatives Hub', value: 'Central command for all 10 operatives + specialists.', route: '/dashboard/ai-agents', tier: 'Elite', who: 'Admin' },
+    { name: 'Specialist Operatives Console', value: 'Launch industry specialists on demand.', tier: 'All (industry pack)', who: 'Admin' },
+    { name: 'Talk to Aura', value: 'Voice-first conversational interface.', route: '/dashboard/talk-to-aura', tier: 'Core', who: 'Admin' },
+  ]},
+  { area: 'Knowledge, Help & Notifications', items: [
+    { name: 'Knowledge Base', value: 'Curated content fed into every operative prompt.', route: '/dashboard/knowledge-base', tier: 'Core', who: 'Admin' },
+    { name: 'AI Help Center', value: 'In-product help powered by KB + industry pack.', tier: 'Core', who: 'Anyone' },
+    { name: 'Tavily Web Research', value: 'Live web lookups for the AI.', tier: 'Core', who: 'AI', dep: 'Tavily' },
+    { name: 'Staff Alerts (4 channels)', value: 'Push, email, SMS, in-app bell.', route: '/dashboard/notifications', tier: 'Core', who: 'Staff' },
+  ]},
+  { area: 'Integrations', items: [
+    { name: 'Voice Integration', value: 'SignalWire setup + number provisioning.', route: '/dashboard/integrations/voice', tier: 'Core', who: 'Admin' },
+    { name: 'SMS Integration', value: '10DLC registration + keyword setup.', route: '/dashboard/integrations/sms', tier: 'Core', who: 'Admin' },
+    { name: 'Email Integration', value: 'Resend domain verification.', route: '/dashboard/integrations/email', tier: 'Core', who: 'Admin' },
+    { name: 'Calendar Integration', value: 'Google OAuth flow.', route: '/dashboard/integrations/calendar', tier: 'Core', who: 'Admin' },
+    { name: 'Tavily Integration', value: 'Research key + caps.', route: '/dashboard/integrations/tavily', tier: 'Core', who: 'Admin' },
+  ]},
+];
+
+// --- Dashboards (detailed) ---
+const DASHBOARDS_DETAIL: Array<{
+  name: string; who: string; route: string; tier: string;
+  widgets: string[]; actions: string[];
+}> = [
+  { name: 'Aura Command Center', who: 'Owner / GM', route: '/dashboard', tier: 'Core',
+    widgets: ['Natural-language Aura prompt (hero)', 'Today\'s priorities', 'Live operative status', 'At-risk items'],
+    actions: ['Ask Aura', 'Approve/reject AI actions', 'Jump to console'] },
+  { name: 'Company Admin Dashboard (Simple)', who: 'Admin / Manager', route: '/dashboard', tier: 'Core',
+    widgets: ['Top 5 KPIs (calls, bookings, leads, revenue, reviews)', 'Quick actions'],
+    actions: ['Toggle Pro mode', 'Open any console'] },
+  { name: 'Company Admin Dashboard (Pro)', who: 'Admin / Manager', route: '/dashboard', tier: 'Core',
+    widgets: ['Full KPI grid', 'Per-operative latest events', 'Subscription progress', 'Setup progress'],
+    actions: ['Drill into any KPI', 'Manage operatives'] },
+  { name: 'Technician Dashboard (PWA)', who: 'Field staff', route: '/technician', tier: 'Boost',
+    widgets: ['Today\'s jobs', 'Route map', 'Voice input FAB', 'Customer history'],
+    actions: ['Check in / out', 'Capture photo + notes', 'Send invoice'] },
+  { name: 'Customer Portal Home', who: 'End customer', route: '/customer-portal', tier: 'Core',
+    widgets: ['Active bookings', 'Live job status', 'Open invoices', 'Message thread'],
+    actions: ['Book again', 'Pay invoice', 'Message Aura'] },
+  { name: 'Platform Health (Admin)', who: 'Platform admin', route: '/dashboard/platform-health', tier: 'Internal',
+    widgets: ['Uptime chips', 'Edge function pulse', 'Tenant counts'],
+    actions: ['Restart agent sessions', 'Open logs'] },
+  { name: 'Subscription Analytics', who: 'Owner / Admin', route: '/dashboard/subscription-analytics', tier: 'Pro',
+    widgets: ['Trial progress bar', 'Plan utilization', 'Upgrade prompts'],
+    actions: ['Upgrade plan', 'Manage billing'] },
+  { name: 'Analytics Console Suite (8 tabs)', who: 'Owner / Admin', route: '/dashboard/analytics', tier: 'Pro',
+    widgets: ['KPI dashboard', 'Revenue', 'Demand forecast', 'Customer insights', 'Business insights', 'Performance', 'New leads', 'Custom NLP query'],
+    actions: ['Ask Aura in any tab', 'Schedule email digest'] },
+];
+
+// --- Consoles (detailed) ---
+const CONSOLES_DETAIL: Array<{
+  id: string; name: string; route: string; tier: string; operatives: string[];
+  tabs: string[]; purpose: string; kpis: string[];
+}> = [
+  { id: 'customer_portal', name: 'Customer Portal Console', route: '/dashboard/customer-portal', tier: 'Core',
+    operatives: ['triage', 'customer_journey'],
+    tabs: ['Inbound', 'Bookings', 'Chat', 'Missed-call recovery'],
+    purpose: 'Front-of-house inbox: every channel + booking pipeline in one view.',
+    kpis: ['Answer rate', 'Booking conversion', 'Missed-call recovery rate'] },
+  { id: 'marketing_sales', name: 'Outreach & Sales Console', route: '/dashboard/marketing-sales', tier: 'Core',
+    operatives: ['outreach'],
+    tabs: ['Leads', 'Campaigns', 'Pipeline', 'Specialists'],
+    purpose: 'Lead capture & scoring, campaign control, pipeline progression.',
+    kpis: ['Leads/day', 'Lead → booked %', 'Campaign reply rate'] },
+  { id: 'creative_web_presence', name: 'Creative & Web Presence Console', route: '/dashboard/creative-web-presence', tier: 'Core',
+    operatives: ['creative_content', 'web_presence'],
+    tabs: ['Smart Website', 'Blog', 'Widget', 'Brand assets'],
+    purpose: 'Build + maintain web presence + brand-aware content generation.',
+    kpis: ['Sessions', 'Blog cadence', 'Chat-to-lead %'] },
+  { id: 'social_media', name: 'Social Media Console', route: '/dashboard/social-media', tier: 'Core',
+    operatives: ['creative_content'],
+    tabs: ['Composer', 'Queue', 'Insights'],
+    purpose: 'Multi-platform posting, scheduling, analytics.',
+    kpis: ['Posts published', 'Engagement', 'Reach'] },
+  { id: 'field_operations', name: 'Field Operations Console', route: '/dashboard/field-operations', tier: 'Boost',
+    operatives: ['dispatch', 'field_navigation'],
+    tabs: ['Dispatch board', 'Route map', 'Technicians', 'ETA broadcast'],
+    purpose: 'Dispatch + route + tech PWA + customer ETA.',
+    kpis: ['Time-to-assign', 'On-time arrival', 'Jobs/day per tech'] },
+  { id: 'business_management', name: 'Business Management Console', route: '/dashboard/business-management', tier: 'Pro',
+    operatives: ['business_finance', 'admin'],
+    tabs: ['Quotes', 'Invoices', 'Inventory', 'Payments', 'Employees'],
+    purpose: 'Back-office: billing, inventory, payments, employee management.',
+    kpis: ['Quote acceptance', 'Days-to-pay', 'Stockouts'] },
+  { id: 'analytics_reports', name: 'Analytics & Reports Console', route: '/dashboard/analytics', tier: 'Pro',
+    operatives: ['analytics_intelligence'],
+    tabs: ['KPI', 'Revenue', 'Demand forecast', 'Customer', 'Business', 'Performance', 'New leads', 'Ask Aura'],
+    purpose: 'NLP analytics across the platform; per-industry KPI presets.',
+    kpis: ['Revenue trend', 'Forecast accuracy', 'Action-rate from prompts'] },
+  { id: 'ai_operatives_hub', name: 'AI Operatives Hub', route: '/dashboard/ai-agents', tier: 'Elite',
+    operatives: ['triage','customer_journey','outreach','creative_content','web_presence','dispatch','field_navigation','business_finance','analytics_intelligence','admin'],
+    tabs: ['Core operatives', 'Advanced operatives', 'Specialists', 'Live activity'],
+    purpose: 'Central command for all 10 operatives + industry specialists.',
+    kpis: ['Operative health', 'Action volume', 'Override rate'] },
+];
+
+// --- Industry Packs (18) ---
+const INDUSTRY_PACKS: Array<{ id: string; cluster: string; tagline: string }> = [
+  { id: 'hvac', cluster: 'Trades', tagline: 'Capture more cooling & heating peaks' },
+  { id: 'plumbing', cluster: 'Trades', tagline: 'Win more emergency calls before competitors' },
+  { id: 'electrical', cluster: 'Trades', tagline: 'Higher-ticket panel & EV opportunities' },
+  { id: 'roofing', cluster: 'Trades', tagline: 'Storm-driven leads, organized' },
+  { id: 'solar', cluster: 'Trades', tagline: 'Higher-intent solar leads, faster' },
+  { id: 'construction', cluster: 'Trades', tagline: 'Bigger pipeline, cleaner bids' },
+  { id: 'handyman', cluster: 'Trades', tagline: 'Recurring small-job revenue' },
+  { id: 'fencing', cluster: 'Trades', tagline: 'Spring season fence demand' },
+  { id: 'security_systems', cluster: 'Trades', tagline: 'Higher monitoring attach rates' },
+  { id: 'landscape', cluster: 'Outdoor', tagline: 'More properties per route, more spring sign-ups' },
+  { id: 'pest_control', cluster: 'Outdoor', tagline: 'Recurring plans drive predictable revenue' },
+  { id: 'pool_spa', cluster: 'Outdoor', tagline: 'Open-and-close season revenue' },
+  { id: 'appliance_repair', cluster: 'Repair', tagline: 'Win the repair-vs-replace decision' },
+  { id: 'auto_care', cluster: 'Repair', tagline: 'More repeat visits per active vehicle' },
+  { id: 'real_estate', cluster: 'Booking', tagline: 'More booked showings and faster offers' },
+  { id: 'beauty_wellness', cluster: 'Booking', tagline: 'Fuller chairs, fewer no-shows' },
+  { id: 'salon', cluster: 'Booking', tagline: 'Fuller chairs, more rebookings' },
+  { id: 'restaurants', cluster: 'Booking', tagline: 'More covers, better reviews' },
+  { id: 'fitness', cluster: 'Booking', tagline: 'Fewer cancellations, more retention' },
+  { id: 'personal_assistant', cluster: 'Booking', tagline: 'Higher-trust client communications' },
+  { id: 'professional', cluster: 'Booking', tagline: 'Higher-trust client communications' },
+  { id: 'home_health', cluster: 'Booking', tagline: 'Trusted, compassionate patient growth' },
+];
+
+// --- Sales rep toolkit ---
+const DISCOVERY_QUESTIONS = [
+  'How many calls do you miss in a typical week — and what does each one cost you?',
+  'Who answers your phone after hours, on weekends, or during a rush?',
+  'How do new leads come in today — and how long before someone follows up?',
+  'What\'s your current tool stack (CRM, dispatch, booking, SMS, email)?',
+  'How many employees / technicians, and across how many service zones?',
+  'Which industry pack fits you best — and do you have niche workflows I should know?',
+  'Do you bill / invoice / take payments today — and how?',
+  'What\'s the #1 thing that would unlock 20% more revenue right now?',
+];
+
+const ELEVATOR_PITCH =
+  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $497/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 90-day live trial with concierge onboarding in the first 30 days.';
+
+const DEMO_FLOW = [
+  '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
+  '0:45 — Open Outreach & Sales Console. Show lead → score → drip → booking.',
+  '1:30 — Field Operations. Drag a job, watch the customer SMS go live.',
+  '2:15 — Business Management. Quote → invoice → Stripe link.',
+  '2:45 — AI Operatives Hub (Elite). Show all 10 operatives + specialists.',
+  '3:00 — Close: "Pick your tier. We onboard you in 30 days, you run live for 60."',
+];
+
+const TIER_FIT = [
+  { who: '1–10 employees, no field techs, owner-operator', tier: 'Aura Core ($497/mo)' },
+  { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($697/mo)' },
+  { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,197/mo)' },
+  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($2,197/mo)' },
+];
+
+const OBJECTIONS_EXTRA = [
+  { q: '"What if AI says something wrong to my customer?"', a: 'Every operative supports human override and "validate before send" mode. KB-grounded answers + DOMPurify safety + explicit reject/approve UI for high-stakes actions.' },
+  { q: '"We already use SignalWire / Stripe / Resend."', a: 'Perfect — we plug into your existing accounts. Aura never resells provider usage; you keep the same vendor relationships and bills.' },
+  { q: '"Onboarding fee feels steep."', a: 'It\'s a one-time concierge cost equal to one month — you get a 30-day live setup of voice, SMS, KB, agents, calendars, and integrations. Without it, most teams take 60–90 days to self-serve.' },
+  { q: '"Will my staff resist AI?"', a: 'Aura is the receptionist that frees your staff for high-value work. Plain-English labels (Front Desk, Dispatch, Billing) make it feel like a teammate, not a robot.' },
+  { q: '"What about multi-location?"', a: 'Aura is single-tenant per company today. Multi-location is on the roadmap; current customers operate one Aura per brand or location.' },
+  { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 90. The one-time onboarding fee is non-refundable since concierge work is performed in days 1–30.' },
+  { q: '"How do you compare to ServiceTitan / Housecall Pro?"', a: 'Those are operations platforms; Aura is an AI layer that *runs* the operations — answering, booking, dispatching, marketing autonomously. Many customers run Aura alongside an existing FSM.' },
+];
+
+const EMAIL_TEMPLATES = [
+  { name: 'Cold opener', body: 'Subject: 24/7 AI receptionist for {{company}}\n\nHi {{first_name}} — your team likely misses 20–40% of calls outside business hours. Aura Intercept is an AI receptionist + dispatcher + marketer that answers every call, books appointments, and dispatches your techs — for $497/mo. Worth a 15-min look?' },
+  { name: 'Demo follow-up', body: 'Subject: Recap + next step\n\nThanks for the time. Pulling together: tier fit ({{tier}}), onboarding timeline (30d), 3rd-party setup list. Reply "go" and we\'ll send the trial signup link.' },
+  { name: 'Stalled prospect', body: 'Subject: Quick re-ping\n\nHaven\'t heard back — usually means timing or budget. We have a free AI Opportunity Audit (no card, 10 min) that quantifies missed-call revenue. Worth a look?' },
+];
+
+const SMS_TEMPLATES = [
+  { name: 'Cold opener', body: 'Hi {{first_name}} — saw {{company}} online. Curious if you\'re losing calls after hours? We have an AI receptionist that answers 24/7 from $497/mo. Worth a quick demo?' },
+  { name: 'Demo nudge', body: 'Still on for our {{day}} demo? I\'ll show how Aura would handle your last week of missed calls. — {{rep}}' },
+  { name: 'Trial activation', body: 'Trial link: auraintercept.ai/auth — 90 days, concierge setup in the first 30. Reply if you need help.' },
+];
+
 const TALKING_POINTS = [
   { q: '"Why not just hire a receptionist?"', a: 'A receptionist works ~40 hrs/week; AI Receptionist works 168 — across voice, SMS, email, and chat — and never misses a call. Concierge Onboarding sets it up for you in the first 30 days.' },
   { q: '"What about my existing tools?"', a: 'Aura plugs into Google Calendar, Stripe, your social accounts, and your phone provider. We replace the glue — not the tools you already love.' },
