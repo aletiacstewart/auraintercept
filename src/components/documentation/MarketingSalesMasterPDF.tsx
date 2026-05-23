@@ -79,66 +79,169 @@ const OPERATIVES: Array<{
   oneLiner: string;
   capabilities: string[];
   useCases: string[];
+  underlyingAgents: string[];
+  channels: string[];
+  handoffs: string;
+  kpis: string[];
+  thirdParty: string[];
+  minTier: 'Core' | 'Boost' | 'Pro' | 'Elite';
+  sampleTranscript: { from: string; line: string }[];
 }> = [
   {
     id: 'triage', name: 'AI Receptionist (Triage)', customerLabel: 'Front Desk',
     oneLiner: 'First point of contact across voice, SMS, email, and web chat. Routes intent to the right operative.',
     capabilities: ['24/7 multi-channel intake', 'Intent detection & routing', 'Caller identification & spam filtering', 'Multilingual greeting'],
     useCases: ['After-hours coverage', 'Spike call deflection', 'Qualifying new vs returning customers'],
+    underlyingAgents: ['triage', 'intent_router', 'spam_filter'],
+    channels: ['Voice', 'SMS', 'Email', 'Web Chat'],
+    handoffs: 'Routes to Customer Journey (booking), Outreach (new lead), Dispatch (emergency), Business Finance (billing question), or Admin (account).',
+    kpis: ['Answer rate', 'Avg time-to-answer', 'Routed-correctly %', 'Missed-call recoveries'],
+    thirdParty: ['SignalWire (voice/SMS)', 'ElevenLabs (voice synth)', 'Resend (email)'],
+    minTier: 'Core',
+    sampleTranscript: [
+      { from: 'Caller', line: '"Hi, my AC stopped working."' },
+      { from: 'Aura', line: '"I can get a tech out today. Are you a current customer? I\'ll route you to dispatch."' },
+    ],
   },
   {
     id: 'customer_journey', name: 'Customer Journey', customerLabel: 'Front Desk',
     oneLiner: 'Books appointments, sends confirmations & follow-ups, and orchestrates the post-service review request.',
     capabilities: ['Booking with Google Calendar', 'Confirmation & reminder cadence', 'Post-service review automation', 'Re-engagement of stale customers'],
     useCases: ['No-show reduction', 'Review velocity boost', 'Repeat booking automation'],
+    underlyingAgents: ['booking', 'followup', 'review'],
+    channels: ['SMS', 'Email', 'Voice', 'Web Chat'],
+    handoffs: 'Receives from Triage; hands to Dispatch (assign tech) and Outreach (re-engagement campaigns).',
+    kpis: ['No-show rate', 'Booking conversion', 'Review request → review %', 'Repeat-booking rate'],
+    thirdParty: ['Google Calendar (OAuth)', 'SignalWire (SMS)', 'Resend (email)'],
+    minTier: 'Core',
+    sampleTranscript: [
+      { from: 'Aura', line: '"Reminder: tomorrow 2pm appointment with Mike. Reply C to confirm, R to reschedule."' },
+      { from: 'Customer', line: '"C"' },
+    ],
   },
   {
     id: 'outreach', name: 'Outreach', customerLabel: 'Marketing',
     oneLiner: 'Captures, scores, and warms leads from every channel. Runs targeted campaigns with personalization.',
     capabilities: ['Lead capture & scoring', 'Drip campaigns (SMS/email)', 'List segmentation', 'A/B subject and copy tests'],
     useCases: ['Reactivating dormant lists', 'Promo blasts', 'New-lead instant follow-up'],
+    underlyingAgents: ['lead', 'campaign', 'marketing'],
+    channels: ['SMS', 'Email', 'Web Chat', 'Social'],
+    handoffs: 'Receives leads from Triage and Web Presence; hands hot leads to Customer Journey for booking.',
+    kpis: ['Lead score distribution', 'Campaign open/click/reply', 'Lead → booked %', 'Cost per booked lead'],
+    thirdParty: ['SignalWire (SMS, A2P 10DLC)', 'Resend (email)'],
+    minTier: 'Core',
+    sampleTranscript: [
+      { from: 'Aura', line: '"New lead from website: Sara, kitchen remodel, scored 87. Suggested first touch: SMS within 5 min."' },
+    ],
   },
   {
     id: 'creative_content', name: 'Creative Content', customerLabel: 'Social Posts',
     oneLiner: 'Generates social posts, captions, image briefs and schedules content across connected platforms.',
     capabilities: ['Multi-platform post drafting', 'AI image generation', 'Scheduling & queue', 'Engagement analytics'],
     useCases: ['Daily content calendar', 'Promo announcements', 'Review reshares'],
+    underlyingAgents: ['creative', 'social_content', 'social_scheduler', 'social_analytics'],
+    channels: ['Facebook', 'Instagram', 'Google Business', 'LinkedIn', 'X', 'TikTok'],
+    handoffs: 'Pulls brief from Outreach campaigns; pushes drafts to Web Presence (blog) and Content Engine (queue).',
+    kpis: ['Posts published', 'Engagement rate', 'Profile reach growth', 'Inbound DMs from posts'],
+    thirdParty: ['Social OAuth (per platform)', 'Lovable AI Gateway (image gen)'],
+    minTier: 'Core',
+    sampleTranscript: [
+      { from: 'Owner', line: '"Post about our heat wave special."' },
+      { from: 'Aura', line: '"Drafted 3 variants + image. Scheduling for IG + FB tomorrow 9am."' },
+    ],
   },
   {
     id: 'web_presence', name: 'Web Presence', customerLabel: 'Website',
     oneLiner: 'Smart Website + blog + embeddable chat widget tuned to the company\'s industry pack.',
     capabilities: ['Smart Website builder', 'Blog management', 'Custom domain (CNAME)', 'Embeddable chat widget'],
     useCases: ['New-business website launch', 'SEO blog cadence', 'Lead capture from existing site'],
+    underlyingAgents: ['web_presence', 'blog', 'widget'],
+    channels: ['Web', 'Embeddable widget (3 install methods)'],
+    handoffs: 'Captured leads flow to Outreach; chat sessions escalate to Triage.',
+    kpis: ['Sessions', 'Chat-started %', 'Lead capture rate', 'Blog post throughput'],
+    thirdParty: ['Custom DNS (CNAME + TXT)', 'Lovable AI Gateway (content gen)'],
+    minTier: 'Core',
+    sampleTranscript: [
+      { from: 'Visitor', line: '"Do you service my zip code?"' },
+      { from: 'Aura', line: '"Yes — 4 techs cover 30339. Want to book a window now?"' },
+    ],
   },
   {
     id: 'dispatch', name: 'Dispatch', customerLabel: 'Dispatch',
     oneLiner: 'Assigns jobs to the right technician using skills, availability, and routing.',
     capabilities: ['Skill-based assignment', 'Availability JSON awareness', 'Click-to-call dispatch UI', 'Real-time job board'],
     useCases: ['Same-day emergency routing', 'Multi-tech coordination', 'Shift handoffs'],
+    underlyingAgents: ['dispatch'],
+    channels: ['Internal dispatch board', 'SMS to tech', 'Push to PWA'],
+    handoffs: 'Receives confirmed jobs from Customer Journey; hands to Field Navigation when tech accepts.',
+    kpis: ['Time-to-assign', 'First-time-fix %', 'Tech utilization', 'Same-day fill rate'],
+    thirdParty: ['SignalWire (tech SMS)', 'Web Push (PWA)'],
+    minTier: 'Boost',
+    sampleTranscript: [
+      { from: 'Aura', line: '"Emergency drain call · 2 mi from Jose · he\'s open 11–1. Assigning + sending route."' },
+    ],
   },
   {
     id: 'field_navigation', name: 'Field Navigation', customerLabel: 'On The Way',
     oneLiner: 'Optimizes routes, broadcasts ETAs, and runs check-in / check-out flows.',
     capabilities: ['Route optimization', 'Live ETA messaging', 'Check-in / check-out', 'Geofence triggers'],
     useCases: ['Customer ETA notifications', 'Tech location accountability', 'Job-time accuracy'],
+    underlyingAgents: ['route', 'eta', 'checkin'],
+    channels: ['Tech PWA', 'Customer SMS', 'Push notifications'],
+    handoffs: 'Receives from Dispatch; check-out completes a job and pings Business Finance to invoice and Customer Journey to request a review.',
+    kpis: ['On-time arrival %', 'Avg drive time', 'ETA accuracy', 'Jobs/day per tech'],
+    thirdParty: ['Mapping (Leaflet)', 'SignalWire (customer SMS)'],
+    minTier: 'Boost',
+    sampleTranscript: [
+      { from: 'Aura → customer', line: '"Mike is 12 min away. Track: aura.link/abc"' },
+    ],
   },
   {
     id: 'business_finance', name: 'Business Finance', customerLabel: 'Billing',
     oneLiner: 'Quotes, invoices, inventory, and Stripe payments — pre-filled by industry templates.',
     capabilities: ['Quote & invoice templates', 'Inventory tracking', 'Stripe payment links', 'Industry-aware line items'],
     useCases: ['On-site invoice & pay', 'Quote-to-job conversion', 'Inventory reorder alerts'],
+    underlyingAgents: ['quoting', 'invoice', 'inventory'],
+    channels: ['Tech PWA (on-site)', 'Email', 'SMS payment links'],
+    handoffs: 'Triggered by Field Navigation check-out; quote acceptance creates a job routed back to Customer Journey.',
+    kpis: ['Quote acceptance %', 'Days-to-pay', 'Invoice volume', 'Inventory stockouts'],
+    thirdParty: ['Stripe (customer connects own account)'],
+    minTier: 'Pro',
+    sampleTranscript: [
+      { from: 'Aura', line: '"Job complete. Invoice $487 sent via SMS + email. Stripe link expires in 7 days."' },
+    ],
   },
   {
     id: 'analytics_intelligence', name: 'Analytics Intelligence', customerLabel: 'Reports',
     oneLiner: 'Natural-language analytics across the entire platform — ask, don\'t click.',
     capabilities: ['NLP querying', 'Revenue & demand forecasts', 'Per-industry KPI presets', 'Auto-generated executive briefs'],
     useCases: ['Weekly performance review', 'Forecast next 30 days', 'Find the biggest leak'],
+    underlyingAgents: ['insights', 'revenue', 'forecast'],
+    channels: ['Analytics Console', 'Command Center', 'Email digest'],
+    handoffs: 'Reads from every operative; surfaces action prompts that route back to the relevant console.',
+    kpis: ['Revenue trend', 'Pipeline coverage', 'Forecast accuracy', 'KPI alert volume'],
+    thirdParty: ['Lovable AI Gateway (NLP)'],
+    minTier: 'Pro',
+    sampleTranscript: [
+      { from: 'Owner', line: '"What\'s slipping this week?"' },
+      { from: 'Aura', line: '"3 quotes >7 days old totaling $12.4k. Want me to follow up?"' },
+    ],
   },
   {
     id: 'admin', name: 'Admin', customerLabel: 'Office',
     oneLiner: 'Back-office automations — employee, settings, notifications, knowledge-base curation.',
     capabilities: ['Employee onboarding', 'Notification preferences', 'KB curation & updates', 'Bulk settings actions'],
     useCases: ['New hire ramp', 'Policy rollout', 'Quiet-hours config'],
+    underlyingAgents: ['admin'],
+    channels: ['Settings', 'Notifications (push/email/SMS/in-app)'],
+    handoffs: 'Configures every other operative — quiet hours, escalation paths, KB content, employee permissions.',
+    kpis: ['Setup completion %', 'KB freshness', 'Notification opt-in rate', 'Employee activation'],
+    thirdParty: ['Resend (email)', 'SignalWire (SMS)', 'Web Push'],
+    minTier: 'Pro',
+    sampleTranscript: [
+      { from: 'Owner', line: '"Add Sarah as a tech, weekday 8–5, plumbing skills."' },
+      { from: 'Aura', line: '"Created. Invite sent. Dispatch will start routing her tomorrow."' },
+    ],
   },
 ];
 
