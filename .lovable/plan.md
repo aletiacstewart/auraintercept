@@ -1,66 +1,73 @@
-# Platform Resources Consistency Audit
-
 ## Goal
-Audit every export doc, video script, and platform guide under **Platform Resources** (`/dashboard/export-docs`) against the live platform — AI operatives, consoles, hubs, dashboards, homepage, and sign-up flow — then fix any drift in a single pass.
+Expand `MarketingSalesMasterPDF` from a high-level overview (~12 pages) into a deep, sales-rep-ready reference (~30–40 pages) with substantive per-agent, per-feature, per-dashboard, and per-hub detail.
 
-## Sources of Truth
-- **Pricing/tiers** — `src/lib/subscriptionAgentConfig.ts` + `src/lib/documentationConfig.ts` + memory `marketing/pricing/canonical-four-tier-model`.
-- **Trial** — memory `product/trial-period-standard`: 90-Day Live Trial = first 30d onboarding + 60d live.
-- **Operatives (10)** — `src/lib/subscriptionAgentConfig.ts`, `src/lib/agentStyles.ts`, memory `features/dashboard/plain-english-labels-v1`.
-- **Consoles (7) + AI Hub** — `src/pages/ai-consoles/*`, memory `architecture/navigation/console-route-standardization`.
-- **Dashboards** — `Dashboard.tsx`, `CompanyAdminDashboard`, `TechnicianDashboard`, `CustomerPortalHome`.
-- **3rd-party policy** — memory `integrations/3rd-party-requirements-standard` + `legal/third-party-fee-disclaimer`.
-- **Public surfaces** — homepage components in `src/components/landing/`, `Auth.tsx`, `Contact.tsx`, `About.tsx`, `ForBusiness.tsx`.
+## Current state
+Single PDF with: Cover → Exec Summary → 4-Tier table → Pricing/Tiers → 10 Operatives (2 batches, brief) → Industry Specialists (overview) → Feature Catalog (grouped lists) → Dashboards (table) → Consoles & Hubs (list) → 3rd-Party Stack → Trial + Talking Points → Next Steps. Pulls data from `subscriptionAgentConfig`, `agentStyles`, `industryCapabilities`.
 
-## Known Conflict To Resolve First
-Memory core says **Core $497 / Boost $697 / Pro $1,197 / Elite $2,197** (monthly = onboarding).
-File `marketing/pricing/canonical-four-tier-model.md` still shows **Core $197 / Boost $497 / Pro $997 / Elite $1,997** with separate onboarding.
-Treat the **core memory** as authoritative; reconcile the standalone file and `documentationConfig.ts` as part of the fix.
+## Expansion plan (sections to deepen)
 
-## Artifacts In Scope
-Under `src/components/documentation/`:
-1. MarketingSalesMasterPDF
-2. AIAgentGuidesPDF
-3. PlatformDocumentPDF
-4. PricingSummaryPDF
-5. ComprehensiveGuidesPDF
-6. CompanyGuidesPDF
-7. CompanyOnboardingPDF
-8. PlatformFAQPDF
-9. SalesPitchDataPDF
-10. WebsiteCopyPDF
-11. BrandAssetGuidePDF
-12. IndustryMarketingKitPDF
-13. SocialMediaContentPackPDF
-14. **VideoScriptsPDF** + promo-video toolkit prompts (`src/components/marketing/` / promo video data)
+### 1. AI Operatives — full profile per operative (10 pages, 1/page)
+For each of the 10 operatives:
+- Name + customer-facing label + underlying agent IDs (from 24-agent map)
+- One-line pitch + 3-sentence "what it actually does"
+- Channels (voice, SMS, email, web chat, social)
+- Triggers / handoffs (who routes to it, where it routes next)
+- Sample transcript snippet (1 short Q&A)
+- KPIs the operative moves
+- Tier availability badges (Core / Boost / Pro / Elite)
+- Required 3rd-party services (e.g. SignalWire for voice) with billing note
 
-Plus the **Export Documentation page** card copy (`src/pages/ExportDocumentation.tsx`) and the **Marketing Sales Console** master-guide button.
+### 2. Industry Specialists — expanded
+- Full table of specialist operatives (listing_writer, comp_analyst, menu_writer, style_consultant, loyalty_coach, review_responder, site_survey, diagnostic, calendar_optimizer, task_triager, insurance_claim) with: name, what it does, which industries auto-activate it, sample output
 
-## Audit Checklist (applied per artifact)
-- **Tier names + pricing**: Core/Boost/Pro/Elite with $497/$697/$1,197/$2,197 monthly = onboarding. Flag Starter/Connect/Performance/Command or stale $197/$497/$997/$1,997.
-- **Trial**: "90-Day Live Trial" with `(first 30 days = onboarding)` short form or full long-form sentence. Flag "Free Trial", "60-day", "14-day".
-- **Operatives**: 10 operatives with plain-English labels in customer-facing copy. "24 agents" only where technically accurate (architecture docs).
-- **Consoles**: 7 consoles + AI Operatives Hub (Elite). Flag "7 Control Centers" without Hub or wrong count.
-- **3rd-party copy**: customer-owned account + billed separately by provider. Flag "bundled / overage / absorbed / included / we cover" language across SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social.
-- **URLs**: `https://auraintercept.ai` only; no `lovable.app` / preview URLs.
-- **Brand**: "Aura Intercept", correct logo, Cyber-Sentry tone, theme tokens (no raw hex).
-- **No multi-location**, **no CRM/Warranty** modules — use "Lead Capture & Scoring".
-- **Cross-doc parity**: agent descriptions, tier inclusions, feature names, and trial copy match across every PDF + homepage + Auth + Contact + ForBusiness.
+### 3. Feature Catalog — per-feature detail (replaces grouped lists)
+Group by capability area; each feature gets:
+- Name + one-line value prop
+- Where it lives in the app (route)
+- Tier required
+- Who uses it (admin / employee / customer / technician)
+- 3rd-party dependency, if any
 
-## Deliverable
-1. **Audit report posted in chat** — one table per artifact: Finding · Severity (blocker / drift / nit) · Corrected wording.
-2. **Code fixes in one pass** — edit only affected PDF/script/guide files plus Export Documentation card copy and `documentationConfig.ts` pricing constants. No business logic, schema, routes, or new features.
-3. **Visual QA** — render any PDF whose layout was touched (skill/pdf guidance) and inspect each page before delivery.
-4. **Memory reconciliation** — update `marketing/pricing/canonical-four-tier-model.md` to match the core memory pricing.
+Areas: Voice & Telephony · SMS & Messaging · Email · Web Chat & Smart Website · Social Media · Scheduling & Booking · Field Ops & Dispatch · Quotes/Invoices/Payments · Lead Capture & Scoring · Customer Portal · Analytics · AI Operatives & Hub · Knowledge Base · Tutorials/Help · Notifications · Integrations
 
-## Out of Scope
-- Pricing math redesign, new tiers, new features.
-- Backend / edge functions.
-- Spanish locale, unless a string is a direct mirror of an English fix.
+### 4. Dashboards — per-dashboard page
+Detail page each for: Aura Command Center · Company Admin Dashboard (Simple/Pro modes) · Employee Dashboard · Technician Dashboard · Customer Portal Home · Platform Health (admin) · Subscription Analytics · Analytics Dashboard Suite (8 tabs)
+Each page: who sees it, top widgets/KPIs, primary actions, default route.
 
-## Execution Order
-1. Read all 14 PDFs + video scripts + ExportDocumentation + homepage/Auth/Contact/ForBusiness.
-2. Build finding table.
-3. Apply fixes (parallel writes where independent).
-4. Visual QA on layout-affected PDFs.
-5. Post final report + summary of changes.
+### 5. Consoles & Hubs — per-console page
+Detail page each for: Outreach & Sales · Business Management · Field Ops · Social Media · Content Engine · Customer Portal Console · Analytics Console · AI Operatives Hub (Elite). Each: purpose, tabs/sub-views, operatives surfaced, tier required, KPIs.
+
+### 6. Industry Packs Appendix
+One-row-per-industry table covering all 18 packs: industry_id, cluster, terminology (job/customer), specialists auto-activated, marketing playbook tagline.
+
+### 7. Sales rep toolkit (new)
+- Discovery question script (6–8 questions)
+- 60-second elevator pitch
+- 3-minute demo flow
+- Tier-fit decision tree (employees + industry → recommended tier)
+- Expanded objection handling (12+ Q&A, vs current ~5)
+- Email & SMS outreach templates (3 each)
+
+### 8. Compliance & legal one-pager
+- 3rd-party billing disclosure (verbatim approved copy)
+- A2P 10DLC requirement
+- Trial terms (90-Day Live Trial, onboarding due at start, non-refundable onboarding)
+
+## Data sources (no business-logic changes)
+- `src/lib/subscriptionAgentConfig.ts` — tiers, operatives, consoles, specialists
+- `src/lib/agentStyles.ts` — labels
+- `src/lib/industryCapabilities.ts`, `industryPackSchema.ts`, `industryMarketingPlaybooks.ts` — industry packs
+- `src/pages/ai-consoles/*` — console names/routes
+- `src/lib/howToUseContent.ts` — feature blurbs
+- Memory: pricing, trial, 3rd-party policy, sidebar v1, plain-English labels
+
+## Files to change
+- `src/components/documentation/MarketingSalesMasterPDF.tsx` — major expansion; keep existing styles, add new sections + page-per-item layouts. May split into helper sub-components in the same file.
+- No changes to consoles, routes, business logic, or other PDFs.
+
+## QA
+- Render the PDF, convert pages to images with `pdftoppm`, scan every page for overflow / clipped text / table column issues, iterate until clean.
+- Deliver final PDF as `/mnt/documents/marketing-sales-master-guide.pdf` via `<presentation-artifact>` so you can download immediately, and keep the in-app PDFDownloadLink so it stays available from the Outreach & Sales Console.
+
+## Out of scope
+- Pricing changes, new features, new tiers, backend/edge-function edits, Spanish locale, other PDFs.
