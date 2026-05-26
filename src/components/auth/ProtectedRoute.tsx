@@ -41,8 +41,20 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (requiredRole && userRole !== requiredRole) {
-    // If user doesn't have required role, redirect to their appropriate dashboard
-    return <Navigate to="/dashboard" replace />;
+    // Show a clear access-denied screen instead of silently redirecting,
+    // so missing-role situations are visible to the user.
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-md w-full border border-border rounded-lg p-6 space-y-3 text-center">
+          <h1 className="text-lg font-semibold text-foreground">Access restricted</h1>
+          <p className="text-sm text-muted-foreground">
+            This page is only available to <span className="font-medium">{requiredRole}</span> accounts.
+            You are signed in as <span className="font-medium">{userRole ?? 'unknown'}</span>.
+          </p>
+          <a href="/dashboard" className="inline-block text-sm text-primary underline">Return to dashboard</a>
+        </div>
+      </div>
+    );
   }
 
   // Sales-rep demo accounts: only allowed in /super-switcher unless they've switched
