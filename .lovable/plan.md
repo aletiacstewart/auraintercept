@@ -1,49 +1,94 @@
-## Add examples + onboarding plan/invoice fields to intake workbook
+# Carrier Call-Forwarding Guide + Export PDF Sync
 
-Edit `src/pages/PublicOnboardingIntake.tsx` only. No DB / edge function changes (form_data already accepts any keys, and submit-onboarding email already includes the full form_data dump).
+## Goal
+1. Add a built-in **Carrier Call-Forwarding Guide** (immediate, no-answer, busy, unreachable, cancel) for every major US carrier into the Contact Routing step of the fillable onboarding intake.
+2. Rebuild the downloadable **Company Onboarding Questionnaire PDF** so its sections match the 12-step fillable intake, including the new forwarding guide and the Terms/Plan selector that were added in prior turns.
 
-### 1. Add example placeholders / helper text to 4 steps
+---
 
-**Step 2 — Brand & Voice**
-- Tone: placeholder `"e.g. Friendly, professional, confident"`
-- Never-say: placeholder `"e.g. 'cheap', 'guaranteed', competitor names"`
-- Greeting: placeholder `"e.g. Thanks for calling Acme Plumbing, this is Aura — how can I help today?"`
-- Primary color: keep `#0ea5a4`; Secondary: placeholder `"#0f172a"`
+## 1. New shared data file
+Create `src/lib/carrierForwarding.ts` exporting a single typed dataset used by both the React intake and the PDF. Each carrier entry has the same row shape so the table renders identically in both places.
 
-**Step 8 — Industry-Specific Intake**
-- Intake questions: placeholder
-  `"e.g.\n• What's the address of the property?\n• Is this a repair or new install?\n• When did the issue start?"`
-- Terminology: placeholder `"e.g. 'condenser', 'evaporator coil', 'SEER rating'"`
-- Compliance: placeholder `"e.g. EPA 608 certified, state contractor license #12345, HIPAA if medical"`
+Fields per carrier:
+- `name` (e.g. "Verizon Wireless")
+- `type` — `"Postpaid"` / `"Prepaid / MVNO"` / `"VoIP"`
+- `immediate_on` — code/steps for unconditional "forward all calls"
+- `immediate_off`
+- `no_answer_on` — Conditional Forward No Answer (CFNA) — fires after rings
+- `no_answer_off`
+- `busy_on` — Conditional Forward Busy (CFB)
+- `busy_off`
+- `unreachable_on` — Conditional Forward Not Reachable (CFNR) — phone off / no signal
+- `unreachable_off`
+- `cancel_all`
+- `verify` (e.g. `*#21#`, `*#62#`)
+- `notes` (CDMA quirks, app-only paths, dialer steps for visual UIs)
 
-**Step 9 — Smart Website Inputs**
-- Headline: placeholder `"e.g. 24/7 HVAC repair across Phoenix — answered in 6 seconds"`
-- Subheadline: placeholder `"e.g. Licensed techs, upfront pricing, same-day appointments."`
-- Service blurbs: placeholder
-  `"e.g.\nAC Repair — Fast diagnostics, transparent quotes, most jobs done same day.\nFurnace Tune-Up — Seasonal maintenance to prevent breakdowns and lower bills."`
+Carriers covered (US market, ordered by share):
+1. **Verizon Wireless** — `*72{num}` / `*73`, plus My Verizon app path for CFNA/CFB/CFNR (Verizon is CDMA-origin and doesn't accept the GSM star codes; document the app flow under Settings → Manage device → Call forwarding).
+2. **AT&T Mobility** — full GSM set: `**21*{num}#`, `##21#`, `**61*{num}**{rings}#`, `##61#`, `**67*{num}#`, `##67#`, `**62*{num}#`, `##62#`, `##002#` to cancel all, `*#21#` / `*#61#` to verify.
+3. **T-Mobile** (incl. Sprint legacy) — same GSM star codes as AT&T; note Sprint legacy numbers also accept `*72` / `*720`.
+4. **US Cellular** — `*72{num}` / `*73` immediate; CFNA via app or `*92{num}` / `*93` on supported handsets.
+5. **Google Voice** — Settings → Calls → Call forwarding (web/app only; no star codes).
+6. **Cricket Wireless** (AT&T MVNO) — GSM star codes as AT&T.
+7. **Metro by T-Mobile** — GSM star codes as T-Mobile.
+8. **Visible** (Verizon MVNO) — Visible app → Account → Call forwarding; star codes not supported.
+9. **Mint Mobile** (T-Mobile MVNO) — GSM star codes as T-Mobile.
+10. **Xfinity Mobile / Spectrum Mobile** (Verizon MVNO) — carrier app only.
+11. **Generic GSM fallback** — the `**21*`, `**61*`, `**67*`, `**62*` family with explanation.
+12. **iPhone visual path** (any GSM carrier) — Settings → Phone → Call Forwarding (immediate only; conditional still requires star codes).
 
-**Step 11 — Document & Image Uploads**
-- Add a small helper line under each row label with an example (e.g. "Ex: acme-logo.svg, 512×512 transparent", "Ex: brand-guide.pdf, hero photos", "Ex: IRS CP-575 letter or W-9 PDF", "Ex: customers.csv with name, email, phone, last service", "Ex: techs.csv with name, role, phone, email", "Ex: 2025-price-sheet.pdf or services.xlsx", "Ex: insurance cert, prior contracts, SOPs").
+Every row will tell the user to replace `{num}` with the Aura business number they were assigned during setup, and (for CFNA) replace `{rings}` with `30` for ~6 rings.
 
-### 2. Onboarding plan + invoice email on Step 12 (Terms)
+## 2. Contact Routing step — new collapsible "Carrier Forwarding Setup Guide"
+In `src/pages/PublicOnboardingIntake.tsx`, inside the `contact_routing` section, add an accordion below the existing forwarding-number fields:
 
-Add a new block above the acknowledgement checkboxes titled **"Onboarding plan & invoice"**:
+- Heading: **"How to forward your business line to Aura"** + one-line explainer.
+- Carrier picker (`Select`) defaulting to the carrier the user types into a new `carrier` field (saved to `data.contact_routing.carrier`).
+- Picked-carrier card shows a 5-row table: Immediate / No Answer / Busy / Unreachable / Cancel, each with the on-code, off-code, and copy-to-clipboard button.
+- "Verify current forwarding" and "Notes" rows below the table.
+- A "Show all carriers" toggle that expands the full list as stacked cards (used as the printable reference).
+- Persisted choice is saved into `data.contact_routing.carrier` so the submitted JSON / PDF includes which carrier the company is on.
 
-- **Plan selector** (radio cards, single-select) — sourced from canonical 4-tier model:
-  - Aura Core — $497/mo · $497 one-time onboarding
-  - Aura Boost — $697/mo · $697 one-time onboarding
-  - Aura Pro — $1,197/mo · $1,197 one-time onboarding
-  - Aura Elite — $2,197/mo · $2,197 one-time onboarding
-  - Stored at `data.terms.plan` as `'core' | 'boost' | 'pro' | 'elite'`.
-- **Billing frequency** small toggle: Monthly / Annual (annual ≈ 20% off, shown next to selected plan). Stored at `data.terms.billing_cycle`.
-- **Invoice email for onboarding fee** — `Input type="email"`, stored at `data.terms.invoice_email`, with helper text "We'll send the one-time onboarding invoice here. Subscription billing starts after the 90-day Live Trial."
-- A live summary line: `"Due at start of trial: $<onboarding_fee>. Then $<monthly>/mo (or $<annual>/yr) after the 90-day Live Trial."`
+No backend changes — this is presentation only, written against the existing `data.contact_routing` slice.
 
-Submit validation (in `submit()`):
-- Require `terms.plan` and a valid-looking `terms.invoice_email` in addition to existing checks.
-- On failure, toast and jump to last step (already does).
+## 3. Export PDF — rewrite to match the 12 fillable sections
+`src/components/documentation/CompanyOnboardingPDF.tsx` is currently structured around a legacy 7-section audit workbook. Rewrite the page list so it matches the live intake one-for-one:
 
-No backend changes needed — `form_data` is already forwarded in the submission email, so plan + invoice email will appear in the admin notification to `ai@auraintercept.ai`.
+```text
+Cover
+How to Use This Workbook (refreshed)
+1. Company Profile
+2. Brand & Voice                       (new)
+3. Contact Routing
+   3a. Carrier Call-Forwarding Guide   (new — full table for every carrier)
+4. 3rd-Party Accounts                  (new — Resend/SignalWire/ElevenLabs/Tavily/Stripe/Google/A2P)
+5. A2P 10DLC (SMS Compliance)         (new)
+6. Employees / Technicians
+7. Booking Rules                       (new)
+8. Industry-Specific Intake            (new)
+9. Smart Website Inputs                (new)
+10. Goals & Notes
+11. Document & Image Uploads checklist (new — mirrors UPLOAD_SECTIONS)
+12. Terms, Plan Selection & Signature  (new — Core/Boost/Pro/Elite + onboarding fees + invoice email + signature block)
+Appendix: Legacy AI Opportunity Audit  (keep the 30-question audit as an optional appendix so we don't lose it)
+```
 
-### Files touched
-- `src/pages/PublicOnboardingIntake.tsx` (only)
+Each section page mirrors the field labels, placeholders/examples, and helper copy already shown in `PublicOnboardingIntake.tsx`. The carrier-forwarding page consumes the shared `carrierForwarding.ts` dataset so the live form and the printable PDF can never drift again.
+
+The Terms page lists the canonical 4-tier pricing (Core $497, Boost $697, Pro $1,197, Elite $2,197 — monthly = onboarding fee) and includes checkboxes for the same TOS/Privacy/Authorization acknowledgements, plus invoice email + signature lines.
+
+No changes to `ExportDocumentation.tsx` other than refreshing the "Document includes" bullet list to reflect the new sections.
+
+---
+
+## Technical notes
+- Shared dataset lives at `src/lib/carrierForwarding.ts` and is consumed by both the Vite app (React) and `@react-pdf/renderer` (the PDF doc) — pure data, no JSX, safe to import from either runtime.
+- No database/edge-function changes. No new dependencies.
+- Submitted JSON gains `data.contact_routing.carrier`; existing `get-onboarding-invite` / PDF download already serialize the whole `form_data` blob, so the carrier choice will appear in the admin "View" dialog and the per-submission PDF without further changes.
+- All copy uses semantic Tailwind tokens, no hardcoded colors.
+
+## Out of scope
+- No new edge functions, no schema migrations, no auth changes.
+- Not touching the 30-question audit content itself — only relocating it to an appendix in the printable PDF.
+- Not adding international carriers (UK/CA/AU). Can follow up if requested.

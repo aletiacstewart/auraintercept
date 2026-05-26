@@ -12,6 +12,7 @@ import {
   THIRD_PARTY_INTEGRATIONS,
 } from '@/lib/documentationConfig';
 import { sanitizePdfText, SAFE_BULLET } from './pdfSanitize';
+import { CARRIERS, FORWARDING_RULES, fillTokens } from '@/lib/carrierForwarding';
 
 const colors = {
   primary: '#6366f1',
@@ -1224,6 +1225,79 @@ const TechnicianRosterPage = () => (
   </Page>
 );
 
+// ---------------------------------------------------------------------------
+// Carrier call-forwarding reference page (mirrors the live intake guide).
+// ---------------------------------------------------------------------------
+const CarrierForwardingPage = () => (
+  <>
+    <Page size="A4" style={styles.page}>
+      <PageHeader title="Carrier Call-Forwarding Guide" pageNum={10} />
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Carrier Call-Forwarding Setup')}</Text>
+      <Text style={styles.paragraph}>
+        {sanitizePdfText(
+          'These codes tell your business mobile phone to forward calls to the Aura number assigned during setup. Replace {num} with the Aura number (e.g. +15551234567) and {rings} with 30 for ~6 rings before forwarding. Most phones answer with a short confirmation tone; if nothing happens, your carrier may require the conditional-forwarding add-on to be enabled (free) — call them and ask to activate "Call Forwarding No Answer".'
+        )}
+      </Text>
+      <View style={styles.infoBox}>
+        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Four scenarios Aura covers')}</Text>
+        {FORWARDING_RULES.map((r) => (
+          <Text key={r.short} style={[styles.infoBoxText, { marginBottom: 3 }]}>
+            {sanitizePdfText(`${SAFE_BULLET} ${r.label} — ${r.when}`)}
+          </Text>
+        ))}
+      </View>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('My carrier')}</Text>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Carrier name:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Aura number to forward TO:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Business line being forwarded:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+    </Page>
+    {CARRIERS.map((c, idx) => (
+      <Page key={c.name} size="A4" style={styles.page}>
+        <PageHeader title={`Carrier Guide — ${c.name}`} pageNum={10 + idx + 1} />
+        <Text style={styles.sectionTitle}>{sanitizePdfText(c.name)}</Text>
+        <Text style={[styles.paragraph, { marginTop: -6, color: colors.gray }]}>
+          {sanitizePdfText(c.type)}
+        </Text>
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderCell, { width: 90 }]}>{sanitizePdfText('Scenario')}</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Turn ON')}</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Turn OFF')}</Text>
+          </View>
+          {FORWARDING_RULES.map((rule) => {
+            const on = fillTokens(c[rule.on] as string, '{num}');
+            const off = rule.short === 'Cancel All' ? '' : fillTokens(c[rule.off] as string, '{num}');
+            return (
+              <View key={rule.short} style={styles.tableRow}>
+                <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>{sanitizePdfText(rule.short)}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(on)}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(off || '—')}</Text>
+              </View>
+            );
+          })}
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>{sanitizePdfText('Verify')}</Text>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{sanitizePdfText(fillTokens(c.verify, '{num}'))}</Text>
+          </View>
+        </View>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoBoxTitle}>{sanitizePdfText('Carrier notes')}</Text>
+          <Text style={styles.infoBoxText}>{sanitizePdfText(c.notes)}</Text>
+        </View>
+      </Page>
+    ))}
+  </>
+);
+
 const BookingPortalPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Booking & Customer Portal" pageNum={12} />
@@ -1324,6 +1398,30 @@ const TermsAcknowledgementPage = () => {
       <Text style={styles.paragraph}>
         {sanitizePdfText('Initial each item below to confirm agreement, then complete and sign at the bottom of the page. Return this signed page with the rest of the onboarding workbook.')}
       </Text>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
+      {[
+        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $497 one-time onboarding' },
+        { id: 'boost', label: 'Aura Boost — $697/mo  ·  $697 one-time onboarding' },
+        { id: 'pro',   label: 'Aura Pro   — $1,197/mo ·  $1,197 one-time onboarding' },
+        { id: 'elite', label: 'Aura Elite — $2,197/mo ·  $2,197 one-time onboarding' },
+      ].map((p) => (
+        <View key={p.id} style={styles.optionRow}>
+          <View style={styles.checkbox} />
+          <Text style={styles.optionText}>{sanitizePdfText(p.label)}</Text>
+        </View>
+      ))}
+      <Text style={[styles.formNote, { marginLeft: 20, marginTop: 4 }]}>
+        {sanitizePdfText('Billing cycle (check one): [ ] Monthly   [ ] Annual (save ~20%)')}
+      </Text>
+      <View style={[styles.formRow, { marginTop: 8 }]}>
+        <Text style={[styles.formLabel, { width: 180 }]}>{sanitizePdfText('Invoice email for onboarding fee:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <Text style={[styles.formNote, { marginLeft: 188 }]}>
+        {sanitizePdfText('One-time onboarding invoice is sent here. Subscription billing begins after the 90-Day Live Trial.')}
+      </Text>
+
+      <Text style={[styles.subsectionTitle, { marginTop: 14 }]}>{sanitizePdfText('Acknowledgements (initial each)')}</Text>
       {ackItems.map((item, i) => (
         <View key={i} style={[styles.optionRow, { marginBottom: 10, alignItems: 'flex-start' }]}>
           <View style={[styles.checkbox, { marginTop: 2 }]} />
@@ -1431,6 +1529,7 @@ export const CompanyOnboardingPDF = () => (
     <KnowledgeBaseExpandedPage />
     <IndustryIntakePage />
     <CommunicationRoutingPage />
+    <CarrierForwardingPage />
     <TechnicianRosterPage />
     <BookingPortalPage />
     <SmartWebsitePage />
