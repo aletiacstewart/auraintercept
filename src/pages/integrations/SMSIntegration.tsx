@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SignalWireSetupGuide } from '@/components/integrations/SignalWireSetupGuide';
+import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 import { SMSKeywordsSection } from '@/components/sms/SMSKeywordsSection';
 import { FormShell } from '@/components/ui/form-shell';
 import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
@@ -180,6 +181,11 @@ export default function SMSIntegration() {
 
           {/* SignalWire Setup Guide */}
           <SignalWireSetupGuide />
+
+          {/* Carrier call-forwarding reference (voice line paired with this SMS number) */}
+          <CarrierForwardingGuide
+            auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+          />
 
           {/* Integration Cards */}
           <div className="grid gap-4 md:grid-cols-2">
