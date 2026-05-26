@@ -43,14 +43,21 @@ const SECTIONS = [
 ] as const;
 
 const UPLOAD_SECTIONS = [
-  { key: 'logo', label: 'Company logo (PNG/SVG)' },
-  { key: 'brand_assets', label: 'Additional brand assets (color guide, fonts, photos)' },
-  { key: 'ein_w9', label: 'EIN letter / W-9' },
-  { key: 'customer_csv', label: 'Customer list (CSV)' },
-  { key: 'employee_csv', label: 'Employee / technician list (CSV)' },
-  { key: 'price_sheet', label: 'Price sheet / service catalog' },
-  { key: 'misc', label: 'Other documents' },
+  { key: 'logo', label: 'Company logo (PNG/SVG)', example: 'Ex: acme-logo.svg, 512×512, transparent background' },
+  { key: 'brand_assets', label: 'Additional brand assets (color guide, fonts, photos)', example: 'Ex: brand-guide.pdf, hero photos, team headshots' },
+  { key: 'ein_w9', label: 'EIN letter / W-9', example: 'Ex: IRS CP-575 confirmation letter or signed W-9 PDF' },
+  { key: 'customer_csv', label: 'Customer list (CSV)', example: 'Ex: customers.csv — name, email, phone, last service date' },
+  { key: 'employee_csv', label: 'Employee / technician list (CSV)', example: 'Ex: techs.csv — name, role, phone, email, service area' },
+  { key: 'price_sheet', label: 'Price sheet / service catalog', example: 'Ex: 2025-price-sheet.pdf or services.xlsx with SKU + price' },
+  { key: 'misc', label: 'Other documents', example: 'Ex: insurance cert, prior contracts, SOPs, training docs' },
 ];
+
+const PLAN_OPTIONS = [
+  { id: 'core',  name: 'Aura Core',  monthly: 497,  annual: 4970,  onboarding: 497 },
+  { id: 'boost', name: 'Aura Boost', monthly: 697,  annual: 6970,  onboarding: 697 },
+  { id: 'pro',   name: 'Aura Pro',   monthly: 1197, annual: 11970, onboarding: 1197 },
+  { id: 'elite', name: 'Aura Elite', monthly: 2197, annual: 21970, onboarding: 2197 },
+] as const;
 
 export default function PublicOnboardingIntake() {
   const { token = '' } = useParams();
@@ -122,8 +129,9 @@ export default function PublicOnboardingIntake() {
 
   async function submit() {
     const sig = data.terms || {};
-    if (!sig.agree_tos || !sig.agree_privacy || !sig.agree_third_party || !sig.signer_name || !sig.signer_title) {
-      toast({ title: 'Missing acknowledgements', description: 'Please complete the Terms of Service section.', variant: 'destructive' });
+    const emailOk = typeof sig.invoice_email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sig.invoice_email);
+    if (!sig.plan || !emailOk || !sig.agree_tos || !sig.agree_privacy || !sig.agree_third_party || !sig.signer_name || !sig.signer_title) {
+      toast({ title: 'Missing info', description: 'Please select a plan, enter a valid invoice email, and complete all acknowledgements.', variant: 'destructive' });
       setStep(SECTIONS.length - 1);
       return;
     }
@@ -202,11 +210,11 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'brand' && (
               <>
-                <Field label="Brand tone (3 adjectives)"><Input value={get('brand','tone')} onChange={(e) => set('brand','tone', e.target.value)} /></Field>
-                <Field label="Words / phrases to NEVER use"><Textarea value={get('brand','never_say')} onChange={(e) => set('brand','never_say', e.target.value)} /></Field>
-                <Field label="Sample greeting (how should Aura answer?)"><Textarea value={get('brand','greeting')} onChange={(e) => set('brand','greeting', e.target.value)} /></Field>
+                <Field label="Brand tone (3 adjectives)"><Input value={get('brand','tone')} onChange={(e) => set('brand','tone', e.target.value)} placeholder="e.g. Friendly, professional, confident" /></Field>
+                <Field label="Words / phrases to NEVER use"><Textarea value={get('brand','never_say')} onChange={(e) => set('brand','never_say', e.target.value)} placeholder="e.g. 'cheap', 'guaranteed', competitor names, slang" /></Field>
+                <Field label="Sample greeting (how should Aura answer?)"><Textarea value={get('brand','greeting')} onChange={(e) => set('brand','greeting', e.target.value)} placeholder="e.g. Thanks for calling Acme Plumbing, this is Aura — how can I help today?" /></Field>
                 <Field label="Primary brand color (hex)"><Input value={get('brand','primary_color')} onChange={(e) => set('brand','primary_color', e.target.value)} placeholder="#0ea5a4" /></Field>
-                <Field label="Secondary color (hex)"><Input value={get('brand','secondary_color')} onChange={(e) => set('brand','secondary_color', e.target.value)} /></Field>
+                <Field label="Secondary color (hex)"><Input value={get('brand','secondary_color')} onChange={(e) => set('brand','secondary_color', e.target.value)} placeholder="#0f172a" /></Field>
               </>
             )}
             {sec.id === 'contact_routing' && (
@@ -254,17 +262,17 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'industry' && (
               <>
-                <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} /></Field>
-                <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} /></Field>
-                <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} /></Field>
+                <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} placeholder={"e.g.\n• What's the address of the property?\n• Is this a repair or new install?\n• When did the issue start?\n• Preferred appointment window?"} /></Field>
+                <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} placeholder="e.g. 'condenser', 'evaporator coil', 'SEER rating', 'split system'" /></Field>
+                <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} placeholder="e.g. EPA 608 certified, state contractor license #12345, HIPAA if medical, insured up to $1M" /></Field>
               </>
             )}
             {sec.id === 'website' && (
               <>
                 <Field label="Preferred subdomain or custom domain"><Input value={get('website','domain')} onChange={(e) => set('website','domain', e.target.value)} placeholder="acme.auraintercept.ai or www.acme.com" /></Field>
-                <Field label="Hero headline"><Input value={get('website','headline')} onChange={(e) => set('website','headline', e.target.value)} /></Field>
-                <Field label="Hero subheadline"><Textarea value={get('website','subheadline')} onChange={(e) => set('website','subheadline', e.target.value)} /></Field>
-                <Field label="Service blurbs (1 short paragraph per service)"><Textarea rows={6} value={get('website','services_copy')} onChange={(e) => set('website','services_copy', e.target.value)} /></Field>
+                <Field label="Hero headline"><Input value={get('website','headline')} onChange={(e) => set('website','headline', e.target.value)} placeholder="e.g. 24/7 HVAC repair across Phoenix — answered in 6 seconds" /></Field>
+                <Field label="Hero subheadline"><Textarea value={get('website','subheadline')} onChange={(e) => set('website','subheadline', e.target.value)} placeholder="e.g. Licensed techs, upfront pricing, same-day appointments." /></Field>
+                <Field label="Service blurbs (1 short paragraph per service)"><Textarea rows={6} value={get('website','services_copy')} onChange={(e) => set('website','services_copy', e.target.value)} placeholder={"e.g.\nAC Repair — Fast diagnostics, transparent quotes, most jobs done same day.\nFurnace Tune-Up — Seasonal maintenance to prevent breakdowns and lower bills.\nIndoor Air Quality — Filtration and humidity control for healthier homes."} /></Field>
               </>
             )}
             {sec.id === 'goals' && (
@@ -278,9 +286,12 @@ export default function PublicOnboardingIntake() {
               <div className="space-y-4">
                 {UPLOAD_SECTIONS.map((u) => (
                   <div key={u.key} className="border border-border rounded-md p-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm">{u.label}</Label>
-                      <label className="inline-flex items-center gap-1.5 text-sm text-primary cursor-pointer hover:underline">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <Label className="text-sm">{u.label}</Label>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{u.example}</p>
+                      </div>
+                      <label className="inline-flex items-center gap-1.5 text-sm text-primary cursor-pointer hover:underline whitespace-nowrap">
                         <Upload className="h-4 w-4" /> Add file
                         <input type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadFile(u.key, f); e.target.value = ''; }} />
                       </label>
@@ -299,12 +310,82 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'terms' && (
               <div className="space-y-4">
+                <div className="space-y-3 border border-border rounded-md p-3 bg-muted/20">
+                  <div>
+                    <Label className="text-sm font-semibold">Choose your onboarding plan</Label>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">One-time onboarding fee is due at the start of the 90-Day Live Trial. Subscription begins after the trial.</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {PLAN_OPTIONS.map((p) => {
+                      const selected = get('terms','plan') === p.id;
+                      return (
+                        <button
+                          type="button"
+                          key={p.id}
+                          onClick={() => set('terms','plan', p.id)}
+                          className={`text-left rounded-md border p-3 transition ${selected ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-foreground">{p.name}</span>
+                            {selected && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            ${p.monthly.toLocaleString()}/mo · ${p.annual.toLocaleString()}/yr
+                          </div>
+                          <div className="text-xs text-foreground mt-1">
+                            One-time onboarding: <span className="font-semibold">${p.onboarding.toLocaleString()}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Subscription billing after trial:</span>
+                    {(['monthly','annual'] as const).map((c) => {
+                      const selected = (get('terms','billing_cycle','monthly')) === c;
+                      return (
+                        <button
+                          type="button"
+                          key={c}
+                          onClick={() => set('terms','billing_cycle', c)}
+                          className={`px-2 py-1 rounded border text-xs ${selected ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground'}`}
+                        >
+                          {c === 'monthly' ? 'Monthly' : 'Annual (save ~20%)'}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {(() => {
+                    const planId = get('terms','plan');
+                    const plan = PLAN_OPTIONS.find((p) => p.id === planId);
+                    const cycle = get('terms','billing_cycle','monthly');
+                    if (!plan) return null;
+                    const recurring = cycle === 'annual'
+                      ? `$${plan.annual.toLocaleString()}/yr`
+                      : `$${plan.monthly.toLocaleString()}/mo`;
+                    return (
+                      <div className="text-xs text-foreground bg-background border border-border rounded p-2">
+                        Due at start of trial: <span className="font-semibold">${plan.onboarding.toLocaleString()}</span>. Then <span className="font-semibold">{recurring}</span> after the 90-Day Live Trial.
+                      </div>
+                    );
+                  })()}
+                  <Field label="Invoice email for onboarding fee">
+                    <Input
+                      type="email"
+                      value={get('terms','invoice_email')}
+                      onChange={(e) => set('terms','invoice_email', e.target.value)}
+                      placeholder="billing@yourcompany.com"
+                    />
+                  </Field>
+                  <p className="text-[11px] text-muted-foreground -mt-2">We'll send the one-time onboarding invoice here. Subscription billing starts after the 90-Day Live Trial.</p>
+                </div>
+
                 <p className="text-sm text-muted-foreground">Review the full <a className="text-primary underline" href="https://auraintercept.ai/terms-of-service" target="_blank" rel="noreferrer">Terms of Service</a> and <a className="text-primary underline" href="https://auraintercept.ai/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
                 {[
                   ['agree_tos', 'I agree to the Aura Intercept Terms of Service.'],
                   ['agree_privacy', 'I have read and agree to the Privacy Policy.'],
                   ['agree_third_party', 'I understand each 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) bills me directly with my own account + credit card on file. Aura Intercept does not resell or mark up usage.'],
-                  ['agree_onboarding_fee', 'I understand the onboarding fee is due at the start of the 90-day Live Trial.'],
+                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is due at the start of the 90-Day Live Trial and is non-refundable once onboarding has been completed.'],
                   ['agree_authority', 'I am authorized to sign this agreement on behalf of the company.'],
                 ].map(([key, label]) => (
                   <label key={key} className="flex items-start gap-2 text-sm">
