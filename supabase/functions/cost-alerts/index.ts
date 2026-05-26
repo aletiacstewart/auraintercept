@@ -115,7 +115,7 @@ serve(async (req) => {
           supabase,
           resendApiKey: integration.resend_api_key,
           companyId: company.id,
-          from: "Cost Alerts <alerts@resend.dev>",
+          from: "Cost Alerts <ai@auraintercept.ai>",
           to: [company.cost_alert_email],
           subject: `⚠️ Cost Alert: Budget exceeded by ${variancePercent.toFixed(0)}%`,
           template: 'cost_alert',

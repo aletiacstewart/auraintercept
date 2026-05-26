@@ -164,7 +164,7 @@ serve(async (req) => {
                     supabase,
                     resendApiKey,
                     companyId: followUp.company_id,
-                    from: `${companyName} <noreply@auraintercept.ai>`,
+                    from: `${companyName} <ai@auraintercept.ai>`,
                     to: [lead.email],
                     subject,
                     text: message,

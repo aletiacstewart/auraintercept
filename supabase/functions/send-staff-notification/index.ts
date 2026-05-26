@@ -186,7 +186,7 @@ serve(async (req) => {
           resendApiKey,
           companyId,
           to: recipient,
-          from: `${companyName} Alerts <onboarding@resend.dev>`,
+          from: `${companyName} Alerts <ai@auraintercept.ai>`,
           subject: `[Alert] ${title}`,
           html,
           template: `staff_${notificationType}`,

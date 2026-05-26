@@ -13,6 +13,10 @@ interface Props {
   defaultCarrier?: string;
   /** Wrap in a Card with header. Defaults to true. */
   withCard?: boolean;
+  /** Controlled carrier value. When provided, component is controlled. */
+  carrier?: string;
+  onCarrierChange?: (v: string) => void;
+  onAuraNumberChange?: (v: string) => void;
 }
 
 /**
@@ -23,9 +27,17 @@ export function CarrierForwardingGuide({
   auraNumber: initialAura = '',
   defaultCarrier = '',
   withCard = true,
+  carrier: controlledCarrier,
+  onCarrierChange,
+  onAuraNumberChange,
 }: Props) {
-  const [carrier, setCarrier] = useState(defaultCarrier);
-  const [auraNumber, setAuraNumber] = useState(initialAura);
+  const [carrierInternal, setCarrierInternal] = useState(defaultCarrier);
+  const [auraNumberInternal, setAuraNumberInternal] = useState(initialAura);
+  const carrier = controlledCarrier ?? carrierInternal;
+  const auraNumber = onAuraNumberChange ? initialAura : auraNumberInternal;
+  const setCarrier = (v: string) => (onCarrierChange ? onCarrierChange(v) : setCarrierInternal(v));
+  const setAuraNumber = (v: string) =>
+    onAuraNumberChange ? onAuraNumberChange(v) : setAuraNumberInternal(v);
   const [showAll, setShowAll] = useState(false);
 
   const selected = CARRIERS.find((c) => c.name === carrier);

@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, FileText, CheckCircle2, X, Copy as CopyIcon, ChevronDown } from 'lucide-react';
-import { CARRIERS, FORWARDING_RULES, fillTokens } from '@/lib/carrierForwarding';
+import { Loader2, Upload, FileText, CheckCircle2, X, Download } from 'lucide-react';
+import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
+import { supabase } from '@/integrations/supabase/client';
+import jsPDF from 'jspdf';
 
 type InviteState = {
   status: 'loading' | 'invalid' | 'expired' | 'submitted' | 'ready';
@@ -60,6 +62,18 @@ const PLAN_OPTIONS = [
   { id: 'elite', name: 'Aura Elite', monthly: 2197, annual: 21970, onboarding: 2197 },
 ] as const;
 
+const INTEGRATION_PROVIDERS = [
+  { key: 'signalwire', label: 'SignalWire (voice/SMS)' },
+  { key: 'elevenlabs', label: 'ElevenLabs (voice)' },
+  { key: 'resend', label: 'Resend (email)' },
+  { key: 'tavily', label: 'Tavily (research)' },
+  { key: 'stripe', label: 'Stripe (payments)' },
+  { key: 'google', label: 'Google Workspace' },
+  { key: 'a2p_10dlc', label: 'A2P 10DLC (SMS registration)' },
+  { key: 'social', label: 'Social Media (Meta/X/LinkedIn OAuth)' },
+];
+const STATUS_OPTIONS = ['None', 'In progress', 'Active'] as const;
+
 export default function PublicOnboardingIntake() {
   const { token = '' } = useParams();
   const { toast } = useToast();
@@ -70,6 +84,19 @@ export default function PublicOnboardingIntake() {
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const saveTimer = useRef<number | null>(null);
+  const [industryPacks, setIndustryPacks] = useState<Array<{ industry_id: string; label: string; cluster: string }>>([]);
+  const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data: packs } = await supabase
+        .from('industry_template_packs')
+        .select('industry_id, label, cluster')
+        .eq('is_active', true)
+        .order('label');
+      setIndustryPacks((packs as any) || []);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -137,6 +164,23 @@ export default function PublicOnboardingIntake() {
       return;
     }
     setSubmitting(true);
+    // Generate a simple signed PDF receipt of the workbook and upload it
+    // so it's archived alongside customer uploads and emailed back to them.
+    try {
+      const pdfBlob = buildSubmissionPdfBlob({
+        companyName: state.company_name || '',
+        recipient: state.recipient_email || '',
+        data,
+        signature: sig,
+      });
+      const fd = new FormData();
+      fd.append('token', token);
+      fd.append('section', 'signed_workbook');
+      fd.append('file', new File([pdfBlob], `onboarding-workbook-${Date.now()}.pdf`, { type: 'application/pdf' }));
+      await fetch(`${FN_URL}/upload-onboarding-file`, { method: 'POST', body: fd, headers: { apikey: APIKEY } });
+    } catch (e) {
+      console.warn('[onboarding] pdf upload failed (non-fatal)', e);
+    }
     const res = await fetch(`${FN_URL}/submit-onboarding`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: APIKEY },
@@ -148,6 +192,7 @@ export default function PublicOnboardingIntake() {
       toast({ title: 'Submission failed', description: json.error || 'Try again', variant: 'destructive' });
       return;
     }
+    if (json.signed_pdf_url) setSignedPdfUrl(json.signed_pdf_url);
     setState((s) => ({ ...s, status: 'submitted' }));
   }
 
@@ -169,7 +214,18 @@ export default function PublicOnboardingIntake() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>Thanks{state.company_name ? `, ${state.company_name}` : ''}! Your onboarding workbook is on its way to the Aura Intercept team.</p>
-            <p>We'll be in touch within 1 business day to begin Concierge Onboarding.</p>
+            <p>A confirmation email with a copy of your signed workbook is on its way to <span className="font-medium text-foreground">{state.recipient_email}</span>.</p>
+            <p>We'll be in touch within 1 business day to schedule your Concierge Onboarding kickoff call.</p>
+            {signedPdfUrl && (
+              <a
+                href={signedPdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-primary hover:underline pt-2"
+              >
+                <Download className="h-4 w-4" /> Download your signed workbook (PDF)
+              </a>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -226,22 +282,59 @@ export default function PublicOnboardingIntake() {
                 <Field label="Email inbox for new leads"><Input value={get('contact_routing','lead_email')} onChange={(e) => set('contact_routing','lead_email', e.target.value)} /></Field>
                 <Field label="Escalation phone (urgent)"><Input value={get('contact_routing','escalation_phone')} onChange={(e) => set('contact_routing','escalation_phone', e.target.value)} /></Field>
                 <CarrierForwardingGuide
+                  withCard={false}
                   carrier={get('contact_routing','carrier','')}
                   auraNumber={get('contact_routing','aura_number','')}
                   onCarrierChange={(v) => set('contact_routing','carrier', v)}
                   onAuraNumberChange={(v) => set('contact_routing','aura_number', v)}
-                  onCopy={(txt) => { navigator.clipboard.writeText(txt); toast({ title: 'Copied', description: txt }); }}
                 />
               </>
             )}
             {sec.id === 'integrations' && (
               <>
-                <p className="text-xs text-muted-foreground">All 3rd-party providers require your own account + credit card on file. Each invoices you separately.</p>
-                {['SignalWire (voice/SMS)','ElevenLabs (voice)','Resend (email)','Tavily (research)','Stripe (payments)','Google Workspace','A2P 10DLC carrier registration'].map((label) => (
-                  <Field key={label} label={`${label} — account status`}>
-                    <Input value={get('integrations', label)} onChange={(e) => set('integrations', label, e.target.value)} placeholder="None / In progress / Active (email used)" />
-                  </Field>
-                ))}
+                <p className="text-xs text-muted-foreground">All 3rd-party providers require your own account + valid credit card on file. Each invoices you directly and separately from your Aura plan fee. If you don't have an account yet, leave it blank — Concierge Onboarding will create it on your behalf using your login + card.</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-border rounded-md">
+                    <thead className="bg-muted/40 text-xs text-muted-foreground">
+                      <tr>
+                        <th className="text-left p-2">Provider</th>
+                        <th className="text-left p-2">Account email</th>
+                        <th className="text-left p-2">Status</th>
+                        <th className="text-left p-2">Card on file</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {INTEGRATION_PROVIDERS.map((p) => (
+                        <tr key={p.key} className="border-t border-border">
+                          <td className="p-2 font-medium">{p.label}</td>
+                          <td className="p-2">
+                            <Input
+                              className="h-8 text-xs"
+                              value={get('integrations', `${p.key}_email`)}
+                              onChange={(e) => set('integrations', `${p.key}_email`, e.target.value)}
+                              placeholder="account@yourcompany.com"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <select
+                              value={get('integrations', `${p.key}_status`, 'None')}
+                              onChange={(e) => set('integrations', `${p.key}_status`, e.target.value)}
+                              className="h-8 rounded border border-input bg-background px-2 text-xs"
+                            >
+                              {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                          </td>
+                          <td className="p-2">
+                            <Checkbox
+                              checked={!!get('integrations', `${p.key}_card`, false)}
+                              onCheckedChange={(v) => set('integrations', `${p.key}_card`, !!v)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
             {sec.id === 'a2p' && (
@@ -270,6 +363,20 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'industry' && (
               <>
+                <Field label="Industry vertical (pick the closest match)">
+                  <select
+                    value={get('industry','vertical')}
+                    onChange={(e) => set('industry','vertical', e.target.value)}
+                    className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
+                  >
+                    <option value="">— Select industry —</option>
+                    {industryPacks.map((p) => (
+                      <option key={p.industry_id} value={p.industry_id}>{p.label} · {p.cluster}</option>
+                    ))}
+                    <option value="__custom__">Other / custom (describe below)</option>
+                  </select>
+                </Field>
+                <p className="text-[11px] text-muted-foreground -mt-3">Picking an industry pre-loads agent prompts, dashboard widgets, and intake forms tuned for that vertical.</p>
                 <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} placeholder={"e.g.\n• What's the address of the property?\n• Is this a repair or new install?\n• When did the issue start?\n• Preferred appointment window?"} /></Field>
                 <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} placeholder="e.g. 'condenser', 'evaporator coil', 'SEER rating', 'split system'" /></Field>
                 <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} placeholder="e.g. EPA 608 certified, state contractor license #12345, HIPAA if medical, insured up to $1M" /></Field>
@@ -446,146 +553,59 @@ function CenteredMessage({ title, body }: { title: string; body: string }) {
   );
 }
 
-function CarrierForwardingGuide({
-  carrier,
-  auraNumber,
-  onCarrierChange,
-  onAuraNumberChange,
-  onCopy,
+function buildSubmissionPdfBlob({
+  companyName,
+  recipient,
+  data,
+  signature,
 }: {
-  carrier: string;
-  auraNumber: string;
-  onCarrierChange: (v: string) => void;
-  onAuraNumberChange: (v: string) => void;
-  onCopy: (text: string) => void;
-}) {
-  const [showAll, setShowAll] = useState(false);
-  const selected = CARRIERS.find((c) => c.name === carrier) || CARRIERS[0];
+  companyName: string;
+  recipient: string;
+  data: Record<string, any>;
+  signature: Record<string, any>;
+}): Blob {
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  let y = 56;
+  const margin = 48;
+  const lineH = 14;
 
-  return (
-    <div className="mt-4 border border-border rounded-md p-3 bg-muted/20 space-y-3">
-      <div>
-        <Label className="text-sm font-semibold">Carrier call-forwarding setup</Label>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
-          Pick the carrier of the business line above. The codes below tell that phone to forward calls (immediate, after-hours / no-answer, busy, or unreachable) to the Aura number assigned during setup.
-        </p>
-      </div>
+  const write = (text: string, size = 10, bold = false) => {
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setFontSize(size);
+    const lines = doc.splitTextToSize(text, pageW - margin * 2);
+    for (const line of lines) {
+      if (y > pageH - margin) { doc.addPage(); y = margin; }
+      doc.text(line, margin, y);
+      y += lineH;
+    }
+  };
 
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="Your mobile carrier">
-          <select
-            value={carrier}
-            onChange={(e) => onCarrierChange(e.target.value)}
-            className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
-          >
-            <option value="">— Select carrier —</option>
-            {CARRIERS.map((c) => (
-              <option key={c.name} value={c.name}>{c.name} · {c.type}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Aura number to forward TO">
-          <Input
-            value={auraNumber}
-            onChange={(e) => onAuraNumberChange(e.target.value)}
-            placeholder="+15551234567 (provided during setup)"
-          />
-        </Field>
-      </div>
+  write('Aura Intercept · Signed Onboarding Workbook', 16, true);
+  y += 4;
+  write(companyName || '(no company name)', 12, true);
+  write(`Recipient: ${recipient}`, 9);
+  write(`Submitted: ${new Date().toISOString()}`, 9);
+  y += 8;
 
-      {carrier ? (
-        <CarrierCard carrier={selected} num={auraNumber} onCopy={onCopy} />
-      ) : (
-        <p className="text-xs text-muted-foreground italic">Select your carrier above to see the exact codes for that network.</p>
-      )}
+  for (const [section, val] of Object.entries(data)) {
+    if (!val || typeof val !== 'object') continue;
+    y += 6;
+    write(section.replace(/_/g, ' ').toUpperCase(), 11, true);
+    for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+      const display = typeof v === 'object' ? JSON.stringify(v) : String(v ?? '');
+      if (!display.trim()) continue;
+      write(`• ${k.replace(/_/g, ' ')}: ${display}`, 9);
+    }
+  }
 
-      <button
-        type="button"
-        onClick={() => setShowAll((v) => !v)}
-        className="flex items-center gap-1 text-xs text-primary hover:underline"
-      >
-        <ChevronDown className={`h-3.5 w-3.5 transition ${showAll ? 'rotate-180' : ''}`} />
-        {showAll ? 'Hide' : 'Show'} reference for all carriers
-      </button>
+  y += 12;
+  write('SIGNATURE', 11, true);
+  write(`Signer: ${signature.signer_name ?? ''} (${signature.signer_title ?? ''})`, 9);
+  if (signature.signer_email) write(`Email: ${signature.signer_email}`, 9);
+  write(`Typed signature: ${signature.typed_signature ?? signature.signer_name ?? ''}`, 9);
+  write('Acknowledgements: TOS, Privacy, 3rd-party billing, onboarding fee, signing authority — accepted.', 9);
 
-      {showAll && (
-        <div className="space-y-3 pt-2 border-t border-border">
-          {CARRIERS.filter((c) => c.name !== selected?.name || !carrier).map((c) => (
-            <CarrierCard key={c.name} carrier={c} num={auraNumber} onCopy={onCopy} compact />
-          ))}
-        </div>
-      )}
-
-      <p className="text-[10px] text-muted-foreground">
-        Tip: most phones answer star codes with a short confirmation tone. If nothing happens, your carrier may require the conditional-forwarding add-on to be enabled (free) — call the carrier and request "Call Forwarding No Answer activation".
-      </p>
-    </div>
-  );
-}
-
-function CarrierCard({
-  carrier,
-  num,
-  onCopy,
-  compact = false,
-}: {
-  carrier: typeof CARRIERS[number];
-  num: string;
-  onCopy: (text: string) => void;
-  compact?: boolean;
-}) {
-  return (
-    <div className="rounded-md border border-border bg-background">
-      <div className="px-3 py-2 border-b border-border flex items-center justify-between">
-        <div>
-          <div className="text-sm font-semibold text-foreground">{carrier.name}</div>
-          <div className="text-[10px] text-muted-foreground">{carrier.type}</div>
-        </div>
-      </div>
-      <div className="divide-y divide-border">
-        {FORWARDING_RULES.map((rule) => {
-          const onText = fillTokens(carrier[rule.on] as string, num);
-          const offText = rule.short === 'Cancel All' ? '' : fillTokens(carrier[rule.off] as string, num);
-          return (
-            <div key={rule.short} className="px-3 py-2 grid grid-cols-1 sm:grid-cols-[120px,1fr] gap-2 text-xs">
-              <div>
-                <div className="font-semibold text-foreground">{rule.short}</div>
-                {!compact && <div className="text-[10px] text-muted-foreground mt-0.5">{rule.when}</div>}
-              </div>
-              <div className="space-y-1">
-                <CodeRow label="Turn ON" value={onText} onCopy={onCopy} />
-                {offText && offText !== onText && (
-                  <CodeRow label="Turn OFF" value={offText} onCopy={onCopy} />
-                )}
-              </div>
-            </div>
-          );
-        })}
-        <div className="px-3 py-2 text-xs">
-          <div className="font-semibold text-foreground mb-1">Verify current forwarding</div>
-          <CodeRow label="Check" value={fillTokens(carrier.verify, num)} onCopy={onCopy} />
-        </div>
-        <div className="px-3 py-2 text-[11px] text-muted-foreground">
-          <span className="font-semibold text-foreground">Notes: </span>{carrier.notes}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CodeRow({ label, value, onCopy }: { label: string; value: string; onCopy: (text: string) => void }) {
-  return (
-    <div className="flex items-start gap-2">
-      <span className="text-[10px] text-muted-foreground w-14 shrink-0 mt-1">{label}</span>
-      <code className="flex-1 text-[11px] bg-muted/60 rounded px-2 py-1 font-mono text-foreground break-all">{value}</code>
-      <button
-        type="button"
-        onClick={() => onCopy(value)}
-        className="text-muted-foreground hover:text-foreground mt-1"
-        title="Copy"
-      >
-        <CopyIcon className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
+  return doc.output('blob');
 }

@@ -266,7 +266,7 @@ Deno.serve(async (req) => {
       resendApiKey: integrations.resend_api_key,
       companyId: appointment.company_id,
       to: appointment.customer_email,
-      from: `${companyName} <onboarding@resend.dev>`,
+      from: `${companyName} <ai@auraintercept.ai>`,
       subject,
       html,
       template: `appointment_${type}`,
