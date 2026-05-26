@@ -43,14 +43,21 @@ const SECTIONS = [
 ] as const;
 
 const UPLOAD_SECTIONS = [
-  { key: 'logo', label: 'Company logo (PNG/SVG)' },
-  { key: 'brand_assets', label: 'Additional brand assets (color guide, fonts, photos)' },
-  { key: 'ein_w9', label: 'EIN letter / W-9' },
-  { key: 'customer_csv', label: 'Customer list (CSV)' },
-  { key: 'employee_csv', label: 'Employee / technician list (CSV)' },
-  { key: 'price_sheet', label: 'Price sheet / service catalog' },
-  { key: 'misc', label: 'Other documents' },
+  { key: 'logo', label: 'Company logo (PNG/SVG)', example: 'Ex: acme-logo.svg, 512×512, transparent background' },
+  { key: 'brand_assets', label: 'Additional brand assets (color guide, fonts, photos)', example: 'Ex: brand-guide.pdf, hero photos, team headshots' },
+  { key: 'ein_w9', label: 'EIN letter / W-9', example: 'Ex: IRS CP-575 confirmation letter or signed W-9 PDF' },
+  { key: 'customer_csv', label: 'Customer list (CSV)', example: 'Ex: customers.csv — name, email, phone, last service date' },
+  { key: 'employee_csv', label: 'Employee / technician list (CSV)', example: 'Ex: techs.csv — name, role, phone, email, service area' },
+  { key: 'price_sheet', label: 'Price sheet / service catalog', example: 'Ex: 2025-price-sheet.pdf or services.xlsx with SKU + price' },
+  { key: 'misc', label: 'Other documents', example: 'Ex: insurance cert, prior contracts, SOPs, training docs' },
 ];
+
+const PLAN_OPTIONS = [
+  { id: 'core',  name: 'Aura Core',  monthly: 497,  annual: 4970,  onboarding: 497 },
+  { id: 'boost', name: 'Aura Boost', monthly: 697,  annual: 6970,  onboarding: 697 },
+  { id: 'pro',   name: 'Aura Pro',   monthly: 1197, annual: 11970, onboarding: 1197 },
+  { id: 'elite', name: 'Aura Elite', monthly: 2197, annual: 21970, onboarding: 2197 },
+] as const;
 
 export default function PublicOnboardingIntake() {
   const { token = '' } = useParams();
@@ -122,8 +129,9 @@ export default function PublicOnboardingIntake() {
 
   async function submit() {
     const sig = data.terms || {};
-    if (!sig.agree_tos || !sig.agree_privacy || !sig.agree_third_party || !sig.signer_name || !sig.signer_title) {
-      toast({ title: 'Missing acknowledgements', description: 'Please complete the Terms of Service section.', variant: 'destructive' });
+    const emailOk = typeof sig.invoice_email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sig.invoice_email);
+    if (!sig.plan || !emailOk || !sig.agree_tos || !sig.agree_privacy || !sig.agree_third_party || !sig.signer_name || !sig.signer_title) {
+      toast({ title: 'Missing info', description: 'Please select a plan, enter a valid invoice email, and complete all acknowledgements.', variant: 'destructive' });
       setStep(SECTIONS.length - 1);
       return;
     }
