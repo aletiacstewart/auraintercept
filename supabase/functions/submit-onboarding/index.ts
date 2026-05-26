@@ -60,10 +60,12 @@ Deno.serve(async (req) => {
     // Gather uploads + signed URLs
     const { data: uploads } = await admin.from('onboarding_uploads').select('section, file_name, storage_path, mime_type, size_bytes').eq('invite_id', invite.id);
     const uploadLinks: string[] = [];
+    let signedPdfUrl: string | null = null;
     for (const u of uploads ?? []) {
       const { data: signed } = await admin.storage.from('onboarding-uploads').createSignedUrl(u.storage_path, 60 * 60 * 24 * 14);
       if (signed?.signedUrl) {
         uploadLinks.push(`<li><strong>${escapeHtml(u.section)}</strong>: <a href="${signed.signedUrl}">${escapeHtml(u.file_name)}</a> <span style="color:#64748b">(${Math.round((u.size_bytes || 0) / 1024)} KB)</span></li>`);
+        if (u.section === 'signed_workbook' && !signedPdfUrl) signedPdfUrl = signed.signedUrl;
       }
     }
     const uploadsHtml = uploadLinks.length
@@ -90,7 +92,35 @@ Deno.serve(async (req) => {
       priority: 'high',
     });
 
-    return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    // Customer confirmation email with signed-PDF link + next steps.
+    if (invite.recipient_email) {
+      const customerHtml = `
+        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#0f172a">
+          <h2 style="margin:0 0 8px">Your onboarding workbook was received ✓</h2>
+          <p>Thanks${invite.company_name ? `, ${escapeHtml(invite.company_name)}` : ''}! We received your signed onboarding workbook on ${escapeHtml(submittedAt)}.</p>
+          ${signedPdfUrl ? `<p><a href="${signedPdfUrl}" style="display:inline-block;background:#0ea5a4;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600">Download your signed workbook (PDF)</a></p><p style="font-size:12px;color:#64748b">This download link expires in 14 days. Save a copy for your records.</p>` : ''}
+          <h3 style="margin:24px 0 6px;font-size:15px">What happens next</h3>
+          <ol style="line-height:1.6">
+            <li>Within <strong>1 business day</strong>, your Aura Intercept Concierge will email to schedule your kickoff call.</li>
+            <li>We'll review your workbook together and configure your 3rd-party accounts (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) using the logins + card you provide. Each provider invoices you directly and separately from your Aura plan fee.</li>
+            <li>Your one-time onboarding fee is invoiced at the start of your 90-Day Live Trial.</li>
+            <li>Your platform goes live — the trial begins.</li>
+          </ol>
+          <p style="margin-top:18px;font-size:12px;color:#64748b">Questions before then? Reply to this email or write to ai@auraintercept.ai.</p>
+        </div>`;
+      await sendGuardedEmail({
+        supabase: admin,
+        resendApiKey: Deno.env.get('RESEND_API_KEY') ?? '',
+        companyId: null,
+        to: invite.recipient_email,
+        from: 'Aura Intercept <ai@auraintercept.ai>',
+        subject: `Workbook received — next steps for ${invite.company_name}`,
+        html: customerHtml,
+        priority: 'high',
+      }).catch((e) => console.warn('[submit-onboarding] customer email failed', e));
+    }
+
+    return new Response(JSON.stringify({ ok: true, signed_pdf_url: signedPdfUrl }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e) {
     console.error('[submit-onboarding]', e);
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
