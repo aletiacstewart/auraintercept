@@ -380,6 +380,11 @@ export default function Integrations() {
           </CardContent>
         </Card>
 
+        {/* Carrier call-forwarding reference for 3rd-party voice integrations */}
+        <CarrierForwardingGuide
+          auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+        />
+
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {INTEGRATIONS.map((integration) => {
