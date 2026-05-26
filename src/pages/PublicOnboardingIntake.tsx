@@ -214,7 +214,18 @@ export default function PublicOnboardingIntake() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>Thanks{state.company_name ? `, ${state.company_name}` : ''}! Your onboarding workbook is on its way to the Aura Intercept team.</p>
-            <p>We'll be in touch within 1 business day to begin Concierge Onboarding.</p>
+            <p>A confirmation email with a copy of your signed workbook is on its way to <span className="font-medium text-foreground">{state.recipient_email}</span>.</p>
+            <p>We'll be in touch within 1 business day to schedule your Concierge Onboarding kickoff call.</p>
+            {signedPdfUrl && (
+              <a
+                href={signedPdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-primary hover:underline pt-2"
+              >
+                <Download className="h-4 w-4" /> Download your signed workbook (PDF)
+              </a>
+            )}
           </CardContent>
         </Card>
       </div>
