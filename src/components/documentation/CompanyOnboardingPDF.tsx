@@ -1337,6 +1337,8 @@ export const CompanyOnboardingPDF = () => (
     <EmployeeInfoPage />
     <AuditQuestionsPages />
     <GoalsNotesPage />
+    <TermsOfServiceSummaryPage />
+    <TermsAcknowledgementPage />
     <SignOffPage />
   </Document>
 );
