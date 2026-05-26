@@ -164,6 +164,23 @@ export default function PublicOnboardingIntake() {
       return;
     }
     setSubmitting(true);
+    // Generate a simple signed PDF receipt of the workbook and upload it
+    // so it's archived alongside customer uploads and emailed back to them.
+    try {
+      const pdfBlob = buildSubmissionPdfBlob({
+        companyName: state.company_name || '',
+        recipient: state.recipient_email || '',
+        data,
+        signature: sig,
+      });
+      const fd = new FormData();
+      fd.append('token', token);
+      fd.append('section', 'signed_workbook');
+      fd.append('file', new File([pdfBlob], `onboarding-workbook-${Date.now()}.pdf`, { type: 'application/pdf' }));
+      await fetch(`${FN_URL}/upload-onboarding-file`, { method: 'POST', body: fd, headers: { apikey: APIKEY } });
+    } catch (e) {
+      console.warn('[onboarding] pdf upload failed (non-fatal)', e);
+    }
     const res = await fetch(`${FN_URL}/submit-onboarding`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: APIKEY },
@@ -175,6 +192,7 @@ export default function PublicOnboardingIntake() {
       toast({ title: 'Submission failed', description: json.error || 'Try again', variant: 'destructive' });
       return;
     }
+    if (json.signed_pdf_url) setSignedPdfUrl(json.signed_pdf_url);
     setState((s) => ({ ...s, status: 'submitted' }));
   }
 
