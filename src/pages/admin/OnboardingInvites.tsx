@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Loader2, Send } from 'lucide-react';
+import { Copy, Loader2, Send, ExternalLink, FlaskConical } from 'lucide-react';
 
 type Invite = {
   id: string;
@@ -52,17 +52,48 @@ export default function OnboardingInvites() {
     load();
   }
 
+  async function createTestInvite() {
+    setSending(true);
+    const { data, error } = await supabase.functions.invoke('create-onboarding-invite', {
+      body: { company_name: 'Test Company (preview)', recipient_email: 'ai@auraintercept.ai' },
+    });
+    setSending(false);
+    if (error || (data as any)?.error) {
+      toast({ title: 'Test invite failed', description: (data as any)?.error || error?.message, variant: 'destructive' });
+      return;
+    }
+    const token = (data as any)?.token;
+    await load();
+    if (token) {
+      window.open(`/intake/${token}`, '_blank');
+      toast({ title: 'Test invite created', description: 'Opening intake form in a new tab.' });
+    } else {
+      toast({ title: 'Test invite created', description: 'Use the Copy button to grab the link.' });
+    }
+  }
+
   function copyLink(token: string) {
-    const url = `https://auraintercept.ai/intake/${token}`;
+    const url = `${window.location.origin}/intake/${token}`;
     navigator.clipboard.writeText(url);
     toast({ title: 'Link copied' });
+  }
+
+  function openLink(token: string) {
+    window.open(`/intake/${token}`, '_blank');
   }
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">Onboarding Invites</h1>
-        <p className="text-sm text-muted-foreground">Send the fillable workbook to a company. They get a private link; completed submissions are emailed to ai@auraintercept.ai.</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground">Onboarding Invites</h1>
+            <p className="text-sm text-muted-foreground">Send the fillable workbook to a company. They get a private link; completed submissions are emailed to ai@auraintercept.ai.</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={createTestInvite} disabled={sending}>
+            <FlaskConical className="h-4 w-4 mr-2" />Generate test link
+          </Button>
+        </div>
       </header>
 
       <Card>
@@ -106,12 +137,17 @@ export default function OnboardingInvites() {
                     <TableCell className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{r.submitted_at ? new Date(r.submitted_at).toLocaleString() : '—'}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="sm" onClick={() => copyLink(r.token)}><Copy className="h-3.5 w-3.5 mr-1" />Copy</Button>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" onClick={() => copyLink(r.token)}><Copy className="h-3.5 w-3.5 mr-1" />Copy</Button>
+                        <Button variant="ghost" size="sm" onClick={() => openLink(r.token)}><ExternalLink className="h-3.5 w-3.5 mr-1" />Open</Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
                 {rows.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">No invites yet.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+                    No invites yet. Fill in a company + email above and click <span className="font-medium">Send invite</span>, or use <span className="font-medium">Generate test link</span> to preview the form.
+                  </TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
