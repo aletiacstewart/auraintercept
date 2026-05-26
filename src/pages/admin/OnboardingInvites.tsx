@@ -62,7 +62,7 @@ export default function OnboardingInvites() {
       toast({ title: 'Test invite failed', description: (data as any)?.error || error?.message, variant: 'destructive' });
       return;
     }
-    const token = (data as any)?.token;
+    const token = (data as any)?.invite?.token;
     await load();
     if (token) {
       window.open(`/intake/${token}`, '_blank');
