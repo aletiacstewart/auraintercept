@@ -12,6 +12,7 @@ import {
   THIRD_PARTY_INTEGRATIONS,
 } from '@/lib/documentationConfig';
 import { sanitizePdfText, SAFE_BULLET } from './pdfSanitize';
+import { CARRIERS, FORWARDING_RULES, fillTokens } from '@/lib/carrierForwarding';
 
 const colors = {
   primary: '#6366f1',
@@ -1222,6 +1223,79 @@ const TechnicianRosterPage = () => (
       <Text style={styles.infoBoxText}>{sanitizePdfText('Core: 10 · Boost: 25 · Pro: 50 · Elite: unlimited')}</Text>
     </View>
   </Page>
+);
+
+// ---------------------------------------------------------------------------
+// Carrier call-forwarding reference page (mirrors the live intake guide).
+// ---------------------------------------------------------------------------
+const CarrierForwardingPage = () => (
+  <>
+    <Page size="A4" style={styles.page}>
+      <PageHeader title="Carrier Call-Forwarding Guide" pageNum={10} />
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Carrier Call-Forwarding Setup')}</Text>
+      <Text style={styles.paragraph}>
+        {sanitizePdfText(
+          'These codes tell your business mobile phone to forward calls to the Aura number assigned during setup. Replace {num} with the Aura number (e.g. +15551234567) and {rings} with 30 for ~6 rings before forwarding. Most phones answer with a short confirmation tone; if nothing happens, your carrier may require the conditional-forwarding add-on to be enabled (free) — call them and ask to activate "Call Forwarding No Answer".'
+        )}
+      </Text>
+      <View style={styles.infoBox}>
+        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Four scenarios Aura covers')}</Text>
+        {FORWARDING_RULES.map((r) => (
+          <Text key={r.short} style={[styles.infoBoxText, { marginBottom: 3 }]}>
+            {sanitizePdfText(`${SAFE_BULLET} ${r.label} — ${r.when}`)}
+          </Text>
+        ))}
+      </View>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('My carrier')}</Text>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Carrier name:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Aura number to forward TO:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <View style={styles.formRow}>
+        <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Business line being forwarded:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+    </Page>
+    {CARRIERS.map((c, idx) => (
+      <Page key={c.name} size="A4" style={styles.page}>
+        <PageHeader title={`Carrier Guide — ${c.name}`} pageNum={10 + idx + 1} />
+        <Text style={styles.sectionTitle}>{sanitizePdfText(c.name)}</Text>
+        <Text style={[styles.paragraph, { marginTop: -6, color: colors.gray }]}>
+          {sanitizePdfText(c.type)}
+        </Text>
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderCell, { width: 90 }]}>{sanitizePdfText('Scenario')}</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Turn ON')}</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Turn OFF')}</Text>
+          </View>
+          {FORWARDING_RULES.map((rule) => {
+            const on = fillTokens(c[rule.on] as string, '{num}');
+            const off = rule.short === 'Cancel All' ? '' : fillTokens(c[rule.off] as string, '{num}');
+            return (
+              <View key={rule.short} style={styles.tableRow}>
+                <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>{sanitizePdfText(rule.short)}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(on)}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(off || '—')}</Text>
+              </View>
+            );
+          })}
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>{sanitizePdfText('Verify')}</Text>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{sanitizePdfText(fillTokens(c.verify, '{num}'))}</Text>
+          </View>
+        </View>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoBoxTitle}>{sanitizePdfText('Carrier notes')}</Text>
+          <Text style={styles.infoBoxText}>{sanitizePdfText(c.notes)}</Text>
+        </View>
+      </Page>
+    ))}
+  </>
 );
 
 const BookingPortalPage = () => (
