@@ -311,31 +311,37 @@ const CoverPage = () => (
   <Page size="A4" style={styles.coverPage}>
     <Text style={styles.coverTagline}>{sanitizePdfText('AURA INTERCEPT')}</Text>
     <Text style={styles.coverTitle}>{sanitizePdfText('Company Onboarding')}</Text>
-    <Text style={styles.coverTitle}>{sanitizePdfText('Questionnaire')}</Text>
+    <Text style={styles.coverTitle}>{sanitizePdfText('Workbook')}</Text>
     <Text style={styles.coverSubtitle}>
-      {sanitizePdfText('Complete this form to help us configure your AI platform')}
+      {sanitizePdfText('Everything we need to launch your AI platform — fill this out before kickoff.')}
     </Text>
     <View style={{ marginTop: 40 }}>
       <Text style={{ fontSize: 11, color: '#a5b4fc', textAlign: 'center', marginBottom: 8 }}>
         {sanitizePdfText('This document includes:')}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} Company Profile & Contact Information`)}
+        {sanitizePdfText(`${SAFE_BULLET} How to use this workbook + master document checklist`)}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} Business Operations Details`)}
+        {sanitizePdfText(`${SAFE_BULLET} Company profile, hours, service area, branding`)}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} 30-Question AI Opportunity Audit`)}
+        {sanitizePdfText(`${SAFE_BULLET} 3rd-party account worksheet (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Google, Social)`)}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} Integration Requirements Checklist`)}
+        {sanitizePdfText(`${SAFE_BULLET} Brand voice + knowledge base intake`)}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} Knowledge Base Setup Forms`)}
+        {sanitizePdfText(`${SAFE_BULLET} Industry-specific intake pack`)}
       </Text>
       <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
-        {sanitizePdfText(`${SAFE_BULLET} Employee Account Information`)}
+        {sanitizePdfText(`${SAFE_BULLET} Communication routing + employee/technician roster`)}
+      </Text>
+      <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
+        {sanitizePdfText(`${SAFE_BULLET} Booking, customer portal, Smart Website inputs`)}
+      </Text>
+      <Text style={{ fontSize: 10, color: colors.white, textAlign: 'center', marginBottom: 4 }}>
+        {sanitizePdfText(`${SAFE_BULLET} 30-question AI Opportunity Audit + sign-off`)}
       </Text>
     </View>
     <Text style={styles.coverVersion}>
