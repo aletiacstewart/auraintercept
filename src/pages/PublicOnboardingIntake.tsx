@@ -334,6 +334,20 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'industry' && (
               <>
+                <Field label="Industry vertical (pick the closest match)">
+                  <select
+                    value={get('industry','vertical')}
+                    onChange={(e) => set('industry','vertical', e.target.value)}
+                    className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
+                  >
+                    <option value="">— Select industry —</option>
+                    {industryPacks.map((p) => (
+                      <option key={p.industry_id} value={p.industry_id}>{p.label} · {p.cluster}</option>
+                    ))}
+                    <option value="__custom__">Other / custom (describe below)</option>
+                  </select>
+                </Field>
+                <p className="text-[11px] text-muted-foreground -mt-3">Picking an industry pre-loads agent prompts, dashboard widgets, and intake forms tuned for that vertical.</p>
                 <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} placeholder={"e.g.\n• What's the address of the property?\n• Is this a repair or new install?\n• When did the issue start?\n• Preferred appointment window?"} /></Field>
                 <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} placeholder="e.g. 'condenser', 'evaporator coil', 'SEER rating', 'split system'" /></Field>
                 <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} placeholder="e.g. EPA 608 certified, state contractor license #12345, HIPAA if medical, insured up to $1M" /></Field>
