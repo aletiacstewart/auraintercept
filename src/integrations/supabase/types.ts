@@ -4070,6 +4070,45 @@ export type Database = {
           },
         ]
       }
+      onboarding_invites: {
+        Row: {
+          company_name: string
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          recipient_email: string
+          status: string
+          submitted_at: string | null
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          recipient_email: string
+          status?: string
+          submitted_at?: string | null
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          recipient_email?: string
+          status?: string
+          submitted_at?: string | null
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       onboarding_step_events: {
         Row: {
           action: string
@@ -4111,6 +4150,85 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_submissions: {
+        Row: {
+          created_at: string
+          form_data: Json
+          id: string
+          invite_id: string
+          signature: Json | null
+          submitted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          form_data?: Json
+          id?: string
+          invite_id: string
+          signature?: Json | null
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json
+          id?: string
+          invite_id?: string
+          signature?: Json | null
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_submissions_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: true
+            referencedRelation: "onboarding_invites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_uploads: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          invite_id: string
+          mime_type: string | null
+          section: string
+          size_bytes: number | null
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          invite_id: string
+          mime_type?: string | null
+          section: string
+          size_bytes?: number | null
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          invite_id?: string
+          mime_type?: string | null
+          section?: string
+          size_bytes?: number | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_uploads_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_invites"
             referencedColumns: ["id"]
           },
         ]
