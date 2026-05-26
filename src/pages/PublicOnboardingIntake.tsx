@@ -84,6 +84,19 @@ export default function PublicOnboardingIntake() {
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const saveTimer = useRef<number | null>(null);
+  const [industryPacks, setIndustryPacks] = useState<Array<{ industry_id: string; label: string; cluster: string }>>([]);
+  const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data: packs } = await supabase
+        .from('industry_template_packs')
+        .select('industry_id, label, cluster')
+        .eq('is_active', true)
+        .order('label');
+      setIndustryPacks((packs as any) || []);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
