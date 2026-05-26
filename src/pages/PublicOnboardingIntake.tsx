@@ -210,11 +210,11 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'brand' && (
               <>
-                <Field label="Brand tone (3 adjectives)"><Input value={get('brand','tone')} onChange={(e) => set('brand','tone', e.target.value)} /></Field>
-                <Field label="Words / phrases to NEVER use"><Textarea value={get('brand','never_say')} onChange={(e) => set('brand','never_say', e.target.value)} /></Field>
-                <Field label="Sample greeting (how should Aura answer?)"><Textarea value={get('brand','greeting')} onChange={(e) => set('brand','greeting', e.target.value)} /></Field>
+                <Field label="Brand tone (3 adjectives)"><Input value={get('brand','tone')} onChange={(e) => set('brand','tone', e.target.value)} placeholder="e.g. Friendly, professional, confident" /></Field>
+                <Field label="Words / phrases to NEVER use"><Textarea value={get('brand','never_say')} onChange={(e) => set('brand','never_say', e.target.value)} placeholder="e.g. 'cheap', 'guaranteed', competitor names, slang" /></Field>
+                <Field label="Sample greeting (how should Aura answer?)"><Textarea value={get('brand','greeting')} onChange={(e) => set('brand','greeting', e.target.value)} placeholder="e.g. Thanks for calling Acme Plumbing, this is Aura — how can I help today?" /></Field>
                 <Field label="Primary brand color (hex)"><Input value={get('brand','primary_color')} onChange={(e) => set('brand','primary_color', e.target.value)} placeholder="#0ea5a4" /></Field>
-                <Field label="Secondary color (hex)"><Input value={get('brand','secondary_color')} onChange={(e) => set('brand','secondary_color', e.target.value)} /></Field>
+                <Field label="Secondary color (hex)"><Input value={get('brand','secondary_color')} onChange={(e) => set('brand','secondary_color', e.target.value)} placeholder="#0f172a" /></Field>
               </>
             )}
             {sec.id === 'contact_routing' && (
@@ -262,17 +262,17 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'industry' && (
               <>
-                <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} /></Field>
-                <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} /></Field>
-                <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} /></Field>
+                <Field label="Custom intake questions to ask every new lead"><Textarea rows={6} value={get('industry','intake_questions')} onChange={(e) => set('industry','intake_questions', e.target.value)} placeholder={"e.g.\n• What's the address of the property?\n• Is this a repair or new install?\n• When did the issue start?\n• Preferred appointment window?"} /></Field>
+                <Field label="Industry-specific terminology / jargon to use"><Textarea value={get('industry','terminology')} onChange={(e) => set('industry','terminology', e.target.value)} placeholder="e.g. 'condenser', 'evaporator coil', 'SEER rating', 'split system'" /></Field>
+                <Field label="Compliance / licensing notes"><Textarea value={get('industry','compliance')} onChange={(e) => set('industry','compliance', e.target.value)} placeholder="e.g. EPA 608 certified, state contractor license #12345, HIPAA if medical, insured up to $1M" /></Field>
               </>
             )}
             {sec.id === 'website' && (
               <>
                 <Field label="Preferred subdomain or custom domain"><Input value={get('website','domain')} onChange={(e) => set('website','domain', e.target.value)} placeholder="acme.auraintercept.ai or www.acme.com" /></Field>
-                <Field label="Hero headline"><Input value={get('website','headline')} onChange={(e) => set('website','headline', e.target.value)} /></Field>
-                <Field label="Hero subheadline"><Textarea value={get('website','subheadline')} onChange={(e) => set('website','subheadline', e.target.value)} /></Field>
-                <Field label="Service blurbs (1 short paragraph per service)"><Textarea rows={6} value={get('website','services_copy')} onChange={(e) => set('website','services_copy', e.target.value)} /></Field>
+                <Field label="Hero headline"><Input value={get('website','headline')} onChange={(e) => set('website','headline', e.target.value)} placeholder="e.g. 24/7 HVAC repair across Phoenix — answered in 6 seconds" /></Field>
+                <Field label="Hero subheadline"><Textarea value={get('website','subheadline')} onChange={(e) => set('website','subheadline', e.target.value)} placeholder="e.g. Licensed techs, upfront pricing, same-day appointments." /></Field>
+                <Field label="Service blurbs (1 short paragraph per service)"><Textarea rows={6} value={get('website','services_copy')} onChange={(e) => set('website','services_copy', e.target.value)} placeholder={"e.g.\nAC Repair — Fast diagnostics, transparent quotes, most jobs done same day.\nFurnace Tune-Up — Seasonal maintenance to prevent breakdowns and lower bills.\nIndoor Air Quality — Filtration and humidity control for healthier homes."} /></Field>
               </>
             )}
             {sec.id === 'goals' && (
@@ -286,9 +286,12 @@ export default function PublicOnboardingIntake() {
               <div className="space-y-4">
                 {UPLOAD_SECTIONS.map((u) => (
                   <div key={u.key} className="border border-border rounded-md p-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm">{u.label}</Label>
-                      <label className="inline-flex items-center gap-1.5 text-sm text-primary cursor-pointer hover:underline">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <Label className="text-sm">{u.label}</Label>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{u.example}</p>
+                      </div>
+                      <label className="inline-flex items-center gap-1.5 text-sm text-primary cursor-pointer hover:underline whitespace-nowrap">
                         <Upload className="h-4 w-4" /> Add file
                         <input type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadFile(u.key, f); e.target.value = ''; }} />
                       </label>
