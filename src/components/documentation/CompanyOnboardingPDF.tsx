@@ -1505,6 +1505,7 @@ export const CompanyOnboardingPDF = () => (
     <KnowledgeBaseExpandedPage />
     <IndustryIntakePage />
     <CommunicationRoutingPage />
+    <CarrierForwardingPage />
     <TechnicianRosterPage />
     <BookingPortalPage />
     <SmartWebsitePage />
