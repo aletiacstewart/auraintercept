@@ -44,6 +44,7 @@ import {
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
 import { getIntegrationRequirements } from '@/lib/documentationConfig';
+import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 
 interface Integration {
   id: string;
