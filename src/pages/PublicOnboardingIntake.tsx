@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, FileText, CheckCircle2, X, Copy as CopyIcon, ChevronDown } from 'lucide-react';
-import { CARRIERS, FORWARDING_RULES, fillTokens } from '@/lib/carrierForwarding';
+import { Loader2, Upload, FileText, CheckCircle2, X, Download } from 'lucide-react';
+import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
+import { supabase } from '@/integrations/supabase/client';
+import jsPDF from 'jspdf';
 
 type InviteState = {
   status: 'loading' | 'invalid' | 'expired' | 'submitted' | 'ready';
