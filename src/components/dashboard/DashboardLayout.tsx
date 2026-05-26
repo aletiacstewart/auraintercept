@@ -68,7 +68,7 @@ import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { useSuperSwitcher } from '@/hooks/useSuperSwitcher';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video, Sparkles } from 'lucide-react';
+import { Clapperboard, Video, Sparkles, Send } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
