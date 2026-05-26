@@ -310,12 +310,82 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'terms' && (
               <div className="space-y-4">
+                <div className="space-y-3 border border-border rounded-md p-3 bg-muted/20">
+                  <div>
+                    <Label className="text-sm font-semibold">Choose your onboarding plan</Label>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">One-time onboarding fee is due at the start of the 90-Day Live Trial. Subscription begins after the trial.</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {PLAN_OPTIONS.map((p) => {
+                      const selected = get('terms','plan') === p.id;
+                      return (
+                        <button
+                          type="button"
+                          key={p.id}
+                          onClick={() => set('terms','plan', p.id)}
+                          className={`text-left rounded-md border p-3 transition ${selected ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-foreground">{p.name}</span>
+                            {selected && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            ${p.monthly.toLocaleString()}/mo · ${p.annual.toLocaleString()}/yr
+                          </div>
+                          <div className="text-xs text-foreground mt-1">
+                            One-time onboarding: <span className="font-semibold">${p.onboarding.toLocaleString()}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Subscription billing after trial:</span>
+                    {(['monthly','annual'] as const).map((c) => {
+                      const selected = (get('terms','billing_cycle','monthly')) === c;
+                      return (
+                        <button
+                          type="button"
+                          key={c}
+                          onClick={() => set('terms','billing_cycle', c)}
+                          className={`px-2 py-1 rounded border text-xs ${selected ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground'}`}
+                        >
+                          {c === 'monthly' ? 'Monthly' : 'Annual (save ~20%)'}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {(() => {
+                    const planId = get('terms','plan');
+                    const plan = PLAN_OPTIONS.find((p) => p.id === planId);
+                    const cycle = get('terms','billing_cycle','monthly');
+                    if (!plan) return null;
+                    const recurring = cycle === 'annual'
+                      ? `$${plan.annual.toLocaleString()}/yr`
+                      : `$${plan.monthly.toLocaleString()}/mo`;
+                    return (
+                      <div className="text-xs text-foreground bg-background border border-border rounded p-2">
+                        Due at start of trial: <span className="font-semibold">${plan.onboarding.toLocaleString()}</span>. Then <span className="font-semibold">{recurring}</span> after the 90-Day Live Trial.
+                      </div>
+                    );
+                  })()}
+                  <Field label="Invoice email for onboarding fee">
+                    <Input
+                      type="email"
+                      value={get('terms','invoice_email')}
+                      onChange={(e) => set('terms','invoice_email', e.target.value)}
+                      placeholder="billing@yourcompany.com"
+                    />
+                  </Field>
+                  <p className="text-[11px] text-muted-foreground -mt-2">We'll send the one-time onboarding invoice here. Subscription billing starts after the 90-Day Live Trial.</p>
+                </div>
+
                 <p className="text-sm text-muted-foreground">Review the full <a className="text-primary underline" href="https://auraintercept.ai/terms-of-service" target="_blank" rel="noreferrer">Terms of Service</a> and <a className="text-primary underline" href="https://auraintercept.ai/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
                 {[
                   ['agree_tos', 'I agree to the Aura Intercept Terms of Service.'],
                   ['agree_privacy', 'I have read and agree to the Privacy Policy.'],
                   ['agree_third_party', 'I understand each 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) bills me directly with my own account + credit card on file. Aura Intercept does not resell or mark up usage.'],
-                  ['agree_onboarding_fee', 'I understand the onboarding fee is due at the start of the 90-day Live Trial.'],
+                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is due at the start of the 90-Day Live Trial and is non-refundable once onboarding has been completed.'],
                   ['agree_authority', 'I am authorized to sign this agreement on behalf of the company.'],
                 ].map(([key, label]) => (
                   <label key={key} className="flex items-start gap-2 text-sm">
