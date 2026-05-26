@@ -474,7 +474,7 @@ Deno.serve(async (req) => {
         supabase,
         resendApiKey: integrations.resend_api_key,
         companyId: company.id,
-        from: `${company.name} <onboarding@resend.dev>`,
+        from: `${company.name} <ai@auraintercept.ai>`,
         to: [company.weekly_digest_email],
         subject: `📊 Weekly Performance Digest - ${formatDate(periodStart)} to ${formatDate(periodEnd)}`,
         html: emailHtml,

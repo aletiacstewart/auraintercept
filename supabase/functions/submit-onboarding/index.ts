@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
       resendApiKey: Deno.env.get('RESEND_API_KEY') ?? '',
       companyId: null,
       to: ADMIN_EMAIL,
-      from: 'Aura Intercept Onboarding <onboarding@resend.dev>',
+      from: 'Aura Intercept Onboarding <ai@auraintercept.ai>',
       subject: `New onboarding submission — ${invite.company_name}`,
       html,
       priority: 'high',

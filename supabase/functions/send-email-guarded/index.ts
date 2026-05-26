@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       if (data?.resend_api_key) resendApiKey = data.resend_api_key;
     }
 
-    const fromAddress = from || `Aura Intercept <onboarding@resend.dev>`;
+    const fromAddress = from || `Aura Intercept <ai@auraintercept.ai>`;
 
     const result = await sendGuardedEmail({
       supabase, resendApiKey, companyId,

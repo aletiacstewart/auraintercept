@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
           supabase,
           resendApiKey: integrations.resend_api_key,
           companyId: company.id,
-          from: `${company.name} Alerts <onboarding@resend.dev>`,
+          from: `${company.name} Alerts <ai@auraintercept.ai>`,
           to: [company.unsubscribe_alert_email],
           subject: `⚠️ High Unsubscribe Rate Alert - ${unsubscribeCount} opt-outs in 24 hours`,
           template: 'unsubscribe_alert',

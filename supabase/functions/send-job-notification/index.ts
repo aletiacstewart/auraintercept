@@ -252,7 +252,7 @@ Deno.serve(async (req) => {
               supabase,
               resendApiKey: integrations.resend_api_key,
               companyId: appointment.company_id,
-              from: `${companyName} <onboarding@resend.dev>`,
+              from: `${companyName} <ai@auraintercept.ai>`,
               to: [emailAddress],
               subject: messages.emailSubject,
               html: messages.emailHtml,

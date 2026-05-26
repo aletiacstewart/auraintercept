@@ -112,7 +112,7 @@ async function checkBounceRateAlert(
     const resend = new Resend(integrations.resend_api_key);
     
     const { error: sendError } = await resend.emails.send({
-      from: `${company.name} <onboarding@resend.dev>`,
+      from: `${company.name} <ai@auraintercept.ai>`,
       to: [company.bounce_alert_email],
       subject: `⚠️ Email Deliverability Alert - ${issueCount} issues in 24h`,
       html: `

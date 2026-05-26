@@ -393,7 +393,7 @@ Deno.serve(async (req) => {
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
-          from: 'Aura Intercept <demos@auraintercept.ai>',
+          from: 'Aura Intercept <ai@auraintercept.ai>',
           to: [email],
           subject: `Your ${ind.label} demo is ready — 48 hours of Aura Intercept`,
           html: buildDemoEmailHtml({
