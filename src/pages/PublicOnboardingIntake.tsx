@@ -263,12 +263,49 @@ export default function PublicOnboardingIntake() {
             )}
             {sec.id === 'integrations' && (
               <>
-                <p className="text-xs text-muted-foreground">All 3rd-party providers require your own account + credit card on file. Each invoices you separately.</p>
-                {['SignalWire (voice/SMS)','ElevenLabs (voice)','Resend (email)','Tavily (research)','Stripe (payments)','Google Workspace','A2P 10DLC carrier registration'].map((label) => (
-                  <Field key={label} label={`${label} — account status`}>
-                    <Input value={get('integrations', label)} onChange={(e) => set('integrations', label, e.target.value)} placeholder="None / In progress / Active (email used)" />
-                  </Field>
-                ))}
+                <p className="text-xs text-muted-foreground">All 3rd-party providers require your own account + valid credit card on file. Each invoices you directly and separately from your Aura plan fee. If you don't have an account yet, leave it blank — Concierge Onboarding will create it on your behalf using your login + card.</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-border rounded-md">
+                    <thead className="bg-muted/40 text-xs text-muted-foreground">
+                      <tr>
+                        <th className="text-left p-2">Provider</th>
+                        <th className="text-left p-2">Account email</th>
+                        <th className="text-left p-2">Status</th>
+                        <th className="text-left p-2">Card on file</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {INTEGRATION_PROVIDERS.map((p) => (
+                        <tr key={p.key} className="border-t border-border">
+                          <td className="p-2 font-medium">{p.label}</td>
+                          <td className="p-2">
+                            <Input
+                              className="h-8 text-xs"
+                              value={get('integrations', `${p.key}_email`)}
+                              onChange={(e) => set('integrations', `${p.key}_email`, e.target.value)}
+                              placeholder="account@yourcompany.com"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <select
+                              value={get('integrations', `${p.key}_status`, 'None')}
+                              onChange={(e) => set('integrations', `${p.key}_status`, e.target.value)}
+                              className="h-8 rounded border border-input bg-background px-2 text-xs"
+                            >
+                              {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                          </td>
+                          <td className="p-2">
+                            <Checkbox
+                              checked={!!get('integrations', `${p.key}_card`, false)}
+                              onCheckedChange={(v) => set('integrations', `${p.key}_card`, !!v)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
             {sec.id === 'a2p' && (
