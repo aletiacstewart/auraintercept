@@ -228,11 +228,11 @@ export default function PublicOnboardingIntake() {
                 <Field label="Email inbox for new leads"><Input value={get('contact_routing','lead_email')} onChange={(e) => set('contact_routing','lead_email', e.target.value)} /></Field>
                 <Field label="Escalation phone (urgent)"><Input value={get('contact_routing','escalation_phone')} onChange={(e) => set('contact_routing','escalation_phone', e.target.value)} /></Field>
                 <CarrierForwardingGuide
+                  withCard={false}
                   carrier={get('contact_routing','carrier','')}
                   auraNumber={get('contact_routing','aura_number','')}
                   onCarrierChange={(v) => set('contact_routing','carrier', v)}
                   onAuraNumberChange={(v) => set('contact_routing','aura_number', v)}
-                  onCopy={(txt) => { navigator.clipboard.writeText(txt); toast({ title: 'Copied', description: txt }); }}
                 />
               </>
             )}
