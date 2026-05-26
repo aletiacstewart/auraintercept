@@ -552,3 +552,60 @@ function CenteredMessage({ title, body }: { title: string; body: string }) {
     </div>
   );
 }
+
+function buildSubmissionPdfBlob({
+  companyName,
+  recipient,
+  data,
+  signature,
+}: {
+  companyName: string;
+  recipient: string;
+  data: Record<string, any>;
+  signature: Record<string, any>;
+}): Blob {
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  let y = 56;
+  const margin = 48;
+  const lineH = 14;
+
+  const write = (text: string, size = 10, bold = false) => {
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setFontSize(size);
+    const lines = doc.splitTextToSize(text, pageW - margin * 2);
+    for (const line of lines) {
+      if (y > pageH - margin) { doc.addPage(); y = margin; }
+      doc.text(line, margin, y);
+      y += lineH;
+    }
+  };
+
+  write('Aura Intercept · Signed Onboarding Workbook', 16, true);
+  y += 4;
+  write(companyName || '(no company name)', 12, true);
+  write(`Recipient: ${recipient}`, 9);
+  write(`Submitted: ${new Date().toISOString()}`, 9);
+  y += 8;
+
+  for (const [section, val] of Object.entries(data)) {
+    if (!val || typeof val !== 'object') continue;
+    y += 6;
+    write(section.replace(/_/g, ' ').toUpperCase(), 11, true);
+    for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+      const display = typeof v === 'object' ? JSON.stringify(v) : String(v ?? '');
+      if (!display.trim()) continue;
+      write(`• ${k.replace(/_/g, ' ')}: ${display}`, 9);
+    }
+  }
+
+  y += 12;
+  write('SIGNATURE', 11, true);
+  write(`Signer: ${signature.signer_name ?? ''} (${signature.signer_title ?? ''})`, 9);
+  if (signature.signer_email) write(`Email: ${signature.signer_email}`, 9);
+  write(`Typed signature: ${signature.typed_signature ?? signature.signer_name ?? ''}`, 9);
+  write('Acknowledgements: TOS, Privacy, 3rd-party billing, onboarding fee, signing authority — accepted.', 9);
+
+  return doc.output('blob');
+}
