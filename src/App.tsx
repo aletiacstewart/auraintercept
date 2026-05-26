@@ -97,6 +97,8 @@ import DispatchFieldOpsApp from "./pages/DispatchFieldOpsApp";
 import BusinessMgtOpsApp from "./pages/BusinessMgtOpsApp";
 import OpportunityAudit from "./pages/OpportunityAudit";
 import OnboardingForm from "./pages/OnboardingForm";
+import PublicOnboardingIntake from "./pages/PublicOnboardingIntake";
+import OnboardingInvites from "./pages/admin/OnboardingInvites";
 import CustomerPortalAppInstall from "./pages/CustomerPortalAppInstall";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -183,6 +185,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/demo/:trialId" element={<DemoAccess />} />
                 <Route path="/super-switcher" element={<ProtectedRoute><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
+                <Route path="/intake/:token" element={<PublicOnboardingIntake />} />
+                <Route path="/dashboard/onboarding-invites" element={<ProtectedRoute requiredRole="platform_admin"><OnboardingInvites /></ProtectedRoute>} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
                 <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />

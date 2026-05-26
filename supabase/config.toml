@@ -39,6 +39,21 @@ verify_jwt = false
 [functions.check-unsubscribe-alerts]
 verify_jwt = false
 
+[functions.get-onboarding-invite]
+verify_jwt = false
+
+[functions.save-onboarding-progress]
+verify_jwt = false
+
+[functions.upload-onboarding-file]
+verify_jwt = false
+
+[functions.submit-onboarding]
+verify_jwt = false
+
+[functions.create-onboarding-invite]
+verify_jwt = true
+
 [functions.weekly-digest]
 verify_jwt = false
 

@@ -1,38 +1,70 @@
 ## Goal
-Add a Terms of Service agreement + signature section to the Company Onboarding Workbook PDF so the company formally agrees to and signs the ToS as part of onboarding intake.
 
-## Scope
-Single file: `src/components/documentation/CompanyOnboardingPDF.tsx`. No route, schema, or business-logic changes.
+Turn the Company Onboarding Workbook PDF into a **shareable web intake page** companies can fill in their browser. On submit, a polished PDF + all uploaded files are emailed to `ai@auraintercept.ai`.
 
-## Changes
+## How it works (user-facing)
 
-1. **New `TermsOfServiceAgreementPage` component** (2 pages, A4) inserted in the `<Document>` order immediately before `SignOffPage`:
+1. Admin opens `/dashboard/onboarding-invites`, enters a company name + contact email, clicks **Send Invite**.
+2. Recipient gets an email with a unique, signed link: `https://auraintercept.ai/intake/{token}`.
+3. They fill out the workbook (same sections as the PDF — broken into ~10 friendly steps with autosave). They can upload logos, EIN/W-9, customer/employee CSVs, brand assets, etc.
+4. They e-sign the Terms of Service inline (typed signature + IP/timestamp capture).
+5. On **Submit**, they see a confirmation page. The platform admin gets an email with the generated PDF + every uploaded file as attachments (or download links if total >20 MB).
 
-   - **Page A — Master Services Agreement Summary**
-     - Section title: "Terms of Service Agreement"
-     - Intro paragraph: this page summarizes the binding terms; full ToS at `https://auraintercept.ai/terms-of-service` and Privacy Policy at `/privacy-policy`.
-     - Numbered clause summaries pulled in plain English from the existing `TermsOfService.tsx` page (Services, Subscription & Trial, Onboarding Fee, 3rd-Party Provider Accounts & Billing Pass-Through, Customer Data & Privacy, Acceptable Use, IP, Disclaimers/Limitation of Liability, Termination, Governing Law).
-     - Callout box restating the 3rd-party billing disclaimer (per legal/third-party-fee-disclaimer memory) and 90-Day Live Trial / onboarding fee terms (per product/trial-period-standard memory).
+## Architecture
 
-   - **Page B — Acknowledgement & Signature**
-     - Checkbox rows the signer initials:
-       - "I have read and agree to the Aura Intercept Terms of Service."
-       - "I have read and agree to the Privacy Policy."
-       - "I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account + credit card and are billed to me directly and separately from my Aura plan fee."
-       - "I authorize Concierge Onboarding to configure these accounts on my behalf using my credentials."
-       - "I agree to the 90-Day Live Trial terms; the onboarding fee for my selected tier is due at trial start and is non-refundable."
-     - Form rows: Company Legal Name, Authorized Signer Name, Title, Email.
-     - Signature block: Authorized Signature + Date.
-     - Witness/secondary signature block (optional): Printed Name + Signature + Date.
+### Database (new)
+- `onboarding_invites` — `id`, `token` (unguessable, 32-byte), `company_name`, `recipient_email`, `status` (`sent` / `in_progress` / `submitted`), `expires_at` (30 days), `created_by`, `submitted_at`.
+- `onboarding_submissions` — `id`, `invite_id` (FK), `form_data` jsonb (all answers), `signature` jsonb (name, title, signed_at, ip), `submitted_at`.
+- `onboarding_uploads` — `id`, `invite_id`, `section` (e.g. `logo`, `ein_w9`, `customer_csv`), `file_name`, `storage_path`, `mime_type`, `size_bytes`.
+- Storage bucket `onboarding-uploads` (private). Files stored under `{invite_id}/{section}/{filename}`.
 
-2. **Update `SignOffPage`** to add one checklist item "Signed Terms of Service Agreement (previous page)" and a short reminder that the ToS signature page must be returned with the workbook.
+### Access model
+- All three tables: **no anon SELECT**. Platform admins can read everything.
+- Public access is handled exclusively through **edge functions** that validate the token server-side (SECURITY DEFINER RPCs). No client-side Supabase reads via token.
 
-3. **Register the page** in the `CompanyOnboardingPDF` `<Document>` ordering between `SmartWebsiteInputsPage` and `SignOffPage`.
+### Edge functions
+- `create-onboarding-invite` (auth required, platform_admin only) → generates token, inserts row, sends invite email via the existing send-email-guarded path.
+- `get-onboarding-invite` (public) → validates token, returns `{ company_name, status, saved_form_data }`.
+- `save-onboarding-progress` (public, token-gated) → upserts partial `form_data` for autosave.
+- `upload-onboarding-file` (public, token-gated) → accepts multipart, stores in private bucket, inserts `onboarding_uploads` row, returns metadata.
+- `submit-onboarding` (public, token-gated) → marks submitted, renders PDF (server-side using `@react-pdf/renderer` rehydrated with the same `CompanyOnboardingPDF` component), gathers signed URLs for each upload (7-day expiry), and emails admin with PDF attached + links to uploads. If combined attachments fit under ~15 MB, attach files directly; otherwise attach PDF only and include signed download links in the body.
+
+### Frontend pages
+- `/intake/:token` — public, no auth. Loads invite via edge function. If invalid/expired → friendly error. Otherwise renders a multi-step wizard mirroring the PDF sections (Company Profile, Brand & Voice, 3rd-Party Accounts, A2P 10DLC, Communication Routing, Employees, Booking Rules, Industry-Specific Intake, Smart Website, Goals, Document Uploads, Terms of Service, Review & Submit). Autosaves on step change. Mobile-friendly. Uses existing Cyber-Sentry theme tokens.
+- `/dashboard/onboarding-invites` — platform_admin only. Table of invites with status, copy-link, resend, view-submission. "New Invite" dialog.
+
+### Security
+- Tokens are 32-byte URL-safe base64, unique-indexed, expire in 30 days. Edge functions reject expired/submitted tokens for write ops.
+- Uploads: server-side validation of mime type (images, PDF, CSV, XLSX, DOCX) and size (≤20 MB/file, ≤100 MB total per invite).
+- Private storage bucket; only edge function (service role) can read for emailing.
+- IP + user-agent captured for signature audit.
+- Rate-limit uploads/saves per token (simple in-memory or table counter).
+
+### Email
+- Uses existing `send-email-guarded` with platform Resend key. From: `onboarding@notify.auraintercept.ai` (or current default). To admin: `ai@auraintercept.ai`. Subject: `New onboarding submission — {Company Name}`.
 
 ## Out of scope
-- Editing `TermsOfService.tsx` or legal copy beyond summarizing existing content.
-- New routes, DB tables, e-signature integration.
-- Other PDFs.
+- Keeping the existing PDF generator (it stays — used both for downloadable workbook AND server-rendered final submission).
+- Stripe collection / payment within the form.
+- Multi-signer / countersignature workflow.
+- E-signature legal certification (DocuSign-grade) — typed signature + IP/timestamp only.
 
-## Validation
-Render the PDF via the existing Export Documentation page, rasterize the two new pages, and visually confirm layout/no clipping.
+## Files
+
+**New**
+- `supabase/migrations/<ts>_onboarding_intake.sql` — tables, RLS, storage bucket + policies.
+- `supabase/functions/create-onboarding-invite/index.ts`
+- `supabase/functions/get-onboarding-invite/index.ts`
+- `supabase/functions/save-onboarding-progress/index.ts`
+- `supabase/functions/upload-onboarding-file/index.ts`
+- `supabase/functions/submit-onboarding/index.ts`
+- `src/pages/PublicOnboardingIntake.tsx` (+ step components under `src/components/intake/`)
+- `src/pages/admin/OnboardingInvites.tsx`
+
+**Edited**
+- `src/App.tsx` — add `/intake/:token` (public) and `/dashboard/onboarding-invites` (admin) routes.
+- Sidebar nav — add "Onboarding Invites" under platform admin section.
+
+## Open question
+
+Do you want recipients to be able to **resume later from the same email link** (current plan, autosave keyed to token), or should the link be single-use and they finish in one sitting?
