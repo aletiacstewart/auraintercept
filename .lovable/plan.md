@@ -1,73 +1,67 @@
 ## Goal
-Expand `MarketingSalesMasterPDF` from a high-level overview (~12 pages) into a deep, sales-rep-ready reference (~30–40 pages) with substantive per-agent, per-feature, per-dashboard, and per-hub detail.
+Give companies a single fillable PDF they can complete before kickoff so every piece of info, asset, account, and content the Aura onboarding team needs is collected up front.
 
 ## Current state
-Single PDF with: Cover → Exec Summary → 4-Tier table → Pricing/Tiers → 10 Operatives (2 batches, brief) → Industry Specialists (overview) → Feature Catalog (grouped lists) → Dashboards (table) → Consoles & Hubs (list) → 3rd-Party Stack → Trial + Talking Points → Next Steps. Pulls data from `subscriptionAgentConfig`, `agentStyles`, `industryCapabilities`.
+`src/components/documentation/CompanyOnboardingPDF.tsx` already renders a 7-section "Company Onboarding Questionnaire" (Company Profile, Business Ops, Subscription, Integrations, Knowledge Base, Employees, Goals). It's wired into `ExportDocumentation.tsx`. It's solid but missing several intake items the onboarding team actually needs.
 
-## Expansion plan (sections to deepen)
+## What to add (expansion, not rewrite)
 
-### 1. AI Operatives — full profile per operative (10 pages, 1/page)
-For each of the 10 operatives:
-- Name + customer-facing label + underlying agent IDs (from 24-agent map)
-- One-line pitch + 3-sentence "what it actually does"
-- Channels (voice, SMS, email, web chat, social)
-- Triggers / handoffs (who routes to it, where it routes next)
-- Sample transcript snippet (1 short Q&A)
-- KPIs the operative moves
-- Tier availability badges (Core / Boost / Pro / Elite)
-- Required 3rd-party services (e.g. SignalWire for voice) with billing note
+1. **Cover + How-to-use page** — clear instructions: "Fill this out, email back with attachments listed in the checklist." Add company-name / date / tier-selected fields and a signature/acknowledgement block.
 
-### 2. Industry Specialists — expanded
-- Full table of specialist operatives (listing_writer, comp_analyst, menu_writer, style_consultant, loyalty_coach, review_responder, site_survey, diagnostic, calendar_optimizer, task_triager, insurance_claim) with: name, what it does, which industries auto-activate it, sample output
+2. **Master Document & Asset Checklist** (new page near front) — single checkbox table the customer ticks off and attaches:
+   - Logo (SVG/PNG transparent), favicon, brand colors, fonts
+   - Business license / EIN / W-9 (for A2P 10DLC + Stripe)
+   - Insurance certificate (field-ops verticals)
+   - Existing website URL + login (if migrating)
+   - Existing customer list (CSV template referenced)
+   - Existing employee/technician list (CSV)
+   - Service/price list, quote template, invoice template
+   - Photos: team, storefront, completed jobs (for Smart Website + social)
+   - Testimonials / Google review screenshots
+   - Voicemail greeting script + after-hours script
 
-### 3. Feature Catalog — per-feature detail (replaces grouped lists)
-Group by capability area; each feature gets:
-- Name + one-line value prop
-- Where it lives in the app (route)
-- Tier required
-- Who uses it (admin / employee / customer / technician)
-- 3rd-party dependency, if any
+3. **3rd-Party Account Worksheet** (new section, replaces brief integrations block) — per Aura policy every provider is customer-owned. For each, capture: account exists Y/N, account email, billing card on file Y/N, who will grant access:
+   - SignalWire (voice + SMS)
+   - ElevenLabs (voice agent)
+   - Resend (email sending) + sending domain + DNS access
+   - Tavily (web research)
+   - Stripe (payments)
+   - A2P 10DLC registration data (legal business name, EIN, address, brand vertical, sample messages, opt-in language)
+   - Google Workspace / Calendar admin
+   - Social accounts (FB, IG, LinkedIn, X, TikTok, YouTube, GBP) — handle + admin email
 
-Areas: Voice & Telephony · SMS & Messaging · Email · Web Chat & Smart Website · Social Media · Scheduling & Booking · Field Ops & Dispatch · Quotes/Invoices/Payments · Lead Capture & Scoring · Customer Portal · Analytics · AI Operatives & Hub · Knowledge Base · Tutorials/Help · Notifications · Integrations
+4. **Brand & Voice Worksheet** — tone descriptors, words to avoid, signature sign-offs, sample customer greetings, do/don't examples (feeds AI operative prompts).
 
-### 4. Dashboards — per-dashboard page
-Detail page each for: Aura Command Center · Company Admin Dashboard (Simple/Pro modes) · Employee Dashboard · Technician Dashboard · Customer Portal Home · Platform Health (admin) · Subscription Analytics · Analytics Dashboard Suite (8 tabs)
-Each page: who sees it, top widgets/KPIs, primary actions, default route.
+5. **Knowledge Base Intake (expanded)** — keep current Services/FAQ/Differentiators, add: pricing rules, warranty/return policy, payment terms, cancellation policy, common objections, escalation rules, hours/holiday calendar, service-area ZIPs/radius, emergency protocols.
 
-### 5. Consoles & Hubs — per-console page
-Detail page each for: Outreach & Sales · Business Management · Field Ops · Social Media · Content Engine · Customer Portal Console · Analytics Console · AI Operatives Hub (Elite). Each: purpose, tabs/sub-views, operatives surfaced, tier required, KPIs.
+6. **Industry-Specific Intake Pack** (new) — one mini-form per industry cluster (Home Services, Professional Services, Retail/Restaurants, Real Estate, Healthcare/Wellness). Customer fills only the one that matches. Pulls field prompts from `industryFastStartQuestions.ts` + `industryPackSchema.ts`.
 
-### 6. Industry Packs Appendix
-One-row-per-industry table covering all 18 packs: industry_id, cluster, terminology (job/customer), specialists auto-activated, marketing playbook tagline.
+7. **Communication Routing Worksheet** — who answers what:
+   - Voice: main line, after-hours, missed-call SMS text, transfer numbers per operative
+   - SMS keywords + auto-reply text
+   - Email aliases (sales@, support@, billing@)
+   - Web chat escalation rules
+   - Notification recipients (push/email/SMS) per event type
 
-### 7. Sales rep toolkit (new)
-- Discovery question script (6–8 questions)
-- 60-second elevator pitch
-- 3-minute demo flow
-- Tier-fit decision tree (employees + industry → recommended tier)
-- Expanded objection handling (12+ Q&A, vs current ~5)
-- Email & SMS outreach templates (3 each)
+8. **Employee/Technician Roster Worksheet** — table to list each user: name, email, phone, role (admin/employee/technician/dispatcher), service area, availability, skills. Replaces today's brief employee section.
 
-### 8. Compliance & legal one-pager
-- 3rd-party billing disclosure (verbatim approved copy)
-- A2P 10DLC requirement
-- Trial terms (90-Day Live Trial, onboarding due at start, non-refundable onboarding)
+9. **Customer Portal & Booking Setup** — booking window, buffer, deposit, cancellation policy, intake-form custom fields, portal welcome message.
 
-## Data sources (no business-logic changes)
-- `src/lib/subscriptionAgentConfig.ts` — tiers, operatives, consoles, specialists
-- `src/lib/agentStyles.ts` — labels
-- `src/lib/industryCapabilities.ts`, `industryPackSchema.ts`, `industryMarketingPlaybooks.ts` — industry packs
-- `src/pages/ai-consoles/*` — console names/routes
-- `src/lib/howToUseContent.ts` — feature blurbs
-- Memory: pricing, trial, 3rd-party policy, sidebar v1, plain-English labels
+10. **Smart Website & Content Inputs** — preferred domain, current DNS provider, About-us copy or bullet points, services blurbs, 5 photo slots, hero headline preference.
+
+11. **Sign-off & Submission page** — checklist of attachments included, signature line, return-to email, expected onboarding start date.
 
 ## Files to change
-- `src/components/documentation/MarketingSalesMasterPDF.tsx` — major expansion; keep existing styles, add new sections + page-per-item layouts. May split into helper sub-components in the same file.
-- No changes to consoles, routes, business logic, or other PDFs.
+- `src/components/documentation/CompanyOnboardingPDF.tsx` — extend with new sections + checklist tables. Reuse existing styles + form-field components.
+- No other files. (Existing `ExportDocumentation.tsx` link already works.)
+
+## Data sources (read-only)
+- `src/lib/industryFastStartQuestions.ts`, `industryPackSchema.ts`, `industryCapabilities.ts`
+- `src/lib/documentationConfig.ts` (tiers + integration requirements already imported)
+- Memory: third-party-fee-disclaimer, trial-period-standard, canonical-four-tier-model
 
 ## QA
-- Render the PDF, convert pages to images with `pdftoppm`, scan every page for overflow / clipped text / table column issues, iterate until clean.
-- Deliver final PDF as `/mnt/documents/marketing-sales-master-guide.pdf` via `<presentation-artifact>` so you can download immediately, and keep the in-app PDFDownloadLink so it stays available from the Outreach & Sales Console.
+Render PDF → `pdftoppm -jpeg -r 150` → inspect every page for overflow, clipped checkboxes, table alignment. Iterate until clean. Deliver `/mnt/documents/company-onboarding-workbook.pdf` via `<presentation-artifact>` and keep the in-app download on ExportDocumentation.
 
 ## Out of scope
-- Pricing changes, new features, new tiers, backend/edge-function edits, Spanish locale, other PDFs.
+New routes, business logic, pricing changes, separate per-industry PDFs (one combined PDF with all industries).
