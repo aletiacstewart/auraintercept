@@ -62,6 +62,18 @@ const PLAN_OPTIONS = [
   { id: 'elite', name: 'Aura Elite', monthly: 2197, annual: 21970, onboarding: 2197 },
 ] as const;
 
+const INTEGRATION_PROVIDERS = [
+  { key: 'signalwire', label: 'SignalWire (voice/SMS)' },
+  { key: 'elevenlabs', label: 'ElevenLabs (voice)' },
+  { key: 'resend', label: 'Resend (email)' },
+  { key: 'tavily', label: 'Tavily (research)' },
+  { key: 'stripe', label: 'Stripe (payments)' },
+  { key: 'google', label: 'Google Workspace' },
+  { key: 'a2p_10dlc', label: 'A2P 10DLC (SMS registration)' },
+  { key: 'social', label: 'Social Media (Meta/X/LinkedIn OAuth)' },
+];
+const STATUS_OPTIONS = ['None', 'In progress', 'Active'] as const;
+
 export default function PublicOnboardingIntake() {
   const { token = '' } = useParams();
   const { toast } = useToast();
