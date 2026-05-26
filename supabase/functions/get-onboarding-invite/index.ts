@@ -22,10 +22,25 @@ Deno.serve(async (req) => {
     const { data: sub } = await admin.from('onboarding_submissions').select('form_data, submitted_at').eq('invite_id', invite.id).maybeSingle();
     const { data: uploads } = await admin.from('onboarding_uploads').select('id, section, file_name, mime_type, size_bytes, created_at').eq('invite_id', invite.id).order('created_at', { ascending: true });
 
+    // Generate signed download URLs (valid 1 hour) for each upload
+    const uploadsWithUrls = [] as any[];
+    for (const u of uploads ?? []) {
+      const { data: row } = await admin.from('onboarding_uploads').select('storage_path').eq('id', u.id).maybeSingle();
+      let signedUrl: string | null = null;
+      if (row?.storage_path) {
+        const { data: signed } = await admin.storage.from('onboarding-uploads').createSignedUrl(row.storage_path, 60 * 60);
+        signedUrl = signed?.signedUrl ?? null;
+      }
+      uploadsWithUrls.push({ ...u, signed_url: signedUrl });
+    }
+
+    const { data: subFull } = await admin.from('onboarding_submissions').select('signature').eq('invite_id', invite.id).maybeSingle();
+
     return new Response(JSON.stringify({
       invite: { company_name: invite.company_name, recipient_email: invite.recipient_email, status: invite.status, submitted_at: invite.submitted_at },
       form_data: sub?.form_data ?? {},
-      uploads: uploads ?? [],
+      uploads: uploadsWithUrls,
+      signature: subFull?.signature ?? null,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
