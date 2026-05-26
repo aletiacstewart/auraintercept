@@ -7,6 +7,7 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
+import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -157,6 +158,11 @@ export default function VoiceIntegration() {
 
           {/* ElevenLabs Setup Guide */}
           <ElevenLabsVoiceSetupGuide />
+
+          {/* Carrier call-forwarding reference */}
+          <CarrierForwardingGuide
+            auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+          />
 
           {/* Integration Cards */}
           <div className="grid gap-4 md:grid-cols-2">
