@@ -1268,12 +1268,114 @@ const SmartWebsitePage = () => (
   </Page>
 );
 
+const TOS_CLAUSES: Array<{ title: string; body: string }> = [
+  { title: '1. Services', body: 'Aura Intercept provides an AI-powered customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
+  { title: '2. Subscription & 90-Day Live Trial', body: 'Subscription begins on the date the onboarding fee is paid. A 90-Day Live Trial period applies; the platform is fully active during the trial. Cancellation must occur in writing before the next monthly billing date.' },
+  { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to the selected tier\'s monthly price is due at trial start and is non-refundable. It covers Concierge Onboarding services and platform configuration.' },
+  { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms, Google Workspace, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells, marks up, or absorbs third-party usage charges.' },
+  { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
+  { title: '6. Customer Data & Privacy', body: 'Customer retains ownership of all customer data uploaded to the Platform. Aura Intercept processes data per the Privacy Policy and applicable law (CCPA, GDPR where relevant). Customer is the data controller; Aura Intercept is the data processor.' },
+  { title: '7. Acceptable Use', body: 'Customer agrees not to use the Platform for unlawful, harassing, or fraudulent activity, to violate TCPA / CAN-SPAM / A2P 10DLC rules, or to interfere with platform operation. Aura may suspend service for material violations.' },
+  { title: '8. Intellectual Property', body: 'Aura Intercept retains all rights to the Platform, software, models, prompts, and documentation. Customer retains rights to its own content, branding, and customer data.' },
+  { title: '9. Disclaimers & Limitation of Liability', body: 'The Platform is provided "AS IS" without warranties of any kind. Aura Intercept\'s aggregate liability is limited to fees paid in the preceding twelve (12) months. Aura Intercept is not liable for indirect, consequential, or third-party provider damages.' },
+  { title: '10. Termination', body: 'Either party may terminate at end of any monthly billing cycle. Aura may terminate immediately for non-payment or material breach. Customer remains responsible for any outstanding fees and all third-party provider charges incurred.' },
+  { title: '11. Governing Law', body: 'These Terms are governed by the laws of the United States and the State of Aura Intercept\'s registered jurisdiction. Disputes resolved by binding arbitration unless otherwise required by law.' },
+];
+
+const TermsOfServiceSummaryPage = () => (
+  <Page size="A4" style={styles.page}>
+    <PageHeader title="Terms of Service Agreement" pageNum={97} />
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Terms of Service Agreement')}</Text>
+    <Text style={styles.paragraph}>
+      {sanitizePdfText('This page summarizes the binding terms between Customer ("you", "your", "Company") and Aura Intercept ("we", "us"). The full Terms of Service and Privacy Policy are available at https://auraintercept.ai/terms-of-service and https://auraintercept.ai/privacy-policy. By signing the next page, you agree to be bound by the full Terms, not only this summary.')}
+    </Text>
+    {TOS_CLAUSES.map(clause => (
+      <View key={clause.title} style={{ marginBottom: 8 }}>
+        <Text style={[styles.subsectionTitle, { marginTop: 4, marginBottom: 2 }]}>
+          {sanitizePdfText(clause.title)}
+        </Text>
+        <Text style={[styles.paragraph, { marginBottom: 0 }]}>
+          {sanitizePdfText(clause.body)}
+        </Text>
+      </View>
+    ))}
+    <View style={styles.infoBox}>
+      <Text style={styles.infoBoxTitle}>{sanitizePdfText('Key Reminders')}</Text>
+      <Text style={styles.infoBoxText}>
+        {sanitizePdfText('- 90-Day Live Trial: platform is fully active; onboarding fee due at start and non-refundable.\n- 3rd-Party Costs: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social platforms bill you directly on your own account and card.\n- Concierge Onboarding configures these accounts on your behalf using your credentials.\n- Cancel in writing before your next monthly billing date to avoid the next charge.')}
+      </Text>
+    </View>
+  </Page>
+);
+
+const TermsAcknowledgementPage = () => {
+  const ackItems = [
+    'I have read and agree to the Aura Intercept Terms of Service (summarized on the previous page and published in full at auraintercept.ai/terms-of-service).',
+    'I have read and agree to the Aura Intercept Privacy Policy at auraintercept.ai/privacy-policy.',
+    'I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account and credit card and will be invoiced to me DIRECTLY and SEPARATELY from my Aura plan fee.',
+    'I authorize Aura Intercept Concierge Onboarding to configure these third-party accounts on my behalf using credentials I provide.',
+    'I agree to the 90-Day Live Trial terms; the onboarding fee for my selected tier is due at trial start and is non-refundable.',
+    'I confirm that I am an authorized signer with legal authority to bind the Company named below.',
+  ];
+  return (
+    <Page size="A4" style={styles.page}>
+      <PageHeader title="Terms Acknowledgement & Signature" pageNum={98} />
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Acknowledgement & Signature')}</Text>
+      <Text style={styles.paragraph}>
+        {sanitizePdfText('Initial each item below to confirm agreement, then complete and sign at the bottom of the page. Return this signed page with the rest of the onboarding workbook.')}
+      </Text>
+      {ackItems.map((item, i) => (
+        <View key={i} style={[styles.optionRow, { marginBottom: 10, alignItems: 'flex-start' }]}>
+          <View style={[styles.checkbox, { marginTop: 2 }]} />
+          <Text style={[styles.optionText, { paddingRight: 60 }]}>
+            {sanitizePdfText(item)}
+          </Text>
+          <View style={{ width: 50, borderBottomWidth: 1, borderBottomColor: colors.gray, alignSelf: 'flex-end', marginLeft: 6 }} />
+        </View>
+      ))}
+      <Text style={[styles.formNote, { marginLeft: 20, marginTop: 0, marginBottom: 12 }]}>
+        {sanitizePdfText('Initials')}
+      </Text>
+
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Signer Information')}</Text>
+      <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company Legal Name:')}</Text><View style={styles.formLine} /></View>
+      <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Authorized Signer Name:')}</Text><View style={styles.formLine} /></View>
+      <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Title:')}</Text><View style={styles.formLine} /></View>
+      <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Email:')}</Text><View style={styles.formLine} /></View>
+
+      <View style={styles.signatureLine}>
+        <View style={styles.signatureBlock}>
+          <View style={[styles.formLine, { marginBottom: 0 }]} />
+          <Text style={styles.signatureLabel}>{sanitizePdfText('Authorized Signature')}</Text>
+        </View>
+        <View style={styles.signatureBlock}>
+          <View style={[styles.formLine, { marginBottom: 0 }]} />
+          <Text style={styles.signatureLabel}>{sanitizePdfText('Date')}</Text>
+        </View>
+      </View>
+
+      <Text style={[styles.subsectionTitle, { marginTop: 20 }]}>{sanitizePdfText('Witness / Secondary Signer (optional)')}</Text>
+      <View style={styles.signatureLine}>
+        <View style={styles.signatureBlock}>
+          <View style={[styles.formLine, { marginBottom: 0 }]} />
+          <Text style={styles.signatureLabel}>{sanitizePdfText('Printed Name')}</Text>
+        </View>
+        <View style={styles.signatureBlock}>
+          <View style={[styles.formLine, { marginBottom: 0 }]} />
+          <Text style={styles.signatureLabel}>{sanitizePdfText('Signature & Date')}</Text>
+        </View>
+      </View>
+    </Page>
+  );
+};
+
 const SignOffPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Sign-Off & Submission" pageNum={99} />
     <Text style={styles.sectionTitle}>{sanitizePdfText('Sign-Off & Submission')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments included with this workbook')}</Text>
-    {['Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
+    {['Signed Terms of Service Agreement (previous page) — REQUIRED',
+      'Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
       'Customer list CSV', 'Employee/technician list CSV', 'Service / price list', 'Quote + invoice samples',
       'Photos (numbered to website slots)', 'Testimonials / review screenshots'].map(item => (
       <View key={item} style={styles.optionRow}>
@@ -1336,6 +1438,8 @@ export const CompanyOnboardingPDF = () => (
     <EmployeeInfoPage />
     <AuditQuestionsPages />
     <GoalsNotesPage />
+    <TermsOfServiceSummaryPage />
+    <TermsAcknowledgementPage />
     <SignOffPage />
   </Document>
 );

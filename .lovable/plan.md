@@ -1,67 +1,38 @@
 ## Goal
-Give companies a single fillable PDF they can complete before kickoff so every piece of info, asset, account, and content the Aura onboarding team needs is collected up front.
+Add a Terms of Service agreement + signature section to the Company Onboarding Workbook PDF so the company formally agrees to and signs the ToS as part of onboarding intake.
 
-## Current state
-`src/components/documentation/CompanyOnboardingPDF.tsx` already renders a 7-section "Company Onboarding Questionnaire" (Company Profile, Business Ops, Subscription, Integrations, Knowledge Base, Employees, Goals). It's wired into `ExportDocumentation.tsx`. It's solid but missing several intake items the onboarding team actually needs.
+## Scope
+Single file: `src/components/documentation/CompanyOnboardingPDF.tsx`. No route, schema, or business-logic changes.
 
-## What to add (expansion, not rewrite)
+## Changes
 
-1. **Cover + How-to-use page** — clear instructions: "Fill this out, email back with attachments listed in the checklist." Add company-name / date / tier-selected fields and a signature/acknowledgement block.
+1. **New `TermsOfServiceAgreementPage` component** (2 pages, A4) inserted in the `<Document>` order immediately before `SignOffPage`:
 
-2. **Master Document & Asset Checklist** (new page near front) — single checkbox table the customer ticks off and attaches:
-   - Logo (SVG/PNG transparent), favicon, brand colors, fonts
-   - Business license / EIN / W-9 (for A2P 10DLC + Stripe)
-   - Insurance certificate (field-ops verticals)
-   - Existing website URL + login (if migrating)
-   - Existing customer list (CSV template referenced)
-   - Existing employee/technician list (CSV)
-   - Service/price list, quote template, invoice template
-   - Photos: team, storefront, completed jobs (for Smart Website + social)
-   - Testimonials / Google review screenshots
-   - Voicemail greeting script + after-hours script
+   - **Page A — Master Services Agreement Summary**
+     - Section title: "Terms of Service Agreement"
+     - Intro paragraph: this page summarizes the binding terms; full ToS at `https://auraintercept.ai/terms-of-service` and Privacy Policy at `/privacy-policy`.
+     - Numbered clause summaries pulled in plain English from the existing `TermsOfService.tsx` page (Services, Subscription & Trial, Onboarding Fee, 3rd-Party Provider Accounts & Billing Pass-Through, Customer Data & Privacy, Acceptable Use, IP, Disclaimers/Limitation of Liability, Termination, Governing Law).
+     - Callout box restating the 3rd-party billing disclaimer (per legal/third-party-fee-disclaimer memory) and 90-Day Live Trial / onboarding fee terms (per product/trial-period-standard memory).
 
-3. **3rd-Party Account Worksheet** (new section, replaces brief integrations block) — per Aura policy every provider is customer-owned. For each, capture: account exists Y/N, account email, billing card on file Y/N, who will grant access:
-   - SignalWire (voice + SMS)
-   - ElevenLabs (voice agent)
-   - Resend (email sending) + sending domain + DNS access
-   - Tavily (web research)
-   - Stripe (payments)
-   - A2P 10DLC registration data (legal business name, EIN, address, brand vertical, sample messages, opt-in language)
-   - Google Workspace / Calendar admin
-   - Social accounts (FB, IG, LinkedIn, X, TikTok, YouTube, GBP) — handle + admin email
+   - **Page B — Acknowledgement & Signature**
+     - Checkbox rows the signer initials:
+       - "I have read and agree to the Aura Intercept Terms of Service."
+       - "I have read and agree to the Privacy Policy."
+       - "I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account + credit card and are billed to me directly and separately from my Aura plan fee."
+       - "I authorize Concierge Onboarding to configure these accounts on my behalf using my credentials."
+       - "I agree to the 90-Day Live Trial terms; the onboarding fee for my selected tier is due at trial start and is non-refundable."
+     - Form rows: Company Legal Name, Authorized Signer Name, Title, Email.
+     - Signature block: Authorized Signature + Date.
+     - Witness/secondary signature block (optional): Printed Name + Signature + Date.
 
-4. **Brand & Voice Worksheet** — tone descriptors, words to avoid, signature sign-offs, sample customer greetings, do/don't examples (feeds AI operative prompts).
+2. **Update `SignOffPage`** to add one checklist item "Signed Terms of Service Agreement (previous page)" and a short reminder that the ToS signature page must be returned with the workbook.
 
-5. **Knowledge Base Intake (expanded)** — keep current Services/FAQ/Differentiators, add: pricing rules, warranty/return policy, payment terms, cancellation policy, common objections, escalation rules, hours/holiday calendar, service-area ZIPs/radius, emergency protocols.
-
-6. **Industry-Specific Intake Pack** (new) — one mini-form per industry cluster (Home Services, Professional Services, Retail/Restaurants, Real Estate, Healthcare/Wellness). Customer fills only the one that matches. Pulls field prompts from `industryFastStartQuestions.ts` + `industryPackSchema.ts`.
-
-7. **Communication Routing Worksheet** — who answers what:
-   - Voice: main line, after-hours, missed-call SMS text, transfer numbers per operative
-   - SMS keywords + auto-reply text
-   - Email aliases (sales@, support@, billing@)
-   - Web chat escalation rules
-   - Notification recipients (push/email/SMS) per event type
-
-8. **Employee/Technician Roster Worksheet** — table to list each user: name, email, phone, role (admin/employee/technician/dispatcher), service area, availability, skills. Replaces today's brief employee section.
-
-9. **Customer Portal & Booking Setup** — booking window, buffer, deposit, cancellation policy, intake-form custom fields, portal welcome message.
-
-10. **Smart Website & Content Inputs** — preferred domain, current DNS provider, About-us copy or bullet points, services blurbs, 5 photo slots, hero headline preference.
-
-11. **Sign-off & Submission page** — checklist of attachments included, signature line, return-to email, expected onboarding start date.
-
-## Files to change
-- `src/components/documentation/CompanyOnboardingPDF.tsx` — extend with new sections + checklist tables. Reuse existing styles + form-field components.
-- No other files. (Existing `ExportDocumentation.tsx` link already works.)
-
-## Data sources (read-only)
-- `src/lib/industryFastStartQuestions.ts`, `industryPackSchema.ts`, `industryCapabilities.ts`
-- `src/lib/documentationConfig.ts` (tiers + integration requirements already imported)
-- Memory: third-party-fee-disclaimer, trial-period-standard, canonical-four-tier-model
-
-## QA
-Render PDF → `pdftoppm -jpeg -r 150` → inspect every page for overflow, clipped checkboxes, table alignment. Iterate until clean. Deliver `/mnt/documents/company-onboarding-workbook.pdf` via `<presentation-artifact>` and keep the in-app download on ExportDocumentation.
+3. **Register the page** in the `CompanyOnboardingPDF` `<Document>` ordering between `SmartWebsiteInputsPage` and `SignOffPage`.
 
 ## Out of scope
-New routes, business logic, pricing changes, separate per-industry PDFs (one combined PDF with all industries).
+- Editing `TermsOfService.tsx` or legal copy beyond summarizing existing content.
+- New routes, DB tables, e-signature integration.
+- Other PDFs.
+
+## Validation
+Render the PDF via the existing Export Documentation page, rasterize the two new pages, and visually confirm layout/no clipping.
