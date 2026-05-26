@@ -1273,7 +1273,8 @@ const SignOffPage = () => (
     <PageHeader title="Sign-Off & Submission" pageNum={99} />
     <Text style={styles.sectionTitle}>{sanitizePdfText('Sign-Off & Submission')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments included with this workbook')}</Text>
-    {['Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
+    {['Signed Terms of Service Agreement (previous page) — REQUIRED',
+      'Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
       'Customer list CSV', 'Employee/technician list CSV', 'Service / price list', 'Quote + invoice samples',
       'Photos (numbered to website slots)', 'Testimonials / review screenshots'].map(item => (
       <View key={item} style={styles.optionRow}>
