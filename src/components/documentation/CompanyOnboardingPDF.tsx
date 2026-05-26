@@ -1398,6 +1398,30 @@ const TermsAcknowledgementPage = () => {
       <Text style={styles.paragraph}>
         {sanitizePdfText('Initial each item below to confirm agreement, then complete and sign at the bottom of the page. Return this signed page with the rest of the onboarding workbook.')}
       </Text>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
+      {[
+        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $497 one-time onboarding' },
+        { id: 'boost', label: 'Aura Boost — $697/mo  ·  $697 one-time onboarding' },
+        { id: 'pro',   label: 'Aura Pro   — $1,197/mo ·  $1,197 one-time onboarding' },
+        { id: 'elite', label: 'Aura Elite — $2,197/mo ·  $2,197 one-time onboarding' },
+      ].map((p) => (
+        <View key={p.id} style={styles.optionRow}>
+          <View style={styles.checkbox} />
+          <Text style={styles.optionText}>{sanitizePdfText(p.label)}</Text>
+        </View>
+      ))}
+      <Text style={[styles.formNote, { marginLeft: 20, marginTop: 4 }]}>
+        {sanitizePdfText('Billing cycle (check one): [ ] Monthly   [ ] Annual (save ~20%)')}
+      </Text>
+      <View style={[styles.formRow, { marginTop: 8 }]}>
+        <Text style={[styles.formLabel, { width: 180 }]}>{sanitizePdfText('Invoice email for onboarding fee:')}</Text>
+        <View style={styles.formLine} />
+      </View>
+      <Text style={[styles.formNote, { marginLeft: 188 }]}>
+        {sanitizePdfText('One-time onboarding invoice is sent here. Subscription billing begins after the 90-Day Live Trial.')}
+      </Text>
+
+      <Text style={[styles.subsectionTitle, { marginTop: 14 }]}>{sanitizePdfText('Acknowledgements (initial each)')}</Text>
       {ackItems.map((item, i) => (
         <View key={i} style={[styles.optionRow, { marginBottom: 10, alignItems: 'flex-start' }]}>
           <View style={[styles.checkbox, { marginTop: 2 }]} />
