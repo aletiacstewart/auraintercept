@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
@@ -6,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Copy, Check, Video, Info, Clapperboard, Film, Mic, ImageIcon } from 'lucide-react';
+import { Copy, Check, Video, Info, Clapperboard, Film, Mic, ImageIcon, Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { sections, type Clip } from '@/lib/videoPromptsData';
+import VideoPromptsPDF from '@/components/documentation/VideoPromptsPDF';
 
 interface Clip {
   num: number;
