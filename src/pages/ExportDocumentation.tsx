@@ -15,6 +15,7 @@ import CompanyGuidesPDF from '@/components/documentation/CompanyGuidesPDF';
 import CompanyOnboardingPDF from '@/components/documentation/CompanyOnboardingPDF';
 import SocialMediaContentPackPDF from '@/components/documentation/SocialMediaContentPackPDF';
 import VideoScriptsPDF from '@/components/documentation/VideoScriptsPDF';
+import VideoPromptsPDF from '@/components/documentation/VideoPromptsPDF';
 import SalesPitchDataPDF from '@/components/documentation/SalesPitchDataPDF';
 import BrandAssetGuidePDF from '@/components/documentation/BrandAssetGuidePDF';
 import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
@@ -559,6 +560,35 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                     <Button className="w-full" variant="outline" disabled={loading}>
                       {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
                       {loading ? 'Generating...' : 'Download Video Scripts'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* AI Promo Video Prompts */}
+            <Card className="border-cyan-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-cyan-500" />
+                  AI Promo Video Prompts
+                </CardTitle>
+                <CardDescription>34 ready-to-paste prompts for Runway, Sora, Kling, and similar AI video tools</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Video prompt per 8s clip</li>
+                    <li>Voice-over / audio script</li>
+                    <li>Graphic / image prompt</li>
+                    <li>All 7 consoles + 24 agents</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<VideoPromptsPDF />} fileName={`ai-promo-video-prompts-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Promo Prompts'}
                     </Button>
                   )}
                 </PDFDownloadLink>
