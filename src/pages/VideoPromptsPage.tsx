@@ -128,10 +128,23 @@ export default function VideoPromptsPage() {
                   <Info className="h-4 w-4 text-primary" />
                   <CardTitle className="text-sm text-foreground">Assembly Guide</CardTitle>
                 </div>
-                <Button size="sm" variant="outline" onClick={handleCopyAll} className="h-7 text-xs border-border/50 text-foreground hover:bg-white/10">
-                  {copiedAll ? <Check className="mr-1 h-3 w-3 text-green-400" /> : <Copy className="mr-1 h-3 w-3" />}
-                  Copy All 34 Prompts
-                </Button>
+                <div className="flex items-center gap-2">
+                  <PDFDownloadLink
+                    document={<VideoPromptsPDF />}
+                    fileName={`ai-promo-video-prompts-${new Date().toISOString().split('T')[0]}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button size="sm" variant="outline" className="h-7 text-xs border-border/50 text-foreground hover:bg-white/10" disabled={loading}>
+                        {loading ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Download className="mr-1 h-3 w-3" />}
+                        {loading ? 'Generating...' : 'Download PDF'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                  <Button size="sm" variant="outline" onClick={handleCopyAll} className="h-7 text-xs border-border/50 text-foreground hover:bg-white/10">
+                    {copiedAll ? <Check className="mr-1 h-3 w-3 text-green-400" /> : <Copy className="mr-1 h-3 w-3" />}
+                    Copy All 34 Prompts
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
