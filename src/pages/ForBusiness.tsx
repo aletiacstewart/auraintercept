@@ -8,6 +8,7 @@ import { IndustryHero } from '@/components/marketing/IndustryHero';
 import { IndustryValueProps } from '@/components/marketing/IndustryValueProps';
 import { RolePreviewRow } from '@/components/marketing/RolePreviewRow';
 import { StartDemoDialog } from '@/components/marketing/StartDemoDialog';
+import { IndustryROICalculator } from '@/components/marketing/IndustryROICalculator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
@@ -99,6 +100,13 @@ export default function ForBusiness() {
         <IndustryValueProps content={content} />
         <RolePreviewRow industryId={industry} onTryDemo={() => setDemoOpen(true)} />
         <IntegrationStatusPanel />
+
+        {/* Industry ROI calculator */}
+        <section className="py-10 bg-background">
+          <div className="container max-w-6xl mx-auto px-4">
+            <IndustryROICalculator industryId={industry} industryLabel={content.label} />
+          </div>
+        </section>
 
         {/* Pricing snapshot */}
         <section className="py-10 bg-background">
