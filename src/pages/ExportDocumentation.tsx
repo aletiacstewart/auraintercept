@@ -15,6 +15,7 @@ import CompanyGuidesPDF from '@/components/documentation/CompanyGuidesPDF';
 import CompanyOnboardingPDF from '@/components/documentation/CompanyOnboardingPDF';
 import SocialMediaContentPackPDF from '@/components/documentation/SocialMediaContentPackPDF';
 import VideoScriptsPDF from '@/components/documentation/VideoScriptsPDF';
+import VideoPromptsPDF from '@/components/documentation/VideoPromptsPDF';
 import SalesPitchDataPDF from '@/components/documentation/SalesPitchDataPDF';
 import BrandAssetGuidePDF from '@/components/documentation/BrandAssetGuidePDF';
 import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
