@@ -11,7 +11,6 @@ import { Copy, Check, Video, Info, Clapperboard, Film, Mic, ImageIcon, Download,
 import { toast } from 'sonner';
 import { sections, type Clip } from '@/lib/videoPromptsData';
 import VideoPromptsPDF from '@/components/documentation/VideoPromptsPDF';
-  {
 function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sectionColor: string; sectionBorderColor: string }) {
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
