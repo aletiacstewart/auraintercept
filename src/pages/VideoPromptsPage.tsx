@@ -11,24 +11,6 @@ import { Copy, Check, Video, Info, Clapperboard, Film, Mic, ImageIcon, Download,
 import { toast } from 'sonner';
 import { sections, type Clip } from '@/lib/videoPromptsData';
 import VideoPromptsPDF from '@/components/documentation/VideoPromptsPDF';
-
-interface Clip {
-  num: number;
-  name: string;
-  prompt: string;
-  audioScript: string;
-  imagePrompt: string;
-}
-
-interface Section {
-  title: string;
-  color: string;
-  borderColor: string;
-  bgColor: string;
-  clips: Clip[];
-}
-
-const sections: Section[] = [
   {
     title: 'Platform Intro',
     color: 'text-cyan-400',
