@@ -254,3 +254,6 @@ verify_jwt = false
 
 [functions.admin-reset-password]
 verify_jwt = false
+
+[functions.send-campaign]
+verify_jwt = true
