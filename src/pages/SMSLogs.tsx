@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Search, Clock, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight, Send, Radio, ExternalLink } from 'lucide-react';
+import { MessageSquare, Search, Clock, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight, Send, Radio, ExternalLink, Stethoscope, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
@@ -39,6 +39,9 @@ export default function SMSLogs() {
   const [testOpen, setTestOpen] = useState(false);
   const [testTo, setTestTo] = useState('');
   const [testSending, setTestSending] = useState(false);
+  const [bypassAllowlist, setBypassAllowlist] = useState(false);
+  const [health, setHealth] = useState<any>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
 
   const { data: smsRows, isLoading } = useQuery({
     queryKey: ['sms-unified', companyId],
@@ -175,7 +178,7 @@ export default function SMSLogs() {
     setTestSending(true);
     try {
       const { data, error } = await supabase.functions.invoke('sms-diagnostic', {
-        body: { companyId, to: testTo },
+        body: { companyId, to: testTo, mode: bypassAllowlist ? 'verified' : undefined },
       });
       if (error) throw error;
       if ((data as any)?.ok) {
@@ -196,6 +199,22 @@ export default function SMSLogs() {
     }
   };
 
+  const runHealth = async () => {
+    if (!companyId) return;
+    setHealthLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sms-diagnostic', {
+        body: { companyId, mode: 'health' },
+      });
+      if (error) throw error;
+      setHealth(data);
+    } catch (e: any) {
+      toast.error('Health check failed', { description: e?.message || String(e) });
+    } finally {
+      setHealthLoading(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <PageContainer>
@@ -212,6 +231,103 @@ export default function SMSLogs() {
             <MetricCard icon={CheckCircle} value={sent} label="Delivered" valueColor="success" iconColor="text-green-400" />
             <MetricCard icon={XCircle} value={failed} label="Failed" valueColor="destructive" iconColor="text-destructive" />
           </div>
+
+          <Card className="border-border/50">
+            <CardHeader>
+              <div className="flex items-start justify-between gap-2 flex-wrap">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Stethoscope className="w-5 h-5" /> SignalWire Health
+                  </CardTitle>
+                  <CardDescription>
+                    Verify credentials, From-number ownership, SMS capability, and likely cause of provider rejections.
+                  </CardDescription>
+                </div>
+                <Button size="sm" variant="outline" onClick={runHealth} disabled={healthLoading}>
+                  {healthLoading ? 'Checking…' : (health ? 'Re-check' : 'Run health check')}
+                </Button>
+              </div>
+            </CardHeader>
+            {health && (
+              <CardContent className="space-y-3 text-sm">
+                {health.error ? (
+                  <p className="text-destructive">{health.error}</p>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <div className="text-xs text-muted-foreground">Account type</div>
+                        <div className="font-medium flex items-center gap-1">
+                          {health.account?.type === 'Full' ? (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                          ) : (
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                          )}
+                          {health.account?.type || 'unknown'}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Space</div>
+                        <div className="font-mono text-xs truncate">{health.space}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">From owned by project</div>
+                        <div className="flex items-center gap-1">
+                          {health.from_number_owned ? (
+                            <><CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> Yes</>
+                          ) : (
+                            <><AlertTriangle className="w-3.5 h-3.5 text-destructive" /> No</>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">SMS capability</div>
+                        <div className="flex items-center gap-1">
+                          {health.from_number_sms_capable ? (
+                            <><CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> Enabled</>
+                          ) : (
+                            <><AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> Off</>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {health.incoming_numbers?.length > 0 && (
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Numbers owned by this project</div>
+                        <div className="flex flex-wrap gap-1">
+                          {health.incoming_numbers.map((n: any) => (
+                            <Badge key={n.phone_number} variant="outline" className="font-mono text-xs">
+                              {n.phone_number}{n.sms ? '' : ' (no SMS)'}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {health.hints?.length > 0 && (
+                      <div className="space-y-2">
+                        {health.hints.map((h: string, i: number) => (
+                          <div key={i} className="flex gap-2 p-3 rounded-md bg-amber-500/10 border border-amber-500/30">
+                            <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                            <p className="text-sm">{h}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {health.errors?.length > 0 && (
+                      <div className="space-y-1">
+                        {health.errors.map((e: string, i: number) => (
+                          <p key={i} className="text-xs text-destructive">{e}</p>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </CardContent>
+            )}
+          </Card>
 
           <Card className="border-border/50">
             <CardHeader>
@@ -243,6 +359,17 @@ export default function SMSLogs() {
                         value={testTo}
                         onChange={(e) => setTestTo(e.target.value)}
                       />
+                      <label className="flex items-start gap-2 text-xs text-muted-foreground mt-2">
+                        <input
+                          type="checkbox"
+                          checked={bypassAllowlist}
+                          onChange={(e) => setBypassAllowlist(e.target.checked)}
+                          className="mt-0.5"
+                        />
+                        <span>
+                          Bypass Leads/Customers check (use for a number you have already added under SignalWire → Phone Numbers → Verified Caller IDs)
+                        </span>
+                      </label>
                     </div>
                     <DialogFooter>
                       <Button variant="ghost" onClick={() => setTestOpen(false)}>Cancel</Button>

@@ -260,7 +260,7 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
       const code = payload?.code ? String(payload.code) : String(resp.status);
       const baseMsg = payload?.message || text;
       const friendly = code === "10000"
-        ? `SignalWire 10000: ${baseMsg} — The SignalWire account must verify the recipient or upgrade from trial to send to this number.`
+        ? `SignalWire 10000: ${baseMsg} — On a paid Space this usually means (a) the From number is not owned by the project these API credentials authenticate into, or (b) the number is not attached to an approved A2P 10DLC campaign and can therefore only message numbers verified in the Space. Run "SignalWire Health" from SMS Logs to see which.`
         : `SignalWire ${code}: ${baseMsg}`;
       await logSms(supabase, {
         companyId,
