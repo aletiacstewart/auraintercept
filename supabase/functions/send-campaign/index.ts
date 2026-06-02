@@ -73,20 +73,57 @@ Deno.serve(async (req) => {
     const channels: string[] = campaign.channels || [];
     const segment: string = campaign.target_segment || 'all';
 
-    // Resolve recipients from the active customer profile table used by the app.
-    let query = supabase
-      .from('customer_profiles')
-      .select('id, name, email, phone, email_opt_out, sms_opt_out, created_at, intake_data')
-      .eq('company_id', companyId);
+    // Resolve recipients — strictly scoped to the campaign's company_id.
+    // Customer rows come from customer_profiles; lead rows come from leads.
+    // 'all', 'new', 'vip', 'inactive' = customers only (existing behavior).
+    // 'leads' = leads only. 'leads_and_customers' = union, deduped by email/phone.
+    const includeCustomers = segment !== 'leads';
+    const includeLeads = segment === 'leads' || segment === 'leads_and_customers';
 
-    if (segment === 'new') {
-      const cutoff = new Date(Date.now() - 30 * 86400_000).toISOString();
-      query = query.gte('created_at', cutoff);
+    let recipients: any[] = [];
+
+    if (includeCustomers) {
+      let query = supabase
+        .from('customer_profiles')
+        .select('id, company_id, name, email, phone, email_opt_out, sms_opt_out, created_at, intake_data')
+        .eq('company_id', companyId);
+      if (segment === 'new') {
+        const cutoff = new Date(Date.now() - 30 * 86400_000).toISOString();
+        query = query.gte('created_at', cutoff);
+      }
+      const { data, error } = await query.limit(2000);
+      if (error) throw error;
+      for (const c of data || []) {
+        recipients.push({ ...c, _source: 'customer' });
+      }
     }
 
-    const { data: customerProfiles, error: custErr } = await query.limit(2000);
-    if (custErr) throw custErr;
-    let recipients = customerProfiles || [];
+    if (includeLeads) {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('id, company_id, name, email, phone, created_at, intake_data')
+        .eq('company_id', companyId)
+        .limit(2000);
+      if (error) throw error;
+      for (const l of data || []) {
+        // Leads don't have opt-out columns yet — treat as opt-in.
+        recipients.push({ ...l, email_opt_out: false, sms_opt_out: false, _source: 'lead' });
+      }
+    }
+
+    // Dedupe across customers + leads by normalized email / phone
+    if (includeCustomers && includeLeads) {
+      const seen = new Set<string>();
+      recipients = recipients.filter((r: any) => {
+        const emailKey = clean(r.email).toLowerCase();
+        const phoneKey = clean(r.phone).replace(/\D/g, '');
+        const key = `${emailKey}|${phoneKey}`;
+        if (!emailKey && !phoneKey) return true;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
 
     if (segment === 'vip') {
       recipients = recipients.filter((c: any) => {
@@ -115,6 +152,9 @@ Deno.serve(async (req) => {
         return !activeContacts.has(emailKey) && !activeContacts.has(phoneKey);
       });
     }
+
+    // Defense-in-depth: drop anything whose company_id doesn't match the campaign.
+    recipients = recipients.filter((r: any) => r.company_id === companyId);
 
     const reachableCount = recipients.reduce((count: number, c: any) => {
       const canEmail = channels.includes('email') && clean(c.email) && c.email_opt_out !== true;
