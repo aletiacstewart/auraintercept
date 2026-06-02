@@ -37,15 +37,10 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { companyId: authCompanyId, user } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
-  const [activeTab, setActiveTab] = useState('chat');
+  const [activeTab, setActiveTab] = useState<string>('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('outreach');
-  
-  // Form visibility states
-  const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [showLeadsForm, setShowLeadsForm] = useState(false);
-  const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -77,65 +72,33 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const hideAllForms = () => {
-    setShowCampaignForm(false);
-    setShowLeadsForm(false);
-    setShowSegmentsForm(false);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
     const message = inputValue.trim();
     setInputValue('');
-    hideAllForms();
-    await sendMessage(message);
-  };
-
-  const handleQuickAction = async (message: string, actionId?: string) => {
-    // Show appropriate form or switch tab based on action
-    if (actionId === 'campaign') {
-      hideAllForms();
-      setShowCampaignForm(true);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'leads') {
-      hideAllForms();
-      setShowLeadsForm(true);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'customers') {
-      hideAllForms();
-      setShowSegmentsForm(true);
-      setActiveTab('chat');
-      return;
-    }
-    
-    // Default: send message to AI
-    hideAllForms();
     setActiveTab('chat');
     await sendMessage(message);
   };
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab !== 'chat') {
-      hideAllForms();
+  const handleQuickAction = async (message: string, actionId?: string) => {
+    if (actionId && ['campaign', 'leads', 'customers'].includes(actionId)) {
+      setActiveTab(actionId);
+      return;
     }
+    setActiveTab('chat');
+    await sendMessage(message);
   };
 
   const handleHome = () => {
     clearMessages();
-    hideAllForms();
     setInputValue('');
     setActiveTab('chat');
     setLastAgent('outreach');
   };
 
   const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {
-    hideAllForms();
+    setActiveTab('chat');
     const successMessages: Record<string, string> = {
       campaign: `I just created a new ${data.type} campaign called "${data.name}". Can you help me optimize it and suggest the best channels and messaging?`,
     };
@@ -144,15 +107,14 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     }
   };
 
-  const isShowingForm = showCampaignForm || showLeadsForm || showSegmentsForm;
-  const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
+  const isShowingForm = activeTab !== 'chat';
+  const showWelcome = messages.length === 0 && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
-  // Get active label based on form type
   const getActiveLabel = () => {
-    if (showCampaignForm) return 'Campaign';
-    if (showLeadsForm) return 'Leads';
-    if (showSegmentsForm) return 'Marketing';
+    if (activeTab === 'campaign') return 'Campaign';
+    if (activeTab === 'leads') return 'Leads';
+    if (activeTab === 'customers') return 'Marketing';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -178,24 +140,43 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
-      onTabChange={(tabId) => {
-        handleTabChange(tabId);
-        if (tabId !== 'chat') {
-          const action = QUICK_ACTIONS.find(a => a.id === tabId);
-          if (action) handleQuickAction(action.message, action.id);
-        }
-      }}
+      onTabChange={(tabId) => setActiveTab(tabId)}
       onHomeClick={handleHome}
       agents={MARKETING_AGENTS}
       currentAgentId="outreach"
-      onAgentClick={() => {
-        const action = QUICK_ACTIONS.find(a => a.id === 'campaign');
-        if (action) handleQuickAction(action.message, action.id);
-      }}
+      onAgentClick={() => setActiveTab('campaign')}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}
     >
+      {/* Form Tabs */}
+      {activeTab !== 'chat' && (
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          {!effectiveCompanyId ? (
+            <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
+              Sign in to a company workspace to use this form.
+            </div>
+          ) : activeTab === 'campaign' ? (
+            <CampaignForm
+              companyId={effectiveCompanyId}
+              onCancel={handleHome}
+              onSuccess={(data) => handleFormSuccess('campaign', data)}
+            />
+          ) : activeTab === 'leads' ? (
+            <LeadForm
+              companyId={effectiveCompanyId}
+              onCancel={handleHome}
+              onSuccess={(data) => handleFormSuccess('leads', data)}
+            />
+          ) : activeTab === 'customers' ? (
+            <CustomerSegmentsForm
+              companyId={effectiveCompanyId}
+              onCancel={handleHome}
+            />
+          ) : null}
+        </div>
+      )}
+
       {/* Chat Tab */}
       {activeTab === 'chat' && (
         <>
@@ -212,32 +193,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
               />
             ) : (
               <div className="space-y-4">
-                {/* Forms */}
-                {showCampaignForm && effectiveCompanyId && (
-                  <CampaignForm
-                    companyId={effectiveCompanyId}
-                    onCancel={handleHome}
-                    onSuccess={(data) => handleFormSuccess('campaign', data)}
-                  />
-                )}
-
-                {showLeadsForm && effectiveCompanyId && (
-                  <LeadForm
-                    companyId={effectiveCompanyId}
-                    onCancel={handleHome}
-                    onSuccess={(data) => handleFormSuccess('leads', data)}
-                  />
-                )}
-                
-                {showSegmentsForm && effectiveCompanyId && (
-                  <CustomerSegmentsForm
-                    companyId={effectiveCompanyId}
-                    onCancel={handleHome}
-                  />
-                )}
-
                 {/* Chat Messages */}
-                {!isShowingForm && messages.map((msg, idx) => {
+                {messages.map((msg, idx) => {
                   const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
                   const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
                   const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
@@ -254,7 +211,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                     />
                   );
                 })}
-                {isLoading && !isShowingForm && (
+                {isLoading && (
                   <ChatBubble
                     role="assistant"
                     content=""
