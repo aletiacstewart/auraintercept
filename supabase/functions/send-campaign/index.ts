@@ -17,6 +17,15 @@ function wrapLinks(html: string, sendId: string, trackBase: string): string {
   });
 }
 
+function splitName(name?: string | null) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  return { firstName: parts[0] || '', lastName: parts.slice(1).join(' ') };
+}
+
+function clean(value?: string | null) {
+  return (value || '').trim();
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
