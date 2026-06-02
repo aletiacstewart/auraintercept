@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
+import { sendGuardedSms } from "../_shared/sms-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -80,7 +81,7 @@ serve(async (req) => {
     // Fetch company settings including script templates
     const { data: company } = await supabase
       .from("companies")
-      .select("missed_call_action, name, missed_call_sms_template, missed_call_callback_script")
+      .select("missed_call_action, name, missed_call_sms_template, missed_call_callback_script, missed_call_reply_known_only")
       .eq("id", companyId)
       .single();
 
@@ -97,46 +98,28 @@ serve(async (req) => {
 
     // Send SMS for sms_only or callback_then_sms
     if (missedCallAction === "sms_only" || missedCallAction === "callback_then_sms") {
-      if (signalwire_project_id && signalwire_api_token && signalwire_space_url) {
-        const smsUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Messages.json`;
-        const authHeader = "Basic " + btoa(`${signalwire_project_id}:${signalwire_api_token}`);
-        const defaultSms = `Hi, we noticed we missed your call at ${companyName}. How can we help? Reply to this message or call us back at your convenience.`;
-        const smsBody = company?.missed_call_sms_template
-          ? company.missed_call_sms_template.replace(/\{companyName\}/g, companyName)
-          : defaultSms;
-
-        const smsParams = new URLSearchParams({
-          From: normalizePhoneNumber(signalwire_phone_number),
-          To: normalizedFrom,
-          Body: smsBody,
-        });
-
-        const smsResponse = await fetch(smsUrl, {
-          method: "POST",
-          headers: {
-            Authorization: authHeader,
-            "Content-Type": "application/x-www-form-urlencoded",
-            Accept: "application/json",
-          },
-          body: smsParams.toString(),
-        });
-
-        if (!smsResponse.ok) {
-          const errText = await smsResponse.text();
-          console.error("Failed to send missed call SMS:", smsResponse.status, errText);
-        } else {
-          console.log("Missed call SMS sent to:", normalizedFrom);
-
-          // Log SMS
-          await supabase.from("sms_logs").insert({
-            company_id: companyId,
-            direction: "outbound",
-            from_number: normalizePhoneNumber(signalwire_phone_number),
-            to_number: normalizedFrom,
-            body: smsBody,
-            status: "sent",
-          });
-        }
+      const defaultSms = `Hi, we noticed we missed your call at ${companyName}. How can we help? Reply to this message or call us back at your convenience.`;
+      const smsBody = company?.missed_call_sms_template
+        ? company.missed_call_sms_template.replace(/\{companyName\}/g, companyName)
+        : defaultSms;
+      // When reply-to-known-only is enabled (default), only auto-reply if the
+      // caller exists in Leads/Customers. Otherwise allow the recent inbound
+      // caller as the basis for the allowlist.
+      const knownOnly = company?.missed_call_reply_known_only !== false;
+      const result = await sendGuardedSms({
+        supabase,
+        companyId,
+        from: signalwire_phone_number,
+        to: normalizedFrom,
+        body: smsBody,
+        source: "missed_call",
+        customerName: "Missed Caller",
+        allowInboundCaller: !knownOnly,
+      });
+      if (!result.ok) {
+        console.warn("[missed-call-handler] SMS not sent:", result.status, result.error);
+      } else {
+        console.log("Missed call SMS sent to:", normalizedFrom);
       }
     }
 
