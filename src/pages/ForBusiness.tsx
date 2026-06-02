@@ -20,10 +20,10 @@ import { SEO } from '@/components/seo/SEO';
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
 const PRICING_TIERS = [
-  { name: 'Aura Core', price: '$497', tagline: '8 agents · 3 consoles', tier: 'starter' },
-  { name: 'Aura Boost', price: '$697', tagline: '12 agents · 5 consoles', tier: 'connect' },
-  { name: 'Aura Pro', price: '$1,197', tagline: '16 agents · 5 consoles', tier: 'performance' },
-  { name: 'Aura Elite', price: '$2,197', tagline: '24 agents · 7 consoles + AI Hub', tier: 'command' },
+  { name: 'Aura Core', price: '$697', tagline: '8 agents · 3 consoles', tier: 'starter' },
+  { name: 'Aura Boost', price: '$1,097', tagline: '12 agents · 5 consoles', tier: 'connect' },
+  { name: 'Aura Pro', price: '$1,997', tagline: '16 agents · 5 consoles', tier: 'performance' },
+  { name: 'Aura Elite', price: '$3,497', tagline: '24 agents · 7 consoles + AI Hub', tier: 'command' },
 ] as const;
 
 export default function ForBusiness() {

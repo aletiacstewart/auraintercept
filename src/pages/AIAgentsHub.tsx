@@ -116,7 +116,7 @@ const CATEGORY_INFO: Record<string, {
 };
 
 // Core agents that should always be visible & recommended first.
-// These match the Aura Core ($497) operative set in TIER_AGENT_CONFIG so that
+// These match the Aura Core ($697) operative set in TIER_AGENT_CONFIG so that
 // "Enable Core Agents" activates the agents Aura Core actually includes.
 const CORE_AGENT_TYPES = new Set([
   'triage',
