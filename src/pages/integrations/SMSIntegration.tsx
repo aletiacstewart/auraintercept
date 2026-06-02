@@ -15,7 +15,6 @@ import { SignalWireSetupGuide } from '@/components/integrations/SignalWireSetupG
 import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 import { SMSKeywordsSection } from '@/components/sms/SMSKeywordsSection';
 import { FormShell } from '@/components/ui/form-shell';
-import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
 import { toast } from 'sonner';
 import { Phone, Check, ExternalLink, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -162,8 +161,6 @@ export default function SMSIntegration() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <InlineFormProvider>
-        <InlineFormHost className="mb-4" />
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Phone}
@@ -302,7 +299,6 @@ export default function SMSIntegration() {
               )}
           </FormShell>
         </div>
-        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
