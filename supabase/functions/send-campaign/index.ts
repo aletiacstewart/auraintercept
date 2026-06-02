@@ -203,6 +203,7 @@ Deno.serve(async (req) => {
       };
       const message = render(campaign.message_template || '', vars);
       const subject = sanitizeSubject(render(campaign.email_subject || campaign.name || 'A message for you', vars));
+      const smsBody = render(campaign.sms_template || campaign.message_template || '', vars);
 
       const email = clean(c.email);
       if (channels.includes('email') && email && c.email_opt_out !== true) {
@@ -244,7 +245,7 @@ Deno.serve(async (req) => {
         } else {
         try {
           const res = await supabase.functions.invoke('send-appointment-sms', {
-            body: { companyId, customerPhone: phone, customerName: name, message },
+            body: { companyId, customerPhone: phone, customerName: name, message: smsBody },
           });
           const ok = !res.error && (res.data as any)?.success !== false;
           logs.push({
