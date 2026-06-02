@@ -12,79 +12,83 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// 4-TIER STRUCTURE: Core ($497), Boost ($697), Pro ($1,197), Elite ($2,197)
+// 4-TIER STRUCTURE: Core ($697 · $349 onboarding), Boost ($1,097 · $549 onboarding),
+// Pro ($1,997 · $999 onboarding), Elite ($3,497 · $1,749 onboarding).
+// NOTE: After deploy, create new Stripe Price objects for these monthly amounts and
+// paste the new price_ids below. The existing IDs are kept as fallbacks for
+// in-flight checkout sessions and will be retained in PRICE_TO_TIER for grandfathering.
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
   // Canonical 4 tiers
   starter: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   connect: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Boost",
-    price: 69700, // $697 in cents
+    price: 109700, // $1,097 in cents
   },
   performance: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Pro",
-    price: 119700, // $1,197 in cents
+    price: 199700, // $1,997 in cents
   },
   command: {
     price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
     name: "Aura Elite",
-    price: 219700, // $2,197 in cents
+    price: 349700, // $3,497 in cents
   },
   // Legacy tier aliases → map to canonical 4 tiers
   scheduling: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   growth: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Boost",
-    price: 69700,
+    price: 109700,
   },
   business: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Pro",
-    price: 119700,
+    price: 199700,
   },
   field_ops: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Boost",
-    price: 69700,
+    price: 109700,
   },
   express: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   aura_flow: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   halo: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   core: {
     price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
     name: "Aura Core",
-    price: 49700, // $497 in cents
+    price: 69700, // $697 in cents
   },
   single_point: {
     price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
     name: "Aura Boost",
-    price: 69700,
+    price: 109700,
   },
   multi_track: {
     price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
     name: "Aura Pro",
-    price: 119700,
+    price: 199700,
   },
 };
 

@@ -903,10 +903,10 @@ export default function Auth() {
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$697',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$1,097',   annualPrice: '$581', annualTotal: '$6,970', savings: '$1,394',   color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,997',   annualPrice: '$998', annualTotal: '$11,970', savings: '$2,394', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$3,497', annualPrice: '$1,831', annualTotal: '$21,970', savings: '$4,394', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$697',   annualPrice: '$581', annualTotal: '$6,970', savings: '$1,394',   color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$1,097',   annualPrice: '$914', annualTotal: '$10,970', savings: '$2,194',   color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,997',   annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'purple',  popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$3,497', annualPrice: '$2,914', annualTotal: '$34,970', savings: '$6,994', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -1460,11 +1460,11 @@ export default function Auth() {
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   One-Time Onboarding Fee (required)
                                   <span className="ml-auto text-primary font-bold">
-                                    {selectedTier === 'starter' ? '$697' : selectedTier === 'connect' ? '$1,097' : selectedTier === 'performance' ? '$1,997' : selectedTier === 'command' ? '$3,497' : '$697–$3,497'}
+                                    {selectedTier === 'starter' ? '$349' : selectedTier === 'connect' ? '$549' : selectedTier === 'performance' ? '$999' : selectedTier === 'command' ? '$1,749' : '$349–$1,749'}
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $697 · Boost $1,097 · Pro $1,997 · Elite $3,497</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
@@ -1507,7 +1507,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $697 · Boost $1,097 · Pro $1,997 · Elite $3,497</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
+                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
                  </p>
               </div>
 
