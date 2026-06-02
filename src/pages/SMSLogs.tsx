@@ -85,7 +85,26 @@ export default function SMSLogs() {
           source: 'reminder',
         });
       }
+      // De-dupe: when sms_logs already has the provider truth for a recipient
+      // within a short window, skip the generic campaign_sends row so the UI
+      // surfaces SignalWire codes / SIDs instead of "Outbound API" placeholders.
+      const digits = (v: string) => (v || '').replace(/\D/g, '').slice(-10);
+      const smsLogKeys = new Set(
+        ((logsRes.data as any[]) || []).map(
+          (r) => `${digits(r.to_number)}|${Math.floor(new Date(r.created_at).getTime() / 60000)}`,
+        ),
+      );
       for (const r of (campaignRes.data as any[]) || []) {
+        const key = `${digits(r.recipient)}|${Math.floor(new Date(r.created_at).getTime() / 60000)}`;
+        // also drop if same recipient appears in sms_logs within +/- 2 minutes
+        const recipDigits = digits(r.recipient);
+        const ts = new Date(r.created_at).getTime();
+        const dupedByWindow = ((logsRes.data as any[]) || []).some(
+          (s) =>
+            digits(s.to_number) === recipDigits &&
+            Math.abs(new Date(s.created_at).getTime() - ts) < 5 * 60 * 1000,
+        );
+        if (smsLogKeys.has(key) || dupedByWindow) continue;
         rows.push({
           id: `camp-${r.id}`,
           created_at: r.created_at,
