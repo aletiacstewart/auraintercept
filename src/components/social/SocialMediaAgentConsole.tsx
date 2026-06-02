@@ -46,11 +46,8 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('creative_content');
-  
-  // Single visibility state
-  const [showContentEngine, setShowContentEngine] = useState(false);
+
   const [contentEngineTab, setContentEngineTab] = useState('generator');
-  const [showMyPosts, setShowMyPosts] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -80,61 +77,41 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const hideAllForms = () => {
-    setShowContentEngine(false);
-    setShowMyPosts(false);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
     const message = inputValue.trim();
     setInputValue('');
-    hideAllForms();
+    setActiveTab('chat');
     await sendMessage(message);
   };
 
   const handleQuickAction = async (message: string, actionId?: string) => {
     if (actionId === 'create-content') {
-      hideAllForms();
-      setShowContentEngine(true);
       setContentEngineTab('generator');
-      setActiveTab('chat');
+      setActiveTab('create-content');
       return;
     }
     if (actionId === 'my-posts') {
-      hideAllForms();
-      setShowMyPosts(true);
-      setActiveTab('chat');
+      setActiveTab('my-posts');
       return;
     }
-    
-    hideAllForms();
     setActiveTab('chat');
     await sendMessage(message);
   };
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab !== 'chat') {
-      hideAllForms();
-    }
-  };
-
   const handleHome = () => {
     clearMessages();
-    hideAllForms();
     setInputValue('');
     setActiveTab('chat');
     setLastAgent('creative_content');
   };
 
-  const isShowingForm = showContentEngine || showMyPosts;
-  const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
+  const showWelcome = messages.length === 0 && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   const getActiveLabel = () => {
-    if (showContentEngine) {
+    if (activeTab === 'create-content') {
       const labels: Record<string, string> = {
         settings: 'Brand Voice',
         generator: 'Content Engine',
@@ -143,7 +120,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       };
       return labels[contentEngineTab] || 'Content Engine';
     }
-    if (showMyPosts) return 'My Posts';
+    if (activeTab === 'my-posts') return 'My Posts';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -169,24 +146,60 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}
-      onTabChange={(tabId) => {
-        handleTabChange(tabId);
-        if (tabId !== 'chat') {
-          const action = QUICK_ACTIONS.find(a => a.id === tabId);
-          if (action) handleQuickAction(action.message, action.id);
-        }
-      }}
+      onTabChange={(tabId) => setActiveTab(tabId)}
       onHomeClick={handleHome}
       agents={SOCIAL_AGENTS}
       currentAgentId="creative_content"
-      onAgentClick={() => {
-        const action = QUICK_ACTIONS.find(a => a.id === 'create-content');
-        if (action) handleQuickAction(action.message, action.id);
-      }}
+      onAgentClick={() => setActiveTab('create-content')}
       quickActions={QUICK_ACTIONS}
       onQuickAction={handleQuickAction}
       useDefaultLogo={true}
     >
+      {/* Create Content tab */}
+      {activeTab === 'create-content' && (
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          {!effectiveCompanyId ? (
+            <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
+              Sign in to a company workspace to use the content engine.
+            </div>
+          ) : (
+            <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
+              <TabsList>
+                <TabsTrigger value="settings">Brand Voice</TabsTrigger>
+                <TabsTrigger value="generator">Generate</TabsTrigger>
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="calendar">Calendar</TabsTrigger>
+              </TabsList>
+              <TabsContent value="settings">
+                <AIContentProfileManager />
+              </TabsContent>
+              <TabsContent value="generator">
+                <MultiChannelGenerator />
+              </TabsContent>
+              <TabsContent value="dashboard">
+                <ContentEngineDashboard />
+              </TabsContent>
+              <TabsContent value="calendar">
+                <ContentEngineCalendar />
+              </TabsContent>
+            </Tabs>
+          )}
+        </div>
+      )}
+
+      {/* My Posts tab */}
+      {activeTab === 'my-posts' && (
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          {!effectiveCompanyId ? (
+            <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
+              Sign in to a company workspace to view your posts.
+            </div>
+          ) : (
+            <SocialFeedQueue companyId={effectiveCompanyId} initialFilter="pending" />
+          )}
+        </div>
+      )}
+
       {activeTab === 'chat' && (
         <>
           <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
@@ -209,7 +222,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                 {/* Secondary actions */}
                 <div className="flex items-center justify-center gap-3">
                   <button
-                    onClick={() => handleQuickAction('View saved drafts and posts', 'my-posts')}
+                    onClick={() => setActiveTab('my-posts')}
                     className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
                   >
                     View saved drafts & posts
@@ -222,40 +235,8 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
               </div>
             ) : (
               <div className="space-y-4">
-                {/* Content Engine */}
-                {showContentEngine && effectiveCompanyId && (
-                  <div className="space-y-4">
-                    <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
-                      <TabsList>
-                        <TabsTrigger value="settings">Brand Voice</TabsTrigger>
-                        <TabsTrigger value="generator">Generate</TabsTrigger>
-                        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                        <TabsTrigger value="calendar">Calendar</TabsTrigger>
-                      </TabsList>
-
-                      <TabsContent value="settings">
-                        <AIContentProfileManager />
-                      </TabsContent>
-                      <TabsContent value="generator">
-                        <MultiChannelGenerator />
-                      </TabsContent>
-                      <TabsContent value="dashboard">
-                        <ContentEngineDashboard />
-                      </TabsContent>
-                      <TabsContent value="calendar">
-                        <ContentEngineCalendar />
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-                )}
-
-                {/* My Posts */}
-                {showMyPosts && effectiveCompanyId && (
-                  <SocialFeedQueue companyId={effectiveCompanyId} initialFilter="pending" />
-                )}
-
                 {/* Chat Messages */}
-                {!isShowingForm && messages.map((msg, idx) => {
+                {messages.map((msg, idx) => {
                   const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
                   const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
                   const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
@@ -272,7 +253,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                     />
                   );
                 })}
-                {isLoading && !isShowingForm && (
+                {isLoading && (
                   <ChatBubble
                     role="assistant"
                     content=""
