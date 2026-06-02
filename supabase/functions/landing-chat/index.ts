@@ -35,7 +35,7 @@ Pricing Tiers (4 Tiers — Growth Ladder):
 - Aura Boost ($1,097/mo · $549 onboarding): 12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In). 5 Consoles (adds Field Operations, Social Media). 25 employees. Best for HVAC, plumbing, field service companies.
 - Aura Pro ($1,997/mo · $999 onboarding): 16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler Agent, Social Analytics). 5 Consoles. 50 employees. White-label branding. Best for growing companies.
 - Aura Elite ($3,497/mo · $1,749 onboarding): All 24 Smart AI Agents (adds Invoice, Inventory, Insights, Performance, Revenue, Forecast). All 7 Consoles + AI Operatives Hub. Unlimited employees. Best for large service teams and enterprise operations.
-- Annual billing: Core $4,970/yr, Boost $6,970/yr, Pro $11,970/yr, Elite $21,970/yr
+- Annual billing: Core $6,970/yr, Boost $10,970/yr, Pro $19,970/yr, Elite $34,970/yr
 - Additional employees: $25/mo per 10 employees beyond included amount
 
 Communication Channels:
