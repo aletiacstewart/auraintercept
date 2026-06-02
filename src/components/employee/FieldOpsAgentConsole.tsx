@@ -995,6 +995,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     >
       {/* Quick Actions moved inside chat content area */}
 
+      {/* No-workspace empty state for any selector-driven panel */}
+      {selectorMode && !effectiveCompanyId && (
+        <div className="shrink-0 border-b p-6 text-center" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
+          <h3 className="text-base font-semibold text-foreground mb-2">Pick a company workspace</h3>
+          <p className="text-sm text-muted-foreground">
+            This action needs a company context. Use the workspace switcher (top bar) to load jobs and forms for a specific company.
+          </p>
+        </div>
+      )}
+
       {/* Quote Form Panel */}
       {selectorMode === 'quote' && effectiveCompanyId && (
         <div className="shrink-0 border-b max-h-[60%] overflow-auto" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
