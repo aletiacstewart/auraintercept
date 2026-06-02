@@ -79,12 +79,12 @@ serve(async (req) => {
     let faqs: any[] = [];
     let resolvedCompanyName = companyName;
     let resolvedIndustry = industry;
-    
-    if (companyId) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    if (companyId) {
       // Fetch company info, AI profile, services, FAQs, and integrations in parallel
       const [companyRes, aiProfileRes, servicesRes, faqsRes, integrationsRes] = await Promise.all([
         supabase.from('companies').select('name, service_categories, brand_tone').eq('id', companyId).maybeSingle(),
