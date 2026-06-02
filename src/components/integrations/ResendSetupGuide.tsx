@@ -209,7 +209,7 @@ export function ResendSetupGuide() {
                     <span className="font-medium">Monthly</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Overage rate</span>
+                    <span>After free tier</span>
                     <span className="font-medium">$0.90 per 1,000 emails</span>
                   </div>
                   <div className="flex justify-between">
