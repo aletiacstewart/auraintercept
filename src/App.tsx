@@ -58,6 +58,7 @@ import {
 } from "./pages/ai-consoles";
 import AskAura from "./pages/AskAura";
 import OperationsRouter from "./pages/operations/OperationsRouter";
+import VideoConsole from "./pages/VideoConsole";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AIAgentGuide from "./pages/AIAgentGuide";
 import AuditReport from "./pages/AuditReport";
