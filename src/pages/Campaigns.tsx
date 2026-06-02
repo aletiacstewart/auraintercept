@@ -169,7 +169,20 @@ export default function Campaigns() {
       toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}${skipped ? `, ${skipped} skipped` : ''}.`);
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
     } catch (e: any) {
-      toast.error('Failed to send campaign: ' + (e?.message || 'unknown error'));
+      const msg = e?.message || 'unknown error';
+      if (/verified caller id|trial/i.test(msg) && /signalwire|sms/i.test(msg)) {
+        toast.error('SignalWire trial blocking SMS', {
+          description:
+            'Your SignalWire account is on a trial and only sends to verified numbers. Verify each recipient number in SignalWire, or upgrade to a paid plan, then re-send.',
+          duration: 12000,
+          action: {
+            label: 'Open SignalWire',
+            onClick: () => window.open('https://my.signalwire.com', '_blank'),
+          },
+        });
+      } else {
+        toast.error('Failed to send campaign: ' + msg);
+      }
     } finally {
       setSendingId(null);
     }
