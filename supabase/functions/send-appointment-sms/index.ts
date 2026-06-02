@@ -101,7 +101,35 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       console.error('SignalWire SMS error:', responseText);
-      throw new Error(`Failed to send SMS: ${response.status}`);
+      let swCode = '';
+      let swMessage = '';
+      try {
+        const parsed = JSON.parse(responseText);
+        swCode = String(parsed.code ?? '');
+        swMessage = String(parsed.message ?? '');
+      } catch { /* non-JSON */ }
+      const detail = swCode || swMessage
+        ? `SignalWire ${swCode}: ${swMessage}`
+        : `SignalWire HTTP ${response.status}`;
+      let hint = '';
+      if (swCode === '10000' || /verified caller id/i.test(swMessage)) {
+        hint = ' — The SignalWire Space connected to Aura is still enforcing trial-style verified-recipient limits. Confirm the upgraded Space matches the credentials saved in Aura and that the From number belongs to that Space, then verify the recipient number in that Space or contact SignalWire to lift trial restrictions.';
+      } else if (swCode === '21408' || /permission to send/i.test(swMessage)) {
+        hint = ' — The From number does not have permission to send to that destination in SignalWire.';
+      } else if (swCode === '21610' || /unsubscribed/i.test(swMessage)) {
+        hint = ' — Recipient has unsubscribed from this number in SignalWire (STOP).';
+      }
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: detail + hint,
+          provider: 'signalwire',
+          provider_code: swCode || null,
+          provider_status: response.status,
+          provider_message: swMessage || null,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     let messageSid = '';
