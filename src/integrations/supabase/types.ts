@@ -3992,6 +3992,7 @@ export type Database = {
           scheduled_send_date: string | null
           series_id: string | null
           series_order: number | null
+          sms_template: string | null
           start_date: string | null
           status: string
           target_segment: string | null
@@ -4018,6 +4019,7 @@ export type Database = {
           scheduled_send_date?: string | null
           series_id?: string | null
           series_order?: number | null
+          sms_template?: string | null
           start_date?: string | null
           status?: string
           target_segment?: string | null
@@ -4044,6 +4046,7 @@ export type Database = {
           scheduled_send_date?: string | null
           series_id?: string | null
           series_order?: number | null
+          sms_template?: string | null
           start_date?: string | null
           status?: string
           target_segment?: string | null
