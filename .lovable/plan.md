@@ -1,27 +1,43 @@
 ## Root cause
 
-Edge Function logs show:
-`null value in column "id" of relation "campaign_sends" violates not-null constraint`
+The `1 sent` toast is misleading — the actual `campaign_sends` rows show:
 
-The `campaign_sends.id` column has a `gen_random_uuid()` default, but in `send-campaign/index.ts` only the email-success log row sets an explicit `id` (used for open/click tracking). The SMS-success row and both catch-block rows omit `id`. When supabase-js batch-inserts an array of objects with different keys, it builds the column set as the **union** of all keys and sends `null` for rows missing a key — that null overrides the DB default and the whole insert fails. Net effect: nothing is recorded and the function returns 500, which the UI shows as "Edge Function returned a non-2xx status code".
+- **Email** rejected by Resend: `The \n is not allowed in the subject field` (campaign subject contains a newline)
+- **Email** rejected: malformed `to` like `"a r a s at alicia steward dot com"` (voice-transcription artifact in `customer_profiles`)
+- Placeholder addresses (`@noemail.placeholder`, `@phone.placeholder`) are being treated as real recipients
+- **SMS** rejected by SignalWire: `"To must send to a verified caller id"` (trial-account restriction)
+- The one "sent" SMS went to a malformed number (`+1-261-813-983`, 10 digits not 11) that SignalWire happened to accept — not a real delivery
 
 ## Changes
 
-**`supabase/functions/send-campaign/index.ts`**
-- Add `id: crypto.randomUUID()` to every `logs.push(...)` call:
-  - SMS success entry (line ~182)
-  - Email catch-block entry (line ~171)
-  - SMS catch-block entry (line ~191)
-- Email success entry already has `id: sendId`; leave it.
-- Redeploy the function.
+### 1. `supabase/functions/send-campaign/index.ts` — input sanitization
 
-## Verify
+- **Subject sanitizer**: `subject.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)` before passing to `send-email-guarded`.
+- **Email validator**: skip recipient when
+  - email ends in `@noemail.placeholder` or `@phone.placeholder`, OR
+  - email does not match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+  
+  Push row with `status: 'skipped'`, `error: 'invalid_email'`. Do NOT increment `failed`.
+- **Phone normalizer**: strip non-digits; if 10 digits prepend `+1`; if 11 digits starting with `1` prepend `+`; otherwise skip with `status: 'skipped'`, `error: 'invalid_phone'`.
+- **Accounting**: add `skipped` counter; return `{ sent, failed, skipped, recipientCount }`. Treat `sent === 0 && failed === 0 && skipped > 0` as a 400 with message `"No valid recipients — all customer phones/emails were missing or invalid."`
+- Redeploy.
 
-- Click "Send Again" on a saved campaign.
-- Confirm: no more `23502` error in logs; `campaign_sends` rows appear; toast reports actual per-recipient outcome.
-- For SMS: the underlying SignalWire error `"To must send to a verified caller id"` will now propagate to the per-row `error` column and toast — this is a SignalWire trial-account constraint (recipient numbers must be verified or the account upgraded), not a code bug. Out of scope for this fix.
+### 2. Toast copy — `MarketingSalesAgentConsole.tsx` and `Campaigns.tsx`
 
-## Out of scope
+After invoke, read `data.sent / failed / skipped` and show:
+- `sent > 0`: `"Campaign sent: {sent} delivered, {failed} failed, {skipped} skipped"`
+- `sent === 0 && skipped > 0`: warning toast `"No messages sent — {skipped} recipients had invalid contact info."`
+- `sent === 0 && failed > 0`: error toast already surfaces first error; if it contains `verified caller id`, replace with `"SignalWire rejected SMS — your SignalWire account must verify recipient numbers (trial-account limit) or upgrade to a paid plan."`
 
-- UI, schema, tracking pixel, `campaign-track` function.
-- SignalWire account configuration.
+### Verify
+
+Click Send Again on the same campaign:
+- Confirm zero Resend `\n` errors in `email_send_log`.
+- Confirm skipped rows appear in `campaign_sends` with reasons.
+- Confirm toast accurately reflects outcome.
+
+### Out of scope
+
+- Cleaning bad rows already in `customer_profiles` (voice-transcribed garbage emails/phones).
+- SignalWire account verification — that's done in your SignalWire dashboard, not code.
+- Schema or UI restructuring.
