@@ -39,6 +39,7 @@ export default function Campaigns() {
   const [showSeriesWizard, setShowSeriesWizard] = useState(false);
   const [generatingSubject, setGeneratingSubject] = useState(false);
   const [generatingMessage, setGeneratingMessage] = useState(false);
+  const [sendingId, setSendingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     campaign_type: 'promotional',
@@ -136,6 +137,30 @@ export default function Campaigns() {
     },
     onError: () => toast.error('Failed to create campaign'),
   });
+
+  const sendCampaign = async (campaignId: string, name: string) => {
+    const ok = window.confirm(
+      `Send "${name}" now?\n\n` +
+      `This will dispatch the campaign to matching customers via the channels you selected (email and/or SMS). ` +
+      `Email and SMS usage is billed by your own Resend / SignalWire accounts.`
+    );
+    if (!ok) return;
+    setSendingId(campaignId);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-campaign', {
+        body: { campaignId },
+      });
+      if (error) throw error;
+      const sent = (data as any)?.sent ?? 0;
+      const failed = (data as any)?.failed ?? 0;
+      toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}.`);
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    } catch (e: any) {
+      toast.error('Failed to send campaign: ' + (e?.message || 'unknown error'));
+    } finally {
+      setSendingId(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
