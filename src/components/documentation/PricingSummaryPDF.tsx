@@ -308,7 +308,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.pricingTierName}>Aura Core</Text>
         <Text style={styles.pricingPrice}>$697/month</Text>
         <Text style={styles.pricingAnnual}>or $6,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$994 with annual billing</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,394 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
@@ -389,7 +389,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.pricingTierName}>Aura Pro</Text>
         <Text style={styles.pricingPrice}>$1,997/month</Text>
         <Text style={styles.pricingAnnual}>or $19,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$2,394 with annual billing</Text>
+        <Text style={styles.pricingSavings}>Save ~$3,994 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{pro.bestFor}</Text>
       </View>
@@ -426,7 +426,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.pricingTierName}>Aura Elite</Text>
         <Text style={styles.pricingPrice}>$3,497/month</Text>
         <Text style={styles.pricingAnnual}>or $34,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$4,394 with annual billing</Text>
+        <Text style={styles.pricingSavings}>Save ~$6,994 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{command.bestFor}</Text>
       </View>
@@ -481,7 +481,7 @@ const PricingSummaryPDF = () => (
         </View>
         {[
           { tier: 'Aura Core', monthly: '$697', yearlyPath: '$8,364', annual: '$6,970', savings: '$1,394' },
-          { tier: 'Aura Boost', monthly: '$1,097', yearlyPath: '$8,364', annual: '$6,970', savings: '$1,394' },
+          { tier: 'Aura Boost', monthly: '$1,097', yearlyPath: '$13,164', annual: '$10,970', savings: '$2,194' },
           { tier: 'Aura Pro', monthly: '$1,997', yearlyPath: '$23,964', annual: '$19,970', savings: '$3,994' },
           { tier: 'Aura Elite', monthly: '$3,497', yearlyPath: '$41,964', annual: '$34,970', savings: '$6,994' },
         ].map((row, i) => (
