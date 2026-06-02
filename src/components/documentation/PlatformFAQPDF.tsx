@@ -491,7 +491,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Do I need to pay for integrations separately?"
-          answer="Yes, third-party integrations have their own costs, billed directly by each provider on your own account with a valid credit card on file: SignalWire (~$0.50/number + SMS $0.00415/segment + Voice $0.0066/min in / $0.008/min out + AI Agent $0.16/min), A2P 10DLC ($4.50 brand one-time + campaign $1.50–$30/mo + DCA $7.50/submission + $250/mo T-Mobile if inactive 60 consecutive days), ElevenLabs (Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go), Resend (Free 3,000/mo · Pro $20 · Scale $90+ · overage ~$0.90/1,000), Tavily (Free 1,000 credits/mo · $0.008/credit · Project plans from ~$30/mo), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
+          answer="Yes, third-party integrations have their own costs, billed directly by each provider on your own account with a valid credit card on file: SignalWire (~$0.50/number + SMS $0.00415/segment + Voice $0.0066/min in / $0.008/min out + AI Agent $0.16/min), A2P 10DLC ($4.50 brand one-time + campaign $1.50–$30/mo + DCA $7.50/submission + $250/mo T-Mobile if inactive 60 consecutive days), ElevenLabs (Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go), Resend (Free 3,000/mo · Pro $20 · Scale $90+ · then ~$0.90/1,000), Tavily (Free 1,000 credits/mo · $0.008/credit · Project plans from ~$30/mo), and Stripe (2.9% + $0.30 per transaction). Google Calendar sync is free."
         />
 
         <FAQItem 
