@@ -507,7 +507,7 @@ const DISCOVERY_QUESTIONS = [
 ];
 
 const ELEVATOR_PITCH =
-  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $697/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 90-day live trial with concierge onboarding in the first 30 days.';
+  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $349/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 90-day live trial with concierge onboarding in the first 30 days.';
 
 const DEMO_FLOW = [
   '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
@@ -558,10 +558,10 @@ const TALKING_POINTS = [
 const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
-  { key: 'starter', onboarding: '$697 one-time', employees: '10 employees' },
-  { key: 'connect', onboarding: '$1,097 one-time', employees: '25 employees' },
-  { key: 'performance', onboarding: '$1,997 one-time', employees: '50 employees' },
-  { key: 'command', onboarding: '$3,497 one-time', employees: 'Unlimited employees' },
+  { key: 'starter', onboarding: '$349 one-time', employees: '10 employees' },
+  { key: 'connect', onboarding: '$549 one-time', employees: '25 employees' },
+  { key: 'performance', onboarding: '$999 one-time', employees: '50 employees' },
+  { key: 'command', onboarding: '$1,749 one-time', employees: 'Unlimited employees' },
 ];
 
 const opName = (id: string) => OPERATIVES.find(o => o.id === id)?.name ?? id;

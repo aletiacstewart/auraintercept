@@ -900,7 +900,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Core $697 · Boost $1,097 · Pro $1,997 · Elite $3,497 / month. Onboarding fee equal to monthly price due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Core $349 · Boost $549 · Pro $999 · Elite $1,749 / month. Onboarding fee equal to monthly price due at start.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 
@@ -1400,10 +1400,10 @@ const TermsAcknowledgementPage = () => {
       </Text>
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
       {[
-        { id: 'core',  label: 'Aura Core  — $697/mo  ·  $697 one-time onboarding' },
-        { id: 'boost', label: 'Aura Boost — $1,097/mo  ·  $1,097 one-time onboarding' },
-        { id: 'pro',   label: 'Aura Pro   — $1,997/mo ·  $1,997 one-time onboarding' },
-        { id: 'elite', label: 'Aura Elite — $3,497/mo ·  $3,497 one-time onboarding' },
+        { id: 'core',  label: 'Aura Core  — $349/mo  ·  $349 one-time onboarding' },
+        { id: 'boost', label: 'Aura Boost — $549/mo  ·  $549 one-time onboarding' },
+        { id: 'pro',   label: 'Aura Pro   — $999/mo ·  $999 one-time onboarding' },
+        { id: 'elite', label: 'Aura Elite — $1,749/mo ·  $1,749 one-time onboarding' },
       ].map((p) => (
         <View key={p.id} style={styles.optionRow}>
           <View style={styles.checkbox} />

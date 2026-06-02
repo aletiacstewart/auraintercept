@@ -583,7 +583,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 90-Day Live Trial: $697 Core, $1,097 Boost, $1,997 Pro, $3,497 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 60 days of full live use. No per-call charges, no hidden costs, no surprises.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 90-Day Live Trial: $349 Core, $549 Boost, $999 Pro, $1,749 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 60 days of full live use. No per-call charges, no hidden costs, no surprises.</Text>
       </View>
 
       <View style={styles.faqCard}>
