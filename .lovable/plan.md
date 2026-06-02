@@ -1,40 +1,58 @@
-# Add Save to Carrier Call-Forwarding Cheat Sheet
+## What I found
 
-## Goal
-The Carrier Forwarding section currently has no Save button. Add one that:
-1. Persists the selected carrier + Aura number on the company record.
-2. Marks "Call forwarding configured" as a completed setup step (status badge + setup-progress signal).
-3. Pre-fills the carrier dropdown and number the next time the user opens the section.
+- **Outbound SMS is being attempted**, but SignalWire is rejecting it with:
+  - `SignalWire 10000: To must send to a verified caller id`
+- That means the connected SignalWire Space is still behaving like a trial/verified-recipient-limited account, or the saved credentials/From number belong to a Space that has not been fully enabled for that recipient.
+- **Email is sending when both email + SMS are selected**. The latest campaign logged:
+  - 1 email sent to `team@brandedby.com`
+  - 1 email skipped because it used a placeholder invalid address
+  - 1 SMS failed because SignalWire rejected the recipient
+- **Inbound SMS is not being received/logged in Aura** because:
+  - The `sms-handler` function has no recent logs, so SignalWire is likely not hitting the inbound SMS webhook.
+  - The code tries to write inbound/outbound SMS to `sms_logs`, but that table does not exist.
+  - The keyword lookup also uses `is_active`, while the actual `sms_keywords` column is `is_enabled`, which would break hashtag replies.
+- The current SMS logs page only reads appointment reminder logs, so campaign SMS and inbound SMS do not show there.
 
-## Where it shows up
-`CarrierForwardingGuide` is used in 4 places — Save behavior will apply in the dashboard surfaces only (Voice + SMS integrations, main Integrations page). The public onboarding intake stays as a reference-only view (no Save) since there's no authenticated company yet.
+## Plan
 
-## Changes
+1. **Fix inbound SMS logging storage**
+   - Add a `sms_logs` table for two-way SMS history.
+   - Include company, from/to number, direction, status, message, metadata, and created time.
+   - Add secure access rules so company users can read their own company’s SMS history, while backend functions can write logs.
 
-### 1. Database (migration)
-Add two nullable columns to `public.companies`:
-- `call_forwarding_carrier text`
-- `call_forwarding_target_number text`
-- `call_forwarding_configured_at timestamptz`
+2. **Fix the inbound SMS handler**
+   - Update `sms-handler` to use `sms_keywords.is_enabled` instead of the non-existent `is_active` column.
+   - Ensure inbound messages are logged even if AI reply generation or reply sending fails.
+   - Keep SignalWire webhook responses XML-compatible so SignalWire receives a clean response.
 
-No new GRANTs needed (companies table already configured). RLS already restricts updates to the company's admins.
+3. **Improve outbound campaign SMS logging**
+   - Keep campaign send rows in `campaign_sends`, but also write outbound SMS attempts into `sms_logs` so all SMS activity appears in one place.
+   - Capture provider failure details when SignalWire rejects a message.
 
-### 2. `CarrierForwardingGuide.tsx`
-- Add an optional `companyId` prop. When present, render a **Save** button below the inputs.
-- On mount, load saved `call_forwarding_carrier` + `call_forwarding_target_number` and pre-fill the fields.
-- On Save: update the company row, toast success, show a green "✅ Forwarding configured for {Carrier} → {number}" status chip, and dispatch `triggerSetupProgressRefresh()` so the dashboard setup bar updates.
-- If `companyId` is not provided (public intake), keep existing reference-only behavior.
+4. **Update SMS Logs UI**
+   - Change `/dashboard/sms-logs` from reminder-only logs to a combined view:
+     - inbound texts
+     - outbound campaign texts
+     - appointment reminders if present
+   - Show failed campaign SMS errors clearly.
 
-### 3. Setup progress
-In the setup-progress edge function / hook that calculates completion steps, add `call_forwarding_configured_at IS NOT NULL` as one of the "Voice setup" sub-checks so configuring forwarding contributes to the bar.
+5. **Improve mixed email + SMS campaign feedback**
+   - Update campaign detail/list UI messaging so a campaign with email sent + SMS failed is shown as **partial delivery**, not “nothing sent.”
+   - Show per-channel counts: email sent/skipped/failed and SMS sent/skipped/failed.
 
-### 4. Call sites
-Pass `companyId` into `<CarrierForwardingGuide />` from:
-- `src/pages/integrations/SMSIntegration.tsx`
-- `src/pages/integrations/VoiceIntegration.tsx`
-- `src/pages/Integrations.tsx`
+6. **SignalWire setup note**
+   - No code change can bypass SignalWire error `10000`; the SignalWire account/Space must verify the recipient or complete paid/A2P setup with the correct From number.
+   - The app fix will make that failure visible everywhere instead of looking like the campaign did not run.
 
-Public intake (`PublicOnboardingIntake.tsx`) stays unchanged.
+## Technical details
 
-## Notes
-- This does not actually program the carrier — Aura still can't dial `*72` from the user's phone. The Save reflects "user has acknowledged + recorded the forwarding setup" so support/dispatch can see which carrier was used and the setup-progress bar reflects completion.
+- Migration: create `public.sms_logs` with grants + RLS.
+- Edge functions touched:
+  - `sms-handler`
+  - `send-appointment-sms`
+  - possibly `send-campaign` only if we need campaign-level metadata copied into SMS logs.
+- Frontend touched:
+  - `src/pages/SMSLogs.tsx`
+  - campaign detail/list component(s) for partial delivery status.
+
+After implementation, I’ll validate by checking logs and recent database rows for campaign sends and SMS logs.
