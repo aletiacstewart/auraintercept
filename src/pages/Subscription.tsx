@@ -76,8 +76,8 @@ const TIERS = [
     id: 'starter',
     name: 'Aura Core',
     monthlyPrice: '$697',
-    annualPrice: '$4,970',
-    annualSavings: 'Save ~$994',
+    annualPrice: '$6,970',
+    annualSavings: 'Save ~$1,394',
     description: 'Solo operators, restaurants, single-location',
     popular: false,
     agentCount: 8,
@@ -95,8 +95,8 @@ const TIERS = [
     id: 'connect',
     name: 'Aura Boost',
     monthlyPrice: '$1,097',
-    annualPrice: '$6,970',
-    annualSavings: 'Save ~$1,394',
+    annualPrice: '$10,970',
+    annualSavings: 'Save ~$2,194',
     description: 'HVAC, plumbing, field service teams',
     popular: true,
     agentCount: 12,
@@ -114,8 +114,8 @@ const TIERS = [
     id: 'performance',
     name: 'Aura Pro',
     monthlyPrice: '$1,997',
-    annualPrice: '$11,970',
-    annualSavings: 'Save ~$2,394',
+    annualPrice: '$19,970',
+    annualSavings: 'Save ~$3,994',
     description: 'Growing companies with field teams',
     popular: false,
     agentCount: 16,
@@ -132,8 +132,8 @@ const TIERS = [
     id: 'command',
     name: 'Aura Elite',
     monthlyPrice: '$3,497',
-    annualPrice: '$21,970',
-    annualSavings: 'Save ~$4,394',
+    annualPrice: '$34,970',
+    annualSavings: 'Save ~$6,994',
     description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
@@ -256,9 +256,9 @@ const sections: FeatureSection[] = [
     title: 'Pricing',
     features: [
       { name: 'Monthly Price', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
-      { name: 'Annual Price', starter: '$4,970/year', connect: '$6,970/year', performance: '$11,970/year', command: '$21,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,394', performance: 'Save ~$2,394', command: 'Save ~$4,394' },
-      { name: 'Onboarding Fee (one-time)', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
+      { name: 'Annual Price', starter: '$6,970/year', connect: '$10,970/year', performance: '$19,970/year', command: '$34,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$1,394', connect: 'Save ~$2,194', performance: 'Save ~$3,994', command: 'Save ~$6,994' },
+      { name: 'Onboarding Fee (one-time)', starter: '$349', connect: '$549', performance: '$999', command: '$1,749' },
     ],
   },
 ];
@@ -735,7 +735,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $697 · Boost $1,097 · Pro $1,997 · Elite $3,497</span>
+                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>
               </div>
             </div>
           </CardContent>
