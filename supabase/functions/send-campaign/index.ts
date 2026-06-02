@@ -286,9 +286,11 @@ Deno.serve(async (req) => {
 
     if (sent === 0 && failed === 0 && skipped > 0) {
       return new Response(JSON.stringify({
+        success: false,
         error: `No valid recipients — ${skipped} customers had missing or invalid contact info.`,
         sent, failed, skipped, recipientCount: recipients.length,
-      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        byChannel,
+      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (sent === 0 && failed > 0) {
@@ -298,9 +300,11 @@ Deno.serve(async (req) => {
         friendly = 'SignalWire rejected SMS — your SignalWire account must verify recipient numbers (trial-account limit) or upgrade to a paid plan.';
       }
       return new Response(JSON.stringify({
+        success: false,
         error: friendly,
         sent, failed, skipped, recipientCount: recipients.length,
-      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        byChannel, firstSmsError,
+      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     await supabase
