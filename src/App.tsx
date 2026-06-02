@@ -77,6 +77,7 @@ import Quotes from "./pages/Quotes";
 import Invoices from "./pages/Invoices";
 import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
+import CampaignDetail from "./pages/CampaignDetail";
 import Leads from "./pages/Leads";
 // BusinessOpsHub merged into BusinessOperations
 import Help from "./pages/Help";
