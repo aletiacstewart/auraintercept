@@ -931,7 +931,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Core booking & web presence</p>
                 <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses, and home-health / therapy practices.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-teal-400">$497</span>
+                  <span className="text-3xl font-bold text-teal-400">$697</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$6,970/year (Save ~20%)</p>
@@ -951,7 +951,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$497</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$697</span></p>
               </CardContent>
             </Card>
 
@@ -964,7 +964,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Field service automation</p>
                 <p className="text-[10px] text-white italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-cyan-400">$697</span>
+                  <span className="text-3xl font-bold text-cyan-400">$1,097</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$6,970/year (Save ~20%)</p>
@@ -983,7 +983,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$697</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$1,097</span></p>
               </CardContent>
             </Card>
 
@@ -996,7 +996,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Full business management</p>
                 <p className="text-[10px] text-white italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-purple-400">$1,197</span>
+                  <span className="text-3xl font-bold text-purple-400">$1,997</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$11,970/year (Save ~20%)</p>
@@ -1014,7 +1014,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$1,197</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$1,997</span></p>
               </CardContent>
             </Card>
 
@@ -1027,7 +1027,7 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-amber-400">$2,197</span>
+                  <span className="text-3xl font-bold text-amber-400">$3,497</span>
                   <span className="text-white text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$21,970/year (Save ~20%)</p>
@@ -1044,7 +1044,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$2,197</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$3,497</span></p>
               </CardContent>
             </Card>
           </div>
@@ -1095,7 +1095,7 @@ export default function Index() {
                     <span className="font-semibold text-primary">Why an onboarding fee?</span> Due to the amount of setup and hours it takes to onboard each company, we do require a one-time onboarding fee.
                   </p>
                   <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial):</span> Core <span className="font-semibold text-primary">$497</span> • Boost <span className="font-semibold text-primary">$697</span> • Pro <span className="font-semibold text-primary">$1,197</span> • Elite <span className="font-semibold text-primary">$2,197</span>
+                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial):</span> Core <span className="font-semibold text-primary">$697</span> • Boost <span className="font-semibold text-primary">$1,097</span> • Pro <span className="font-semibold text-primary">$1,997</span> • Elite <span className="font-semibold text-primary">$3,497</span>
                   </p>
                   <p className="text-[11px] italic text-white/70 leading-relaxed">
                     Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.
