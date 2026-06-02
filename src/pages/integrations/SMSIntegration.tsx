@@ -299,7 +299,6 @@ export default function SMSIntegration() {
               )}
           </FormShell>
         </div>
-        </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
   );
