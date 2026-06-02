@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
+import { sendGuardedSms, normalizeE164US } from "../_shared/sms-guard.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,7 +43,7 @@ Deno.serve(async (req) => {
     const pack = await loadIndustryPackForCompany(supabase, companyId);
     const message = applyTerminology(rawMessage, pack);
 
-    const normalizedPhone = normalizePhoneNumber(customerPhone);
+    const normalizedPhone = normalizeE164US(customerPhone) || normalizePhoneNumber(customerPhone);
 
     // Check SMS opt-out
     const { data: profile } = await supabase
@@ -60,123 +61,34 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch SignalWire credentials
-    const { data: integration, error: intError } = await supabase
+    // Fetch From number for the guard. Guard pulls credentials itself.
+    const { data: integration } = await supabase
       .from('tenant_integrations')
-      .select('signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url')
+      .select('signalwire_phone_number')
       .eq('company_id', companyId)
       .maybeSingle();
+    const fromNumber = integration?.signalwire_phone_number || '';
 
-    if (intError || !integration) {
-      throw new Error('SignalWire integration not configured');
-    }
-
-    const { signalwire_project_id, signalwire_api_token, signalwire_phone_number, signalwire_space_url } = integration;
-
-    if (!signalwire_project_id || !signalwire_api_token || !signalwire_phone_number || !signalwire_space_url) {
-      throw new Error('SignalWire credentials are incomplete');
-    }
-
-    // Send SMS via SignalWire
-    const swUrl = `https://${signalwire_space_url}/api/laml/2010-04-01/Accounts/${signalwire_project_id}/Messages.json`;
-    const auth = btoa(`${signalwire_project_id}:${signalwire_api_token}`);
-
-    const formData = new URLSearchParams();
-    formData.append('From', signalwire_phone_number);
-    formData.append('To', normalizedPhone);
-    formData.append('Body', message);
-
-    const response = await fetch(swUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-      },
-      body: formData.toString(),
-    });
-
-    const responseText = await response.text();
-    console.log(`SMS send status: ${response.status}`);
-
-    if (!response.ok) {
-      console.error('SignalWire SMS error:', responseText);
-      let swCode = '';
-      let swMessage = '';
-      try {
-        const parsed = JSON.parse(responseText);
-        swCode = String(parsed.code ?? '');
-        swMessage = String(parsed.message ?? '');
-      } catch { /* non-JSON */ }
-      const detail = swCode || swMessage
-        ? `SignalWire ${swCode}: ${swMessage}`
-        : `SignalWire HTTP ${response.status}`;
-      let hint = '';
-      if (swCode === '10000' || /verified caller id/i.test(swMessage)) {
-        hint = ' — The SignalWire Space connected to Aura is still enforcing trial-style verified-recipient limits. Confirm the upgraded Space matches the credentials saved in Aura and that the From number belongs to that Space, then verify the recipient number in that Space or contact SignalWire to lift trial restrictions.';
-      } else if (swCode === '21408' || /permission to send/i.test(swMessage)) {
-        hint = ' — The From number does not have permission to send to that destination in SignalWire.';
-      } else if (swCode === '21610' || /unsubscribed/i.test(swMessage)) {
-        hint = ' — Recipient has unsubscribed from this number in SignalWire (STOP).';
-      }
-      // Log the failed outbound SMS attempt
-      try {
-        await supabase.from('sms_logs').insert({
-          company_id: companyId,
-          from_number: signalwire_phone_number,
-          to_number: normalizedPhone,
-          message,
-          direction: 'outbound',
-          status: 'failed',
-          error: detail + hint,
-          metadata: {
-            appointment_id: appointmentId || null,
-            customer_name: customerName || null,
-            provider: 'signalwire',
-            provider_code: swCode || null,
-            provider_status: response.status,
-          },
-        });
-      } catch (logErr) {
-        console.error('Failed to log failed SMS:', logErr);
-      }
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: detail + hint,
-          provider: 'signalwire',
-          provider_code: swCode || null,
-          provider_status: response.status,
-          provider_message: swMessage || null,
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    let messageSid = '';
-    try {
-      const result = JSON.parse(responseText);
-      messageSid = result.sid || '';
-    } catch { /* empty */ }
-
-    // Log SMS
-    await supabase.from('sms_logs').insert({
-      company_id: companyId,
-      from_number: signalwire_phone_number,
-      to_number: normalizedPhone,
-      message,
-      direction: 'outbound',
-      status: 'sent',
-      metadata: {
-        message_sid: messageSid,
-        appointment_id: appointmentId || null,
-        customer_name: customerName || null,
-      },
+    const result = await sendGuardedSms({
+      supabase,
+      companyId,
+      from: fromNumber,
+      to: normalizedPhone || customerPhone,
+      body: message,
+      source: 'reminder',
+      appointmentId: appointmentId || null,
+      customerName: customerName || null,
     });
 
     return new Response(
-      JSON.stringify({ success: true, messageSid }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        success: result.ok,
+        messageSid: result.providerMessageId || null,
+        status: result.status,
+        error: result.ok ? undefined : result.error,
+        provider_code: result.providerCode || null,
+      }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Send SMS error:', error);
