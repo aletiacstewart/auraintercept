@@ -53,6 +53,7 @@ serve(async (req) => {
   }
 
   try {
+    // redeploy-nudge: v2 (supabase client hoisted)
     const { 
       campaignType, 
       targetSegment, 
