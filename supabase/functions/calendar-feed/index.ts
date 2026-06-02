@@ -52,7 +52,7 @@ function generateICS(appointments: any[], calendarName: string): string {
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Lovable//Calendar Feed//EN",
+    "PRODID:-//Aura Intercept//Calendar Feed//EN",
     `X-WR-CALNAME:${escapeICS(calendarName)}`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
@@ -65,7 +65,7 @@ function generateICS(appointments: any[], calendarName: string): string {
     const updatedDate = new Date(apt.updated_at || apt.created_at);
 
     lines.push("BEGIN:VEVENT");
-    lines.push(`UID:${apt.id}@lovable.app`);
+    lines.push(`UID:${apt.id}@auraintercept.ai`);
     lines.push(`DTSTAMP:${formatDateToICS(updatedDate)}`);
     lines.push(`DTSTART:${formatDateToICS(startDate)}`);
     lines.push(`DTEND:${formatDateToICS(endDate)}`);
@@ -98,7 +98,7 @@ function generateSingleEventICS(appointment: any, companyName: string): string {
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Lovable//Calendar Feed//EN",
+    "PRODID:-//Aura Intercept//Calendar Feed//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
   ];
@@ -108,7 +108,7 @@ function generateSingleEventICS(appointment: any, companyName: string): string {
   const createdDate = new Date(appointment.created_at);
 
   lines.push("BEGIN:VEVENT");
-  lines.push(`UID:${appointment.id}@lovable.app`);
+  lines.push(`UID:${appointment.id}@auraintercept.ai`);
   lines.push(`DTSTAMP:${formatDateToICS(createdDate)}`);
   lines.push(`DTSTART:${formatDateToICS(startDate)}`);
   lines.push(`DTEND:${formatDateToICS(endDate)}`);
