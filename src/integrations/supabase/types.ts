@@ -891,6 +891,56 @@ export type Database = {
           },
         ]
       }
+      campaign_sends: {
+        Row: {
+          campaign_id: string
+          channel: string
+          company_id: string
+          created_at: string
+          customer_id: string | null
+          customer_name: string | null
+          error: string | null
+          id: string
+          recipient: string
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          channel: string
+          company_id: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          error?: string | null
+          id?: string
+          recipient: string
+          sent_at?: string
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          channel?: string
+          company_id?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          error?: string | null
+          id?: string
+          recipient?: string
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           address: string | null
@@ -3926,6 +3976,7 @@ export type Database = {
           email_subject: string | null
           end_date: string | null
           id: string
+          last_sent_at: string | null
           message_template: string | null
           name: string
           promo_code: string | null
@@ -3951,6 +4002,7 @@ export type Database = {
           email_subject?: string | null
           end_date?: string | null
           id?: string
+          last_sent_at?: string | null
           message_template?: string | null
           name: string
           promo_code?: string | null
@@ -3976,6 +4028,7 @@ export type Database = {
           email_subject?: string | null
           end_date?: string | null
           id?: string
+          last_sent_at?: string | null
           message_template?: string | null
           name?: string
           promo_code?: string | null
