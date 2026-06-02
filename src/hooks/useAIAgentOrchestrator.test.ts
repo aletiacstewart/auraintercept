@@ -67,38 +67,31 @@ describe("useAIAgentOrchestrator", () => {
 
   it("groups agents by category correctly", () => {
     const { result } = renderHook(() => useAIAgentOrchestrator());
-    
+
     const { groupedAgents } = result.current;
-    
-    // Check customer_engagement has 4 agents
-    expect(groupedAgents.customer_engagement?.length).toBe(4);
-    
-    // Check field_operations has 4 agents
-    expect(groupedAgents.field_operations?.length).toBe(4);
+
+    // 10-operative consolidated model: 2 customer_engagement, 2 field_operations
+    expect(groupedAgents.customer_engagement?.length).toBe(2);
+    expect(groupedAgents.field_operations?.length).toBe(2);
   });
 
   it("has correct agent types", () => {
     const { result } = renderHook(() => useAIAgentOrchestrator());
-    
+
     const agentTypes = result.current.agents.map(a => a.type);
-    
-    // Customer Portal agents
+
+    // Consolidated operatives (legacy IDs booking/followup/review/route/eta/
+    // checkin/quoting/invoice/inventory fold into these via LEGACY_AGENT_MAP).
     expect(agentTypes).toContain("triage");
-    expect(agentTypes).toContain("booking");
-    expect(agentTypes).toContain("followup");
-    expect(agentTypes).toContain("review");
-    
-    // Field Operations agents
+    expect(agentTypes).toContain("customer_journey");
     expect(agentTypes).toContain("dispatch");
-    expect(agentTypes).toContain("route");
-    expect(agentTypes).toContain("eta");
-    expect(agentTypes).toContain("checkin");
-    
-    // Business Operations agents
+    expect(agentTypes).toContain("field_navigation");
     expect(agentTypes).toContain("admin");
-    expect(agentTypes).toContain("quoting");
-    expect(agentTypes).toContain("invoice");
-    expect(agentTypes).toContain("inventory");
+    expect(agentTypes).toContain("business_finance");
+    expect(agentTypes).toContain("outreach");
+    expect(agentTypes).toContain("creative_content");
+    expect(agentTypes).toContain("web_presence");
+    expect(agentTypes).toContain("analytics_intelligence");
   });
 
   it("exposes toggleAgent function", () => {
@@ -139,15 +132,15 @@ describe("useAIAgentOrchestrator", () => {
 
   it("agents have correct phase assignments", () => {
     const { result } = renderHook(() => useAIAgentOrchestrator());
-    
+
     const triageAgent = result.current.agents.find(a => a.type === "triage");
     expect(triageAgent?.phase).toBe(1);
-    
-    const bookingAgent = result.current.agents.find(a => a.type === "booking");
-    expect(bookingAgent?.phase).toBe(2);
-    
-    const followupAgent = result.current.agents.find(a => a.type === "followup");
-    expect(followupAgent?.phase).toBe(3);
+
+    const customerJourneyAgent = result.current.agents.find(a => a.type === "customer_journey");
+    expect(customerJourneyAgent?.phase).toBe(2);
+
+    const dispatchAgent = result.current.agents.find(a => a.type === "dispatch");
+    expect(dispatchAgent?.phase).toBe(1);
   });
 });
 
