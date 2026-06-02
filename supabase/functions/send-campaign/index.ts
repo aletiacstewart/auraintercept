@@ -133,10 +133,11 @@ Deno.serve(async (req) => {
     const logs: any[] = [];
 
     for (const c of recipients) {
-      const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'there';
+      const { firstName } = splitName(c.name);
+      const name = clean(c.name) || 'there';
       const vars = {
         customer_name: name,
-        first_name: c.first_name || 'there',
+        first_name: firstName || 'there',
         promo_code: campaign.promo_code || '',
         discount: campaign.discount_value
           ? `${campaign.discount_value}${campaign.discount_type === 'percent' ? '%' : '$'}`
@@ -145,7 +146,8 @@ Deno.serve(async (req) => {
       const message = render(campaign.message_template || '', vars);
       const subject = render(campaign.email_subject || campaign.name || 'A message for you', vars);
 
-      if (channels.includes('email') && c.email && c.email_opt_in !== false) {
+      const email = clean(c.email);
+      if (channels.includes('email') && email && c.email_opt_out !== true) {
         try {
           const sendId = crypto.randomUUID();
           const baseHtml = `<div style="font-family:system-ui,sans-serif;line-height:1.5">${message.replace(/\n/g, '<br/>')}</div>`;
@@ -153,25 +155,25 @@ Deno.serve(async (req) => {
           const pixel = `<img src="${trackBase}?id=${sendId}&e=open" width="1" height="1" alt="" style="display:none" />`;
           const html = `${trackedHtml}${pixel}`;
           const res = await supabase.functions.invoke('send-email-guarded', {
-            body: { companyId, to: c.email, subject, html, text: message },
+            body: { companyId, to: email, subject, html, text: message, template: 'marketing_campaign' },
           });
           const ok = !res.error && (res.data as any)?.sent !== false;
           logs.push({
             id: sendId,
             campaign_id: campaignId, company_id: companyId, customer_id: c.id,
-            customer_name: name, recipient: c.email, channel: 'email',
+            customer_name: name, recipient: email, channel: 'email',
             status: ok ? 'sent' : 'failed',
-            error: ok ? null : (res.error?.message || (res.data as any)?.error || 'unknown'),
+            error: ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown'),
           });
           ok ? sent++ : failed++;
         } catch (e) {
           failed++;
-          logs.push({ campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: c.email, channel: 'email', status: 'failed', error: String(e) });
+          logs.push({ campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'failed', error: String(e) });
         }
       }
 
-      const phone = c.mobile_phone || c.phone;
-      if (channels.includes('sms') && phone && c.sms_opt_in !== false) {
+      const phone = clean(c.phone);
+      if (channels.includes('sms') && phone && c.sms_opt_out !== true) {
         try {
           const res = await supabase.functions.invoke('send-appointment-sms', {
             body: { companyId, customerPhone: phone, customerName: name, message },
