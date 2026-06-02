@@ -262,8 +262,8 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { category: 'Monthly Price', core: '$1,097', boost: '$1,097', pro: '$1,997', elite: '$3,497' },
-          { category: 'Annual Price', core: '$4,970', boost: '$6,970', pro: '$11,970', elite: '$21,970' },
+          { category: 'Monthly Price', core: '$697', boost: '$1,097', pro: '$1,997', elite: '$3,497' },
+          { category: 'Annual Price', core: '$6,970', boost: '$10,970', pro: '$19,970', elite: '$34,970' },
           { category: 'One-Time Onboarding Fee', core: '$349', boost: '$549', pro: '$999', elite: '$1,749' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
           { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
