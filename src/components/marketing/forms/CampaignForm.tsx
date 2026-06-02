@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2, Gift, TrendingUp, Tag, Users, Copy, RefreshCw } from 'lucide-react';
 import { subDays } from 'date-fns';
+import { SMS_TEMPLATES, EMAIL_TEMPLATES } from '@/lib/campaignTemplates';
 
 interface CampaignFormProps {
   companyId: string;
@@ -38,6 +39,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
   const { data: companyName } = useCompanyName(companyId);
   const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
   const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
+  const [isGeneratingSms, setIsGeneratingSms] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +47,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     targetSegment: 'all',
     emailSubject: '',
     messageTemplate: '',
+    smsTemplate: '',
     promoCode: '',
     discountType: 'percent',
     discountValue: '',
@@ -94,8 +97,11 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     enabled: formData.campaignType === 'winback',
   });
 
-  const generateContent = async (field: 'subject' | 'message') => {
-    const setLoading = field === 'subject' ? setIsGeneratingSubject : setIsGeneratingMessage;
+  const generateContent = async (field: 'subject' | 'message' | 'sms') => {
+    const setLoading =
+      field === 'subject' ? setIsGeneratingSubject
+      : field === 'sms' ? setIsGeneratingSms
+      : setIsGeneratingMessage;
     setLoading(true);
     
     try {
@@ -105,6 +111,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           targetSegment: formData.targetSegment,
           companyName: companyName || 'our company',
           field,
+          channel: field === 'sms' ? 'sms' : 'email',
           campaignName: formData.name,
           promoCode: formData.promoCode,
           discountType: formData.discountType,
@@ -119,10 +126,16 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
       if (data?.content) {
         if (field === 'subject') {
           setFormData(prev => ({ ...prev, emailSubject: data.content }));
+        } else if (field === 'sms') {
+          setFormData(prev => ({ ...prev, smsTemplate: data.content }));
         } else {
           setFormData(prev => ({ ...prev, messageTemplate: data.content }));
         }
-        toast.success(`${field === 'subject' ? 'Subject' : 'Message'} generated!`);
+        toast.success(
+          field === 'subject' ? 'Subject generated!'
+          : field === 'sms' ? 'SMS generated!'
+          : 'Email body generated!'
+        );
       }
     } catch (error) {
       console.error('Error generating content:', error);
@@ -203,6 +216,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           target_segment: formData.campaignType === 'winback' ? 'inactive' : formData.targetSegment,
           email_subject: formData.emailSubject || null,
           message_template: formData.messageTemplate || null,
+          sms_template: formData.smsTemplate || null,
           promo_code: formData.promoCode || null,
           discount_type: formData.discountType || null,
           discount_value: formData.discountValue ? parseFloat(formData.discountValue) : null,
