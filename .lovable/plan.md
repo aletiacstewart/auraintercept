@@ -1,43 +1,95 @@
-## Root cause
+## Goal
 
-The `1 sent` toast is misleading — the actual `campaign_sends` rows show:
+Stop the "wrong email / misspelled name / no SMS" problem at three layers:
+1. Fix the 4 duplicate Alicia/Aletia profiles right now.
+2. Prevent it from happening again in the voice intake.
+3. Make duplicates easy to merge going forward, and make the SignalWire trial limit visible.
 
-- **Email** rejected by Resend: `The \n is not allowed in the subject field` (campaign subject contains a newline)
-- **Email** rejected: malformed `to` like `"a r a s at alicia steward dot com"` (voice-transcription artifact in `customer_profiles`)
-- Placeholder addresses (`@noemail.placeholder`, `@phone.placeholder`) are being treated as real recipients
-- **SMS** rejected by SignalWire: `"To must send to a verified caller id"` (trial-account restriction)
-- The one "sent" SMS went to a malformed number (`+1-261-813-983`, 10 digits not 11) that SignalWire happened to accept — not a real delivery
+---
 
-## Changes
+## Step 0 — Confirm correct contact info (before any data change)
 
-### 1. `supabase/functions/send-campaign/index.ts` — input sanitization
+I need one quick answer before running the cleanup SQL:
+- Real email for Alicia Stewart? (the DB currently has `aletia.stewart@gmail.com` — likely a voice transcription typo)
+- Real mobile number? (DB has `+1-361-813-9836`)
 
-- **Subject sanitizer**: `subject.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)` before passing to `send-email-guarded`.
-- **Email validator**: skip recipient when
-  - email ends in `@noemail.placeholder` or `@phone.placeholder`, OR
-  - email does not match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
-  
-  Push row with `status: 'skipped'`, `error: 'invalid_email'`. Do NOT increment `failed`.
-- **Phone normalizer**: strip non-digits; if 10 digits prepend `+1`; if 11 digits starting with `1` prepend `+`; otherwise skip with `status: 'skipped'`, `error: 'invalid_phone'`.
-- **Accounting**: add `skipped` counter; return `{ sent, failed, skipped, recipientCount }`. Treat `sent === 0 && failed === 0 && skipped > 0` as a 400 with message `"No valid recipients — all customer phones/emails were missing or invalid."`
-- Redeploy.
+I'll ask in chat after you approve this plan, then run Step 1.
 
-### 2. Toast copy — `MarketingSalesAgentConsole.tsx` and `Campaigns.tsx`
+---
 
-After invoke, read `data.sent / failed / skipped` and show:
-- `sent > 0`: `"Campaign sent: {sent} delivered, {failed} failed, {skipped} skipped"`
-- `sent === 0 && skipped > 0`: warning toast `"No messages sent — {skipped} recipients had invalid contact info."`
-- `sent === 0 && failed > 0`: error toast already surfaces first error; if it contains `verified caller id`, replace with `"SignalWire rejected SMS — your SignalWire account must verify recipient numbers (trial-account limit) or upgrade to a paid plan."`
+## Step 1 — One-time cleanup of the 4 duplicate profiles
 
-### Verify
+Merge into a single canonical `customer_profiles` row for Alicia Stewart:
+- Name: `Alicia Stewart`
+- Email: confirmed in Step 0
+- Phone: confirmed in Step 0 (normalized to E.164)
+- Keep the oldest `id` so any FK references (appointments, campaign_sends, etc.) remain stable
+- Repoint FKs from the 3 deleted profile IDs to the kept ID across: `appointments`, `campaign_sends`, `customer_messages`, `call_logs`, `customer_notes`, `quotes`, `invoices`, `customer_interactions` (only tables that exist)
+- Delete the other 3 profiles
 
-Click Send Again on the same campaign:
-- Confirm zero Resend `\n` errors in `email_send_log`.
-- Confirm skipped rows appear in `campaign_sends` with reasons.
-- Confirm toast accurately reflects outcome.
+Also run a broader sweep that flags (does not delete) any other profile where:
+- email matches `@noemail.placeholder` or `@phone.placeholder`
+- email contains spaces or " at " / " dot " (voice transcription tells)
+- phone has fewer than 10 digits after stripping non-digits
 
-### Out of scope
+Output: a short report of flagged rows so we can decide whether to merge or just null out their email/phone.
 
-- Cleaning bad rows already in `customer_profiles` (voice-transcribed garbage emails/phones).
-- SignalWire account verification — that's done in your SignalWire dashboard, not code.
-- Schema or UI restructuring.
+---
+
+## Step 2 — Harden voice intake (prevent new garbage profiles)
+
+In the edge functions that create `customer_profiles` from voice (`signalwire-voice-webhook`, `voice-call-completed`, `elevenlabs-tool-create-customer`, whichever path is in use):
+
+- **Email**: Before insert, run a regex validator (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`). If it contains spaces, " at ", " dot ", or fails the regex → store `null` (not a placeholder string). Log the raw transcription in `intake_data.raw_email_transcription` so a human can recover it.
+- **Phone**: Strip non-digits. Require exactly 10 digits (US) or 11 starting with `1`. Store as E.164. If invalid → store `null` and log raw value in `intake_data.raw_phone_transcription`.
+- **Name**: Trim, collapse whitespace, title-case. Reject single-letter and pure-digit names.
+- **Dedup on insert**: Before creating a new profile, look up by normalized phone OR normalized email within the same `company_id`. If a match exists, update that row instead of creating a duplicate.
+
+---
+
+## Step 3 — Duplicate detection + merge UI
+
+New component on the existing Customers page (`src/pages/Employees.tsx` area — actual customer list page; will locate during build):
+
+- **"Possible duplicates" banner** when 2+ profiles in the same company share any of:
+  - identical normalized phone digits
+  - identical lowercased email
+  - similar name (Levenshtein ≤ 2 on lowercased name) AND same area code OR same email domain
+- **Merge dialog**: shows the candidate rows side-by-side, lets you pick the correct value per field (name / email / phone / address), then calls a new `merge-customer-profiles` edge function that:
+  - Validates inputs (same Zod rules as Step 2)
+  - Repoints FKs (same table list as Step 1) in a transaction
+  - Deletes losing rows
+  - Logs the merge in a new `customer_merge_log` table (who, when, kept_id, merged_ids, fields chosen)
+
+Permissions: only `company_admin` and `platform_admin`.
+
+---
+
+## Step 4 — Surface SignalWire trial-account block in the campaign UI
+
+In `MarketingSalesAgentConsole.tsx` and `Campaigns.tsx`, when `send-campaign` returns the verified-caller error (already detected server-side in `send-campaign/index.ts`), show a dismissible banner above the campaign list:
+
+> SignalWire is rejecting SMS because your account is on a trial. Verify your recipient numbers in the SignalWire dashboard, or upgrade to a paid plan, then re-send.
+
+Include a link to `https://my.signalwire.com` and a "Don't show again for 7 days" option (localStorage).
+
+You'll also need to verify your own mobile in SignalWire before re-testing — I can't do that for you.
+
+---
+
+## Out of scope
+
+- Schema changes beyond adding `customer_merge_log`.
+- Changing how appointments link to customers.
+- Automatic merging without user confirmation (too risky).
+- Building a full data-quality dashboard.
+
+---
+
+## Technical notes (for me, not required reading)
+
+- Step 1 will be a `supabase--insert` call (data change, not schema) plus one `supabase--migration` only if `customer_merge_log` is added in Step 3.
+- FK repointing uses `UPDATE table SET customer_id = :keep WHERE customer_id = ANY(:losers)` per table, inside a single SQL statement.
+- Voice intake hardening lives in the edge functions only; the React side is untouched.
+- The merge edge function uses `verify_jwt = false` per project standard and checks role via `has_role()` RPC.
+- Duplicate detection runs client-side over the already-loaded customer list to avoid extra DB load; switch to a server-side RPC if list exceeds 500.
