@@ -899,7 +899,7 @@ export function CostCalculator() {
                   <div className="flex items-start gap-3">
                     <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
                     <div className="flex-1">
-                      <h4 className="font-medium mb-1">Cost Overage Alerts</h4>
+                      <h4 className="font-medium mb-1">Cost Threshold Alerts</h4>
                       <p className="text-sm text-muted-foreground">
                         Get notified via email when your actual costs exceed your saved estimates by a configurable threshold.
                       </p>

@@ -120,7 +120,7 @@ export function PublicAppUrlSettings() {
           <div className="flex gap-2">
             <Input
               id="public-url"
-              placeholder="https://your-app.lovable.app"
+              placeholder="https://auraintercept.ai"
               value={publicUrl}
               onChange={(e) => setPublicUrl(e.target.value)}
               className="flex-1"

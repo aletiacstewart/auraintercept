@@ -1151,7 +1151,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">Email Delivery</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
-                <p className="text-[10px] text-white">Free 3,000/mo · Pro $20 (50k) · Scale $90+ · overage ~$0.90 per 1,000</p>
+                <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
                 <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
               </div>
 
@@ -1217,7 +1217,7 @@ export default function Index() {
                 </div>
                 <p className="text-[10px] text-white mb-1">AI Research Engine</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Tavily account · billed directly by Tavily</p>
-                <p className="text-[10px] text-white">Free 1,000 credits/mo · $0.008/credit overage · Project plans from ~$30/mo</p>
+                <p className="text-[10px] text-white">Tavily pricing: Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo</p>
                 <p className="text-[10px] text-white">Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
                 <p className="text-[10px] text-white">API key configured during onboarding · Valid credit card required on your Tavily account</p>
               </div>

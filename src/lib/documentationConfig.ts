@@ -422,7 +422,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
   {
     name: 'Resend',
     purpose: 'Email Notifications (your own account · billed directly by Resend)',
-    cost: 'Free 3,000/mo · Pro $20 (50k) · Scale $90+ · overage ~$0.90/1,000',
+    cost: 'Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90/1,000',
     requiredFor: 'All Tiers (Email)',
     optional: false,
   },
@@ -457,7 +457,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
   {
     name: 'Tavily',
     purpose: 'AI Web Research for Enhanced Content (your own account · billed directly by Tavily)',
-    cost: 'Free 1,000 credits/mo · $0.008/credit overage · Project plans from ~$30/mo',
+    cost: 'Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo',
     requiredFor: 'Optional for all tiers (enhances AI content)',
     optional: true,
   },

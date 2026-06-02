@@ -2,7 +2,7 @@
 
 > AI operatives that automate customer engagement, field operations, billing, marketing, and analytics for service businesses.
 
-Aura Intercept deploys 24 specialized AI operatives across 7 consoles (Customer Portal, Field Ops, Business Management, Marketing & Sales, Social Media, Analytics, Specialists) on a 4-tier subscription (Core, Boost, Pro, Elite) with a 60-day live trial.
+Aura Intercept deploys 24 specialized AI operatives across 7 consoles (Customer Portal, Field Ops, Business Management, Marketing & Sales, Social Media, Analytics, Specialists) on a 4-tier subscription (Core, Boost, Pro, Elite) with a 90-day live trial.
 
 ## Pages
 
