@@ -56,27 +56,74 @@ Deno.serve(async (req) => {
     const channels: string[] = campaign.channels || [];
     const segment: string = campaign.target_segment || 'all';
 
-    // Resolve recipients from customers table
+    // Resolve recipients from the active customer profile table used by the app.
     let query = supabase
-      .from('customers')
-      .select('id, first_name, last_name, email, phone, mobile_phone, email_opt_in, sms_opt_in, lifecycle_stage, customer_since')
+      .from('customer_profiles')
+      .select('id, name, email, phone, email_opt_out, sms_opt_out, created_at, intake_data')
       .eq('company_id', companyId);
 
     if (segment === 'new') {
       const cutoff = new Date(Date.now() - 30 * 86400_000).toISOString();
-      query = query.gte('customer_since', cutoff.slice(0, 10));
-    } else if (segment === 'vip') {
-      query = query.eq('lifecycle_stage', 'vip');
-    } else if (segment === 'inactive') {
-      query = query.eq('lifecycle_stage', 'inactive');
+      query = query.gte('created_at', cutoff);
     }
 
-    const { data: customers, error: custErr } = await query.limit(2000);
+    const { data: customerProfiles, error: custErr } = await query.limit(2000);
     if (custErr) throw custErr;
-    const recipients = customers || [];
+    let recipients = customerProfiles || [];
+
+    if (segment === 'vip') {
+      recipients = recipients.filter((c: any) => {
+        const data = c.intake_data || {};
+        return ['vip', 'loyalty', 'preferred'].includes(String(data.lifecycle_stage || data.segment || data.customer_type || '').toLowerCase());
+      });
+    }
+
+    if (segment === 'inactive') {
+      const cutoff = new Date(Date.now() - 90 * 86400_000).toISOString();
+      const { data: recentAppointments, error: apptErr } = await supabase
+        .from('appointments')
+        .select('customer_email, customer_phone')
+        .eq('company_id', companyId)
+        .gte('datetime', cutoff)
+        .limit(5000);
+      if (apptErr) throw apptErr;
+      const activeContacts = new Set<string>();
+      for (const appt of recentAppointments || []) {
+        if (appt.customer_email) activeContacts.add(String(appt.customer_email).toLowerCase());
+        if (appt.customer_phone) activeContacts.add(String(appt.customer_phone).replace(/\D/g, ''));
+      }
+      recipients = recipients.filter((c: any) => {
+        const emailKey = clean(c.email).toLowerCase();
+        const phoneKey = clean(c.phone).replace(/\D/g, '');
+        return !activeContacts.has(emailKey) && !activeContacts.has(phoneKey);
+      });
+    }
+
+    const reachableCount = recipients.reduce((count: number, c: any) => {
+      const canEmail = channels.includes('email') && clean(c.email) && c.email_opt_out !== true;
+      const canSms = channels.includes('sms') && clean(c.phone) && c.sms_opt_out !== true;
+      return count + (canEmail ? 1 : 0) + (canSms ? 1 : 0);
+    }, 0);
+
+    if (!channels.includes('email') && !channels.includes('sms')) {
+      return new Response(JSON.stringify({ error: 'No delivery channels selected for this campaign.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!reachableCount && !dryRun) {
+      return new Response(JSON.stringify({
+        error: `No reachable recipients found. Add customers with ${channels.join(' or ')} contact info and opt-in enabled, or choose a broader segment.`,
+        recipientCount: recipients.length,
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     if (dryRun) {
-      return new Response(JSON.stringify({ recipientCount: recipients.length, channels }), {
+      return new Response(JSON.stringify({ recipientCount: recipients.length, reachableCount, channels }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
