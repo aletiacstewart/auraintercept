@@ -1004,11 +1004,11 @@ export default function Auth() {
                           { icon: <Shield className="w-2.5 h-2.5 text-amber-400" />, name: 'A2P 10DLC', cost: 'Your SignalWire account · billed by SignalWire', limit: 'Brand $4.50 · campaign $1.50–$30/mo · DCA $7.50/submission · T-Mobile $250/mo if inactive 60 consecutive days', note: '⚠ 3–5 days (clean) · up to 1–2+ wks', color: 'text-amber-400' },
                           { icon: <Phone className="w-2.5 h-2.5 text-green-400" />, name: 'SignalWire', cost: 'Your account · billed by SignalWire', limit: 'Local # $0.50/mo · SMS $0.00415/segment · Voice $0.0066/min in / $0.008/min out · AI Agent $0.16/min', note: 'Required', color: 'text-green-400' },
                           { icon: <Mic className="w-2.5 h-2.5 text-purple-400" />, name: 'ElevenLabs', cost: 'Your account · billed by ElevenLabs', limit: 'Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go', note: 'Required', color: 'text-purple-400' },
-                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: 'Your account · billed by Resend', limit: 'Free 3,000/mo · Pro $20 (50k) · Scale $90+ · overage ~$0.90 per 1,000', note: 'Required', color: 'text-cyan-400' },
+                          { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: 'Your account · billed by Resend', limit: 'Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000', note: 'Required', color: 'text-cyan-400' },
                           { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Your Google account · OAuth', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
                           { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: 'Your account · billed by Stripe', limit: '2.9% + $0.30/txn · payouts to your bank · invoiced directly by Stripe', note: 'Required if collecting payments', color: 'text-amber-400' },
                           { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Your business pages + OAuth', limit: 'Any platform fees billed directly by each network', note: 'Required if posting', color: 'text-pink-400' },
-                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: 'Your account · billed by Tavily', limit: 'Free 1,000 credits/mo · $0.008/credit overage · Project plans from ~$30/mo', note: 'Required', color: 'text-orange-400' },
+                          { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: 'Your account · billed by Tavily', limit: 'Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo', note: 'Required', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, limit, note, color }) => (
                           <div key={name} className="py-1 border-b border-border/20 last:border-0">
                             <div className="flex items-center justify-between text-[9px]">
@@ -1026,7 +1026,7 @@ export default function Auth() {
                         ))}
                       </div>
                       <p className="mb-3 text-[8px] italic text-muted-foreground/70 leading-relaxed">
-                        Over-limit usage on any 3rd-party service will be invoiced at month-end in addition to your Aura plan fee. Provider fees and included limits are set by each vendor and may change at any time.
+                        Every 3rd-party provider above is billed by that provider directly to your own account and credit card, separately from your Aura plan fee. Provider pricing is set by each vendor and may change at any time.
                       </p>
 
                       {/* Setup docs — nested accordion */}
@@ -1058,7 +1058,7 @@ export default function Auth() {
                                 <div>
                                   <p className="font-semibold text-cyan-400 mb-0.5">Resend</p>
                                   <p>• Verified sending domain (recommended)</p>
-                                  <p>• Company credit card on file (overage / automation runs)</p>
+                                  <p>• Company credit card on file (for Resend usage charges)</p>
                                 </div>
                                 <div>
                                   <p className="font-semibold text-primary mb-0.5">AI Knowledge Base</p>
