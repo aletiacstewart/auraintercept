@@ -1,42 +1,39 @@
-## What I found
+## Goal
+Make Campaign creation channel-aware: independent email and SMS message bodies, independent "AI Generate" buttons, and a built-in template picker for each channel (seeded with the 5 SMS samples provided).
 
-- The campaign did try to send SMS to `+13618139836`.
-- The customer record is not opted out.
-- SignalWire credentials are present for the company.
-- The failure is still coming from SignalWire:
-  - `422`
-  - `code: 10000`
-  - `To must send to a verified caller id`
-- The configured outbound/from number is `+14847372424`.
+## UI — `src/components/marketing/forms/CampaignForm.tsx`
+Replace the single "Message Template" + "AI Generate" block with two channel-scoped blocks that render only when the matching channel checkbox is on:
 
-This means Aura is reaching SignalWire, but SignalWire is rejecting the message before delivery.
+- **Email block** (Email checked): Email Subject (existing) + "AI Generate (Email)" + new **Email Body** textarea + new **"Use template"** dropdown of email starter templates.
+- **SMS block** (SMS checked): new **SMS Message** textarea with 160-char counter and "Reply STOP" reminder, "AI Generate (SMS)" button, and **"Use template"** dropdown with these 5 samples:
+  1. Welcome (Post-Signup)
+  2. Onboarding Reminder
+  3. Product / Logic Update
+  4. Service Tier Upgrade
+  5. Scheduled System Alert (placeholders for date/time/link)
 
-## Most likely cause
+Form state gains `smsTemplate` alongside existing `messageTemplate` (email body).
 
-Even after upgrading, the SignalWire project/space currently connected to Aura still appears to be enforcing trial-style verified-recipient restrictions, or the account/space tied to these credentials is not the upgraded one.
+## Template library — new `src/lib/campaignTemplates.ts`
+Exports `SMS_TEMPLATES` (5 entries verbatim from the request) and `EMAIL_TEMPLATES` (matching starter set: Welcome, Onboarding Reminder, Product Update, Tier Upgrade, System Alert) as `{ id, label, subject?, body }`. Imported by the form for the dropdowns.
 
-## Plan
+## Database — new migration
+Add a separate SMS column so the two channels don't overwrite each other:
+```sql
+ALTER TABLE public.marketing_campaigns ADD COLUMN sms_template text;
+```
+Existing rows untouched; SMS sends fall back to `message_template` when `sms_template` is null.
 
-1. Improve SMS provider error handling
-   - Update `send-appointment-sms` so it returns SignalWire’s real error message and code to the campaign sender instead of only `Failed to send SMS: 422`.
-   - Preserve `code`, `status`, and `message` in the response.
+## Edge functions
+- `supabase/functions/generate-campaign-content/index.ts`: accept `channel: 'email' | 'sms'`. SMS prompt enforces ≤160 chars, brand prefix, "Reply STOP to opt out", no markdown. Email keeps current behavior.
+- `supabase/functions/send-campaign/index.ts`: SMS sends use `campaign.sms_template ?? campaign.message_template`; email still uses `message_template`.
 
-2. Improve campaign SMS logs
-   - Update `send-campaign` so campaign send rows store the actual provider message, e.g. `SignalWire 10000: To must send to a verified caller id`.
-   - This will make the Campaigns page/debug data show the real cause immediately.
+## Out of scope
+SignalWire delivery, referral flow, segments/discounts, auth/RLS/billing.
 
-3. Add a specific SignalWire trial/verification hint
-   - When SignalWire returns code `10000`, surface a clear action message:
-     - confirm the upgraded account is the same SignalWire Space connected in Aura
-     - confirm the `From` number belongs to that upgraded Space
-     - if still trial-restricted, verify the recipient in that exact Space or contact SignalWire to remove trial restrictions
-
-4. Retest without sending extra live SMS unless needed
-   - Run a dry diagnostic using recent logs/records.
-   - If you want, after the patch I can trigger a single real test SMS to your number to confirm provider behavior.
-
-## What I will not change
-
-- I will not bypass opt-out rules.
-- I will not switch to platform-owned SMS credentials.
-- I will not store or expose private SignalWire tokens in frontend code.
+## Files
+- edit `src/components/marketing/forms/CampaignForm.tsx`
+- add  `src/lib/campaignTemplates.ts`
+- edit `supabase/functions/generate-campaign-content/index.ts`
+- edit `supabase/functions/send-campaign/index.ts`
+- add  `supabase/migrations/<ts>_add_sms_template_to_marketing_campaigns.sql`

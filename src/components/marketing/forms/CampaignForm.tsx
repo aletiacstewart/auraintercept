@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2, Gift, TrendingUp, Tag, Users, Copy, RefreshCw } from 'lucide-react';
 import { subDays } from 'date-fns';
+import { SMS_TEMPLATES, EMAIL_TEMPLATES } from '@/lib/campaignTemplates';
 
 interface CampaignFormProps {
   companyId: string;
@@ -38,6 +39,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
   const { data: companyName } = useCompanyName(companyId);
   const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
   const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
+  const [isGeneratingSms, setIsGeneratingSms] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +47,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     targetSegment: 'all',
     emailSubject: '',
     messageTemplate: '',
+    smsTemplate: '',
     promoCode: '',
     discountType: 'percent',
     discountValue: '',
@@ -94,8 +97,11 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     enabled: formData.campaignType === 'winback',
   });
 
-  const generateContent = async (field: 'subject' | 'message') => {
-    const setLoading = field === 'subject' ? setIsGeneratingSubject : setIsGeneratingMessage;
+  const generateContent = async (field: 'subject' | 'message' | 'sms') => {
+    const setLoading =
+      field === 'subject' ? setIsGeneratingSubject
+      : field === 'sms' ? setIsGeneratingSms
+      : setIsGeneratingMessage;
     setLoading(true);
     
     try {
@@ -105,6 +111,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           targetSegment: formData.targetSegment,
           companyName: companyName || 'our company',
           field,
+          channel: field === 'sms' ? 'sms' : 'email',
           campaignName: formData.name,
           promoCode: formData.promoCode,
           discountType: formData.discountType,
@@ -119,10 +126,16 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
       if (data?.content) {
         if (field === 'subject') {
           setFormData(prev => ({ ...prev, emailSubject: data.content }));
+        } else if (field === 'sms') {
+          setFormData(prev => ({ ...prev, smsTemplate: data.content }));
         } else {
           setFormData(prev => ({ ...prev, messageTemplate: data.content }));
         }
-        toast.success(`${field === 'subject' ? 'Subject' : 'Message'} generated!`);
+        toast.success(
+          field === 'subject' ? 'Subject generated!'
+          : field === 'sms' ? 'SMS generated!'
+          : 'Email body generated!'
+        );
       }
     } catch (error) {
       console.error('Error generating content:', error);
@@ -203,6 +216,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           target_segment: formData.campaignType === 'winback' ? 'inactive' : formData.targetSegment,
           email_subject: formData.emailSubject || null,
           message_template: formData.messageTemplate || null,
+          sms_template: formData.smsTemplate || null,
           promo_code: formData.promoCode || null,
           discount_type: formData.discountType || null,
           discount_value: formData.discountValue ? parseFloat(formData.discountValue) : null,
@@ -662,67 +676,166 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
             </div>
           )}
 
-          {/* Email Subject (when email channel selected and not referral) */}
+          {/* Email block (subject + body + template picker) */}
           {formData.channels.includes('email') && formData.campaignType !== 'referral' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-foreground/70">Email Subject</Label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => generateContent('subject')}
-                  disabled={isGeneratingSubject}
-                  className="h-7 text-xs gap-1 text-primary hover:text-primary"
+            <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+              <h4 className="font-medium text-sm flex items-center gap-2 text-foreground">
+                <Mail className="h-4 w-4 text-primary" />
+                Email Campaign
+              </h4>
+
+              {/* Template picker */}
+              <div className="space-y-2">
+                <Label className="text-foreground/70">Use template</Label>
+                <Select
+                  value=""
+                  onValueChange={(id) => {
+                    const tpl = EMAIL_TEMPLATES.find(t => t.id === id);
+                    if (tpl) {
+                      setFormData(prev => ({
+                        ...prev,
+                        emailSubject: tpl.subject || prev.emailSubject,
+                        messageTemplate: tpl.body,
+                      }));
+                    }
+                  }}
                 >
-                  {isGeneratingSubject ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-3 w-3" />
-                  )}
-                  AI Generate
-                </Button>
+                  <SelectTrigger className="bg-background text-foreground border-border">
+                    <SelectValue placeholder="Choose a starter template…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMAIL_TEMPLATES.map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <Input
-                placeholder="Don't miss our special offer!"
-                value={formData.emailSubject}
-                onChange={(e) => setFormData(prev => ({ ...prev, emailSubject: e.target.value }))}
-                className="bg-background text-foreground border-border placeholder:text-muted-foreground"
-              />
+
+              {/* Subject */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-foreground/70">Email Subject</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => generateContent('subject')}
+                    disabled={isGeneratingSubject}
+                    className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                  >
+                    {isGeneratingSubject ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3 w-3" />
+                    )}
+                    AI Generate (Email)
+                  </Button>
+                </div>
+                <Input
+                  placeholder="Don't miss our special offer!"
+                  value={formData.emailSubject}
+                  onChange={(e) => setFormData(prev => ({ ...prev, emailSubject: e.target.value }))}
+                  className="bg-background text-foreground border-border placeholder:text-muted-foreground"
+                />
+              </div>
+
+              {/* Email body */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-foreground/70">Email Body</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => generateContent('message')}
+                    disabled={isGeneratingMessage}
+                    className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                  >
+                    {isGeneratingMessage ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3 w-3" />
+                    )}
+                    AI Generate (Email)
+                  </Button>
+                </div>
+                <Textarea
+                  placeholder="Hi {customer_name}, we have an exciting offer for you..."
+                  value={formData.messageTemplate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
+                  rows={5}
+                  className="bg-background text-foreground border-border placeholder:text-muted-foreground"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
+                </p>
+              </div>
             </div>
           )}
 
-          {/* Message Template (not for referral) */}
-          {formData.campaignType !== 'referral' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-foreground/70">Message Template</Label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => generateContent('message')}
-                  disabled={isGeneratingMessage}
-                  className="h-7 text-xs gap-1 text-primary hover:text-primary"
+          {/* SMS block (body + template picker) */}
+          {formData.channels.includes('sms') && formData.campaignType !== 'referral' && (
+            <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+              <h4 className="font-medium text-sm flex items-center gap-2 text-foreground">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                SMS Campaign
+              </h4>
+
+              {/* Template picker */}
+              <div className="space-y-2">
+                <Label className="text-foreground/70">Use template</Label>
+                <Select
+                  value=""
+                  onValueChange={(id) => {
+                    const tpl = SMS_TEMPLATES.find(t => t.id === id);
+                    if (tpl) setFormData(prev => ({ ...prev, smsTemplate: tpl.body }));
+                  }}
                 >
-                  {isGeneratingMessage ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-3 w-3" />
-                  )}
-                  AI Generate
-                </Button>
+                  <SelectTrigger className="bg-background text-foreground border-border">
+                    <SelectValue placeholder="Choose a starter template…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SMS_TEMPLATES.map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <Textarea
-                placeholder="Hi {customer_name}, we have an exciting offer for you..."
-                value={formData.messageTemplate}
-                onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
-                rows={3}
-                className="bg-background text-foreground border-border placeholder:text-muted-foreground"
-              />
-              <p className="text-xs text-muted-foreground">
-                Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
-              </p>
+
+              {/* SMS body */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-foreground/70">SMS Message</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => generateContent('sms')}
+                    disabled={isGeneratingSms}
+                    className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                  >
+                    {isGeneratingSms ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3 w-3" />
+                    )}
+                    AI Generate (SMS)
+                  </Button>
+                </div>
+                <Textarea
+                  placeholder="Hi {customer_name}, quick update from us… Reply STOP to opt out."
+                  value={formData.smsTemplate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, smsTemplate: e.target.value }))}
+                  rows={4}
+                  className="bg-background text-foreground border-border placeholder:text-muted-foreground"
+                />
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'} · Must include "Reply STOP to opt out"</span>
+                  <span className={formData.smsTemplate.length > 320 ? 'text-destructive' : ''}>
+                    {formData.smsTemplate.length} chars
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
