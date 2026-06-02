@@ -490,6 +490,24 @@ export function MissedCallSettings() {
                 </Select>
               </div>
 
+              {(localSettings.missed_call_action === 'sms_only' || localSettings.missed_call_action === 'callback_then_sms') && (
+                <div className="flex items-start justify-between gap-4 rounded-lg border border-border/50 p-3">
+                  <div className="space-y-1">
+                    <Label className="text-sm">Only reply to known Leads & Customers</Label>
+                    <p className="text-xs text-muted-foreground">
+                      When on, missed-call SMS auto-replies are only sent if the caller's number is already in your Leads or Customers list. Recommended to prevent texting unknown callers.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={!!localSettings.missed_call_reply_known_only}
+                    onCheckedChange={(v) => {
+                      setLocalSettings(prev => ({ ...prev, missed_call_reply_known_only: v }));
+                      setHasChanges(true);
+                    }}
+                  />
+                </div>
+              )}
+
               {(localSettings.missed_call_action === 'callback_only' || localSettings.missed_call_action === 'callback_then_sms') && (
                 <div className="space-y-2">
                   <Label>Callback delay (seconds)</Label>
