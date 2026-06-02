@@ -1,39 +1,40 @@
+# Add Save to Carrier Call-Forwarding Cheat Sheet
+
 ## Goal
-Make Campaign creation channel-aware: independent email and SMS message bodies, independent "AI Generate" buttons, and a built-in template picker for each channel (seeded with the 5 SMS samples provided).
+The Carrier Forwarding section currently has no Save button. Add one that:
+1. Persists the selected carrier + Aura number on the company record.
+2. Marks "Call forwarding configured" as a completed setup step (status badge + setup-progress signal).
+3. Pre-fills the carrier dropdown and number the next time the user opens the section.
 
-## UI — `src/components/marketing/forms/CampaignForm.tsx`
-Replace the single "Message Template" + "AI Generate" block with two channel-scoped blocks that render only when the matching channel checkbox is on:
+## Where it shows up
+`CarrierForwardingGuide` is used in 4 places — Save behavior will apply in the dashboard surfaces only (Voice + SMS integrations, main Integrations page). The public onboarding intake stays as a reference-only view (no Save) since there's no authenticated company yet.
 
-- **Email block** (Email checked): Email Subject (existing) + "AI Generate (Email)" + new **Email Body** textarea + new **"Use template"** dropdown of email starter templates.
-- **SMS block** (SMS checked): new **SMS Message** textarea with 160-char counter and "Reply STOP" reminder, "AI Generate (SMS)" button, and **"Use template"** dropdown with these 5 samples:
-  1. Welcome (Post-Signup)
-  2. Onboarding Reminder
-  3. Product / Logic Update
-  4. Service Tier Upgrade
-  5. Scheduled System Alert (placeholders for date/time/link)
+## Changes
 
-Form state gains `smsTemplate` alongside existing `messageTemplate` (email body).
+### 1. Database (migration)
+Add two nullable columns to `public.companies`:
+- `call_forwarding_carrier text`
+- `call_forwarding_target_number text`
+- `call_forwarding_configured_at timestamptz`
 
-## Template library — new `src/lib/campaignTemplates.ts`
-Exports `SMS_TEMPLATES` (5 entries verbatim from the request) and `EMAIL_TEMPLATES` (matching starter set: Welcome, Onboarding Reminder, Product Update, Tier Upgrade, System Alert) as `{ id, label, subject?, body }`. Imported by the form for the dropdowns.
+No new GRANTs needed (companies table already configured). RLS already restricts updates to the company's admins.
 
-## Database — new migration
-Add a separate SMS column so the two channels don't overwrite each other:
-```sql
-ALTER TABLE public.marketing_campaigns ADD COLUMN sms_template text;
-```
-Existing rows untouched; SMS sends fall back to `message_template` when `sms_template` is null.
+### 2. `CarrierForwardingGuide.tsx`
+- Add an optional `companyId` prop. When present, render a **Save** button below the inputs.
+- On mount, load saved `call_forwarding_carrier` + `call_forwarding_target_number` and pre-fill the fields.
+- On Save: update the company row, toast success, show a green "✅ Forwarding configured for {Carrier} → {number}" status chip, and dispatch `triggerSetupProgressRefresh()` so the dashboard setup bar updates.
+- If `companyId` is not provided (public intake), keep existing reference-only behavior.
 
-## Edge functions
-- `supabase/functions/generate-campaign-content/index.ts`: accept `channel: 'email' | 'sms'`. SMS prompt enforces ≤160 chars, brand prefix, "Reply STOP to opt out", no markdown. Email keeps current behavior.
-- `supabase/functions/send-campaign/index.ts`: SMS sends use `campaign.sms_template ?? campaign.message_template`; email still uses `message_template`.
+### 3. Setup progress
+In the setup-progress edge function / hook that calculates completion steps, add `call_forwarding_configured_at IS NOT NULL` as one of the "Voice setup" sub-checks so configuring forwarding contributes to the bar.
 
-## Out of scope
-SignalWire delivery, referral flow, segments/discounts, auth/RLS/billing.
+### 4. Call sites
+Pass `companyId` into `<CarrierForwardingGuide />` from:
+- `src/pages/integrations/SMSIntegration.tsx`
+- `src/pages/integrations/VoiceIntegration.tsx`
+- `src/pages/Integrations.tsx`
 
-## Files
-- edit `src/components/marketing/forms/CampaignForm.tsx`
-- add  `src/lib/campaignTemplates.ts`
-- edit `supabase/functions/generate-campaign-content/index.ts`
-- edit `supabase/functions/send-campaign/index.ts`
-- add  `supabase/migrations/<ts>_add_sms_template_to_marketing_campaigns.sql`
+Public intake (`PublicOnboardingIntake.tsx`) stays unchanged.
+
+## Notes
+- This does not actually program the carrier — Aura still can't dial `*72` from the user's phone. The Save reflects "user has acknowledged + recorded the forwarding setup" so support/dispatch can see which carrier was used and the setup-progress bar reflects completion.

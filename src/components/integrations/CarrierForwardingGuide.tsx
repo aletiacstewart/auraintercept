@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Copy as CopyIcon, ChevronDown, PhoneForwarded } from 'lucide-react';
+import { Copy as CopyIcon, ChevronDown, PhoneForwarded, Check, Loader2 } from 'lucide-react';
 import { CARRIERS, FORWARDING_RULES, fillTokens } from '@/lib/carrierForwarding';
+import { supabase } from '@/integrations/supabase/client';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface Props {
   /** Aura number to forward TO (pre-fills the codes). */
@@ -17,6 +20,12 @@ interface Props {
   carrier?: string;
   onCarrierChange?: (v: string) => void;
   onAuraNumberChange?: (v: string) => void;
+  /**
+   * If supplied, a Save button is rendered that persists the selected
+   * carrier + Aura number on the company record and marks the
+   * forwarding setup step complete.
+   */
+  companyId?: string | null;
 }
 
 /**
@@ -30,6 +39,7 @@ export function CarrierForwardingGuide({
   carrier: controlledCarrier,
   onCarrierChange,
   onAuraNumberChange,
+  companyId,
 }: Props) {
   const [carrierInternal, setCarrierInternal] = useState(defaultCarrier);
   const [auraNumberInternal, setAuraNumberInternal] = useState(initialAura);
@@ -39,6 +49,38 @@ export function CarrierForwardingGuide({
   const setAuraNumber = (v: string) =>
     onAuraNumberChange ? onAuraNumberChange(v) : setAuraNumberInternal(v);
   const [showAll, setShowAll] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [savedCarrier, setSavedCarrier] = useState<string | null>(null);
+  const [savedNumber, setSavedNumber] = useState<string | null>(null);
+
+  // Load saved values when companyId is known.
+  useEffect(() => {
+    if (!companyId) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select(
+          'call_forwarding_carrier, call_forwarding_target_number, call_forwarding_configured_at'
+        )
+        .eq('id', companyId)
+        .maybeSingle();
+      if (cancelled || error || !data) return;
+      const c = (data as any).call_forwarding_carrier as string | null;
+      const n = (data as any).call_forwarding_target_number as string | null;
+      const t = (data as any).call_forwarding_configured_at as string | null;
+      if (c) setCarrier(c);
+      if (n && !initialAura) setAuraNumber(n);
+      setSavedCarrier(c);
+      setSavedNumber(n);
+      setSavedAt(t);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId]);
 
   const selected = CARRIERS.find((c) => c.name === carrier);
 
@@ -47,12 +89,51 @@ export function CarrierForwardingGuide({
     toast.success('Copied', { description: text });
   };
 
+  const canSave = !!companyId && !!carrier && !!auraNumber.trim();
+  const isDirty =
+    canSave && (carrier !== savedCarrier || auraNumber.trim() !== (savedNumber ?? ''));
+
+  const onSave = async () => {
+    if (!companyId || !canSave) return;
+    setSaving(true);
+    const nowIso = new Date().toISOString();
+    const { error } = await supabase
+      .from('companies')
+      .update({
+        call_forwarding_carrier: carrier,
+        call_forwarding_target_number: auraNumber.trim(),
+        call_forwarding_configured_at: nowIso,
+      } as any)
+      .eq('id', companyId);
+    setSaving(false);
+    if (error) {
+      toast.error('Could not save forwarding setup', { description: error.message });
+      return;
+    }
+    setSavedCarrier(carrier);
+    setSavedNumber(auraNumber.trim());
+    setSavedAt(nowIso);
+    toast.success('Call forwarding saved', {
+      description: `${carrier} → ${auraNumber.trim()}`,
+    });
+    triggerSetupProgressRefresh();
+  };
+
   const body = (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
         Pick the carrier of the business line you want forwarded. The codes below tell that phone to forward calls
         (immediate, after-hours / no-answer, busy, or unreachable) to your Aura number.
       </p>
+
+      {companyId && savedAt && (
+        <div className="flex items-center gap-2 rounded-md border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-600">
+          <Check className="h-3.5 w-3.5" />
+          <span>
+            Forwarding configured for <strong>{savedCarrier}</strong> → <strong>{savedNumber}</strong>
+          </span>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
@@ -79,6 +160,29 @@ export function CarrierForwardingGuide({
           />
         </div>
       </div>
+
+      {companyId && (
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            type="button"
+            size="sm"
+            onClick={onSave}
+            disabled={!canSave || saving || !isDirty}
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Saving…
+              </>
+            ) : savedAt && !isDirty ? (
+              <>
+                <Check className="h-3.5 w-3.5 mr-1.5" /> Saved
+              </>
+            ) : (
+              'Save forwarding setup'
+            )}
+          </Button>
+        </div>
+      )}
 
       {selected ? (
         <CarrierCard carrier={selected} num={auraNumber} onCopy={onCopy} />

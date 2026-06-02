@@ -383,6 +383,7 @@ export default function Integrations() {
         {/* Carrier call-forwarding reference for 3rd-party voice integrations */}
         <CarrierForwardingGuide
           auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+          companyId={companyId}
         />
 
         {/* Integration Cards */}
