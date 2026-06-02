@@ -17,13 +17,19 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Legacy IDs at the old $497/$697/$1,197/$2,197 amounts are retained for
 // grandfathered customers — they continue to map to the correct tier.
 const PRICE_TO_TIER: Record<string, string> = {
-  // === CANONICAL 4-TIER PRICE IDS ===
-  // Aura Core - $697/mo (new) — replace with the new Stripe Price ID after creation
+  // === CANONICAL 4-TIER PRICE IDS (new Balanced pricing) ===
+  // Aura Core - $697/mo
+  "price_1Tdvk8J9fo9y8fGHEzdE8sc0": "starter",
+  // Aura Boost - $1,097/mo
+  "price_1Tdvk9J9fo9y8fGHWVQP8Zxi": "connect",
+  // Aura Pro - $1,997/mo
+  "price_1Tdvk9J9fo9y8fGHjXNIXsIn": "performance",
+  // Aura Elite - $3,497/mo
+  "price_1TdvkAJ9fo9y8fGHfu0WlSpR": "command",
+
+  // === LEGACY PRE-LAUNCH PLACEHOLDER IDS (kept for any in-flight sessions) ===
   "price_1T0285J9fo9y8fGHURkfEnLp": "starter",
-  // Aura Boost - $1,097/mo (new) — replace with the new Stripe Price ID after creation
   "price_1T02XqJ9fo9y8fGHMDDvQxR3": "connect",
-  // Aura Pro - $1,997/mo (new) — placeholder, add new Stripe Price ID
-  // Aura Elite - $3,497/mo (new) — replace with the new Stripe Price ID after creation
   "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",
 
   // === LEGACY PRICE IDS (backward compat for existing subscribers) ===
