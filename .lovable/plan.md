@@ -1,27 +1,27 @@
-## Diagnosis
+## Root cause
 
-The toast says **"Failed to send a request to the Edge Function"** and there are **zero logs** for `send-campaign`. That means the function is not booting/deployed — calls never reach it.
+Edge Function logs show:
+`null value in column "id" of relation "campaign_sends" violates not-null constraint`
 
-Likely cause: the last edit to `supabase/functions/send-campaign/index.ts` didn't redeploy cleanly. There is also no explicit `[functions.send-campaign]` block in `supabase/config.toml`, so it relies on default deploy.
+The `campaign_sends.id` column has a `gen_random_uuid()` default, but in `send-campaign/index.ts` only the email-success log row sets an explicit `id` (used for open/click tracking). The SMS-success row and both catch-block rows omit `id`. When supabase-js batch-inserts an array of objects with different keys, it builds the column set as the **union** of all keys and sends `null` for rows missing a key — that null overrides the DB default and the whole insert fails. Net effect: nothing is recorded and the function returns 500, which the UI shows as "Edge Function returned a non-2xx status code".
 
-## Plan
+## Changes
 
-1. **Force a clean redeploy of `send-campaign`**
-   - Make a tiny, safe edit (version comment bump + structured boot log) to `supabase/functions/send-campaign/index.ts`.
-   - Wrap the JSON body parse in try/catch with a clear error so any future failure surfaces immediately instead of bubbling as a generic Edge Function transport error.
+**`supabase/functions/send-campaign/index.ts`**
+- Add `id: crypto.randomUUID()` to every `logs.push(...)` call:
+  - SMS success entry (line ~182)
+  - Email catch-block entry (line ~171)
+  - SMS catch-block entry (line ~191)
+- Email success entry already has `id: sendId`; leave it.
+- Redeploy the function.
 
-2. **Add explicit config entry**
-   - Add `[functions.send-campaign]` to `supabase/config.toml` (default `verify_jwt = true` — invocations come from the logged-in console with the user's auth header, which is correct).
+## Verify
 
-3. **Better client-side error surfacing**
-   - In `MarketingSalesAgentConsole.sendCampaign` and `Campaigns.tsx`, after `supabase.functions.invoke('send-campaign', …)`, if `error` is set, also try to read `data?.error` so the toast shows the underlying reason ("No recipients found", "Resend not configured", etc.) instead of the opaque transport error.
-
-4. **Verify after redeploy**
-   - Confirm via `edge_function_logs` that `send-campaign` now boots and logs the request. If it still 500s, read the new log line to surface the real failure (missing Resend key, no customers in segment, etc.).
+- Click "Send Again" on a saved campaign.
+- Confirm: no more `23502` error in logs; `campaign_sends` rows appear; toast reports actual per-recipient outcome.
+- For SMS: the underlying SignalWire error `"To must send to a verified caller id"` will now propagate to the per-row `error` column and toast — this is a SignalWire trial-account constraint (recipient numbers must be verified or the account upgraded), not a code bug. Out of scope for this fix.
 
 ## Out of scope
-- No changes to the campaigns UI, schema, tracking pixel, or `campaign-track`.
-- No changes to email/SMS provider routing logic itself — once the function deploys, it will use the existing `send-email-guarded` / `send-appointment-sms` paths.
 
-## Technical notes
-- Files: `supabase/functions/send-campaign/index.ts`, `supabase/config.toml`, `src/components/marketing/MarketingSalesAgentConsole.tsx`, `src/pages/Campaigns.tsx`.
+- UI, schema, tracking pixel, `campaign-track` function.
+- SignalWire account configuration.

@@ -168,7 +168,7 @@ Deno.serve(async (req) => {
           ok ? sent++ : failed++;
         } catch (e) {
           failed++;
-          logs.push({ campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'failed', error: String(e) });
+          logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'failed', error: String(e) });
         }
       }
 
@@ -180,6 +180,7 @@ Deno.serve(async (req) => {
           });
           const ok = !res.error && (res.data as any)?.success !== false;
           logs.push({
+            id: crypto.randomUUID(),
             campaign_id: campaignId, company_id: companyId, customer_id: c.id,
             customer_name: name, recipient: phone, channel: 'sms',
             status: ok ? 'sent' : 'failed',
@@ -188,7 +189,7 @@ Deno.serve(async (req) => {
           ok ? sent++ : failed++;
         } catch (e) {
           failed++;
-          logs.push({ campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: phone, channel: 'sms', status: 'failed', error: String(e) });
+          logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: phone, channel: 'sms', status: 'failed', error: String(e) });
         }
       }
     }
