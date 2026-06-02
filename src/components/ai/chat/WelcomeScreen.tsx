@@ -53,6 +53,21 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} feedbackRating={feedbackRating} />
           </div>
         )}
+
+        {/* Title + subtitle */}
+        <div className="w-full max-w-4xl mx-auto text-center space-y-2 pt-2">
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>
+          )}
+        </div>
+
+        {/* Quick action grid */}
+        {actions && actions.length > 0 && (
+          <div className="w-full max-w-4xl mx-auto">
+            <QuickActionGrid actions={actions} onAction={onAction} />
+          </div>
+        )}
       </div>
     </div>
   );
