@@ -350,6 +350,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             return { ...item, label: navLabels.techView };
           }
           if (item.href === '/dashboard/dispatch-field-ops') {
+            // Aura Intercept (saas_platform) repurposes this slot as the
+            // Video Console for live customer/team meetings.
+            if (industryPack?.industry_id === 'saas_platform') {
+              return { ...item, href: '/dashboard/video-console', label: 'Video Console', icon: Video };
+            }
             return { ...item, label: operationsLabel };
           }
           if (item.href === '/dashboard/appointments' && item.roles.includes('company_admin')) {

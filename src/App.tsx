@@ -58,6 +58,7 @@ import {
 } from "./pages/ai-consoles";
 import AskAura from "./pages/AskAura";
 import OperationsRouter from "./pages/operations/OperationsRouter";
+import VideoConsole from "./pages/VideoConsole";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AIAgentGuide from "./pages/AIAgentGuide";
 import AuditReport from "./pages/AuditReport";
@@ -272,6 +273,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/audit-report" element={<ProtectedRoute requiredRole="platform_admin"><AuditReport /></ProtectedRoute>} />
                 <Route path="/dashboard/operations" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
+                <Route path="/dashboard/video-console" element={<ProtectedRoute><VideoConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops-install" element={<ProtectedRoute><DispatchFieldOpsInstall /></ProtectedRoute>} />

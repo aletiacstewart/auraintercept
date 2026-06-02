@@ -89,7 +89,7 @@ const INDUSTRY_HEADERS: Record<string, Partial<IndustryPageHeaders>> = {
     customers: { title: 'Customer Companies',     description: 'View, support, and manage active companies on the platform' },
     messages:  { title: 'Inbound Conversations',  description: 'Chat and SMS conversations from prospects and customers' },
     calls:     { title: 'Sales & Support Calls',  description: 'Inbound and outbound call activity' },
-    appointments: { title: 'Demo Calls',          description: 'Demo calls, onboarding, support, and strategy reviews' },
+    appointments: { title: 'Appointments',        description: 'Customer appointments, demos, onboarding, and strategy sessions' },
     campaigns: { title: 'Outbound Campaigns',     description: 'Email and SMS campaigns to prospects and customers' },
     employees: { title: 'Solutions Engineers',    description: 'Manage solutions engineers, support, and sales staff' },
   },
