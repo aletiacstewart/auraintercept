@@ -50,7 +50,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
                 )}
               </div>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• <strong>3,000 emails/month bundled in your plan</strong> (about 1,500 appointments with 2 reminders each); overage $0.90 per 1,000</li>
+                <li>• <strong>Resend Free tier: 3,000 emails/mo</strong> (about 1,500 appointments with 2 reminders each); then $0.90 per 1,000, billed directly by Resend to your account</li>
                 <li>• Above 3,000: $20/month flat fee for up to 50,000 emails</li>
                 <li>• Your current estimate: {totalReminders} emails = <strong>{formatCurrency(costs.email)}</strong></li>
               </ul>
