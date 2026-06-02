@@ -182,6 +182,7 @@ export default function SMSIntegration() {
           {/* Carrier call-forwarding reference (voice line paired with this SMS number) */}
           <CarrierForwardingGuide
             auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+            companyId={companyId}
           />
 
           {/* Integration Cards */}
