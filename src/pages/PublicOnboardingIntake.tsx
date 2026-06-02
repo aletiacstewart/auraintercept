@@ -56,10 +56,10 @@ const UPLOAD_SECTIONS = [
 ];
 
 const PLAN_OPTIONS = [
-  { id: 'core',  name: 'Aura Core',  monthly: 497,  annual: 4970,  onboarding: 497 },
-  { id: 'boost', name: 'Aura Boost', monthly: 697,  annual: 6970,  onboarding: 697 },
-  { id: 'pro',   name: 'Aura Pro',   monthly: 1197, annual: 11970, onboarding: 1197 },
-  { id: 'elite', name: 'Aura Elite', monthly: 2197, annual: 21970, onboarding: 2197 },
+  { id: 'core',  name: 'Aura Core',  monthly: 697,  annual: 6970,  onboarding: 349 },
+  { id: 'boost', name: 'Aura Boost', monthly: 1097, annual: 10970, onboarding: 549 },
+  { id: 'pro',   name: 'Aura Pro',   monthly: 1997, annual: 19970, onboarding: 999 },
+  { id: 'elite', name: 'Aura Elite', monthly: 3497, annual: 34970, onboarding: 1749 },
 ] as const;
 
 const INTEGRATION_PROVIDERS = [

@@ -450,7 +450,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Quantifiable business impact for sales conversations</Text>
 
       <View style={styles.roiCard}>
-        <Text style={styles.roiTitle}>ROI Calculator: Aura Boost Tier ($697/mo)</Text>
+        <Text style={styles.roiTitle}>ROI Calculator: Aura Boost Tier ($1,097/mo)</Text>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Missed calls recovered (23/mo x $500)</Text>
           <Text style={styles.roiValue}>+$11,500</Text>
@@ -469,7 +469,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Aura Intercept cost</Text>
-          <Text style={styles.roiValue}>-$497</Text>
+          <Text style={styles.roiValue}>-$697</Text>
         </View>
         <View style={[styles.roiRow, styles.roiTotal]}>
           <Text style={styles.roiTotalLabel}>Net Monthly ROI</Text>
@@ -515,26 +515,26 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Core</Text>
-              <Text style={styles.tierPrice}>$697/mo</Text>
+              <Text style={styles.tierPrice}>$1,097/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Solo Operators, Restaurants, Single-location</Text>
             <Text style={styles.tierBullet}>- Appointments booked: +$2,000</Text>
             <Text style={styles.tierBullet}>- Time saved (10h): +$500</Text>
             <Text style={styles.tierBullet}>- Reviews generated: +$400</Text>
-            <Text style={styles.tierBullet}>- Cost: -$497</Text>
+            <Text style={styles.tierBullet}>- Cost: -$697</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,703/mo</Text>
           </View>
 
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Boost</Text>
-              <Text style={styles.tierPrice}>$697/mo</Text>
+              <Text style={styles.tierPrice}>$1,097/mo</Text>
             </View>
             <Text style={styles.tierDesc}>HVAC, Plumbing, Field Service</Text>
             <Text style={styles.tierBullet}>- Field jobs optimized: +$3,000</Text>
             <Text style={styles.tierBullet}>- After-hours leads: +$2,000</Text>
             <Text style={styles.tierBullet}>- Dispatch efficiency: +$1,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$497</Text>
+            <Text style={styles.tierBullet}>- Cost: -$697</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$5,503/mo</Text>
           </View>
         </View>
@@ -543,26 +543,26 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Pro</Text>
-              <Text style={styles.tierPrice}>$1,197/mo</Text>
+              <Text style={styles.tierPrice}>$1,997/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Growing companies, multiple technicians</Text>
             <Text style={styles.tierBullet}>- All Boost benefits: +$6,000</Text>
             <Text style={styles.tierBullet}>- Campaign & outreach revenue: +$3,000</Text>
             <Text style={styles.tierBullet}>- Admin automation: +$1,500</Text>
-            <Text style={styles.tierBullet}>- Cost: -$1,197</Text>
+            <Text style={styles.tierBullet}>- Cost: -$1,997</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$9,503/mo</Text>
           </View>
 
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Elite</Text>
-              <Text style={styles.tierPrice}>$2,197/mo</Text>
+              <Text style={styles.tierPrice}>$3,497/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Full Suite, Enterprise Operations</Text>
             <Text style={styles.tierBullet}>- All Pro benefits: +$10,000</Text>
             <Text style={styles.tierBullet}>- Analytics-driven decisions: +$3,000</Text>
             <Text style={styles.tierBullet}>- Enterprise operations coordination: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$2,197</Text>
+            <Text style={styles.tierBullet}>- Cost: -$3,497</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$13,003/mo</Text>
           </View>
         </View>
@@ -630,7 +630,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$2,197</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$697-$3,497</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
@@ -643,7 +643,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <VisualDataRow label="Part-time + After-hours" value={70} display="$28,000" color={colors.warning} />
         <VisualDataRow label="Aura Elite Tier" value={57} display="$23,964" color={colors.primary} />
         <VisualDataRow label="Aura Pro Tier" value={28} display="$11,964" color={colors.secondary} />
-        <VisualDataRow label="Aura Boost Tier" value={14} display="$5,964" color={colors.accent} />
+        <VisualDataRow label="Aura Boost Tier" value={14} display="$13,164" color={colors.accent} />
         <VisualDataRow label="Aura Core Tier" value={6} display="$2,364" color={colors.success} />
       </View>
 
@@ -671,7 +671,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionText}>"It's too expensive for my small business."</Text>
         <Text style={styles.responseLabel}>Response</Text>
         <Text style={styles.responseText}>
-          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Core tier starts at just $497/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
+          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Core tier starts at just $697/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
         </Text>
       </View>
 
@@ -768,7 +768,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Core</Text>
-          <Text style={styles.tierPrice}>$697/mo</Text>
+          <Text style={styles.tierPrice}>$1,097/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Solo operators, restaurants, single-location</Text>
         <Text style={styles.tierBullet}>- 10 Employee Accounts</Text>
@@ -779,7 +779,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Boost</Text>
-          <Text style={styles.tierPrice}>$697/mo</Text>
+          <Text style={styles.tierPrice}>$1,097/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: HVAC, plumbing, field service teams</Text>
         <Text style={styles.tierBullet}>- 25 Employee Accounts</Text>
@@ -790,7 +790,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Pro</Text>
-          <Text style={styles.tierPrice}>$1,197/mo</Text>
+          <Text style={styles.tierPrice}>$1,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Growing companies with multiple technicians</Text>
         <Text style={styles.tierBullet}>- 50 Employee Accounts</Text>
@@ -802,7 +802,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Elite (Enterprise)</Text>
-          <Text style={styles.tierPrice}>$2,197/mo</Text>
+          <Text style={styles.tierPrice}>$3,497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Large service teams, enterprise operations</Text>
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>

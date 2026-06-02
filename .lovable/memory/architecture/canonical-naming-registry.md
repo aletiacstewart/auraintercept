@@ -34,14 +34,14 @@ tier check or "Active" computation.
 
 ## Tiers (4 + free)
 
-- **Aura Core** (`starter`) $197/mo — 5 operatives: AI Receptionist, Customer
+- **Aura Core** (`starter`) $697/mo · $349 onboarding — 5 operatives: AI Receptionist, Customer
   Journey, Outreach, Creative Content, Web Presence. Consoles: Customer
   Portal, Outreach & Sales, Creative & Web Presence. 10 employees.
-- **Aura Boost** (`connect`) $497/mo — Core + Dispatch + Field Navigation.
+- **Aura Boost** (`connect`) $1,097/mo · $549 onboarding — Core + Dispatch + Field Navigation.
   Adds Field Operations + Social Media consoles. 25 employees.
-- **Aura Pro** (`performance`) $997/mo — Boost + Business Finance + Analytics
+- **Aura Pro** (`performance`) $1,997/mo · $999 onboarding — Boost + Business Finance + Analytics
   Intelligence + Admin. 50 employees.
-- **Aura Elite** (`command`) $1,997/mo — All 10 operatives + industry
+- **Aura Elite** (`command`) $3,497/mo · $1,749 onboarding — All 10 operatives + industry
   specialists + AI Operatives Hub console. Unlimited employees.
 
 ## 7 Consoles (canonical display titles)

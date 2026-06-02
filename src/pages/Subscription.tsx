@@ -75,9 +75,9 @@ const TIERS = [
   {
     id: 'starter',
     name: 'Aura Core',
-    monthlyPrice: '$497',
-    annualPrice: '$4,970',
-    annualSavings: 'Save ~$994',
+    monthlyPrice: '$697',
+    annualPrice: '$6,970',
+    annualSavings: 'Save ~$1,394',
     description: 'Solo operators, restaurants, single-location',
     popular: false,
     agentCount: 8,
@@ -94,9 +94,9 @@ const TIERS = [
   {
     id: 'connect',
     name: 'Aura Boost',
-    monthlyPrice: '$697',
-    annualPrice: '$6,970',
-    annualSavings: 'Save ~$1,394',
+    monthlyPrice: '$1,097',
+    annualPrice: '$10,970',
+    annualSavings: 'Save ~$2,194',
     description: 'HVAC, plumbing, field service teams',
     popular: true,
     agentCount: 12,
@@ -113,9 +113,9 @@ const TIERS = [
   {
     id: 'performance',
     name: 'Aura Pro',
-    monthlyPrice: '$1,197',
-    annualPrice: '$11,970',
-    annualSavings: 'Save ~$2,394',
+    monthlyPrice: '$1,997',
+    annualPrice: '$19,970',
+    annualSavings: 'Save ~$3,994',
     description: 'Growing companies with field teams',
     popular: false,
     agentCount: 16,
@@ -131,9 +131,9 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Elite',
-    monthlyPrice: '$2,197',
-    annualPrice: '$21,970',
-    annualSavings: 'Save ~$4,394',
+    monthlyPrice: '$3,497',
+    annualPrice: '$34,970',
+    annualSavings: 'Save ~$6,994',
     description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
@@ -255,10 +255,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
-      { name: 'Annual Price', starter: '$4,970/year', connect: '$6,970/year', performance: '$11,970/year', command: '$21,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,394', performance: 'Save ~$2,394', command: 'Save ~$4,394' },
-      { name: 'Onboarding Fee (one-time)', starter: '$497', connect: '$697', performance: '$1,197', command: '$2,197' },
+      { name: 'Monthly Price', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
+      { name: 'Annual Price', starter: '$6,970/year', connect: '$10,970/year', performance: '$19,970/year', command: '$34,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$1,394', connect: 'Save ~$2,194', performance: 'Save ~$3,994', command: 'Save ~$6,994' },
+      { name: 'Onboarding Fee (one-time)', starter: '$349', connect: '$549', performance: '$999', command: '$1,749' },
     ],
   },
 ];
@@ -668,19 +668,19 @@ export default function Subscription() {
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Core</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$497/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
                         <div className="text-primary">Boost</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$1,097/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Pro</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,197/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Elite</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$2,197/mo</div>
+                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -735,7 +735,7 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $497 · Boost $697 · Pro $1,197 · Elite $2,197</span>
+                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>
               </div>
             </div>
           </CardContent>
@@ -785,7 +785,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($497/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($697/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,197/mo) adds campaign, outreach, and social media. Elite ($2,197/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
+                Core ($697/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($1,097/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,997/mo) adds campaign, outreach, and social media. Elite ($3,497/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
               </p>
             </div>
             <div>

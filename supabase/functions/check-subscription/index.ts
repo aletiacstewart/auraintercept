@@ -12,19 +12,22 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map price IDs to 3 canonical tiers: connect, performance, command
+// Map price IDs to canonical 4 tiers: starter, connect, performance, command.
+// New pricing (effective rollout): Core $697 · Boost $1,097 · Pro $1,997 · Elite $3,497.
+// Legacy IDs at the old $497/$697/$1,197/$2,197 amounts are retained for
+// grandfathered customers — they continue to map to the correct tier.
 const PRICE_TO_TIER: Record<string, string> = {
   // === CANONICAL 4-TIER PRICE IDS ===
-  // Aura Core - $497/mo
+  // Aura Core - $697/mo (new) — replace with the new Stripe Price ID after creation
   "price_1T0285J9fo9y8fGHURkfEnLp": "starter",
-  // Aura Boost - $697/mo
+  // Aura Boost - $1,097/mo (new) — replace with the new Stripe Price ID after creation
   "price_1T02XqJ9fo9y8fGHMDDvQxR3": "connect",
-  // Aura Pro - $1,197/mo (placeholder)
-  // Aura Elite - $2,197/mo
+  // Aura Pro - $1,997/mo (new) — placeholder, add new Stripe Price ID
+  // Aura Elite - $3,497/mo (new) — replace with the new Stripe Price ID after creation
   "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq": "command",
 
   // === LEGACY PRICE IDS (backward compat for existing subscribers) ===
-  // Starter $497 → connect
+  // Starter $497 → connect (legacy)
   "price_1SuzwwJ9fo9y8fGH0rJZBw5q": "connect",
   // Old Connect/Scheduling $397 → connect
   "price_1SxfFNJ9fo9y8fGH2rcByvoY": "connect",

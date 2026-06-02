@@ -230,12 +230,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 8,
     consoleCount: 3,
     employeeLimit: 'Up to 10 employees',
-    implementationFee: '$497',
+    implementationFee: '$349',
   },
   BOOST: {
     tier: 'BOOST',
     label: 'Aura Boost',
-    price: '$697/mo',
+    price: '$1,097/mo',
     description: '12 Smart AI Agents that add On The Way (dispatch, routing & ETAs) for small service teams in the field.',
     keyFeatures: [
       'Everything in Core, plus:',
@@ -247,12 +247,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 12,
     consoleCount: 5,
     employeeLimit: 'Up to 25 employees',
-    implementationFee: '$697',
+    implementationFee: '$549',
   },
   PRO: {
     tier: 'PRO',
     label: 'Aura Pro',
-    price: '$1,197/mo',
+    price: '$1,997/mo',
     description: '16 Smart AI Agents adding full Marketing automation, Outreach & deeper Reports for scaling field teams.',
     keyFeatures: [
       'Everything in Boost, plus:',
@@ -264,12 +264,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 16,
     consoleCount: 5,
     employeeLimit: 'Up to 50 employees',
-    implementationFee: '$1,197',
+    implementationFee: '$999',
   },
   ELITE: {
     tier: 'ELITE',
     label: 'Aura Elite',
-    price: '$2,197/mo',
+    price: '$3,497/mo',
     description: 'Full 24-agent suite — adds Billing (quotes, invoices, inventory) and full Reports for large teams & enterprise operations.',
     keyFeatures: [
       'Everything in Pro, plus:',
@@ -281,7 +281,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 24,
     consoleCount: 7,
     employeeLimit: 'Unlimited employees',
-    implementationFee: '$2,197',
+    implementationFee: '$1,749',
   },
 };
 
