@@ -134,7 +134,7 @@ export function RecommendedPlanCalculator() {
         'Budget Starter',
         'Email only - perfect for getting started',
         { email: true, sms: false, voice: false },
-        ['3,000 emails/month bundled in plan · overage $0.90 per 1,000', 'No phone number required', 'Easy to set up'],
+        ['Resend free tier: 3,000/mo · then $0.90 per 1,000 (billed by Resend)', 'No phone number required', 'Easy to set up'],
         ['Lower open rates (~45%)', 'May land in spam', 'Less urgent feel'],
         'New businesses with tight budgets'
       ),
