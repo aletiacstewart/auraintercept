@@ -1,3 +1,4 @@
+// send-campaign v2 — force redeploy + clearer errors
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -19,6 +20,8 @@ function wrapLinks(html: string, sendId: string, trackBase: string): string {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  console.log('[send-campaign] request received', req.method);
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -27,8 +30,11 @@ Deno.serve(async (req) => {
   const trackBase = `${supaUrl}/functions/v1/campaign-track`;
 
   try {
-    const { campaignId, dryRun = false } = await req.json();
+    let body: any = {};
+    try { body = await req.json(); } catch { throw new Error('Invalid JSON body'); }
+    const { campaignId, dryRun = false } = body || {};
     if (!campaignId) throw new Error('campaignId required');
+    console.log('[send-campaign] campaignId', campaignId, 'dryRun', dryRun);
 
     const { data: campaign, error: cErr } = await supabase
       .from('marketing_campaigns')

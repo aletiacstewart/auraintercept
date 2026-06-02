@@ -159,7 +159,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     setSendingId(campaignId);
     try {
       const { data, error } = await supabase.functions.invoke('send-campaign', { body: { campaignId } });
-      if (error) throw error;
+      const apiError = (data as any)?.error;
+      if (error || apiError) throw new Error(apiError || error?.message || 'Edge Function error');
       const sent = (data as any)?.sent ?? 0;
       const failed = (data as any)?.failed ?? 0;
       toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}.`);
