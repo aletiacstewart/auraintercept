@@ -6,13 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Search, Clock, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { MessageSquare, Search, Clock, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight, Send, Radio, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 type UnifiedSmsRow = {
   id: string;
@@ -25,11 +29,16 @@ type UnifiedSmsRow = {
   error: string | null;
   source: 'sms_logs' | 'reminder' | 'campaign';
   source_tag?: string | null;
+  metadata?: Record<string, any> | null;
+  provider_message_id?: string | null;
 };
 
 export default function SMSLogs() {
   const { companyId } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [testOpen, setTestOpen] = useState(false);
+  const [testTo, setTestTo] = useState('');
+  const [testSending, setTestSending] = useState(false);
 
   const { data: smsRows, isLoading } = useQuery({
     queryKey: ['sms-unified', companyId],
@@ -39,7 +48,7 @@ export default function SMSLogs() {
       const [logsRes, reminderRes, campaignRes] = await Promise.all([
         supabase
           .from('sms_logs' as any)
-          .select('id, created_at, direction, status, from_number, to_number, message, error, source')
+          .select('id, created_at, direction, status, from_number, to_number, message, error, source, metadata, provider_message_id')
           .eq('company_id', companyId)
           .order('created_at', { ascending: false })
           .limit(200),
@@ -124,6 +133,11 @@ export default function SMSLogs() {
     return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">{status}</Badge>;
   };
 
+  const reachedSignalWire = (row: UnifiedSmsRow) => {
+    const m = row.metadata || {};
+    return m.provider === 'signalwire' && (m.provider_status || m.provider_code || row.provider_message_id);
+  };
+
   const sourceLabel = (row: UnifiedSmsRow) => {
     if (row.source === 'campaign') return 'Campaign';
     if (row.source === 'reminder') return 'Reminder';
@@ -134,6 +148,32 @@ export default function SMSLogs() {
       case 'staff': return 'Staff';
       case 'aura': return 'Aura';
       default: return 'Message';
+    }
+  };
+
+  const handleTestSend = async () => {
+    if (!companyId || !testTo) return;
+    setTestSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sms-diagnostic', {
+        body: { companyId, to: testTo },
+      });
+      if (error) throw error;
+      if ((data as any)?.ok) {
+        toast.success('Test SMS reached SignalWire', {
+          description: `Message SID: ${(data as any).providerMessageId || 'sent'}`,
+        });
+      } else {
+        const code = (data as any)?.providerCode;
+        toast.error(code ? `SignalWire rejected (code ${code})` : 'Test failed', {
+          description: (data as any)?.error || 'Unknown error',
+        });
+      }
+      setTestOpen(false);
+    } catch (e: any) {
+      toast.error('Test failed', { description: e?.message || String(e) });
+    } finally {
+      setTestSending(false);
     }
   };
 
@@ -156,10 +196,44 @@ export default function SMSLogs() {
 
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" /> SMS History
-              </CardTitle>
-              <CardDescription>All SMS activity across messages, campaigns, and reminders</CardDescription>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" /> SMS History
+                  </CardTitle>
+                  <CardDescription>All SMS activity across messages, campaigns, and reminders</CardDescription>
+                </div>
+                <Dialog open={testOpen} onOpenChange={setTestOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Send className="w-3.5 h-3.5" /> Send test SMS
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Send a diagnostic SMS</DialogTitle>
+                      <DialogDescription>
+                        Sends a one-line test to confirm whether messages are reaching SignalWire. The recipient must already exist in your Leads or Customers.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-2 py-2">
+                      <Label htmlFor="test-to">Recipient phone (E.164 or 10-digit US)</Label>
+                      <Input
+                        id="test-to"
+                        placeholder="+13615551234"
+                        value={testTo}
+                        onChange={(e) => setTestTo(e.target.value)}
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button variant="ghost" onClick={() => setTestOpen(false)}>Cancel</Button>
+                      <Button onClick={handleTestSend} disabled={testSending || !testTo}>
+                        {testSending ? 'Sending…' : 'Send test'}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="relative">
@@ -207,6 +281,38 @@ export default function SMSLogs() {
                             )}
                             {row.error && (
                               <p className="text-sm mt-2 text-destructive">Error: {row.error}</p>
+                            )}
+                            {(reachedSignalWire(row) || row.provider_message_id) && (
+                              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 gap-1">
+                                  <Radio className="w-3 h-3" /> Reached SignalWire
+                                </Badge>
+                                {row.metadata?.provider_code && (
+                                  <span className="text-muted-foreground">
+                                    code <span className="font-mono">{row.metadata.provider_code}</span>
+                                  </span>
+                                )}
+                                {row.metadata?.provider_status && (
+                                  <span className="text-muted-foreground">
+                                    HTTP <span className="font-mono">{row.metadata.provider_status}</span>
+                                  </span>
+                                )}
+                                {row.provider_message_id && (
+                                  <span className="text-muted-foreground">
+                                    SID <span className="font-mono">{row.provider_message_id}</span>
+                                  </span>
+                                )}
+                                {row.metadata?.provider_code && (
+                                  <a
+                                    href="https://developer.signalwire.com/rest/compatibility-api/overview/error-codes/"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-primary hover:underline"
+                                  >
+                                    docs <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
