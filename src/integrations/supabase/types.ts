@@ -5785,6 +5785,48 @@ export type Database = {
           },
         ]
       }
+      sms_logs: {
+        Row: {
+          company_id: string
+          created_at: string
+          direction: string
+          error: string | null
+          from_number: string
+          id: string
+          message: string | null
+          metadata: Json | null
+          provider_message_id: string | null
+          status: string
+          to_number: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          direction: string
+          error?: string | null
+          from_number: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          provider_message_id?: string | null
+          status?: string
+          to_number: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          direction?: string
+          error?: string | null
+          from_number?: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          provider_message_id?: string | null
+          status?: string
+          to_number?: string
+        }
+        Relationships: []
+      }
       sms_templates: {
         Row: {
           company_id: string

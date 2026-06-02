@@ -188,6 +188,11 @@ Deno.serve(async (req) => {
     let sent = 0;
     let failed = 0;
     let skipped = 0;
+    const byChannel: Record<string, { sent: number; failed: number; skipped: number }> = {
+      email: { sent: 0, failed: 0, skipped: 0 },
+      sms: { sent: 0, failed: 0, skipped: 0 },
+    };
+    let firstSmsError: string | null = null;
     const logs: any[] = [];
 
     for (const c of recipients) {
@@ -209,6 +214,7 @@ Deno.serve(async (req) => {
       if (channels.includes('email') && email && c.email_opt_out !== true) {
         if (!isValidEmail(email)) {
           skipped++;
+          byChannel.email.skipped++;
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'skipped', error: 'invalid_email' });
         } else {
         try {
@@ -228,9 +234,10 @@ Deno.serve(async (req) => {
             status: ok ? 'sent' : 'failed',
             error: ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown'),
           });
-          ok ? sent++ : failed++;
+          if (ok) { sent++; byChannel.email.sent++; } else { failed++; byChannel.email.failed++; }
         } catch (e) {
           failed++;
+          byChannel.email.failed++;
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'failed', error: String(e) });
         }
         }
@@ -241,6 +248,7 @@ Deno.serve(async (req) => {
         const phone = normalizePhone(rawPhone);
         if (!phone) {
           skipped++;
+          byChannel.sms.skipped++;
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: rawPhone, channel: 'sms', status: 'skipped', error: 'invalid_phone' });
         } else {
         try {
@@ -248,16 +256,23 @@ Deno.serve(async (req) => {
             body: { companyId, customerPhone: phone, customerName: name, message: smsBody },
           });
           const ok = !res.error && (res.data as any)?.success !== false;
+          const errMsg = ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown');
           logs.push({
             id: crypto.randomUUID(),
             campaign_id: campaignId, company_id: companyId, customer_id: c.id,
             customer_name: name, recipient: phone, channel: 'sms',
             status: ok ? 'sent' : 'failed',
-            error: ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown'),
+            error: errMsg,
           });
-          ok ? sent++ : failed++;
+          if (ok) { sent++; byChannel.sms.sent++; } else {
+            failed++;
+            byChannel.sms.failed++;
+            if (!firstSmsError && errMsg) firstSmsError = errMsg;
+          }
         } catch (e) {
           failed++;
+          byChannel.sms.failed++;
+          if (!firstSmsError) firstSmsError = String(e);
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: phone, channel: 'sms', status: 'failed', error: String(e) });
         }
         }
@@ -297,7 +312,12 @@ Deno.serve(async (req) => {
       })
       .eq('id', campaignId);
 
-    return new Response(JSON.stringify({ sent, failed, skipped, recipientCount: recipients.length }), {
+    return new Response(JSON.stringify({
+      sent, failed, skipped,
+      recipientCount: recipients.length,
+      byChannel,
+      firstSmsError,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {

@@ -157,6 +157,8 @@ export default function Campaigns() {
       const failed = (data as any)?.failed ?? 0;
       const skipped = (data as any)?.skipped ?? 0;
       const recipientCount = (data as any)?.recipientCount ?? 0;
+      const byChannel = (data as any)?.byChannel || {};
+      const firstSmsError = (data as any)?.firstSmsError || '';
       if (sent === 0) {
         throw new Error(
           recipientCount === 0
@@ -166,7 +168,21 @@ export default function Campaigns() {
               : `No messages were delivered${failed ? `; ${failed} failed` : ''}${skipped ? `, ${skipped} skipped` : ''}. Check customer contact info and email/SMS integrations.`
         );
       }
-      toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}${skipped ? `, ${skipped} skipped` : ''}.`);
+      const parts: string[] = [];
+      if (byChannel.email) parts.push(`Email: ${byChannel.email.sent} sent, ${byChannel.email.failed} failed`);
+      if (byChannel.sms) parts.push(`SMS: ${byChannel.sms.sent} sent, ${byChannel.sms.failed} failed`);
+      const summary = parts.length ? parts.join(' · ') : `${sent} delivered${failed ? `, ${failed} failed` : ''}`;
+      if (byChannel?.sms?.failed > 0 && /verified caller id|trial/i.test(firstSmsError)) {
+        toast.warning('Campaign partially sent — SMS blocked by SignalWire trial', {
+          description: `${summary}. Verify recipient numbers in SignalWire or upgrade the Space.`,
+          duration: 12000,
+          action: { label: 'Open SignalWire', onClick: () => window.open('https://my.signalwire.com', '_blank') },
+        });
+      } else if (failed > 0) {
+        toast.warning('Campaign partially sent', { description: summary, duration: 8000 });
+      } else {
+        toast.success(`Campaign sent — ${summary}`);
+      }
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
     } catch (e: any) {
       const msg = e?.message || 'unknown error';
