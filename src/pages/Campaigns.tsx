@@ -284,6 +284,8 @@ export default function Campaigns() {
                         <SelectItem value="new">New Customers</SelectItem>
                         <SelectItem value="inactive">Inactive</SelectItem>
                         <SelectItem value="vip">VIP</SelectItem>
+                        <SelectItem value="leads">Leads only</SelectItem>
+                        <SelectItem value="leads_and_customers">Leads + Customers</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
