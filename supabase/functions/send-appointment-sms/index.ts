@@ -119,6 +119,27 @@ Deno.serve(async (req) => {
       } else if (swCode === '21610' || /unsubscribed/i.test(swMessage)) {
         hint = ' — Recipient has unsubscribed from this number in SignalWire (STOP).';
       }
+      // Log the failed outbound SMS attempt
+      try {
+        await supabase.from('sms_logs').insert({
+          company_id: companyId,
+          from_number: signalwire_phone_number,
+          to_number: normalizedPhone,
+          message,
+          direction: 'outbound',
+          status: 'failed',
+          error: detail + hint,
+          metadata: {
+            appointment_id: appointmentId || null,
+            customer_name: customerName || null,
+            provider: 'signalwire',
+            provider_code: swCode || null,
+            provider_status: response.status,
+          },
+        });
+      } catch (logErr) {
+        console.error('Failed to log failed SMS:', logErr);
+      }
       return new Response(
         JSON.stringify({
           success: false,

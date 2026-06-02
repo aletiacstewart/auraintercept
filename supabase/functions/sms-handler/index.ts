@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
         .select('response_message')
         .eq('company_id', company_id)
         .eq('keyword', keyword)
-        .eq('is_active', true)
+        .eq('is_enabled', true)
         .maybeSingle();
 
       if (keywordMatch?.response_message) {
