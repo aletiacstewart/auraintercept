@@ -12,6 +12,7 @@ import type { CyberAgent } from '@/components/ai/chat/CyberConsoleLayout';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { AnalyticsNLHero } from './AnalyticsNLHero';
+import { EmptyConsolePanel } from '@/components/ai/chat/EmptyConsolePanel';
 import { PerformanceReportForm } from './forms/PerformanceReportForm';
 import { RevenueAnalysisForm } from './forms/RevenueAnalysisForm';
 import { CustomerInsightsForm } from './forms/CustomerInsightsForm';
@@ -287,7 +288,12 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     >
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-          {showWelcome ? (
+          {isShowingForm && !effectiveCompanyId ? (
+            <EmptyConsolePanel
+              title="Pick a company workspace"
+              body="This panel needs a company context. Use the workspace switcher (top bar) to load reports and analytics for a specific company."
+            />
+          ) : showWelcome ? (
             <AnalyticsNLHero
               onSubmit={async (query) => {
                 hideAllForms();

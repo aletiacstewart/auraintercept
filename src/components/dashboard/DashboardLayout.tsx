@@ -485,10 +485,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         item.href.includes('?') &&
                         location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
                     let displayLabel = item.label;
-                    if (item.href === '/dashboard/ai-consoles/field-ops' && serviceConfig.workerSubItemLabel) {
-                      displayLabel = serviceConfig.workerSubItemLabel;
-                    } else if (item.href === '/dashboard/dispatch-field-ops' && serviceConfig.dispatchSubItemLabel) {
-                      displayLabel = serviceConfig.dispatchSubItemLabel;
+                    if (item.href === '/dashboard/ai-consoles/field-ops') {
+                      displayLabel = serviceConfig.workerSubItemLabel || item.label;
+                    } else if (item.href === '/dashboard/dispatch-field-ops') {
+                      const dispatchLabel = serviceConfig.dispatchSubItemLabel || item.label;
+                      const workerLabel = serviceConfig.workerSubItemLabel;
+                      // Avoid showing two identical sidebar entries when the
+                      // industry pack maps both items to the same name.
+                      displayLabel = workerLabel && dispatchLabel === workerLabel
+                        ? `${dispatchLabel} — Dispatch`
+                        : dispatchLabel;
                     }
 
                     const tourId = item.href === '/dashboard' ? 'nav-dashboard'
