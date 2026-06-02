@@ -183,7 +183,7 @@ Deno.serve(async (req) => {
             campaign_id: campaignId, company_id: companyId, customer_id: c.id,
             customer_name: name, recipient: phone, channel: 'sms',
             status: ok ? 'sent' : 'failed',
-            error: ok ? null : (res.error?.message || (res.data as any)?.reason || 'unknown'),
+            error: ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown'),
           });
           ok ? sent++ : failed++;
         } catch (e) {
@@ -193,7 +193,22 @@ Deno.serve(async (req) => {
       }
     }
 
-    if (logs.length) await supabase.from('campaign_sends').insert(logs);
+    if (logs.length) {
+      const { error: logErr } = await supabase.from('campaign_sends').insert(logs);
+      if (logErr) throw logErr;
+    }
+
+    if (sent === 0 && failed > 0) {
+      const firstError = logs.find((log) => log.status === 'failed')?.error;
+      return new Response(JSON.stringify({
+        error: `Campaign attempted but nothing was delivered.${firstError ? ` First error: ${firstError}` : ''}`,
+        sent,
+        failed,
+        recipientCount: recipients.length,
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     await supabase
       .from('marketing_campaigns')
