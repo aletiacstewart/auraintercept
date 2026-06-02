@@ -95,6 +95,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* AI Agent Guide PDF */}
           <Card className="border-accent/20">
+
+          {/* 3rd-Party Integration Onboarding Guide - inserted via patch */}
             {/* (existing card kept below) */}
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
