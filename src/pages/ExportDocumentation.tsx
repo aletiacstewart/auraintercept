@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink, HelpCircle, Megaphone } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink, HelpCircle, Megaphone, Plug } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
@@ -22,6 +22,7 @@ import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
 import IndustryMarketingKitPDF from '@/components/documentation/IndustryMarketingKitPDF';
 import PlatformFAQPDF from '@/components/documentation/PlatformFAQPDF';
 import MarketingSalesMasterPDF from '@/components/documentation/MarketingSalesMasterPDF';
+import IntegrationOnboardingPDF from '@/components/documentation/IntegrationOnboardingPDF';
 
 const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
@@ -85,6 +86,63 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                     <Button className="w-full">
                       <Download className="mr-2 h-4 w-4" />
                       Download Master Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
+          {/* 3rd-Party Integration Onboarding Guide */}
+          <Card className="border-primary/40">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plug className="h-5 w-5 text-primary" />
+                3rd-Party Integration Onboarding
+              </CardTitle>
+              <CardDescription>
+                Step-by-step setup guide for every external account a company must create and connect
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Stripe (customer payments)</li>
+                  <li>SignalWire (voice + SMS + A2P 10DLC)</li>
+                  <li>ElevenLabs (voice AI brain + client tools)</li>
+                  <li>Resend (email + domain DNS)</li>
+                  <li>Tavily (web search)</li>
+                  <li>Google Workspace + Calendar OAuth</li>
+                  <li>Social Media OAuth apps (Meta, LinkedIn, X, TikTok, YouTube)</li>
+                  <li>Custom domain (CNAME + TXT)</li>
+                  <li>Master verification checklist</li>
+                </ul>
+              </div>
+              <PDFDownloadLink
+                document={<IntegrationOnboardingPDF />}
+                fileName={`integration-onboarding-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+                  return (
+                    <Button className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Onboarding Guide
                     </Button>
                   );
                 }}
