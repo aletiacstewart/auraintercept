@@ -14,82 +14,49 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // 4-TIER STRUCTURE: Core ($697 · $349 onboarding), Boost ($1,097 · $549 onboarding),
 // Pro ($1,997 · $999 onboarding), Elite ($3,497 · $1,749 onboarding).
-// NOTE: After deploy, create new Stripe Price objects for these monthly amounts and
-// paste the new price_ids below. The existing IDs are kept as fallbacks for
-// in-flight checkout sessions and will be retained in PRICE_TO_TIER for grandfathering.
-const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
+// Each tier includes the recurring monthly price and a one-time onboarding price
+// (added as an additional line item on the first checkout session).
+const CORE = {
+  name: "Aura Core",
+  price: 69700,
+  price_id: "price_1Tdvk8J9fo9y8fGHEzdE8sc0",
+  onboarding_price_id: "price_1TdvkBJ9fo9y8fGHaV3n9eNy",
+};
+const BOOST = {
+  name: "Aura Boost",
+  price: 109700,
+  price_id: "price_1Tdvk9J9fo9y8fGHWVQP8Zxi",
+  onboarding_price_id: "price_1TdvkCJ9fo9y8fGHfHPIsB5z",
+};
+const PRO = {
+  name: "Aura Pro",
+  price: 199700,
+  price_id: "price_1Tdvk9J9fo9y8fGHjXNIXsIn",
+  onboarding_price_id: "price_1TdvkDJ9fo9y8fGHTfoLNrX3",
+};
+const ELITE = {
+  name: "Aura Elite",
+  price: 349700,
+  price_id: "price_1TdvkAJ9fo9y8fGHfu0WlSpR",
+  onboarding_price_id: "price_1TdvkEJ9fo9y8fGHKnhvthzV",
+};
+const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
-  starter: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  connect: {
-    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Boost",
-    price: 109700, // $1,097 in cents
-  },
-  performance: {
-    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Pro",
-    price: 199700, // $1,997 in cents
-  },
-  command: {
-    price_id: "price_1T02YAJ9fo9y8fGHJ7Q7g4Cq",
-    name: "Aura Elite",
-    price: 349700, // $3,497 in cents
-  },
+  starter: CORE,
+  connect: BOOST,
+  performance: PRO,
+  command: ELITE,
   // Legacy tier aliases → map to canonical 4 tiers
-  scheduling: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  growth: {
-    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Boost",
-    price: 109700,
-  },
-  business: {
-    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Pro",
-    price: 199700,
-  },
-  field_ops: {
-    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Boost",
-    price: 109700,
-  },
-  express: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  aura_flow: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  halo: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  core: {
-    price_id: "price_1T027ZJ9fo9y8fGHCoreStrt",
-    name: "Aura Core",
-    price: 69700, // $697 in cents
-  },
-  single_point: {
-    price_id: "price_1T0285J9fo9y8fGHURkfEnLp",
-    name: "Aura Boost",
-    price: 109700,
-  },
-  multi_track: {
-    price_id: "price_1T02XqJ9fo9y8fGHMDDvQxR3",
-    name: "Aura Pro",
-    price: 199700,
-  },
+  core: CORE,
+  express: CORE,
+  aura_flow: CORE,
+  halo: CORE,
+  scheduling: CORE,
+  growth: BOOST,
+  field_ops: BOOST,
+  single_point: BOOST,
+  business: PRO,
+  multi_track: PRO,
 };
 
 serve(async (req) => {
@@ -211,14 +178,27 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "http://localhost:5173";
 
+    // Detect existing subscriptions for this customer so we only charge the
+    // one-time onboarding fee on the FIRST checkout (new signups), not on
+    // plan changes or renewals.
+    const existingSubs = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "all",
+      limit: 1,
+    });
+    const isFirstCheckout = existingSubs.data.length === 0;
+    logStep("Onboarding fee eligibility", { isFirstCheckout });
+
+    const lineItems: Array<{ price: string; quantity: number }> = [
+      { price: selectedTier.price_id, quantity: 1 },
+    ];
+    if (isFirstCheckout && selectedTier.onboarding_price_id) {
+      lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      line_items: [
-        {
-          price: selectedTier.price_id,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: "subscription",
       success_url: `${origin}/dashboard/subscription?success=true`,
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
