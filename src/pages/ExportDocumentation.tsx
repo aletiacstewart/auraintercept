@@ -93,6 +93,63 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
             </CardContent>
           </Card>
 
+          {/* 3rd-Party Integration Onboarding Guide */}
+          <Card className="border-primary/40">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plug className="h-5 w-5 text-primary" />
+                3rd-Party Integration Onboarding
+              </CardTitle>
+              <CardDescription>
+                Step-by-step setup guide for every external account a company must create and connect
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Stripe (customer payments)</li>
+                  <li>SignalWire (voice + SMS + A2P 10DLC)</li>
+                  <li>ElevenLabs (voice AI brain + client tools)</li>
+                  <li>Resend (email + domain DNS)</li>
+                  <li>Tavily (web search)</li>
+                  <li>Google Workspace + Calendar OAuth</li>
+                  <li>Social Media OAuth apps (Meta, LinkedIn, X, TikTok, YouTube)</li>
+                  <li>Custom domain (CNAME + TXT)</li>
+                  <li>Master verification checklist</li>
+                </ul>
+              </div>
+              <PDFDownloadLink
+                document={<IntegrationOnboardingPDF />}
+                fileName={`integration-onboarding-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+                  return (
+                    <Button className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Onboarding Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
           {/* AI Agent Guide PDF */}
           <Card className="border-accent/20">
             {/* (existing card kept below) */}
