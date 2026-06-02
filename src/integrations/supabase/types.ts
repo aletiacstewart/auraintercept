@@ -895,12 +895,15 @@ export type Database = {
         Row: {
           campaign_id: string
           channel: string
+          clicked_at: string | null
           company_id: string
           created_at: string
           customer_id: string | null
           customer_name: string | null
           error: string | null
           id: string
+          opened_at: string | null
+          provider_message_id: string | null
           recipient: string
           sent_at: string
           status: string
@@ -908,12 +911,15 @@ export type Database = {
         Insert: {
           campaign_id: string
           channel: string
+          clicked_at?: string | null
           company_id: string
           created_at?: string
           customer_id?: string | null
           customer_name?: string | null
           error?: string | null
           id?: string
+          opened_at?: string | null
+          provider_message_id?: string | null
           recipient: string
           sent_at?: string
           status?: string
@@ -921,12 +927,15 @@ export type Database = {
         Update: {
           campaign_id?: string
           channel?: string
+          clicked_at?: string | null
           company_id?: string
           created_at?: string
           customer_id?: string | null
           customer_name?: string | null
           error?: string | null
           id?: string
+          opened_at?: string | null
+          provider_message_id?: string | null
           recipient?: string
           sent_at?: string
           status?: string

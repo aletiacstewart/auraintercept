@@ -23,6 +23,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2, Layers } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPageHeader } from '@/lib/industryNavLabels';
@@ -430,6 +431,9 @@ export default function Campaigns() {
                         ) : (
                           <><Send className="mr-2 h-4 w-4" />{campaign.status === 'draft' ? 'Send Now' : 'Send Again'}</>
                         )}
+                      </Button>
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={`/dashboard/campaigns/${campaign.id}`}>View Details</Link>
                       </Button>
                       {campaign.last_sent_at && (
                         <span className="self-center text-xs text-muted-foreground">

@@ -1,57 +1,60 @@
-## Issues confirmed
+## What's actually broken vs. missing
 
-1. **AI Generate error in Create Campaign** — Edge function log shows `ReferenceError: supabase is not defined` at `generate-campaign-content/index.ts:133`. The `supabase` client is declared inside `if (companyId) { ... }`, but it's referenced again later (line 179) by `loadIndustryPackForCompany(supabase, companyId)` outside that block. Any request with a `companyId` crashes after Tavily research.
+**1. AI Generate still erroring**
+The edge log shows the same `ReferenceError: supabase is not defined at index.ts:133:71` from before. The source file in the project has the fix (the `supabase` client is hoisted above the `if (companyId)` block), but the running edge function is the old version — the redeploy didn't take effect. Need to force a redeploy of `generate-campaign-content`.
 
-2. **Campaigns aren't sent anywhere** — `CampaignForm` correctly inserts into `marketing_campaigns` with `status: 'draft'`, but `/dashboard/campaigns` only lists them with metrics; there is **no Launch / Send action**, no dispatch edge function. So users build a campaign and it never goes out.
+**2. Campaigns ARE saved, but there's no way to review them**
+- `marketing_campaigns` rows persist (draft + after send) — they're already reusable: Send Again button exists.
+- `campaign_sends` table logs every recipient + channel + status + error from `send-campaign`.
+- `marketing_campaigns.total_sent` is incremented after a send.
+- But the UI only shows aggregate stat cards on the list. There is **no per-campaign detail view** that shows who received it, when, delivery status, errors, or per-recipient opens.
 
-3. **"Demo Calls" sidebar label** — `src/lib/industryNavLabels.ts` maps `saas_platform.appointments.title = 'Demo Calls'`. Aura Intercept runs on the `saas_platform` pack, so the Customers > Calendar entry shows "Demo Calls".
-
-4. **OPERATIONS > "Appointment" link** — In `DashboardLayout.tsx`, the second Field-Ops nav item (`/dashboard/dispatch-field-ops`) is relabeled "Appointment Console" when `operatingModel === 'appointment_booking'` (Aura Intercept's model). User wants this to be a **Video Console** for live video meetings, but only for the Aura Intercept (`saas_platform`) tenant.
+**3. Opens / clicks are not tracked at all**
+- `total_opened` / `total_clicked` columns exist on `marketing_campaigns` but nothing ever writes to them.
+- `send-campaign` calls `send-email-guarded` (Resend). Resend can post open/click webhooks, but we have no webhook handler that ties those events back to a `campaign_sends` row or a `marketing_campaigns` counter.
+- No tracking pixel / link wrapper either.
 
 ## Plan
 
-### 1. Fix AI Generate (edge function)
-File: `supabase/functions/generate-campaign-content/index.ts`
-- Hoist the `supabase` client creation above the `if (companyId)` block so the reference on line 179 resolves. Guard the inner DB calls behind the `companyId` check as today.
+### A. Fix AI Generate (force redeploy)
+- Re-touch `supabase/functions/generate-campaign-content/index.ts` (no logic change needed — current source is already correct) so the platform redeploys it. Add a small no-op comment + log line to ensure the deploy ships.
+- Verify by calling the function with `companyId` and checking logs.
 
-### 2. Add "Send Campaign" capability
-- **New edge function** `supabase/functions/send-campaign/index.ts`:
-  - Input: `{ campaignId }`.
-  - Loads campaign + company, resolves recipients from the `target_segment`:
-    - `all` → distinct customers from `customers` table.
-    - `inactive` → customers with no `appointments` in last `inactivePeriod` days (default 90).
-    - `new` → customers created in last 30 days.
-    - `vip` → customers with most appointments (top decile).
-  - For each `channels` entry:
-    - `email` → call existing `send-email-guarded` with `email_subject` + rendered `message_template` (replace `{customer_name}`, `{promo_code}`, `{discount}`).
-    - `sms` → call existing `send-appointment-sms`-style SignalWire path with rendered template.
-  - Updates `marketing_campaigns`: `status='active'`, `total_sent` increment, `last_sent_at = now()`.
-  - Logs per-recipient delivery to a `campaign_sends` table (new migration; tracks `campaign_id`, `customer_id`, `channel`, `status`, `sent_at`, `error`).
-- **UI** in `src/pages/Campaigns.tsx`:
-  - Add a **"Send Now"** button on each draft campaign card (and a "Resend"/"Send Again" on active ones).
-  - Confirm dialog showing estimated recipient count + channels + 3rd-party cost disclaimer (per project policy).
-  - Calls the new edge function and refreshes the list.
+### B. Per-campaign delivery review
+- Add a **"View Details"** button on each campaign card in `src/pages/Campaigns.tsx` opening a new page `src/pages/CampaignDetail.tsx` at `/dashboard/campaigns/:id`.
+- The detail page shows:
+  - Campaign metadata (name, type, segment, channels, subject, message, promo, status, created/last sent).
+  - Delivery summary: total recipients, sent, failed, opened, clicked, last_sent_at (queried from `campaign_sends` + `marketing_campaigns`).
+  - Recipient table (paginated): customer name, recipient (email/phone), channel, status badge, sent_at, opened_at, clicked_at, error.
+  - Per-send timestamp grouping so multiple "Send Again" runs are visually separated.
+- Add **Duplicate** action that clones the campaign into a new `draft` row so it's clearly reusable.
+- Add route in `src/App.tsx`.
 
-### 3. Rename "Demo Calls" → "Appointments"
-File: `src/lib/industryNavLabels.ts`
-- `saas_platform.appointments.title = 'Appointments'` (description updated to: "Customer appointments, demos, onboarding, and strategy sessions").
+### C. Open & click tracking
+- Migration: add `opened_at`, `clicked_at`, `provider_message_id` to `campaign_sends`; add index on `(campaign_id)` and `(provider_message_id)`.
+- Update `send-campaign`:
+  - Generate a `campaign_send` UUID up-front; pass it as `metadata.campaign_send_id` when invoking `send-email-guarded` (already supported via `email_send_log.message_id`).
+  - When sending email, append a 1×1 tracking pixel at the bottom of the HTML: `<img src="${SUPABASE_URL}/functions/v1/campaign-track?id=<send_id>&e=open" />`.
+  - Rewrite outbound links in the HTML to `${SUPABASE_URL}/functions/v1/campaign-track?id=<send_id>&e=click&u=<encoded_url>` (simple regex on `href="..."`).
+- New public edge function `supabase/functions/campaign-track/index.ts` (`verify_jwt = false`):
+  - `e=open` → set `campaign_sends.opened_at` (first only) and increment `marketing_campaigns.total_opened`; return 1×1 GIF.
+  - `e=click` → set `clicked_at` (first only) + increment `total_clicked`; 302 redirect to `u`.
+- Resend webhook fallback (optional, but cheap): also wire `supabase/functions/resend-webhook/index.ts` to catch `email.opened` / `email.clicked` events. Maps via `provider_message_id` → `campaign_sends`. (Only if Resend is configured; otherwise pixel/link rewriting carries it.)
 
-### 4. Aura Intercept Operations link → Video Console
-- **New page** `src/pages/VideoConsole.tsx`: live video meeting console (using existing meeting/Jitsi infra if present, otherwise a placeholder card with "Start meeting" / "Join meeting" / upcoming list pulled from `appointments` where `meeting_type='video'`). Scoped to platform_admin/company_admin of Aura Intercept tenant.
-- **Route**: register `/dashboard/video-console` in the router (gated to `saas_platform` industry pack only).
-- **`DashboardLayout.tsx`**: when `industryPack?.industry_id === 'saas_platform'`, override the `/dashboard/dispatch-field-ops` item to `{ href: '/dashboard/video-console', label: 'Video Console', icon: Video }`. All other industries keep current behavior (Appointment Console / Dispatch View / etc.).
-
-### Out of scope
-- Changing the Customers > Calendar route target (only its label).
-- Reworking `marketing_campaigns` schema beyond adding `campaign_sends` + `last_sent_at`.
-- Pricing / tier gating changes for video meetings (assume bundled with existing Aura Intercept tenant).
+### D. Reuse / lifecycle
+- Already covered by Send Again + new Duplicate action.
+- Add `status = 'completed'` transition after a send (currently always `active`) is out of scope; leaving as `active` so Send Again remains visible.
 
 ### Files touched
-- `supabase/functions/generate-campaign-content/index.ts` (hoist supabase client)
-- `supabase/functions/send-campaign/index.ts` (new)
-- `supabase/migrations/*_campaign_sends.sql` (new table + grants + RLS)
-- `src/pages/Campaigns.tsx` (Send Now button + confirm dialog)
-- `src/lib/industryNavLabels.ts` (Demo Calls → Appointments)
-- `src/pages/VideoConsole.tsx` (new)
-- `src/App.tsx` (or router file) — register `/dashboard/video-console`
-- `src/components/dashboard/DashboardLayout.tsx` (Aura-Intercept-only override)
+- `supabase/functions/generate-campaign-content/index.ts` (trivial redeploy nudge)
+- `supabase/functions/send-campaign/index.ts` (pixel + link rewrite + send_id)
+- `supabase/functions/campaign-track/index.ts` (new)
+- `supabase/migrations/*_campaign_open_click.sql` (new columns + indexes + grants)
+- `src/pages/Campaigns.tsx` (View Details, Duplicate buttons)
+- `src/pages/CampaignDetail.tsx` (new)
+- `src/App.tsx` (route)
+
+### Out of scope
+- SMS open/click tracking (carriers don't expose this; the recipient table will still show delivery status).
+- Inbox-preview / template editor changes.
+- Campaign scheduling automation.

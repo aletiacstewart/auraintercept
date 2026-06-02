@@ -9,6 +9,13 @@ function render(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? `{${k}}`);
 }
 
+function wrapLinks(html: string, sendId: string, trackBase: string): string {
+  return html.replace(/href="(https?:\/\/[^"]+)"/g, (_m, url) => {
+    const tracked = `${trackBase}?id=${sendId}&e=click&u=${encodeURIComponent(url)}`;
+    return `href="${tracked}"`;
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -16,6 +23,8 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   );
+  const supaUrl = Deno.env.get('SUPABASE_URL')!;
+  const trackBase = `${supaUrl}/functions/v1/campaign-track`;
 
   try {
     const { campaignId, dryRun = false } = await req.json();
@@ -76,12 +85,17 @@ Deno.serve(async (req) => {
 
       if (channels.includes('email') && c.email && c.email_opt_in !== false) {
         try {
-          const html = `<div style="font-family:system-ui,sans-serif;line-height:1.5">${message.replace(/\n/g, '<br/>')}</div>`;
+          const sendId = crypto.randomUUID();
+          const baseHtml = `<div style="font-family:system-ui,sans-serif;line-height:1.5">${message.replace(/\n/g, '<br/>')}</div>`;
+          const trackedHtml = wrapLinks(baseHtml, sendId, trackBase);
+          const pixel = `<img src="${trackBase}?id=${sendId}&e=open" width="1" height="1" alt="" style="display:none" />`;
+          const html = `${trackedHtml}${pixel}`;
           const res = await supabase.functions.invoke('send-email-guarded', {
             body: { companyId, to: c.email, subject, html, text: message },
           });
           const ok = !res.error && (res.data as any)?.sent !== false;
           logs.push({
+            id: sendId,
             campaign_id: campaignId, company_id: companyId, customer_id: c.id,
             customer_name: name, recipient: c.email, channel: 'email',
             status: ok ? 'sent' : 'failed',
