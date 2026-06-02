@@ -419,6 +419,24 @@ export default function Campaigns() {
                         {format(new Date(campaign.created_at), 'MMM d, yyyy')}
                       </div>
                     </div>
+                    <div className="mb-3 flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => sendCampaign(campaign.id, campaign.name)}
+                        disabled={sendingId === campaign.id || !(campaign.channels?.length)}
+                      >
+                        {sendingId === campaign.id ? (
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</>
+                        ) : (
+                          <><Send className="mr-2 h-4 w-4" />{campaign.status === 'draft' ? 'Send Now' : 'Send Again'}</>
+                        )}
+                      </Button>
+                      {campaign.last_sent_at && (
+                        <span className="self-center text-xs text-muted-foreground">
+                          Last sent {format(new Date(campaign.last_sent_at), 'MMM d, h:mm a')}
+                        </span>
+                      )}
+                    </div>
                     <div className="grid grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-muted-foreground">Sent</p>
