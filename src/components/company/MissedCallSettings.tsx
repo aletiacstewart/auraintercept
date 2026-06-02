@@ -44,6 +44,7 @@ export function MissedCallSettings() {
     business_phone: '',
     ring_timeout_seconds: 15,
     phone_number_setup_type: null as string | null,
+    missed_call_reply_known_only: true,
   });
   const [showWizard, setShowWizard] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -55,7 +56,7 @@ export function MissedCallSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds, phone_number_setup_type')
+        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds, phone_number_setup_type, missed_call_reply_known_only')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -105,6 +106,7 @@ export function MissedCallSettings() {
         business_phone: company.business_phone || '',
         ring_timeout_seconds: company.ring_timeout_seconds || 15,
         phone_number_setup_type: (company as any).phone_number_setup_type || null,
+        missed_call_reply_known_only: (company as any).missed_call_reply_known_only !== false,
       });
       setHasChanges(false);
     }
