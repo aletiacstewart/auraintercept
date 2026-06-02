@@ -59,6 +59,7 @@ serve(async (req) => {
       targetSegment, 
       companyName, 
       field,
+      channel,
       campaignName,
       promoCode,
       discountType,
@@ -161,9 +162,20 @@ serve(async (req) => {
         : `$${discountValue} off`;
     }
 
-    const fieldPrompt = field === 'subject' 
+    const resolvedChannel: 'email' | 'sms' =
+      channel === 'sms' || field === 'sms' ? 'sms' : 'email';
+
+    const fieldPrompt = field === 'subject'
       ? 'Generate a compelling email subject line (max 60 characters) that will get high open rates.'
-      : 'Generate an engaging marketing message template. Use {customer_name} as a placeholder for personalization. Keep it concise but persuasive (2-3 short paragraphs max).';
+      : resolvedChannel === 'sms'
+        ? `Generate a single SMS marketing message. STRICT REQUIREMENTS:
+- Maximum 320 characters total (aim for under 160 when possible).
+- Plain text only — no markdown, no emoji, no line headers like "Subject:".
+- Lead with the brand name ("${resolvedCompanyName || 'Our team'}").
+- Use {customer_name} for personalization only if it fits naturally.
+- MUST end with "Reply STOP to opt out." for opt-out compliance.
+- One short call-to-action with a single link is OK.`
+        : 'Generate an engaging marketing EMAIL body. Use {customer_name} as a placeholder for personalization. Keep it concise but persuasive (2-3 short paragraphs max). Do NOT include the subject line in the body.';
 
     // Build tone guidance from AI profile
     const toneGuidance = aiProfile?.tone ? `Write in a ${aiProfile.tone} tone.` : '';
