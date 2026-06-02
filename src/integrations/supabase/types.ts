@@ -971,6 +971,9 @@ export type Database = {
           brand_tone: string | null
           business_phone: string | null
           calendar_feed_token: string | null
+          call_forwarding_carrier: string | null
+          call_forwarding_configured_at: string | null
+          call_forwarding_target_number: string | null
           call_routing_mode: string
           callback_delay_seconds: number | null
           callback_retry_count: number | null
@@ -1109,6 +1112,9 @@ export type Database = {
           brand_tone?: string | null
           business_phone?: string | null
           calendar_feed_token?: string | null
+          call_forwarding_carrier?: string | null
+          call_forwarding_configured_at?: string | null
+          call_forwarding_target_number?: string | null
           call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
@@ -1247,6 +1253,9 @@ export type Database = {
           brand_tone?: string | null
           business_phone?: string | null
           calendar_feed_token?: string | null
+          call_forwarding_carrier?: string | null
+          call_forwarding_configured_at?: string | null
+          call_forwarding_target_number?: string | null
           call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
