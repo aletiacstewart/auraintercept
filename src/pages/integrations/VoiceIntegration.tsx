@@ -162,6 +162,7 @@ export default function VoiceIntegration() {
           {/* Carrier call-forwarding reference */}
           <CarrierForwardingGuide
             auraNumber={(integrations as any)?.signalwire_phone_number || ''}
+            companyId={companyId}
           />
 
           {/* Integration Cards */}
