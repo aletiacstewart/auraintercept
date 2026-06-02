@@ -155,15 +155,18 @@ export default function Campaigns() {
       if (error || apiError) throw new Error(apiError || error?.message || 'Edge Function error');
       const sent = (data as any)?.sent ?? 0;
       const failed = (data as any)?.failed ?? 0;
+      const skipped = (data as any)?.skipped ?? 0;
       const recipientCount = (data as any)?.recipientCount ?? 0;
       if (sent === 0) {
         throw new Error(
           recipientCount === 0
             ? 'No matching customers were found for this campaign segment.'
-            : `No messages were delivered${failed ? `; ${failed} failed` : ''}. Check customer contact info and email/SMS integrations.`
+            : skipped > 0 && failed === 0
+              ? `No messages sent — ${skipped} recipients had invalid contact info.`
+              : `No messages were delivered${failed ? `; ${failed} failed` : ''}${skipped ? `, ${skipped} skipped` : ''}. Check customer contact info and email/SMS integrations.`
         );
       }
-      toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}.`);
+      toast.success(`Campaign sent: ${sent} delivered${failed ? `, ${failed} failed` : ''}${skipped ? `, ${skipped} skipped` : ''}.`);
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
     } catch (e: any) {
       toast.error('Failed to send campaign: ' + (e?.message || 'unknown error'));

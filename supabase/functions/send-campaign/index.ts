@@ -26,6 +26,23 @@ function clean(value?: string | null) {
   return (value || '').trim();
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(value: string): boolean {
+  if (!value) return false;
+  const v = value.toLowerCase();
+  if (v.endsWith('@noemail.placeholder') || v.endsWith('@phone.placeholder')) return false;
+  return EMAIL_RE.test(value);
+}
+function normalizePhone(value: string): string | null {
+  const digits = (value || '').replace(/\D/g, '');
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+  return null;
+}
+function sanitizeSubject(value: string): string {
+  return (value || '').replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -130,6 +147,7 @@ Deno.serve(async (req) => {
 
     let sent = 0;
     let failed = 0;
+    let skipped = 0;
     const logs: any[] = [];
 
     for (const c of recipients) {
@@ -144,10 +162,14 @@ Deno.serve(async (req) => {
           : '',
       };
       const message = render(campaign.message_template || '', vars);
-      const subject = render(campaign.email_subject || campaign.name || 'A message for you', vars);
+      const subject = sanitizeSubject(render(campaign.email_subject || campaign.name || 'A message for you', vars));
 
       const email = clean(c.email);
       if (channels.includes('email') && email && c.email_opt_out !== true) {
+        if (!isValidEmail(email)) {
+          skipped++;
+          logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'skipped', error: 'invalid_email' });
+        } else {
         try {
           const sendId = crypto.randomUUID();
           const baseHtml = `<div style="font-family:system-ui,sans-serif;line-height:1.5">${message.replace(/\n/g, '<br/>')}</div>`;
@@ -170,10 +192,16 @@ Deno.serve(async (req) => {
           failed++;
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: email, channel: 'email', status: 'failed', error: String(e) });
         }
+        }
       }
 
-      const phone = clean(c.phone);
-      if (channels.includes('sms') && phone && c.sms_opt_out !== true) {
+      const rawPhone = clean(c.phone);
+      if (channels.includes('sms') && rawPhone && c.sms_opt_out !== true) {
+        const phone = normalizePhone(rawPhone);
+        if (!phone) {
+          skipped++;
+          logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: rawPhone, channel: 'sms', status: 'skipped', error: 'invalid_phone' });
+        } else {
         try {
           const res = await supabase.functions.invoke('send-appointment-sms', {
             body: { companyId, customerPhone: phone, customerName: name, message },
@@ -191,6 +219,7 @@ Deno.serve(async (req) => {
           failed++;
           logs.push({ id: crypto.randomUUID(), campaign_id: campaignId, company_id: companyId, customer_id: c.id, customer_name: name, recipient: phone, channel: 'sms', status: 'failed', error: String(e) });
         }
+        }
       }
     }
 
@@ -199,16 +228,23 @@ Deno.serve(async (req) => {
       if (logErr) throw logErr;
     }
 
-    if (sent === 0 && failed > 0) {
-      const firstError = logs.find((log) => log.status === 'failed')?.error;
+    if (sent === 0 && failed === 0 && skipped > 0) {
       return new Response(JSON.stringify({
-        error: `Campaign attempted but nothing was delivered.${firstError ? ` First error: ${firstError}` : ''}`,
-        sent,
-        failed,
-        recipientCount: recipients.length,
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+        error: `No valid recipients — ${skipped} customers had missing or invalid contact info.`,
+        sent, failed, skipped, recipientCount: recipients.length,
+      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    if (sent === 0 && failed > 0) {
+      const firstError = logs.find((log) => log.status === 'failed')?.error || '';
+      let friendly = `Campaign attempted but nothing was delivered.${firstError ? ` First error: ${firstError}` : ''}`;
+      if (/verified caller id/i.test(firstError)) {
+        friendly = 'SignalWire rejected SMS — your SignalWire account must verify recipient numbers (trial-account limit) or upgrade to a paid plan.';
+      }
+      return new Response(JSON.stringify({
+        error: friendly,
+        sent, failed, skipped, recipientCount: recipients.length,
+      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     await supabase
@@ -220,7 +256,7 @@ Deno.serve(async (req) => {
       })
       .eq('id', campaignId);
 
-    return new Response(JSON.stringify({ sent, failed, recipientCount: recipients.length }), {
+    return new Response(JSON.stringify({ sent, failed, skipped, recipientCount: recipients.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
