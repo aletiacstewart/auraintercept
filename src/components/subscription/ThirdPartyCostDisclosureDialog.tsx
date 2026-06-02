@@ -101,7 +101,9 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
   const isElite = tierId === 'command' || /elite/i.test(tierName);
   const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
   const isBoost = !isElite && !isPro && (tierId === 'connect' || /boost/i.test(tierName));
-  const conciergeFee = isElite ? 2197 : isPro ? 1197 : isBoost ? 697 : 497;
+  // Onboarding fee = 50% of monthly price.
+  // Core $349 · Boost $549 · Pro $999 · Elite $1,749
+  const conciergeFee = isElite ? 1749 : isPro ? 999 : isBoost ? 549 : 349;
   const conciergePriceLabel = `$${conciergeFee.toLocaleString()}`;
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);

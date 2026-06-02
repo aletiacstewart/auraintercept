@@ -51,10 +51,10 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
-  starter: 197,
-  connect: 497,
-  performance: 997,
-  command: 1997,
+  starter: 697,
+  connect: 1097,
+  performance: 1997,
+  command: 3497,
 };
 
 const AgentRequirementCalculator: React.FC = () => {
