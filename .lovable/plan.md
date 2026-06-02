@@ -1,58 +1,64 @@
-## What I found
+## Problem
 
-- **Outbound SMS is being attempted**, but SignalWire is rejecting it with:
-  - `SignalWire 10000: To must send to a verified caller id`
-- That means the connected SignalWire Space is still behaving like a trial/verified-recipient-limited account, or the saved credentials/From number belong to a Space that has not been fully enabled for that recipient.
-- **Email is sending when both email + SMS are selected**. The latest campaign logged:
-  - 1 email sent to `team@brandedby.com`
-  - 1 email skipped because it used a placeholder invalid address
-  - 1 SMS failed because SignalWire rejected the recipient
-- **Inbound SMS is not being received/logged in Aura** because:
-  - The `sms-handler` function has no recent logs, so SignalWire is likely not hitting the inbound SMS webhook.
-  - The code tries to write inbound/outbound SMS to `sms_logs`, but that table does not exist.
-  - The keyword lookup also uses `is_active`, while the actual `sms_keywords` column is `is_enabled`, which would break hashtag replies.
-- The current SMS logs page only reads appointment reminder logs, so campaign SMS and inbound SMS do not show there.
+Outbound SMS is reaching numbers that aren't in your Leads/Customers lists. Looking at the logs:
+
+- The campaign function (`send-campaign`) is actually sending to `+13618139836`, which **does** match Aletia Stewart in `customer_profiles` and `leads` — that part is correct.
+- However, the failed SignalWire message you saw (`To +11261813983`) does **not** appear anywhere in `customer_profiles`, `leads`, or `customers`. Most likely it came from one of these unguarded paths:
+  - **`missed-call-handler`** — blindly sends an auto-reply SMS to whatever number called the SignalWire line, with no check against Leads/Customers.
+  - **`send-staff-notification`** — sends SMS to staff records.
+  - **`send-appointment-sms`** — uses the phone passed in by the caller without verifying it belongs to a known contact.
+
+There's no central guard ensuring outbound SMS only goes to numbers that exist in `customer_profiles` or `leads` for that company. We need to add one.
 
 ## Plan
 
-1. **Fix inbound SMS logging storage**
-   - Add a `sms_logs` table for two-way SMS history.
-   - Include company, from/to number, direction, status, message, metadata, and created time.
-   - Add secure access rules so company users can read their own company’s SMS history, while backend functions can write logs.
+### 1. Add a shared "outbound SMS guard" helper
 
-2. **Fix the inbound SMS handler**
-   - Update `sms-handler` to use `sms_keywords.is_enabled` instead of the non-existent `is_active` column.
-   - Ensure inbound messages are logged even if AI reply generation or reply sending fails.
-   - Keep SignalWire webhook responses XML-compatible so SignalWire receives a clean response.
+Create `supabase/functions/_shared/sms-guard.ts` exporting:
 
-3. **Improve outbound campaign SMS logging**
-   - Keep campaign send rows in `campaign_sends`, but also write outbound SMS attempts into `sms_logs` so all SMS activity appears in one place.
-   - Capture provider failure details when SignalWire rejects a message.
+- `isAllowedRecipient(supabase, companyId, e164Phone, opts)` — returns `true` only if the normalized number matches:
+  - `customer_profiles.phone` for `companyId`, OR
+  - `leads.phone` for `companyId`, OR
+  - `customers.phone` / `customers.mobile_phone` for `companyId`, OR
+  - (opt-in) `staff_members.phone` for `companyId` when `opts.allowStaff = true`, OR
+  - (opt-in) the inbound caller number when `opts.allowInboundCaller = true` AND a matching `call_logs` row exists in the last 24h.
+- `sendGuardedSms({ supabase, companyId, from, to, body, source, allowStaff?, allowInboundCaller? })` — normalizes, checks allowlist, sends via SignalWire, and writes a row to `sms_logs` with `source` (`campaign | reminder | missed_call | staff | aura`) and `status` (`sent | failed | blocked`). Returns a structured result.
+- All E.164 normalization + strict US area-code validation in one place (rejects bogus area codes like `126`).
 
-4. **Update SMS Logs UI**
-   - Change `/dashboard/sms-logs` from reminder-only logs to a combined view:
-     - inbound texts
-     - outbound campaign texts
-     - appointment reminders if present
-   - Show failed campaign SMS errors clearly.
+### 2. Route every SMS sender through the guard
 
-5. **Improve mixed email + SMS campaign feedback**
-   - Update campaign detail/list UI messaging so a campaign with email sent + SMS failed is shown as **partial delivery**, not “nothing sent.”
-   - Show per-channel counts: email sent/skipped/failed and SMS sent/skipped/failed.
+- **`send-campaign`** — replace the inline SignalWire/`send-appointment-sms` invoke with `sendGuardedSms(..., source: 'campaign')`. Recipients already come from `customer_profiles` + `leads`, so this is mostly belt-and-suspenders; the guard will also reject any malformed numbers that previously slipped through.
+- **`send-appointment-sms`** — wrap its outbound call in `sendGuardedSms(..., source: 'reminder')`.
+- **`missed-call-handler`** — switch to `sendGuardedSms(..., source: 'missed_call', allowInboundCaller: true)`. This is the change that stops random caller numbers from receiving texts unless they're already a known Lead/Customer (the inbound-caller exception is opt-in per company setting — see step 4).
+- **`send-staff-notification`** — switch to `sendGuardedSms(..., source: 'staff', allowStaff: true)`.
 
-6. **SignalWire setup note**
-   - No code change can bypass SignalWire error `10000`; the SignalWire account/Space must verify the recipient or complete paid/A2P setup with the correct From number.
-   - The app fix will make that failure visible everywhere instead of looking like the campaign did not run.
+Any path that fails the allowlist writes an `sms_logs` row with `status = 'blocked'` and `error = 'recipient_not_in_contacts'` and returns a clear error, so you can see the block in the SMS Logs UI instead of silently failing.
 
-## Technical details
+### 3. Surface "blocked" sends in the UI
 
-- Migration: create `public.sms_logs` with grants + RLS.
-- Edge functions touched:
-  - `sms-handler`
-  - `send-appointment-sms`
-  - possibly `send-campaign` only if we need campaign-level metadata copied into SMS logs.
-- Frontend touched:
-  - `src/pages/SMSLogs.tsx`
-  - campaign detail/list component(s) for partial delivery status.
+Update `src/pages/SMSLogs.tsx` to:
 
-After implementation, I’ll validate by checking logs and recent database rows for campaign sends and SMS logs.
+- Add a `blocked` status badge (amber) alongside `sent` / `failed` / `skipped`.
+- Add a filter chip for `Source` (campaign, reminder, missed call, staff).
+- Show the recipient's matched Lead/Customer name when available; otherwise show `Unknown contact — blocked`.
+
+### 4. New per-company setting for missed-call replies
+
+Add a single `missed_call_reply_known_only` boolean on `companies` (default `true`). When `true`, `missed-call-handler` only auto-replies if the caller is already a Lead/Customer. When `false`, it replies to any caller (legacy behavior). Surface this toggle in the existing Missed Call Settings card next to the SMS template.
+
+### 5. Backfill / data hygiene
+
+- Migration to add `source` and `error` columns to `sms_logs` if not present, plus an index on `(company_id, created_at desc)`.
+- Migration adds `missed_call_reply_known_only` to `companies`.
+- No backfill of historical `sms_logs` rows (they'll just show `source = NULL`).
+
+## Files touched
+
+- New: `supabase/functions/_shared/sms-guard.ts`
+- Edited: `supabase/functions/send-campaign/index.ts`, `supabase/functions/send-appointment-sms/index.ts`, `supabase/functions/missed-call-handler/index.ts`, `supabase/functions/send-staff-notification/index.ts`
+- Edited: `src/pages/SMSLogs.tsx`, missed-call settings component
+- New migration: add `sms_logs.source`, `sms_logs.error`, `companies.missed_call_reply_known_only`
+
+## What this does NOT change
+
+- SignalWire trial-mode error 10000 (`To must send to a verified caller id`) is still a SignalWire-account issue — you must verify recipients in SignalWire or upgrade the Space. The guard prevents wrong recipients; it doesn't bypass SignalWire's own restrictions.

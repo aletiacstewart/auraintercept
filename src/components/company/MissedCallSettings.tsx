@@ -44,6 +44,7 @@ export function MissedCallSettings() {
     business_phone: '',
     ring_timeout_seconds: 15,
     phone_number_setup_type: null as string | null,
+    missed_call_reply_known_only: true,
   });
   const [showWizard, setShowWizard] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -55,7 +56,7 @@ export function MissedCallSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds, phone_number_setup_type')
+        .select('missed_call_action, callback_delay_seconds, callback_retry_count, call_routing_mode, business_phone, ring_timeout_seconds, phone_number_setup_type, missed_call_reply_known_only')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -105,6 +106,7 @@ export function MissedCallSettings() {
         business_phone: company.business_phone || '',
         ring_timeout_seconds: company.ring_timeout_seconds || 15,
         phone_number_setup_type: (company as any).phone_number_setup_type || null,
+        missed_call_reply_known_only: (company as any).missed_call_reply_known_only !== false,
       });
       setHasChanges(false);
     }
@@ -487,6 +489,24 @@ export function MissedCallSettings() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {(localSettings.missed_call_action === 'sms_only' || localSettings.missed_call_action === 'callback_then_sms') && (
+                <div className="flex items-start justify-between gap-4 rounded-lg border border-border/50 p-3">
+                  <div className="space-y-1">
+                    <Label className="text-sm">Only reply to known Leads & Customers</Label>
+                    <p className="text-xs text-muted-foreground">
+                      When on, missed-call SMS auto-replies are only sent if the caller's number is already in your Leads or Customers list. Recommended to prevent texting unknown callers.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={!!localSettings.missed_call_reply_known_only}
+                    onCheckedChange={(v) => {
+                      setLocalSettings(prev => ({ ...prev, missed_call_reply_known_only: v }));
+                      setHasChanges(true);
+                    }}
+                  />
+                </div>
+              )}
 
               {(localSettings.missed_call_action === 'callback_only' || localSettings.missed_call_action === 'callback_then_sms') && (
                 <div className="space-y-2">

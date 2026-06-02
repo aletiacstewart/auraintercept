@@ -24,6 +24,7 @@ type UnifiedSmsRow = {
   message: string | null;
   error: string | null;
   source: 'sms_logs' | 'reminder' | 'campaign';
+  source_tag?: string | null;
 };
 
 export default function SMSLogs() {
@@ -38,7 +39,7 @@ export default function SMSLogs() {
       const [logsRes, reminderRes, campaignRes] = await Promise.all([
         supabase
           .from('sms_logs' as any)
-          .select('id, created_at, direction, status, from_number, to_number, message, error')
+          .select('id, created_at, direction, status, from_number, to_number, message, error, source')
           .eq('company_id', companyId)
           .order('created_at', { ascending: false })
           .limit(200),
@@ -60,7 +61,7 @@ export default function SMSLogs() {
 
       const rows: UnifiedSmsRow[] = [];
       for (const r of (logsRes.data as any[]) || []) {
-        rows.push({ ...r, source: 'sms_logs' });
+        rows.push({ ...r, source: 'sms_logs', source_tag: r.source || null });
       }
       for (const r of (reminderRes.data as any[]) || []) {
         rows.push({
@@ -117,11 +118,24 @@ export default function SMSLogs() {
     if (status === 'failed') {
       return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">Failed</Badge>;
     }
+    if (status === 'blocked') {
+      return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Blocked</Badge>;
+    }
     return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">{status}</Badge>;
   };
 
-  const sourceLabel = (s: UnifiedSmsRow['source']) =>
-    s === 'campaign' ? 'Campaign' : s === 'reminder' ? 'Reminder' : 'Message';
+  const sourceLabel = (row: UnifiedSmsRow) => {
+    if (row.source === 'campaign') return 'Campaign';
+    if (row.source === 'reminder') return 'Reminder';
+    switch (row.source_tag) {
+      case 'campaign': return 'Campaign';
+      case 'reminder': return 'Reminder';
+      case 'missed_call': return 'Missed Call';
+      case 'staff': return 'Staff';
+      case 'aura': return 'Aura';
+      default: return 'Message';
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -177,7 +191,7 @@ export default function SMSLogs() {
                             <div className="flex items-center justify-between gap-2 flex-wrap">
                               <div className="flex items-center gap-2">
                                 <Badge variant="secondary" className="text-xs capitalize">{row.direction}</Badge>
-                                <Badge variant="outline" className="text-xs">{sourceLabel(row.source)}</Badge>
+                                <Badge variant="outline" className="text-xs">{sourceLabel(row)}</Badge>
                                 {statusBadge(row.status)}
                               </div>
                               <span className="text-xs text-muted-foreground flex items-center gap-1 whitespace-nowrap">

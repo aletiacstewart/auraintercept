@@ -1020,6 +1020,7 @@ export type Database = {
           manager_name: string | null
           missed_call_action: string | null
           missed_call_callback_script: string | null
+          missed_call_reply_known_only: boolean
           missed_call_sms_template: string | null
           monthly_digest_day: number | null
           monthly_digest_email: string | null
@@ -1161,6 +1162,7 @@ export type Database = {
           manager_name?: string | null
           missed_call_action?: string | null
           missed_call_callback_script?: string | null
+          missed_call_reply_known_only?: boolean
           missed_call_sms_template?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
@@ -1302,6 +1304,7 @@ export type Database = {
           manager_name?: string | null
           missed_call_action?: string | null
           missed_call_callback_script?: string | null
+          missed_call_reply_known_only?: boolean
           missed_call_sms_template?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
@@ -5796,6 +5799,7 @@ export type Database = {
           message: string | null
           metadata: Json | null
           provider_message_id: string | null
+          source: string | null
           status: string
           to_number: string
         }
@@ -5809,6 +5813,7 @@ export type Database = {
           message?: string | null
           metadata?: Json | null
           provider_message_id?: string | null
+          source?: string | null
           status?: string
           to_number: string
         }
@@ -5822,6 +5827,7 @@ export type Database = {
           message?: string | null
           metadata?: Json | null
           provider_message_id?: string | null
+          source?: string | null
           status?: string
           to_number?: string
         }
