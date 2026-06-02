@@ -1,95 +1,29 @@
-## Goal
+## Scope SMS/Email Campaigns to the Campaign's Company (Customers + Leads)
 
-Stop the "wrong email / misspelled name / no SMS" problem at three layers:
-1. Fix the 4 duplicate Alicia/Aletia profiles right now.
-2. Prevent it from happening again in the voice intake.
-3. Make duplicates easy to merge going forward, and make the SignalWire trial limit visible.
+### Problem
+Campaign sends should only go to people who actually belong to the company that owns the campaign. Today `send-campaign`:
+- Pulls only from `customer_profiles` filtered by `company_id` (good, but no `leads` table).
+- Has no "Leads" segment option in the UI.
+- Trusts duplicate/junk profiles. After the recent merge that's cleaner, but there's no guardrail against a profile slipping in with a different `company_id`.
 
----
+### Changes
 
-## Step 0 — Confirm correct contact info (before any data change)
+**1. Add a `Leads` segment (and `Leads + Customers`) to the Campaigns UI**
+- File: `src/pages/Campaigns.tsx`
+- Add `<SelectItem value="leads">Leads only</SelectItem>` and `<SelectItem value="leads_and_customers">Leads + Customers</SelectItem>` to the Target Segment select.
 
-I need one quick answer before running the cleanup SQL:
-- Real email for Alicia Stewart? (the DB currently has `aletia.stewart@gmail.com` — likely a voice transcription typo)
-- Real mobile number? (DB has `+1-361-813-9836`)
+**2. Update `send-campaign` edge function to honor the new segments and stay company-scoped**
+- File: `supabase/functions/send-campaign/index.ts`
+- Keep the existing `customer_profiles` query with `.eq('company_id', companyId)`.
+- When `segment === 'leads'`, query `leads` with `.eq('company_id', companyId)` and use those rows as recipients (map `email`, `phone`, treat missing opt-out as opt-in).
+- When `segment === 'leads_and_customers'`, query both tables (both filtered by `company_id`) and concat, deduping by lowercased email and digits-only phone so the same person doesn't get hit twice.
+- Defense-in-depth: right before send, re-assert `recipient.company_id === campaign.company_id` and drop any row that doesn't match (logs a `skipped: 'company_mismatch'` row in `campaign_sends`).
+- Skip leads/customers where `email_opt_out` / `sms_opt_out` is true (leads don't have these columns — treat as opt-in for now; noted as a follow-up).
 
-I'll ask in chat after you approve this plan, then run Step 1.
+**3. Tag campaign_sends rows with `recipient_type`**
+- Add `recipient_type: 'customer' | 'lead'` to the `logs` insert payload so the UI can show which list each send came from. This uses the existing `intake_data`/extra columns on `campaign_sends` if available; otherwise stored in the existing `customer_id` field with a separate `lead_id` only when the column exists. (Will inspect `campaign_sends` schema during implementation and add a migration only if needed.)
 
----
-
-## Step 1 — One-time cleanup of the 4 duplicate profiles
-
-Merge into a single canonical `customer_profiles` row for Alicia Stewart:
-- Name: `Alicia Stewart`
-- Email: confirmed in Step 0
-- Phone: confirmed in Step 0 (normalized to E.164)
-- Keep the oldest `id` so any FK references (appointments, campaign_sends, etc.) remain stable
-- Repoint FKs from the 3 deleted profile IDs to the kept ID across: `appointments`, `campaign_sends`, `customer_messages`, `call_logs`, `customer_notes`, `quotes`, `invoices`, `customer_interactions` (only tables that exist)
-- Delete the other 3 profiles
-
-Also run a broader sweep that flags (does not delete) any other profile where:
-- email matches `@noemail.placeholder` or `@phone.placeholder`
-- email contains spaces or " at " / " dot " (voice transcription tells)
-- phone has fewer than 10 digits after stripping non-digits
-
-Output: a short report of flagged rows so we can decide whether to merge or just null out their email/phone.
-
----
-
-## Step 2 — Harden voice intake (prevent new garbage profiles)
-
-In the edge functions that create `customer_profiles` from voice (`signalwire-voice-webhook`, `voice-call-completed`, `elevenlabs-tool-create-customer`, whichever path is in use):
-
-- **Email**: Before insert, run a regex validator (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`). If it contains spaces, " at ", " dot ", or fails the regex → store `null` (not a placeholder string). Log the raw transcription in `intake_data.raw_email_transcription` so a human can recover it.
-- **Phone**: Strip non-digits. Require exactly 10 digits (US) or 11 starting with `1`. Store as E.164. If invalid → store `null` and log raw value in `intake_data.raw_phone_transcription`.
-- **Name**: Trim, collapse whitespace, title-case. Reject single-letter and pure-digit names.
-- **Dedup on insert**: Before creating a new profile, look up by normalized phone OR normalized email within the same `company_id`. If a match exists, update that row instead of creating a duplicate.
-
----
-
-## Step 3 — Duplicate detection + merge UI
-
-New component on the existing Customers page (`src/pages/Employees.tsx` area — actual customer list page; will locate during build):
-
-- **"Possible duplicates" banner** when 2+ profiles in the same company share any of:
-  - identical normalized phone digits
-  - identical lowercased email
-  - similar name (Levenshtein ≤ 2 on lowercased name) AND same area code OR same email domain
-- **Merge dialog**: shows the candidate rows side-by-side, lets you pick the correct value per field (name / email / phone / address), then calls a new `merge-customer-profiles` edge function that:
-  - Validates inputs (same Zod rules as Step 2)
-  - Repoints FKs (same table list as Step 1) in a transaction
-  - Deletes losing rows
-  - Logs the merge in a new `customer_merge_log` table (who, when, kept_id, merged_ids, fields chosen)
-
-Permissions: only `company_admin` and `platform_admin`.
-
----
-
-## Step 4 — Surface SignalWire trial-account block in the campaign UI
-
-In `MarketingSalesAgentConsole.tsx` and `Campaigns.tsx`, when `send-campaign` returns the verified-caller error (already detected server-side in `send-campaign/index.ts`), show a dismissible banner above the campaign list:
-
-> SignalWire is rejecting SMS because your account is on a trial. Verify your recipient numbers in the SignalWire dashboard, or upgrade to a paid plan, then re-send.
-
-Include a link to `https://my.signalwire.com` and a "Don't show again for 7 days" option (localStorage).
-
-You'll also need to verify your own mobile in SignalWire before re-testing — I can't do that for you.
-
----
-
-## Out of scope
-
-- Schema changes beyond adding `customer_merge_log`.
-- Changing how appointments link to customers.
-- Automatic merging without user confirmation (too risky).
-- Building a full data-quality dashboard.
-
----
-
-## Technical notes (for me, not required reading)
-
-- Step 1 will be a `supabase--insert` call (data change, not schema) plus one `supabase--migration` only if `customer_merge_log` is added in Step 3.
-- FK repointing uses `UPDATE table SET customer_id = :keep WHERE customer_id = ANY(:losers)` per table, inside a single SQL statement.
-- Voice intake hardening lives in the edge functions only; the React side is untouched.
-- The merge edge function uses `verify_jwt = false` per project standard and checks role via `has_role()` RPC.
-- Duplicate detection runs client-side over the already-loaded customer list to avoid extra DB load; switch to a server-side RPC if list exceeds 500.
+### Out of scope
+- Adding `sms_opt_out` / `email_opt_out` columns to `leads` (separate follow-up).
+- The previously-planned voice-intake hardening (Step 2) and duplicate-merge UI (Step 3) — still pending separately.
+- Any change to how phone numbers are verified with SignalWire.
