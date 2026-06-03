@@ -463,9 +463,7 @@ export default function SMSLogs() {
                             )}
                             {(reachedSignalWire(row) || row.provider_message_id) && (
                               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 gap-1">
-                                  <Radio className="w-3 h-3" /> Reached SignalWire
-                                </Badge>
+                                {deliveryPathBadge(row)}
                                 {row.metadata?.provider_code && (
                                   <span className="text-muted-foreground">
                                     code <span className="font-mono">{row.metadata.provider_code}</span>
@@ -481,6 +479,11 @@ export default function SMSLogs() {
                                     SID <span className="font-mono">{row.provider_message_id}</span>
                                   </span>
                                 )}
+                                {row.metadata?.aura_trace_id && (
+                                  <span className="text-muted-foreground">
+                                    trace <span className="font-mono">{String(row.metadata.aura_trace_id).slice(0, 8)}</span>
+                                  </span>
+                                )}
                                 {row.metadata?.provider_code && (
                                   <a
                                     href="https://developer.signalwire.com/rest/compatibility-api/overview/error-codes/"
@@ -491,6 +494,11 @@ export default function SMSLogs() {
                                     docs <ExternalLink className="w-3 h-3" />
                                   </a>
                                 )}
+                              </div>
+                            )}
+                            {!reachedSignalWire(row) && !row.provider_message_id && deliveryPathBadge(row) && (
+                              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                {deliveryPathBadge(row)}
                               </div>
                             )}
                           </div>
