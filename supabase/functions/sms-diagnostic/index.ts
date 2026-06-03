@@ -241,6 +241,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (mode === 'sync_10dlc') {
+      const sync = await runCampaignSync(supabase, companyId, payload?.campaignId, payload?.cspReference);
+      return new Response(JSON.stringify(sync), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     if (!to) {
       return new Response(
         JSON.stringify({ ok: false, error: 'to is required for send mode' }),
