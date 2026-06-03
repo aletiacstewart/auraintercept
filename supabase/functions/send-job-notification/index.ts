@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { sendGuardedEmail } from '../_shared/email-guard.ts';
+import { sendGuardedSms } from '../_shared/sms-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

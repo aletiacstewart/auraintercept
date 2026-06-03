@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { getCompanyTerminology } from '../_shared/terminology.ts';
+import { sendGuardedSms } from '../_shared/sms-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -244,31 +245,22 @@ Deno.serve(async (req) => {
             const message = applyTemplate(setting.sms_template, templateVars);
 
             try {
-              const signalwireUrl = `https://${integration!.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integration!.signalwire_project_id}/Messages`;
-              const authHeader = btoa(`${integration!.signalwire_project_id}:${integration!.signalwire_api_token}`);
-
-              const formData = new URLSearchParams();
-              formData.append('From', integration!.signalwire_phone_number!);
-              formData.append('To', appointment.customer_phone);
-              formData.append('Body', message);
-
-              const signalwireResponse = await fetch(signalwireUrl, {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Basic ${authHeader}`,
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formData.toString(),
+              const result = await sendGuardedSms({
+                supabase,
+                companyId,
+                from: integration!.signalwire_phone_number!,
+                to: appointment.customer_phone,
+                body: message,
+                source: 'reminder',
+                appointmentId: appointment.id,
+                customerName: appointment.customer_name,
               });
-
-              if (!signalwireResponse.ok) {
-                const errorText = await signalwireResponse.text();
-                console.error(`SignalWire error for appointment ${appointment.id}:`, errorText);
+              if (!result.ok) {
+                console.error(`SignalWire error for appointment ${appointment.id}:`, result.error);
                 smsFailed++;
-                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'failed', appointment.customer_phone, message, errorText);
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'failed', appointment.customer_phone, message, result.error || 'send failed');
               } else {
-                const signalwireResult = await signalwireResponse.json();
-                console.log(`SMS sent for appointment ${appointment.id}, SID: ${signalwireResult.sid}`);
+                console.log(`SMS sent for appointment ${appointment.id}, SID: ${result.providerMessageId || 'n/a'}`);
                 smsSent++;
                 await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'sent', appointment.customer_phone, message);
               }
