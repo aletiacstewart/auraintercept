@@ -31,6 +31,7 @@ export interface GuardedSmsResult {
   error?: string;
   providerCode?: string;
   providerMessageId?: string;
+  traceId?: string;
 }
 
 // US area codes start 2-9 (NANP), middle digit 0-9, last 0-9.
