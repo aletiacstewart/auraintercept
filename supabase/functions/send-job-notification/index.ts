@@ -204,31 +204,22 @@ Deno.serve(async (req) => {
         
         if (smsEnabled) {
           try {
-            const signalwireUrl = `https://${integrations.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integrations.signalwire_project_id}/Messages`;
-            const credentials = btoa(`${integrations.signalwire_project_id}:${integrations.signalwire_api_token}`);
-
-            const formData = new URLSearchParams();
-            formData.append('To', phoneNumber);
-            formData.append('From', integrations.signalwire_phone_number);
-            formData.append('Body', messages.sms);
-
-            const signalwireResponse = await fetch(signalwireUrl, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Basic ${credentials}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: formData.toString(),
+            const smsResult = await sendGuardedSms({
+              supabase,
+              companyId: appointment.company_id,
+              from: integrations.signalwire_phone_number,
+              to: phoneNumber,
+              body: messages.sms,
+              source: recipientType === 'employee' ? 'staff' : 'aura',
+              customerName: recipientType === 'customer' ? appointment.customer_name : (employee?.full_name || null),
+              allowStaff: recipientType === 'employee',
             });
-
-            const signalwireResult = await signalwireResponse.json();
-
-            if (signalwireResponse.ok) {
-              results.sms = { success: true, messageSid: signalwireResult.sid };
-              console.log(`[Job Notification] SMS sent successfully to ${recipientType}:`, signalwireResult.sid);
+            if (smsResult.ok) {
+              results.sms = { success: true, messageSid: smsResult.providerMessageId };
+              console.log(`[Job Notification] SMS sent successfully to ${recipientType}:`, smsResult.providerMessageId);
             } else {
-              results.sms = { success: false, error: signalwireResult };
-              console.error('[Job Notification] SignalWire error:', signalwireResult);
+              results.sms = { success: false, error: smsResult.error };
+              console.error('[Job Notification] SMS failed:', smsResult.error);
             }
           } catch (smsError) {
             console.error('[Job Notification] SMS send error:', smsError);
