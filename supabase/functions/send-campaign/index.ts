@@ -297,7 +297,7 @@ Deno.serve(async (req) => {
       const firstError = logs.find((log) => log.status === 'failed')?.error || '';
       let friendly = `Campaign attempted but nothing was delivered.${firstError ? ` First error: ${firstError}` : ''}`;
       if (/verified caller id/i.test(firstError)) {
-        friendly = 'SignalWire rejected SMS — your SignalWire account must verify recipient numbers (trial-account limit) or upgrade to a paid plan.';
+        friendly = 'SignalWire received the send but rejected it before carrier delivery (code 10000). On a paid Space this almost always means the From number is not attached to an approved A2P 10DLC Brand + Campaign yet. Finish 10DLC registration in SignalWire or verify the recipient number inside your Space to test end-to-end.';
       }
       return new Response(JSON.stringify({
         success: false,
