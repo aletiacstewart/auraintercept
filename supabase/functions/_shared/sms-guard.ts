@@ -31,6 +31,7 @@ export interface GuardedSmsResult {
   error?: string;
   providerCode?: string;
   providerMessageId?: string;
+  traceId?: string;
 }
 
 // US area codes start 2-9 (NANP), middle digit 0-9, last 0-9.
@@ -241,6 +242,11 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
   const url = `https://${integ.signalwire_space_url}/api/laml/2010-04-01/Accounts/${integ.signalwire_project_id}/Messages.json`;
   const auth = "Basic " + btoa(`${integ.signalwire_project_id}:${integ.signalwire_api_token}`);
 
+  const traceId = (globalThis.crypto as any)?.randomUUID?.() || `aura-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const endpoint = `${integ.signalwire_space_url}/Messages.json`;
+  const requestedAt = new Date().toISOString();
+  console.log(`[sms-guard] trace=${traceId} POST ${endpoint} from=${fromNumber} to=${to} source=${source}`);
+
   try {
     const params = new URLSearchParams({ From: fromNumber, To: to, Body: args.body });
     const resp = await fetch(url, {
@@ -255,12 +261,14 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
     const text = await resp.text();
     let payload: any = {};
     try { payload = JSON.parse(text); } catch { /* keep raw text */ }
+    const responseExcerpt = text.slice(0, 500);
+    console.log(`[sms-guard] trace=${traceId} status=${resp.status} sid=${payload?.sid || 'none'} code=${payload?.code || 'none'}`);
 
     if (!resp.ok) {
       const code = payload?.code ? String(payload.code) : String(resp.status);
       const baseMsg = payload?.message || text;
       const friendly = code === "10000"
-        ? `SignalWire 10000: ${baseMsg} — On a paid Space this usually means (a) the From number is not owned by the project these API credentials authenticate into, or (b) the number is not attached to an approved A2P 10DLC campaign and can therefore only message numbers verified in the Space. Run "SignalWire Health" from SMS Logs to see which.`
+        ? `SignalWire 10000: ${baseMsg} — SignalWire received Aura's create-message request and rejected it before carrier delivery. On a paid Space the usual cause is that the From number is not attached to an approved A2P 10DLC Brand + Campaign, so SignalWire only allows sending to recipients verified inside the Space. Register/approve a 10DLC Campaign for ${fromNumber} or verify the recipient in SignalWire to confirm end-to-end delivery.`
         : `SignalWire ${code}: ${baseMsg}`;
       await logSms(supabase, {
         companyId,
@@ -277,10 +285,17 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
           provider: "signalwire",
           provider_code: code,
           provider_status: resp.status,
+          provider_endpoint: endpoint,
+          provider_response_excerpt: responseExcerpt,
+          provider_message_sid: payload?.sid || null,
+          aura_trace_id: traceId,
+          requested_at: requestedAt,
+          sent_via: "shared_sms_guard",
+          reached_signalwire: true,
           matched: guard.matchedName,
         },
       });
-      return { ok: false, status: "failed", to, error: friendly, providerCode: code };
+      return { ok: false, status: "failed", to, error: friendly, providerCode: code, traceId };
     }
 
     await logSms(supabase, {
@@ -296,12 +311,19 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
         customer_name: args.customerName,
         appointment_id: args.appointmentId,
         provider: "signalwire",
+        provider_endpoint: endpoint,
+        provider_status: resp.status,
+        aura_trace_id: traceId,
+        requested_at: requestedAt,
+        sent_via: "shared_sms_guard",
+        reached_signalwire: true,
         matched: guard.matchedName,
       },
     });
-    return { ok: true, status: "sent", to, providerMessageId: payload?.sid };
+    return { ok: true, status: "sent", to, providerMessageId: payload?.sid, traceId };
   } catch (e: any) {
     const err = e?.message || String(e);
+    console.error(`[sms-guard] trace=${traceId} transport error: ${err}`);
     await logSms(supabase, {
       companyId,
       from: fromNumber,
@@ -311,8 +333,18 @@ export async function sendGuardedSms(args: GuardedSmsArgs): Promise<GuardedSmsRe
       status: "failed",
       source,
       error: err,
-      metadata: { customer_name: args.customerName, appointment_id: args.appointmentId },
+      metadata: {
+        customer_name: args.customerName,
+        appointment_id: args.appointmentId,
+        provider: "signalwire",
+        provider_endpoint: endpoint,
+        aura_trace_id: traceId,
+        requested_at: requestedAt,
+        sent_via: "shared_sms_guard",
+        reached_signalwire: false,
+        transport_error: true,
+      },
     });
-    return { ok: false, status: "failed", to, error: err };
+    return { ok: false, status: "failed", to, error: err, traceId };
   }
 }

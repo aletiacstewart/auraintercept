@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
       throw new Error('Invalid JSON body');
     }
 
-    const { companyId, customerPhone, customerName, message: rawMessage, appointmentId } = payload;
+    const { companyId, customerPhone, customerName, message: rawMessage, appointmentId, source } = payload;
 
     if (!companyId) throw new Error('companyId is required');
     if (!customerPhone) throw new Error('customerPhone is required');
@@ -69,13 +69,16 @@ Deno.serve(async (req) => {
       .maybeSingle();
     const fromNumber = integration?.signalwire_phone_number || '';
 
+    const allowedSources = ['reminder', 'campaign', 'missed_call', 'staff', 'aura'];
+    const effectiveSource = allowedSources.includes(source) ? source : 'reminder';
+
     const result = await sendGuardedSms({
       supabase,
       companyId,
       from: fromNumber,
       to: normalizedPhone || customerPhone,
       body: message,
-      source: 'reminder',
+      source: effectiveSource as any,
       appointmentId: appointmentId || null,
       customerName: customerName || null,
     });
@@ -87,6 +90,7 @@ Deno.serve(async (req) => {
         status: result.status,
         error: result.ok ? undefined : result.error,
         provider_code: result.providerCode || null,
+        trace_id: result.traceId || null,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -160,6 +160,39 @@ export default function SMSLogs() {
     return m.provider === 'signalwire' && (m.provider_status || m.provider_code || row.provider_message_id);
   };
 
+  const deliveryPathBadge = (row: UnifiedSmsRow) => {
+    const m = row.metadata || {};
+    if (row.status === 'blocked' || (m.reached_signalwire === false && !m.transport_error)) {
+      return (
+        <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 gap-1">
+          Blocked in Aura
+        </Badge>
+      );
+    }
+    if (row.provider_message_id || (m.provider === 'signalwire' && row.status === 'sent')) {
+      return (
+        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 gap-1">
+          <Radio className="w-3 h-3" /> Accepted by SignalWire
+        </Badge>
+      );
+    }
+    if (m.reached_signalwire || m.provider_status || m.provider_code) {
+      return (
+        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 gap-1">
+          <Radio className="w-3 h-3" /> Reached SignalWire — rejected
+        </Badge>
+      );
+    }
+    if (m.transport_error) {
+      return (
+        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
+          Transport error to SignalWire
+        </Badge>
+      );
+    }
+    return null;
+  };
+
   const sourceLabel = (row: UnifiedSmsRow) => {
     if (row.source === 'campaign') return 'Campaign';
     if (row.source === 'reminder') return 'Reminder';
@@ -430,9 +463,7 @@ export default function SMSLogs() {
                             )}
                             {(reachedSignalWire(row) || row.provider_message_id) && (
                               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 gap-1">
-                                  <Radio className="w-3 h-3" /> Reached SignalWire
-                                </Badge>
+                                {deliveryPathBadge(row)}
                                 {row.metadata?.provider_code && (
                                   <span className="text-muted-foreground">
                                     code <span className="font-mono">{row.metadata.provider_code}</span>
@@ -448,6 +479,11 @@ export default function SMSLogs() {
                                     SID <span className="font-mono">{row.provider_message_id}</span>
                                   </span>
                                 )}
+                                {row.metadata?.aura_trace_id && (
+                                  <span className="text-muted-foreground">
+                                    trace <span className="font-mono">{String(row.metadata.aura_trace_id).slice(0, 8)}</span>
+                                  </span>
+                                )}
                                 {row.metadata?.provider_code && (
                                   <a
                                     href="https://developer.signalwire.com/rest/compatibility-api/overview/error-codes/"
@@ -458,6 +494,11 @@ export default function SMSLogs() {
                                     docs <ExternalLink className="w-3 h-3" />
                                   </a>
                                 )}
+                              </div>
+                            )}
+                            {!reachedSignalWire(row) && !row.provider_message_id && deliveryPathBadge(row) && (
+                              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                {deliveryPathBadge(row)}
                               </div>
                             )}
                           </div>
