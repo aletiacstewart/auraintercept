@@ -173,8 +173,8 @@ export default function Campaigns() {
       if (byChannel.sms) parts.push(`SMS: ${byChannel.sms.sent} sent, ${byChannel.sms.failed} failed`);
       const summary = parts.length ? parts.join(' · ') : `${sent} delivered${failed ? `, ${failed} failed` : ''}`;
       if (byChannel?.sms?.failed > 0 && /verified caller id|trial/i.test(firstSmsError)) {
-        toast.warning('Campaign partially sent — SMS blocked by SignalWire trial', {
-          description: `${summary}. Verify recipient numbers in SignalWire or upgrade the Space.`,
+        toast.warning('Campaign partially sent — SignalWire rejected SMS', {
+          description: `${summary}. SignalWire received the request but rejected before carrier delivery (usually A2P 10DLC Brand + Campaign not yet attached to your number).`,
           duration: 12000,
           action: { label: 'Open SignalWire', onClick: () => window.open('https://my.signalwire.com', '_blank') },
         });
@@ -187,9 +187,9 @@ export default function Campaigns() {
     } catch (e: any) {
       const msg = e?.message || 'unknown error';
       if (/verified caller id|trial/i.test(msg) && /signalwire|sms/i.test(msg)) {
-        toast.error('SignalWire trial blocking SMS', {
+        toast.error('SignalWire rejected SMS (code 10000)', {
           description:
-            'Your SignalWire account is on a trial and only sends to verified numbers. Verify each recipient number in SignalWire, or upgrade to a paid plan, then re-send.',
+            'Aura reached SignalWire and SignalWire rejected the message before carrier delivery. On a paid Space this almost always means the From number is not yet attached to an approved A2P 10DLC Brand + Campaign. Finish 10DLC registration or verify the recipient inside SignalWire to test end-to-end.',
           duration: 12000,
           action: {
             label: 'Open SignalWire',

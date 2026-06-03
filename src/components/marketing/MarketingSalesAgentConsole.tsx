@@ -179,9 +179,9 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     } catch (e: any) {
       const msg = e?.message || 'unknown error';
       if (/verified caller id|trial/i.test(msg) && /signalwire|sms/i.test(msg)) {
-        toast.error('SignalWire trial blocking SMS', {
+        toast.error('SignalWire rejected SMS (code 10000)', {
           description:
-            'Your SignalWire account is on a trial and only sends to verified numbers. Verify each recipient number in SignalWire, or upgrade to a paid plan, then re-send.',
+            'Aura reached SignalWire and SignalWire rejected the message before carrier delivery. On a paid Space this almost always means the From number is not yet attached to an approved A2P 10DLC Brand + Campaign. Finish 10DLC registration or verify the recipient inside SignalWire to test end-to-end.',
           duration: 12000,
           action: {
             label: 'Open SignalWire',
