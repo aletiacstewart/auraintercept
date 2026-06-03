@@ -389,6 +389,77 @@ export default function SMSLogs() {
                         ))}
                       </div>
                     )}
+
+                    <div className="pt-3 border-t border-border/50 space-y-3">
+                      <div>
+                        <div className="font-medium text-sm flex items-center gap-2">
+                          <Radio className="w-4 h-4" /> A2P 10DLC Campaign
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Aura pulls the live campaign + number-assignment status from SignalWire's Campaign Registry. Paste the Campaign ID shown under Messaging → 10DLC → Campaigns.
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label htmlFor="campaign-id" className="text-xs">Campaign ID (UUID)</Label>
+                          <Input id="campaign-id" placeholder="cf41ae70-a541-4ee0-9407-e4f951b9fa66" value={campaignId} onChange={(e) => setCampaignId(e.target.value)} className="font-mono text-xs" />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="csp-ref" className="text-xs">CSP Reference (optional)</Label>
+                          <Input id="csp-ref" placeholder="CHUAYDQ" value={cspReference} onChange={(e) => setCspReference(e.target.value)} className="font-mono text-xs" />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" onClick={runSync10dlc} disabled={syncLoading}>
+                          {syncLoading ? 'Syncing…' : 'Sync 10DLC status'}
+                        </Button>
+                        {health.ten_dlc?.synced_at && (
+                          <span className="text-xs text-muted-foreground">
+                            Last synced {format(new Date(health.ten_dlc.synced_at), 'MMM d, h:mm a')}
+                          </span>
+                        )}
+                      </div>
+                      {(syncResult || health.ten_dlc?.status || health.ten_dlc?.last_error) && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                          <div>
+                            <div className="text-muted-foreground">Campaign status</div>
+                            <div className="font-medium flex items-center gap-1">
+                              {(syncResult?.status || health.ten_dlc?.status) ? (
+                                <>
+                                  {String(syncResult?.status || health.ten_dlc?.status).toUpperCase().match(/ACTIVE|APPROVED/) ? (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                                  ) : (
+                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                  )}
+                                  {syncResult?.status || health.ten_dlc?.status}
+                                </>
+                              ) : <span className="text-muted-foreground">unknown</span>}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground">From attached to campaign</div>
+                            <div className="font-medium flex items-center gap-1">
+                              {(() => {
+                                const attached = syncResult?.number_attached ?? health.ten_dlc?.number_attached;
+                                if (attached === true) return (<><CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> Yes</>);
+                                if (attached === false) return (<><AlertTriangle className="w-3.5 h-3.5 text-destructive" /> No</>);
+                                return <span className="text-muted-foreground">unknown</span>;
+                              })()}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground">Attached numbers</div>
+                            <div className="font-medium">{syncResult?.attached_numbers_count ?? '—'}</div>
+                          </div>
+                        </div>
+                      )}
+                      {(syncResult?.error || health.ten_dlc?.last_error) && (
+                        <div className="flex gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/30">
+                          <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+                          <p className="text-xs">{syncResult?.error || health.ten_dlc?.last_error}</p>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </CardContent>
