@@ -162,7 +162,7 @@ export default function SMSLogs() {
 
   const deliveryPathBadge = (row: UnifiedSmsRow) => {
     const m = row.metadata || {};
-    if (row.status === 'blocked' || m.reached_signalwire === false && !m.transport_error) {
+    if (row.status === 'blocked' || (m.reached_signalwire === false && !m.transport_error)) {
       return (
         <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 gap-1">
           Blocked in Aura
