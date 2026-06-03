@@ -9,7 +9,7 @@ const corsHeaders = {
 async function runHealthCheck(supabase: any, companyId: string) {
   const { data: integ } = await supabase
     .from('tenant_integrations')
-    .select('signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_phone_number')
+    .select('signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_phone_number, signalwire_campaign_id, signalwire_csp_reference, signalwire_campaign_status, signalwire_campaign_number_attached, signalwire_campaign_synced_at, signalwire_campaign_last_error')
     .eq('company_id', companyId)
     .maybeSingle();
 
@@ -34,6 +34,15 @@ async function runHealthCheck(supabase: any, companyId: string) {
     from_number_sms_capable: false,
     incoming_numbers: [] as Array<{ phone_number: string; sms: boolean; voice: boolean; friendly_name: string }>,
     errors: [] as string[],
+    ten_dlc: {
+      campaign_id: integ.signalwire_campaign_id || null,
+      csp_reference: integ.signalwire_csp_reference || null,
+      status: integ.signalwire_campaign_status || null,
+      number_attached: integ.signalwire_campaign_number_attached ?? null,
+      synced_at: integ.signalwire_campaign_synced_at || null,
+      last_error: integ.signalwire_campaign_last_error || null,
+      configured: !!integ.signalwire_campaign_id,
+    },
   };
 
   // 1. Account info
@@ -99,11 +108,109 @@ async function runHealthCheck(supabase: any, companyId: string) {
     result.from_number_sms_capable &&
     hints.length === 0
   ) {
-    hints.push(`Credentials, ownership, and SMS capability look correct. Code 10000 to non-verified US numbers almost certainly means the number is not attached to an approved A2P 10DLC Campaign in SignalWire. Register a Brand + Campaign and attach ${from}.`);
+    if (!result.ten_dlc.configured) {
+      hints.push(`Credentials, ownership, and SMS capability look correct. Aura does not yet know your A2P 10DLC Campaign ID. Paste it into Aura (or click "Sync 10DLC Status") so Aura can verify the campaign is approved and that ${from} is attached.`);
+    } else if (result.ten_dlc.number_attached === false) {
+      hints.push(`Aura's last 10DLC sync says campaign ${result.ten_dlc.campaign_id} exists but ${from} is NOT in its attached number list. Open the Campaign in SignalWire → Campaign Phone Numbers and add ${from}, then click "Sync 10DLC Status".`);
+    } else if (result.ten_dlc.status && result.ten_dlc.status.toUpperCase() !== 'ACTIVE' && result.ten_dlc.status.toUpperCase() !== 'APPROVED') {
+      hints.push(`Aura's last 10DLC sync shows campaign status "${result.ten_dlc.status}". SignalWire will keep rejecting non-verified recipients until the campaign reaches ACTIVE/APPROVED.`);
+    } else if (result.ten_dlc.status && result.ten_dlc.number_attached) {
+      hints.push(`10DLC campaign ${result.ten_dlc.campaign_id} is ${result.ten_dlc.status} and ${from} is attached. If sends are still failing with code 10000, the rejection is happening at the SignalWire enforcement layer despite registry approval — open a SignalWire ticket with the trace_id from any failed sms_logs row.`);
+    } else {
+      hints.push(`Click "Sync 10DLC Status" to pull the live campaign + number-assignment state from SignalWire.`);
+    }
   }
   result.hints = hints;
 
   return result;
+}
+
+async function runCampaignSync(supabase: any, companyId: string, campaignIdOverride?: string, cspReferenceOverride?: string) {
+  const { data: integ } = await supabase
+    .from('tenant_integrations')
+    .select('id, signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_phone_number, signalwire_campaign_id, signalwire_csp_reference')
+    .eq('company_id', companyId)
+    .maybeSingle();
+
+  if (!integ?.signalwire_project_id || !integ?.signalwire_api_token || !integ?.signalwire_space_url) {
+    return { ok: false, error: 'SignalWire is not configured for this company.' };
+  }
+
+  const campaignId = (campaignIdOverride || integ.signalwire_campaign_id || '').trim();
+  const cspReference = (cspReferenceOverride || integ.signalwire_csp_reference || '').trim() || null;
+
+  if (!campaignId) {
+    return { ok: false, error: 'A2P 10DLC Campaign ID is required. Paste it from SignalWire → Messaging → 10DLC → Campaigns.' };
+  }
+
+  const auth = 'Basic ' + btoa(`${integ.signalwire_project_id}:${integ.signalwire_api_token}`);
+  const headers = { Authorization: auth, Accept: 'application/json' };
+  const base = `https://${integ.signalwire_space_url}/api/relay/rest/registry/beta`;
+  const fromDigits = (integ.signalwire_phone_number || '').replace(/\D/g, '').slice(-10);
+
+  let campaign: any = null;
+  let numbers: any[] = [];
+  let lastError: string | null = null;
+
+  try {
+    const r = await fetch(`${base}/campaigns/${encodeURIComponent(campaignId)}`, { headers });
+    const text = await r.text();
+    let body: any = {};
+    try { body = JSON.parse(text); } catch {}
+    if (!r.ok) {
+      lastError = `Campaign lookup failed: HTTP ${r.status} ${body?.message || text.slice(0, 200)}`;
+    } else {
+      campaign = body;
+    }
+  } catch (e: any) {
+    lastError = `Campaign lookup threw: ${e?.message || String(e)}`;
+  }
+
+  try {
+    const r = await fetch(`${base}/campaigns/${encodeURIComponent(campaignId)}/numbers?PageSize=200`, { headers });
+    const text = await r.text();
+    let body: any = {};
+    try { body = JSON.parse(text); } catch {}
+    if (!r.ok) {
+      lastError = lastError || `Number assignment lookup failed: HTTP ${r.status} ${body?.message || text.slice(0, 200)}`;
+    } else {
+      // Response shape varies; accept either an array or { data: [...] } / { phone_numbers: [...] }
+      numbers = body?.data || body?.phone_numbers || body?.numbers || (Array.isArray(body) ? body : []);
+    }
+  } catch (e: any) {
+    lastError = lastError || `Number assignment lookup threw: ${e?.message || String(e)}`;
+  }
+
+  const status = campaign?.status || campaign?.campaign_status || campaign?.state || null;
+  const attached = numbers.some((n: any) => {
+    const p = (n?.phone_number || n?.number || n || '').toString().replace(/\D/g, '').slice(-10);
+    return p && fromDigits && p === fromDigits;
+  });
+
+  await supabase
+    .from('tenant_integrations')
+    .update({
+      signalwire_campaign_id: campaignId,
+      signalwire_csp_reference: cspReference,
+      signalwire_campaign_status: status,
+      signalwire_campaign_number_attached: campaign ? attached : null,
+      signalwire_campaign_synced_at: new Date().toISOString(),
+      signalwire_campaign_last_error: lastError,
+      signalwire_campaign_raw: { campaign, numbers_count: numbers.length, sample_numbers: numbers.slice(0, 10) },
+    })
+    .eq('id', integ.id);
+
+  return {
+    ok: !lastError,
+    campaign_id: campaignId,
+    csp_reference: cspReference,
+    status,
+    number_attached: campaign ? attached : null,
+    attached_numbers_count: numbers.length,
+    from_number: integ.signalwire_phone_number,
+    error: lastError,
+    synced_at: new Date().toISOString(),
+  };
 }
 
 Deno.serve(async (req) => {
