@@ -42,6 +42,10 @@ export default function SMSLogs() {
   const [bypassAllowlist, setBypassAllowlist] = useState(false);
   const [health, setHealth] = useState<any>(null);
   const [healthLoading, setHealthLoading] = useState(false);
+  const [campaignId, setCampaignId] = useState('');
+  const [cspReference, setCspReference] = useState('');
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncResult, setSyncResult] = useState<any>(null);
 
   const { data: smsRows, isLoading } = useQuery({
     queryKey: ['sms-unified', companyId],
@@ -241,10 +245,39 @@ export default function SMSLogs() {
       });
       if (error) throw error;
       setHealth(data);
+      if ((data as any)?.ten_dlc?.campaign_id) setCampaignId((data as any).ten_dlc.campaign_id);
+      if ((data as any)?.ten_dlc?.csp_reference) setCspReference((data as any).ten_dlc.csp_reference);
     } catch (e: any) {
       toast.error('Health check failed', { description: e?.message || String(e) });
     } finally {
       setHealthLoading(false);
+    }
+  };
+
+  const runSync10dlc = async () => {
+    if (!companyId) return;
+    if (!campaignId.trim()) {
+      toast.error('Campaign ID required', { description: 'Paste your A2P 10DLC Campaign ID from SignalWire first.' });
+      return;
+    }
+    setSyncLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sms-diagnostic', {
+        body: { companyId, mode: 'sync_10dlc', campaignId: campaignId.trim(), cspReference: cspReference.trim() || undefined },
+      });
+      if (error) throw error;
+      setSyncResult(data);
+      if ((data as any)?.ok) {
+        toast.success('10DLC status synced from SignalWire');
+        // refresh health so the hints update
+        runHealth();
+      } else {
+        toast.error('10DLC sync issue', { description: (data as any)?.error || 'Check campaign id and token scope' });
+      }
+    } catch (e: any) {
+      toast.error('Sync failed', { description: e?.message || String(e) });
+    } finally {
+      setSyncLoading(false);
     }
   };
 
