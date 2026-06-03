@@ -253,7 +253,7 @@ Deno.serve(async (req) => {
         } else {
         try {
           const res = await supabase.functions.invoke('send-appointment-sms', {
-            body: { companyId, customerPhone: phone, customerName: name, message: smsBody },
+            body: { companyId, customerPhone: phone, customerName: name, message: smsBody, source: 'campaign' },
           });
           const ok = !res.error && (res.data as any)?.success !== false;
           const errMsg = ok ? null : (res.error?.message || (res.data as any)?.error || (res.data as any)?.reason || 'unknown');
