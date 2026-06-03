@@ -6537,6 +6537,13 @@ export type Database = {
           openai_tts_voice: string | null
           resend_api_key: string | null
           signalwire_api_token: string | null
+          signalwire_campaign_id: string | null
+          signalwire_campaign_last_error: string | null
+          signalwire_campaign_number_attached: boolean | null
+          signalwire_campaign_raw: Json | null
+          signalwire_campaign_status: string | null
+          signalwire_campaign_synced_at: string | null
+          signalwire_csp_reference: string | null
           signalwire_phone_number: string | null
           signalwire_project_id: string | null
           signalwire_space_url: string | null
@@ -6596,6 +6603,13 @@ export type Database = {
           openai_tts_voice?: string | null
           resend_api_key?: string | null
           signalwire_api_token?: string | null
+          signalwire_campaign_id?: string | null
+          signalwire_campaign_last_error?: string | null
+          signalwire_campaign_number_attached?: boolean | null
+          signalwire_campaign_raw?: Json | null
+          signalwire_campaign_status?: string | null
+          signalwire_campaign_synced_at?: string | null
+          signalwire_csp_reference?: string | null
           signalwire_phone_number?: string | null
           signalwire_project_id?: string | null
           signalwire_space_url?: string | null
@@ -6655,6 +6669,13 @@ export type Database = {
           openai_tts_voice?: string | null
           resend_api_key?: string | null
           signalwire_api_token?: string | null
+          signalwire_campaign_id?: string | null
+          signalwire_campaign_last_error?: string | null
+          signalwire_campaign_number_attached?: boolean | null
+          signalwire_campaign_raw?: Json | null
+          signalwire_campaign_status?: string | null
+          signalwire_campaign_synced_at?: string | null
+          signalwire_csp_reference?: string | null
           signalwire_phone_number?: string | null
           signalwire_project_id?: string | null
           signalwire_space_url?: string | null
