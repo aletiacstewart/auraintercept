@@ -81,7 +81,7 @@ export default function CustomerPortalConsole() {
                 ) : undefined
               }
               action={
-                <div className="flex items-center gap-2">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
                   <HowToUseModal {...HOW_TO_USE.customerPortalConsole} />
                   {canManageSettings && (
                     <>
@@ -99,22 +99,23 @@ export default function CustomerPortalConsole() {
                         variant="outline"
                         size="sm"
                         onClick={() => navigate('/dashboard/ai-agents')}
+                        className="flex-1 sm:flex-none"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                        Manage Agents
+                        <span className="truncate">Manage Agents</span>
                       </Button>
                     </>
                   )}
                   {userRole !== 'employee' && (
-                    <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
-                      <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5">
-                        <TabsTrigger value="customer" className="text-xs px-3 py-1.5 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                    <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')} className="w-full sm:w-auto">
+                      <TabsList className="grid h-auto w-full grid-cols-2 gap-0.5 rounded-lg border border-border/50 bg-muted/30 p-1 sm:inline-flex sm:w-auto sm:rounded-full">
+                        <TabsTrigger value="customer" className="min-w-0 text-xs px-2 sm:px-3 py-1.5 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                           <Monitor className="h-3 w-3 mr-1" />
-                          Customer View
+                          <span className="truncate">Customer View</span>
                         </TabsTrigger>
-                        <TabsTrigger value="debug" className="text-xs px-3 py-1.5 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                        <TabsTrigger value="debug" className="min-w-0 text-xs px-2 sm:px-3 py-1.5 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                           <Code className="h-3 w-3 mr-1" />
-                          Debug
+                          <span className="truncate">Debug</span>
                         </TabsTrigger>
                       </TabsList>
                     </Tabs>
