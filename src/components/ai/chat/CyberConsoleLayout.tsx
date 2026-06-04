@@ -133,7 +133,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
 
   return (
     <div
-      className="flex flex-col rounded-xl"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl"
       style={{
         background: 'rgba(2,8,18,0.97)',
         border: '1px solid rgba(0,229,255,0.15)',
@@ -165,7 +165,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
       />
 
       {/* 3-Column Cyber Layout (desktop) / Single column (mobile) */}
-      <div className="flex-1 flex min-h-0">
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
 
         {/* ── LEFT PANEL: Active Agents ── */}
         <div
@@ -271,7 +271,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
         </div>
 
         {/* ── CENTER: Content ── */}
-        <div className="flex-1 flex flex-col min-h-0 bg-background/95">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background/95">
           {children}
         </div>
 
