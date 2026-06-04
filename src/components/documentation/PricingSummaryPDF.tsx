@@ -136,7 +136,7 @@ const PricingSummaryPDF = () => (
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>$497</Text>
-          <Text style={styles.coverStatLabel}>Starting Price</Text>
+          <Text style={styles.coverStatLabel}>Starting Price (Launch Pricing — was $697)</Text>
         </View>
       </View>
       <View style={styles.footer}>
