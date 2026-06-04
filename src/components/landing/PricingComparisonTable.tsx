@@ -322,19 +322,19 @@ export const PricingComparisonTable = () => {
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-2 font-semibold bg-teal-500/20 border-x border-teal-400/30 text-xs">
               <div className="text-teal-300">Aura Core</div>
-              <div className="text-[10px] font-normal text-teal-300/70">$1,097/mo · 8 agents</div>
+              <div className="text-[10px] font-normal text-teal-300/70"><span className="line-through opacity-70">$697</span> $497/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
               <div className="text-cyan-300">Aura Boost</div>
-              <div className="text-[10px] font-normal text-cyan-300/70">$1,097/mo · 12 agents</div>
+              <div className="text-[10px] font-normal text-cyan-300/70"><span className="line-through opacity-70">$1,097</span> $897/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Pro</div>
-              <div className="text-[10px] font-normal text-purple-300/70">$1,997/mo · 16 agents</div>
+              <div className="text-[10px] font-normal text-purple-300/70"><span className="line-through opacity-70">$1,997</span> $1,797/mo · 16 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
               <div className="text-amber-300">Aura Elite</div>
-              <div className="text-[10px] font-normal text-amber-300/70">$3,497/mo · 24</div>
+              <div className="text-[10px] font-normal text-amber-300/70"><span className="line-through opacity-70">$3,497</span> $3,097/mo · 24</div>
             </th>
           </tr>
         </thead>
