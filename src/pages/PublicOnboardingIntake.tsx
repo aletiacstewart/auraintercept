@@ -56,10 +56,10 @@ const UPLOAD_SECTIONS = [
 ];
 
 const PLAN_OPTIONS = [
-  { id: 'core',  name: 'Aura Core',  monthly: 697,  annual: 6970,  onboarding: 349 },
-  { id: 'boost', name: 'Aura Boost', monthly: 1097, annual: 10970, onboarding: 549 },
-  { id: 'pro',   name: 'Aura Pro',   monthly: 1997, annual: 19970, onboarding: 999 },
-  { id: 'elite', name: 'Aura Elite', monthly: 3497, annual: 34970, onboarding: 1749 },
+  { id: 'core',  name: 'Aura Core',  monthly: 497,  originalMonthly: 697,  annual: 4970,  onboarding: 249,  originalOnboarding: 349 },
+  { id: 'boost', name: 'Aura Boost', monthly: 897,  originalMonthly: 1097, annual: 8970,  onboarding: 449,  originalOnboarding: 549 },
+  { id: 'pro',   name: 'Aura Pro',   monthly: 1797, originalMonthly: 1997, annual: 17970, onboarding: 899,  originalOnboarding: 999 },
+  { id: 'elite', name: 'Aura Elite', monthly: 3097, originalMonthly: 3497, annual: 30970, onboarding: 1549, originalOnboarding: 1749 },
 ] as const;
 
 const INTEGRATION_PROVIDERS = [
@@ -445,10 +445,14 @@ export default function PublicOnboardingIntake() {
                             {selected && <CheckCircle2 className="h-4 w-4 text-primary" />}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            ${p.monthly.toLocaleString()}/mo · ${p.annual.toLocaleString()}/yr
+                            <span className="line-through decoration-destructive/70">${p.originalMonthly.toLocaleString()}</span>{' '}
+                            <span className="text-primary font-semibold">${p.monthly.toLocaleString()}</span>/mo · ${p.annual.toLocaleString()}/yr
+                            <span className="ml-1 text-[9px] uppercase font-semibold text-primary">Launch Pricing</span>
                           </div>
                           <div className="text-xs text-foreground mt-1">
-                            One-time onboarding: <span className="font-semibold">${p.onboarding.toLocaleString()}</span>
+                            One-time onboarding:{' '}
+                            <span className="line-through text-muted-foreground">${p.originalOnboarding.toLocaleString()}</span>{' '}
+                            <span className="font-semibold text-primary">${p.onboarding.toLocaleString()}</span>
                           </div>
                         </button>
                       );
