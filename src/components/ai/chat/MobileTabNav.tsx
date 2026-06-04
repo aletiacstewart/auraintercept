@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, ChevronRight } from 'lucide-react';
 
 interface Tab {
   id: string;
@@ -37,6 +37,33 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   onTabChange,
   onHomeClick,
 }) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [showRightFade, setShowRightFade] = useState(false);
+
+  const updateFade = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setShowRightFade(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    updateFade();
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateFade, { passive: true });
+    window.addEventListener('resize', updateFade);
+    return () => {
+      el.removeEventListener('scroll', updateFade);
+      window.removeEventListener('resize', updateFade);
+    };
+  }, [tabs.length]);
+
+  useEffect(() => {
+    const btn = tabRefs.current[activeTab];
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [activeTab]);
+
   const handleTabClick = (tabId: string) => {
     // If clicking on home/chat tab, trigger home reset callback
     if (tabId === 'chat' && onHomeClick) {
@@ -46,8 +73,8 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   };
 
   return (
-    <div className="shrink-0 border-b" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
-      <div className="flex overflow-x-auto scrollbar-hide">
+    <div className="shrink-0 border-b relative" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
+      <div ref={scrollerRef} className="flex overflow-x-auto scrollbar-hide snap-x">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -55,9 +82,10 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
           return (
           <button
               key={tab.id}
+              ref={(el) => { tabRefs.current[tab.id] = el; }}
               onClick={() => handleTabClick(tab.id)}
               className={cn(
-                'flex flex-col items-center gap-0.5 py-2 px-3 min-w-[56px] text-[9px] font-medium transition-all duration-200 relative whitespace-nowrap rounded-lg',
+                'flex flex-col items-center gap-0.5 py-2 px-3 min-w-[56px] text-[9px] font-medium transition-all duration-200 relative whitespace-nowrap rounded-lg snap-start',
                 isActive 
                   ? 'text-white' 
                   : 'text-muted-foreground',
@@ -104,6 +132,14 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
           );
         })}
       </div>
+      {showRightFade && (
+        <div
+          className="pointer-events-none absolute top-0 right-0 h-full w-10 flex items-center justify-end pr-1"
+          style={{ background: 'linear-gradient(to right, rgba(2,8,18,0) 0%, rgba(2,8,18,0.95) 70%)' }}
+        >
+          <ChevronRight className="h-4 w-4 animate-pulse" style={{ color: 'hsl(189,100%,65%)' }} />
+        </div>
+      )}
     </div>
   );
 };
