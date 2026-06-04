@@ -77,8 +77,14 @@ Deno.serve(async (req) => {
     // Customer rows come from customer_profiles; lead rows come from leads.
     // 'all', 'new', 'vip', 'inactive' = customers only (existing behavior).
     // 'leads' = leads only. 'leads_and_customers' = union, deduped by email/phone.
+    // 'all' = customers + leads (deduped). 'customers' = customers only.
+    // 'leads' = leads only. 'leads_and_customers' = explicit union (same as 'all').
+    // 'new' / 'vip' / 'inactive' = customer-scoped segment filters.
     const includeCustomers = segment !== 'leads';
-    const includeLeads = segment === 'leads' || segment === 'leads_and_customers';
+    const includeLeads =
+      segment === 'leads' ||
+      segment === 'leads_and_customers' ||
+      segment === 'all';
 
     let recipients: any[] = [];
 

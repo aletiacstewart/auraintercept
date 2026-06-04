@@ -558,10 +558,11 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Customers</SelectItem>
-                    <SelectItem value="new">New Customers</SelectItem>
-                    <SelectItem value="returning">Returning Customers</SelectItem>
-                    <SelectItem value="inactive">Inactive Customers</SelectItem>
+                    <SelectItem value="all">Everyone (Customers + Leads)</SelectItem>
+                    <SelectItem value="customers">Customers Only</SelectItem>
+                    <SelectItem value="leads">Leads Only</SelectItem>
+                    <SelectItem value="new">New Customers (last 30 days)</SelectItem>
+                    <SelectItem value="inactive">Inactive Customers (90+ days)</SelectItem>
                     <SelectItem value="vip">VIP Customers</SelectItem>
                   </SelectContent>
                 </Select>

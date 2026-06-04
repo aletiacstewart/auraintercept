@@ -277,9 +277,11 @@ export function CampaignSeriesWizard({ companyId, onCancel, onSuccess }: Campaig
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Customers</SelectItem>
-                    <SelectItem value="new">New Customers</SelectItem>
-                    <SelectItem value="inactive">Inactive Customers</SelectItem>
+                    <SelectItem value="all">Everyone (Customers + Leads)</SelectItem>
+                    <SelectItem value="customers">Customers Only</SelectItem>
+                    <SelectItem value="leads">Leads Only</SelectItem>
+                    <SelectItem value="new">New Customers (last 30 days)</SelectItem>
+                    <SelectItem value="inactive">Inactive Customers (90+ days)</SelectItem>
                     <SelectItem value="vip">VIP Customers</SelectItem>
                   </SelectContent>
                 </Select>
