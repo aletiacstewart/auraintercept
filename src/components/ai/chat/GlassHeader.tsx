@@ -69,7 +69,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
 
   return (
     <div
-      className="p-3 text-white relative shrink-0"
+      className="relative min-w-0 shrink-0 overflow-hidden p-3 text-white"
       style={{
         background: 'rgba(2,8,18,0.97)',
         borderTop: '3px solid rgba(0,229,255,0.75)',
@@ -77,9 +77,9 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         backdropFilter: 'blur(24px)',
       }}
     >
-      <div className="relative flex items-center justify-between gap-2">
+      <div className="relative flex min-w-0 items-center justify-between gap-2">
         {/* LEFT: Logo + Name */}
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
           {showBackButton && (
             <TooltipProvider delayDuration={200}>
               <Tooltip>
@@ -132,7 +132,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         </div>
 
         {/* RIGHT: Status chips + actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
           {showStatusChips && isOnline && (
             <>
               {/* DATE + LIVE TIME chip */}
@@ -145,7 +145,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
               </div>
               {/* Mobile: time only */}
               <div
-                className="flex sm:hidden items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
+                className="hidden min-[400px]:flex sm:hidden items-center gap-1 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider"
                 style={{ background: 'rgba(0,229,255,0.1)', border: '1px solid rgba(0,229,255,0.35)', color: 'rgb(0,229,255)', boxShadow: '0 0 8px rgba(0,229,255,0.2)' }}
               >
                 <Radio className="h-2.5 w-2.5 shrink-0" />
