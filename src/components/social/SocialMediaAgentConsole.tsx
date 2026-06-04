@@ -157,14 +157,14 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     >
       {/* Create Content tab */}
       {activeTab === 'create-content' && (
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-3 sm:px-4 sm:py-4">
           {!effectiveCompanyId ? (
             <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
               Sign in to a company workspace to use the content engine.
             </div>
           ) : (
-            <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
-              <TabsList>
+            <Tabs value={contentEngineTab} onValueChange={setContentEngineTab} className="min-w-0">
+              <TabsList className="grid h-auto w-full grid-cols-2 sm:grid-cols-4">
                 <TabsTrigger value="settings">Brand Voice</TabsTrigger>
                 <TabsTrigger value="generator">Generate</TabsTrigger>
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -189,7 +189,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
 
       {/* My Posts tab */}
       {activeTab === 'my-posts' && (
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-3 sm:px-4 sm:py-4">
           {!effectiveCompanyId ? (
             <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
               Sign in to a company workspace to view your posts.
@@ -202,7 +202,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
 
       {activeTab === 'chat' && (
         <>
-          <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+          <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 pt-3 pb-32 sm:px-4 sm:pt-4">
             {showWelcome ? (
               <div className="space-y-6 animate-fade-in">
                 {/* Hero: Multi-Channel Generator */}

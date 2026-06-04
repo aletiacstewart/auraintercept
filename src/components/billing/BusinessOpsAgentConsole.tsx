@@ -246,6 +246,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   };
   
   const activeLabel = getActiveLabel();
+  const embeddedPanelClass = "min-w-0 w-full overflow-x-hidden rounded-lg border border-border/40 bg-card/95 p-3 sm:p-4";
 
   const { data: bopsMetrics } = useBusinessOpsMetrics(effectiveCompanyId);
   const m = bopsMetrics;
@@ -309,7 +310,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       useDefaultLogo={!company?.logo_url}
     >
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+      <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 pt-3 pb-32 sm:px-4 sm:pt-4">
         <InlineFormProvider>
           <InlineFormHost className="mb-4" />
           {showWelcome ? (
@@ -323,7 +324,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               showHowToGuide={true}
             />
           ) : (
-            <div className="space-y-4">
+            <div className="min-w-0 w-full space-y-4">
               {/* Aura Live Stream */}
               {showAuraLive && effectiveCompanyId && (
                 <AuraLiveStream companyId={effectiveCompanyId} />
@@ -331,49 +332,49 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
 
               {/* Embedded Managers */}
               {showQuoteForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <QuotesManager onClose={handleHome} />
                 </div>
               )}
               
               {showInvoiceForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <InvoicesManager onClose={handleHome} />
                 </div>
               )}
               
               {showLeadForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <LeadsManager onClose={handleHome} />
                 </div>
               )}
 
               {showInventoryManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <InventoryManager />
                 </div>
               )}
 
               {showAppointmentsManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <AppointmentsManager onClose={handleHome} />
                 </div>
               )}
 
               {showCompaniesManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <CompaniesManager />
                 </div>
               )}
 
               {showEmployeesManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <EmployeeManagement />
                 </div>
               )}
 
               {showCustomersManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <CustomersManager />
                 </div>
               )}

@@ -120,13 +120,13 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
   const overdueCount = invoices.filter(i => i.status === 'overdue').length;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h3 className="text-lg font-semibold text-foreground">{invoicePlural}</h3>
           <p className="text-sm text-foreground/70">Create and manage customer {invoicePlural.toLowerCase()}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" onClick={() => setIsAddOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New {invoiceNoun}
@@ -158,7 +158,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
           <div className="text-xs font-medium text-foreground/60 mb-1">Total</div>
           <div className="text-xl font-bold text-foreground">{invoices.length}</div>
@@ -178,8 +178,8 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="relative min-w-0 flex-1 sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={getIndustryPlaceholders(pack).searchInvoices}
@@ -189,7 +189,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 h-9">
+          <SelectTrigger className="h-9 w-full sm:w-32">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -204,7 +204,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
 
       {/* Invoices Table */}
       <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
-        <CardContent className="p-0">
+        <CardContent className="w-full overflow-x-auto p-0">
           <Table>
             <TableHeader>
               <TableRow>

@@ -126,13 +126,13 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h3 className="text-lg font-semibold text-foreground">Leads</h3>
           <p className="text-sm text-foreground/70">Manage and follow up on potential customers</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" data-voice-label="New Lead" onClick={() => setIsAddLeadOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Lead
@@ -164,7 +164,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: '0.5rem' }} className="p-3">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-feature-leads" />
@@ -196,8 +196,8 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="relative min-w-0 flex-1 sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={ph.searchLeads}
@@ -207,7 +207,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 h-9">
+          <SelectTrigger className="h-9 w-full sm:w-32">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -226,7 +226,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
         <CardHeader className="py-3 px-4">
           <CardTitle className="text-sm">All Leads ({filteredLeads.length})</CardTitle>
         </CardHeader>
-        <CardContent className="px-4 pb-4 pt-0">
+        <CardContent className="min-w-0 px-3 pb-4 pt-0 sm:px-4">
           {isLoading ? (
             <div className="text-center py-6 text-foreground/70 text-sm">Loading...</div>
           ) : filteredLeads.length === 0 ? (

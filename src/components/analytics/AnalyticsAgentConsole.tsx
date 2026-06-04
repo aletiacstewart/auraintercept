@@ -287,7 +287,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       useDefaultLogo={true}
     >
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+      <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 pt-3 pb-32 sm:px-4 sm:pt-4">
           {isShowingForm && !effectiveCompanyId ? (
             <EmptyConsolePanel
               title="Pick a company workspace"
@@ -302,7 +302,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
               isLoading={isLoading}
             />
           ) : (
-            <div className="space-y-4">
+            <div className="min-w-0 space-y-4">
               {/* Forms */}
               {showPerformanceForm && effectiveCompanyId && (
                 <PerformanceReportForm

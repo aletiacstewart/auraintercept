@@ -228,7 +228,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     >
       {/* Form Tabs */}
       {activeTab !== 'chat' && (
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-3 sm:px-4 sm:py-4">
           {!effectiveCompanyId ? (
             <div className="max-w-md mx-auto text-center py-12 text-sm text-muted-foreground">
               Sign in to a company workspace to use this form.
@@ -240,9 +240,9 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
               onSuccess={(data) => handleFormSuccess('campaign', data)}
             />
           ) : activeTab === 'library' ? (
-            <div className="max-w-4xl mx-auto space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
+            <div className="mx-auto min-w-0 max-w-4xl space-y-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
                   <h2 className="text-lg font-semibold">Saved Campaigns</h2>
                   <p className="text-xs text-muted-foreground">Review, resend, and track every campaign you've created.</p>
                 </div>
@@ -283,7 +283,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                               </p>
                             </div>
                           </div>
-                          <div className="grid grid-cols-4 gap-3 text-xs">
+                          <div className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
                             <div><p className="text-muted-foreground">Sent</p><p className="font-medium text-sm">{c.total_sent || 0}</p></div>
                             <div><p className="text-muted-foreground flex items-center gap-1"><Eye className="h-3 w-3" />Opens</p><p className="font-medium text-sm">{c.total_opened || 0} <span className="text-muted-foreground">({openRate}%)</span></p></div>
                             <div><p className="text-muted-foreground flex items-center gap-1"><MousePointer className="h-3 w-3" />Clicks</p><p className="font-medium text-sm">{c.total_clicked || 0} <span className="text-muted-foreground">({clickRate}%)</span></p></div>
