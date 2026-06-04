@@ -52,7 +52,7 @@ export default function BusinessManagementConsole() {
               showAuraBar
               badge={<ValueBadge label="Automates 60-70% of admin tasks" />}
               action={
-                <div className="flex items-center gap-2">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
                   <HowToUseModal {...HOW_TO_USE.businessMgmtConsole} />
                   {canManageSettings && (
                     <>
@@ -61,9 +61,10 @@ export default function BusinessManagementConsole() {
                         variant="outline"
                         size="sm"
                         onClick={() => navigate('/dashboard/ai-agents')}
+                        className="flex-1 sm:flex-none"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                        Manage Agents
+                        <span className="truncate">Manage Agents</span>
                       </Button>
                     </>
                   )}
