@@ -400,10 +400,12 @@ export default function Subscription() {
       );
     }
     
-    const isPricing = featureName === 'Monthly Price';
+    const isPricing = featureName === 'Monthly Price' || featureName.startsWith('Monthly Price') || featureName.startsWith('Onboarding Fee');
     const isSavings = value.includes('Save');
     const isAddon = value.includes('Add-on') || value.startsWith('+$');
     const isOptional = value === 'Optional';
+    // Support `~~old~~ new` markdown-style strikethrough for Launch Pricing rows.
+    const strikeMatch = typeof value === 'string' ? value.match(/^~~(.+?)~~\s+(.+)$/) : null;
     
     let textClass = 'text-card-foreground text-xs';
     if (isPricing) {
@@ -418,7 +420,14 @@ export default function Subscription() {
     
     return (
       <td className={`${baseClass} ${textClass}`}>
-        {value}
+        {strikeMatch ? (
+          <span className="inline-flex items-baseline gap-1.5 flex-wrap justify-center">
+            <span className="text-muted-foreground line-through decoration-destructive/70 text-[11px]">{strikeMatch[1]}</span>
+            <span className="text-primary font-semibold">{strikeMatch[2]}</span>
+          </span>
+        ) : (
+          value
+        )}
       </td>
     );
   };
