@@ -9,6 +9,7 @@ export interface TierConfig {
   consoles: string[];
   label: string;
   price: string;
+  originalPrice?: string;
   description: string;
 }
 
