@@ -332,25 +332,25 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
 
               {/* Embedded Managers */}
               {showQuoteForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <QuotesManager onClose={handleHome} />
                 </div>
               )}
               
               {showInvoiceForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <InvoicesManager onClose={handleHome} />
                 </div>
               )}
               
               {showLeadForm && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <LeadsManager onClose={handleHome} />
                 </div>
               )}
 
               {showInventoryManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <InventoryManager />
                 </div>
               )}
