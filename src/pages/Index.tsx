@@ -1053,7 +1053,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · One-time onboarding fee: <span className="font-semibold">$1,749</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through text-white/50">$1,749</span> <span className="font-semibold">$1,549</span></p>
               </CardContent>
             </Card>
           </div>
@@ -1105,7 +1105,7 @@ export default function Index() {
                     <span className="font-semibold text-primary">Why an onboarding fee?</span> Due to the amount of setup and hours it takes to onboard each company, we do require a one-time onboarding fee.
                   </p>
                   <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial):</span> Core <span className="font-semibold text-primary">$349</span> • Boost <span className="font-semibold text-primary">$549</span> • Pro <span className="font-semibold text-primary">$999</span> • Elite <span className="font-semibold text-primary">$1,749</span>
+                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial) — <span className="text-primary">Launch Pricing</span>:</span> Core <span className="line-through text-white/50">$349</span> <span className="font-semibold text-primary">$249</span> • Boost <span className="line-through text-white/50">$549</span> <span className="font-semibold text-primary">$449</span> • Pro <span className="line-through text-white/50">$999</span> <span className="font-semibold text-primary">$899</span> • Elite <span className="line-through text-white/50">$1,749</span> <span className="font-semibold text-primary">$1,549</span>
                   </p>
                   <p className="text-[11px] italic text-white/70 leading-relaxed">
                     Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.
