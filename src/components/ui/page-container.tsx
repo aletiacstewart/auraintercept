@@ -19,7 +19,7 @@ export function PageContainer({ children, className, variant = 'default' }: Page
 
   return (
     <div 
-      className={cn("flex flex-col rounded-xl relative", className)}
+      className={cn("relative flex min-w-0 max-w-full flex-col overflow-x-hidden rounded-xl", className)}
       style={{
         background: 'rgba(2,8,18,0.97)',
         border: '1px solid rgba(0,229,255,0.12)',
@@ -27,7 +27,7 @@ export function PageContainer({ children, className, variant = 'default' }: Page
         borderTop: '3px solid rgba(0,229,255,0.5)',
       }}
     >
-      <div className="flex-1 p-4">
+      <div className="min-w-0 flex-1 p-3 sm:p-4">
         {children}
       </div>
     </div>
