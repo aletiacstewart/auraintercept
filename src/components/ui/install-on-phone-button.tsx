@@ -21,7 +21,7 @@ export function InstallOnPhoneButton({ to, label = 'Install on phone', className
       variant="outline"
       size="sm"
       onClick={() => navigate(to)}
-      className={cn('flex-1 sm:flex-none', className)}
+      className={cn('w-full sm:w-auto', className)}
     >
       <Smartphone className="h-3.5 w-3.5 mr-1.5" />
       <span className="truncate">{label}</span>
