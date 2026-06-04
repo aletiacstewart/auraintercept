@@ -65,7 +65,7 @@ export default function FieldOpsConsole() {
               showAuraBar
               badge={<ValueBadge label={badge} />}
               action={
-                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
                   <HowToUseModal {...HOW_TO_USE.fieldOpsConsole} />
                   {canManageSettings && (
                     <>
@@ -74,7 +74,7 @@ export default function FieldOpsConsole() {
                         variant="outline"
                         size="sm"
                         onClick={() => navigate('/dashboard/ai-agents')}
-                        className="flex-1 sm:flex-none"
+                        className="w-full sm:w-auto"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />
                         <span className="truncate">Manage Agents</span>
