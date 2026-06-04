@@ -717,7 +717,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3 top-8 h-6 w-6 rounded-full"
+          className="hidden md:flex absolute -right-3 top-8 h-6 w-6 rounded-full"
           style={{ border: "1px solid rgba(0,229,255,0.2)", background: "rgba(4,10,20,0.95)", color: "#00E5FF" }}
           onClick={() => setCollapsed(!collapsed)}
         >
