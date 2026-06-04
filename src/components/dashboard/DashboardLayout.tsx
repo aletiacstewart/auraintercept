@@ -59,6 +59,8 @@ import {
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Menu } from 'lucide-react';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -195,7 +197,10 @@ const navGroups: NavGroup[] = [
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  // Mobile sidebar: hidden by default, slides over content
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { userRole, signOut, user } = useAuth();
   const { subscriptionTier, subscriptionEnd } = useSubscription();
   const { jobTypes, hasJobType } = useEmployeeJobRole();
@@ -203,6 +208,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const sidebarScrollRootRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname, location.search]);
 
   const SIDEBAR_SCROLL_STORAGE_KEY = 'dashboard.sidebar.scrollTop';
 
@@ -438,12 +448,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <DashboardTutorialProvider>
-    <div className="min-h-screen flex" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
+    <div className="min-h-screen flex overflow-x-hidden w-full max-w-full" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
+      {/* Mobile backdrop */}
+      {isMobile && mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden
+        />
+      )}
       {/* Sidebar */}
       <aside
         className={cn(
-          'h-screen sticky top-0 flex flex-col transition-all duration-300 border-r',
-          collapsed ? 'w-16' : 'w-64'
+          'flex flex-col transition-all duration-300 border-r',
+          // Desktop: sticky inline column
+          'md:h-screen md:sticky md:top-0 md:translate-x-0',
+          collapsed ? 'md:w-16' : 'md:w-64',
+          // Mobile: fixed overlay drawer
+          'fixed inset-y-0 left-0 z-50 h-screen w-64 md:relative',
+          isMobile && !mobileOpen ? '-translate-x-full' : 'translate-x-0'
         )}
         style={{
           background: "rgba(4,10,20,0.92)",
@@ -703,19 +726,31 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main ref={mainRef} className="dashboard-main flex-1 overflow-auto" data-tour-id="main-content">
+      <main ref={mainRef} className="dashboard-main flex-1 min-w-0 overflow-x-hidden overflow-y-auto w-full" data-tour-id="main-content">
         <DemoExpiryBanner />
         {/* Mobile install banner (only on small screens, dismissable) */}
         <MobileInstallBanner />
         {/* Header with notification bell */}
         <div className="sticky top-0 z-10 border-b" style={{ background: "rgba(4,10,20,0.85)", backdropFilter: "blur(20px)", borderColor: "rgba(0,229,255,0.1)" }}>
-          <div className="container max-w-7xl flex items-center justify-end gap-2 py-2 px-4">
+          <div className="container max-w-7xl flex items-center justify-between gap-2 py-2 px-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-9 w-9 shrink-0"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+              style={{ color: "#00E5FF" }}
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+            <div className="flex items-center justify-end gap-2 ml-auto">
             <CurrentPlanChip />
             <SuperAdminHubButton />
             <NotificationBell />
+            </div>
           </div>
         </div>
-        <div className="container max-w-7xl py-5 px-4">
+        <div className="container max-w-7xl py-5 px-4 overflow-x-hidden">
           {children}
         </div>
       </main>
