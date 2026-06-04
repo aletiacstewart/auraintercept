@@ -356,25 +356,25 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               )}
 
               {showAppointmentsManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <AppointmentsManager onClose={handleHome} />
                 </div>
               )}
 
               {showCompaniesManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <CompaniesManager />
                 </div>
               )}
 
               {showEmployeesManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <EmployeeManagement />
                 </div>
               )}
 
               {showCustomersManager && (
-                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className={embeddedPanelClass}>
                   <CustomersManager />
                 </div>
               )}
