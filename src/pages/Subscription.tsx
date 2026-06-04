@@ -75,7 +75,8 @@ const TIERS = [
   {
     id: 'starter',
     name: 'Aura Core',
-    monthlyPrice: '$697',
+    originalMonthlyPrice: '$697',
+    monthlyPrice: '$497',
     annualPrice: '$6,970',
     annualSavings: 'Save ~$1,394',
     description: 'Solo operators, restaurants, single-location',
@@ -94,7 +95,8 @@ const TIERS = [
   {
     id: 'connect',
     name: 'Aura Boost',
-    monthlyPrice: '$1,097',
+    originalMonthlyPrice: '$1,097',
+    monthlyPrice: '$897',
     annualPrice: '$10,970',
     annualSavings: 'Save ~$2,194',
     description: 'HVAC, plumbing, field service teams',
@@ -113,7 +115,8 @@ const TIERS = [
   {
     id: 'performance',
     name: 'Aura Pro',
-    monthlyPrice: '$1,997',
+    originalMonthlyPrice: '$1,997',
+    monthlyPrice: '$1,797',
     annualPrice: '$19,970',
     annualSavings: 'Save ~$3,994',
     description: 'Growing companies with field teams',
@@ -131,7 +134,8 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Elite',
-    monthlyPrice: '$3,497',
+    originalMonthlyPrice: '$3,497',
+    monthlyPrice: '$3,097',
     annualPrice: '$34,970',
     annualSavings: 'Save ~$6,994',
     description: 'Full suite, enterprise',
@@ -255,10 +259,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
-      { name: 'Annual Price', starter: '$6,970/year', connect: '$10,970/year', performance: '$19,970/year', command: '$34,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$1,394', connect: 'Save ~$2,194', performance: 'Save ~$3,994', command: 'Save ~$6,994' },
-      { name: 'Onboarding Fee (one-time)', starter: '$349', connect: '$549', performance: '$999', command: '$1,749' },
+      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
+      { name: 'Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
     ],
   },
 ];
