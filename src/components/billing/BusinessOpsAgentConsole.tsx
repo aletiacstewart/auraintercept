@@ -331,49 +331,49 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
 
               {/* Embedded Managers */}
               {showQuoteForm && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <QuotesManager onClose={handleHome} />
                 </div>
               )}
               
               {showInvoiceForm && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <InvoicesManager onClose={handleHome} />
                 </div>
               )}
               
               {showLeadForm && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <LeadsManager onClose={handleHome} />
                 </div>
               )}
 
               {showInventoryManager && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <InventoryManager />
                 </div>
               )}
 
               {showAppointmentsManager && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <AppointmentsManager onClose={handleHome} />
                 </div>
               )}
 
               {showCompaniesManager && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <CompaniesManager />
                 </div>
               )}
 
               {showEmployeesManager && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <EmployeeManagement />
                 </div>
               )}
 
               {showCustomersManager && (
-                <div className="rounded-lg p-4" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
+                <div className="rounded-lg p-4 min-w-0 overflow-x-hidden" style={{ background: 'rgba(2,8,18,0.95)', border: '1px solid rgba(0,229,255,0.12)' }}>
                   <CustomersManager />
                 </div>
               )}
