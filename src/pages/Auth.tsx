@@ -903,10 +903,10 @@ export default function Auth() {
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', monthlyPrice: '$697',   annualPrice: '$581', annualTotal: '$6,970', savings: '$1,394',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               monthlyPrice: '$1,097',   annualPrice: '$914', annualTotal: '$10,970', savings: '$2,194',   color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      monthlyPrice: '$1,997',   annualPrice: '$1,664', annualTotal: '$19,970', savings: '$3,994', color: 'purple',  popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',       monthlyPrice: '$3,497', annualPrice: '$2,914', annualTotal: '$34,970', savings: '$6,994', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,097', monthlyPrice: '$897',   annualPrice: '$748', annualTotal: '$8,970', savings: '$1,794', color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$1,997', monthlyPrice: '$1,797', annualPrice: '$1,498', annualTotal: '$17,970', savings: '$3,594', color: 'purple', popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$3,497', monthlyPrice: '$3,097', annualPrice: '$2,581', annualTotal: '$30,970', savings: '$6,194', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -934,10 +934,20 @@ export default function Auth() {
                         <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        {!isAnnualBilling && (
+                          <span className="text-[10px] text-muted-foreground line-through decoration-destructive/70">
+                            {t.originalMonthly}
+                          </span>
+                        )}
                         <span className={`text-xs font-bold ${t.popular ? 'text-primary' : `text-${t.color}-500`}`}>
                           {isAnnualBilling ? t.annualPrice : t.monthlyPrice}
                           <span className="font-normal text-muted-foreground">/mo</span>
                         </span>
+                        {!isAnnualBilling && (
+                          <span className="hidden md:inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-primary border border-primary/20">
+                            Launch
+                          </span>
+                        )}
                         {isAnnualBilling && (
                           <span className="text-[9px] text-muted-foreground">({t.annualTotal}/yr)</span>
                         )}
@@ -964,13 +974,13 @@ export default function Auth() {
                 {isAnnualBilling && selectedTier && (
                   <p className="text-xs text-center text-green-500">
                     💰 Billed annually — save ${
-                      { starter: '394', connect: '994', performance: '1,994', command: '3,994' }[selectedTier]
+                      { starter: '994', connect: '1,794', performance: '3,594', command: '6,194' }[selectedTier]
                     }/year
                   </p>
                 )}
                 {isAnnualBilling && !selectedTier && (
                   <p className="text-xs text-center text-green-500">
-                    💰 Billed annually — save up to $4,394/year
+                    💰 Billed annually — save up to $6,194/year
                   </p>
                 )}
 
