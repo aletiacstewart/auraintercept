@@ -614,9 +614,17 @@ export default function Subscription() {
               
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-4xl font-bold text-card-foreground">{tier.monthlyPrice}</span>
+                  <div className="flex items-baseline justify-center gap-2">
+                    {tier.originalMonthlyPrice && (
+                      <span className="text-base text-muted-foreground line-through decoration-2 decoration-destructive/70">{tier.originalMonthlyPrice}</span>
+                    )}
+                    <span className="text-4xl font-bold text-primary">{tier.monthlyPrice}</span>
                     <span className="text-muted-foreground">/mo</span>
+                  </div>
+                  <div className="mt-1 flex justify-center">
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary border border-primary/20">
+                      Launch Pricing
+                    </span>
                   </div>
                   <div className="mt-1 text-sm">
                     <span className="text-muted-foreground">{tier.annualPrice}/year</span>
