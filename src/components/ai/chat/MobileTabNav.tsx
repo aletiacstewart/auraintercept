@@ -23,20 +23,6 @@ interface MobileTabNavProps {
   onHomeClick?: () => void;
 }
 
-const featureGlowMap: Record<string, string> = {
-  'text-feature-overview':     '189,100%,65%',
-  'text-feature-config':       '221,100%,65%',
-  'text-feature-platform':     '189,100%,55%',
-  'text-feature-fieldops':     '84,100%,55%',
-  'text-feature-customers':    '38,100%,65%',
-  'text-feature-employees':    '173,100%,55%',
-  'text-feature-analytics':    '223,100%,65%',
-  'text-feature-marketing':    '292,100%,70%',
-  'text-feature-integrations': '282,80%,70%',
-  'text-feature-quotes':       '48,100%,65%',
-  'text-primary':              '189,100%,55%',
-};
-
 export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   tabs,
   activeTab,
