@@ -46,7 +46,7 @@ const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({
         
         const diagram = `
 flowchart TB
-    subgraph CORE["🟢 CORE — $697/mo"]
+    subgraph CORE["🟢 CORE — $497/mo (was $697)"]
         direction TB
         Triage["🎧 AI Receptionist"]
         Booking["📅 Booking Agent"]
@@ -58,7 +58,7 @@ flowchart TB
         Marketing["📣 Marketing Agent"]
     end
     
-    subgraph BOOST["🔵 BOOST — $1,097/mo"]
+    subgraph BOOST["🔵 BOOST — $897/mo (was $1,097)"]
         direction TB
         Dispatch["🚚 Dispatch/GPS Console"]
         Route["🗺️ Route Agent"]
@@ -66,7 +66,7 @@ flowchart TB
         Checkin["✅ Check-in Agent"]
     end
     
-    subgraph PRO["🟣 PRO — $1,997/mo"]
+    subgraph PRO["🟣 PRO — $1,797/mo (was $1,997)"]
         direction TB
         Campaign["📣 Campaign Agent"]
         Outreach["📧 Outreach Agent"]
@@ -76,7 +76,7 @@ flowchart TB
         Quoting["💼 Quoting Agent"]
     end
 
-    subgraph ELITE["🟡 ELITE — $3,497/mo"]
+    subgraph ELITE["🟡 ELITE — $3,097/mo (was $3,497)"]
         direction TB
         Invoice["💳 Invoice Agent"]
         Inventory["📦 Inventory Agent"]
@@ -154,19 +154,19 @@ flowchart TB
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-green-600" />
-            <span className="text-sm text-card-foreground">Core ($697/mo)</span>
+            <span className="text-sm text-card-foreground">Core ($497/mo · was $697)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-sky-600" />
-            <span className="text-sm text-card-foreground">Boost ($1,097/mo)</span>
+            <span className="text-sm text-card-foreground">Boost ($897/mo · was $1,097)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-card-foreground">Pro ($1,997/mo)</span>
+            <span className="text-sm text-card-foreground">Pro ($1,797/mo · was $1,997)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-card-foreground">Elite ($3,497/mo)</span>
+            <span className="text-sm text-card-foreground">Elite ($3,097/mo · was $3,497)</span>
           </div>
         </div>
       </CardContent>
