@@ -576,7 +576,7 @@ export function AppointmentCalendar() {
             Select a date to view appointments
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="flex justify-center overflow-x-auto p-2 sm:p-6">
           <Calendar
             mode="single"
             selected={selectedDate}
@@ -585,9 +585,9 @@ export function AppointmentCalendar() {
             onMonthChange={setMonth}
             className={cn("p-0 pointer-events-auto")}
             classNames={{
-              cell: "h-auto w-12 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-              day: cn("h-auto min-h-[50px] w-12 p-1 font-normal aria-selected:opacity-100 flex flex-col items-center justify-start hover:bg-accent/50 rounded-md"),
-              head_cell: "text-muted-foreground rounded-md w-12 font-normal text-[0.8rem]",
+              cell: "h-auto w-9 sm:w-12 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+              day: cn("h-auto min-h-[44px] sm:min-h-[50px] w-9 sm:w-12 p-1 font-normal aria-selected:opacity-100 flex flex-col items-center justify-start hover:bg-accent/50 rounded-md"),
+              head_cell: "text-muted-foreground rounded-md w-9 sm:w-12 font-normal text-[0.7rem] sm:text-[0.8rem]",
             }}
             components={{
               DayContent: ({ date }) => renderDayContent(date),
