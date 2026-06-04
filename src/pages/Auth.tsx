@@ -1469,12 +1469,17 @@ export default function Auth() {
                                 <label htmlFor="concierge-onboarding" className="flex items-center gap-1.5 cursor-pointer font-semibold text-xs text-foreground">
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   One-Time Onboarding Fee (required)
-                                  <span className="ml-auto text-primary font-bold">
-                                    {selectedTier === 'starter' ? '$349' : selectedTier === 'connect' ? '$549' : selectedTier === 'performance' ? '$999' : selectedTier === 'command' ? '$1,749' : '$349–$1,749'}
+                                  <span className="ml-auto inline-flex items-baseline gap-1.5">
+                                    <span className="text-[10px] text-muted-foreground line-through decoration-destructive/70">
+                                      {selectedTier === 'starter' ? '$349' : selectedTier === 'connect' ? '$549' : selectedTier === 'performance' ? '$999' : selectedTier === 'command' ? '$1,749' : '$349–$1,749'}
+                                    </span>
+                                    <span className="text-primary font-bold">
+                                      {selectedTier === 'starter' ? '$249' : selectedTier === 'connect' ? '$449' : selectedTier === 'performance' ? '$899' : selectedTier === 'command' ? '$1,549' : '$249–$1,549'}
+                                    </span>
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Per tier: <span className="font-semibold text-foreground">Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Launch Pricing</span> per tier: <span className="font-semibold text-foreground">Core <span className="line-through text-muted-foreground">$349</span> $249 · Boost <span className="line-through text-muted-foreground">$549</span> $449 · Pro <span className="line-through text-muted-foreground">$999</span> $899 · Elite <span className="line-through text-muted-foreground">$1,749</span> $1,549</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
@@ -1517,7 +1522,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>: <span className="font-bold text-cyan-300">Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
+                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>. <span className="font-bold text-primary">Launch Pricing:</span> <span className="font-bold text-cyan-300">Core <span className="line-through opacity-60">$349</span> $249 · Boost <span className="line-through opacity-60">$549</span> $449 · Pro <span className="line-through opacity-60">$999</span> $899 · Elite <span className="line-through opacity-60">$1,749</span> $1,549</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
                  </p>
               </div>
 
