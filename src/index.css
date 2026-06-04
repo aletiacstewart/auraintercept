@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+  html, body, #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@layer base {
   :root {
     /* Light mode - White background with dark cards */
     --background: 0 0% 100%;
