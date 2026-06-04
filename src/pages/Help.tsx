@@ -675,19 +675,19 @@ export default function Help() {
                         <div className="text-card-foreground/70 space-y-3">
                           <ul className="space-y-3 text-sm">
                             <li>
-                              <strong className="text-card-foreground">Aura Core ($697/mo):</strong>
+                              <strong className="text-card-foreground">Aura Core (<span className="line-through text-muted-foreground">$697</span> $497/mo · Launch Pricing):</strong>
                               <p className="mt-1">8 AI Agents: Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing. Perfect for solo operators.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Boost ($1,097/mo):</strong>
+                              <strong className="text-card-foreground">Aura Boost (<span className="line-through text-muted-foreground">$1,097</span> $897/mo · Launch Pricing):</strong>
                               <p className="mt-1">12 AI Agents: All Core agents + Dispatch, Route, ETA, Check-In. Adds field operations and advanced scheduling.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Pro ($1,997/mo):</strong>
+                              <strong className="text-card-foreground">Aura Pro (<span className="line-through text-muted-foreground">$1,997</span> $1,797/mo · Launch Pricing):</strong>
                               <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Scheduler Agent, Social Analytics. Full marketing and outreach automation.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Elite ($3,497/mo):</strong>
+                              <strong className="text-card-foreground">Aura Elite (<span className="line-through text-muted-foreground">$3,497</span> $3,097/mo · Launch Pricing):</strong>
                               <p className="mt-1">Full suite of 24 agents including Invoice, Inventory, Insights, Performance, Revenue, Forecast + Predictive AI Hub.</p>
                             </li>
                           </ul>

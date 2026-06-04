@@ -9,6 +9,7 @@ export interface TierConfig {
   consoles: string[];
   label: string;
   price: string;
+  originalPrice?: string;
   description: string;
 }
 
@@ -41,7 +42,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Core',
-    price: '$697/mo',
+    price: '$497/mo',
+    originalPrice: '$697/mo',
     description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included',
   },
   connect: {
@@ -60,7 +62,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Boost',
-    price: '$1,097/mo',
+    price: '$897/mo',
+    originalPrice: '$1,097/mo',
     description: 'Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations',
   },
   performance: {
@@ -84,7 +87,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'business_management', 'ai_operatives_hub',
     ],
     label: 'Aura Pro',
-    price: '$1,997/mo',
+    price: '$1,797/mo',
+    originalPrice: '$1,997/mo',
     description: '16 Smart AI Agents with social media and campaigns (industry specialists included on every plan)',
   },
   command: {
@@ -104,7 +108,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Elite',
-    price: '$3,497/mo',
+    price: '$3,097/mo',
+    originalPrice: '$3,497/mo',
     description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub',
   },
 };

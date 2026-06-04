@@ -8,10 +8,10 @@ import { getIndustryRoiDefaults } from '@/lib/industryRoiDefaults';
 
 // Canonical 4-tier model (monthly price)
 const TIERS = [
-  { id: 'core', name: 'Core', price: 697 },
-  { id: 'boost', name: 'Boost', price: 1097 },
-  { id: 'pro', name: 'Pro', price: 1997 },
-  { id: 'elite', name: 'Elite', price: 3497 },
+  { id: 'core', name: 'Core', price: 497 },
+  { id: 'boost', name: 'Boost', price: 897 },
+  { id: 'pro', name: 'Pro', price: 1797 },
+  { id: 'elite', name: 'Elite', price: 3097 },
 ] as const;
 
 // Industry benchmarks (NextPhone 2026, Aura Intercept analysis)

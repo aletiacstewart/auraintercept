@@ -3339,27 +3339,27 @@ serve(async (req) => {
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Core ($697/mo · $349 onboarding): 8 agents — AI receptionist, customer journey, outreach, creative
+      // Aura Core ($497/mo · $249 onboarding — Launch Pricing, was $697 + $349): 8 agents — AI receptionist, customer journey, outreach, creative
       starter: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
       ],
-      // Aura Boost ($1,097/mo · $549 onboarding): 12 agents — adds field ops (dispatch + field navigation)
+      // Aura Boost ($897/mo · $449 onboarding — Launch Pricing, was $1,097 + $549): 12 agents — adds field ops (dispatch + field navigation)
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
         'dispatch', 'field_navigation', // Field Operations
       ],
-      // Aura Pro ($1,997/mo · $999 onboarding): 16 agents — adds campaign, outreach, social
+      // Aura Pro ($1,797/mo · $899 onboarding — Launch Pricing, was $1,997 + $999): 16 agents — adds campaign, outreach, social
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
       ],
-      // Aura Elite ($3,497/mo · $1,749 onboarding): All 24 agents (10 operative groups) + enterprise features
+      // Aura Elite ($3,097/mo · $1,549 onboarding — Launch Pricing, was $3,497 + $1,749): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations

@@ -184,10 +184,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
-      { name: 'Annual Price', starter: '$6,970/year', connect: '$10,970/year', performance: '$19,970/year', command: '$34,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$1,394', connect: 'Save ~$2,194', performance: 'Save ~$3,994', command: 'Save ~$6,994' },
-      { name: 'One-Time Onboarding Fee', starter: '$349', connect: '$549', performance: '$999', command: '$1,749' },
+      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
+      { name: 'One-Time Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
     ],
   },
 ];
@@ -243,7 +243,7 @@ const renderValue = (
     );
   }
 
-  const isPricing = featureName === 'Monthly Price';
+  const isPricing = featureName.startsWith('Monthly Price') || featureName.startsWith('One-Time Onboarding Fee');
   const isSavings = value.includes('Save');
   const isAddon = value.includes('Add-on') || value.startsWith('+$');
   const isOptional = value === 'Optional';
@@ -260,9 +260,18 @@ const renderValue = (
   else if (isBundled) textClass = 'text-emerald-400 text-xs font-medium';
   else if (isConnect) textClass = 'text-cyan-300/90 text-xs';
 
+  const strikeMatch = typeof value === 'string' ? value.match(/^~~(.+?)~~\s+(.+)$/) : null;
+
   return (
     <td className={`${style.base} ${textClass}`}>
-      {value}
+      {strikeMatch ? (
+        <span className="inline-flex items-baseline gap-1.5 flex-wrap justify-center">
+          <span className="text-slate-400/80 line-through decoration-rose-400/70 text-[11px]">{strikeMatch[1]}</span>
+          <span className={style.price}>{strikeMatch[2]}</span>
+        </span>
+      ) : (
+        value
+      )}
     </td>
   );
 };
@@ -313,19 +322,19 @@ export const PricingComparisonTable = () => {
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-2 font-semibold bg-teal-500/20 border-x border-teal-400/30 text-xs">
               <div className="text-teal-300">Aura Core</div>
-              <div className="text-[10px] font-normal text-teal-300/70">$1,097/mo · 8 agents</div>
+              <div className="text-[10px] font-normal text-teal-300/70"><span className="line-through opacity-70">$697</span> $497/mo · 8 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
               <div className="text-cyan-300">Aura Boost</div>
-              <div className="text-[10px] font-normal text-cyan-300/70">$1,097/mo · 12 agents</div>
+              <div className="text-[10px] font-normal text-cyan-300/70"><span className="line-through opacity-70">$1,097</span> $897/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Pro</div>
-              <div className="text-[10px] font-normal text-purple-300/70">$1,997/mo · 16 agents</div>
+              <div className="text-[10px] font-normal text-purple-300/70"><span className="line-through opacity-70">$1,997</span> $1,797/mo · 16 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
               <div className="text-amber-300">Aura Elite</div>
-              <div className="text-[10px] font-normal text-amber-300/70">$3,497/mo · 24</div>
+              <div className="text-[10px] font-normal text-amber-300/70"><span className="line-through opacity-70">$3,497</span> $3,097/mo · 24</div>
             </th>
           </tr>
         </thead>

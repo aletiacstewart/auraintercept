@@ -195,22 +195,22 @@ const TierComparisonCards: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
             <div className="flex items-center gap-2">
               <Badge className="bg-teal-600">Starter</Badge>
-              <span className="text-muted-foreground text-xs">$697 · 8</span>
+              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$697</span> $497 · 8</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-sky-600">Connect</Badge>
-              <span className="text-muted-foreground text-xs">$1,097 · 12</span>
+              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$1,097</span> $897 · 12</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-purple-600">Performance</Badge>
-              <span className="text-muted-foreground text-xs">$1,997 · 16</span>
+              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$1,997</span> $1,797 · 16</span>
             </div>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-amber-600">Command</Badge>
-              <span className="text-muted-foreground text-xs">$3,497 · 24</span>
+              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$3,497</span> $3,097 · 24</span>
             </div>
           </div>
         </CardContent>

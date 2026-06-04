@@ -75,7 +75,8 @@ const TIERS = [
   {
     id: 'starter',
     name: 'Aura Core',
-    monthlyPrice: '$697',
+    originalMonthlyPrice: '$697',
+    monthlyPrice: '$497',
     annualPrice: '$6,970',
     annualSavings: 'Save ~$1,394',
     description: 'Solo operators, restaurants, single-location',
@@ -94,7 +95,8 @@ const TIERS = [
   {
     id: 'connect',
     name: 'Aura Boost',
-    monthlyPrice: '$1,097',
+    originalMonthlyPrice: '$1,097',
+    monthlyPrice: '$897',
     annualPrice: '$10,970',
     annualSavings: 'Save ~$2,194',
     description: 'HVAC, plumbing, field service teams',
@@ -113,7 +115,8 @@ const TIERS = [
   {
     id: 'performance',
     name: 'Aura Pro',
-    monthlyPrice: '$1,997',
+    originalMonthlyPrice: '$1,997',
+    monthlyPrice: '$1,797',
     annualPrice: '$19,970',
     annualSavings: 'Save ~$3,994',
     description: 'Growing companies with field teams',
@@ -131,7 +134,8 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Elite',
-    monthlyPrice: '$3,497',
+    originalMonthlyPrice: '$3,497',
+    monthlyPrice: '$3,097',
     annualPrice: '$34,970',
     annualSavings: 'Save ~$6,994',
     description: 'Full suite, enterprise',
@@ -255,10 +259,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', starter: '$697', connect: '$1,097', performance: '$1,997', command: '$3,497' },
-      { name: 'Annual Price', starter: '$6,970/year', connect: '$10,970/year', performance: '$19,970/year', command: '$34,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$1,394', connect: 'Save ~$2,194', performance: 'Save ~$3,994', command: 'Save ~$6,994' },
-      { name: 'Onboarding Fee (one-time)', starter: '$349', connect: '$549', performance: '$999', command: '$1,749' },
+      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
+      { name: 'Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
     ],
   },
 ];
@@ -396,10 +400,12 @@ export default function Subscription() {
       );
     }
     
-    const isPricing = featureName === 'Monthly Price';
+    const isPricing = featureName === 'Monthly Price' || featureName.startsWith('Monthly Price') || featureName.startsWith('Onboarding Fee');
     const isSavings = value.includes('Save');
     const isAddon = value.includes('Add-on') || value.startsWith('+$');
     const isOptional = value === 'Optional';
+    // Support `~~old~~ new` markdown-style strikethrough for Launch Pricing rows.
+    const strikeMatch = typeof value === 'string' ? value.match(/^~~(.+?)~~\s+(.+)$/) : null;
     
     let textClass = 'text-card-foreground text-xs';
     if (isPricing) {
@@ -414,7 +420,14 @@ export default function Subscription() {
     
     return (
       <td className={`${baseClass} ${textClass}`}>
-        {value}
+        {strikeMatch ? (
+          <span className="inline-flex items-baseline gap-1.5 flex-wrap justify-center">
+            <span className="text-muted-foreground line-through decoration-destructive/70 text-[11px]">{strikeMatch[1]}</span>
+            <span className="text-primary font-semibold">{strikeMatch[2]}</span>
+          </span>
+        ) : (
+          value
+        )}
       </td>
     );
   };
@@ -601,9 +614,17 @@ export default function Subscription() {
               
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-4xl font-bold text-card-foreground">{tier.monthlyPrice}</span>
+                  <div className="flex items-baseline justify-center gap-2">
+                    {tier.originalMonthlyPrice && (
+                      <span className="text-base text-muted-foreground line-through decoration-2 decoration-destructive/70">{tier.originalMonthlyPrice}</span>
+                    )}
+                    <span className="text-4xl font-bold text-primary">{tier.monthlyPrice}</span>
                     <span className="text-muted-foreground">/mo</span>
+                  </div>
+                  <div className="mt-1 flex justify-center">
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary border border-primary/20">
+                      Launch Pricing
+                    </span>
                   </div>
                   <div className="mt-1 text-sm">
                     <span className="text-muted-foreground">{tier.annualPrice}/year</span>
@@ -668,19 +689,19 @@ export default function Subscription() {
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Core</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$697</span> <span className="text-primary font-semibold">$497</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
                         <div className="text-primary">Boost</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,097/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,097</span> <span className="text-primary font-semibold">$897</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Pro</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,997</span> <span className="text-primary font-semibold">$1,797</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Elite</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$3,497</span> <span className="text-primary font-semibold">$3,097</span>/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -735,7 +756,13 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>
+                <span className="text-muted-foreground">
+                  Onboarding Fee (one-time, due at start of 90-Day Live Trial) — <span className="text-primary font-semibold">Launch Pricing:</span>{' '}
+                  Core <span className="line-through">$349</span> <span className="text-foreground font-semibold">$249</span> ·{' '}
+                  Boost <span className="line-through">$549</span> <span className="text-foreground font-semibold">$449</span> ·{' '}
+                  Pro <span className="line-through">$999</span> <span className="text-foreground font-semibold">$899</span> ·{' '}
+                  Elite <span className="line-through">$1,749</span> <span className="text-foreground font-semibold">$1,549</span>
+                </span>
               </div>
             </div>
           </CardContent>
@@ -785,7 +812,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($697/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($1,097/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,997/mo) adds campaign, outreach, and social media. Elite ($3,497/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
+                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
               </p>
             </div>
             <div>

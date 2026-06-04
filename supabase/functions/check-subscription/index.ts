@@ -17,7 +17,17 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Legacy IDs at the old $497/$697/$1,197/$2,197 amounts are retained for
 // grandfathered customers — they continue to map to the correct tier.
 const PRICE_TO_TIER: Record<string, string> = {
-  // === CANONICAL 4-TIER PRICE IDS (new Balanced pricing) ===
+  // === LAUNCH PRICING PRICE IDS (active) ===
+  // Aura Core - $497/mo (Launch Pricing, was $697)
+  "price_1TeereJ9fo9y8fGHzz419yW6": "starter",
+  // Aura Boost - $897/mo (Launch Pricing, was $1,097)
+  "price_1TeerfJ9fo9y8fGHX2tAGIVR": "connect",
+  // Aura Pro - $1,797/mo (Launch Pricing, was $1,997)
+  "price_1TeerfJ9fo9y8fGHxdXiHqSg": "performance",
+  // Aura Elite - $3,097/mo (Launch Pricing, was $3,497)
+  "price_1TeergJ9fo9y8fGHMwqU7pMV": "command",
+
+  // === PRE-LAUNCH FULL-PRICE IDS (grandfathered) ===
   // Aura Core - $697/mo
   "price_1Tdvk8J9fo9y8fGHEzdE8sc0": "starter",
   // Aura Boost - $1,097/mo

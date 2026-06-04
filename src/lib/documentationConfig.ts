@@ -15,6 +15,8 @@ export interface TierConfig {
   annualPrice: number;
   annualSavings: number;
   implementationFee: number | 'Custom';
+  originalPrice?: number;
+  originalImplementationFee?: number;
   employees: number | 'Unlimited';
   operatives: number;
   consoles: number;
@@ -30,10 +32,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   aura_core: {
     id: 'aura_core',
     name: 'Aura Core',
-    price: 697,
-    annualPrice: 6970,
-    annualSavings: 1394,
-    implementationFee: 349,
+    price: 497,
+    originalPrice: 697,
+    annualPrice: 4970,
+    annualSavings: 994,
+    implementationFee: 249,
+    originalImplementationFee: 349,
     employees: 10,
     operatives: 8,
     consoles: 3,
@@ -60,10 +64,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   aura_boost: {
     id: 'aura_boost',
     name: 'Aura Boost',
-    price: 1097,
-    annualPrice: 10970,
-    annualSavings: 2194,
-    implementationFee: 549,
+    price: 897,
+    originalPrice: 1097,
+    annualPrice: 8970,
+    annualSavings: 1794,
+    implementationFee: 449,
+    originalImplementationFee: 549,
     employees: 25,
     operatives: 12,
     consoles: 5,
@@ -87,10 +93,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   aura_pro: {
     id: 'aura_pro',
     name: 'Aura Pro',
-    price: 1997,
-    annualPrice: 19970,
-    annualSavings: 3994,
-    implementationFee: 999,
+    price: 1797,
+    originalPrice: 1997,
+    annualPrice: 17970,
+    annualSavings: 3594,
+    implementationFee: 899,
+    originalImplementationFee: 999,
     employees: 50,
     operatives: 16,
     consoles: 5,
@@ -110,10 +118,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   aura_elite: {
     id: 'aura_elite',
     name: 'Aura Elite',
-    price: 3497,
-    annualPrice: 34970,
-    annualSavings: 6994,
-    implementationFee: 1749,
+    price: 3097,
+    originalPrice: 3497,
+    annualPrice: 30970,
+    annualSavings: 6194,
+    implementationFee: 1549,
+    originalImplementationFee: 1749,
     employees: 'Unlimited',
     operatives: 24,
     consoles: 7,
@@ -472,7 +482,7 @@ export const PLATFORM_STATS = {
   totalOperatives: 10, // 10 consolidated operative groups
   totalConsoles: 7,
   totalTiers: 4,
-  startingPrice: 697,
+  startingPrice: 497,
   maxEmployees: 'Unlimited',
   socialPlatforms: 6,
   analyticsTabs: 8,
