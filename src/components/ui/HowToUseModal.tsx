@@ -58,12 +58,13 @@ export function HowToUseModal({
           size={iconOnly ? 'icon' : 'sm'}
           className={cn(
             'border-primary/40 text-primary hover:bg-primary/10 hover:text-primary',
+            !iconOnly && 'w-full sm:w-auto',
             className,
           )}
           aria-label={`How to use ${title}`}
         >
           <HelpCircle className={cn('h-4 w-4', !iconOnly && 'mr-1.5')} />
-          {!iconOnly && <span>{triggerLabel}</span>}
+          {!iconOnly && <span className="truncate">{triggerLabel}</span>}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">

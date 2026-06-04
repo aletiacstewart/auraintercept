@@ -57,20 +57,20 @@ export default function MarketingSalesConsole() {
               showAuraBar
               badge={<ValueBadge label={playbook.tagline} />}
               action={
-                <div className="flex items-center gap-2">
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
                   <HowToUseModal {...HOW_TO_USE.outreachSalesConsole} />
                   <PDFDownloadLink
                     document={<MarketingSalesMasterPDF />}
                     fileName={`marketing-sales-master-guide-${new Date().toISOString().split('T')[0]}.pdf`}
                   >
                     {({ loading }) => (
-                      <Button variant="outline" size="sm" disabled={loading}>
+                      <Button variant="outline" size="sm" disabled={loading} className="w-full sm:w-auto">
                         {loading ? (
                           <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                         ) : (
                           <Download className="h-3.5 w-3.5 mr-1.5" />
                         )}
-                        Master Guide PDF
+                        <span className="truncate">Master Guide PDF</span>
                       </Button>
                     )}
                   </PDFDownloadLink>
@@ -79,9 +79,10 @@ export default function MarketingSalesConsole() {
                       variant="outline"
                       size="sm"
                       onClick={() => navigate('/dashboard/ai-agents')}
+                      className="w-full sm:w-auto"
                     >
                       <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                      Manage Agents
+                      <span className="truncate">Manage Agents</span>
                     </Button>
                   )}
                 </div>

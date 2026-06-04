@@ -357,8 +357,8 @@ export default function SpecialistOperativesConsole() {
               </Badge>
             }
             action={
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-agents')}>
-                Manage Operatives
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-agents')} className="w-full sm:w-auto">
+                <span className="truncate">Manage Operatives</span>
               </Button>
             }
           />

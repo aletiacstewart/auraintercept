@@ -34,16 +34,17 @@ export default function SocialMediaConsole() {
               showAuraBar
               badge={<ValueBadge label="Saves ~8 hrs/week on content" />}
               action={
-                <div className="flex items-center gap-2">
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
                   <HowToUseModal {...HOW_TO_USE.socialMediaConsole} />
                   {canManageSettings && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => navigate('/dashboard/ai-agents')}
+                      className="w-full sm:w-auto"
                     >
                       <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                      Manage Agents
+                      <span className="truncate">Manage Agents</span>
                     </Button>
                   )}
                 </div>
