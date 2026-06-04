@@ -135,7 +135,7 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Consoles</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>$697</Text>
+          <Text style={styles.coverStatNumber}>$497</Text>
           <Text style={styles.coverStatLabel}>Starting Price</Text>
         </View>
       </View>
@@ -185,25 +185,25 @@ const PricingSummaryPDF = () => (
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
-          <Text style={styles.summaryPrice}>$697</Text>
+          <Text style={styles.summaryPrice}>$497</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 AI Agents</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BOOST</Text>
-          <Text style={styles.summaryPrice}>$1,097</Text>
+          <Text style={styles.summaryPrice}>$897</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>12 AI Agents</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PRO</Text>
-          <Text style={styles.summaryPrice}>$1,997</Text>
+          <Text style={styles.summaryPrice}>$1,797</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>16 AI Agents</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
-          <Text style={styles.summaryPrice}>$3,497</Text>
+          <Text style={styles.summaryPrice}>$3,097</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 10 AI Operatives</Text>
         </View>
@@ -240,7 +240,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>One-Time Onboarding Fee</Text>
         <Text style={styles.noticeText}>
-          Core $349 · Boost $549 · Pro $999 · Elite $1,749. Due at start of the 90-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 60 days of full live use. Non-refundable once onboarding begins. Annual billing = 10x monthly rate.
+          Core $249 · Boost $449 · Pro $899 · Elite $1,549. Due at start of the 90-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 60 days of full live use. Non-refundable once onboarding begins. Annual billing = 10x monthly rate.
         </Text>
       </View>
       <View style={styles.footer}>
@@ -262,9 +262,9 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { category: 'Monthly Price', core: '$697', boost: '$1,097', pro: '$1,997', elite: '$3,497' },
-          { category: 'Annual Price', core: '$6,970', boost: '$10,970', pro: '$19,970', elite: '$34,970' },
-          { category: 'One-Time Onboarding Fee', core: '$349', boost: '$549', pro: '$999', elite: '$1,749' },
+          { category: 'Monthly Price', core: '$497', boost: '$897', pro: '$1,797', elite: '$3,097' },
+          { category: 'Annual Price', core: '$4,970', boost: '$8,970', pro: '$17,970', elite: '$30,970' },
+          { category: 'One-Time Onboarding Fee', core: '$249', boost: '$449', pro: '$899', elite: '$1,549' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
           { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
@@ -306,9 +306,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.green, fontWeight: 700, marginBottom: 4 }}>ENTRY LEVEL</Text>
         <Text style={styles.pricingTierName}>Aura Core</Text>
-        <Text style={styles.pricingPrice}>$697/month</Text>
-        <Text style={styles.pricingAnnual}>or $6,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$1,394 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$497/month</Text>
+        <Text style={styles.pricingAnnual}>or $4,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$994 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
@@ -334,7 +334,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>$349 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$249 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -349,9 +349,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCardHighlight}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
         <Text style={styles.pricingTierName}>Aura Boost</Text>
-        <Text style={styles.pricingPrice}>$1,097/month</Text>
-        <Text style={styles.pricingAnnual}>or $10,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$2,194 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$897/month</Text>
+        <Text style={styles.pricingAnnual}>or $8,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,794 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{performance.bestFor}</Text>
       </View>
@@ -372,7 +372,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$549 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$449 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -387,9 +387,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>GROWTH</Text>
         <Text style={styles.pricingTierName}>Aura Pro</Text>
-        <Text style={styles.pricingPrice}>$1,997/month</Text>
-        <Text style={styles.pricingAnnual}>or $19,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$3,994 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$1,797/month</Text>
+        <Text style={styles.pricingAnnual}>or $17,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$3,594 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{pro.bestFor}</Text>
       </View>
@@ -409,7 +409,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$999 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$899 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -424,9 +424,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.primary, fontWeight: 700, marginBottom: 4 }}>ENTERPRISE</Text>
         <Text style={styles.pricingTierName}>Aura Elite</Text>
-        <Text style={styles.pricingPrice}>$3,497/month</Text>
-        <Text style={styles.pricingAnnual}>or $34,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$6,994 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$3,097/month</Text>
+        <Text style={styles.pricingAnnual}>or $30,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$6,194 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{command.bestFor}</Text>
       </View>
@@ -453,7 +453,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$1,749 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$1,549 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -480,10 +480,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Savings</Text>
         </View>
         {[
-          { tier: 'Aura Core', monthly: '$697', yearlyPath: '$8,364', annual: '$6,970', savings: '$1,394' },
-          { tier: 'Aura Boost', monthly: '$1,097', yearlyPath: '$13,164', annual: '$10,970', savings: '$2,194' },
-          { tier: 'Aura Pro', monthly: '$1,997', yearlyPath: '$23,964', annual: '$19,970', savings: '$3,994' },
-          { tier: 'Aura Elite', monthly: '$3,497', yearlyPath: '$41,964', annual: '$34,970', savings: '$6,994' },
+          { tier: 'Aura Core', monthly: '$497', yearlyPath: '$5,964', annual: '$4,970', savings: '$994' },
+          { tier: 'Aura Boost', monthly: '$897', yearlyPath: '$10,764', annual: '$8,970', savings: '$1,794' },
+          { tier: 'Aura Pro', monthly: '$1,797', yearlyPath: '$21,564', annual: '$17,970', savings: '$3,594' },
+          { tier: 'Aura Elite', monthly: '$3,097', yearlyPath: '$37,164', annual: '$30,970', savings: '$6,194' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.tier}</Text>
@@ -580,10 +580,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$349', includes: 'Guided setup (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Boost', fee: '$549', includes: 'Onboarding, setup, training (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Pro', fee: '$999', includes: 'Onboarding, setup, training, industry tuning (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Elite', fee: '$1,749', includes: 'Enterprise onboarding, custom setup (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Core', fee: '$249', includes: 'Guided setup (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Boost', fee: '$449', includes: 'Onboarding, setup, training (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Pro', fee: '$899', includes: 'Onboarding, setup, training, industry tuning (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Elite', fee: '$1,549', includes: 'Enterprise onboarding, custom setup (due at start of 90-Day Live Trial; first 30 days = onboarding)' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>

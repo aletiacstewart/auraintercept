@@ -497,25 +497,25 @@ export const BrandAssetGuidePDF: React.FC = () => (
               color="#14b8a6" 
               name="Aura Core Teal" 
               hex="#14b8a6" 
-              usage="Aura Core tier ($697/mo)"
+              usage="Aura Core tier ($497/mo)"
             />
             <ColorSwatch 
               color="#3b82f6" 
               name="Aura Boost Blue" 
               hex="#3b82f6" 
-              usage="Aura Boost tier ($1,097/mo)"
+              usage="Aura Boost tier ($897/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 
               name="Aura Pro Purple" 
               hex="#8b5cf6" 
-              usage="Aura Pro tier ($1,997/mo)"
+              usage="Aura Pro tier ($1,797/mo)"
             />
             <ColorSwatch 
               color="#f59e0b" 
               name="Aura Elite Gold" 
               hex="#f59e0b" 
-              usage="Aura Elite tier ($3,497/mo)"
+              usage="Aura Elite tier ($3,097/mo)"
             />
           </View>
         </View>
@@ -580,7 +580,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         </View>
         <View style={{ marginBottom: 0 }}>
           <Text style={styles.fontName}>Monospace: JetBrains Mono</Text>
-          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$1,097-$3,497/month</Text>
+          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$897-$3,097/month</Text>
           <Text style={styles.fontMeta}>Weights: 400 (Regular), 500 (Medium){'\n'}Use for: Code, data, pricing, technical specs</Text>
         </View>
       </View>
