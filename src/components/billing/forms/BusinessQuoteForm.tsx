@@ -255,13 +255,13 @@ export function BusinessQuoteForm({
         <h3 className="font-semibold text-foreground">Create {quoteNoun}</h3>
       </div>
 
-      <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+      <div className="space-y-3 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
           <Input
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             placeholder="Customer Name *"
-            className="h-9 text-sm"
+            className="h-9 text-sm w-full min-w-0"
             required
           />
           <Input
@@ -269,24 +269,24 @@ export function BusinessQuoteForm({
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
             placeholder="Phone Number"
-            className="h-9 text-sm"
+            className="h-9 text-sm w-full min-w-0"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
           <Input
             type="email"
             value={customerEmail}
             onChange={(e) => setCustomerEmail(e.target.value)}
             placeholder="Email Address"
-            className="h-9 text-sm"
+            className="h-9 text-sm w-full min-w-0"
           />
           {showAddress ? (
             <Input
               value={customerAddress}
               onChange={(e) => setCustomerAddress(e.target.value)}
               placeholder="Service Address"
-              className="h-9 text-sm"
+              className="h-9 text-sm w-full min-w-0"
             />
           ) : <div />}
         </div>
@@ -317,7 +317,7 @@ export function BusinessQuoteForm({
 
         {mode === 'direct' && (
           <>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
               <div className="space-y-1">
                 <Label className="text-xs text-foreground/70">Tax Rate (%)</Label>
                 <Input 
