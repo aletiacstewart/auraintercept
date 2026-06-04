@@ -248,7 +248,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
         
         <div style="text-align: center;">
           <a href="https://auraintercept.ai/dashboard/subscription" class="cta-button">
-            Subscribe Now - Starting at $697/month
+            Subscribe Now — Launch Pricing from $497/mo (was $697)
           </a>
         </div>
         
@@ -292,7 +292,7 @@ function getExpiredEmailHtml(companyName: string): string {
         
         <div style="text-align: center;">
           <a href="https://auraintercept.ai/dashboard/subscription" class="cta-button">
-            Subscribe Now - Starting at $697/month
+            Subscribe Now — Launch Pricing from $497/mo (was $697)
           </a>
         </div>
         
