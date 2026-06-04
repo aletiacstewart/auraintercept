@@ -346,12 +346,12 @@ export function BusinessQuoteForm({
                   <Plus className="w-3 h-3 mr-1" /> Add
                 </Button>
               </div>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <div className="space-y-2 max-h-40 overflow-y-auto overflow-x-hidden">
                 {lineItems.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-1 items-center">
-                    <div className="col-span-5 flex items-center gap-1">
+                  <div key={index} className="grid grid-cols-12 gap-1 items-center min-w-0">
+                    <div className="col-span-5 flex items-center gap-1 min-w-0">
                       <Input
-                        className="h-8 text-xs flex-1"
+                        className="h-8 text-xs flex-1 min-w-0"
                         placeholder="Description"
                         value={item.description}
                         onChange={e => updateLineItem(index, 'description', e.target.value)}
@@ -365,14 +365,14 @@ export function BusinessQuoteForm({
                       />
                     </div>
                     <Input
-                      className="col-span-2 h-8 text-xs"
+                      className="col-span-2 h-8 text-xs min-w-0"
                       type="number"
                       placeholder="Qty"
                       value={item.quantity}
                       onChange={e => updateLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
                     />
                     <Input
-                      className="col-span-3 h-8 text-xs"
+                      className="col-span-3 h-8 text-xs min-w-0"
                       type="number"
                       step="0.01"
                       placeholder="Price"
