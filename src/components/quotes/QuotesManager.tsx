@@ -221,6 +221,13 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
       </div>
 
       {/* Quotes Table */}
+      {!isLoading && filteredQuotes.length === 0 ? (
+        <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
+          <CardContent className="p-0">
+            <IndustryEmptyState surface="quotes" onAction={() => setIsAddOpen(true)} />
+          </CardContent>
+        </Card>
+      ) : (
       <Card style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,229,255,0.1)' }}>
         <CardContent className="w-full overflow-x-auto p-0">
           <Table>
@@ -237,12 +244,6 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-6 text-foreground/60 text-sm">Loading...</TableCell>
-                </TableRow>
-              ) : filteredQuotes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5}>
-                    <IndustryEmptyState surface="quotes" onAction={() => setIsAddOpen(true)} />
-                  </TableCell>
                 </TableRow>
               ) : (
                 filteredQuotes.slice(0, 5).map(quote => (
@@ -280,6 +281,7 @@ export const QuotesManager: React.FC<QuotesManagerProps> = ({ onClose }) => {
           </Table>
         </CardContent>
       </Card>
+      )}
 
       {/* View Quote Dialog */}
       <Dialog open={!!viewQuote} onOpenChange={open => !open && setViewQuote(null)}>
