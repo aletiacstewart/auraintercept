@@ -572,7 +572,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   return (
     <div
-      className="flex flex-col overflow-hidden rounded-xl"
+      className="flex min-w-0 flex-col overflow-hidden rounded-xl"
       style={{
         height: 'calc(100vh - 200px)',
         minHeight: '500px',
@@ -608,7 +608,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       />
 
       {/* 3-Column Cyber Layout (desktop) / Single column (mobile) */}
-      <div className="flex-1 flex min-h-0 overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
 
         {/* ── LEFT PANEL: Business Info Card ── (hidden on mobile) */}
         <div
@@ -733,9 +733,9 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         </div>
 
         {/* ── CENTER: Chat / Content ── */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* Content Area */}
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" style={{ background: 'rgba(3,9,20,0.95)' }}>
 
         {/* Chat Tab */}
         {activeTab === 'chat' && (
