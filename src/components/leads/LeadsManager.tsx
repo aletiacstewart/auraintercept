@@ -286,8 +286,8 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
                       <DialogHeader>
                         <DialogTitle>Lead Details</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-4 min-w-0">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
                           <div>
                             <label className="text-sm text-foreground/70">Name</label>
                             <p className="font-medium">{lead.name || '-'}</p>

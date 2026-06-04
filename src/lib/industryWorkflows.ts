@@ -85,16 +85,16 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       command: 'Take my newest lead: book the next available appointment, send a confirmation, and queue follow-up messages until close',
     },
     {
-      id: 'listing-to-marketing', label: 'Listing → Marketing → Open House',
-      description: 'Promote a new listing and book the open house',
-      icon: PenTool, steps: ['Listing', 'Posts', 'Book Open House'],
-      command: 'For my newest listing, draft social posts and email blasts, then schedule the open house and capture RSVPs',
+      id: 'appointment-reminders', label: '{{appointment}} Reminders',
+      description: 'Send confirmations and reminders for upcoming {{appointment}}s',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft Reminder', 'Send'],
+      command: 'Find all upcoming appointments in the next 48 hours, draft reminder messages, and send them for my approval',
     },
     {
-      id: 'invoice-followup', label: 'Invoice / Commission Follow-Up',
-      description: 'Chase outstanding invoices and commissions',
+      id: 'invoice-followup', label: 'Invoice Follow-Up',
+      description: 'Chase outstanding invoices with smart reminders',
       icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
-      command: 'Find all outstanding invoices and pending commissions, draft friendly reminders, and show them for my approval',
+      command: 'Find all outstanding invoices, draft friendly reminders, and show them for my approval',
     },
   ],
 
@@ -126,6 +126,153 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
  * listing / commission workflows from the shared `booking` cluster).
  */
 const INDUSTRY_WORKFLOWS: Partial<Record<string, WorkflowChain[]>> = {
+  real_estate: [
+    {
+      id: 'lead-to-showing', label: 'Lead → Showing → Close',
+      description: 'Convert a new lead into a showing and close the deal',
+      icon: Home, steps: ['Lead', 'Schedule', 'Follow-Up', 'Close'],
+      command: 'Take my newest lead: book the next available showing, send a confirmation, and queue follow-up messages until close',
+    },
+    {
+      id: 'listing-to-marketing', label: 'Listing → Marketing → Open House',
+      description: 'Promote a new listing and book the open house',
+      icon: PenTool, steps: ['Listing', 'Posts', 'Book Open House'],
+      command: 'For my newest listing, draft social posts and email blasts, then schedule the open house and capture RSVPs',
+    },
+    {
+      id: 'commission-followup', label: 'Invoice / Commission Follow-Up',
+      description: 'Chase outstanding invoices and commissions',
+      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
+      command: 'Find all outstanding invoices and pending commissions, draft friendly reminders, and show them for my approval',
+    },
+  ],
+
+  saas_platform: [
+    {
+      id: 'trial-to-activation', label: 'Trial → Activation → Upgrade',
+      description: 'Move new trial signups toward activation and a paid upgrade',
+      icon: ArrowRightLeft, steps: ['Trial', 'Onboard', 'Activate', 'Upgrade'],
+      command: 'For my newest trial signups, send the onboarding sequence, track activation milestones, and queue upgrade offers when ready',
+    },
+    {
+      id: 'inbound-demo', label: 'Inbound → Demo → Follow-Up',
+      description: 'Capture an inbound lead, book a demo, and run the follow-up',
+      icon: Phone, steps: ['Capture', 'Book Demo', 'Follow-Up'],
+      command: 'Take my newest inbound lead, book a product demo on my calendar, and queue a personalized follow-up sequence',
+    },
+    {
+      id: 'renewal-churn-save', label: 'Renewal / Churn Save',
+      description: 'Spot at-risk accounts and run a save play before they churn',
+      icon: Star, steps: ['Score Risk', 'Draft Outreach', 'Offer'],
+      command: 'Identify at-risk customers approaching renewal, draft a save-play outreach for each, and show me for approval',
+    },
+  ],
+
+  salon: [
+    {
+      id: 'lead-to-appointment', label: 'Lead → Appointment → Rebook',
+      description: 'Convert a new lead into a booked appointment and queue rebook',
+      icon: Home, steps: ['Lead', 'Book', 'Confirm', 'Rebook'],
+      command: 'Take my newest lead: book the next available appointment, send confirmation, and queue a rebook reminder',
+    },
+    {
+      id: 'appointment-reminders', label: 'Appointment Reminders',
+      description: 'Send 48-hour and same-day reminders to reduce no-shows',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft', 'Send'],
+      command: 'Find all appointments in the next 48 hours, draft reminder texts, and send them for approval',
+    },
+    {
+      id: 'review-pulse', label: 'Review Pulse',
+      description: 'Reply to new reviews and request more from happy clients',
+      icon: Star, steps: ['Pull Reviews', 'Draft Replies', 'Request More'],
+      command: 'Pull the latest reviews, draft replies, and text recent happy clients a review request link',
+    },
+  ],
+
+  beauty_wellness: [
+    {
+      id: 'lead-to-appointment', label: 'Lead → Appointment → Rebook',
+      description: 'Convert a new lead into a booked session and queue rebook',
+      icon: Home, steps: ['Lead', 'Book', 'Confirm', 'Rebook'],
+      command: 'Take my newest lead: book the next available session, send confirmation, and queue a rebook reminder',
+    },
+    {
+      id: 'appointment-reminders', label: 'Session Reminders',
+      description: 'Send 48-hour and same-day reminders to reduce no-shows',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft', 'Send'],
+      command: 'Find all sessions in the next 48 hours, draft reminder texts, and send them for approval',
+    },
+    {
+      id: 'review-pulse', label: 'Review Pulse',
+      description: 'Reply to new reviews and request more from happy clients',
+      icon: Star, steps: ['Pull Reviews', 'Draft Replies', 'Request More'],
+      command: 'Pull the latest reviews, draft replies, and text happy clients a review request link',
+    },
+  ],
+
+  fitness: [
+    {
+      id: 'lead-to-class', label: 'Lead → Class → Membership',
+      description: 'Convert a lead into a booked class and a membership',
+      icon: Home, steps: ['Lead', 'Book Class', 'Follow-Up', 'Membership'],
+      command: 'Take my newest lead: book a trial class, send confirmation, and queue follow-up until they sign up for a membership',
+    },
+    {
+      id: 'class-reminders', label: 'Class Reminders',
+      description: 'Send class reminders to reduce no-shows',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft', 'Send'],
+      command: 'Find all classes in the next 24 hours, draft reminder messages, and send for approval',
+    },
+    {
+      id: 'win-back', label: 'Win-Back Inactive Members',
+      description: 'Re-engage members who have stopped showing up',
+      icon: Star, steps: ['Find Inactive', 'Draft Offer', 'Send'],
+      command: 'Find members who have not visited in 30+ days, draft a personalized win-back offer, and send for approval',
+    },
+  ],
+
+  professional: [
+    {
+      id: 'lead-to-consult', label: 'Lead → Consult → Engagement',
+      description: 'Move a lead from inquiry to a paid engagement',
+      icon: Home, steps: ['Lead', 'Consult', 'Proposal', 'Engagement'],
+      command: 'Take my newest lead, book a consult, draft a proposal, and queue follow-up until engagement starts',
+    },
+    {
+      id: 'invoice-followup', label: 'Invoice Follow-Up',
+      description: 'Chase overdue invoices with smart reminders',
+      icon: Receipt, steps: ['Find Overdue', 'Draft', 'Send'],
+      command: 'Find all overdue invoices, draft friendly payment reminders, and show them for my approval',
+    },
+    {
+      id: 'consult-reminders', label: 'Consult Reminders',
+      description: 'Send reminders for upcoming consults',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft', 'Send'],
+      command: 'Find all consults scheduled in the next 48 hours, draft reminders, and send for approval',
+    },
+  ],
+
+  personal_assistant: [
+    {
+      id: 'lead-to-engagement', label: 'Lead → Intake → Engagement',
+      description: 'Onboard a new client from inquiry to active engagement',
+      icon: Home, steps: ['Lead', 'Intake', 'Schedule', 'Engagement'],
+      command: 'Take my newest lead, complete intake, schedule the first session, and queue follow-up',
+    },
+    {
+      id: 'appointment-reminders', label: 'Appointment Reminders',
+      description: 'Send reminders for upcoming client appointments',
+      icon: Phone, steps: ['Pull Upcoming', 'Draft', 'Send'],
+      command: 'Find all appointments in the next 48 hours, draft reminders, and send for approval',
+    },
+    {
+      id: 'invoice-followup', label: 'Invoice Follow-Up',
+      description: 'Chase outstanding invoices',
+      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
+      command: 'Find all outstanding invoices, draft friendly reminders, and show for approval',
+    },
+  ],
+
   restaurants: [
     {
       id: 'smart-link-send', label: 'Inbound → Smart Link',
