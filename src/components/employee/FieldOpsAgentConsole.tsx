@@ -1007,7 +1007,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Quote Form Panel */}
       {selectorMode === 'quote' && effectiveCompanyId && (
-        <div className="shrink-0 border-b max-h-[60%] overflow-auto" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
+        <div className="min-w-0 shrink-0 overflow-auto border-b" style={{ maxHeight: '60%', background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <BusinessQuoteForm
             companyId={effectiveCompanyId}
             onSubmit={handleQuoteSubmit}
@@ -1020,7 +1020,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Invoice Form Panel */}
       {selectorMode === 'invoice' && effectiveCompanyId && (
-        <div className="shrink-0 border-b max-h-[60%] overflow-auto" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
+        <div className="min-w-0 shrink-0 overflow-auto border-b" style={{ maxHeight: '60%', background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <InvoiceForm
             companyId={effectiveCompanyId}
             onSubmit={handleInvoiceSubmit}
@@ -1033,7 +1033,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && selectorMode !== 'quote' && selectorMode !== 'invoice' && (
-        <div className="shrink-0 border-b p-4" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
+        <div className="min-w-0 shrink-0 overflow-x-hidden border-b p-3 sm:p-4" style={{ background: 'rgba(2,8,18,0.97)', borderColor: 'rgba(0,229,255,0.1)' }}>
           <div className="flex items-center justify-between mb-3">
             <div className="text-sm font-medium flex items-center gap-2 text-foreground">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
