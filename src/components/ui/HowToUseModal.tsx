@@ -58,7 +58,7 @@ export function HowToUseModal({
           size={iconOnly ? 'icon' : 'sm'}
           className={cn(
             'border-primary/40 text-primary hover:bg-primary/10 hover:text-primary',
-            !iconOnly && 'flex-1 sm:flex-none',
+            !iconOnly && 'w-full sm:w-auto',
             className,
           )}
           aria-label={`How to use ${title}`}
