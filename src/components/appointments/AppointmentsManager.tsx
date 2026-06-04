@@ -36,8 +36,8 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
             </p>
           </div>
         </div>
-        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-          <Button size="sm" onClick={() => setIsAddOpen(true)} className="flex-1 sm:flex-none">
+        <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
+          <Button size="sm" onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             <span className="truncate">Add Appointment</span>
           </Button>
