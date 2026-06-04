@@ -64,7 +64,7 @@ export default function MarketingSalesConsole() {
                     fileName={`marketing-sales-master-guide-${new Date().toISOString().split('T')[0]}.pdf`}
                   >
                     {({ loading }) => (
-                      <Button variant="outline" size="sm" disabled={loading}>
+                      <Button variant="outline" size="sm" disabled={loading} className="flex-1 sm:flex-none">
                         {loading ? (
                           <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                         ) : (
