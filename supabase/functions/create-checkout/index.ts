@@ -12,33 +12,32 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// 4-TIER STRUCTURE: Core ($697 · $349 onboarding), Boost ($1,097 · $549 onboarding),
-// Pro ($1,997 · $999 onboarding), Elite ($3,497 · $1,749 onboarding).
-// Each tier includes the recurring monthly price and a one-time onboarding price
-// (added as an additional line item on the first checkout session).
+// LAUNCH PRICING (active): Core $497 · Boost $897 · Pro $1,797 · Elite $3,097.
+// Onboarding fees are 50% of new monthly, rounded: $249 / $449 / $899 / $1,549.
+// Original (struck-through) pricing: $697 / $1,097 / $1,997 / $3,497.
 const CORE = {
   name: "Aura Core",
-  price: 69700,
-  price_id: "price_1Tdvk8J9fo9y8fGHEzdE8sc0",
-  onboarding_price_id: "price_1TdvkBJ9fo9y8fGHaV3n9eNy",
+  price: 49700,
+  price_id: "price_1TeereJ9fo9y8fGHzz419yW6",
+  onboarding_price_id: "price_1TeerhJ9fo9y8fGHqxIcNkSa",
 };
 const BOOST = {
   name: "Aura Boost",
-  price: 109700,
-  price_id: "price_1Tdvk9J9fo9y8fGHWVQP8Zxi",
-  onboarding_price_id: "price_1TdvkCJ9fo9y8fGHfHPIsB5z",
+  price: 89700,
+  price_id: "price_1TeerfJ9fo9y8fGHX2tAGIVR",
+  onboarding_price_id: "price_1TeeriJ9fo9y8fGHfhWNll0O",
 };
 const PRO = {
   name: "Aura Pro",
-  price: 199700,
-  price_id: "price_1Tdvk9J9fo9y8fGHjXNIXsIn",
-  onboarding_price_id: "price_1TdvkDJ9fo9y8fGHTfoLNrX3",
+  price: 179700,
+  price_id: "price_1TeerfJ9fo9y8fGHxdXiHqSg",
+  onboarding_price_id: "price_1TeerjJ9fo9y8fGH3WaiwV2o",
 };
 const ELITE = {
   name: "Aura Elite",
-  price: 349700,
-  price_id: "price_1TdvkAJ9fo9y8fGHfu0WlSpR",
-  onboarding_price_id: "price_1TdvkEJ9fo9y8fGHKnhvthzV",
+  price: 309700,
+  price_id: "price_1TeergJ9fo9y8fGHMwqU7pMV",
+  onboarding_price_id: "price_1TeerkJ9fo9y8fGHCV3tC51t",
 };
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
