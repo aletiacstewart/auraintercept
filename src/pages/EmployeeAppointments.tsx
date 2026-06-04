@@ -66,9 +66,9 @@ export default function EmployeeAppointments() {
             description={apptHeader.description}
             featureColor="fieldops"
             action={
-              <Button onClick={() => setIsAddOpen(true)}>
+              <Button onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Appointment
+                <span className="truncate">Add Appointment</span>
               </Button>
             }
           />
@@ -86,23 +86,23 @@ export default function EmployeeAppointments() {
             />
           </FormShell>
 
-          <Tabs defaultValue="calendar" className="w-full">
-            <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-              <TabsTrigger value="calendar" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <Tabs defaultValue="calendar" className="w-full min-w-0 overflow-hidden">
+            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-lg border border-border/50 bg-muted/30 p-1.5 sm:inline-flex sm:w-auto sm:rounded-full">
+              <TabsTrigger value="calendar" className="min-w-0 flex items-center gap-2 px-2 sm:px-4 py-2 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Calendar className="h-4 w-4" />
-                Calendar
+                <span className="truncate">Calendar</span>
               </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <TabsTrigger value="jobs" className="min-w-0 flex items-center gap-2 px-2 sm:px-4 py-2 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <ClipboardList className="h-4 w-4" />
-                {queueLabels.queueTab}
+                <span className="truncate">{queueLabels.queueTab}</span>
               </TabsTrigger>
-              <TabsTrigger value="history" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <TabsTrigger value="history" className="min-w-0 flex items-center gap-2 px-2 sm:px-4 py-2 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <History className="h-4 w-4" />
-                History
+                <span className="truncate">History</span>
               </TabsTrigger>
-              <TabsTrigger value="all-jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <TabsTrigger value="all-jobs" className="min-w-0 flex items-center gap-2 px-2 sm:px-4 py-2 rounded-md sm:rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Briefcase className="h-4 w-4" />
-                {queueLabels.allJobsTab}
+                <span className="truncate">{queueLabels.allJobsTab}</span>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="calendar" className="mt-4">
