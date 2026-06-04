@@ -595,12 +595,12 @@ export function InvoiceForm({
               </Button>
             </div>
           </div>
-          <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-2 bg-muted/20">
+          <div className="space-y-2 max-h-48 overflow-y-auto overflow-x-hidden border rounded-lg p-2 bg-muted/20">
             {lineItems.map((item, index) => (
-              <div key={item.id} className="grid grid-cols-12 gap-1 items-center">
-                <div className="col-span-5 flex items-center gap-1">
+              <div key={item.id} className="grid grid-cols-12 gap-1 items-center min-w-0">
+                <div className="col-span-5 flex items-center gap-1 min-w-0">
                   <Input
-                    className="h-8 text-xs flex-1"
+                    className="h-8 text-xs flex-1 min-w-0"
                     placeholder="Description"
                     value={item.description}
                     onChange={e => updateLineItem(index, 'description', e.target.value)}
@@ -614,14 +614,14 @@ export function InvoiceForm({
                   />
                 </div>
                 <Input
-                  className="col-span-2 h-8 text-xs"
+                  className="col-span-2 h-8 text-xs min-w-0"
                   type="number"
                   placeholder="Qty"
                   value={item.quantity}
                   onChange={e => updateLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
                 />
                 <Input
-                  className="col-span-3 h-8 text-xs"
+                  className="col-span-3 h-8 text-xs min-w-0"
                   type="number"
                   step="0.01"
                   placeholder="Price"
