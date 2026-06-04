@@ -51,9 +51,9 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               active?.variant === 'destructive' && 'border-destructive/35 text-destructive'
             )}
           >
-            <span className="flex min-w-0 items-center gap-2">
+            <span className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
               {ActiveIcon && <ActiveIcon className={cn('h-4 w-4 shrink-0', active?.featureColor)} />}
-              <span className="truncate">{active?.label ?? 'Menu'}</span>
+              <span className="block min-w-0 truncate">{active?.label ?? 'Menu'}</span>
             </span>
             <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           </button>
