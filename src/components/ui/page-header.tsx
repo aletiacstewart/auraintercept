@@ -66,10 +66,10 @@ export function PageHeader({
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="relative">
+    <div className={cn("min-w-0 space-y-3 overflow-hidden", className)}>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-2.5">
+          <div className="relative shrink-0">
             {/* Round container with breathing animation + cyber neon ring */}
             <div className={cn(
               "w-9 h-9 rounded-full flex items-center justify-center transition-all",
@@ -87,16 +87,20 @@ export function PageHeader({
               />
             )}
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h1 className={cn("text-lg font-bold", colorClasses.text)}>{title}</h1>
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              <h1 className={cn("min-w-0 break-words text-lg font-bold leading-tight", colorClasses.text)}>{title}</h1>
               {badge}
               <VoiceStatusIndicator size="sm" />
             </div>
-            <p className="text-xs text-white">{description}</p>
+            <p className="mt-1 text-xs leading-relaxed text-white break-words">{description}</p>
           </div>
         </div>
-        {action}
+        {action && (
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+            {action}
+          </div>
+        )}
       </div>
       
       {/* Inline Ask Aura Bar */}
