@@ -689,19 +689,19 @@ export default function Subscription() {
                       <th className="text-left py-2.5 px-4 font-semibold text-card-foreground text-sm">Feature</th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Core</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$697/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$697</span> <span className="text-primary font-semibold">$497</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
                         <div className="text-primary">Boost</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,097/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,097</span> <span className="text-primary font-semibold">$897</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Pro</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$1,997/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,997</span> <span className="text-primary font-semibold">$1,797</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Elite</div>
-                        <div className="text-[10px] font-normal text-muted-foreground">$3,497/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$3,497</span> <span className="text-primary font-semibold">$3,097</span>/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -756,7 +756,13 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Onboarding Fee (one-time, due at start of 90-Day Live Trial): Core $349 · Boost $549 · Pro $999 · Elite $1,749</span>
+                <span className="text-muted-foreground">
+                  Onboarding Fee (one-time, due at start of 90-Day Live Trial) — <span className="text-primary font-semibold">Launch Pricing:</span>{' '}
+                  Core <span className="line-through">$349</span> <span className="text-foreground font-semibold">$249</span> ·{' '}
+                  Boost <span className="line-through">$549</span> <span className="text-foreground font-semibold">$449</span> ·{' '}
+                  Pro <span className="line-through">$999</span> <span className="text-foreground font-semibold">$899</span> ·{' '}
+                  Elite <span className="line-through">$1,749</span> <span className="text-foreground font-semibold">$1,549</span>
+                </span>
               </div>
             </div>
           </CardContent>
@@ -806,7 +812,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                Core ($697/mo) includes 8 AI agents ideal for solo operators and restaurants. Boost ($1,097/mo) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro ($1,997/mo) adds campaign, outreach, and social media. Elite ($3,497/mo) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
+                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
               </p>
             </div>
             <div>
