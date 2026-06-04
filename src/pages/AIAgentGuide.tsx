@@ -18,49 +18,49 @@ const QUICK_REFERENCE_DATA = [
     agent: 'Booking Agent', 
     requires: ['AI Receptionist'], 
     tier: 'Aura Core', 
-    cost: '$1,097/mo', 
+    cost: '$897/mo (was $1,097)', 
     notes: 'Enables online booking' 
   },
   { 
     agent: 'ETA Agent', 
     requires: ['Dispatch/GPS Console', 'Route Agent'], 
     tier: 'Aura Boost', 
-    cost: '$1,097/mo', 
+    cost: '$897/mo (was $1,097)', 
     notes: 'Full field ops chain' 
   },
   { 
     agent: 'Invoice Agent', 
     requires: ['Quoting Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,497/mo', 
+    cost: '$3,097/mo (was $3,497)', 
     notes: 'Billing automation' 
   },
   { 
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,497/mo', 
+    cost: '$3,097/mo (was $3,497)', 
     notes: 'Full analytics suite' 
   },
   { 
     agent: 'Social Scheduler Agent', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,997/mo', 
+    cost: '$1,797/mo (was $1,997)', 
     notes: 'Social media automation' 
   },
   { 
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,497/mo', 
+    cost: '$3,097/mo (was $3,497)', 
     notes: 'KPI tracking' 
   },
   { 
     agent: 'Social Analytics', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,997/mo', 
+    cost: '$1,797/mo (was $1,997)', 
     notes: 'Engagement metrics' 
   },
 ];
