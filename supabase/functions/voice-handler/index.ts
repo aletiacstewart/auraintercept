@@ -115,6 +115,58 @@ function buildSWMLDocument(
     if (svc.name) hints.push(svc.name);
   }
 
+  // Language config — when company supports Spanish, register both English and Spanish
+  // SignalWire's AI will auto-switch based on the caller's spoken language.
+  const defaultLanguage: string = company?.default_language || 'en';
+  const supportedLanguages: string[] = Array.isArray(company?.supported_languages) && company.supported_languages.length
+    ? company.supported_languages
+    : [defaultLanguage === 'auto' ? 'en' : defaultLanguage];
+  const includeSpanish = supportedLanguages.includes('es') || defaultLanguage === 'es' || defaultLanguage === 'auto';
+  const languages: Array<Record<string, unknown>> = [];
+  // Order matters — first language is the default.
+  if (defaultLanguage === 'es') {
+    languages.push({
+      name: 'Spanish',
+      code: 'es-ES',
+      voice,
+      speech_fillers: ['eh', 'mmm'],
+      function_fillers: ['un momento', 'permítame revisar eso', 'enseguida'],
+    });
+    languages.push({
+      name: 'English',
+      code: 'en-US',
+      voice,
+      speech_fillers: ['um', 'uh'],
+      function_fillers: ['one moment', 'let me check on that', 'just a moment'],
+    });
+  } else {
+    languages.push({
+      name: 'English',
+      code: 'en-US',
+      voice,
+      speech_fillers: ['um', 'uh'],
+      function_fillers: ['one moment', 'let me check on that', 'just a moment'],
+    });
+    if (includeSpanish) {
+      languages.push({
+        name: 'Spanish',
+        code: 'es-ES',
+        voice,
+        speech_fillers: ['eh', 'mmm'],
+        function_fillers: ['un momento', 'permítame revisar eso', 'enseguida'],
+      });
+    }
+  }
+
+  // Inject a language directive into the system prompt so the AI honors caller language.
+  const languagePromptAddon = defaultLanguage === 'auto' || includeSpanish
+    ? `\n\nLANGUAGE: Detect the caller's language from their first words. If they speak Spanish, respond in natural Spanish. Otherwise respond in English. Stay in the detected language for the rest of the call.`
+    : '';
+  const finalSystemPrompt = systemPrompt + languagePromptAddon;
+  const localizedGreeting = defaultLanguage === 'es'
+    ? (company?.ai_voice_greeting_es || `Gracias por llamar a ${companyName}. ¿En qué puedo ayudarle hoy?`)
+    : greeting;
+
   return {
     version: "1.0.0",
     sections: {
@@ -123,7 +175,7 @@ function buildSWMLDocument(
         {
           ai: {
             prompt: {
-              text: systemPrompt,
+              text: finalSystemPrompt,
               temperature: 0.7,
             },
             post_prompt: {
@@ -131,7 +183,7 @@ function buildSWMLDocument(
             },
             post_prompt_url: postPromptUrl,
             params: {
-              static_greeting: greeting,
+              static_greeting: localizedGreeting,
               swaig_allow_swml: true,
               end_of_speech_timeout: 4000,
               attention_timeout: 30000,
@@ -139,15 +191,7 @@ function buildSWMLDocument(
               barge_confidence: 0.9,
               interruption_threshold: 200,
             },
-            languages: [
-              {
-                name: "English",
-                code: "en-US",
-                voice,
-                speech_fillers: ["um", "uh"],
-                function_fillers: ["one moment", "let me check on that", "just a moment"],
-              },
-            ],
+            languages,
             hints,
             SWAIG: {
               defaults: {
