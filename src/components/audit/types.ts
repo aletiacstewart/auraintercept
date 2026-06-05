@@ -269,7 +269,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   ELITE: {
     tier: 'ELITE',
     label: 'Aura Elite',
-    price: '$3,097/mo (Launch Pricing — was $3,497)',
+    price: '$2,997/mo (Launch Pricing — was $3,997)',
     description: 'Full 24-agent suite — adds Billing (quotes, invoices, inventory) and full Reports for large teams & enterprise operations.',
     keyFeatures: [
       'Everything in Pro, plus:',

@@ -118,9 +118,9 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
   aura_elite: {
     id: 'aura_elite',
     name: 'Aura Elite',
-    price: 3097,
-    originalPrice: 3497,
-    annualPrice: 30970,
+    price: 2997,
+    originalPrice: 3997,
+    annualPrice: 29970,
     annualSavings: 6194,
     implementationFee: 1549,
     originalImplementationFee: 1749,

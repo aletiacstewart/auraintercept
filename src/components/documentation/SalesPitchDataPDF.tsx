@@ -556,13 +556,13 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Elite</Text>
-              <Text style={styles.tierPrice}>$3,097/mo</Text>
+              <Text style={styles.tierPrice}>$2,997/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Full Suite, Enterprise Operations</Text>
             <Text style={styles.tierBullet}>- All Pro benefits: +$10,000</Text>
             <Text style={styles.tierBullet}>- Analytics-driven decisions: +$3,000</Text>
             <Text style={styles.tierBullet}>- Enterprise operations coordination: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$3,097</Text>
+            <Text style={styles.tierBullet}>- Cost: -$2,997</Text>
             <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$13,003/mo</Text>
           </View>
         </View>
@@ -630,7 +630,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$3,097</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$2,997</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
@@ -802,7 +802,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Elite (Enterprise)</Text>
-          <Text style={styles.tierPrice}>$3,097/mo</Text>
+          <Text style={styles.tierPrice}>$2,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Large service teams, enterprise operations</Text>
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>

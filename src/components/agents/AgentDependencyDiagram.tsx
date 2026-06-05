@@ -76,7 +76,7 @@ flowchart TB
         Quoting["💼 Quoting Agent"]
     end
 
-    subgraph ELITE["🟡 ELITE — $3,097/mo (was $3,497)"]
+    subgraph ELITE["🟡 ELITE — $2,997/mo (was $3,997)"]
         direction TB
         Invoice["💳 Invoice Agent"]
         Inventory["📦 Inventory Agent"]
@@ -166,7 +166,7 @@ flowchart TB
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-card-foreground">Elite ($3,097/mo · was $3,497)</span>
+            <span className="text-sm text-card-foreground">Elite ($2,997/mo · was $3,997)</span>
           </div>
         </div>
       </CardContent>

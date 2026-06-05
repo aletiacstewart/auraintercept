@@ -1034,12 +1034,12 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,497</span>
-                  <span className="text-3xl font-bold text-amber-400">$3,097</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,997</span>
+                  <span className="text-3xl font-bold text-amber-400">$2,997</span>
                   <span className="text-white text-sm">/month</span>
                   <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$30,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$29,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>

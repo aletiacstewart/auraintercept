@@ -538,7 +538,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Elite - $3,097/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $2,997/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 10 AI Operatives suite (24 underlying specialist agents) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}

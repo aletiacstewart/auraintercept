@@ -32,14 +32,14 @@ const QUICK_REFERENCE_DATA = [
     agent: 'Invoice Agent', 
     requires: ['Quoting Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$2,997/mo (was $3,997)', 
     notes: 'Billing automation' 
   },
   { 
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$2,997/mo (was $3,997)', 
     notes: 'Full analytics suite' 
   },
   { 
@@ -53,7 +53,7 @@ const QUICK_REFERENCE_DATA = [
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$2,997/mo (was $3,997)', 
     notes: 'KPI tracking' 
   },
   { 

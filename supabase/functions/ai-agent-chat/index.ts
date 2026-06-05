@@ -3359,7 +3359,7 @@ serve(async (req) => {
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
       ],
-      // Aura Elite ($3,097/mo · $1,549 onboarding — Launch Pricing, was $3,497 + $1,749): All 24 agents (10 operative groups) + enterprise features
+      // Aura Elite ($2,997/mo · $1,549 onboarding — Launch Pricing, was $3,997 + $1,749): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations

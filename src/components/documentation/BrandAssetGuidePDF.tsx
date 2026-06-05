@@ -515,7 +515,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
               color="#f59e0b" 
               name="Aura Elite Gold" 
               hex="#f59e0b" 
-              usage="Aura Elite tier ($3,097/mo)"
+              usage="Aura Elite tier ($2,997/mo)"
             />
           </View>
         </View>
@@ -580,7 +580,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         </View>
         <View style={{ marginBottom: 0 }}>
           <Text style={styles.fontName}>Monospace: JetBrains Mono</Text>
-          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$897-$3,097/month</Text>
+          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$897-$2,997/month</Text>
           <Text style={styles.fontMeta}>Weights: 400 (Regular), 500 (Medium){'\n'}Use for: Code, data, pricing, technical specs</Text>
         </View>
       </View>

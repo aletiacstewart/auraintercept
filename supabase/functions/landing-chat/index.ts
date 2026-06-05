@@ -35,7 +35,7 @@ LAUNCH PRICING is active — quote the sale price first, then mention the origin
 - Aura Core ($497/mo · $249 onboarding — Launch Pricing, was $697 + $349): 8 Smart AI Agents (AI Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing). 3 Consoles (Customer Portal, Outreach & Sales, Creative & Web). 10 employees. Best for solo operators, salons, restaurants.
 - Aura Boost ($897/mo · $449 onboarding — Launch Pricing, was $1,097 + $549): 12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In). 5 Consoles (adds Field Operations, Social Media). 25 employees. Best for HVAC, plumbing, field service companies.
 - Aura Pro ($1,797/mo · $899 onboarding — Launch Pricing, was $1,997 + $999): 16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler Agent, Social Analytics). 5 Consoles. 50 employees. White-label branding. Best for growing companies.
-- Aura Elite ($3,097/mo · $1,549 onboarding — Launch Pricing, was $3,497 + $1,749): All 24 Smart AI Agents (adds Invoice, Inventory, Insights, Performance, Revenue, Forecast). All 7 Consoles + AI Operatives Hub. Unlimited employees. Best for large service teams and enterprise operations.
+- Aura Elite ($2,997/mo · $1,549 onboarding — Launch Pricing, was $3,997 + $1,749): All 24 Smart AI Agents (adds Invoice, Inventory, Insights, Performance, Revenue, Forecast). All 7 Consoles + AI Operatives Hub. Unlimited employees. Best for large service teams and enterprise operations.
 - Annual billing: Core $6,970/yr, Boost $10,970/yr, Pro $19,970/yr, Elite $34,970/yr
 - Additional employees: $25/mo per 10 employees beyond included amount
 
