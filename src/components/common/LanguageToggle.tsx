@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const SCOPE_HINT = 'Translates marketing pages. Full app translation coming soon.';
+const SCOPE_HINT = 'Switch the entire platform between English and Spanish.';
 
 interface LanguageToggleProps {
   variant?: 'default' | 'ghost' | 'compact';

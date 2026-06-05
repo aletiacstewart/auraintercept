@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import logo from '@/assets/aura-intercept-logo.png';
 import { useTranslation } from 'react-i18next';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
 
 interface PublicHeaderProps {
   showHomeLink?: boolean;
@@ -36,6 +37,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-3">
+          <LanguageToggle variant="ghost" />
           {showHomeLink && (
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/')}>
               <Home className="w-4 h-4 mr-1" />
