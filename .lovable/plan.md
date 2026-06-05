@@ -1,70 +1,107 @@
-# Plan: Console Mobile + Industry Workflow Fixes
 
-Five connected issues from the screenshots:
+# Launch Readiness Sweep
 
-1. The console tab bar (Home / Aura Live / Quote / Invoice / Lead / Appts / Inventory…) gets cut off on the right edge with no visual cue that more tabs exist.
-2. The embedded forms (Create Invoice, Create Quote, Create Lead) overflow the mobile viewport — fields and buttons clip off the right side.
-3. Aura Intercept (industry `saas_platform`) is showing real‑estate workflow cards (Listing → Marketing → Open House, Commission Follow‑Up). Same bug exists for every other booking‑cluster industry that isn't real estate: salon, beauty, fitness, professional services, personal assistant.
-4. The top marketing/site header on mobile collides — the logo text, "Sign In", and "90‑Day Live Trial" overlap each other. The header needs to collapse into a single dropdown (hamburger) menu on mobile that contains every nav link and CTA.
-5. Per‑industry dashboards, consoles, and sidebars need to be audited end‑to‑end so each industry only sees content/labels/widgets that belong to it.
+One large pass covering docs, pricing, onboarding, audit page, AI agents, 3rd-party integrations (live smoke tests), and a clean demo reseed. Launch Pricing stays ACTIVE.
 
-Root cause for #3 — `src/lib/industryWorkflows.ts` `CLUSTER_WORKFLOWS.booking` is hard‑coded to real‑estate copy and only `restaurants` has an `INDUSTRY_WORKFLOWS` override. Every other booking industry inherits the real‑estate cards.
+## Phase 1 — Source-of-truth reconciliation (must do first)
 
-## 1. Industry workflows — correct per‑vertical content
+Two contradictions in project memory must be resolved before docs are touched, otherwise every fix will be wrong somewhere:
 
-Edit `src/lib/industryWorkflows.ts`:
+1. **Trial length.** Core rule says *90-Day Live Trial*. Memory `product/trial-period-standard` says *60-Day*. Code (`useDemoSession`, signup, progress bar) and docs mix both. I will standardize on **90-day** (matches Core rule + current signup), update the 60-day memory file, and fix every stale string.
+2. **Demo registry size.** Core list says *v3 / 54 accounts / 18 industries*; the actual `demo-account-registry` file is *v6 / 78 accounts / 26 industries*. I will refresh the index to v6/78/26 to match `industry_template_packs` and the seeder.
 
-- Replace the real‑estate‑flavored `CLUSTER_WORKFLOWS.booking` default with a generic Lead → Appointment → Close / Reminder / Follow‑Up set (uses `{{appointment}}` terminology so it reads "Booking", "Showing", "Class", "Session", etc.).
-- Move the existing real‑estate cards into `INDUSTRY_WORKFLOWS.real_estate` so they only show for real‑estate companies.
-- Add explicit `INDUSTRY_WORKFLOWS` entries for `saas_platform`, `salon`, `beauty_wellness`, `fitness`, `professional`, `personal_assistant`.
+Also reconcile 3rd-party policy copy: memory currently has BOTH a "Bundled (Resend/Tavily/SignalWire/ElevenLabs)" disclaimer file AND the newer "customer brings their own account, billed direct" core rule. The core rule wins — I'll rewrite `legal/third-party-fee-disclaimer` and scrub any "bundled / overage / absorbed" copy from UI + PDFs.
 
-Verify by loading Aura Intercept (saas_platform) and a salon demo account — neither should see "Listing → Marketing → Open House" or "Commission Follow‑Up".
+## Phase 2 — Pricing, fees, onboarding docs
 
-## 2. Mobile console tab nav — visible "more tabs" affordance
+- Audit every surface that prints a price/fee against `src/lib/launchPricing.ts` (single source of truth): landing pricing, `/audit` checklist PDF, `documentationConfig.ts` (`implementationFee`), Stripe checkout, signup tier cards, plan comparison, outreach toolkit PDFs, blog/marketing JSON.
+- Verify every shown price renders as: original strikethrough + sale + "Launch Pricing" chip. Onboarding = 50% of sale rounded.
+- Verify Stripe price IDs: new `Tee*` IDs active, legacy `Tdvk*` retained only for grandfathered subs (no new checkout uses them).
+- Onboarding flow review: `OnboardingForm` (Fast Start vs Full), `CompanyOnboardingForm`, `FastStartWizard`, `LaunchProgressCard`, `useLaunchProgress`, `useSetupProgress`. Confirm:
+  - Tier + industry persisted correctly (per `signup-vs-demo-isolation`).
+  - 90-day trial start sets `trial_ends_at = now()+90 days`.
+  - Onboarding fee charged at trial start; first 30 days = onboarding window copy is consistent.
+  - 10DLC / A2P legal step present and accurate now that SignalWire SMS is live.
+  - Industry pack auto-seed trigger fires (KB + FAQs).
 
-Edit `src/components/ai/chat/MobileTabNav.tsx`:
+## Phase 3 — /audit page + downloadable PDF
 
-- Wrap the scroller in a relative container, add a right‑edge gradient fade and a small chevron indicator that hides itself once scrolled to the end (track `scroll` + `scrollWidth`).
-- Add `snap-x snap-mandatory` to the scroller and `snap-start` to each tab.
-- Auto‑scroll the active tab into view via `scrollIntoView({ inline: 'center' })` on `activeTab` change.
-- Keep existing tab content, sizing, and animations untouched.
+- Review `pages/OpportunityAudit.tsx`, `AuditReport.tsx`, `components/audit/*`, AuditChecklistPDF generator.
+- Update pricing table, onboarding fee, trial length, feature list per tier (Core 8 / Boost 12 / Pro 18 / Elite 24 agents).
+- Confirm public access (no auth wall) per `power-user-pages-restricted-v1`.
+- Regenerate PDF, visually QA each page (pdftoppm → inspect), fix overlaps/clipping.
+- Verify lead capture from `/audit` writes to `leads` table with `service_interest='audit'`.
 
-## 3. Embedded forms — kill mobile overflow
+## Phase 4 — Documentation sweep
 
-Cause: `grid-cols-2` with no mobile fallback plus inputs that don't shrink.
+Single source = `src/lib/documentationConfig.ts` + `src/lib/howToUseContent.ts` + `src/lib/helpSystemPrompt.ts` + industry help content libs.
 
-- In `src/components/billing/forms/InvoiceForm.tsx`, `BusinessQuoteForm.tsx`, sibling forms under `src/components/billing/forms/`, and the lead form(s) under `src/components/leads/`: change every field‑row `grid grid-cols-2 gap-*` to `grid grid-cols-1 sm:grid-cols-2 gap-*`. Add `min-w-0 w-full` to inputs. Action button rows become `flex flex-wrap gap-2`.
-- In `BusinessOpsAgentConsole.tsx`, the embedded manager wrappers (`<div className="rounded-lg p-4">` around `<QuotesManager/>`, `<InvoicesManager/>`, etc.) get `min-w-0 overflow-x-hidden`.
-- Inner table rows in `QuotesManager` / `InvoicesManager` summary header keep breakpoints; children get `min-w-0`.
+- Reconcile every prices/fees/feature/tier list against Phase 1 truths.
+- Update outreach toolkit PDFs (7 components) and promo video scripts.
+- Update marketing locales (`src/locales/{en,es}/marketing.json`) — CTAs say "90-Day Live Trial".
+- Scrub "bundled/overage/absorbed" language; replace with customer-pays-provider-directly copy.
 
-## 4. Top page header — single mobile dropdown menu
+## Phase 5 — Features & AI Agents functional audit
 
-Convert the marketing/site header (and any console page header that exposes multiple buttons) into a single dropdown on small screens.
+- 24-agent / 10-operative model: verify each agent has a working system prompt + edge function path, tier-gated correctly (Core 8 / Boost 12 / Pro 18 / Elite 24), and renders in the right Operative Hub tab.
+- Spot-check console pages we recently fixed: Business, Analytics, Marketing & Sales, Social, Field Ops, Customer Portal, Specialist — confirm nav dropdowns + panels render real data, no mock arrays.
+- Field Ops + Technician PWA: job assignment, dispatch, click-to-call.
+- Smart Website: chat widget install (3 methods), public RLS read, blog management isolation.
+- Content Engine, Aura Command Center, conversational intelligence modal.
+- Run `vitest` for hook/component test suites; run security linter; review console + network errors at `/`.
 
-- Target component(s): the public site header used by `Index.tsx`, `ForBusiness.tsx`, `Contact.tsx`, `Help.tsx`, `PlatformGuides.tsx`, `Auth.tsx`, and any other public pages — locate by searching for "Sign In" + "90‑Day Live Trial".
-- Below `md`: collapse logo into icon only, then render a single hamburger `Button` that opens a shadcn `DropdownMenu` (or `Sheet`) containing every nav link, "Sign In", and "Start 90‑Day Live Trial" CTA.
-- ≥ `md`: keep the current horizontal layout untouched.
-- Apply the same rule to console `PageHeader` `action` slots that render 2+ buttons (HowToUse + InstallOnPhone + Manage Agents, etc.) — wrap them in a shared `<HeaderActions />` helper that renders inline on `md+` and collapses into a `DropdownMenu` triangle/kebab below `md`.
+## Phase 6 — 3rd-party integrations LIVE smoke tests
 
-## 5. Per‑industry dashboards / consoles / sidebars audit
+Each tested against Aura Intercept tenant (`04c57cbe…`) credentials. Captured results documented in chat.
 
-Sweep every console under `src/pages/ai-consoles/*` and `src/components/billing/*Console.tsx` plus the dashboard sidebar groups in `src/components/dashboard/AppSidebar.tsx`:
+| Provider | Test | Function |
+|---|---|---|
+| SignalWire SMS | send test SMS to a staff number | `send-sms` / keyword auto-responder |
+| SignalWire Voice | place test inbound to AI receptionist | SWML voice flow |
+| ElevenLabs | trigger voice agent test call | client-tools webhook |
+| Resend | send test transactional email | `send-transactional-email` |
+| Tavily | run a web search query | `tavily-search` |
+| Stripe | create $1 test PaymentIntent against current Tee* price | `stripe-checkout` |
+| Google Calendar | OAuth + event create/sync | `google-calendar-*` |
+| Push notifications | send test push to a registered sub | `send-push` |
+| Social (manual + OAuth) | dry-run publish to connected accounts | `social-publish` |
 
-- Confirm every list of workflow chains, quick actions, KPI cards, empty‑state copy, and side‑nav items is sourced from `useIndustryPack()` (or `getBusinessWorkflows`, `getIndustryEmptyState`, etc.) — never hard‑coded.
-- Where a console renders a sub‑surface that doesn't apply to the active industry (e.g. `Inventory` for `personal_assistant`, `Dispatch Map` for `saas_platform`), gate it through `pack.console_visibility` and `usesQuotes/usesLeads/usesInventory/usesCompaniesB2B/usesAppointments`. Already partially wired in `BusinessOpsAgentConsole` — extend the same gating to: Field Ops Console, Customer Console, Marketing/Outreach Console, Analytics tabs, and the dashboard sidebar (hide groups whose only routes are turned off for the pack).
-- Sidebar labels and icons that today say "Jobs / Quotes / Invoices" should use `pack.terminology.job / appointment / customer` (already done in some places — confirm parity across all groups).
-- Add a single helper `getIndustryNavGroups(pack)` if needed to centralize sidebar filtering.
+For each: confirm env var present, edge function deployed, success response, log row written. Flag any failure with concrete fix.
 
-Verify by switching between Aura Intercept (saas_platform), Demo Restaurants, a real‑estate demo, and a trades demo — each should display a meaningfully different sidebar, console workflow set, and form labels.
+## Phase 7 — Clear mock data + reseed demos
+
+Per your scope: only `is_demo=true` companies (and their data) — Aura Intercept tenant + any real signups are untouched.
+
+1. Run a migration that deletes all rows tied to `companies.is_demo=true` (appointments, leads, quotes, invoices, customers, blogs, marketing campaigns, agent configs, KB docs, FAQs, inventory, etc.), then deletes the companies themselves and their demo auth users.
+2. Run `seed-demo-accounts-v2` to reseed 78 accounts (26 industries × 3 roles). Verify:
+   - Each industry sits at curated tier.
+   - AI agents auto-activated per tier + pack extras.
+   - KB/FAQs seeded by `trg_seed_industry_pack_kb`.
+   - Tier-appropriate quotes/invoices created (Pro/Elite only).
+   - Universal password `aidemo*!` works for one sample admin/employee/customer.
+3. Update `mem://platform-operations/demo-account-registry` if any drift found; refresh index entry.
+
+## Phase 8 — Final launch checklist + verification
+
+- Run security scan + linter, fix any new high/critical.
+- Verify all canonical URLs use `https://auraintercept.ai` (no Lovable previews) per Published Domain Standard.
+- Confirm SEO basics on landing + `/audit` + pricing (title <60, desc <160, single H1, sitemap entries).
+- Smoke test signup → onboarding fee → 90-day trial → dashboard → one agent action end-to-end as a brand-new real (non-demo) user.
+- Produce a short "Launch Readiness Report" in chat: ✅/⚠️ per area + any remaining manual steps the user must do (e.g. provider-side billing top-ups, DNS, Google verification).
+
+---
 
 ## Technical notes
 
-- `useIndustryPack()` already resolves the company's pack; #1, #4 (console action collapsing only), and the #5 sweep all lean on it.
-- Aura Intercept is `industry_vertical = 'saas_platform'`, with a published `industry_template_packs` row (cluster `booking`). No DB migration needed.
-- Tab nav, dropdown header, and form grid changes are presentation only; no new dependencies — `DropdownMenu` and `Sheet` already exist in `components/ui`.
+- Migrations: one for demo wipe (DELETE only — no schema change), reseed is an edge function call, not a migration.
+- Hard rules respected: don't touch `auth` schema directly; deletes go through service-role inside the seeder edge function where possible; for direct deletes, use Supabase migrations.
+- Memory updates required: `product/trial-period-standard` (60→90), index entry for demo registry (v3/54/18 → v6/78/26), `legal/third-party-fee-disclaimer` (remove bundled language), index core line "60-Day" if any.
+- Any pricing string found hardcoded outside `launchPricing.ts` / `documentationConfig.ts` is replaced with a call to the helpers (`getMonthlyPrice`, `getOnboardingPrice`, `<SalePrice>`).
+- No new dependencies expected.
 
-## Out of scope
+## Out of scope (will not touch)
 
-- No new console tabs, no console reorganization.
-- No desktop layout changes.
-- No edits to Stripe, pricing, or the Launch Pricing work.
+- Real customer companies (`is_demo=false`).
+- Aura Intercept tenant users beyond what `seed-aura-intercept` already manages.
+- Schema migrations to add/remove tables.
+- New features — only verification + reconciliation + reseed.
