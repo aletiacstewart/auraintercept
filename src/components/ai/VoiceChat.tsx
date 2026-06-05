@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,8 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   testMode = false,
 }) => {
   const { toast } = useToast();
+  const { i18n } = useTranslation();
+  const voiceLanguage: 'en' | 'es' = i18n.language?.startsWith('es') ? 'es' : 'en';
 
   const [isConnecting, setIsConnecting] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -209,15 +212,19 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       await conversation.startSession({
         agentId,
         connectionType: "webrtc",
+        overrides: {
+          agent: { language: voiceLanguage },
+        },
       });
 
       const today = new Date();
       const formatted = today.toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
       });
-      conversation.sendContextualUpdate(
-        `Today's date is ${formatted} (${today.toISOString().split('T')[0]}). IMPORTANT: Before using any tool, always say a brief filler like 'Let me check on that for you' or 'One moment while I look that up' so the caller knows you're still here. Never go silent.`
-      );
+      const fillerNote = voiceLanguage === 'es'
+        ? `La fecha de hoy es ${formatted} (${today.toISOString().split('T')[0]}). IMPORTANTE: Antes de usar cualquier herramienta, di siempre un breve relleno como "Permítame revisar eso" o "Un momento mientras lo busco" para que la persona sepa que sigues ahí. Nunca te quedes en silencio.`
+        : `Today's date is ${formatted} (${today.toISOString().split('T')[0]}). IMPORTANT: Before using any tool, always say a brief filler like 'Let me check on that for you' or 'One moment while I look that up' so the caller knows you're still here. Never go silent.`;
+      conversation.sendContextualUpdate(fillerNote);
       console.log("[VoiceChat] Sent date context:", formatted);
     } catch (e) {
       console.error("[VoiceChat] Start failed:", e);

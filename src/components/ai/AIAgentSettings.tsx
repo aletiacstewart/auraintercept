@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles, Phone, MessageCircle, FileText } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import { VoiceCloningCard } from './VoiceCloningCard';
 import { TTSProviderSettings } from './TTSProviderSettings';
 import { AIContentButton, ContentType } from './AIContentButton';
@@ -188,6 +189,10 @@ export const AIAgentSettings = () => {
   const [followupCallScript, setFollowupCallScript] = useState('');
   const [defaultOutboundScript, setDefaultOutboundScript] = useState('');
 
+  // Language preferences
+  const [defaultLanguage, setDefaultLanguage] = useState<'en' | 'es' | 'auto'>('en');
+  const [spanishEnabled, setSpanishEnabled] = useState(false);
+
   // Fetch company settings
   const { data: company, isLoading: isLoadingCompany } = useQuery({
     queryKey: ['company-ai-settings', companyId],
@@ -195,12 +200,12 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script')
+        .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages' as any)
         .eq('id', companyId)
         .single();
 
       if (error) throw error;
-      return data;
+      return data as any;
     },
     enabled: !!companyId,
   });
@@ -233,6 +238,10 @@ export const AIAgentSettings = () => {
       setReminderCallScript((company as any).reminder_call_script || '');
       setFollowupCallScript((company as any).followup_call_script || '');
       setDefaultOutboundScript((company as any).default_outbound_script || '');
+      const dl = (company as any).default_language;
+      if (dl === 'en' || dl === 'es' || dl === 'auto') setDefaultLanguage(dl);
+      const sl = (company as any).supported_languages;
+      setSpanishEnabled(Array.isArray(sl) ? sl.includes('es') : false);
     }
   }, [company]);
 
@@ -273,6 +282,10 @@ export const AIAgentSettings = () => {
           reminder_call_script: reminderCallScript || null,
           followup_call_script: followupCallScript || null,
           default_outbound_script: defaultOutboundScript || null,
+          default_language: defaultLanguage,
+          supported_languages: spanishEnabled || defaultLanguage !== 'en'
+            ? Array.from(new Set(['en', 'es']))
+            : ['en'],
         } as any)
         .eq('id', companyId);
 
@@ -800,6 +813,51 @@ export const AIAgentSettings = () => {
             </p>
           </div>
 
+        </CardContent>
+      </Card>
+
+      {/* Language Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Languages className="h-5 w-5" />
+            Languages
+          </CardTitle>
+          <CardDescription>
+            Choose the default language for AI chat and voice. "Auto" lets Aura detect the customer's language from their first message or words.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Default Language</Label>
+            <Select value={defaultLanguage} onValueChange={(v: 'en' | 'es' | 'auto') => setDefaultLanguage(v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Español (Spanish)</SelectItem>
+                <SelectItem value="auto">Auto-detect (English + Spanish)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Applies to chat, phone calls, and the in-app Aura assistant. Auto-detect lets the AI switch between English and Spanish based on what the customer says first.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 rounded-md border border-border bg-muted/40 p-3">
+            <input
+              id="spanish-enabled"
+              type="checkbox"
+              className="mt-1 h-4 w-4"
+              checked={spanishEnabled || defaultLanguage !== 'en'}
+              disabled={defaultLanguage !== 'en'}
+              onChange={(e) => setSpanishEnabled(e.target.checked)}
+            />
+            <div className="space-y-1">
+              <Label htmlFor="spanish-enabled" className="cursor-pointer">Enable Spanish as a secondary language</Label>
+              <p className="text-xs text-muted-foreground">
+                Allows the AI to switch to Spanish when a customer writes or speaks Spanish, even with English as the default. For phone calls, also add Spanish to your ElevenLabs agent's "Additional Languages" so the voice model is loaded.
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

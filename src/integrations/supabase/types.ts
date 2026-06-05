@@ -991,6 +991,7 @@ export type Database = {
           de_escalation_manager_contact: string | null
           default_call_enabled: boolean
           default_email_enabled: boolean
+          default_language: string
           default_outbound_script: string | null
           default_sms_enabled: boolean
           demo_email_opt_in: boolean
@@ -1071,6 +1072,7 @@ export type Database = {
           sms_optout_alert_threshold: number | null
           stripe_customer_id: string | null
           subscription_tier: string | null
+          supported_languages: string[]
           supported_modules: Json
           tavily_caps: Json | null
           trial_ends_at: string | null
@@ -1133,6 +1135,7 @@ export type Database = {
           de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
+          default_language?: string
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
           demo_email_opt_in?: boolean
@@ -1213,6 +1216,7 @@ export type Database = {
           sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
+          supported_languages?: string[]
           supported_modules?: Json
           tavily_caps?: Json | null
           trial_ends_at?: string | null
@@ -1275,6 +1279,7 @@ export type Database = {
           de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
+          default_language?: string
           default_outbound_script?: string | null
           default_sms_enabled?: boolean
           demo_email_opt_in?: boolean
@@ -1355,6 +1360,7 @@ export type Database = {
           sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
+          supported_languages?: string[]
           supported_modules?: Json
           tavily_caps?: Json | null
           trial_ends_at?: string | null

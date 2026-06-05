@@ -1,0 +1,1 @@
+ALTER TABLE public.companies ADD COLUMN IF NOT EXISTS default_language TEXT NOT NULL DEFAULT 'en' CHECK (default_language IN ('en','es','auto')); ALTER TABLE public.companies ADD COLUMN IF NOT EXISTS supported_languages TEXT[] NOT NULL DEFAULT ARRAY['en']::text[];
