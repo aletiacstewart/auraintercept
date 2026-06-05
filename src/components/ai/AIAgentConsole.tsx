@@ -32,6 +32,8 @@ import { SMSChat } from './SMSChat';
 import { FeedbackForm } from './FeedbackForm';
 import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
+import { InlineSlotPicker } from '@/components/chat/InlineSlotPicker';
+import { InlineBookingFormCard } from '@/components/chat/InlineBookingFormCard';
 import { QuoteForm, QuoteData } from './QuoteForm';
 import { TrackingData } from './TrackAppointmentForm';
 import { AppointmentTrackingView } from './AppointmentTrackingView';
@@ -840,6 +842,30 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                       agentBgColor={msgAgentInfo?.bgColor}
                       isHandoff={showHandoffIndicator}
                     />
+
+                    {message.role === 'assistant' && message.tool_ui?.kind === 'slot_picker' && (
+                      <div className="mt-2">
+                        <InlineSlotPicker
+                          ui={message.tool_ui}
+                          disabled={isLoading}
+                          onConfirm={(slot) => {
+                            void sendMessage(
+                              `Please book me for ${slot.label} (${slot.service_type}). The selected slot is ${slot.datetime}.`,
+                            );
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {message.role === 'assistant' && message.tool_ui?.kind === 'booking_form_link' && (
+                      <div className="mt-2">
+                        <InlineBookingFormCard
+                          ui={message.tool_ui}
+                          disabled={isLoading}
+                          onOpen={() => setActiveTab('book')}
+                        />
+                      </div>
+                    )}
                   </React.Fragment>
                 );
               })}

@@ -275,7 +275,14 @@ Then present the closest dates with open slots to the customer like:
 "That date is fully booked, but I found availability on:
 - [Day], [Date] — available at [times]
 - [Day], [Date] — available at [times]
-Would any of these work for you?"`,
+Would any of these work for you?"
+
+CRITICAL - VISUAL FALLBACKS (use instead of apologizing in a loop):
+- When the customer wants to book but has NOT given a specific date/time, call offer_slot_picker(service_type) ONCE. The chat will render an interactive calendar. Tell the customer "Tap a time below to confirm." Do NOT also type out the slot times.
+- If create_appointment FAILS, do NOT retry silently and do NOT apologize a second time. Immediately call offer_slot_picker so the customer can pick a slot visually.
+- If create_appointment fails TWICE in the same conversation, OR the industry requires intake fields the customer hasn't provided, call offer_booking_form(reason="...") so the full form opens.
+- If the customer literally asks for a "form", "picker", "calendar", "link", or says "let me pick", call offer_slot_picker (preferred) or offer_booking_form.
+- Never apologize more than once in a row without calling one of these fallback tools.`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
@@ -1307,6 +1314,37 @@ const AGENT_TOOLS: Record<string, any[]> = {
             search_term: { type: 'string', description: 'Optional search term to help find the right link' },
           },
           required: ['category'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'offer_slot_picker',
+        description: 'Post an interactive calendar + time-slot picker in the chat so the customer can tap a slot. Use this when the customer wants to book but has not given a specific time, when check_availability returned multiple slots, or right after the first failed create_appointment attempt instead of apologizing again.',
+        parameters: {
+          type: 'object',
+          properties: {
+            service_type: { type: 'string', description: 'The service the customer wants to book.' },
+            preferred_date: { type: 'string', description: 'YYYY-MM-DD, or "tomorrow"/"today". Defaults to tomorrow when omitted.' },
+            days_to_scan: { type: 'number', description: 'How many days forward to scan if the preferred date has no slots. Defaults to 7.' },
+          },
+          required: ['service_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'offer_booking_form',
+        description: 'Post an in-chat button that opens the full Book tab/form. Use after two failed create_appointment attempts, when the industry requires intake fields the customer has not provided, or when the customer asks for a form/picker/link.',
+        parameters: {
+          type: 'object',
+          properties: {
+            reason: { type: 'string', description: 'One short sentence explaining why the form is being offered. Shown to the customer above the button.' },
+            service_type: { type: 'string', description: 'Pre-select this service in the form if known.' },
+          },
+          required: ['reason'],
         },
       },
     },
@@ -4338,12 +4376,28 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       nextSteps = generateNextSteps(handoffTo, handoffReason);
     }
 
+    // Extract the most recent UI directive from offer_slot_picker / offer_booking_form
+    let toolUi: any = null;
+    for (let i = toolCalls.length - 1; i >= 0; i--) {
+      const tc = toolCalls[i];
+      if (tc.name === 'offer_slot_picker' || tc.name === 'offer_booking_form') {
+        try {
+          const parsed = JSON.parse(tc.result);
+          if (parsed?.ui?.kind) {
+            toolUi = parsed.ui;
+            break;
+          }
+        } catch { /* ignore */ }
+      }
+    }
+
     return new Response(JSON.stringify({
       response: responseText,
       event_type: eventType,
       handoff_to: handoffTo,
       handoff_reason: handoffReason,
       tool_calls: toolCalls,
+      tool_ui: toolUi,
       context_id: contextId,
       next_steps: nextSteps,
     }), {
@@ -4849,6 +4903,89 @@ async function executeAgentTool(
       }
     }
 
+    case 'offer_slot_picker': {
+      console.log('[AI Agent] Offering slot picker with args:', args);
+      const daysToScan = Math.min(Math.max(Number(args.days_to_scan) || 7, 1), 14);
+
+      // Resolve starting date
+      let startDate = new Date();
+      if (args.preferred_date) {
+        const parsed = new Date(args.preferred_date);
+        if (!isNaN(parsed.getTime())) startDate = parsed;
+        else if (String(args.preferred_date).toLowerCase() === 'tomorrow') {
+          startDate.setDate(startDate.getDate() + 1);
+        }
+      } else {
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      const serviceName = args.service_type || 'Standard Service Call / Diagnostic';
+      const slotsByDate: Array<{ date: string; slots: Array<{ datetime: string; time: string; employee_id?: string; employee_name?: string }> }> = [];
+
+      for (let i = 0; i < daysToScan; i++) {
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + i);
+        const dateStr = d.toISOString().split('T')[0];
+        try {
+          const r = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/booking-actions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+              action: 'check_availability',
+              company_id: companyId,
+              service_name: serviceName,
+              date: dateStr,
+            }),
+          });
+          if (!r.ok) continue;
+          const json = await r.json();
+          const slots = (json.available_slots || []).map((s: any) => ({
+            datetime: s.datetime,
+            time: s.start_time,
+            employee_id: s.employee_id,
+            employee_name: s.employee_name,
+          }));
+          if (slots.length > 0) slotsByDate.push({ date: dateStr, slots });
+        } catch (e) {
+          console.warn('[AI Agent] offer_slot_picker scan error for', dateStr, e);
+        }
+        // Stop early once we have 3 days with availability
+        if (slotsByDate.length >= 3) break;
+      }
+
+      const totalSlots = slotsByDate.reduce((acc, d) => acc + d.slots.length, 0);
+      return {
+        success: true,
+        ui: {
+          kind: 'slot_picker',
+          service_type: serviceName,
+          start_date: startDate.toISOString().split('T')[0],
+          days_scanned: daysToScan,
+          dates: slotsByDate,
+        },
+        total_slots: totalSlots,
+        message: totalSlots > 0
+          ? `Posted an interactive calendar with ${totalSlots} available slots across ${slotsByDate.length} day(s). Ask the customer to tap a slot — do not retype the times.`
+          : `No slots in the next ${daysToScan} day(s). Offer the booking form instead.`,
+      };
+    }
+
+    case 'offer_booking_form': {
+      console.log('[AI Agent] Offering booking form with args:', args);
+      return {
+        success: true,
+        ui: {
+          kind: 'booking_form_link',
+          reason: args.reason || 'Open the full booking form to finish scheduling.',
+          service_type: args.service_type || null,
+        },
+        message: 'Posted a button that opens the full booking form. Tell the customer to tap it — do not apologize again.',
+      };
+    }
+
     case 'create_appointment': {
       console.log('[AI Agent] Creating appointment with args:', args);
       
@@ -4974,37 +5111,83 @@ async function executeAgentTool(
 
       const deliveryType = matchedService?.delivery_type || 'in_person_customer';
 
+      // Defensively coerce intake_data: accept object, JSON-string, or null.
+      let normalizedIntake: Record<string, unknown> | null = null;
+      const rawIntake = args.intake_data;
+      if (rawIntake && typeof rawIntake === 'object' && !Array.isArray(rawIntake)) {
+        normalizedIntake = rawIntake as Record<string, unknown>;
+      } else if (typeof rawIntake === 'string') {
+        try {
+          const parsed = JSON.parse(rawIntake);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            normalizedIntake = parsed;
+          }
+        } catch {
+          console.warn('[AI Agent] intake_data was a non-JSON string, dropping:', rawIntake);
+        }
+      }
+
+      const baseInsert = {
+        company_id: companyId,
+        customer_name: args.customer_name,
+        customer_phone: args.customer_phone,
+        customer_email: args.customer_email,
+        customer_address: args.customer_address || null,
+        service_type: args.service_type,
+        datetime: appointmentDatetime,
+        duration_minutes: args.duration_minutes || 60,
+        notes: args.notes || null,
+        status: 'scheduled',
+        employee_id: employeeId,
+        customer_user_id: userId || null,
+        delivery_type: deliveryType,
+      };
+
       // Create the appointment with the properly parsed datetime
-      const { data: appointment, error } = await supabase
+      let { data: appointment, error } = await supabase
         .from('appointments')
-        .insert({
-          company_id: companyId,
-          customer_name: args.customer_name,
-          customer_phone: args.customer_phone,
-          customer_email: args.customer_email,
-          customer_address: args.customer_address || null,
-          service_type: args.service_type,
-          datetime: appointmentDatetime,
-          duration_minutes: args.duration_minutes || 60,
-          notes: args.notes || null,
-          status: 'scheduled',
-          employee_id: employeeId,
-          customer_user_id: userId || null,
-          delivery_type: deliveryType,
-          intake_data:
-            args.intake_data && typeof args.intake_data === 'object' && !Array.isArray(args.intake_data)
-              ? args.intake_data
-              : null,
-        })
+        .insert({ ...baseInsert, intake_data: normalizedIntake })
         .select()
         .single();
 
+      let intakeWarning: string | null = null;
       if (error) {
-        console.error('[AI Agent] Appointment creation error:', error);
-        return { success: false, error: error.message };
+        // Log the full Postgres error so we can see future failures in edge logs.
+        console.error('[AI Agent] Appointment creation error (with intake):', {
+          code: (error as any).code,
+          message: error.message,
+          details: (error as any).details,
+          hint: (error as any).hint,
+          intake_keys: normalizedIntake ? Object.keys(normalizedIntake) : null,
+        });
+
+        const msg = (error.message || '').toLowerCase();
+        const looksIntakeRelated =
+          normalizedIntake && (
+            msg.includes('intake_data') ||
+            msg.includes('jsonb') ||
+            msg.includes('invalid input syntax for type json')
+          );
+
+        if (looksIntakeRelated) {
+          // Retry once without intake_data so the booking still succeeds.
+          const retry = await supabase
+            .from('appointments')
+            .insert({ ...baseInsert, intake_data: null })
+            .select()
+            .single();
+          if (retry.error) {
+            console.error('[AI Agent] Appointment retry-without-intake also failed:', retry.error);
+            return { success: false, error: retry.error.message };
+          }
+          appointment = retry.data;
+          intakeWarning = 'Saved without intake fields — staff will follow up to collect them.';
+        } else {
+          return { success: false, error: error.message };
+        }
       }
 
-      console.log('[AI Agent] Appointment created:', appointment.id);
+      console.log('[AI Agent] Appointment created:', appointment.id, intakeWarning ? '(intake stripped)' : '');
 
       // Create job assignment if employee assigned
       let jobAssignment = null;
@@ -5106,6 +5289,7 @@ async function executeAgentTool(
         appointment_id: appointment.id, 
         employee_id: employeeId,
         job_assignment_id: jobAssignment?.id,
+        intake_warning: intakeWarning,
         message: `Appointment created successfully. Your appointment is pending confirmation. Once accepted by our team, you'll receive a confirmation with all the details.${employeeId ? ' A team member has been assigned and notified.' : ''}` 
       };
     }

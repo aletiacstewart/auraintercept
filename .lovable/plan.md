@@ -1,87 +1,76 @@
-## Goal
-Make the entire Aura platform Spanish-ready using a two-layer translation system: hand-curated react-i18next strings for high-value surfaces + an AI auto-translate fallback for everything else. No DOM-mutating third-party widget. Real `/es` URLs, brand-safe terms, works with PDFs/SMS/email.
 
-## Architecture
+## Problem
 
-### Layer 1 — Curated i18n (react-i18next, already installed)
-Expand the existing 6 JSON namespaces and convert hardcoded strings to `t('key')` on the highest-value surfaces only:
-- Public marketing + auth (landing, pricing, audit, contact, signup, login, legal)
-- Top dashboard chrome (sidebar, header, role nav, command center hero)
-- Billing & subscription pages, trial banners
-- Customer portal (booking, status, receipts)
-- Transactional email/SMS templates (edge-function side)
+In the customer chat, when the AI tries to book it sometimes loops on `create_appointment` and gives up ("intake data not being accepted"). The customer is left with no visual way to pick a date/time. Today the visual `BookingForm` lives only in the separate "Book" tab — never surfaced inside the conversation.
 
-Brand-locked terms never translated: "Aura", "Aura Intercept", "Operative", "Boost", "Core", "Pro", "Elite", tier prices, "Launch Pricing".
+## Goals
 
-### Layer 2 — AI auto-translate fallback (everything else)
-A `<TranslatedText>` wrapper + `useAutoTranslate(text)` hook for deep console pages we don't manually translate. When locale = `es` and no curated key exists:
-1. Check `localStorage` cache → instant
-2. Check `ui_translations` table (shared cache across users) → ~50ms
-3. Call new `translate-ui` edge function (Lovable AI Gateway, `google/gemini-3-flash-preview`) → ~300ms, then write to both caches
+1. Make AI booking actually succeed when intake fields are present.
+2. Let the AI post an inline date+time slot picker right inside the chat.
+3. If the inline picker can't satisfy the request (industry requires intake, or customer prefers a longer form), the AI offers a one-tap button that opens the existing full Book form.
 
-Brand-locked terms passed in a "do not translate" list in the system prompt.
+## Changes
 
-### New database
-`ui_translations` table:
-- `text_hash` (text, PK part) — sha256 of source string
-- `source_lang` (text, default 'en')
-- `target_lang` (text)
-- `source_text` (text)
-- `translated_text` (text)
-- `created_at` (timestamptz)
-- Public read (RLS), service-role write only. GRANTs included.
+### 1. Edge function: `supabase/functions/ai-agent-chat/index.ts`
 
-### New edge function
-`supabase/functions/translate-ui/index.ts` — batched (up to 50 strings/request), uses `LOVABLE_API_KEY`, returns `{ hash → translated }`. `verify_jwt = false` (public, cached, low risk).
+- **Fix the intake_data rejection bug.** In the `create_appointment` handler:
+  - Coerce `intake_data` defensively: accept object, JSON-string, or `null`. Strip unknown keys against the company's industry intake schema instead of rejecting the whole insert.
+  - On insert error, **retry once without `intake_data`** and return `{ success: true, appointment, intake_warning: "Saved without intake fields — staff will follow up." }` so the AI stops apologizing in a loop.
+  - Log the exact Postgres error code/message so we can see future failures in edge logs.
+- **Add a new tool `offer_slot_picker`** the AI calls when:
+  - The customer asks to book but hasn't given a specific time, OR
+  - `check_availability` / `find_next_available` returned multiple slots.
+  - Returns `{ ui: "slot_picker", service_type, slots: [{datetime, label}, …], booking_token }` — the chat UI renders an inline card.
+- **Add a new tool `offer_booking_form`** the AI calls when:
+  - 2+ booking attempts have failed, OR
+  - The industry pack requires intake fields the customer hasn't given, OR
+  - The customer says "send me a form / link / picker".
+  - Returns `{ ui: "booking_form_link", reason }`.
+- Update the booking-agent system prompt: after one failed `create_appointment`, **must** call `offer_slot_picker` or `offer_booking_form` rather than re-trying silently. Never apologize twice in a row; offer a visual alternative.
 
-### Routing & SEO
-- Add `/es` prefix routes mirroring key public pages (landing, pricing, audit, contact, auth).
-- `<html lang>` updates with locale.
-- `hreflang` alternate tags on public pages.
-- LanguageToggle persists to localStorage + URL.
+### 2. Chat UI: `src/components/chat/CustomerChatInterface.tsx` and `src/components/ai/AIAgentConsole.tsx`
 
-## Scope of work (this implementation)
+- New component `src/components/chat/InlineSlotPicker.tsx`:
+  - Renders shadcn `Calendar` (date) + a horizontal list of time chips for that date.
+  - Pulls slots from the tool result payload; on confirm, posts a synthetic user message ("Book me for Mon Jun 8, 8:00 AM") that the AI then turns into `create_appointment`.
+- New component `src/components/chat/InlineBookingFormCard.tsx`:
+  - Small card with "Open booking form →" button that calls `setActiveTab('book')` on the parent console (or, in the public widget, navigates to `/book/:companyId`).
+- Message renderer in `CustomerChatInterface.tsx` / `AIAgentConsole.tsx` checks `message.tool_ui` and renders the right inline card. Falls back to plain markdown otherwise.
 
-1. **DB migration** — `ui_translations` table + RLS + GRANTs.
-2. **Edge function** — `translate-ui` (batched, cached, brand-locked terms).
-3. **Frontend infra**
-   - Extend `LanguageContext` with `/es` URL sync + `<html lang>` updater.
-   - Add `useAutoTranslate(text)` hook (cache → DB → edge function).
-   - Add `<T>` component (drop-in wrapper that auto-translates children text).
-   - Brand-term denylist constant.
-4. **Curated translations** — expand existing `es/*.json` namespaces to cover:
-   - `common` (buttons, nav, errors, time/date)
-   - `landing`, `pricing`, `auth`, `legal`
-   - `dashboard` chrome (sidebar groups, header)
-   - `billing` (trial banner, subscription, upgrade prompts)
-   - `customer-portal`
-5. **Convert highest-value components to `t()`** (≈40 files):
-   - Sidebar, AppHeader, role nav, LanguageToggle
-   - Landing pages: Index, ForBusiness, Contact, Auth, Subscription, Pricing table, Audit
-   - Trial banner, subscription cards, billing prompts
-   - Customer portal pages
-6. **Auto-translate the rest** — wrap deep console page roots in `<AutoTranslateProvider>` so any uncurated text passes through Layer 2.
-7. **Transactional content (email/SMS)** — pass `locale` into existing send functions; switch templates based on customer's `preferred_language` (already on profiles).
-8. **Toggle UX** — global header `LanguageToggle` (EN | ES) wired to context; reflects in URL on public pages.
+### 3. Hook plumbing: `src/hooks/useAIAgent.ts` (and `useMultiAgentChat.ts` if used here)
 
-## Out of scope (explicit)
-- Manual translation of every deep console string (auto-translate covers it).
-- Translating PDFs already generated — only new PDF generations honor locale (separate follow-up if needed).
-- Third-party admin tools or external SaaS dashboards.
+- When a tool result includes `{ ui: "slot_picker" | "booking_form_link" }`, attach it to the assistant message as `tool_ui` so the renderer can pick it up. No backend schema change.
 
-## Technical details (for reference)
+### 4. BookingForm reuse
 
-- **Caching keys**: `tx:${sha256(text)}:es`
-- **Edge function input**: `{ texts: string[], target: 'es' }` → `{ results: Record<hash, translation> }`
-- **Brand denylist** lives in `src/lib/brandTerms.ts` and is sent to AI in system prompt.
-- **Hook batching**: `useAutoTranslate` collects strings within a 50ms tick and sends one batched request per render flush.
-- **Performance**: First view of an uncurated page ~300ms slower; cached views are instant. Curated pages have zero overhead.
-- **Cost**: ~0.0001¢ per translated string, one-time per phrase across all users (shared DB cache).
-- **Failure mode**: If edge function errors or rate-limits (429/402), render original English silently and log.
+- Export `BookingForm` as-is; the inline form-fallback card just deep-links to the existing Book tab. No duplication.
 
-## Acceptance
-- Toggle EN↔ES in header flips entire visible UI within 1s on cached pages, 1–2s first time.
-- `/es/pricing`, `/es/audit`, `/es/contact`, `/es/auth` render fully Spanish with correct `<html lang="es">` and `hreflang`.
-- Brand terms ("Aura", tier names, "Operative") remain unchanged in Spanish.
-- Customer with `preferred_language='es'` receives Spanish SMS/email.
-- No DOM errors in Radix dialogs, dropdowns, or toasts.
+### 5. Intake validation surface
+
+- `src/lib/industryFormSchemas.ts` already lists required intake fields per industry. Add a thin helper `validateIntakeForIndustry(packId, intakeData)` returning `{ ok, missingFields }` and use it both in the chat agent (to decide when to call `offer_booking_form`) and in the edge function (to log warnings, not to reject).
+
+## Out of scope
+
+- Calendar sync / Google Calendar changes.
+- Reworking the standalone `/book/:companyId` PublicBooking page.
+- Voice agent booking flow (separate path; not in the screenshot).
+- Changing tier gating — slot picker available wherever `create_appointment` is already enabled.
+
+## Technical notes
+
+- The inline slot picker uses the same `check_availability` results the agent already fetches — no new DB queries.
+- `tool_ui` payload schema:
+  ```ts
+  type ToolUi =
+    | { kind: 'slot_picker'; service_type: string; slots: { datetime: string; label: string }[] }
+    | { kind: 'booking_form_link'; reason: string };
+  ```
+- The retry-without-intake fallback only triggers on Postgres insert errors mentioning `intake_data`, `jsonb`, or `column "intake_data"` — never silently drops other validation errors.
+- New prompt rule (booking agent): *"If a create_appointment call fails twice, immediately call offer_booking_form. Never apologize more than once in a row without offering a visual alternative."*
+
+## Verification
+
+1. Reproduce the original failure with the same customer (Aletia / Platform Demo / Mon Jun 8 8:00 AM) in the preview — booking now succeeds, or falls back to the inline slot picker.
+2. Tap a slot in the inline picker → appointment created → confirmation message.
+3. Force a failure (e.g. industry with required intake the customer hasn't given) → AI posts the "Open booking form" card → tapping it switches to the Book tab.
+4. Check edge function logs to confirm the exact Postgres error is being recorded.
