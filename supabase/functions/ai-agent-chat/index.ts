@@ -1310,9 +1310,39 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'offer_slot_picker',
+        description: 'Post an interactive calendar + time-slot picker in the chat so the customer can tap a slot. Use this when the customer wants to book but has not given a specific time, when check_availability returned multiple slots, or right after the first failed create_appointment attempt instead of apologizing again.',
+        parameters: {
+          type: 'object',
+          properties: {
+            service_type: { type: 'string', description: 'The service the customer wants to book.' },
+            preferred_date: { type: 'string', description: 'YYYY-MM-DD, or "tomorrow"/"today". Defaults to tomorrow when omitted.' },
+            days_to_scan: { type: 'number', description: 'How many days forward to scan if the preferred date has no slots. Defaults to 7.' },
+          },
+          required: ['service_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'offer_booking_form',
+        description: 'Post an in-chat button that opens the full Book tab/form. Use after two failed create_appointment attempts, when the industry requires intake fields the customer has not provided, or when the customer asks for a form/picker/link.',
+        parameters: {
+          type: 'object',
+          properties: {
+            reason: { type: 'string', description: 'One short sentence explaining why the form is being offered. Shown to the customer above the button.' },
+            service_type: { type: 'string', description: 'Pre-select this service in the form if known.' },
+          },
+          required: ['reason'],
+        },
+      },
+    },
   ],
   followup: [
-    // ⛔ unused placeholder — followup tools start below
     {
       type: 'function',
       function: {
