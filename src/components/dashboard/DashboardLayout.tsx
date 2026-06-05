@@ -518,10 +518,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     } else if (item.href === '/dashboard/dispatch-field-ops') {
                       const dispatchLabel = serviceConfig.dispatchSubItemLabel || item.label;
                       const workerLabel = serviceConfig.workerSubItemLabel;
-                      // Avoid showing two identical sidebar entries when the
-                      // industry pack maps both items to the same name.
-                      displayLabel = workerLabel && dispatchLabel === workerLabel
-                        ? `${dispatchLabel} — Dispatch`
+                      // Avoid showing two identical sidebar entries. Compare
+                      // against the resolved worker label (sub-item override
+                      // OR techView fallback) so industries whose
+                      // techView/dispatchView collide (e.g. saas_platform's
+                      // "Service Management") still get a clear "Dispatch"
+                      // label on the second entry.
+                      const resolvedWorker = workerLabel || navLabels.techView;
+                      displayLabel = dispatchLabel === resolvedWorker
+                        ? 'Dispatch'
                         : dispatchLabel;
                     }
 
