@@ -41,7 +41,7 @@ tier check or "Active" computation.
   Adds Field Operations + Social Media consoles. 25 employees.
 - **Aura Pro** (`performance`) $1,997/mo · $999 onboarding — Boost + Business Finance + Analytics
   Intelligence + Admin. 50 employees.
-- **Aura Elite** (`command`) $3,497/mo · $1,749 onboarding — All 10 operatives + industry
+- **Aura Elite** (`command`) $3,997/mo (launch sale $2,997) · $1,549 onboarding — All 10 operatives + industry
   specialists + AI Operatives Hub console. Unlimited employees.
 
 ## 7 Consoles (canonical display titles)
