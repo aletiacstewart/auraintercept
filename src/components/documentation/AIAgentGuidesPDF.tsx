@@ -753,8 +753,8 @@ const COMMUNICATION_CHANNELS = [
 const TIERS = [
   {
     name: SUBSCRIPTION_TIERS.aura_core?.name ?? 'Aura Core',
-    price: `$${(SUBSCRIPTION_TIERS.aura_core?.price ?? 197).toLocaleString()}/month`,
-    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_core?.annualPrice ?? 6970).toLocaleString()}/year`,
+    price: `$${(SUBSCRIPTION_TIERS.aura_core?.price ?? 497).toLocaleString()}/month`,
+    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_core?.annualPrice ?? 4970).toLocaleString()}/year`,
     consoles: [`${SUBSCRIPTION_TIERS.aura_core?.consoles ?? 3} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_core?.operatives ?? 8,
     agents: ['AI Receptionist (Triage)', 'Booking Agent', 'Follow-Up Agent', 'Review Agent', 'Creative Content Agent', 'Web Presence Agent', 'Lead Agent', 'Marketing Agent'],
@@ -763,8 +763,8 @@ const TIERS = [
   },
   {
     name: SUBSCRIPTION_TIERS.aura_boost?.name ?? 'Aura Boost',
-    price: `$${(SUBSCRIPTION_TIERS.aura_boost?.price ?? 497).toLocaleString()}/month`,
-    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_boost?.annualPrice ?? 10970).toLocaleString()}/year`,
+    price: `$${(SUBSCRIPTION_TIERS.aura_boost?.price ?? 897).toLocaleString()}/month`,
+    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_boost?.annualPrice ?? 8970).toLocaleString()}/year`,
     consoles: [`${SUBSCRIPTION_TIERS.aura_boost?.consoles ?? 5} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_boost?.operatives ?? 12,
     agents: [
@@ -776,8 +776,8 @@ const TIERS = [
   },
   {
     name: SUBSCRIPTION_TIERS.aura_pro?.name ?? 'Aura Pro',
-    price: `$${(SUBSCRIPTION_TIERS.aura_pro?.price ?? 997).toLocaleString()}/month`,
-    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_pro?.annualPrice ?? 19970).toLocaleString()}/year`,
+    price: `$${(SUBSCRIPTION_TIERS.aura_pro?.price ?? 1797).toLocaleString()}/month`,
+    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_pro?.annualPrice ?? 17970).toLocaleString()}/year`,
     consoles: [`${SUBSCRIPTION_TIERS.aura_pro?.consoles ?? 5} Consoles`],
     agentCount: SUBSCRIPTION_TIERS.aura_pro?.operatives ?? 16,
     agents: ['All Boost Agents', 'Campaign Agent', 'Outreach Agent', 'Social Scheduler Agent', 'Social Analytics'],
@@ -786,8 +786,8 @@ const TIERS = [
   },
   {
     name: SUBSCRIPTION_TIERS.aura_elite?.name ?? 'Aura Elite',
-    price: `$${(SUBSCRIPTION_TIERS.aura_elite?.price ?? 1997).toLocaleString()}/month`,
-    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_elite?.annualPrice ?? 34970).toLocaleString()}/year`,
+    price: `$${(SUBSCRIPTION_TIERS.aura_elite?.price ?? 3097).toLocaleString()}/month`,
+    annualPrice: `$${(SUBSCRIPTION_TIERS.aura_elite?.annualPrice ?? 30970).toLocaleString()}/year`,
     consoles: [`All ${SUBSCRIPTION_TIERS.aura_elite?.consoles ?? 7} Consoles + AI Hub`],
     agentCount: SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24,
     agents: [`All ${SUBSCRIPTION_TIERS.aura_elite?.operatives ?? 24} AI Agents`],

@@ -248,7 +248,9 @@ const renderValue = (
   const isAddon = value.includes('Add-on') || value.startsWith('+$');
   const isOptional = value === 'Optional';
   const isLimited = value === 'Limited';
-  const isBundled = value === 'Bundled' || value === 'Included';
+  // Note: do not use 'Bundled' as a value — Aura never bundles 3rd-party usage.
+  // Only 'Included' (a platform feature) gets the green highlight.
+  const isIncluded = value === 'Included';
   const isConnect = value === 'Connect yours';
 
   let textClass = 'text-white text-xs';
@@ -257,7 +259,7 @@ const renderValue = (
   else if (isAddon) textClass = 'text-amber-400 text-xs';
   else if (isOptional) textClass = 'text-white text-xs';
   else if (isLimited) textClass = 'text-yellow-400/80 text-xs';
-  else if (isBundled) textClass = 'text-emerald-400 text-xs font-medium';
+  else if (isIncluded) textClass = 'text-emerald-400 text-xs font-medium';
   else if (isConnect) textClass = 'text-cyan-300/90 text-xs';
 
   const strikeMatch = typeof value === 'string' ? value.match(/^~~(.+?)~~\s+(.+)$/) : null;

@@ -469,11 +469,11 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Aura Intercept cost</Text>
-          <Text style={styles.roiValue}>-$497</Text>
+          <Text style={styles.roiValue}>-$897</Text>
         </View>
         <View style={[styles.roiRow, styles.roiTotal]}>
           <Text style={styles.roiTotalLabel}>Net Monthly ROI</Text>
-          <Text style={styles.roiTotalValue}>+$12,203</Text>
+          <Text style={styles.roiTotalValue}>+$11,803</Text>
         </View>
       </View>
 
@@ -515,14 +515,14 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Core</Text>
-              <Text style={styles.tierPrice}>$897/mo</Text>
+              <Text style={styles.tierPrice}>$497/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Solo Operators, Restaurants, Single-location</Text>
             <Text style={styles.tierBullet}>- Appointments booked: +$2,000</Text>
             <Text style={styles.tierBullet}>- Time saved (10h): +$500</Text>
             <Text style={styles.tierBullet}>- Reviews generated: +$400</Text>
             <Text style={styles.tierBullet}>- Cost: -$497</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,703/mo</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,403/mo</Text>
           </View>
 
           <View style={styles.tierCard}>
@@ -534,8 +534,8 @@ export const SalesPitchDataPDF: React.FC = () => (
             <Text style={styles.tierBullet}>- Field jobs optimized: +$3,000</Text>
             <Text style={styles.tierBullet}>- After-hours leads: +$2,000</Text>
             <Text style={styles.tierBullet}>- Dispatch efficiency: +$1,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$497</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$5,503/mo</Text>
+            <Text style={styles.tierBullet}>- Cost: -$897</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$5,103/mo</Text>
           </View>
         </View>
 
