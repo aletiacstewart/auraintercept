@@ -6761,6 +6761,33 @@ export type Database = {
           },
         ]
       }
+      ui_translations: {
+        Row: {
+          created_at: string
+          source_lang: string
+          source_text: string
+          target_lang: string
+          text_hash: string
+          translated_text: string
+        }
+        Insert: {
+          created_at?: string
+          source_lang?: string
+          source_text: string
+          target_lang: string
+          text_hash: string
+          translated_text: string
+        }
+        Update: {
+          created_at?: string
+          source_lang?: string
+          source_text?: string
+          target_lang?: string
+          text_hash?: string
+          translated_text?: string
+        }
+        Relationships: []
+      }
       unsubscribe_alerts: {
         Row: {
           company_id: string
