@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, Copy, CheckCircle2, Building2, Crown } from 'lucide-react';
+import { Sparkles, Loader2, Copy, CheckCircle2, Building2, Crown, Trash2, AlertTriangle } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
@@ -71,6 +71,28 @@ export default function DemoAccountSeeder() {
   const [results, setResults] = useState<SeedResult[] | null>(null);
   const [seedingTenant, setSeedingTenant] = useState(false);
   const [seedingSuper, setSeedingSuper] = useState(false);
+  const [wiping, setWiping] = useState(false);
+
+  const runWipe = async () => {
+    const ok = window.confirm(
+      'DESTRUCTIVE: delete EVERY demo company (is_demo=true) and all of its data + auth users.\n\nNon-demo companies (real customers, Aura Intercept) are NOT touched.\n\nContinue?'
+    );
+    if (!ok) return;
+    setWiping(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('wipe-demo-companies');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error ?? 'Wipe failed');
+      toast.success(
+        `Wiped ${data.deleted_companies} companies · ${data.deleted_profile_users} users · ${data.deleted_stray_demo_users} stray demo users`
+      );
+      setResults(null);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Wipe failed');
+    } finally {
+      setWiping(false);
+    }
+  };
 
   const runSeedSuperAdmin = async () => {
     setSeedingSuper(true);
@@ -182,6 +204,22 @@ export default function DemoAccountSeeder() {
                 <><Sparkles className="mr-2 h-4 w-4" /> Seed All Demo Accounts</>
               )}
             </Button>
+
+            <div className="border-t pt-4 mt-2 space-y-2">
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Full Wipe</strong> deletes every demo company (is_demo=true) and its data + auth users — useful before a fresh launch reseed. Non-demo companies (real customers, Aura Intercept) are <strong>not</strong> touched.
+                </AlertDescription>
+              </Alert>
+              <Button onClick={runWipe} disabled={wiping || running} size="lg" className="w-full" variant="destructive">
+                {wiping ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Wiping all demo data…</>
+                ) : (
+                  <><Trash2 className="mr-2 h-4 w-4" /> Wipe ALL Demo Companies (destructive)</>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
