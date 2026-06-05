@@ -202,7 +202,7 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
 
         <div>
           <Label className="text-xs text-muted-foreground">Services Needed *</Label>
-          <div className="mt-1 space-y-1 max-h-24 overflow-y-auto border rounded p-1.5 bg-white">
+          <div className="mt-1 space-y-1 max-h-24 overflow-y-auto border rounded p-1.5 bg-background">
             {services.length > 0 ? (
               services.map((service) => (
                 <div key={service.id} className="flex items-center space-x-2">
@@ -211,7 +211,7 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
                     checked={selectedServices.includes(service.id)}
                     onCheckedChange={() => handleServiceToggle(service.id)}
                   />
-                  <label htmlFor={`quote-service-${service.id}`} className="text-xs cursor-pointer flex-1 text-foreground/70">
+                  <label htmlFor={`quote-service-${service.id}`} className="text-xs cursor-pointer flex-1 text-foreground">
                     {service.name}
                   </label>
                 </div>
