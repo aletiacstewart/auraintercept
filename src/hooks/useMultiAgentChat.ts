@@ -11,7 +11,30 @@ export interface ChatMessage {
   timestamp?: Date;
   actions?: Array<{ label: string; action: string }>;
   isLocked?: boolean;
+  tool_ui?: ChatToolUi | null;
 }
+
+export type ChatToolUi =
+  | {
+      kind: 'slot_picker';
+      service_type: string;
+      start_date?: string;
+      days_scanned?: number;
+      dates: Array<{
+        date: string;
+        slots: Array<{
+          datetime: string;
+          time: string;
+          employee_id?: string;
+          employee_name?: string;
+        }>;
+      }>;
+    }
+  | {
+      kind: 'booking_form_link';
+      reason: string;
+      service_type?: string | null;
+    };
 
 export interface UseMultiAgentChatOptions {
   companyId?: string;
@@ -127,6 +150,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
         agent: newAgent || data.agent || currentAgent,
         timestamp: new Date(),
         actions: data.actions,
+        tool_ui: data.tool_ui || null,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -165,6 +189,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
             agent: data.handoff_to,
             timestamp: new Date(),
             actions: followUpData.actions,
+            tool_ui: followUpData.tool_ui || null,
           };
           setMessages((prev) => [...prev, followUpMsg]);
         }
