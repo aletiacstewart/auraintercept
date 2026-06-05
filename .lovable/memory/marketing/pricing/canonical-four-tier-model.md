@@ -10,7 +10,7 @@ Canonical 4-tier growth ladder (onboarding fee = 50% of monthly price, rounded t
 | Aura Core   | $697/mo   | $6,970/yr   | $349   | starter     |
 | Aura Boost  | $1,097/mo | $10,970/yr  | $549   | connect     |
 | Aura Pro    | $1,997/mo | $19,970/yr  | $999   | performance |
-| Aura Elite  | $3,497/mo | $34,970/yr  | $1,749 | command     |
+| Aura Elite  | $3,997/mo (sale $2,997) | $29,970/yr  | $1,549 (sale) | command     |
 
 Onboarding fee is due at the start of the 90-Day Live Trial and is non-refundable once onboarding has been completed. The first 30 days of the trial are dedicated to onboarding; the remaining 60 days are full live use.
 
