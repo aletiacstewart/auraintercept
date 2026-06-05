@@ -1312,6 +1312,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
     },
   ],
   followup: [
+    // ⛔ unused placeholder — followup tools start below
     {
       type: 'function',
       function: {
