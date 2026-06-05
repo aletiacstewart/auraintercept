@@ -132,9 +132,15 @@ async function refreshAccessToken(supabase: any, connection: any): Promise<strin
 
     if (data.error) {
       console.error('Token refresh error:', data);
+      const isInvalidGrant = String(data.error || '').toLowerCase().includes('invalid_grant');
       await supabase
         .from('google_calendar_connections')
-        .update({ last_error: `Token refresh failed: ${data.error}` })
+        .update({
+          last_error: `Token refresh failed: ${data.error}. Please reconnect Google Calendar.`,
+          // Disable sync so the UI surfaces a clear "reconnect" state and
+          // we stop hammering Google with refresh attempts that will keep failing.
+          ...(isInvalidGrant ? { sync_enabled: false } : {}),
+        })
         .eq('company_id', connection.company_id);
       return null;
     }

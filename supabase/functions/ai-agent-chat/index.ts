@@ -282,7 +282,15 @@ CRITICAL - VISUAL FALLBACKS (use instead of apologizing in a loop):
 - If create_appointment FAILS, do NOT retry silently and do NOT apologize a second time. Immediately call offer_slot_picker so the customer can pick a slot visually.
 - If create_appointment fails TWICE in the same conversation, OR the industry requires intake fields the customer hasn't provided, call offer_booking_form(reason="...") so the full form opens.
 - If the customer literally asks for a "form", "picker", "calendar", "link", or says "let me pick", call offer_slot_picker (preferred) or offer_booking_form.
-- Never apologize more than once in a row without calling one of these fallback tools.`,
+- Never apologize more than once in a row without calling one of these fallback tools.
+
+CRITICAL - DO NOT DROP TO capture_lead WHEN THE CUSTOMER IS READY TO BOOK:
+- If you have (name AND phone) AND a valid service_type, you MUST move the booking forward.
+- If a specific datetime is provided → call create_appointment immediately.
+- If no datetime is provided → call offer_slot_picker(service_type) so the customer can tap a time. Do NOT call capture_lead in this case.
+- ONLY call capture_lead if the customer explicitly declines to book, goes silent for 2+ turns, or says "I'll think about it / call back later".
+- Address is OPTIONAL for delivery_type "virtual" or "in_person_business" — never block booking on address for those.
+- When the customer's message is a structured slot confirmation like "Please book me for <date> at <time> (<service>). The selected slot is <ISO>." you MUST call create_appointment using that exact ISO datetime and the customer info already gathered earlier in this conversation. Do not ask for the info again. Do not call capture_lead.`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
@@ -1202,7 +1210,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
               additionalProperties: true,
             },
           },
-          required: ['customer_name', 'customer_phone', 'customer_address', 'service_type', 'datetime'],
+          required: ['customer_name', 'customer_phone', 'service_type', 'datetime'],
         },
       },
     },
@@ -5266,7 +5274,7 @@ async function executeAgentTool(
 
       // Sync to Google Calendar (if connected)
       try {
-        await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
+        const calRes = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -5279,7 +5287,14 @@ async function executeAgentTool(
             appointment: appointment,
           }),
         });
-        console.log('[AI Agent] Google Calendar sync triggered for appointment:', appointment.id);
+        const calJson = await calRes.json().catch(() => ({}));
+        console.log('[AI Agent] Google Calendar sync result for', appointment.id, calJson);
+        if (calJson?.success === false) {
+          const errMsg = String(calJson?.error || calJson?.message || '');
+          if (/invalid_grant|refresh/i.test(errMsg)) {
+            console.warn('[AI Agent] Calendar token invalid — needs reconnection for company', companyId);
+          }
+        }
       } catch (calendarError) {
         console.error('[AI Agent] Google Calendar sync error (non-blocking):', calendarError);
       }
