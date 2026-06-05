@@ -4880,6 +4880,89 @@ async function executeAgentTool(
       }
     }
 
+    case 'offer_slot_picker': {
+      console.log('[AI Agent] Offering slot picker with args:', args);
+      const daysToScan = Math.min(Math.max(Number(args.days_to_scan) || 7, 1), 14);
+
+      // Resolve starting date
+      let startDate = new Date();
+      if (args.preferred_date) {
+        const parsed = new Date(args.preferred_date);
+        if (!isNaN(parsed.getTime())) startDate = parsed;
+        else if (String(args.preferred_date).toLowerCase() === 'tomorrow') {
+          startDate.setDate(startDate.getDate() + 1);
+        }
+      } else {
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      const serviceName = args.service_type || 'Standard Service Call / Diagnostic';
+      const slotsByDate: Array<{ date: string; slots: Array<{ datetime: string; time: string; employee_id?: string; employee_name?: string }> }> = [];
+
+      for (let i = 0; i < daysToScan; i++) {
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + i);
+        const dateStr = d.toISOString().split('T')[0];
+        try {
+          const r = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/booking-actions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+              action: 'check_availability',
+              company_id: companyId,
+              service_name: serviceName,
+              date: dateStr,
+            }),
+          });
+          if (!r.ok) continue;
+          const json = await r.json();
+          const slots = (json.available_slots || []).map((s: any) => ({
+            datetime: s.datetime,
+            time: s.start_time,
+            employee_id: s.employee_id,
+            employee_name: s.employee_name,
+          }));
+          if (slots.length > 0) slotsByDate.push({ date: dateStr, slots });
+        } catch (e) {
+          console.warn('[AI Agent] offer_slot_picker scan error for', dateStr, e);
+        }
+        // Stop early once we have 3 days with availability
+        if (slotsByDate.length >= 3) break;
+      }
+
+      const totalSlots = slotsByDate.reduce((acc, d) => acc + d.slots.length, 0);
+      return {
+        success: true,
+        ui: {
+          kind: 'slot_picker',
+          service_type: serviceName,
+          start_date: startDate.toISOString().split('T')[0],
+          days_scanned: daysToScan,
+          dates: slotsByDate,
+        },
+        total_slots: totalSlots,
+        message: totalSlots > 0
+          ? `Posted an interactive calendar with ${totalSlots} available slots across ${slotsByDate.length} day(s). Ask the customer to tap a slot — do not retype the times.`
+          : `No slots in the next ${daysToScan} day(s). Offer the booking form instead.`,
+      };
+    }
+
+    case 'offer_booking_form': {
+      console.log('[AI Agent] Offering booking form with args:', args);
+      return {
+        success: true,
+        ui: {
+          kind: 'booking_form_link',
+          reason: args.reason || 'Open the full booking form to finish scheduling.',
+          service_type: args.service_type || null,
+        },
+        message: 'Posted a button that opens the full booking form. Tell the customer to tap it — do not apologize again.',
+      };
+    }
+
     case 'create_appointment': {
       console.log('[AI Agent] Creating appointment with args:', args);
       
