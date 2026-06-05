@@ -596,8 +596,14 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         onPhoneClick={() => window.open(`tel:${callablePhone}`, '_self')}
         onVoiceClick={() => setActiveTab('voice')}
         useDefaultLogo={true}
-        showBackButton={allowCompanySelection && !!selectedCompanyId}
-        onBackClick={handleBackToCompanySelector}
+        showBackButton={(allowCompanySelection && !!selectedCompanyId) || activeTab !== 'chat'}
+        onBackClick={() => {
+          if (activeTab !== 'chat') {
+            setActiveTab('chat');
+          } else {
+            handleBackToCompanySelector();
+          }
+        }}
         subtitle="Customer Portal — Cyber-Sentry Edition"
       />
 
