@@ -26,7 +26,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
         <div className="flex items-center gap-3 min-w-0">
           <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img src={logo} alt="Aura Intercept" className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0" />
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col min-w-0" data-no-translate>
               <span className="font-brand text-[#00E5FF] text-base sm:text-xl tracking-wide truncate">Aura Intercept</span>
               <span className="text-[#46a2d3] text-[10px] sm:text-xs font-medium hidden sm:inline">
                 Smart Agents, Automated Service.
