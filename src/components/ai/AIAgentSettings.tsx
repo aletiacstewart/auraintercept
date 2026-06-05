@@ -816,6 +816,51 @@ export const AIAgentSettings = () => {
         </CardContent>
       </Card>
 
+      {/* Language Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Languages className="h-5 w-5" />
+            Languages
+          </CardTitle>
+          <CardDescription>
+            Choose the default language for AI chat and voice. "Auto" lets Aura detect the customer's language from their first message or words.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Default Language</Label>
+            <Select value={defaultLanguage} onValueChange={(v: 'en' | 'es' | 'auto') => setDefaultLanguage(v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Español (Spanish)</SelectItem>
+                <SelectItem value="auto">Auto-detect (English + Spanish)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Applies to chat, phone calls, and the in-app Aura assistant. Auto-detect lets the AI switch between English and Spanish based on what the customer says first.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 rounded-md border border-border bg-muted/40 p-3">
+            <input
+              id="spanish-enabled"
+              type="checkbox"
+              className="mt-1 h-4 w-4"
+              checked={spanishEnabled || defaultLanguage !== 'en'}
+              disabled={defaultLanguage !== 'en'}
+              onChange={(e) => setSpanishEnabled(e.target.checked)}
+            />
+            <div className="space-y-1">
+              <Label htmlFor="spanish-enabled" className="cursor-pointer">Enable Spanish as a secondary language</Label>
+              <p className="text-xs text-muted-foreground">
+                Allows the AI to switch to Spanish when a customer writes or speaks Spanish, even with English as the default. For phone calls, also add Spanish to your ElevenLabs agent's "Additional Languages" so the voice model is loaded.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Call & SMS Scripts Card */}
       <Card>
         <CardHeader>
