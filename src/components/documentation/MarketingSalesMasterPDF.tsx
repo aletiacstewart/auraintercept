@@ -273,7 +273,7 @@ const FEATURE_GROUPS: Array<{ group: string; items: string[] }> = [
   { group: 'Analytics & Reports', items: ['NLP analytics interface', 'KPI dashboard', 'Demand forecast', 'Revenue analysis', 'Per-industry KPI presets'] },
   { group: 'Knowledge & AI', items: ['Tavily web research', 'Knowledge base curation', 'Conversational intelligence', 'Industry prompt injection'] },
   { group: 'Customer Portal', items: ['Unified customer portal', 'Public company listing / directory', 'Branded per-company experience'] },
-  { group: 'Platform & Security', items: ['RLS-protected DB', 'SECURITY DEFINER RPCs for public reads', 'Push / Email / SMS / In-app alerts', '90-Day Live Trial (30d onboarding + 60d live)'] },
+  { group: 'Platform & Security', items: ['RLS-protected DB', 'SECURITY DEFINER RPCs for public reads', 'Push / Email / SMS / In-app alerts', '60-Day Live Trial (30d onboarding + 30d live)'] },
 ];
 
 const THIRD_PARTY = [
@@ -507,7 +507,7 @@ const DISCOVERY_QUESTIONS = [
 ];
 
 const ELEVATOR_PITCH =
-  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $249/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 90-day live trial with concierge onboarding in the first 30 days.';
+  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $249/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days.';
 
 const DEMO_FLOW = [
   '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
@@ -531,7 +531,7 @@ const OBJECTIONS_EXTRA = [
   { q: '"Onboarding fee feels steep."', a: 'It\'s a one-time concierge cost equal to one month — you get a 30-day live setup of voice, SMS, KB, agents, calendars, and integrations. Without it, most teams take 60–90 days to self-serve.' },
   { q: '"Will my staff resist AI?"', a: 'Aura is the receptionist that frees your staff for high-value work. Plain-English labels (Front Desk, Dispatch, Billing) make it feel like a teammate, not a robot.' },
   { q: '"What about multi-location?"', a: 'Aura is single-tenant per company today. Multi-location is on the roadmap; current customers operate one Aura per brand or location.' },
-  { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 90. The one-time onboarding fee is non-refundable since concierge work is performed in days 1–30.' },
+  { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 60. The one-time onboarding fee is non-refundable since concierge work is performed in days 1–30.' },
   { q: '"How do you compare to ServiceTitan / Housecall Pro?"', a: 'Those are operations platforms; Aura is an AI layer that *runs* the operations — answering, booking, dispatching, marketing autonomously. Many customers run Aura alongside an existing FSM.' },
 ];
 
@@ -544,7 +544,7 @@ const EMAIL_TEMPLATES = [
 const SMS_TEMPLATES = [
   { name: 'Cold opener', body: 'Hi {{first_name}} — saw {{company}} online. Curious if you\'re losing calls after hours? We have an AI receptionist that answers 24/7 from $497/mo. Worth a quick demo?' },
   { name: 'Demo nudge', body: 'Still on for our {{day}} demo? I\'ll show how Aura would handle your last week of missed calls. — {{rep}}' },
-  { name: 'Trial activation', body: 'Trial link: auraintercept.ai/auth — 90 days, concierge setup in the first 30. Reply if you need help.' },
+  { name: 'Trial activation', body: 'Trial link: auraintercept.ai/auth — 60 days, concierge setup in the first 30. Reply if you need help.' },
 ];
 
 const TALKING_POINTS = [
@@ -620,7 +620,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
       })}
       <View style={s.callout}>
         <Text style={s.p}>
-          90-Day Live Trial · The first 30 days are dedicated concierge onboarding
+          60-Day Live Trial · The first 30 days are dedicated concierge onboarding
           (account config, agent tuning, KB, 3rd-party activation, training). The
           remaining 60 days are full live operation. Onboarding fee is due at trial start.
         </Text>
@@ -974,7 +974,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
     <Page size="LETTER" style={s.page}>
       <Text style={s.h1}>Trial, Onboarding &amp; Sales Talking Points</Text>
       <View style={s.divider} />
-      <Text style={s.h2}>90-Day Live Trial structure</Text>
+      <Text style={s.h2}>60-Day Live Trial structure</Text>
       <Bullet>Days 1–30: Concierge onboarding — account config, agent tuning, KB build, 3rd-party activation, team training.</Bullet>
       <Bullet>Days 31–90: Full live operation — every operative live across the customer's actual channels.</Bullet>
       <Bullet>Onboarding fee due at trial start. Monthly billing begins after the trial.</Bullet>
@@ -1016,7 +1016,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         onboarding.
       </Text></View>
       <Text style={s.h2}>Trial terms</Text>
-      <Bullet>90-Day Live Trial — 30-day concierge onboarding + 60-day full live operation.</Bullet>
+      <Bullet>60-Day Live Trial — 30-day concierge onboarding + 30-day full live operation.</Bullet>
       <Bullet>Onboarding fee (equal to one month of the chosen tier) is due at trial start and is non-refundable.</Bullet>
       <Bullet>Monthly subscription billing begins on day 91.</Bullet>
       <Bullet>Cancel any time during the trial; only the onboarding fee applies.</Bullet>
@@ -1037,7 +1037,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         <Text style={s.p}>auraintercept.ai/contact</Text>
       </View>
       <View style={s.card}>
-        <Text style={s.h3}>Start the 90-Day Live Trial</Text>
+        <Text style={s.h3}>Start the 60-Day Live Trial</Text>
         <Text style={s.p}>auraintercept.ai/auth</Text>
       </View>
       <View style={s.card}>

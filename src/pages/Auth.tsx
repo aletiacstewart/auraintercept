@@ -302,7 +302,7 @@ export default function Auth() {
       // Create company — honor the tier the user picked at signup (defaults to Core if skipped)
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
-      // and powers useIndustryPack everywhere). 90-day trial regardless of tier.
+      // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
       const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
       if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
         toast({
@@ -458,7 +458,7 @@ export default function Auth() {
 
       toast({ 
         title: 'Welcome! 🎉', 
-        description: 'Your 90-Day Live Trial has started. Enjoy full access to all features!' 
+        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
       });
       navigate('/dashboard');
     }
@@ -659,7 +659,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Start your 90-Day Live Trial',
+          description: 'Start your 60-Day Live Trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -838,10 +838,10 @@ export default function Auth() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">👑</span>
-                      <h3 className="text-sm font-bold text-foreground">90-Day Live Trial — Full Access</h3>
+                      <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your <span className="font-semibold text-foreground">90-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
+                      Your <span className="font-semibold text-foreground">60-Day Live Trial</span> activates the plan you select below — Core, Boost, Pro, or Elite — with all of that plan's agents, consoles, and integrations turned on for your industry. No credit card required. You can upgrade or downgrade anytime during the trial.
                     </p>
                     <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
                       <span className="font-semibold text-foreground">First 30 days = onboarding.</span> Account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training happen during the onboarding window — so the remaining 60 days are spent fully live.
@@ -858,7 +858,7 @@ export default function Auth() {
                     <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">a 90-Day Live Trial</span> for testing — the <span className="font-semibold text-foreground">first 30 days are dedicated to onboarding</span>, then 60 days of full live use. All we ask is your honest feedback to help us improve the platform.
+                    All users who join during the beta period receive <span className="font-semibold text-primary">a 60-Day Live Trial</span> for testing — the <span className="font-semibold text-foreground">first 30 days are dedicated to onboarding</span>, then 30 days of full live use. All we ask is your honest feedback to help us improve the platform.
                   </p>
                 </div>
 
@@ -1479,7 +1479,7 @@ export default function Auth() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">90-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Launch Pricing</span> per tier: <span className="font-semibold text-foreground">Core <span className="line-through text-muted-foreground">$349</span> $249 · Boost <span className="line-through text-muted-foreground">$549</span> $449 · Pro <span className="line-through text-muted-foreground">$999</span> $899 · Elite <span className="line-through text-muted-foreground">$1,749</span> $1,549</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Launch Pricing</span> per tier: <span className="font-semibold text-foreground">Core <span className="line-through text-muted-foreground">$349</span> $249 · Boost <span className="line-through text-muted-foreground">$549</span> $449 · Pro <span className="line-through text-muted-foreground">$999</span> $899 · Elite <span className="line-through text-muted-foreground">$1,749</span> $1,549</span>.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
@@ -1494,14 +1494,14 @@ export default function Auth() {
                           disabled={isLoading || !termsAgreed || (mode === 'company' && (!setupAcknowledged.a2p || !setupAcknowledged.costs || !setupAcknowledged.knowledgeBase))}
                         >
                           {isLoading ? 'Creating account...' : mode === 'company' 
-                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start 90-Day Live Trial')
+                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start 60-Day Live Trial')
                             : 'Create Account'}
                         </Button>
                         {mode === 'company' && (
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '90-Day Live Trial (first 30 days = onboarding) • No credit card required for the trial • Cancel anytime'}
+                              : '60-Day Live Trial (first 30 days = onboarding) • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
                       </form>
@@ -1522,7 +1522,7 @@ export default function Auth() {
                 </div>
                 <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
                  <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">90-Day Live Trial</span>. <span className="font-bold text-primary">Launch Pricing:</span> <span className="font-bold text-cyan-300">Core <span className="line-through opacity-60">$349</span> $249 · Boost <span className="line-through opacity-60">$549</span> $449 · Pro <span className="line-through opacity-60">$999</span> $899 · Elite <span className="line-through opacity-60">$1,749</span> $1,549</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 60 days of full live use. Non-refundable once onboarding begins.
+                   Due at start of the <span className="font-bold text-cyan-300">60-Day Live Trial</span>. <span className="font-bold text-primary">Launch Pricing:</span> <span className="font-bold text-cyan-300">Core <span className="line-through opacity-60">$349</span> $249 · Boost <span className="line-through opacity-60">$549</span> $449 · Pro <span className="line-through opacity-60">$999</span> $899 · Elite <span className="line-through opacity-60">$1,749</span> $1,549</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 30 days of full live use. Non-refundable once onboarding begins.
                  </p>
               </div>
 

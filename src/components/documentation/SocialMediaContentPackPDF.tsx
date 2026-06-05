@@ -411,7 +411,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.ctaBox}>
         <Text style={styles.ctaLabel}>CTA VARIATIONS</Text>
         <Text style={styles.ctaText}>
-          - "Link in bio to start your 90-Day Live Trial"{'\n'}
+          - "Link in bio to start your 60-Day Live Trial"{'\n'}
           - "Comment 'INFO' for a personalized demo"{'\n'}
           - "DM us 'SAVE' to see your ROI calculation"{'\n'}
           - "Tag a contractor who needs this"{'\n'}

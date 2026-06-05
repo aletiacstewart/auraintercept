@@ -195,7 +195,7 @@ serve(async (req) => {
 function getEmailSubject(reminderType: string, companyName: string): string {
   switch (reminderType) {
     case '7-day':
-      return `Your 90-day free trial ends in 7 days - Subscribe to keep your AI Agent`;
+      return `Your 60-day free trial ends in 7 days - Subscribe to keep your AI Agent`;
     case '3-day':
       return `Only 3 days left! Subscribe to continue using Aura Intercept`;
     case '1-day':
