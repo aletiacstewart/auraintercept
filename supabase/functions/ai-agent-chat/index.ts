@@ -1202,7 +1202,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
               additionalProperties: true,
             },
           },
-          required: ['customer_name', 'customer_phone', 'customer_address', 'service_type', 'datetime'],
+          required: ['customer_name', 'customer_phone', 'service_type', 'datetime'],
         },
       },
     },
