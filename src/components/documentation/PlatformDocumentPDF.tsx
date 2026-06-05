@@ -932,7 +932,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.ctaBox}>
         <Text style={styles.ctaTitle}>Ready to Transform Your Business?</Text>
-        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 90-Day Live Trial today. No credit card required. The first 30 days are dedicated to onboarding, then 60 days of full live use.</Text></Text>
+        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 60-Day Live Trial today. No credit card required. The first 30 days are dedicated to onboarding, then 30 days of full live use.</Text></Text>
       </View>
     </Page>
 
@@ -1151,7 +1151,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- AI Receptionist, Booking, Follow-Up, Review</Text>
         <Text style={styles.pricingFeature}>- Creative Content, Web Presence, Lead, Marketing</Text>
         <Text style={styles.pricingFeature}>- 10 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $249 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</Text>
+        <Text style={styles.pricingFeature}>- $249 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</Text>
       </View>
 
 
@@ -1163,7 +1163,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- All Core agents + Dispatch, Route, ETA, Check-In</Text>
         <Text style={styles.pricingFeature}>- Field Operations & Social Media</Text>
         <Text style={styles.pricingFeature}>- 25 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $449 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</Text>
+        <Text style={styles.pricingFeature}>- $449 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
@@ -1173,7 +1173,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- All Boost agents + Campaign, Outreach, Social</Text>
         <Text style={styles.pricingFeature}>- Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim)</Text>
         <Text style={styles.pricingFeature}>- 50 Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $899 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</Text>
+        <Text style={styles.pricingFeature}>- $899 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</Text>
       </View>
 
       <View style={styles.pricingCard}>
@@ -1183,7 +1183,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
-        <Text style={styles.pricingFeature}>- $1,549 one-time onboarding fee (due at start of 90-Day Live Trial; first 30 days = onboarding)</Text>
+        <Text style={styles.pricingFeature}>- $1,549 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>
@@ -1262,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Aura Core starts at $249/month — and there's a 90-Day Live Trial with no credit card required (first 30 days are dedicated to onboarding, then 60 days of full live use)."
+          that's $6,000/month in lost revenue. Aura Core starts at $249/month — and there's a 60-Day Live Trial with no credit card required (first 30 days are dedicated to onboarding, then 30 days of full live use)."
         </Text>
       </View>
 
@@ -1275,7 +1275,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 90-Day Live Trial today—no credit card required. First 30 days = onboarding, then 60 days of full live use."</BulletPoint>
+      <BulletPoint>"Let's start your 60-Day Live Trial today—no credit card required. First 30 days = onboarding, then 30 days of full live use."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>
@@ -1291,7 +1291,7 @@ const PlatformDocumentPDF = () => (
           Hook: "Every missed call costs your business $300-$500."{"\n"}
           Problem: Show phone ringing, going to voicemail, competitor getting the job.{"\n"}
           Solution: Aura AI answers instantly, books appointment, sends confirmation.{"\n"}
-          CTA: "Never miss a lead again. Start your 90-Day Live Trial at AuraIntercept.com"
+          CTA: "Never miss a lead again. Start your 60-Day Live Trial at AuraIntercept.com"
         </Text>
       </View>
 
@@ -1361,7 +1361,7 @@ const PlatformDocumentPDF = () => (
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
-          Free 90-day trial (first 30 days = onboarding). No credit card. Start now"
+          Free 60-day trial (first 30 days = onboarding). No credit card. Start now"
         </Text>
       </View>
 
@@ -1369,7 +1369,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Slide 1: "19 AI Agents for Your Service Business"</BulletPoint>
       <BulletPoint>Slide 2-7: One agent per slide with icon and benefit</BulletPoint>
       <BulletPoint>Slide 8: "All working together 24/7"</BulletPoint>
-      <BulletPoint>Slide 9: CTA with 90-Day Live Trial offer</BulletPoint>
+      <BulletPoint>Slide 9: CTA with 60-Day Live Trial offer</BulletPoint>
 
       <Text style={styles.subsectionTitle}>Hashtags</Text>
       <Text style={styles.paragraph}>

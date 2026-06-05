@@ -814,7 +814,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.closingCard}>
         <Text style={styles.closingTitle}>[TARGET] Closing Question</Text>
         <Text style={styles.closingText}>
-          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 90-day trial? The first 30 days are your onboarding window, then 60 days of full live use."
+          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 60-day trial? The first 30 days are your onboarding window, then 30 days of full live use."
         </Text>
       </View>
 
@@ -850,7 +850,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionLabel}>The Risk Reversal Close</Text>
         <Text style={styles.responseText}>
           "I understand you want to be careful with this decision. Here's what I can offer:{'\n\n'}
-          Start your 90-day trial today. Full access to [tier]. First 30 days = onboarding (we configure everything for you), then 60 days of full live use. If after two weeks you don't see the value—if you're not capturing more leads and saving time—you pay nothing.{'\n\n'}
+          Start your 60-day trial today. Full access to [tier]. First 30 days = onboarding (we configure everything for you), then 30 days of full live use. If after two weeks you don't see the value—if you're not capturing more leads and saving time—you pay nothing.{'\n\n'}
           There's literally zero risk. The only risk is continuing to miss calls while you think about it.{'\n\n'}
           Can I get you started with that trial right now?"
         </Text>

@@ -949,7 +949,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">HIPAA-aware intake for Physical Therapy, Occupational Therapy & Hospice</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=starter')}>
-                  Start 90-Day Live Trial
+                  Start 60-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -983,7 +983,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">25 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=connect')}>
-                  <Zap className="w-3 h-3 mr-1" />Start 90-Day Live Trial
+                  <Zap className="w-3 h-3 mr-1" />Start 60-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1016,7 +1016,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
                 </div>
                 <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white" onClick={() => navigate('/auth?mode=company&tab=signup&tier=performance')}>
-                  Start 90-Day Live Trial
+                  Start 60-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1048,7 +1048,7 @@ export default function Index() {
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>
                 </div>
                 <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/auth?mode=company&tab=signup&tier=command')}>
-                  Start 90-Day Live Trial
+                  Start 60-Day Live Trial
                 </Button>
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1073,7 +1073,7 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>90-Day Live Trial • No credit card required for the trial</p>
+            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>60-Day Live Trial • No credit card required for the trial</p>
             <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
           </div>
@@ -1091,7 +1091,7 @@ export default function Index() {
                 </div>
                 <p className="text-sm text-white leading-relaxed">
                   We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
-                  <span className="font-semibold text-primary">90-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
+                  <span className="font-semibold text-primary">60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
                 </p>
 
                 <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3">
@@ -1105,7 +1105,7 @@ export default function Index() {
                     <span className="font-semibold text-primary">Why an onboarding fee?</span> Due to the amount of setup and hours it takes to onboard each company, we do require a one-time onboarding fee.
                   </p>
                   <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 90-Day Live Trial) — <span className="text-primary">Launch Pricing</span>:</span> Core <span className="line-through text-white/50">$349</span> <span className="font-semibold text-primary">$249</span> • Boost <span className="line-through text-white/50">$549</span> <span className="font-semibold text-primary">$449</span> • Pro <span className="line-through text-white/50">$999</span> <span className="font-semibold text-primary">$899</span> • Elite <span className="line-through text-white/50">$1,749</span> <span className="font-semibold text-primary">$1,549</span>
+                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 60-Day Live Trial) — <span className="text-primary">Launch Pricing</span>:</span> Core <span className="line-through text-white/50">$349</span> <span className="font-semibold text-primary">$249</span> • Boost <span className="line-through text-white/50">$549</span> <span className="font-semibold text-primary">$449</span> • Pro <span className="line-through text-white/50">$999</span> <span className="font-semibold text-primary">$899</span> • Elite <span className="line-through text-white/50">$1,749</span> <span className="font-semibold text-primary">$1,549</span>
                   </p>
                   <p className="text-[11px] italic text-white/70 leading-relaxed">
                     Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.

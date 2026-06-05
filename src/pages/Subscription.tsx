@@ -514,7 +514,7 @@ export default function Subscription() {
                     )}
                   </div>
                   <p className="font-medium text-card-foreground">
-                    {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining in your 90-day live trial
+                    {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining in your 60-day live trial
                   </p>
                   <div className="mt-2 space-y-1">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -745,7 +745,7 @@ export default function Subscription() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-center">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-card-foreground font-medium">90-Day Live Trial</span>
+                <span className="text-card-foreground font-medium">60-Day Live Trial</span>
                 <span className="text-muted-foreground">No credit card required</span>
               </div>
               <span className="text-muted-foreground">•</span>
@@ -757,7 +757,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">
-                  Onboarding Fee (one-time, due at start of 90-Day Live Trial) — <span className="text-primary font-semibold">Launch Pricing:</span>{' '}
+                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-primary font-semibold">Launch Pricing:</span>{' '}
                   Core <span className="line-through">$349</span> <span className="text-foreground font-semibold">$249</span> ·{' '}
                   Boost <span className="line-through">$549</span> <span className="text-foreground font-semibold">$449</span> ·{' '}
                   Pro <span className="line-through">$999</span> <span className="text-foreground font-semibold">$899</span> ·{' '}
@@ -812,13 +812,13 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 90-Day Live Trial.
+                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 60-Day Live Trial.
               </p>
             </div>
             <div>
               <h4 className="font-medium text-card-foreground">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                When your 90-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
+                When your 60-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
               </p>
             </div>
             <div>

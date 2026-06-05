@@ -428,7 +428,7 @@ export default function PublicOnboardingIntake() {
                 <div className="space-y-3 border border-border rounded-md p-3 bg-muted/20">
                   <div>
                     <Label className="text-sm font-semibold">Choose your onboarding plan</Label>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">One-time onboarding fee is due at the start of the 90-Day Live Trial. Subscription begins after the trial.</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">One-time onboarding fee is due at the start of the 60-Day Live Trial. Subscription begins after the trial.</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-2">
                     {PLAN_OPTIONS.map((p) => {
@@ -484,7 +484,7 @@ export default function PublicOnboardingIntake() {
                       : `$${plan.monthly.toLocaleString()}/mo`;
                     return (
                       <div className="text-xs text-foreground bg-background border border-border rounded p-2">
-                        Due at start of trial: <span className="font-semibold">${plan.onboarding.toLocaleString()}</span>. Then <span className="font-semibold">{recurring}</span> after the 90-Day Live Trial.
+                        Due at start of trial: <span className="font-semibold">${plan.onboarding.toLocaleString()}</span>. Then <span className="font-semibold">{recurring}</span> after the 60-Day Live Trial.
                       </div>
                     );
                   })()}
@@ -496,7 +496,7 @@ export default function PublicOnboardingIntake() {
                       placeholder="billing@yourcompany.com"
                     />
                   </Field>
-                  <p className="text-[11px] text-muted-foreground -mt-2">We'll send the one-time onboarding invoice here. Subscription billing starts after the 90-Day Live Trial.</p>
+                  <p className="text-[11px] text-muted-foreground -mt-2">We'll send the one-time onboarding invoice here. Subscription billing starts after the 60-Day Live Trial.</p>
                 </div>
 
                 <p className="text-sm text-muted-foreground">Review the full <a className="text-primary underline" href="https://auraintercept.ai/terms-of-service" target="_blank" rel="noreferrer">Terms of Service</a> and <a className="text-primary underline" href="https://auraintercept.ai/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
@@ -504,7 +504,7 @@ export default function PublicOnboardingIntake() {
                   ['agree_tos', 'I agree to the Aura Intercept Terms of Service.'],
                   ['agree_privacy', 'I have read and agree to the Privacy Policy.'],
                   ['agree_third_party', 'I understand each 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) bills me directly with my own account + credit card on file. Aura Intercept does not resell or mark up usage.'],
-                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is due at the start of the 90-Day Live Trial and is non-refundable once onboarding has been completed.'],
+                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is due at the start of the 60-Day Live Trial and is non-refundable once onboarding has been completed.'],
                   ['agree_authority', 'I am authorized to sign this agreement on behalf of the company.'],
                 ].map(([key, label]) => (
                   <label key={key} className="flex items-start gap-2 text-sm">

@@ -182,7 +182,7 @@ export default function About() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => navigate('/auth?mode=company')}>
-                Start 90-Day Live Trial
+                Start 60-Day Live Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline" onClick={() => navigate('/contact')}>
@@ -190,7 +190,7 @@ export default function About() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              First 30 days = onboarding · then 60 days of full live use
+              First 30 days = onboarding · then 30 days of full live use
             </p>
           </div>
         </section>

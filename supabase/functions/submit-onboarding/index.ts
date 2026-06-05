@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
           <ol style="line-height:1.6">
             <li>Within <strong>1 business day</strong>, your Aura Intercept Concierge will email to schedule your kickoff call.</li>
             <li>We'll review your workbook together and configure your 3rd-party accounts (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) using the logins + card you provide. Each provider invoices you directly and separately from your Aura plan fee.</li>
-            <li>Your one-time onboarding fee is invoiced at the start of your 90-Day Live Trial.</li>
+            <li>Your one-time onboarding fee is invoiced at the start of your 60-Day Live Trial.</li>
             <li>Your platform goes live — the trial begins.</li>
           </ol>
           <p style="margin-top:18px;font-size:12px;color:#64748b">Questions before then? Reply to this email or write to ai@auraintercept.ai.</p>

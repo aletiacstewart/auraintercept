@@ -48,7 +48,7 @@ export function TrialBanner() {
   // If subscribed but not in trial, it means they have a real subscription
   if (subscribed && !inTrial) return null;
 
-  const totalDays = 90;
+  const totalDays = 60;
   const daysUsed = totalDays - (timeRemaining?.days ?? 0);
   const progressPercent = Math.min((daysUsed / totalDays) * 100, 100);
 
@@ -114,7 +114,7 @@ export function TrialBanner() {
           <p className="text-sm text-foreground mt-1">
             {isCritical 
               ? "Subscribe now to keep your AI Operatives and all premium features."
-              : "You have full access to every Aura Elite feature during your 90-day trial. The first 30 days are your onboarding window; the remaining 60 days are full live use."
+              : "You have full access to every Aura Elite feature during your 60-day trial. The first 30 days are your onboarding window; the remaining 60 days are full live use."
             }
           </p>
 

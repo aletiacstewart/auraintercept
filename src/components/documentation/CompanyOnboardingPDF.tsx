@@ -1344,7 +1344,7 @@ const SmartWebsitePage = () => (
 
 const TOS_CLAUSES: Array<{ title: string; body: string }> = [
   { title: '1. Services', body: 'Aura Intercept provides an AI-powered customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
-  { title: '2. Subscription & 90-Day Live Trial', body: 'Subscription begins on the date the onboarding fee is paid. A 90-Day Live Trial period applies; the platform is fully active during the trial. Cancellation must occur in writing before the next monthly billing date.' },
+  { title: '2. Subscription & 60-Day Live Trial', body: 'Subscription begins on the date the onboarding fee is paid. A 60-Day Live Trial period applies; the platform is fully active during the trial. Cancellation must occur in writing before the next monthly billing date.' },
   { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to the selected tier\'s monthly price is due at trial start and is non-refundable. It covers Concierge Onboarding services and platform configuration.' },
   { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms, Google Workspace, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells, marks up, or absorbs third-party usage charges.' },
   { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
@@ -1376,7 +1376,7 @@ const TermsOfServiceSummaryPage = () => (
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Key Reminders')}</Text>
       <Text style={styles.infoBoxText}>
-        {sanitizePdfText('- 90-Day Live Trial: platform is fully active; onboarding fee due at start and non-refundable.\n- 3rd-Party Costs: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social platforms bill you directly on your own account and card.\n- Concierge Onboarding configures these accounts on your behalf using your credentials.\n- Cancel in writing before your next monthly billing date to avoid the next charge.')}
+        {sanitizePdfText('- 60-Day Live Trial: platform is fully active; onboarding fee due at start and non-refundable.\n- 3rd-Party Costs: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social platforms bill you directly on your own account and card.\n- Concierge Onboarding configures these accounts on your behalf using your credentials.\n- Cancel in writing before your next monthly billing date to avoid the next charge.')}
       </Text>
     </View>
   </Page>
@@ -1388,7 +1388,7 @@ const TermsAcknowledgementPage = () => {
     'I have read and agree to the Aura Intercept Privacy Policy at auraintercept.ai/privacy-policy.',
     'I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account and credit card and will be invoiced to me DIRECTLY and SEPARATELY from my Aura plan fee.',
     'I authorize Aura Intercept Concierge Onboarding to configure these third-party accounts on my behalf using credentials I provide.',
-    'I agree to the 90-Day Live Trial terms; the onboarding fee for my selected tier is due at trial start and is non-refundable.',
+    'I agree to the 60-Day Live Trial terms; the onboarding fee for my selected tier is due at trial start and is non-refundable.',
     'I confirm that I am an authorized signer with legal authority to bind the Company named below.',
   ];
   return (
@@ -1418,7 +1418,7 @@ const TermsAcknowledgementPage = () => {
         <View style={styles.formLine} />
       </View>
       <Text style={[styles.formNote, { marginLeft: 188 }]}>
-        {sanitizePdfText('One-time onboarding invoice is sent here. Subscription billing begins after the 90-Day Live Trial.')}
+        {sanitizePdfText('One-time onboarding invoice is sent here. Subscription billing begins after the 60-Day Live Trial.')}
       </Text>
 
       <Text style={[styles.subsectionTitle, { marginTop: 14 }]}>{sanitizePdfText('Acknowledgements (initial each)')}</Text>

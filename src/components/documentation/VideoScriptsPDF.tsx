@@ -463,7 +463,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:55-1:00</Text>
-          <Text style={styles.timestampContent}>[CTA] "Start your 90-Day Live Trial today. Your AI team is ready."</Text>
+          <Text style={styles.timestampContent}>[CTA] "Start your 60-Day Live Trial today. Your AI team is ready."</Text>
         </View>
       </View>
 

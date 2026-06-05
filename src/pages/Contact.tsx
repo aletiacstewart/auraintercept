@@ -317,13 +317,13 @@ export default function Contact() {
                   <CardContent className="pt-6">
                     <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
                     <p className="mb-4 opacity-90">
-                      Start your 90-Day Live Trial and see how AI can transform your business. The first 30 days are your onboarding window; the remaining 60 days are full live use.
+                      Start your 60-Day Live Trial and see how AI can transform your business. The first 30 days are your onboarding window; the remaining 60 days are full live use.
                     </p>
                     <Button 
                       variant="secondary" 
                       onClick={() => navigate('/auth?mode=company')}
                     >
-                      90-Day Live Trial
+                      60-Day Live Trial
                     </Button>
                   </CardContent>
                 </Card>
