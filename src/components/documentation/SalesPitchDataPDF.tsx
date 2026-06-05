@@ -469,11 +469,11 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Aura Intercept cost</Text>
-          <Text style={styles.roiValue}>-$497</Text>
+          <Text style={styles.roiValue}>-$897</Text>
         </View>
         <View style={[styles.roiRow, styles.roiTotal]}>
           <Text style={styles.roiTotalLabel}>Net Monthly ROI</Text>
-          <Text style={styles.roiTotalValue}>+$12,203</Text>
+          <Text style={styles.roiTotalValue}>+$11,803</Text>
         </View>
       </View>
 
