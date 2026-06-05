@@ -4369,12 +4369,28 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       nextSteps = generateNextSteps(handoffTo, handoffReason);
     }
 
+    // Extract the most recent UI directive from offer_slot_picker / offer_booking_form
+    let toolUi: any = null;
+    for (let i = toolCalls.length - 1; i >= 0; i--) {
+      const tc = toolCalls[i];
+      if (tc.name === 'offer_slot_picker' || tc.name === 'offer_booking_form') {
+        try {
+          const parsed = JSON.parse(tc.result);
+          if (parsed?.ui?.kind) {
+            toolUi = parsed.ui;
+            break;
+          }
+        } catch { /* ignore */ }
+      }
+    }
+
     return new Response(JSON.stringify({
       response: responseText,
       event_type: eventType,
       handoff_to: handoffTo,
       handoff_reason: handoffReason,
       tool_calls: toolCalls,
+      tool_ui: toolUi,
       context_id: contextId,
       next_steps: nextSteps,
     }), {
