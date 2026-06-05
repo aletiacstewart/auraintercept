@@ -5005,37 +5005,83 @@ async function executeAgentTool(
 
       const deliveryType = matchedService?.delivery_type || 'in_person_customer';
 
+      // Defensively coerce intake_data: accept object, JSON-string, or null.
+      let normalizedIntake: Record<string, unknown> | null = null;
+      const rawIntake = args.intake_data;
+      if (rawIntake && typeof rawIntake === 'object' && !Array.isArray(rawIntake)) {
+        normalizedIntake = rawIntake as Record<string, unknown>;
+      } else if (typeof rawIntake === 'string') {
+        try {
+          const parsed = JSON.parse(rawIntake);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            normalizedIntake = parsed;
+          }
+        } catch {
+          console.warn('[AI Agent] intake_data was a non-JSON string, dropping:', rawIntake);
+        }
+      }
+
+      const baseInsert = {
+        company_id: companyId,
+        customer_name: args.customer_name,
+        customer_phone: args.customer_phone,
+        customer_email: args.customer_email,
+        customer_address: args.customer_address || null,
+        service_type: args.service_type,
+        datetime: appointmentDatetime,
+        duration_minutes: args.duration_minutes || 60,
+        notes: args.notes || null,
+        status: 'scheduled',
+        employee_id: employeeId,
+        customer_user_id: userId || null,
+        delivery_type: deliveryType,
+      };
+
       // Create the appointment with the properly parsed datetime
-      const { data: appointment, error } = await supabase
+      let { data: appointment, error } = await supabase
         .from('appointments')
-        .insert({
-          company_id: companyId,
-          customer_name: args.customer_name,
-          customer_phone: args.customer_phone,
-          customer_email: args.customer_email,
-          customer_address: args.customer_address || null,
-          service_type: args.service_type,
-          datetime: appointmentDatetime,
-          duration_minutes: args.duration_minutes || 60,
-          notes: args.notes || null,
-          status: 'scheduled',
-          employee_id: employeeId,
-          customer_user_id: userId || null,
-          delivery_type: deliveryType,
-          intake_data:
-            args.intake_data && typeof args.intake_data === 'object' && !Array.isArray(args.intake_data)
-              ? args.intake_data
-              : null,
-        })
+        .insert({ ...baseInsert, intake_data: normalizedIntake })
         .select()
         .single();
 
+      let intakeWarning: string | null = null;
       if (error) {
-        console.error('[AI Agent] Appointment creation error:', error);
-        return { success: false, error: error.message };
+        // Log the full Postgres error so we can see future failures in edge logs.
+        console.error('[AI Agent] Appointment creation error (with intake):', {
+          code: (error as any).code,
+          message: error.message,
+          details: (error as any).details,
+          hint: (error as any).hint,
+          intake_keys: normalizedIntake ? Object.keys(normalizedIntake) : null,
+        });
+
+        const msg = (error.message || '').toLowerCase();
+        const looksIntakeRelated =
+          normalizedIntake && (
+            msg.includes('intake_data') ||
+            msg.includes('jsonb') ||
+            msg.includes('invalid input syntax for type json')
+          );
+
+        if (looksIntakeRelated) {
+          // Retry once without intake_data so the booking still succeeds.
+          const retry = await supabase
+            .from('appointments')
+            .insert({ ...baseInsert, intake_data: null })
+            .select()
+            .single();
+          if (retry.error) {
+            console.error('[AI Agent] Appointment retry-without-intake also failed:', retry.error);
+            return { success: false, error: retry.error.message };
+          }
+          appointment = retry.data;
+          intakeWarning = 'Saved without intake fields — staff will follow up to collect them.';
+        } else {
+          return { success: false, error: error.message };
+        }
       }
 
-      console.log('[AI Agent] Appointment created:', appointment.id);
+      console.log('[AI Agent] Appointment created:', appointment.id, intakeWarning ? '(intake stripped)' : '');
 
       // Create job assignment if employee assigned
       let jobAssignment = null;
