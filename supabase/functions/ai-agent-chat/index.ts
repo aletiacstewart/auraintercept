@@ -275,7 +275,14 @@ Then present the closest dates with open slots to the customer like:
 "That date is fully booked, but I found availability on:
 - [Day], [Date] — available at [times]
 - [Day], [Date] — available at [times]
-Would any of these work for you?"`,
+Would any of these work for you?"
+
+CRITICAL - VISUAL FALLBACKS (use instead of apologizing in a loop):
+- When the customer wants to book but has NOT given a specific date/time, call offer_slot_picker(service_type) ONCE. The chat will render an interactive calendar. Tell the customer "Tap a time below to confirm." Do NOT also type out the slot times.
+- If create_appointment FAILS, do NOT retry silently and do NOT apologize a second time. Immediately call offer_slot_picker so the customer can pick a slot visually.
+- If create_appointment fails TWICE in the same conversation, OR the industry requires intake fields the customer hasn't provided, call offer_booking_form(reason="...") so the full form opens.
+- If the customer literally asks for a "form", "picker", "calendar", "link", or says "let me pick", call offer_slot_picker (preferred) or offer_booking_form.
+- Never apologize more than once in a row without calling one of these fallback tools.`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
