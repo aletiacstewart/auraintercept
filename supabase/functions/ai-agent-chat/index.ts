@@ -3298,10 +3298,28 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
-    const language = (requestLanguage === 'es' || requestLanguage === 'en') ? requestLanguage : 'en';
-    const languageDirective = language === 'es'
-      ? `\n\nLANGUAGE REQUIREMENT: Respond ONLY in Spanish (Español). All replies, confirmations, and questions must be in natural, professional Spanish regardless of the language used in earlier messages or system text. Keep brand names ("Aura Intercept", agent names) in English.`
-      : `\n\nLANGUAGE REQUIREMENT: Respond in clear, professional English unless the customer explicitly requests another language.`;
+
+    // Resolve language: explicit request → company default → 'en'.
+    let resolvedLanguage: 'en' | 'es' | 'auto' = 'en';
+    if (requestLanguage === 'es' || requestLanguage === 'en' || requestLanguage === 'auto') {
+      resolvedLanguage = requestLanguage;
+    } else if (companyId) {
+      try {
+        const { data: companyLang } = await supabase
+          .from('companies')
+          .select('default_language')
+          .eq('id', companyId)
+          .maybeSingle();
+        const dl = (companyLang as { default_language?: string } | null)?.default_language;
+        if (dl === 'es' || dl === 'en' || dl === 'auto') resolvedLanguage = dl;
+      } catch (_) { /* fall back to en */ }
+    }
+    const language: 'en' | 'es' = resolvedLanguage === 'es' ? 'es' : 'en';
+    const languageDirective = resolvedLanguage === 'auto'
+      ? `\n\nLANGUAGE REQUIREMENT: Detect the language of the customer's most recent message. If they wrote in Spanish, reply in natural, professional Spanish (Español). Otherwise reply in clear, professional English. Stay in the detected language for the rest of the conversation. Keep brand names ("Aura Intercept", agent names) in English.`
+      : resolvedLanguage === 'es'
+        ? `\n\nLANGUAGE REQUIREMENT: Respond ONLY in Spanish (Español). All replies, confirmations, and questions must be in natural, professional Spanish regardless of the language used in earlier messages or system text. Keep brand names ("Aura Intercept", agent names) in English.`
+        : `\n\nLANGUAGE REQUIREMENT: Respond in clear, professional English unless the customer explicitly requests another language.`;
     
     // Use the requested model for internal requests (e.g. phone via voice-handler), default to flash
     const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
