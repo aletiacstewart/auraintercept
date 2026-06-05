@@ -14,7 +14,7 @@ const TIER_LABEL: Record<Exclude<SubscriptionTier, 'free'>, string> = {
   starter: 'Aura Core ($497/mo · $249 onboarding · Launch Pricing — was $697 + $349)',
   connect: 'Aura Boost ($897/mo · $449 onboarding · Launch Pricing — was $1,097 + $549)',
   performance: 'Aura Pro ($1,797/mo · $899 onboarding · Launch Pricing — was $1,997 + $999)',
-  command: 'Aura Elite ($3,097/mo · $1,549 onboarding · Launch Pricing — was $3,497 + $1,749)',
+  command: 'Aura Elite ($2,997/mo · $1,549 onboarding · Launch Pricing — was $3,997 + $1,749)',
 };
 
 function renderTierSection(): string {

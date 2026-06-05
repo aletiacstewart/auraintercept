@@ -893,7 +893,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 5, title: 'Core Details', desc: '$497/mo (was $697) tier breakdown' },
                   { page: 6, title: 'Boost Details', desc: '$897/mo (was $1,097) tier breakdown' },
                   { page: 7, title: 'Pro Details', desc: '$1,797/mo (was $1,997) tier breakdown' },
-                  { page: 8, title: 'Elite Details', desc: '$3,097/mo (was $3,497) tier breakdown' },
+                  { page: 8, title: 'Elite Details', desc: '$2,997/mo (was $3,997) tier breakdown' },
                   { page: 9, title: 'Annual Savings', desc: 'Discount calculations' },
                   { page: 10, title: '3rd Party Costs', desc: 'Integration pricing details' },
                   { page: 11, title: 'Billing Clarifications', desc: 'Company Stripe requirements' },

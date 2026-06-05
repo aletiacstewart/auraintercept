@@ -83,7 +83,7 @@ export const DIY_BREAKDOWN: DiyTierBreakdown[] = [
     { label: 'AI contractor retainer', low: 500, high: 1500 },
     { label: 'Setup + integration build (one-time)', low: 5000, high: 12000, oneTime: true },
   ]),
-  build('elite', 'Aura Elite', 3097, [
+  build('elite', 'Aura Elite', 2997, [
     { label: 'Everything in Pro stack', low: 2300, high: 6850 },
     { label: 'Enterprise voice AI (custom build)', low: 400, high: 1500 },
     { label: 'Invoice + billing automation', low: 200, high: 500 },

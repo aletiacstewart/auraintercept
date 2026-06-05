@@ -44,7 +44,7 @@ const tierUpgrades = {
   },
   command: {
     name: 'Elite',
-    price: '$3,497/mo',
+    price: '$3,997/mo',
     limit: '25,000',
     icon: Crown,
     features: ['50x more visitors', 'All 7 Centers + AI Hub', 'Unlimited employees'],

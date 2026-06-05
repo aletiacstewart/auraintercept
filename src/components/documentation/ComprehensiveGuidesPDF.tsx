@@ -219,7 +219,7 @@ const guideCategories = [
           'Aura Core ($497/mo): 8 Smart AI Agents + 3 Consoles, 10 employees',
           'Aura Boost ($897/mo): 12 Smart AI Agents + 5 Consoles, 25 employees',
           'Aura Pro ($1,797/mo): 16 Smart AI Agents + 5 Consoles, 50 employees, Industry Specialists',
-          'Aura Elite ($3,097/mo): All 10 AI Operatives + 7 Consoles + AI Operatives Hub, Unlimited employees',
+          'Aura Elite ($2,997/mo): All 10 AI Operatives + 7 Consoles + AI Operatives Hub, Unlimited employees',
           'All tiers include API Access and Embeddable Chat Widget'
         ],
         tips: ['Trial users get full Elite tier access', 'Annual billing saves ~20%']
@@ -1024,7 +1024,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Elite ($3,097/mo): All 10 AI Operatives, 7 consoles + AI Operatives Hub, unlimited employees</Text>
+          <Text style={styles.bulletText}>Aura Elite ($2,997/mo): All 10 AI Operatives, 7 consoles + AI Operatives Hub, unlimited employees</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

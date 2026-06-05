@@ -40,8 +40,8 @@ export const LAUNCH_PRICING = {
     },
     command: {
       name: 'Aura Elite',
-      original: 3497,
-      sale: 3097,
+      original: 3997,
+      sale: 2997,
       onboardingOriginal: 1749,
       onboardingSale: 1549,
     },

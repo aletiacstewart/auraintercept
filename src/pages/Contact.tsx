@@ -187,7 +187,7 @@ export default function Contact() {
                                 <SelectItem value="starter">Aura Core — $497/mo (was $697 · Launch Pricing)</SelectItem>
                                 <SelectItem value="connect">Aura Boost — $897/mo (was $1,097 · Launch Pricing)</SelectItem>
                                 <SelectItem value="performance">Aura Pro — $1,797/mo (was $1,997 · Launch Pricing)</SelectItem>
-                                <SelectItem value="command">Aura Elite — $3,097/mo (was $3,497 · Launch Pricing)</SelectItem>
+                                <SelectItem value="command">Aura Elite — $2,997/mo (was $3,997 · Launch Pricing)</SelectItem>
                                 <SelectItem value="other">Other / Not Sure</SelectItem>
                               </SelectContent>
                             </Select>

@@ -900,7 +900,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Core $497 · Boost $897 · Pro $1,797 · Elite $3,097 / month. One-time onboarding fee = 50% of monthly: Core $249 · Boost $449 · Pro $899 · Elite $1,549, due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Core $497 · Boost $897 · Pro $1,797 · Elite $2,997 / month. One-time onboarding fee = 50% of monthly: Core $249 · Boost $449 · Pro $899 · Elite $1,549, due at start.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 

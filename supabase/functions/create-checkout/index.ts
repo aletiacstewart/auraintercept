@@ -12,9 +12,9 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// LAUNCH PRICING (active): Core $497 · Boost $897 · Pro $1,797 · Elite $3,097.
-// Onboarding fees are 50% of new monthly, rounded: $249 / $449 / $899 / $1,549.
-// Original (struck-through) pricing: $697 / $1,097 / $1,997 / $3,497.
+// LAUNCH PRICING (active): Core $497 · Boost $897 · Pro $1,797 · Elite $2,997.
+// Onboarding fees: $249 / $449 / $899 / $1,549 (Elite onboarding unchanged).
+// Original (struck-through) pricing: $697 / $1,097 / $1,997 / $3,997.
 const CORE = {
   name: "Aura Core",
   price: 49700,
@@ -35,8 +35,8 @@ const PRO = {
 };
 const ELITE = {
   name: "Aura Elite",
-  price: 309700,
-  price_id: "price_1TeergJ9fo9y8fGHMwqU7pMV",
+  price: 299700,
+  price_id: "price_1Tf4XnJ9fo9y8fGHQSlh9suF",
   onboarding_price_id: "price_1TeerkJ9fo9y8fGHCV3tC51t",
 };
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
