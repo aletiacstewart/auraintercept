@@ -1,49 +1,87 @@
-# Enable Spanish for AI Chat & Voice
+## Goal
+Make the entire Aura platform Spanish-ready using a two-layer translation system: hand-curated react-i18next strings for high-value surfaces + an AI auto-translate fallback for everything else. No DOM-mutating third-party widget. Real `/es` URLs, brand-safe terms, works with PDFs/SMS/email.
 
-## What's already in place
-- **Text chat backend** (`ai-agent-chat`) already accepts `language: 'en' | 'es'` and injects a Spanish system directive. `useUnifiedAura` and `useMultiAgentChat` already forward `language` based on the user's i18n locale.
-- **Language toggle UI** (`LanguageToggle` + `LanguageContext`) exists and persists to `profiles.preferred_language`.
+## Architecture
 
-## What's missing
-1. **ElevenLabs voice (browser + phone)** — `startSession` calls in `VoiceChat.tsx` and `AuraAvatarChat.tsx` never pass `overrides.agent.language`, so the voice agent stays English even when the UI is Spanish.
-2. **SignalWire phone calls** — the same ElevenLabs agent is used for inbound/outbound phone; needs Spanish either via agent config or a per-company "default voice language" setting.
-3. **SMS / email / voicemail auto-responses** (`sms-handler`, `appointment-reminders`, missed-call follow-up) currently hard-code English copy.
-4. **Per-company default language** — today language is driven by the *staff user's* UI locale. Customers on the public chat widget / phone line need a **company-level default** plus optional auto-detection from the caller's first utterance.
-5. **ElevenLabs dashboard config** — each company's Convai agent must have Spanish added as an "Additional language" in the ElevenLabs UI for voice overrides to work (one-time provider setup, documented in the integration guide).
+### Layer 1 — Curated i18n (react-i18next, already installed)
+Expand the existing 6 JSON namespaces and convert hardcoded strings to `t('key')` on the highest-value surfaces only:
+- Public marketing + auth (landing, pricing, audit, contact, signup, login, legal)
+- Top dashboard chrome (sidebar, header, role nav, command center hero)
+- Billing & subscription pages, trial banners
+- Customer portal (booking, status, receipts)
+- Transactional email/SMS templates (edge-function side)
 
-## Plan
+Brand-locked terms never translated: "Aura", "Aura Intercept", "Operative", "Boost", "Core", "Pro", "Elite", tier prices, "Launch Pricing".
 
-### 1. Company-level language settings
-- Add `default_language` (`en` | `es` | `auto`, default `en`) and `supported_languages` (`['en']` or `['en','es']`) to `companies`.
-- Surface in **Settings → AI & Voice** with a short explainer: "Aura will reply in this language by default. 'Auto' detects from the customer's first message."
+### Layer 2 — AI auto-translate fallback (everything else)
+A `<TranslatedText>` wrapper + `useAutoTranslate(text)` hook for deep console pages we don't manually translate. When locale = `es` and no curated key exists:
+1. Check `localStorage` cache → instant
+2. Check `ui_translations` table (shared cache across users) → ~50ms
+3. Call new `translate-ui` edge function (Lovable AI Gateway, `google/gemini-3-flash-preview`) → ~300ms, then write to both caches
 
-### 2. Text chat
-- When resolving `language` in `useUnifiedAura` / `useMultiAgentChat` and the public chat widget, fall back to `company.default_language` (instead of always `'en'`) when there's no staff locale.
-- In `ai-agent-chat`, when `language === 'auto'`, add a system instruction: *"Detect the user's language from their first message; reply in Spanish if they write Spanish, otherwise English. Stay in that language for the rest of the conversation."*
+Brand-locked terms passed in a "do not translate" list in the system prompt.
 
-### 3. ElevenLabs voice (browser & avatar)
-- Pass `overrides: { agent: { language: 'es' } }` to `conversation.startSession` in `VoiceChat.tsx` and `AuraAvatarChat.tsx` when the resolved language is Spanish.
-- Also translate the contextual update string ("Today's date is…/Let me check on that…") to Spanish in that path.
+### New database
+`ui_translations` table:
+- `text_hash` (text, PK part) — sha256 of source string
+- `source_lang` (text, default 'en')
+- `target_lang` (text)
+- `source_text` (text)
+- `translated_text` (text)
+- `created_at` (timestamptz)
+- Public read (RLS), service-role write only. GRANTs included.
 
-### 4. Phone calls (SignalWire → ElevenLabs)
-- In `voice-handler` / `elevenlabs-conversation-token` / `outbound-call`, read `company.default_language` and forward it as the agent override when minting the token / connecting the call.
-- For TTS-only paths (`elevenlabs-tts`, `test-voice-reminder`, `outbound-call`), keep `eleven_turbo_v2_5` (already multilingual-capable) and pick a Spanish-friendly voice id when language is `es` (configurable per company, default to a known multilingual voice).
+### New edge function
+`supabase/functions/translate-ui/index.ts` — batched (up to 50 strings/request), uses `LOVABLE_API_KEY`, returns `{ hash → translated }`. `verify_jwt = false` (public, cached, low risk).
 
-### 5. Customer-facing copy (SMS, voicemail, reminders)
-- Add a small `t(key, lang)` helper with Spanish strings for: missed-call SMS, appointment reminders, booking confirmations, after-hours auto-reply, keyword auto-responder fallback.
-- Each handler chooses the language from (customer.preferred_language ?? company.default_language).
+### Routing & SEO
+- Add `/es` prefix routes mirroring key public pages (landing, pricing, audit, contact, auth).
+- `<html lang>` updates with locale.
+- `hreflang` alternate tags on public pages.
+- LanguageToggle persists to localStorage + URL.
 
-### 6. Provider setup doc
-- Update `ElevenLabsSetupGuide` with a one-step note: "In your ElevenLabs agent → Voice → Additional Languages, add Spanish (es). Aura will switch automatically based on the caller."
+## Scope of work (this implementation)
 
-### 7. QA checklist
-- Spanish UI → Aura chat replies in Spanish.
-- Spanish UI → browser voice replies in Spanish (verify in ElevenLabs dashboard logs).
-- Company set to `auto` → English caller gets English, Spanish caller gets Spanish, on both chat and phone.
-- Missed-call SMS to a Spanish-preferred customer arrives in Spanish.
+1. **DB migration** — `ui_translations` table + RLS + GRANTs.
+2. **Edge function** — `translate-ui` (batched, cached, brand-locked terms).
+3. **Frontend infra**
+   - Extend `LanguageContext` with `/es` URL sync + `<html lang>` updater.
+   - Add `useAutoTranslate(text)` hook (cache → DB → edge function).
+   - Add `<T>` component (drop-in wrapper that auto-translates children text).
+   - Brand-term denylist constant.
+4. **Curated translations** — expand existing `es/*.json` namespaces to cover:
+   - `common` (buttons, nav, errors, time/date)
+   - `landing`, `pricing`, `auth`, `legal`
+   - `dashboard` chrome (sidebar groups, header)
+   - `billing` (trial banner, subscription, upgrade prompts)
+   - `customer-portal`
+5. **Convert highest-value components to `t()`** (≈40 files):
+   - Sidebar, AppHeader, role nav, LanguageToggle
+   - Landing pages: Index, ForBusiness, Contact, Auth, Subscription, Pricing table, Audit
+   - Trial banner, subscription cards, billing prompts
+   - Customer portal pages
+6. **Auto-translate the rest** — wrap deep console page roots in `<AutoTranslateProvider>` so any uncurated text passes through Layer 2.
+7. **Transactional content (email/SMS)** — pass `locale` into existing send functions; switch templates based on customer's `preferred_language` (already on profiles).
+8. **Toggle UX** — global header `LanguageToggle` (EN | ES) wired to context; reflects in URL on public pages.
 
-## Technical notes
-- Backend already validates `language` to `'en' | 'es'`; extend to accept `'auto'` and resolve server-side before building the prompt.
-- No new third-party providers — ElevenLabs Convai supports per-session language overrides; `eleven_turbo_v2_5` is multilingual.
-- No pricing/tier changes; Spanish is a platform capability, not a paid add-on.
-- LEGACY_TIER_MAP, Stripe IDs, and the 60-day trial flow are untouched.
+## Out of scope (explicit)
+- Manual translation of every deep console string (auto-translate covers it).
+- Translating PDFs already generated — only new PDF generations honor locale (separate follow-up if needed).
+- Third-party admin tools or external SaaS dashboards.
+
+## Technical details (for reference)
+
+- **Caching keys**: `tx:${sha256(text)}:es`
+- **Edge function input**: `{ texts: string[], target: 'es' }` → `{ results: Record<hash, translation> }`
+- **Brand denylist** lives in `src/lib/brandTerms.ts` and is sent to AI in system prompt.
+- **Hook batching**: `useAutoTranslate` collects strings within a 50ms tick and sends one batched request per render flush.
+- **Performance**: First view of an uncurated page ~300ms slower; cached views are instant. Curated pages have zero overhead.
+- **Cost**: ~0.0001¢ per translated string, one-time per phrase across all users (shared DB cache).
+- **Failure mode**: If edge function errors or rate-limits (429/402), render original English silently and log.
+
+## Acceptance
+- Toggle EN↔ES in header flips entire visible UI within 1s on cached pages, 1–2s first time.
+- `/es/pricing`, `/es/audit`, `/es/contact`, `/es/auth` render fully Spanish with correct `<html lang="es">` and `hreflang`.
+- Brand terms ("Aura", tier names, "Operative") remain unchanged in Spanish.
+- Customer with `preferred_language='es'` receives Spanish SMS/email.
+- No DOM errors in Radix dialogs, dropdowns, or toasts.
