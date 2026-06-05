@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { VoiceProvider } from "@/contexts/VoiceContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AutoTranslatePageObserver } from "@/components/common/AutoTranslatePageObserver";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import { SwitcherPill } from "@/components/super-switcher/SwitcherPill";
