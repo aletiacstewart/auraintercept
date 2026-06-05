@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import auraAvatarImg from '@/assets/aura-avatar.png';
+import { useTranslation } from 'react-i18next';
 
 type Variant = 'hero' | 'floating' | 'inline';
 type Expression = 'neutral' | 'listening' | 'thinking' | 'happy' | 'concerned';
@@ -27,6 +28,8 @@ interface Caption {
  */
 export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraAvatarChatProps) {
   const { toast } = useToast();
+  const { i18n } = useTranslation();
+  const voiceLanguage: 'en' | 'es' = i18n.language?.startsWith('es') ? 'es' : 'en';
   const [muted, setMuted] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [captions, setCaptions] = useState<Caption[]>([]);
@@ -123,6 +126,9 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
       await conversation.startSession({
         conversationToken: data.token,
         connectionType: 'webrtc',
+        overrides: {
+          agent: { language: voiceLanguage },
+        },
       });
     } catch (err) {
       console.error('Failed to start Aura call', err);
