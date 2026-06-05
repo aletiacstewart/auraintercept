@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { createElement } from 'react';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
 
 interface TProps {
@@ -12,10 +12,9 @@ interface TProps {
  *   <T>Save changes</T>
  *   <T as="span" className="text-sm">Loading…</T>
  */
-export function T({ children, as: Tag = 'span', className }: TProps): ReactNode {
+export function T({ children, as = 'span', className }: TProps) {
   const translated = useAutoTranslate(children);
-  // @ts-expect-error dynamic tag
-  return <Tag className={className}>{translated}</Tag>;
+  return createElement(as, { className }, translated);
 }
 
 export default T;
