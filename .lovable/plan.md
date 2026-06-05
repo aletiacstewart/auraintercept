@@ -1,29 +1,65 @@
-## What I found
+## Goal
+Sweep the entire platform for AI agent issues: runtime errors, broken connections (API keys, integrations), failed handoffs between agents, and misconfigured routing — then deliver a prioritized fix list.
 
-- The chat did **not create an appointment** for the latest test.
-- It saved the request as a **lead** instead:
-  - Name: Aletia S.
-  - Service: Platform Demo
-  - Intent: booking
-  - Notes: “Customer provided contact info but did not complete booking.”
-- That means there was no new appointment record for the calendar sync to pick up.
-- The connected calendar also has an expired/revoked token: `Token refresh failed: invalid_grant`, so calendar sync will still fail until the calendar is reconnected.
+## Scope of audit
 
-## Plan
+### 1. Edge function health (runtime)
+Pull recent logs and error rates for every AI-touching function:
+- `ai-agent-chat`, `ai-agent`, `ai-agent-health`, `ai-orchestrator`
+- `ai-router`, `ai-voice-*`, voice/SMS inventory functions
+- `google-calendar-sync`, `google-calendar-auth`, `google-calendar-webhook`
+- `signalwire-*`, `elevenlabs-*`, `resend-*`, `tavily-*`
+- `check-subscription`, reminder/cron functions
+Look for: 4xx/5xx spikes, timeouts, unhandled exceptions, `invalid_grant`, missing keys, CORS failures.
 
-1. **Fix the chat booking flow**
-   - Update the booking agent rules so when a customer has provided name, phone, email, and a valid service like Platform Demo, it must offer the inline slot picker or proceed to appointment creation instead of capturing only a lead.
-   - Adjust the `create_appointment` tool requirements so virtual / business-location services do not require `customer_address`.
+### 2. Agent configuration integrity
+Query `ai_agent_configs` per company:
+- Missing/disabled core operatives (the 10-operative model)
+- Agents with empty `settings` or no system prompt
+- Stale agent IDs not in the canonical 24-agent → 10-operative map
+- `tenant_integrations`: missing OpenAI / ElevenLabs / SignalWire / Resend keys for tiers that require them
 
-2. **Make inline slot selection book reliably**
-   - When the user taps a time in the inline picker, send the selected datetime and service in a structured enough message that the booking agent calls `create_appointment`, not `capture_lead`.
-   - Preserve the already-collected customer name, phone, and email in the conversation history so the agent can complete the booking.
+### 3. Handoff / event routing
+- Inspect `ai_agent_events` for `status='failed'` in last 7 days, group by source→target
+- Check `EVENT_ROUTING` table/map against actual agents emitting events
+- Verify booking handoff (chat → create_appointment → calendar sync) end-to-end
+- Verify voice handoff (SignalWire → ElevenLabs agent → call_logs → follow-up SMS)
+- Verify SMS keyword auto-responder bypass path
 
-3. **Improve calendar sync visibility**
-   - Keep appointment creation non-blocking, but make the response/logs clearer when calendar sync is skipped or fails.
-   - Surface that the company’s calendar connection needs reconnection when the stored calendar token is invalid/revoked.
+### 4. Integration / connection health
+- `google_calendar_connections` with `invalid_grant` or expired tokens (sync_enabled flip)
+- `social_accounts` with expired OAuth
+- `tenant_integrations` flags vs actual key presence
+- Stripe customer/subscription mismatches surfaced in `check-subscription`
+- Push subscriptions stale (`push_subscriptions`)
 
-4. **Validate after implementation**
-   - Test the chat path with Platform Demo + contact info.
-   - Confirm a new row appears in `appointments`.
-   - Confirm the calendar sync function is called; if it still fails due to `invalid_grant`, the remaining action is reconnecting the calendar integration.
+### 5. Cross-surface routing
+- `auraIntentDetection` / `auraQueryParser` → confirm all intents resolve to a real agent
+- Dashboard navigation: every operative card → working console
+- Customer portal AI: ElevenLabs agent ID resolution
+- Technician AI console: agent availability
+
+### 6. Data integrity flags
+- Companies with `subscription_tier` but no agent configs
+- Agents enabled for tier the company isn't on (tier drift)
+- Orphaned `ai_agent_logs` with errors and no retry
+
+## Deliverable
+A categorized report with:
+- **Critical** (broken for real users now) — e.g. Aura Intercept's `invalid_grant` calendar
+- **High** (degraded, silent failures) — failed handoffs, missing keys
+- **Medium** (config drift) — stale agent IDs, tier mismatches
+- **Low** (cleanup) — orphaned rows, log noise
+
+Each finding gets: company_id (or "platform-wide"), affected function/agent, evidence (log snippet or count), and recommended fix.
+
+## Technical approach
+- Use `supabase--analytics_query` for edge log aggregations (group by function_id, status_code, last 7d)
+- Use `supabase--read_query` for config/integration table sweeps
+- Use `supabase--edge_function_logs` for deep-dive on top offenders
+- No code changes in this pass — audit only. A follow-up plan will propose fixes per finding.
+
+## Out of scope
+- Actual fixes (separate plan after findings)
+- UI/visual issues
+- Customer-specific data corrections beyond surfacing them
