@@ -112,11 +112,21 @@ export default function DemoAccountSeeder() {
     setRunning(true);
     setResults(null);
     try {
-      const { data, error } = await supabase.functions.invoke('seed-demo-accounts-v2');
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error ?? 'Seeding failed');
-      setResults(data.results as SeedResult[]);
-      toast.success(`Seeded ${data.total} industry demo companies`);
+      // Batch by tier to stay under the 150s edge-function idle timeout.
+      const tiers = Object.keys(INDUSTRIES_BY_TIER) as Array<keyof typeof INDUSTRIES_BY_TIER>;
+      const all: SeedResult[] = [];
+      for (const tier of tiers) {
+        const industries = INDUSTRIES_BY_TIER[tier].map((i) => i.key);
+        toast.info(`Seeding ${tier} (${industries.length} industries)…`);
+        const { data, error } = await supabase.functions.invoke('seed-demo-accounts-v2', {
+          body: { industries },
+        });
+        if (error) throw new Error(`${tier}: ${error.message}`);
+        if (!data?.success) throw new Error(`${tier}: ${data?.error ?? 'Seeding failed'}`);
+        all.push(...(data.results as SeedResult[]));
+        setResults([...all]);
+      }
+      toast.success(`Seeded ${all.length} industry demo companies`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Seeding failed';
       toast.error(msg);
