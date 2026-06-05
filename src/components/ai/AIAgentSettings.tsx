@@ -199,7 +199,7 @@ export const AIAgentSettings = () => {
     queryFn: async () => {
       if (!companyId) return null;
       const { data, error } = await supabase
-        .from('companies')
+        .from('companies' as any)
         .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages')
         .eq('id', companyId)
         .single();
