@@ -173,6 +173,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
           <ErrorBoundary>
             <Sonner />
           <Toaster />
+          <AutoTranslatePageObserver />
           {!isEmbedMode && <PWAUpdatePrompt />}
           <BrowserRouter>
             <ScrollToTop />
