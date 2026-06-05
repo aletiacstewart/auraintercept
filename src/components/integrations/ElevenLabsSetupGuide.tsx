@@ -764,6 +764,33 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </AccordionContent>
           </AccordionItem>
 
+          {/* Step 9: Spanish */}
+          <AccordionItem value="step-9">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">9</Badge>
+                Enable Spanish (Optional)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>
+                To let your phone and browser voice agent speak Spanish, add it as an additional
+                language in ElevenLabs. Aura will then auto-switch based on the caller's language
+                (controlled by <strong>Settings → AI Agent → Languages</strong> in this app).
+              </p>
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-1">Location in ElevenLabs:</p>
+                <p className="text-xs">Agent → <strong>Voice</strong> tab → <strong>Additional Languages</strong> → add <code className="bg-muted px-1 rounded">Spanish (es)</code>.</p>
+              </div>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  Use a multilingual voice (e.g. Sarah, Charlie, Aria) so the same voice can speak both English and Spanish naturally.
+                </AlertDescription>
+              </Alert>
+            </AccordionContent>
+          </AccordionItem>
+
           {/* Troubleshooting */}
           <AccordionItem value="troubleshooting">
             <AccordionTrigger className="text-sm">
