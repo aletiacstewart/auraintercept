@@ -5274,7 +5274,7 @@ async function executeAgentTool(
 
       // Sync to Google Calendar (if connected)
       try {
-        await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
+        const calRes = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/google-calendar-sync`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -5287,7 +5287,14 @@ async function executeAgentTool(
             appointment: appointment,
           }),
         });
-        console.log('[AI Agent] Google Calendar sync triggered for appointment:', appointment.id);
+        const calJson = await calRes.json().catch(() => ({}));
+        console.log('[AI Agent] Google Calendar sync result for', appointment.id, calJson);
+        if (calJson?.success === false) {
+          const errMsg = String(calJson?.error || calJson?.message || '');
+          if (/invalid_grant|refresh/i.test(errMsg)) {
+            console.warn('[AI Agent] Calendar token invalid — needs reconnection for company', companyId);
+          }
+        }
       } catch (calendarError) {
         console.error('[AI Agent] Google Calendar sync error (non-blocking):', calendarError);
       }
