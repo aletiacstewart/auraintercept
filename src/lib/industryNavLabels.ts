@@ -165,6 +165,7 @@ const CLUSTER_DEFAULTS: Record<IndustryPack['cluster'], IndustryNavLabels> = {
 
 const INDUSTRY_OVERRIDES: Record<string, IndustryNavLabels> = {
   real_estate:      { techView: 'Agent View',      dispatchView: 'Listings Map',   teamMemberNoun: 'Agent',      jobNoun: 'Showing' },
+  saas_platform:    { techView: 'Solutions View',  dispatchView: 'Operations Map', teamMemberNoun: 'Solutions Engineer', jobNoun: 'Engagement' },
   beauty_wellness:  { techView: 'Stylist View',    dispatchView: 'Chair Schedule', teamMemberNoun: 'Stylist',    jobNoun: 'Appointment' },
   salon:            { techView: 'Stylist View',    dispatchView: 'Chair Schedule', teamMemberNoun: 'Stylist',    jobNoun: 'Appointment' },
   fitness:          { techView: 'Trainer View',    dispatchView: 'Class Schedule', teamMemberNoun: 'Trainer',    jobNoun: 'Class' },
