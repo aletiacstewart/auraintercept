@@ -455,7 +455,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer={`One-time onboarding fees are due at the start of your 90-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 497}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 697}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 1197}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 2197}). The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — so the remaining 60 days are spent fully live.`}
+          answer={`One-time onboarding fees are due at the start of your 90-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 249}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 449}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 899}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 1549}). The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — so the remaining 60 days are spent fully live.`}
         />
         
         <FAQItem 

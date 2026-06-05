@@ -1,22 +1,30 @@
 ---
-name: Third-party fee policy (bundled + pass-through split)
-description: SignalWire/ElevenLabs/Resend/Tavily are BUNDLED up to plan limits with overage rates. A2P 10DLC and Stripe are CUSTOMER PASS-THROUGH (no Aura markup).
+name: Third-party fee policy (customer pays providers directly)
+description: ALL third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) are CUSTOMER PASS-THROUGH. Aura plan fee = platform only; never resells or marks up any provider usage.
 type: feature
 ---
-Two distinct fee models govern third-party services:
+All third-party services are customer pass-through. The customer brings their own provider account
+(or Concierge Onboarding sets one up using the customer's login + credit card) and is invoiced
+DIRECTLY by that provider, separately from their Aura subscription. Aura never resells, marks up,
+or absorbs provider usage.
 
-BUNDLED (in subscription, with overage):
-- Resend: 3,000 emails/mo bundled · overage $0.90 per 1,000 · 100/day default cap · monthly reset · $0.0015/run for >10,000 runs
-- Tavily: 1,000 credits/mo bundled · overage $0.008/credit (Search/Extract/Map credits)
-- SignalWire: bundled voice/SMS minutes per tier · overage invoiced
-- ElevenLabs: bundled TTS allowance per tier · overage invoiced
+Approved copy for any UI / PDF / quote that mentions a third-party cost:
+- "Billed directly by <provider> using your own account — not included in your Aura plan."
+- "Customer pass-through — no Aura markup."
 
-CUSTOMER PASS-THROUGH (charged by carriers/processors directly, no Aura markup):
-- A2P 10DLC: $4.50 brand registration (one-time) · variable campaign fees billed first 3 months upfront · $250/mo T-Mobile fee for inactive campaigns · 1–4 week approval timeline
-- Stripe: 2.9% + $0.30 per transaction (volume discounts apply); customer connects own Stripe account
+Forbidden copy (do NOT use anywhere — UI, PDFs, marketing, sales scripts):
+- "bundled in your plan"
+- "X minutes/credits/emails included"
+- "overage invoiced"
+- "absorbed by Aura"
 
-Standard copy:
-- Bundled: "X bundled in your plan; overage <rate> invoiced at month-end"
-- Pass-through: "Customer pass-through — billed by <carrier/processor> directly, no Aura markup"
+Cost-estimator/calculator surfaces may still show typical provider rates so customers can budget,
+but must frame them as "what <provider> will charge you", not as Aura allowances.
 
-Do NOT show generic "vendor pricing subject to change" disclaimers; show specific overage rates instead.
+Reference rates (customer-facing budgeting only — provider sets actual price):
+- SignalWire: ~$0.004/SMS · ~$0.01/voice min · ~$2/phone number/mo
+- ElevenLabs: TTS per character per their published plans
+- Resend: per their published email pricing
+- Tavily: per their published per-credit pricing
+- Stripe: 2.9% + $0.30 per transaction (Stripe sets, volume discounts apply)
+- A2P 10DLC: ~$4.50 brand registration · campaign + carrier fees per The Campaign Registry

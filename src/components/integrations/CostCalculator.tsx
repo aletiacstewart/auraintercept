@@ -55,10 +55,11 @@ const PRICING = {
     creatorChars: 100000,
   },
   resend: {
-    freeEmails: 3000,         // bundled allowance per tier
-    overagePer1000: 0.90,     // $0.90 per 1,000 emails over allowance
-    proPrice: 20,             // legacy (kept for back-compat)
-    proEmails: 50000,         // legacy (kept for back-compat)
+    // Reference rates from Resend — customer is billed directly by Resend, no Aura markup.
+    freeEmails: 3000,         // Resend free-tier monthly allowance
+    overagePer1000: 0.90,     // Resend rate per 1,000 emails beyond free tier
+    proPrice: 20,             // Resend Pro plan reference
+    proEmails: 50000,         // Resend Pro plan allowance
   },
   stripe: {
     percentFee: 0.029,
