@@ -142,6 +142,29 @@ async function refreshAccessToken(supabase: any, connection: any): Promise<strin
           ...(isInvalidGrant ? { sync_enabled: false } : {}),
         })
         .eq('company_id', connection.company_id);
+      if (isInvalidGrant) {
+        try {
+          await supabase.from('platform_issues').insert({
+            issue_type: 'integration_error',
+            severity: 'high',
+            status: 'new',
+            title: 'Google Calendar disconnected — reconnection required',
+            description:
+              'Google rejected the stored refresh token (invalid_grant). Calendar sync is paused until the owner reconnects under Integrations → Calendar.',
+            company_id: connection.company_id,
+            context: { source: 'google-calendar-sync', error: data.error },
+          } as any);
+          await supabase.from('staff_notifications').insert({
+            company_id: connection.company_id,
+            type: 'integration_alert',
+            title: 'Google Calendar needs reconnection',
+            body: 'Your Google Calendar connection expired. Open Integrations → Calendar and reconnect to resume appointment sync.',
+            severity: 'high',
+          } as any);
+        } catch (e) {
+          console.error('Failed to log invalid_grant platform issue:', e);
+        }
+      }
       return null;
     }
 
