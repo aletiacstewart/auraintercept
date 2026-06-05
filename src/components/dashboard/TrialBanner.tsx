@@ -48,7 +48,7 @@ export function TrialBanner() {
   // If subscribed but not in trial, it means they have a real subscription
   if (subscribed && !inTrial) return null;
 
-  const totalDays = 90;
+  const totalDays = 60;
   const daysUsed = totalDays - (timeRemaining?.days ?? 0);
   const progressPercent = Math.min((daysUsed / totalDays) * 100, 100);
 
