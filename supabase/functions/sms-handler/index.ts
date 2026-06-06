@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { verifySignalWireRequest, recordSignatureFailure } from "../_shared/signalwire-signature.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,11 +40,16 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Parse SignalWire webhook (form-urlencoded)
-    const formData = await req.formData();
-    const from = formData.get('From') as string || '';
-    const to = formData.get('To') as string || '';
-    const body = (formData.get('Body') as string || '').trim();
+    // Verify SignalWire signature (env-gated; skipped when secret unset).
+    const verify = await verifySignalWireRequest(req);
+    if (!verify.ok) {
+      await recordSignatureFailure(verify.reason || 'unknown', { fn: 'sms-handler' });
+      return new Response('Forbidden', { status: 403, headers: corsHeaders });
+    }
+    const fp = verify.formParams || {};
+    const from = fp['From'] || '';
+    const to = fp['To'] || '';
+    const body = (fp['Body'] || '').trim();
 
     const normalizedFrom = normalizePhoneNumber(from);
     const normalizedTo = normalizePhoneNumber(to);
