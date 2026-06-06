@@ -1,0 +1,2 @@
+ALTER TABLE public.tenant_integrations ADD COLUMN IF NOT EXISTS elevenlabs_agent_map JSONB NOT NULL DEFAULT '{}'::jsonb;
+COMMENT ON COLUMN public.tenant_integrations.elevenlabs_agent_map IS 'Per-operative ElevenLabs agent ID mapping. Keys: operative names (customer_journey, field_navigation, etc.). Values: ElevenLabs agent IDs.';
