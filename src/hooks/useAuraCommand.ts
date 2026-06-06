@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { detectLocalIntent } from '@/lib/auraIntentDetection';
 import { isDataQuery } from '@/lib/voiceNavigation';
+import { dispatchAuraRun, hasAuraRunListener } from '@/lib/auraRunBus';
 
 interface UseAuraCommandOptions {
   onOpen?: () => void;
@@ -35,23 +36,30 @@ export function useAuraCommand(options: UseAuraCommandOptions = {}) {
 
   const submitQuery = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
-    
+
     const trimmedQuery = searchQuery.trim();
-    
-    // Detect if this is a data query that should get an inline answer
-    const localIntent = detectLocalIntent(trimmedQuery);
-    const isDataQuestion = isDataQuery(trimmedQuery) || 
-      (localIntent.intent === 'data_query' && localIntent.confidence >= 0.5);
-    
-    if (isDataQuestion) {
-      // For data queries, navigate to analytics with the query for full processing
-      // The analytics page will show the answer inline
-      navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(trimmedQuery)}`);
-    } else {
-      // For other queries (navigation, actions), still go to analytics
-      navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(trimmedQuery)}`);
+
+    // Prefer running inline on the current page if an InlineAuraBar is mounted.
+    // This keeps the user on their console (Field Ops, Business Mgt, etc.) and
+    // streams the response in place instead of jumping to Business Management.
+    if (hasAuraRunListener() && dispatchAuraRun(trimmedQuery)) {
+      close();
+      return;
     }
-    
+
+    // No inline surface — fall back to navigation. Route data questions to the
+    // Analytics & Reports tab; everything else also lands there (the page now
+    // forwards `?q=` into its own Aura bar, so the prompt is no longer dropped).
+    const localIntent = detectLocalIntent(trimmedQuery);
+    const isDataQuestion =
+      isDataQuery(trimmedQuery) ||
+      (localIntent.intent === 'data_query' && localIntent.confidence >= 0.5);
+
+    const target = isDataQuestion
+      ? `/dashboard/analytics-reports?tab=analytics&q=${encodeURIComponent(trimmedQuery)}`
+      : `/dashboard/analytics-reports?q=${encodeURIComponent(trimmedQuery)}`;
+    navigate(target);
+
     close();
   }, [navigate, close]);
 
