@@ -9,6 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Briefcase, LayoutDashboard, FolderKanban, BarChart3, ShieldAlert } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { dispatchAuraRun } from '@/lib/auraRunBus';
 
 export default function BusinessOperations() {
   const { companyId, userRole } = useAuth();
@@ -20,6 +22,25 @@ export default function BusinessOperations() {
 
   // Role-based access
   const hasAccess = userRole === 'platform_admin' || userRole === 'company_admin';
+
+  // Safety net: if we landed here with `?q=<command>` (legacy deep links from
+  // Run with Aura / InlineAuraBar before inline execution was wired), forward
+  // the prompt into the page's InlineAuraBar so it actually runs.
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (!q || !hasAccess) return;
+    // Wait a tick so the InlineAuraBar in PageHeader has subscribed.
+    const timer = setTimeout(() => {
+      const handled = dispatchAuraRun(q);
+      if (handled) {
+        const next = new URLSearchParams(searchParams);
+        next.delete('q');
+        setSearchParams(next, { replace: true });
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAccess]);
 
   // Handle tab change to update URL
   const handleTabChange = (value: string) => {
