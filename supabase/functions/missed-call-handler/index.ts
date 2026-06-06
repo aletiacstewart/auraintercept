@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { normalizePhoneNumber } from "../_shared/phone-utils.ts";
 import { sendGuardedSms } from "../_shared/sms-guard.ts";
+import { verifySignalWireRequest, recordSignatureFailure } from "../_shared/signalwire-signature.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,29 +19,32 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Parse SignalWire form data
+    // Verify SignalWire signature (env-gated; skipped when secret unset).
+    const verify = await verifySignalWireRequest(req);
+    if (!verify.ok) {
+      await recordSignatureFailure(verify.reason || 'unknown', { fn: 'missed-call-handler' });
+      return new Response('Forbidden', { status: 403, headers: corsHeaders });
+    }
+
     let fromNumber = "";
     let toNumber = "";
     let callSid = "";
     let callStatus = "";
-
-    const contentType = req.headers.get("content-type") || "";
-    if (contentType.includes("application/x-www-form-urlencoded")) {
-      const formData = await req.formData();
-      fromNumber = (formData.get("From") || formData.get("from") || "") as string;
-      toNumber = (formData.get("To") || formData.get("to") || "") as string;
-      callSid = (formData.get("CallSid") || formData.get("callSid") || "") as string;
-      callStatus = (formData.get("CallStatus") || formData.get("callStatus") || "") as string;
-    } else {
-      const text = await req.text();
+    if (verify.formParams) {
+      const fp = verify.formParams;
+      fromNumber = fp["From"] || fp["from"] || "";
+      toNumber = fp["To"] || fp["to"] || "";
+      callSid = fp["CallSid"] || fp["callSid"] || "";
+      callStatus = fp["CallStatus"] || fp["callStatus"] || "";
+    } else if (verify.rawBody) {
       try {
-        const body = JSON.parse(text);
+        const body = JSON.parse(verify.rawBody);
         fromNumber = body.From || body.from || "";
         toNumber = body.To || body.to || "";
         callSid = body.CallSid || body.callSid || "";
         callStatus = body.CallStatus || body.callStatus || "";
       } catch {
-        console.error("Failed to parse missed-call-handler body:", text.substring(0, 200));
+        console.error("Failed to parse missed-call-handler body:", verify.rawBody.substring(0, 200));
       }
     }
 
