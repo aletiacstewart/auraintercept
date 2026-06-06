@@ -8,6 +8,7 @@ import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuraQuickResponsePopup } from './AuraQuickResponsePopup';
 import { AnimatePresence, motion } from 'framer-motion';
+import { subscribeAuraRun } from '@/lib/auraRunBus';
 
 interface InlineAuraBarProps {
   className?: string;
@@ -37,6 +38,22 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
       clearInput();
     },
   });
+
+  // Subscribe to the page-local Aura run bus so external triggers
+  // (e.g. "Run with Aura" workflow buttons) can execute commands inline
+  // instead of navigating away.
+  useEffect(() => {
+    const unsubscribe = subscribeAuraRun(async (command) => {
+      setInputValue(command);
+      setShowThinking(true);
+      try {
+        await handleInput(command, false);
+      } finally {
+        clearInput();
+      }
+    });
+    return unsubscribe;
+  }, [handleInput, setInputValue, clearInput]);
 
   // Show thinking state when loading
   useEffect(() => {
