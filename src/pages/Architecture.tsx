@@ -426,7 +426,7 @@ journey
       Start chat: 5: Customer
     section Booking
       Receptionist greets: 5: Customer, Triage
-      Journey books appt: 5: Customer, CJ
+      Book appointment: 5: Customer, CJ
       Calendar confirms: 5: System
       Get confirmation: 5: Customer, System
     section Service Day
