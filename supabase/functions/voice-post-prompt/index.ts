@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2"; // voice-post-prompt
+import { verifySignalWireRequest, recordSignatureFailure } from "../_shared/signalwire-signature.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,10 +15,15 @@ Deno.serve(async (req) => {
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
+  const verify = await verifySignalWireRequest(req);
+  if (!verify.ok) {
+    await recordSignatureFailure(verify.reason || 'unknown', { fn: 'voice-post-prompt' });
+    return new Response('Forbidden', { status: 403, headers: corsHeaders });
+  }
+
   let body: any = {};
   try {
-    const text = await req.text();
-    if (text) body = JSON.parse(text);
+    if (verify.rawBody) body = JSON.parse(verify.rawBody);
   } catch (err) {
     console.error('Failed to parse post-prompt body:', err);
     return new Response(JSON.stringify({ response: "ok" }), {
