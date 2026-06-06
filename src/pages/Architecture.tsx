@@ -529,9 +529,37 @@ export default function Architecture() {
             featureColor="overview"
           />
 
+          {/* Cyber-Sentry telemetry strip */}
+          <div className="relative flex items-center gap-3 overflow-hidden rounded-lg border border-primary/30 bg-card/60 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary/80 backdrop-blur-sm">
+            <span className="flex items-center gap-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              </span>
+              SYS.LINK ESTABLISHED
+            </span>
+            <span className="text-primary/40">//</span>
+            <span>NODES: 24</span>
+            <span className="text-primary/40">//</span>
+            <span>CONSOLES: 7</span>
+            <span className="text-primary/40">//</span>
+            <span>TIERS: 4</span>
+            <span
+              aria-hidden
+              className="ml-auto h-px flex-1 max-w-[40%]"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)',
+                backgroundSize: '200% 100%',
+                animation: 'cyberDataflowStrip 3s linear infinite',
+              }}
+            />
+            <style>{`@keyframes cyberDataflowStrip { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <ScrollArea className="w-full">
-              <TabsList className="inline-flex w-max mb-4">
+              <TabsList className="inline-flex w-max mb-4 border border-primary/20 bg-card/60 backdrop-blur-sm">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="agents">Operatives (10)</TabsTrigger>
                 <TabsTrigger value="operativeFlow">Network Flow</TabsTrigger>
