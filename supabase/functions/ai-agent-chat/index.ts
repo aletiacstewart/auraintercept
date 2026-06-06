@@ -3694,7 +3694,9 @@ serve(async (req) => {
     }
 
     // Build the system prompt with handoff context
-    let basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
+    let basePrompt = AGENT_PROMPTS[normalizedAgentType]
+      || AGENT_PROMPTS[agentType]
+      || `You are a helpful AI assistant for a service business.`;
     
     // === INDUSTRY PROMPT DELTA ===
     // Append the industry-specific delta for this agent (and the universal delta if present).
