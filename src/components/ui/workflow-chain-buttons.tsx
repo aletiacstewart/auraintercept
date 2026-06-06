@@ -4,6 +4,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Zap, ExternalLink } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { RunWithAuraConfirmDialog } from '@/components/ai/RunWithAuraConfirmDialog';
+
+export type WorkflowSideEffectChannel =
+  | 'sms'
+  | 'email'
+  | 'voice'
+  | 'assignment'
+  | 'calendar'
+  | 'db'
+  | 'none';
+
+export interface WorkflowSideEffect {
+  channel: WorkflowSideEffectChannel;
+  description: string;
+}
+
+export interface WorkflowPreview {
+  reads?: string[];
+  writes?: string[];
+  sideEffects?: WorkflowSideEffect[];
+  estimatedVolume?: string;
+}
 
 export interface WorkflowChain {
   id: string;
@@ -14,6 +36,8 @@ export interface WorkflowChain {
   command: string;
   /** Optional route to the working surface for this workflow (e.g. /dashboard/quotes). */
   targetRoute?: string;
+  /** Optional transparency metadata shown in the "Review before Aura runs" dialog. */
+  preview?: WorkflowPreview;
 }
 
 interface WorkflowChainButtonsProps {
@@ -23,6 +47,7 @@ interface WorkflowChainButtonsProps {
 
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
   const navigate = useNavigate();
+  const [pending, setPending] = React.useState<WorkflowChain | null>(null);
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium text-primary">
@@ -58,7 +83,7 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                   size="sm"
                   variant="default"
                   className="h-7 px-2 text-xs flex-1"
-                  onClick={() => onTrigger(chain.command)}
+                  onClick={() => setPending(chain)}
                 >
                   <Zap className="h-3 w-3 mr-1" />
                   Run with Aura
@@ -79,6 +104,14 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
           </Card>
         ))}
       </div>
+      <RunWithAuraConfirmDialog
+        chain={pending}
+        onCancel={() => setPending(null)}
+        onConfirm={(chain) => {
+          setPending(null);
+          onTrigger(chain.command);
+        }}
+      />
     </div>
   );
 };
