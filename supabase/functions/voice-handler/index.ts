@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2"; // voice-handler SWML
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt, type IndustryPackLite } from "../_shared/industry-pack.ts";
 import { loadCompanyWorkspace, buildIndustryPromptSnippet, type CompanyWorkspaceContext } from "../_shared/workspace.ts";
+import { verifySignalWireRequest, recordSignatureFailure } from "../_shared/signalwire-signature.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -307,30 +308,28 @@ Deno.serve(async (req) => {
   console.log(`Voice handler: action=${action} callLogId=${callLogId}`);
 
   try {
-    // Parse request body — SWML mode sends JSON with a `call` object,
-    // while outbound/status callbacks still use form-encoded TwiML-style params
+    // Verify SignalWire signature (env-gated; skipped when secret unset).
+    const verify = await verifySignalWireRequest(req);
+    if (!verify.ok) {
+      await recordSignatureFailure(verify.reason || 'unknown', { fn: 'voice-handler', action });
+      return new Response('Forbidden', { status: 403, headers: corsHeaders });
+    }
+
+    // Parse body from already-captured raw text.
     let formParams: Record<string, string> = {};
     let swmlCall: any = null;
-    
-    const clonedReq = req.clone();
-    try {
-      const jsonBody = await clonedReq.json();
-      // SWML mode: JSON body with { call: { from, to, call_id, ... } }
-      if (jsonBody && jsonBody.call) {
-        swmlCall = jsonBody.call;
-        console.log('SWML request body - call object:', JSON.stringify(swmlCall));
-      } else {
-        // Could be a JSON body without call object (some callbacks)
-        formParams = jsonBody;
-      }
-    } catch {
-      // Not JSON — try form-encoded (TwiML-style callbacks: outbound, status)
+    if (verify.formParams) {
+      formParams = { ...verify.formParams };
+    } else if (verify.rawBody) {
       try {
-        const formData = await req.formData();
-        for (const [key, value] of formData.entries()) {
-          formParams[key] = value as string;
+        const jsonBody = JSON.parse(verify.rawBody);
+        if (jsonBody && jsonBody.call) {
+          swmlCall = jsonBody.call;
+          console.log('SWML request body - call object:', JSON.stringify(swmlCall));
+        } else {
+          formParams = jsonBody || {};
         }
-      } catch { /* empty body is fine */ }
+      } catch { /* empty / non-JSON body is fine */ }
     }
 
     // Extract caller info — SWML call object uses `from`/`to`, TwiML uses `From`/`To`
