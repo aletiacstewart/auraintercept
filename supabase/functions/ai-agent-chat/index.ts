@@ -6727,25 +6727,6 @@ async function executeAgentTool(
     }
 
     // ==========================================
-    // WARRANTY TOOLS
-    // ==========================================
-    case 'check_warranty': {
-      return {
-        success: false,
-        not_supported: true,
-        message: 'Warranty tracking is not part of this platform. Use Lead Capture & Scoring or Customer notes instead.',
-      };
-    }
-
-    case 'submit_warranty_claim': {
-      return {
-        success: false,
-        not_supported: true,
-        message: 'Warranty claims are not part of this platform. Open a service ticket or job instead.',
-      };
-    }
-
-    // ==========================================
     // MARKETING CAMPAIGN TOOLS
     // ==========================================
     case 'create_campaign': {
