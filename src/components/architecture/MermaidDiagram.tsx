@@ -200,6 +200,7 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
         const cleanId = `mermaid${uniqueId}`;
         const { svg } = await mermaid.render(cleanId, chart);
         containerRef.current.innerHTML = svg;
+        enhanceSvg(containerRef.current.querySelector('svg'));
       } catch (error) {
         console.error('Mermaid render error:', error);
         containerRef.current.innerHTML = '<p class="text-destructive">Failed to render diagram</p>';
@@ -302,11 +303,35 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
   };
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-          {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+    <div className="relative overflow-hidden rounded-xl border border-primary/30 bg-card/80 p-4 shadow-[0_0_40px_-12px_hsl(var(--primary)/0.45)] backdrop-blur-sm">
+      {/* Cyber-Sentry corner accents */}
+      <span aria-hidden className="pointer-events-none absolute left-0 top-0 h-6 w-6 border-l-2 border-t-2 border-primary/70" />
+      <span aria-hidden className="pointer-events-none absolute right-0 top-0 h-6 w-6 border-r-2 border-t-2 border-primary/70" />
+      <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-6 w-6 border-b-2 border-l-2 border-primary/70" />
+      <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-6 w-6 border-b-2 border-r-2 border-primary/70" />
+      {/* Scanline overlay */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(0deg, hsl(var(--primary)) 0 1px, transparent 1px 4px)',
+        }}
+      />
+
+      <div className="relative mb-4 flex flex-wrap items-start justify-between gap-2">
+        <div className="flex items-start gap-3">
+          <span className="mt-1 flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-primary">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+            </span>
+            LIVE
+          </span>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground tracking-tight">{title}</h3>
+            {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={handleCopyCode}>
@@ -328,22 +353,97 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
         </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-3 px-1">
+      <div className="relative mb-3 flex flex-wrap gap-3 px-1">
         {TIER_LEGEND.map((tier) => (
-          <div key={tier.label} className="flex items-center gap-1.5">
+          <div
+            key={tier.label}
+            className="flex items-center gap-1.5 rounded-md border px-2 py-0.5 transition-all hover:scale-105"
+            style={{
+              borderColor: tier.border,
+              boxShadow: `0 0 12px -2px ${tier.border}55, inset 0 0 8px -4px ${tier.border}88`,
+              background: `linear-gradient(135deg, ${tier.color}22, transparent)`,
+            }}
+          >
             <span
-              className="inline-block h-3 w-3 rounded-sm border"
-              style={{ backgroundColor: tier.color, borderColor: tier.border }}
+              className="inline-block h-2 w-2 rounded-full"
+              style={{ backgroundColor: tier.border, boxShadow: `0 0 6px ${tier.border}` }}
             />
-            <span className="text-xs text-muted-foreground">{tier.label}</span>
+            <span className="text-xs font-mono uppercase tracking-wide text-foreground/90">{tier.label}</span>
           </div>
         ))}
       </div>
 
       <div
         ref={containerRef}
-        className="min-h-[200px] overflow-x-auto rounded-md bg-background/50 p-4"
+        className="cyber-mermaid relative min-h-[200px] overflow-x-auto rounded-md border border-primary/20 bg-background/60 p-4"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.18) 1px, transparent 0)',
+          backgroundSize: '22px 22px',
+        }}
       />
     </div>
   );
+}
+
+/**
+ * Inject Cyber-Sentry visuals into the freshly rendered Mermaid SVG:
+ *  - per-tier glow filters with animated stdDeviation
+ *  - dashed "data-flow" animation on edges
+ *  - subtle node breathing animation
+ * All <style> + <animate> tags live inside the SVG so SVG exports keep the motion.
+ */
+function enhanceSvg(svg: SVGSVGElement | null) {
+  if (!svg) return;
+
+  // Ensure <defs> exists
+  let defs = svg.querySelector('defs');
+  if (!defs) {
+    defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    svg.insertBefore(defs, svg.firstChild);
+  }
+
+  // Tier glow filters (one shared filter — color comes from the node's own stroke)
+  if (!svg.querySelector('#cyber-glow')) {
+    defs.insertAdjacentHTML(
+      'beforeend',
+      `<filter id="cyber-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2.4" result="blur">
+          <animate attributeName="stdDeviation" values="1.6;3.4;1.6" dur="3.2s" repeatCount="indefinite"/>
+        </feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>`,
+    );
+  }
+
+  // Apply glow to all node shapes
+  svg
+    .querySelectorAll('g.node rect, g.node circle, g.node polygon, g.node path, g.cluster rect')
+    .forEach((el) => {
+      (el as SVGElement).setAttribute('filter', 'url(#cyber-glow)');
+    });
+
+  // Inject scoped style for edge dataflow + hover lift
+  if (!svg.querySelector('style[data-cyber]')) {
+    const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    style.setAttribute('data-cyber', 'true');
+    style.textContent = `
+      @keyframes cyberDataflow { to { stroke-dashoffset: -180; } }
+      @keyframes cyberPulse { 0%,100% { opacity: 1 } 50% { opacity: .78 } }
+      .flowchart-link, .edgePath path.path, .messageLine0, .messageLine1, .relationshipLine {
+        stroke-dasharray: 6 8;
+        animation: cyberDataflow 4s linear infinite;
+        stroke-width: 1.6px;
+      }
+      g.node { transition: transform .25s ease; transform-origin: center; transform-box: fill-box; animation: cyberPulse 4s ease-in-out infinite; }
+      g.node:hover { transform: translateY(-2px) scale(1.03); }
+      g.node:hover rect, g.node:hover circle, g.node:hover polygon { stroke-width: 3px; }
+      .cluster rect { stroke-dasharray: 4 4; opacity: .85; }
+      .edgeLabel { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    `;
+    svg.insertBefore(style, svg.firstChild);
+  }
 }

@@ -1,49 +1,65 @@
 ## Goal
 
-On `/dashboard/architecture`:
-1. The **Customer Journey** tab fails to render.
-2. **PNG and PDF** downloads must work reliably for every diagram (today only SVG and Code feel usable; PNG/PDF silently fail on some diagrams because the SVG-to-canvas path gets tainted or the journey diagram never produces an SVG).
+Make the `/dashboard/architecture` diagrams feel like the Cyber-Sentry consoles — high-tech, glowing, animated — instead of plain dark Mermaid renders.
 
-## Changes
+## Approach
 
-### 1. Fix Customer Journey render (`src/pages/Architecture.tsx`)
+Keep Mermaid as the diagram engine (so all 9 charts and the download pipeline keep working), and layer Cyber-Sentry styling + motion **on top** of the rendered SVG. No diagram content changes.
 
-Mermaid's `journey` diagram type is brittle with our global `theme: 'dark'` + custom `themeVariables` (it expects its own palette). Two fixes layered:
+### 1. Cyber-Sentry theme for Mermaid (`src/components/architecture/MermaidDiagram.tsx`)
 
-- Prepend a per-diagram init directive to the `journey` chart so it renders with its native palette:
-  ```
-  %%{init: {'theme':'base','themeVariables':{'background':'#0f172a','primaryColor':'#1e293b','primaryTextColor':'#f8fafc','primaryBorderColor':'#475569','lineColor':'#64748b','textColor':'#f8fafc','sectionBkgColor':'#1e3a5f','altSectionBkgColor':'#1e293b','sectionBkgColor2':'#0f172a','taskBkgColor':'#334155','taskTextColor':'#f8fafc','taskTextOutsideColor':'#f8fafc','taskTextLightColor':'#f8fafc','activeTaskBkgColor':'#38bdf8','activeTaskBorderColor':'#38bdf8','gridColor':'#334155'}}}%%
-  ```
-- Sanitize task labels (remove the duplicate `title Customer Journey` line, which collides with the section header in some Mermaid versions and is the most common cause of journey render failures).
+- Switch `mermaid.initialize` `themeVariables` to use CSS theme tokens via `hsl(var(--…))` only (per Cyber-Sentry rule, no raw hex/rgba in component output). Background becomes `hsl(var(--card))`, lines `hsl(var(--primary) / 0.6)`, node fill `hsl(var(--muted))`, borders `hsl(var(--primary))`, text `hsl(var(--foreground))`.
+- Wrap the diagram container in a Cyber-Sentry frame: gradient border, soft inner glow, subtle scanline overlay, and a corner "uptime chip" badge showing the diagram id (matches existing console headers).
+- Background gets the existing `bg-grid` / radial-glow pattern used by consoles (reuse the same Tailwind utility already in `index.css`; no new tokens).
 
-### 2. Reliable PNG / PDF for every diagram (`src/components/architecture/MermaidDiagram.tsx`)
+### 2. Tier classDef → glow palette
 
-Replace the current `serializeSvgForExport` → `Image` → `canvas.drawImage` pipeline (which taints the canvas on diagrams that include `<foreignObject>` or external font references, causing the "PNG download failed" toast) with a DOM-capture pipeline using **`html2canvas`** on the rendered diagram container.
+Replace the flat `fill: …` classDefs (`core`/`boost`/`pro`/`elite`/`system`/`external`/`entry`) with stroke-led styles that read as neon chips:
+- `fill: hsl(var(--card))`
+- `stroke: hsl(var(--<tier-token>))` at 2.5px
+- `color: hsl(var(--foreground))`
+- Drop-shadow filter applied per tier via a post-render SVG pass (see §3) — Mermaid classDef can't express `filter`, so we apply it after render.
 
-Concretely:
-- Add dependency `html2canvas` (peer of `jspdf`, already installed).
-- New helper `captureDiagramCanvas()` that calls `html2canvas(containerRef.current, { backgroundColor: '#0f172a', scale: 2, useCORS: true, logging: false })`.
-- `handleDownloadPNG`: canvas → `toDataURL('image/png')` → trigger download. (SVG download stays on the existing serializer.)
-- `handleDownloadPDF`: same canvas → `jsPDF` with auto orientation + multi-page support (split tall captures across A4 pages, keep the dark `#0f172a` page background and the title/description header from the existing implementation).
-- Disable PNG/PDF buttons until the SVG has rendered (guard against "Diagram not ready" by checking `containerRef.current?.querySelector('svg')` and showing a toast if absent — covers the case where a diagram errored).
-- Keep SVG and Code download paths unchanged.
+Tier → token map (already in design system): core→`primary`, boost→`accent`, pro→`secondary`, elite→`warning`, system→`muted-foreground`, external→`destructive`, entry→`success`.
 
-### 3. Visual QA pass (no code change)
+### 3. Post-render SVG animation pass
 
-Open each of the 9 tabs (`overview`, `agents`, `handoffs`, `consoles`, `roles`, `operativeFlow`, `database`, `journey`, `edgeFunctions`) in preview and confirm:
-- The diagram renders.
-- SVG, PNG, PDF, Code buttons all produce a file or copy.
+After `mermaid.render(...)` returns, walk the SVG once and inject:
+- **Node pulse glow** — add an SVG `<filter>` (`feGaussianBlur` + `feMerge`) per tier and apply `filter="url(#glow-<tier>)"` to nodes carrying that class. Animate `stdDeviation` from 2 → 5 → 2 on a 3s loop with `<animate>` (works inside the captured SVG, so PNG/PDF still export a static glow snapshot).
+- **Edge data-flow** — for each `<path class="flowchart-link">`, set `stroke-dasharray: 6 10` and animate `stroke-dashoffset` from 0 → -160 over 4s linear infinite (CSS `@keyframes architecture-dataflow` injected once). Creates the "packets travelling along the wire" look used in the consoles.
+- **Entry-node ping** — entry-tier nodes get a duplicated circle behind them that scales 1 → 1.4 + fades, mirroring the console pulse rings.
+- **Hover lift** — CSS rule on `.mermaid-svg g.node:hover` adds `transform: translateY(-1px)` + brighter stroke. Pointer-events stay on so existing diagram links work.
 
-If any other diagram still fails to render after the html2canvas swap (separate from the journey fix), capture the console error and address it in the same pass.
+All animation CSS lives in a single `<style>` block scoped via a class on the container (`.cyber-mermaid`) — no global leak, no new index.css tokens.
+
+### 4. Tabs + page chrome (`src/pages/Architecture.tsx`)
+
+- Restyle the `TabsList` to match Cyber-Sentry segmented controls: dark capsule, animated underline on the active tab, soft glow on hover.
+- Add a thin animated "telemetry" strip under the PageHeader (3 dots + a scanning line) — purely decorative, matches console headers.
+- No layout, no tab order, no diagram changes.
+
+### 5. Exports still work
+
+- SVG export: animation `<animate>` tags + filters are kept inside the serialized SVG, so the downloaded SVG is animated when opened in a browser.
+- PNG / PDF: `html2canvas` captures a still frame mid-pulse — already works, no change needed.
+- Code export: unchanged (raw Mermaid source).
+
+### 6. Legend
+
+The 7-tier legend chips at the top of each diagram get the same neon-stroke + glow treatment so the legend visually matches the in-diagram nodes.
 
 ## Out of scope
 
-- No changes to diagram content / tier coloring / legend.
-- No changes to the page layout, header, or tab structure.
-- No new diagrams.
+- No diagram content changes (same nodes, edges, sections).
+- No new tabs, no removed tabs.
+- No new design tokens in `index.css` / `tailwind.config.ts` — Cyber-Sentry rule says theme vars only, and the ones we need already exist.
+- No 3D / Three.js / WebGL — pure SVG + CSS so PNG/PDF export keeps working.
 
-## Technical notes
+## Verification
 
-- `html2canvas@^1.4.1` works with our React 18 + Vite stack and is the same library the in-codebase pattern uses for "download visualization as PNG/PDF". Bundle impact ~45 KB gzip; loaded only on the Architecture page (already code-split by route).
-- We keep `jspdf` (already a dependency).
-- We keep the existing `EXPORT_BACKGROUND = '#0f172a'` so PNG/PDF match the diagram theme.
+After implementing, open each of the 9 tabs and confirm:
+1. Nodes glow in their tier color and pulse softly.
+2. Edges show animated dashed flow.
+3. Tabs and header strip read as part of the Cyber-Sentry visual family.
+4. SVG / PNG / PDF / Code downloads still produce files (PNG/PDF as static snapshots, SVG keeps animation).
+5. No console errors, no layout shift, legend matches in-diagram colors.
