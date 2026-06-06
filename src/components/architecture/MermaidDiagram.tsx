@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Copy, Check, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface MermaidDiagramProps {
   chart: string;
@@ -175,6 +176,15 @@ function svgToCanvas({ svgString, width, height }: SvgExportData): Promise<HTMLC
   });
 }
 
+async function captureContainerCanvas(container: HTMLElement): Promise<HTMLCanvasElement> {
+  return html2canvas(container, {
+    backgroundColor: EXPORT_BACKGROUND,
+    scale: EXPORT_SCALE,
+    useCORS: true,
+    logging: false,
+  });
+}
+
 export function MermaidDiagram({ chart, title, description }: MermaidDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
@@ -231,7 +241,9 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
 
   const handleDownloadPNG = async () => {
     try {
-      const canvas = await svgToCanvas(getExportData());
+      const container = containerRef.current?.querySelector('svg')?.parentElement;
+      if (!container) throw new Error('Diagram not ready');
+      const canvas = await captureContainerCanvas(container);
       const pngUrl = canvas.toDataURL('image/png');
       triggerDownload(pngUrl, sanitizeFilename(title, 'png'));
       toast.success('PNG downloaded');
@@ -243,11 +255,14 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
 
   const handleDownloadPDF = async () => {
     try {
-      const exportData = getExportData();
-      const canvas = await svgToCanvas(exportData);
+      const container = containerRef.current?.querySelector('svg')?.parentElement;
+      if (!container) throw new Error('Diagram not ready');
+      const canvas = await captureContainerCanvas(container);
       const imgData = canvas.toDataURL('image/png');
+      const imgWidth = canvas.width / EXPORT_SCALE;
+      const imgHeight = canvas.height / EXPORT_SCALE;
       const pdf = new jsPDF({
-        orientation: exportData.width >= exportData.height ? 'landscape' : 'portrait',
+        orientation: imgWidth >= imgHeight ? 'landscape' : 'portrait',
         unit: 'pt',
         format: 'a4',
         compress: true,
@@ -259,9 +274,9 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
       const titleSpace = description ? 42 : 28;
       const availableWidth = pageWidth - margin * 2;
       const availableHeight = pageHeight - margin * 2 - titleSpace;
-      const scale = Math.min(availableWidth / exportData.width, availableHeight / exportData.height);
-      const imageWidth = exportData.width * scale;
-      const imageHeight = exportData.height * scale;
+      const scale = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
+      const imageWidth = imgWidth * scale;
+      const imageHeight = imgHeight * scale;
       const imageX = (pageWidth - imageWidth) / 2;
       const imageY = margin + titleSpace;
 
