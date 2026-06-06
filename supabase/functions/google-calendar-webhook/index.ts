@@ -211,6 +211,12 @@ async function processEventChange(supabase: any, companyId: string, event: any) 
 
 async function refreshAccessToken(supabase: any, connection: any): Promise<string | null> {
   try {
+    if (!connection.refresh_token) {
+      console.error('Cannot refresh token: connection has no refresh_token');
+      await handleInvalidGrant(supabase, connection, 'missing_refresh_token');
+      return null;
+    }
+
     const response = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -226,6 +232,9 @@ async function refreshAccessToken(supabase: any, connection: any): Promise<strin
 
     if (data.error) {
       console.error('Token refresh error:', data);
+      if (data.error === 'invalid_grant') {
+        await handleInvalidGrant(supabase, connection, data.error_description || 'invalid_grant');
+      }
       return null;
     }
 
@@ -241,5 +250,40 @@ async function refreshAccessToken(supabase: any, connection: any): Promise<strin
   } catch (error) {
     console.error('Token refresh exception:', error);
     return null;
+  }
+}
+
+// When Google rejects the refresh token, disable sync, log a platform issue,
+// and notify staff so the admin can reconnect.
+async function handleInvalidGrant(supabase: any, connection: any, reason: string) {
+  try {
+    await supabase
+      .from('google_calendar_connections')
+      .update({
+        sync_enabled: false,
+        last_error: `invalid_grant: ${reason}`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('company_id', connection.company_id);
+
+    await supabase.from('platform_issues').insert({
+      issue_type: 'api_error',
+      severity: 'high',
+      status: 'new',
+      title: 'Google Calendar disconnected — reconnect required',
+      description: `Google rejected the refresh token (${reason}). Calendar sync has been disabled for company ${connection.company_id}. The admin must reconnect Google Calendar.`,
+      company_id: connection.company_id,
+      metadata: { source: 'google-calendar-webhook', reason },
+    } as any);
+
+    await supabase.from('staff_notifications').insert({
+      company_id: connection.company_id,
+      recipient_role: 'company_admin',
+      notification_type: 'integration_error',
+      message: 'Google Calendar needs to be reconnected. Open Integrations → Google Calendar to restore sync.',
+      metadata: { integration: 'google_calendar', reason },
+    } as any);
+  } catch (e) {
+    console.error('handleInvalidGrant failed:', e);
   }
 }
