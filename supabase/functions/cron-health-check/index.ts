@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
           status: 'new',
           title: `Autonomy health: company ${i.company_id} unhealthy`,
           description: i.reason,
-          context: { source: 'cron-health-check', version: VERSION },
+          metadata: { source: 'cron-health-check', version: VERSION },
         } as any);
       } catch (e) {
         console.error('[cron-health-check] failed to log issue:', e);
