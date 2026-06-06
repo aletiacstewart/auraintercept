@@ -1,70 +1,49 @@
-# Make "Run with Aura" transparent (preview + confirm)
-
 ## Goal
-Before any workflow runs, show the user exactly what Aura is about to do, which data it will read, which external actions it will perform (SMS / email / assignments / DB writes), and require a Confirm click. After they confirm, stream a live step-by-step log in the inline Aura chat so they can see what actually happened.
 
-## What changes for the user
+On `/dashboard/architecture`:
+1. The **Customer Journey** tab fails to render.
+2. **PNG and PDF** downloads must work reliably for every diagram (today only SVG and Code feel usable; PNG/PDF silently fail on some diagrams because the SVG-to-canvas path gets tainted or the journey diagram never produces an SVG).
 
-1. Click **Run with Aura** on any workflow card.
-2. A modal opens titled "Review before Aura runs" with four sections:
-   - **What it will do** — the chain steps in plain English (already on the card, expanded).
-   - **Data it will read** — e.g. "Pending jobs (last 24h), active technicians, customer contact info."
-   - **Actions it will take** — color-coded chips: read-only (neutral), DB write (amber), customer-facing message (red). Each line names the channel and rough volume ("Up to ~12 SMS to customers", "Assigns jobs to technicians in `job_assignments`").
-   - **Cost / 3rd-party notice** — surfaces the standard third-party fee disclaimer when SMS/email/voice is involved (per the project's third-party policy).
-3. Footer: **Cancel** | **Run now**. "Run now" is the only path that dispatches the command.
-4. After confirm: the inline Aura chat opens and streams the command + Aura's step-by-step response (no behavior change here — already wired via `auraRunBus`).
+## Changes
 
-## What changes in code
+### 1. Fix Customer Journey render (`src/pages/Architecture.tsx`)
 
-### 1. Workflow metadata — add a `preview` block
-`WorkflowChain` (in `src/components/ui/workflow-chain-buttons.tsx`) gets an optional `preview`:
-```ts
-preview?: {
-  reads: string[];          // human-readable list
-  writes: string[];         // DB writes
-  sideEffects: Array<{
-    channel: 'sms' | 'email' | 'voice' | 'assignment' | 'calendar' | 'none';
-    description: string;    // "Sends up to ~N SMS ETAs to customers"
-  }>;
-  estimatedVolume?: string; // optional "≈ 8–15 jobs affected"
-}
-```
-Populate `preview` for every existing workflow in:
-- `src/pages/FieldOperations.tsx` (DISPATCH_WORKFLOWS)
-- `src/pages/ai-consoles/FieldOpsConsole.tsx`
-- `src/pages/ai-consoles/BusinessManagementConsole.tsx`
-- `src/lib/industryFieldOpsWorkflows.ts` (per-industry chains)
+Mermaid's `journey` diagram type is brittle with our global `theme: 'dark'` + custom `themeVariables` (it expects its own palette). Two fixes layered:
 
-When `preview` is missing, the modal shows a generic "Aura will interpret this command and may read your business data" warning so legacy entries still get a confirm step.
+- Prepend a per-diagram init directive to the `journey` chart so it renders with its native palette:
+  ```
+  %%{init: {'theme':'base','themeVariables':{'background':'#0f172a','primaryColor':'#1e293b','primaryTextColor':'#f8fafc','primaryBorderColor':'#475569','lineColor':'#64748b','textColor':'#f8fafc','sectionBkgColor':'#1e3a5f','altSectionBkgColor':'#1e293b','sectionBkgColor2':'#0f172a','taskBkgColor':'#334155','taskTextColor':'#f8fafc','taskTextOutsideColor':'#f8fafc','taskTextLightColor':'#f8fafc','activeTaskBkgColor':'#38bdf8','activeTaskBorderColor':'#38bdf8','gridColor':'#334155'}}}%%
+  ```
+- Sanitize task labels (remove the duplicate `title Customer Journey` line, which collides with the section header in some Mermaid versions and is the most common cause of journey render failures).
 
-### 2. New component `RunWithAuraConfirmDialog`
-`src/components/ai/RunWithAuraConfirmDialog.tsx` — shadcn `Dialog`, theme tokens only (no hex/rgba per Cyber-Sentry rule). Receives the `WorkflowChain` + `onConfirm`. Renders the four sections above and the third-party fee disclaimer when any `sideEffects.channel` is sms/email/voice.
+### 2. Reliable PNG / PDF for every diagram (`src/components/architecture/MermaidDiagram.tsx`)
 
-### 3. Wire it into `WorkflowChainButtons`
-`onTrigger` no longer fires immediately. Clicking **Run with Aura** sets local state `{ pending: chain }` which opens the dialog. **Cancel** clears it; **Run now** calls the existing `onTrigger(chain.command)` (which already dispatches via `auraRunBus`).
+Replace the current `serializeSvgForExport` → `Image` → `canvas.drawImage` pipeline (which taints the canvas on diagrams that include `<foreignObject>` or external font references, causing the "PNG download failed" toast) with a DOM-capture pipeline using **`html2canvas`** on the rendered diagram container.
 
-The **Open Page** button is unchanged.
+Concretely:
+- Add dependency `html2canvas` (peer of `jspdf`, already installed).
+- New helper `captureDiagramCanvas()` that calls `html2canvas(containerRef.current, { backgroundColor: '#0f172a', scale: 2, useCORS: true, logging: false })`.
+- `handleDownloadPNG`: canvas → `toDataURL('image/png')` → trigger download. (SVG download stays on the existing serializer.)
+- `handleDownloadPDF`: same canvas → `jsPDF` with auto orientation + multi-page support (split tall captures across A4 pages, keep the dark `#0f172a` page background and the title/description header from the existing implementation).
+- Disable PNG/PDF buttons until the SVG has rendered (guard against "Diagram not ready" by checking `containerRef.current?.querySelector('svg')` and showing a toast if absent — covers the case where a diagram errored).
+- Keep SVG and Code download paths unchanged.
 
-### 4. Aura inline response — show a "Running:" header
-Tiny addition to `InlineAuraBar`: when a command arrives via `subscribeAuraRun`, prepend a small system bubble: "Running workflow: {label} — you can stop at any time." This makes it obvious the chat output corresponds to the button they just confirmed. (No new bus event needed — we extend `dispatchAuraRun` to accept `{ command, label? }`; existing callers keep working.)
+### 3. Visual QA pass (no code change)
 
-### 5. Nothing else changes
-- No edge functions, no RLS, no pricing, no routing.
-- No workflow `command` strings are rewritten.
-- Per-industry behavior stays identical; the modal just appears in front of dispatch for all 28 packs.
+Open each of the 9 tabs (`overview`, `agents`, `handoffs`, `consoles`, `roles`, `operativeFlow`, `database`, `journey`, `edgeFunctions`) in preview and confirm:
+- The diagram renders.
+- SVG, PNG, PDF, Code buttons all produce a file or copy.
 
-## Verification
-
-1. On `/dashboard/ai-consoles/field-ops`, `/dashboard/ai-consoles/business-mgt-ops`, and `/dashboard/dispatch-field-ops`: click **Run with Aura** → modal appears with reads / writes / side effects / disclaimer.
-2. **Cancel** → nothing is dispatched, no chat message, no DB writes.
-3. **Run now** → inline Aura chat opens, "Running workflow: …" header, then the streamed response.
-4. Switch industry pack (HVAC → Med Spa → Restaurant): each pack's workflow chains show their own preview content; modal still opens for every card.
-5. A workflow with no `preview` defined still opens the modal with the generic warning (graceful fallback).
-6. **Open Page** button on every card still navigates to `targetRoute` and skips the modal.
+If any other diagram still fails to render after the html2canvas swap (separate from the journey fix), capture the console error and address it in the same pass.
 
 ## Out of scope
 
-- Dry-run / simulation mode (we picked transparent + confirm, not transparent + dry-run).
-- Removing the feature.
-- Changing the workflow lists themselves or the operative routing.
-- Per-workflow per-customer review screens (still one confirm per workflow, not per record).
+- No changes to diagram content / tier coloring / legend.
+- No changes to the page layout, header, or tab structure.
+- No new diagrams.
+
+## Technical notes
+
+- `html2canvas@^1.4.1` works with our React 18 + Vite stack and is the same library the in-codebase pattern uses for "download visualization as PNG/PDF". Bundle impact ~45 KB gzip; loaded only on the Architecture page (already code-split by route).
+- We keep `jspdf` (already a dependency).
+- We keep the existing `EXPORT_BACKGROUND = '#0f172a'` so PNG/PDF match the diagram theme.
