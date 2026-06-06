@@ -6508,6 +6508,7 @@ export type Database = {
           company_id: string
           created_at: string
           elevenlabs_agent_id: string | null
+          elevenlabs_agent_map: Json
           elevenlabs_api_key: string | null
           elevenlabs_voice_id: string | null
           elevenlabs_voice_similarity: number | null
@@ -6574,6 +6575,7 @@ export type Database = {
           company_id: string
           created_at?: string
           elevenlabs_agent_id?: string | null
+          elevenlabs_agent_map?: Json
           elevenlabs_api_key?: string | null
           elevenlabs_voice_id?: string | null
           elevenlabs_voice_similarity?: number | null
@@ -6640,6 +6642,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           elevenlabs_agent_id?: string | null
+          elevenlabs_agent_map?: Json
           elevenlabs_api_key?: string | null
           elevenlabs_voice_id?: string | null
           elevenlabs_voice_similarity?: number | null
