@@ -1,55 +1,70 @@
-# Fix: "Run with Aura" lands on Business Management page (all industries)
+# Make "Run with Aura" transparent (preview + confirm)
 
-## Root cause
+## Goal
+Before any workflow runs, show the user exactly what Aura is about to do, which data it will read, which external actions it will perform (SMS / email / assignments / DB writes), and require a Confirm click. After they confirm, stream a live step-by-step log in the inline Aura chat so they can see what actually happened.
 
-1. **Run with Aura** on a workflow card calls `useAuraCommand.submitQuery(cmd)`.
-2. `src/hooks/useAuraCommand.ts:36-56` unconditionally runs `navigate("/dashboard/analytics-reports?q=...")` for every query.
-3. `src/App.tsx:237` maps `/dashboard/analytics-reports` → `<BusinessOperations />` (the **Business Management Overview** page).
-4. `BusinessOperations` only reads `?tab=`, **never `?q=`** — so the command string is silently dropped and the user just sees Business Management.
+## What changes for the user
 
-Because the dispatch is industry-agnostic, this is broken for all 28 industry packs simultaneously.
+1. Click **Run with Aura** on any workflow card.
+2. A modal opens titled "Review before Aura runs" with four sections:
+   - **What it will do** — the chain steps in plain English (already on the card, expanded).
+   - **Data it will read** — e.g. "Pending jobs (last 24h), active technicians, customer contact info."
+   - **Actions it will take** — color-coded chips: read-only (neutral), DB write (amber), customer-facing message (red). Each line names the channel and rough volume ("Up to ~12 SMS to customers", "Assigns jobs to technicians in `job_assignments`").
+   - **Cost / 3rd-party notice** — surfaces the standard third-party fee disclaimer when SMS/email/voice is involved (per the project's third-party policy).
+3. Footer: **Cancel** | **Run now**. "Run now" is the only path that dispatches the command.
+4. After confirm: the inline Aura chat opens and streams the command + Aura's step-by-step response (no behavior change here — already wired via `auraRunBus`).
 
-## What it should do
+## What changes in code
 
-Stay on the console you launched from, open the Aura chat inline, send the workflow `command` to it, and stream the response in place. The `targetRoute` on each workflow stays reserved for the **Open Page** button (unchanged).
-
-## Plan
-
-### 1. Lift Aura command execution out of "always navigate"
-- Introduce a small `useAuraExecutor` (or extend `useAuraCommand`) that exposes `runInline(command)`:
-  - Posts the command into the page-local Aura chat surface (the same path `InlineAuraBar` uses to send a user message).
-  - Returns immediately so the caller can show a toast / inline state.
-  - Falls back to a smart navigate **only** if no inline chat is mounted on the current page — and in that case routes to a destination that actually consumes `?q=` (a dedicated Aura runner surface), not the Business Management overview.
-
-### 2. Wire workflow cards through the new executor
-Update the three callers of `WorkflowChainButtons` so **Run with Aura** uses `runInline`:
+### 1. Workflow metadata — add a `preview` block
+`WorkflowChain` (in `src/components/ui/workflow-chain-buttons.tsx`) gets an optional `preview`:
+```ts
+preview?: {
+  reads: string[];          // human-readable list
+  writes: string[];         // DB writes
+  sideEffects: Array<{
+    channel: 'sms' | 'email' | 'voice' | 'assignment' | 'calendar' | 'none';
+    description: string;    // "Sends up to ~N SMS ETAs to customers"
+  }>;
+  estimatedVolume?: string; // optional "≈ 8–15 jobs affected"
+}
+```
+Populate `preview` for every existing workflow in:
+- `src/pages/FieldOperations.tsx` (DISPATCH_WORKFLOWS)
 - `src/pages/ai-consoles/FieldOpsConsole.tsx`
 - `src/pages/ai-consoles/BusinessManagementConsole.tsx`
-- `src/pages/FieldOperations.tsx`
+- `src/lib/industryFieldOpsWorkflows.ts` (per-industry chains)
 
-Keep the existing `toast.info('Running workflow…')` for feedback. The **Open Page** button is untouched.
+When `preview` is missing, the modal shows a generic "Aura will interpret this command and may read your business data" warning so legacy entries still get a confirm step.
 
-### 3. Stop `useAuraCommand` from funneling everything to Business Management
-- Remove the hard-coded `/dashboard/analytics-reports?q=` redirect in `useAuraCommand.submitQuery`.
-- Use the existing `detectLocalIntent` + `isDataQuery` + `voiceNavigation` helpers to:
-  - run inline when an inline Aura surface is available,
-  - route data questions to the **Analytics & Reports** tab (`/dashboard/analytics-reports?tab=analytics&q=...`),
-  - route navigation intents to their real destination,
-  - otherwise open the global Aura dialog with the query pre-filled.
+### 2. New component `RunWithAuraConfirmDialog`
+`src/components/ai/RunWithAuraConfirmDialog.tsx` — shadcn `Dialog`, theme tokens only (no hex/rgba per Cyber-Sentry rule). Receives the `WorkflowChain` + `onConfirm`. Renders the four sections above and the third-party fee disclaimer when any `sideEffects.channel` is sms/email/voice.
 
-### 4. Safety net for stale deep links
-- Teach `BusinessOperations` to read `?q=` and, if present, forward it into its `InlineAuraBar` so old links like `/dashboard/analytics-reports?q=...` still produce a real Aura response instead of looking broken.
+### 3. Wire it into `WorkflowChainButtons`
+`onTrigger` no longer fires immediately. Clicking **Run with Aura** sets local state `{ pending: chain }` which opens the dialog. **Cancel** clears it; **Run now** calls the existing `onTrigger(chain.command)` (which already dispatches via `auraRunBus`).
+
+The **Open Page** button is unchanged.
+
+### 4. Aura inline response — show a "Running:" header
+Tiny addition to `InlineAuraBar`: when a command arrives via `subscribeAuraRun`, prepend a small system bubble: "Running workflow: {label} — you can stop at any time." This makes it obvious the chat output corresponds to the button they just confirmed. (No new bus event needed — we extend `dispatchAuraRun` to accept `{ command, label? }`; existing callers keep working.)
+
+### 5. Nothing else changes
+- No edge functions, no RLS, no pricing, no routing.
+- No workflow `command` strings are rewritten.
+- Per-industry behavior stays identical; the modal just appears in front of dispatch for all 28 packs.
+
+## Verification
+
+1. On `/dashboard/ai-consoles/field-ops`, `/dashboard/ai-consoles/business-mgt-ops`, and `/dashboard/dispatch-field-ops`: click **Run with Aura** → modal appears with reads / writes / side effects / disclaimer.
+2. **Cancel** → nothing is dispatched, no chat message, no DB writes.
+3. **Run now** → inline Aura chat opens, "Running workflow: …" header, then the streamed response.
+4. Switch industry pack (HVAC → Med Spa → Restaurant): each pack's workflow chains show their own preview content; modal still opens for every card.
+5. A workflow with no `preview` defined still opens the modal with the generic warning (graceful fallback).
+6. **Open Page** button on every card still navigates to `targetRoute` and skips the modal.
 
 ## Out of scope
 
-- Workflow definitions and per-industry command text (`src/lib/industryFieldOpsWorkflows.ts` etc.) — unchanged.
-- Agent prompts, edge functions, RLS, pricing, routing config for `/dashboard/analytics-reports`.
-- Visual redesign of the workflow cards.
-
-## Verification (run for at least 3 industry packs)
-
-1. On `/dashboard/ai-consoles/field-ops` and `/dashboard/ai-consoles/business-mgt-ops`, click **Run with Aura** on a workflow card → inline Aura chat opens on the same page and starts streaming. Page does NOT navigate to Business Management.
-2. Click **Open Page** on the same card → navigates to the workflow's `targetRoute` (unchanged).
-3. Switch industry pack (e.g. HVAC → Med Spa → Cleaning) and repeat 1–2. The card list changes per industry; the button behavior is identical and correct.
-4. Type a navigation prompt into `InlineAuraBar` → routes to the correct destination, not Business Management.
-5. Visit a stale `/dashboard/analytics-reports?q=show%20revenue` link → Business Management loads with the query handed off to its Aura bar.
+- Dry-run / simulation mode (we picked transparent + confirm, not transparent + dry-run).
+- Removing the feature.
+- Changing the workflow lists themselves or the operative routing.
+- Per-workflow per-customer review screens (still one confirm per workflow, not per record).
