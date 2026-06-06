@@ -418,8 +418,8 @@ ${tierStyles}`
   journey: {
     title: 'Customer Journey Flow',
     description: 'End-to-end customer experience across operatives',
-    chart: `journey
-    title Customer Journey
+    chart: `%%{init: {'theme':'base','themeVariables':{'background':'#0f172a','primaryColor':'#1e293b','primaryTextColor':'#f8fafc','primaryBorderColor':'#475569','lineColor':'#64748b','textColor':'#f8fafc','sectionBkgColor':'#1e3a5f','altSectionBkgColor':'#1e293b','sectionBkgColor2':'#0f172a','taskBkgColor':'#334155','taskTextColor':'#f8fafc','taskTextOutsideColor':'#f8fafc','taskTextLightColor':'#f8fafc','taskTextDarkColor':'#f8fafc','activeTaskBkgColor':'#38bdf8','activeTaskBorderColor':'#38bdf8','gridColor':'#334155'}}}%%
+journey
     section Discovery
       Visit website: 5: Customer
       Explore services: 4: Customer
