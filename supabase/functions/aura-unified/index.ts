@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadCompanyWorkspace, buildIndustryPromptSnippet } from "../_shared/workspace.ts";
 
 const corsHeaders = {
@@ -75,6 +76,51 @@ serve(async (req) => {
         JSON.stringify({ error: 'Input is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // === AUTH ===
+    // Internal callers send x-internal-secret matching ORCHESTRATOR_SECRET.
+    // All others must present a valid user JWT; if companyId is provided it must
+    // match the user's company (platform_admin bypasses).
+    const internalSecret = Deno.env.get('ORCHESTRATOR_SECRET');
+    const providedInternal = req.headers.get('x-internal-secret');
+    const isInternal = !!internalSecret && providedInternal === internalSecret;
+
+    if (!isInternal) {
+      const authHeader = req.headers.get('Authorization') || '';
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+      if (!token) {
+        return new Response(
+          JSON.stringify({ error: 'Unauthorized' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: `Bearer ${token}` } },
+      });
+      const { data: userData, error: userErr } = await userClient.auth.getUser();
+      if (userErr || !userData?.user) {
+        return new Response(
+          JSON.stringify({ error: 'Unauthorized' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (companyId) {
+        const adminClient = createClient(supabaseUrl, serviceKey);
+        const [{ data: isAdmin }, { data: profile }] = await Promise.all([
+          adminClient.rpc('has_role', { _user_id: userData.user.id, _role: 'platform_admin' }),
+          adminClient.from('profiles').select('company_id').eq('id', userData.user.id).maybeSingle(),
+        ]);
+        if (!isAdmin && profile?.company_id !== companyId) {
+          return new Response(
+            JSON.stringify({ error: 'Forbidden: company mismatch' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

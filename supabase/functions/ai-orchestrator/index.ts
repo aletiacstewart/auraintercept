@@ -106,6 +106,47 @@ serve(async (req) => {
 
     const { action, companyId, agentType, eventType, payload, contextId } = await req.json();
 
+    // === AUTH ===
+    // Internal callers (cron, edge-to-edge) pass x-internal-secret matching ORCHESTRATOR_SECRET.
+    // All other callers must present a valid user JWT whose company_id matches `companyId`.
+    const internalSecret = Deno.env.get('ORCHESTRATOR_SECRET');
+    const providedInternal = req.headers.get('x-internal-secret');
+    const isInternal = !!internalSecret && providedInternal === internalSecret;
+
+    if (!isInternal) {
+      const authHeader = req.headers.get('Authorization') || '';
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+      if (!token) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+        global: { headers: { Authorization: `Bearer ${token}` } },
+      });
+      const { data: userData, error: userErr } = await userClient.auth.getUser();
+      if (userErr || !userData?.user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      // Verify the user belongs to the requested company (platform_admin bypasses)
+      if (companyId) {
+        const [{ data: isAdmin }, { data: profile }] = await Promise.all([
+          supabase.rpc('has_role', { _user_id: userData.user.id, _role: 'platform_admin' }),
+          supabase.from('profiles').select('company_id').eq('id', userData.user.id).maybeSingle(),
+        ]);
+        if (!isAdmin && profile?.company_id !== companyId) {
+          return new Response(JSON.stringify({ error: 'Forbidden: company mismatch' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+    }
+
     console.log(`[Orchestrator] Action: ${action}, Company: ${companyId}, Agent: ${agentType}`);
 
     switch (action) {
