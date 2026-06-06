@@ -22,6 +22,22 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
     icon: Route,
     steps: ['Analyze Queue', 'Match Tech', 'Dispatch', 'Notify'],
     command: 'Analyze pending jobs, match each to the best technician by distance and skill, dispatch all, and send customer notifications with ETAs',
+    preview: {
+      reads: [
+        'Pending jobs and appointments (last 24h)',
+        'Active technicians, skills, and current location',
+        'Customer contact info (name + phone)',
+      ],
+      writes: [
+        'Creates / updates rows in job_assignments',
+        'Marks appointments as dispatched',
+      ],
+      sideEffects: [
+        { channel: 'assignment', description: 'Assigns each pending job to a technician' },
+        { channel: 'sms', description: 'Sends one ETA SMS per affected customer' },
+      ],
+      estimatedVolume: 'Up to all pending jobs in the queue',
+    },
   },
   {
     id: 'reoptimize',
@@ -30,6 +46,19 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
     icon: MapPin,
     steps: ['Gather Active', 'Optimize', 'Update ETAs'],
     command: 'Re-optimize all active technician routes for minimum travel time and update customer ETAs accordingly',
+    preview: {
+      reads: [
+        'All active job_assignments and their order',
+        'Technician current locations',
+      ],
+      writes: [
+        'Updates estimated_arrival_minutes and route order on job_assignments',
+      ],
+      sideEffects: [
+        { channel: 'sms', description: 'Sends updated-ETA SMS only to customers whose ETA changed materially' },
+      ],
+      estimatedVolume: 'All active routes for today',
+    },
   },
   {
     id: 'daily-dispatch-report',
@@ -38,6 +67,16 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
     icon: ClipboardCheck,
     steps: ['Collect Data', 'Analyze', 'Report'],
     command: 'Generate a dispatch performance report for today including on-time rates, average response times, and technician utilization',
+    preview: {
+      reads: [
+        'Today\'s job_assignments (assigned, en-route, arrived, completed times)',
+        'Technician roster and shift hours',
+      ],
+      writes: [],
+      sideEffects: [
+        { channel: 'none', description: 'Read-only — produces a summary in the chat panel' },
+      ],
+    },
   },
 ];
 
