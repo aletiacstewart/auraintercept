@@ -3381,12 +3381,14 @@ serve(async (req) => {
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
+        'web_presence',                 // Creative & Web Presence
       ],
       // Aura Boost ($897/mo · $449 onboarding — Launch Pricing, was $1,097 + $549): 12 agents — adds field ops (dispatch + field navigation)
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
+        'web_presence',                 // Creative & Web Presence
         'dispatch', 'field_navigation', // Field Operations
       ],
       // Aura Pro ($1,797/mo · $899 onboarding — Launch Pricing, was $1,997 + $999): 16 agents — adds campaign, outreach, social
@@ -3395,6 +3397,8 @@ serve(async (req) => {
         'dispatch', 'field_navigation',            // Field Operations
         'outreach',                                // Marketing & Sales
         'creative_content', 'web_presence',        // Creative & Web Presence
+        'business_finance', 'admin',               // Business Operations
+        'analytics_intelligence',                  // Analytics & Reports
       ],
       // Aura Elite ($2,997/mo · $1,549 onboarding — Launch Pricing, was $3,997 + $1,749): All 24 agents (10 operative groups) + enterprise features
       command: [
