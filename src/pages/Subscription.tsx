@@ -136,10 +136,10 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Elite',
-    originalMonthlyPrice: '$3,997',
-    monthlyPrice: '$2,997',
-    annualPrice: '$29,970',
-    annualSavings: 'Save ~$5,994',
+    originalMonthlyPrice: '$3,497',
+    monthlyPrice: '$3,097',
+    annualPrice: '$30,970',
+    annualSavings: 'Save ~$6,194',
     description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
@@ -261,9 +261,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,997~~ $2,997' },
-      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$29,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$5,994' },
+      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
+      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
       { name: 'Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
     ],
   },
@@ -747,7 +747,7 @@ export default function Subscription() {
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Elite</div>
-                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$3,997</span> <span className="text-primary font-semibold">$2,997</span>/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$3,497</span> <span className="text-primary font-semibold">$3,097</span>/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -858,7 +858,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,997 → <span className="font-semibold">$2,997/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 60-Day Live Trial.
+                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 60-Day Live Trial.
               </p>
             </div>
             <div>

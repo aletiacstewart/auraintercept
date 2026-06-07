@@ -210,7 +210,7 @@ const TierComparisonCards: React.FC = () => {
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-amber-600">Command</Badge>
-              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$3,997</span> $2,997 · 24</span>
+              <span className="text-muted-foreground text-xs"><span className="line-through opacity-70">$3,497</span> $3,097 · 24</span>
             </div>
           </div>
         </CardContent>

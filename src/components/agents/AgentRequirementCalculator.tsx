@@ -54,7 +54,7 @@ const TIER_PRICES: Record<SubscriptionTier, number> = {
   starter: 497,
   connect: 897,
   performance: 1797,
-  command: 2997,
+  command: 3097,
 };
 
 const AgentRequirementCalculator: React.FC = () => {

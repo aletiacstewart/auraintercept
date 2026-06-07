@@ -92,7 +92,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '16 Smart AI Agents with social media and campaigns (industry specialists included on every plan)',
   },
   command: {
-    // Aura Elite ($3,997/mo · $1,749 onboarding): All 10 consolidated operatives + industry specialists,
+    // Aura Elite ($3,497/mo · $1,749 onboarding): All 10 consolidated operatives + industry specialists,
     // all 7 consoles + AI Hub, unlimited employees.
     agents: [
       'triage',
@@ -108,8 +108,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Elite',
-    price: '$2,997/mo',
-    originalPrice: '$3,997/mo',
+    price: '$3,097/mo',
+    originalPrice: '$3,497/mo',
     description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub',
   },
 };

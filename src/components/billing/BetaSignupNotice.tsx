@@ -65,8 +65,8 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
         </li>
         <li>
           <span className="font-semibold">Elite:</span>{' '}
-          <span className="line-through text-foreground/50">$3,997</span>{' '}
-          <span className="text-primary font-semibold">$2,997/mo</span>
+          <span className="line-through text-foreground/50">$3,497</span>{' '}
+          <span className="text-primary font-semibold">$3,097/mo</span>
           {' · '}
           Onboarding <span className="line-through text-foreground/50">$1,749</span>{' '}
           <span className="text-primary font-semibold">$1,549</span>

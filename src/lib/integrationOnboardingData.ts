@@ -2,7 +2,7 @@
  * Step-by-step onboarding data for every 3rd-party integration a company
  * needs to set up. Each provider is owned by the CUSTOMER on their own
  * account with their own credit card. Aura Intercept never resells, marks
- * up, or absorbs third-party usage.
+ * up, or marks up third-party usage.
  */
 
 export interface OnboardingStep {
@@ -28,7 +28,7 @@ export interface IntegrationProvider {
 export const POLICY_BANNER =
   'Each provider listed here is billed directly to the customer on the ' +
   "customer's own credit card. Aura Intercept never resells, marks up, " +
-  'or absorbs third-party usage. The Aura plan fee is a platform-only ' +
+  'or marks up third-party usage. The Aura plan fee is a platform-only ' +
   'subscription and is invoiced separately from any provider below.';
 
 export const INTEGRATION_PROVIDERS: IntegrationProvider[] = [

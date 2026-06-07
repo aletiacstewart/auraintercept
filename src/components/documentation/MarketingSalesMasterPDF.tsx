@@ -522,7 +522,7 @@ const TIER_FIT = [
   { who: '1–10 employees, no field techs, owner-operator', tier: 'Aura Core ($497/mo)' },
   { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($897/mo)' },
   { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,797/mo)' },
-  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($2,997/mo)' },
+  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($3,097/mo)' },
 ];
 
 const OBJECTIONS_EXTRA = [
@@ -1006,7 +1006,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         A2P 10DLC carriers, social platforms) requires the customer's own account
         and a valid credit card on file. Each provider invoices the customer
         directly and separately from the Aura plan fee. Aura Intercept does not
-        resell, mark up, or absorb 3rd-party usage.
+        resell, mark up, or mark up 3rd-party usage.
       </Text></View>
       <Text style={s.h2}>A2P 10DLC (US SMS)</Text>
       <View style={s.card}><Text style={s.p}>
