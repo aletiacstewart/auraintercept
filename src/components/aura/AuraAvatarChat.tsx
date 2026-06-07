@@ -45,6 +45,47 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
   }, []);
 
   const conversation = useConversation({
+    clientTools: {
+      // Industry-matched live walkthrough demo (sales agent tool).
+      // Captures industry + contact info, calls the edge function, and
+      // returns the `spoken` field so Aura reads back the confirmation.
+      send_walkthrough_demo: async (params: Record<string, unknown>) => {
+        try {
+          const { data, error } = await supabase.functions.invoke(
+            'send-walkthrough-demo',
+            {
+              body: {
+                industry: params.industry,
+                name: params.name,
+                email: params.email,
+                phone: params.phone || params.mobile || params.phone_number,
+                company_name: params.company_name || params.business_name,
+                source: 'voice_web',
+              },
+            },
+          );
+          if (error) throw error;
+          const spoken =
+            data && typeof (data as any).spoken === 'string'
+              ? (data as any).spoken
+              : "I just sent your live walkthrough link by text and email — tap it whenever you're ready.";
+          if ((data as any)?.demo_url) {
+            toast({
+              title: 'Live demo on the way',
+              description: `Tap the link in your text or email — opens your ${(data as any).industry_label || 'industry'} demo.`,
+            });
+          }
+          return JSON.stringify({ ok: true, spoken });
+        } catch (e) {
+          console.error('[AuraAvatarChat] send_walkthrough_demo failed:', e);
+          return JSON.stringify({
+            ok: false,
+            spoken:
+              "I had trouble sending that — can a teammate text the demo link in a couple minutes?",
+          });
+        }
+      },
+    },
     onConnect: () => {
       setCaptions((c) => [...c, { who: 'aura', text: 'Connected. Listening…' }]);
       flashExpression('happy', 1500);
