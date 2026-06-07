@@ -1412,10 +1412,13 @@ export default function SignUp() {
                               : '60-Day Live Trial (first 30 days = onboarding) • No credit card required for the trial • Cancel anytime'}
                           </p>
                         )}
-                      </form>
-                    </TabsContent>
-                  </Tabs>
-                  )}
+                  </form>
+                  <p className="text-sm text-center text-muted-foreground mt-6">
+                    Already have an account?{' '}
+                    <Link to={`/signin${mode !== 'company' ? `?mode=${mode}` : ''}`} className="text-primary font-medium hover:underline">
+                      Sign in
+                    </Link>
+                  </p>
                 </CardContent>
               </Card>
             </div>
