@@ -495,7 +495,7 @@ export default function Index() {
 
       <SEO
         title="Aura Intercept | AI Operatives for Service Businesses"
-        description="24 specialized AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
+        description="10 AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
         path="/"
       />
 
@@ -857,7 +857,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-10">
             <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
-              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 90-DAY LIVE TRIAL →
+              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 60-DAY LIVE TRIAL →
             </button>
           </div>
         </div>
@@ -1016,7 +1016,7 @@ export default function Index() {
                 <p className="text-xs text-white mb-4">16 Smart AI Agents with social media, campaigns, and industry specialists.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents + Industry Specialists</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers (Business Mgmt unlocked)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">All 7 Control Centers (Business Mgmt unlocked)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Quoting + Invoicing + Inventory</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Insights + Performance Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
@@ -1040,16 +1040,16 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,997</span>
-                  <span className="text-3xl font-bold text-amber-400">$2,997</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,497</span>
+                  <span className="text-3xl font-bold text-amber-400">$3,097</span>
                   <span className="text-white text-sm">/month</span>
                   <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$29,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$30,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers + AI Hub</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 7 Control Centers + AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All Industry Specialists Included</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>
                 </div>
