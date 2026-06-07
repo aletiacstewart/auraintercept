@@ -932,7 +932,7 @@ export default function Auth() {
                     { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Home Health • Therapy • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'teal',   popular: false },
                     { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,097', monthlyPrice: '$897',   annualPrice: '$748', annualTotal: '$8,970', savings: '$1,794', color: 'primary', popular: true  },
                     { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$1,997', monthlyPrice: '$1,797', annualPrice: '$1,498', annualTotal: '$17,970', savings: '$3,594', color: 'purple', popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$3,497', monthlyPrice: '$3,097', annualPrice: '$2,581', annualTotal: '$29,970', savings: '$5,994', color: 'amber', popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$3,497', monthlyPrice: '$3,097', annualPrice: '$2,581', annualTotal: '$30,970', savings: '$6,194', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -1006,7 +1006,7 @@ export default function Auth() {
                 )}
                 {isAnnualBilling && !selectedTier && (
                   <p className="text-xs text-center text-green-500">
-                    💰 Billed annually — save up to $5,994/year
+                    💰 Billed annually — save up to $6,194/year
                   </p>
                 )}
 

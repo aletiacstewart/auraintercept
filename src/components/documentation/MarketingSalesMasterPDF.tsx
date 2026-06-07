@@ -1006,7 +1006,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         A2P 10DLC carriers, social platforms) requires the customer's own account
         and a valid credit card on file. Each provider invoices the customer
         directly and separately from the Aura plan fee. Aura Intercept does not
-        resell, mark up, or absorb 3rd-party usage.
+        resell, mark up, or mark up 3rd-party usage.
       </Text></View>
       <Text style={s.h2}>A2P 10DLC (US SMS)</Text>
       <View style={s.card}><Text style={s.p}>
