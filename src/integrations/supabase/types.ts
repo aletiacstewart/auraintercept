@@ -493,6 +493,48 @@ export type Database = {
           },
         ]
       }
+      beta_invite_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          label: string | null
+          max_redemptions: number | null
+          redemptions_count: number
+          trial_days: number
+          updated_at: string
+          waive_onboarding_fee: boolean
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          max_redemptions?: number | null
+          redemptions_count?: number
+          trial_days?: number
+          updated_at?: string
+          waive_onboarding_fee?: boolean
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          max_redemptions?: number | null
+          redemptions_count?: number
+          trial_days?: number
+          updated_at?: string
+          waive_onboarding_fee?: boolean
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_id: string
@@ -965,6 +1007,8 @@ export type Database = {
           aura_sms_consent_at: string | null
           aura_sms_consent_ip: string | null
           aura_sms_opt_in: boolean
+          beta_code: string | null
+          beta_trial: boolean
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
@@ -1109,6 +1153,8 @@ export type Database = {
           aura_sms_consent_at?: string | null
           aura_sms_consent_ip?: string | null
           aura_sms_opt_in?: boolean
+          beta_code?: string | null
+          beta_trial?: boolean
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -1253,6 +1299,8 @@ export type Database = {
           aura_sms_consent_at?: string | null
           aura_sms_consent_ip?: string | null
           aura_sms_opt_in?: boolean
+          beta_code?: string | null
+          beta_trial?: boolean
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -7588,6 +7636,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      redeem_beta_code: {
+        Args: { p_code: string; p_company_id: string }
+        Returns: boolean
+      }
       regenerate_customer_token: {
         Args: { p_appointment_id: string }
         Returns: string
@@ -7639,6 +7691,16 @@ export type Database = {
           p_service_interest?: string
         }
         Returns: string
+      }
+      validate_beta_code: {
+        Args: { p_code: string }
+        Returns: {
+          label: string
+          message: string
+          trial_days: number
+          valid: boolean
+          waive_onboarding_fee: boolean
+        }[]
       }
       validate_registration_code: {
         Args: { p_code: string; p_company_id?: string }

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
+import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
+import { ThirdPartyFeeNotice } from '@/components/billing/ThirdPartyFeeNotice';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -274,6 +276,7 @@ export default function Subscription() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [disclosureOpen, setDisclosureOpen] = useState(false);
   const [pendingTierId, setPendingTierId] = useState<string | null>(null);
+  const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null);
 
   // Determine if user can manage subscriptions
   const canManageSubscription = userRole === 'company_admin' || userRole === 'platform_admin';
@@ -336,7 +339,7 @@ export default function Subscription() {
       }
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         headers: { Authorization: `Bearer ${session.access_token}` },
-        body: { tier: tierId },
+        body: { tier: tierId, beta_code: betaCode?.code ?? null },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
@@ -584,6 +587,28 @@ export default function Subscription() {
             </CardContent>
           </Card>
         ) : null}
+
+        {/* Beta invite code redemption (admins only, pre-subscribe) */}
+        {!isSubscribed && canManageSubscription && (
+          <Card className="border-primary/30 bg-card">
+            <CardContent className="py-4 space-y-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="font-medium text-card-foreground flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Beta tester? Apply your invite code
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Unlocks a 60-day free trial (14–30 days concierge onboarding, then 30 days
+                    full live use) and waives the one-time onboarding fee.
+                  </p>
+                </div>
+              </div>
+              <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
+              <ThirdPartyFeeNotice />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Tier Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
