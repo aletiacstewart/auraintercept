@@ -133,10 +133,14 @@ serve(async (req) => {
     logStep("Company data fetched", { companyName: companyData.name });
 
     let requestedTier = "command";
+    let betaCode: string | null = null;
     try {
       const body = await req.json();
       if (body.tier && SUBSCRIPTION_TIERS[body.tier]) {
         requestedTier = body.tier;
+      }
+      if (typeof body.beta_code === "string" && body.beta_code.trim()) {
+        betaCode = body.beta_code.trim().toUpperCase();
       }
     } catch {
       // No body or invalid JSON, use default tier
@@ -188,14 +192,32 @@ serve(async (req) => {
     const isFirstCheckout = existingSubs.data.length === 0;
     logStep("Onboarding fee eligibility", { isFirstCheckout });
 
+    // Beta invite code validation (server-authoritative)
+    let betaTrialDays = 0;
+    let betaWaiveOnboarding = false;
+    if (betaCode) {
+      const { data: betaRows, error: betaErr } = await supabaseClient.rpc("validate_beta_code", { p_code: betaCode });
+      const row = Array.isArray(betaRows) ? betaRows[0] : betaRows;
+      if (betaErr || !row?.valid) {
+        logStep("Beta code rejected", { betaCode, message: row?.message, error: betaErr?.message });
+        return new Response(JSON.stringify({ error: row?.message || "Invalid beta invite code" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        });
+      }
+      betaTrialDays = row.trial_days || 60;
+      betaWaiveOnboarding = !!row.waive_onboarding_fee;
+      logStep("Beta code accepted", { betaCode, betaTrialDays, betaWaiveOnboarding });
+    }
+
     const lineItems: Array<{ price: string; quantity: number }> = [
       { price: selectedTier.price_id, quantity: 1 },
     ];
-    if (isFirstCheckout && selectedTier.onboarding_price_id) {
+    if (isFirstCheckout && selectedTier.onboarding_price_id && !betaWaiveOnboarding) {
       lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       line_items: lineItems,
       mode: "subscription",
@@ -205,8 +227,27 @@ serve(async (req) => {
         company_id: companyId,
         admin_user_id: user.id,
         tier: requestedTier,
+        ...(betaCode ? { beta_code: betaCode, beta_trial: "true" } : {}),
       },
-    });
+    };
+    if (betaCode && betaTrialDays > 0) {
+      sessionParams.subscription_data = {
+        trial_period_days: betaTrialDays,
+        metadata: { beta_code: betaCode, beta_trial: "true", company_id: companyId },
+      };
+      sessionParams.payment_method_collection = "if_required";
+    }
+    const session = await stripe.checkout.sessions.create(sessionParams);
+
+    // Mark code redeemed + flip company.beta_trial immediately so the UI
+    // can reflect beta state even before Stripe webhook arrives.
+    if (betaCode) {
+      const { error: redeemErr } = await supabaseClient.rpc("redeem_beta_code", {
+        p_code: betaCode,
+        p_company_id: companyId,
+      });
+      if (redeemErr) logStep("Warning: redeem_beta_code failed", { error: redeemErr.message });
+    }
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url, tier: requestedTier });
 
