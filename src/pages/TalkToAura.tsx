@@ -20,8 +20,8 @@ import { cn } from '@/lib/utils';
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { Link } from 'react-router-dom';
 
-// Aura Intercept company ID for demo purposes
-const AURA_COMPANY_ID = 'aura-intercept-demo';
+// Aura Intercept tenant UUID (must be a real uuid — companies.id is uuid)
+const AURA_COMPANY_ID = '04c57cbe-358e-4036-a3ad-b777a55f5be0';
 const AURA_COMPANY_NAME = 'Aura Intercept';
 
 // REP-AI phone number
