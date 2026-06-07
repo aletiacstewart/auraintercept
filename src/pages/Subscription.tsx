@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
+import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
+import { ThirdPartyFeeNotice } from '@/components/billing/ThirdPartyFeeNotice';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -274,6 +276,7 @@ export default function Subscription() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [disclosureOpen, setDisclosureOpen] = useState(false);
   const [pendingTierId, setPendingTierId] = useState<string | null>(null);
+  const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null);
 
   // Determine if user can manage subscriptions
   const canManageSubscription = userRole === 'company_admin' || userRole === 'platform_admin';
@@ -336,7 +339,7 @@ export default function Subscription() {
       }
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         headers: { Authorization: `Bearer ${session.access_token}` },
-        body: { tier: tierId },
+        body: { tier: tierId, beta_code: betaCode?.code ?? null },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
