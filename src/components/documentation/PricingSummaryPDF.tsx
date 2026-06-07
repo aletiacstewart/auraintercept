@@ -264,7 +264,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', core: '$4,970', boost: '$8,970', pro: '$17,970', elite: '$30,970' },
           { category: 'One-Time Onboarding Fee', core: '$249', boost: '$449', pro: '$899', elite: '$1,549' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
-          { category: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
+          { category: 'AI Operatives', core: '4', boost: '6', pro: '8', elite: 'All 10' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
           { category: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
