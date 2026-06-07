@@ -637,9 +637,12 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
   },
 };
 
-export const INDUSTRY_LIST = Object.values(INDUSTRY_TEMPLATES);
+import { filterVisibleIndustries, isIndustryVisible } from './industryVisibility';
+
+export const INDUSTRY_LIST = filterVisibleIndustries(Object.values(INDUSTRY_TEMPLATES));
 
 export function getIndustryById(id: string): IndustryTemplate | undefined {
+  if (!isIndustryVisible(id)) return undefined;
   return INDUSTRY_TEMPLATES[id];
 }
 

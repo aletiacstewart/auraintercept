@@ -35,6 +35,20 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'physical_therapy', 'occupational_therapy', 'hospice', 'home_health',
 ]);
 
+/**
+ * Industries temporarily HIDDEN until HIPAA + BAA compliance lands.
+ * Edge functions that accept inbound industry IDs (e.g. create-demo-trial)
+ * should refuse or normalize these to 'other'. Existing rows are untouched.
+ */
+export const HIPAA_GATED_INDUSTRIES = new Set<string>([
+  'home_health', 'physical_therapy', 'occupational_therapy', 'hospice',
+]);
+
+export function isIndustryHipaaGated(id: string | null | undefined): boolean {
+  if (!id) return false;
+  return HIPAA_GATED_INDUSTRIES.has(String(id).trim().toLowerCase());
+}
+
 export function toCanonicalIndustryId(
   id: string | null | undefined,
 ): string | null {
