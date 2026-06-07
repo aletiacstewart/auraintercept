@@ -319,7 +319,8 @@ export default function Auth() {
       const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
         ? selectedTier
         : 'starter';
-      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+      const trialDays = betaCode?.trial_days ?? 60;
+      const trialEndsAt = new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -334,6 +335,8 @@ export default function Auth() {
           trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          beta_trial: betaCode ? true : false,
+          beta_code: betaCode?.code ?? null,
           industry_config:
             canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
               ? (buildIndustryConfig(customIndustry) as never)
