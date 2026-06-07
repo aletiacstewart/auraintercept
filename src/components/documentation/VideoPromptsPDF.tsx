@@ -55,8 +55,7 @@ const VideoPromptsPDF: React.FC = () => {
           <View style={styles.coverBadge}><Text style={styles.coverBadgeText}>AURA INTERCEPT</Text></View>
           <Text style={styles.coverTitle}>AI Promo Video Prompts</Text>
           <Text style={styles.coverSubtitle}>
-            {totalClips} production-ready prompts for Runway, Sora, Kling, and similar AI video tools.
-            Each clip ships with a video prompt, 8-second audio script, and graphic image prompt.
+            {totalClips} prompts for Runway, Sora, Kling. Each ships with video prompt, 8s audio, and image prompt.
           </Text>
           <Text style={styles.coverMeta}>Generated {today}</Text>
         </View>
@@ -69,9 +68,7 @@ const VideoPromptsPDF: React.FC = () => {
           <Text style={styles.headerPage}>Overview</Text>
         </View>
         <Text style={styles.intro}>
-          This pack contains {totalClips} clips organized across {sections.length} sections, covering the
-          platform intro, all 7 consoles, the AI Operatives Hub, and a finale. Total runtime ~4:32.
-          Use 0.5s dissolves within a console and 1s glitches between consoles.
+          {totalClips} clips across {sections.length} sections. Runtime ~4:32. Use 0.5s dissolves within a console, 1s glitches between consoles.
         </Text>
         <Text style={styles.sectionTitle}>Contents</Text>
         <View style={styles.toc}>
