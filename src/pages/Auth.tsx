@@ -1419,6 +1419,20 @@ export default function Auth() {
                           onCheckedChange={setTermsAgreed} 
                         />
                         {mode === 'company' && (
+                          <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                            <p className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                              <Zap className="w-3.5 h-3.5" />
+                              Beta Invite Code (optional)
+                            </p>
+                            <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
+                            {betaCode && (
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                60-day free trial + Beta Onboarding capped at $497 (until Aug 1, 2026) will apply at checkout. 3rd-party fees (SignalWire, ElevenLabs, Resend, Stripe, etc.) are billed directly by each provider and are not included in the trial.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {mode === 'company' && (
                           <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
                             <p className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
                               <AlertTriangle className="w-3.5 h-3.5" />
