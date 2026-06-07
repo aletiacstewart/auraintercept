@@ -241,11 +241,41 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Create a mailto link with form data summary
-      const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
-      const body = encodeURIComponent(generateEmailBody());
-      window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
-      toast.success('Opening your email client to send the form...');
+      if (!token) {
+        // Admin / preview mode: no invite token, fall back to mailto so the form is still usable.
+        const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
+        const body = encodeURIComponent(generateEmailBody());
+        window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
+        toast.success('Preview mode — opening email client (submission not saved).');
+        return;
+      }
+
+      const signer_name = formData.signatureName?.trim() || formData.contactName?.trim();
+      const signer_title = formData.contactTitle?.trim() || 'Owner';
+      if (!signer_name) {
+        toast.error('Please add your name in the signature section before submitting.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('submit-onboarding', {
+        body: {
+          token,
+          form_data: formData,
+          signature: { signer_name, signer_title },
+        },
+      });
+      if (error || (data as any)?.error) {
+        const msg = (data as any)?.error || error?.message || 'submit_failed';
+        if (msg === 'already_submitted') {
+          toast.success('Onboarding already submitted — your concierge team has it.');
+          setSubmitted(true);
+          return;
+        }
+        toast.error(`Submission failed: ${msg}`);
+        return;
+      }
+      setSubmitted(true);
+      toast.success('Onboarding submitted — your concierge team has been notified.');
     } catch (error) {
       toast.error('Failed to process form. Please try again.');
     } finally {
