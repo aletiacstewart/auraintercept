@@ -1,76 +1,114 @@
+# Voice-Driven Live Walkthrough Demo (Industry-Matched)
 
-# Hide Medical / Health Verticals Until HIPAA Is Resolved
+When a prospect calls the Aura sales number or starts an in-browser "Talk to Aura" voice session, Aura asks **what industry they're in**, qualifies them, and texts/emails them a one-tap link to a **live walkthrough demo pre-loaded with their industry's pack** (HVAC sees HVAC, plumbing sees plumbing, etc.).
 
-Goal: remove `home_health`, `physical_therapy`, `occupational_therapy`, `hospice` (and any "medical"-adjacent copy) from every customer-facing surface so we don't sell into HIPAA-regulated industries before BAAs and safeguards are in place. **Keep the data and code in place** so we can re-enable in one flag flip once HIPAA work lands.
+## What you already have
 
-## Approach: single feature flag, not deletion
+- `TalkToAura.tsx` + `VoiceChat` (in-browser ElevenLabs voice)
+- `elevenlabs-aura-token`, `voice-handler`, `voice-swaig` (phone-call entry)
+- `create-demo-trial` (industry-scoped 24h demo provisioning — already keyed off `industry_vertical`)
+- 22 visible industry packs (4 HIPAA-gated verticals hidden)
+- SignalWire (SMS), Lovable Email / Resend, Twilio connector
 
-Add one central allow-list rather than scrubbing 25+ files. Cleaner to revert later.
+## Architecture
 
-### 1. Central gate
-- New constant in `src/lib/industryIdAliases.ts` (or a new `src/lib/industryVisibility.ts`):
-  ```ts
-  export const HIPAA_GATED_INDUSTRIES = new Set([
-    'home_health','physical_therapy','occupational_therapy','hospice'
-  ]);
-  export const isIndustryVisible = (id) => !HIPAA_GATED_INDUSTRIES.has(id);
-  ```
-- Mirror in `supabase/functions/_shared/industry-aliases.ts` for edge functions.
+```text
+   Phone ─► SignalWire → voice-handler ─┐
+                                         ├─► ElevenLabs Aura agent (voice)
+   Web ───► /talk-to-aura → VoiceChat ──┘                │
+                                                         │ client tool:
+                                                         │ send_walkthrough_demo
+                                                         ▼
+                                  ┌──────────────────────────────────────┐
+                                  │ EF: send-walkthrough-demo            │
+                                  │  1. canonicalize industry            │
+                                  │  2. refuse if HIPAA-gated            │
+                                  │  3. create-demo-trial(industry)      │
+                                  │  4. mint 24h signed magic link       │
+                                  │  5. SMS + Email link to prospect     │
+                                  │  6. log to leads + call_logs         │
+                                  └──────────────────────────────────────┘
+```
 
-### 2. Filter at every list source (one-liner each)
-Apply `.filter(i => isIndustryVisible(i.id))` in:
-- `src/lib/industryMarketingContent.ts` → `INDUSTRY_LIST` (drives `/for-business` cards, IndustrySelector, Start Demo)
-- `src/lib/industryTemplates.ts` → signup dropdown (`SignUp.tsx`)
-- `src/pages/DemoAccountSeeder.tsx` → demo seeding skips these 4
-- `src/pages/SignUp.tsx` "Other / Custom" preset list
-- `src/pages/Index.tsx` landing industry mentions
-- `FastStartWizard` BUSINESS_TEMPLATES
+## Industry matching — the core requirement
 
-### 3. Hide in marketing / documentation
-- `src/components/documentation/MarketingSalesMasterPDF.tsx` — remove medical sections from generated PDF.
-- `src/lib/auditIndustryQuestions.ts` — strip medical question sets from Free Audit.
-- Any `/for-business/<slug>` route for the 4 IDs → return 404 / redirect to `/for-business`.
+Aura's system prompt forces an industry capture **before** the tool can fire:
 
-### 4. Sitemap & SEO
-- `scripts/generate-sitemap.ts` — exclude gated slugs.
-- `public/llms.txt`, `public/sitemap.xml` regen.
-- Remove medical keywords from landing meta + hero copy in `Index.tsx`.
+> *Step 1: Ask "What industry is your business in?" Map their answer to one of: HVAC, Plumbing, Electrical, Roofing, Solar, Landscaping, Pool & Spa, Pest Control, Appliance Repair, Handyman, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Fencing. Confirm out loud: "Got it — HVAC. I'll set up a live HVAC walkthrough for you." If they say a vertical not on that list, offer the closest match OR tag as "other".*
 
-### 5. Demo accounts
-- `supabase/functions/seed-demo-accounts-v2` and `DemoAccountSeeder.tsx` — skip the 4 verticals so the registry drops from 26 → 22 industries on next reseed. Existing seeded demos: either delete or leave inert (recommend delete via seeder script after flag flip).
+The `send_walkthrough_demo` client tool schema enforces it server-side too:
 
-### 6. Defensive runtime guard
-- `useIndustryPack.ts`: if a company somehow has `industry_vertical` in the gated set (none today, but future-proof), fall back to generic pack and log a warning. Do **not** block their existing sessions.
+```text
+{
+  industry: enum[hvac, plumbing, electrical, roofing, solar, landscape,
+                 pool_spa, pest_control, appliance_repair, handyman,
+                 construction, auto_care, security_systems, real_estate,
+                 beauty_wellness, restaurants, personal_assistant, fencing, other],
+  name: string,
+  phone: string (E.164),
+  email: string,
+  company_name?: string
+}
+```
 
-### 7. Keep behind the scenes
-- Industry pack rows in `industry_template_packs` table — **leave in DB**, untouched. The visibility filter is purely UI.
-- All lib files (`industryWorkflows`, `industryKpiLabels`, etc.) — leave entries; they're harmless when nothing selects them.
-- Memory files / docs referencing these verticals — leave as-is for when we re-enable.
+The edge function:
+1. Runs `toCanonicalIndustryId(industry)` to normalize aliases ("ac repair" → `hvac`, "lawn care" → `landscape`).
+2. **Refuses if `isIndustryHipaaGated(id)` returns true** → response tells Aura to say *"That vertical isn't open for self-serve demos yet — let me have our team reach out."*
+3. Calls `create-demo-trial` with the **resolved industry ID**, which already:
+   - Seeds the demo company's `industry_vertical`
+   - Loads the matching `industry_template_pack` (terminology, KPIs, prompts)
+   - Pre-populates the dashboard with industry-specific empty-state copy + sample workflows
+4. Builds the magic link with `?industry=<id>` so the auto-login route can verify on entry.
 
-## What "medical-adjacent" copy to scrub
+## SMS / Email copy (industry-personalized)
 
-Search and remove from public marketing only (`Index.tsx`, `ForBusiness.tsx`, landing components, PDFs):
-- "home health", "hospice", "physical therapy", "occupational therapy"
-- "medical", "clinic", "patient", "HIPAA" mentions in feature copy
-- Industry icons / cards for these verticals
+SMS:
+> *Hey {name}, here's your live {IndustryLabel} walkthrough of Aura: {link}. Tap to open — your demo is pre-loaded with sample {jobsTerm} and a {receptionistName} ready to take calls. Expires in 24h.*
 
-Keep internal docs (`.lovable/memory/**`) intact — that's our knowledge base.
+Where `IndustryLabel`, `jobsTerm`, and `receptionistName` come from `industry_template_packs.terminology` for the resolved ID.
+
+Email: same, with industry-matched hero image and a "What you'll see in your {Industry} demo" bullet list pulled from the pack.
+
+## Auto-login flow
+
+New route `/demo/auto-login?token=...&industry=...`:
+- Verifies signed token (24h TTL, HMAC with edge secret).
+- Calls existing demo trial auto-login RPC.
+- Confirms `industry_vertical` on the trial matches the URL param; mismatch → 403.
+- Drops the user straight into `/dashboard` where `useIndustryPack` resolves the matching pack and renders industry-correct labels everywhere.
+
+## Files to create / edit
+
+**New**
+- `supabase/functions/send-walkthrough-demo/index.ts`
+- `src/pages/DemoAutoLogin.tsx` (+ route in `App.tsx`)
+
+**Edited**
+- `src/components/ai/VoiceChat.tsx` — register `clientTools.send_walkthrough_demo` that calls the edge function
+- `src/pages/TalkToAura.tsx` — small chip: *"Ask Aura for a live walkthrough — she'll text you a link for your industry."*
+- `supabase/functions/voice-swaig/index.ts` — route incoming SWAIG `send_walkthrough_demo` calls to the new edge function
+- `src/pages/Index.tsx` + `src/pages/ForBusiness.tsx` — CTA copy under phone number / Talk-to-Aura button
+
+**Manual (ElevenLabs dashboard)**
+- Register `send_walkthrough_demo` client tool with the schema above
+- Update Aura agent system prompt with the industry-capture step
+- Update memory `mem://features/integrations/elevenlabs-client-tools-dashboard-config`
+
+## Guardrails
+
+- Rate limit: 1 send per phone+email per 10 min (prevents SMS pumping; matches Twilio fraud guidance).
+- Strict E.164 normalization on phone before SMS.
+- `home_health` / `physical_therapy` / `occupational_therapy` / `hospice` → polite decline + human handoff offer.
+- Log every send: `sms_logs`, `leads` (source: `voice_demo_phone` or `voice_demo_web`), `lead_activities`, and `call_logs.linked_demo_trial_id` for phone sessions.
+- Industry mismatch between token and URL → reject auto-login.
 
 ## Validation
 
-- Visit `/for-business`, `/signup`, `/`, `/audit` → confirm no medical verticals visible.
-- Run `rg -i "home_health|physical_therapy|occupational_therapy|hospice"` on `src/pages/` + `src/components/landing/` + `src/components/marketing/` → should only show inside the gated filter or files we intentionally kept.
-- Sitemap regen → no `/for-business/home-health` etc.
-- Demo seeder run → 22 verticals.
+- Web: open `/talk-to-aura`, say *"I run an HVAC company in Austin, my name is Steve, 512-555-1212, steve@acme.com"* → receive SMS + email within 10s → tap link → land in dashboard with HVAC pack (job board says "Service Calls", agent says "Dispatcher").
+- Same script but say *"I'm a plumber"* → demo shows Plumbing pack.
+- Phone: call sales line, run same script → identical result.
+- Say *"I run a home health agency"* → Aura declines politely.
+- Call twice in 5 min → second call says *"I already sent it — check your messages."*
 
-## To revert later (one PR)
-
-Empty the `HIPAA_GATED_INDUSTRIES` set, regen sitemap, reseed demos. Done.
-
----
-
-## Open questions
-
-1. **"Medical" scope** — just the 4 healthcare verticals, or also anything mentioning HIPAA / medical in marketing copy (e.g. compliance bullets that say "HIPAA-ready")? Recommend: hide the verticals **and** strip HIPAA claims so we don't make promises we can't back.
-2. **Existing demo accounts** for the 4 verticals — delete now, or leave logged-in-able until next reseed? Recommend delete to avoid sales demos showcasing them.
-3. **Industry packs in DB** — leave or soft-delete (set `is_active=false` if that column exists)? Recommend leave for fast revert.
+## Effort
+~3–4 hours: ~2h edge function + auto-login, ~30 min UX wiring, ~30 min ElevenLabs dashboard config + prompt, ~30 min testing across both web and phone paths.
