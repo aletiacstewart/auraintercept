@@ -21,7 +21,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get("ELEVENLABS_API_KEY");
+    const apiKey = Deno.env.get("PLATFORM_ELEVENLABS_API_KEY")
+      || Deno.env.get("ELEVENLABS_API_KEY");
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "ELEVENLABS_API_KEY not configured" }), {
         status: 500,
