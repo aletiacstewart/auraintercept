@@ -56,10 +56,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             <Users className="w-4 h-4 mr-2" />
             {t('nav.customerPortal')}
           </Button>
-          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}>
             {t('nav.signIn')}
           </Button>
-          <Button className="gradient-primary" onClick={() => navigate('/auth?mode=company')}>
+          <Button className="gradient-primary" onClick={() => navigate('/signup?mode=company')}>
             {t('nav.startFreeTrial')}
           </Button>
         </div>
@@ -97,12 +97,12 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
                 {t('nav.customerPortal')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/auth')}>
+              <DropdownMenuItem onClick={() => navigate('/signin')}>
                 <LogIn className="w-4 h-4 mr-2" />
                 {t('nav.signIn')}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => navigate('/auth?mode=company')}
+                onClick={() => navigate('/signup?mode=company')}
                 className="font-semibold text-primary focus:text-primary"
               >
                 <Rocket className="w-4 h-4 mr-2" />
