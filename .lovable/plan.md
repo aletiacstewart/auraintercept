@@ -1,24 +1,32 @@
-## Problem
+## Root cause
 
-The homepage "Talk to Aura" widget (`AuraAvatarChat.tsx`) connects to the sales ElevenLabs agent, which has a `send_walkthrough_demo` client tool configured. The React `useConversation()` call doesn't define `clientTools`, so when the agent tries to invoke it the SDK throws "Client tool with name send_walkthrough_demo is not defined on client".
+The `Talk to Aura` widget calls `send-walkthrough-demo`, which internally calls `create-demo-trial`. That function fails on insert:
 
-The same tool is already implemented in `src/components/ai/VoiceChat.tsx` (lines 180–217). We just need to mirror it on the avatar widget.
+> `trial: Could not find the 'password' column of 'demo_trials' in the schema cache`
+
+`create-demo-trial/index.ts:377` writes `password: PASSWORD` into `public.demo_trials`, but the table has no `password` column (verified via `\d public.demo_trials`). `send-walkthrough-demo` then returns `ok:false` and Aura speaks the "I hit a snag" line.
+
+This is not a timeout — both the gateway request and the internal call return 200 immediately. It's a missing schema column.
 
 ## Fix
 
-In `src/components/aura/AuraAvatarChat.tsx`, add a `clientTools` block to `useConversation({...})` with a single `send_walkthrough_demo` handler that:
+Add the missing column with a migration:
 
-- Calls `supabase.functions.invoke("send-walkthrough-demo", { body: { industry, name, email, phone, company_name, source: "voice_web" } })`, mapping `phone || mobile || phone_number` and `company_name || business_name`.
-- On success: returns `JSON.stringify({ ok: true, spoken })` using `data.spoken` (fallback to the standard confirmation line). Also shows a toast when `data.demo_url` is present, matching VoiceChat copy.
-- On failure: logs and returns `JSON.stringify({ ok: false, spoken: "I had trouble sending that — can a teammate text the demo link in a couple minutes?" })`.
+```sql
+ALTER TABLE public.demo_trials
+  ADD COLUMN IF NOT EXISTS password text;
+```
 
-No other client tools needed here (booking tools belong to tenant agents, not the sales agent).
+No RLS/grant changes needed (table already has policies + grants and is only written by edge functions using the service role). No code change in `create-demo-trial` — the existing `password: PASSWORD` insert is the intended payload (it stores the universal demo login so the credentials email/SMS can include it).
 
 ## Validation
 
-Open `/`, click "Talk to Aura", grant mic. Say "Send me an HVAC walkthrough demo, John, +15125551234". The agent collects info, calls `send_walkthrough_demo`, the edge function returns `spoken`, and the agent reads it back. No red toast appears. Network tab shows a 200 from `send-walkthrough-demo`.
+1. Open `/`, click Talk to Aura, request a Plumbing walkthrough demo for a real mobile number.
+2. Network: `send-walkthrough-demo` returns `{ ok:true, spoken, demo_url }`.
+3. Edge logs: `create-demo-trial` no longer logs the `password` schema error.
+4. Prospect receives the SMS + email with the `/demo/<trialId>` link.
 
 ## Out of scope
 
-- No change to `VoiceChat.tsx` or the edge function.
-- No UI copy or visual changes.
+- No changes to `AuraAvatarChat.tsx`, `send-walkthrough-demo`, or `create-demo-trial` code.
+- No edits to RLS, grants, or other columns on `demo_trials`.

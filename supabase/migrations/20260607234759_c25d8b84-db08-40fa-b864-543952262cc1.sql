@@ -1,0 +1,1 @@
+ALTER TABLE public.demo_trials ADD COLUMN IF NOT EXISTS password text;

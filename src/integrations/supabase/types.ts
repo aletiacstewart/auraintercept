@@ -2405,6 +2405,7 @@ export type Database = {
           expires_at: string
           id: string
           industry: string
+          password: string | null
           prospect_email: string
           prospect_name: string
           prospect_phone: string | null
@@ -2425,6 +2426,7 @@ export type Database = {
           expires_at?: string
           id?: string
           industry: string
+          password?: string | null
           prospect_email: string
           prospect_name: string
           prospect_phone?: string | null
@@ -2445,6 +2447,7 @@ export type Database = {
           expires_at?: string
           id?: string
           industry?: string
+          password?: string | null
           prospect_email?: string
           prospect_name?: string
           prospect_phone?: string | null
