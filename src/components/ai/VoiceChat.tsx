@@ -53,6 +53,79 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [testHistory, setTestHistory] = useState<TranscriptMsg[]>([]);
   const testSessionIdRef = useRef<string>(crypto.randomUUID());
 
+  // Text-mode TTS (ElevenLabs) — plays Aura's reply aloud while in text mode.
+  const [ttsEnabled, setTtsEnabled] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return window.localStorage.getItem("aura.textmode.tts") !== "off";
+  });
+  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
+  const ttsUrlRef = useRef<string | null>(null);
+
+  const toggleTts = useCallback(() => {
+    setTtsEnabled((prev) => {
+      const next = !prev;
+      try { window.localStorage.setItem("aura.textmode.tts", next ? "on" : "off"); } catch {}
+      if (!next && ttsAudioRef.current) {
+        ttsAudioRef.current.pause();
+        ttsAudioRef.current.src = "";
+      }
+      return next;
+    });
+  }, []);
+
+  const playAuraVoice = useCallback(async (text: string) => {
+    if (!ttsEnabled || !text?.trim()) return;
+    try {
+      // Stop anything currently playing
+      if (ttsAudioRef.current) {
+        ttsAudioRef.current.pause();
+      }
+      if (ttsUrlRef.current) {
+        URL.revokeObjectURL(ttsUrlRef.current);
+        ttsUrlRef.current = null;
+      }
+
+      const baseUrl = (import.meta as any).env?.VITE_SUPABASE_URL as string | undefined;
+      const anonKey = (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY
+        || (import.meta as any).env?.VITE_SUPABASE_ANON_KEY;
+      if (!baseUrl) throw new Error("Missing VITE_SUPABASE_URL");
+      const res = await fetch(`${baseUrl}/functions/v1/elevenlabs-tts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(anonKey ? { Authorization: `Bearer ${anonKey}`, apikey: anonKey } : {}),
+        },
+        body: JSON.stringify({ text: text.slice(0, 4000) }),
+      });
+      if (!res.ok) {
+        console.warn("[VoiceChat] TTS failed", res.status);
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      ttsUrlRef.current = url;
+      const audio = ttsAudioRef.current ?? new Audio();
+      ttsAudioRef.current = audio;
+      audio.src = url;
+      audio.play().catch((e) => console.warn("[VoiceChat] TTS play error", e));
+    } catch (e) {
+      console.warn("[VoiceChat] playAuraVoice error", e);
+    }
+  }, [ttsEnabled]);
+
+  React.useEffect(() => {
+    return () => {
+      if (ttsAudioRef.current) {
+        ttsAudioRef.current.pause();
+        ttsAudioRef.current.src = "";
+      }
+      if (ttsUrlRef.current) {
+        URL.revokeObjectURL(ttsUrlRef.current);
+        ttsUrlRef.current = null;
+      }
+    };
+  }, []);
+
   // Browser voice chat fallback hook
   const browserVoice = useBrowserVoiceChat({ companyId, onTranscript });
   const useBrowserFallback = !testMode && !agentId;
