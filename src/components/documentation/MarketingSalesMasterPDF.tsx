@@ -522,7 +522,7 @@ const TIER_FIT = [
   { who: '1–10 employees, no field techs, owner-operator', tier: 'Aura Core ($497/mo)' },
   { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($897/mo)' },
   { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,797/mo)' },
-  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($2,997/mo)' },
+  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($3,097/mo)' },
 ];
 
 const OBJECTIONS_EXTRA = [

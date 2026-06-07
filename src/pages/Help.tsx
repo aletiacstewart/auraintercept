@@ -687,7 +687,7 @@ export default function Help() {
                               <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Scheduler Agent, Social Analytics. Full marketing and outreach automation.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Aura Elite (<span className="line-through text-muted-foreground">$3,997</span> $2,997/mo · Launch Pricing):</strong>
+                              <strong className="text-card-foreground">Aura Elite (<span className="line-through text-muted-foreground">$3,497</span> $3,097/mo · Launch Pricing):</strong>
                               <p className="mt-1">Full suite of 24 agents including Invoice, Inventory, Insights, Performance, Revenue, Forecast + Predictive AI Hub.</p>
                             </li>
                           </ul>

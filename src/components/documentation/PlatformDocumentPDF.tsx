@@ -1178,7 +1178,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$2,997/month</Text>
+        <Text style={styles.pricingPrice}>$3,097/month</Text>
         <Text style={styles.pricingFeature}>- All 10 AI Operatives + 7 Consoles + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
@@ -1205,7 +1205,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
 
       <Text style={styles.subsectionTitle}>vs. Answering Services (Ruby, AnswerConnect)</Text>
-      <BulletPoint>$897-$2,997/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
+      <BulletPoint>$897-$3,097/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
       <BulletPoint>Unlimited calls vs. per-minute pricing</BulletPoint>
       <BulletPoint>Books appointments directly vs. just takes messages</BulletPoint>
       <BulletPoint>Full business automation vs. phone only</BulletPoint>
