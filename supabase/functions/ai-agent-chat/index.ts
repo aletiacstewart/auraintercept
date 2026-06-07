@@ -1138,6 +1138,33 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'send_walkthrough_demo',
+        description: 'Send an industry-matched live walkthrough demo of Aura Intercept to a prospect via SMS + email. Use only when a prospect evaluating Aura asks for a demo/walkthrough/sample for their industry. Collect industry + name + mobile phone first.',
+        parameters: {
+          type: 'object',
+          properties: {
+            industry: {
+              type: 'string',
+              description: 'Canonical industry id',
+              enum: [
+                'hvac','plumbing','electrical','roofing','solar','landscape',
+                'pool_spa','pest_control','appliance_repair','handyman','construction',
+                'auto_care','security_systems','real_estate','beauty_wellness',
+                'restaurants','personal_assistant','fencing',
+              ],
+            },
+            name: { type: 'string', description: 'Prospect first name (or full name)' },
+            phone: { type: 'string', description: 'Mobile phone in E.164 or 10-digit US format' },
+            email: { type: 'string', description: 'Optional email address' },
+            company_name: { type: 'string', description: 'Optional business name' },
+          },
+          required: ['industry', 'name', 'phone'],
+        },
+      },
+    },
   ],
   booking: [
     {
