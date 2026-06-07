@@ -19,6 +19,8 @@ import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
 import { useDeploymentAutoReload } from "@/hooks/useDeploymentAutoReload";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import CustomerAuth from "./pages/CustomerAuth";
 import CustomerPortalHome from "./pages/CustomerPortalHome";
 import CustomerPortalInstall from "./pages/CustomerPortalInstall";
@@ -184,6 +186,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
                 <Route path="/demo/:trialId" element={<DemoAccess />} />
