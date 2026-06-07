@@ -491,7 +491,6 @@ const INDUSTRY_PACKS: Array<{ id: string; cluster: string; tagline: string }> = 
   { id: 'fitness', cluster: 'Booking', tagline: 'Fewer cancellations, more retention' },
   { id: 'personal_assistant', cluster: 'Booking', tagline: 'Higher-trust client communications' },
   { id: 'professional', cluster: 'Booking', tagline: 'Higher-trust client communications' },
-  { id: 'home_health', cluster: 'Booking', tagline: 'Trusted, compassionate patient growth' },
 ];
 
 // --- Sales rep toolkit ---
