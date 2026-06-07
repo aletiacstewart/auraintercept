@@ -556,14 +556,14 @@ export const SalesPitchDataPDF: React.FC = () => (
           <View style={styles.tierCard}>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>Aura Elite</Text>
-              <Text style={styles.tierPrice}>$2,997/mo</Text>
+              <Text style={styles.tierPrice}>$3,097/mo</Text>
             </View>
             <Text style={styles.tierDesc}>Full Suite, Enterprise Operations</Text>
             <Text style={styles.tierBullet}>- All Pro benefits: +$10,000</Text>
             <Text style={styles.tierBullet}>- Analytics-driven decisions: +$3,000</Text>
             <Text style={styles.tierBullet}>- Enterprise operations coordination: +$2,000</Text>
-            <Text style={styles.tierBullet}>- Cost: -$2,997</Text>
-            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$13,003/mo</Text>
+            <Text style={styles.tierBullet}>- Cost: -$3,097</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$11,903/mo</Text>
           </View>
         </View>
       </View>
@@ -630,7 +630,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$2,997</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$3,097</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
@@ -768,12 +768,12 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Core</Text>
-          <Text style={styles.tierPrice}>$897/mo</Text>
+          <Text style={styles.tierPrice}>$497/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Solo operators, restaurants, single-location</Text>
         <Text style={styles.tierBullet}>- 10 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Primary pain: Booking automation + marketing</Text>
-        <Text style={styles.tierBullet}>- 8 Smart AI Agents, 3 Consoles</Text>
+        <Text style={styles.tierBullet}>- 4 AI Operatives, 3 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -784,7 +784,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierDesc}>Best for: HVAC, plumbing, field service teams</Text>
         <Text style={styles.tierBullet}>- 25 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need dispatch + field operations</Text>
-        <Text style={styles.tierBullet}>- 12 Smart AI Agents, 5 Consoles</Text>
+        <Text style={styles.tierBullet}>- 6 AI Operatives, 5 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -796,13 +796,13 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- 50 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need campaign, outreach + social media</Text>
         <Text style={styles.tierBullet}>- Industry Specialist Agents (included on every plan, by industry)</Text>
-        <Text style={styles.tierBullet}>- 16 Smart AI Agents, 5 Consoles</Text>
+        <Text style={styles.tierBullet}>- 8 AI Operatives, 5 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Elite (Enterprise)</Text>
-          <Text style={styles.tierPrice}>$2,997/mo</Text>
+          <Text style={styles.tierPrice}>$3,097/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Large service teams, enterprise operations</Text>
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>

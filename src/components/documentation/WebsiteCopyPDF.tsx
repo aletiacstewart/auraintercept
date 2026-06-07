@@ -369,8 +369,8 @@ export const WebsiteCopyPDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Descriptions" pageNum={4} />
       
-      <Text style={styles.sectionTitle}>24 AI Agent Copy Blocks</Text>
-      <Text style={styles.sectionSubtitle}>Short descriptions for feature pages and marketing</Text>
+      <Text style={styles.sectionTitle}>AI Agent Copy Blocks</Text>
+      <Text style={styles.sectionSubtitle}>Short descriptions for the 24 underlying specialist agents (rolled up into 10 operatives).</Text>
 
       <View style={styles.twoColumn}>
         <View style={styles.column}>
@@ -494,7 +494,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
           Your AI-powered business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
-          - 8 Smart AI Agents{'\n'}
+          - 4 AI Operatives{'\n'}
           - 3 Control Centers{'\n'}
           - AI Receptionist (24/7){'\n'}
           - Booking, Follow-Up & Review Agents{'\n'}
@@ -508,7 +508,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Field Operations Power</Text>
         <Text style={styles.copyBody}>
           Built for service teams that dispatch. HVAC, plumbing, and field service businesses scale with intelligent routing.{'\n\n'}
-          - 12 Smart AI Agents{'\n'}
+          - 6 AI Operatives{'\n'}
           - 5 Control Centers{'\n'}
           - Dispatch, Route, ETA & Check-In Agents{'\n'}
           - Field Operations Console{'\n'}
@@ -528,7 +528,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
           Scale your brand with campaigns and social media for growing companies.{'\n\n'}
-          - 16 Smart AI Agents{'\n'}
+          - 8 AI Operatives{'\n'}
           - 5 Control Centers{'\n'}
           - Campaign & Outreach Agents{'\n'}
           - Social Scheduler Agent & Analytics{'\n'}
@@ -538,7 +538,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Elite - $2,997/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $3,097/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 10 AI Operatives suite (24 underlying specialist agents) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}

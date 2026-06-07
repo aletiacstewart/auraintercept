@@ -900,14 +900,14 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Core $497 · Boost $897 · Pro $1,797 · Elite $2,997 / month. One-time onboarding fee = 50% of monthly: Core $249 · Boost $449 · Pro $899 · Elite $1,549, due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Launch Pricing: Core $497 (was $697) · Boost $897 (was $1,097) · Pro $1,797 (was $1,997) · Elite $3,097 (was $3,497) / month. Onboarding fee = 50% of monthly: Core $249 · Boost $449 · Pro $899 · Elite $1,549, due at start.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Important — 3rd-Party Costs')}</Text>
       <Text style={styles.infoBoxText}>
-        {sanitizePdfText('Every 3rd-party provider used by the platform (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC carrier fees, social platforms) requires YOUR own account with YOUR valid credit card. Each provider invoices you directly and separately from your Aura plan fee. Your Aura plan covers the platform only — we never resell, mark up, or absorb 3rd-party usage.')}
+        {sanitizePdfText('Every 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) requires YOUR own account with a valid credit card. Each invoices you directly, separately from your Aura plan. Your plan covers the platform only — never resold or marked up.')}
       </Text>
     </View>
   </Page>
