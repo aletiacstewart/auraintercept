@@ -166,8 +166,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'ai-operatives-hub',
     title: 'AI Operatives Hub',
-    description: 'The nerve center of your AI workforce. Enable or disable any of the 24 Smart AI Agents, monitor their performance metrics, view real-time event logs, and fine-tune agent behavior from one central management interface.',
-    tryIt: 'Open the Hub to see all 24 AI Agents, their health status, and enable the ones you need.',
+    description: 'The nerve center of your AI workforce. Enable or disable any of the 10 AI Operatives, monitor their performance metrics, view real-time event logs, and fine-tune operative behavior from one central management interface.',
+    tryIt: 'Open the Hub to see all 10 AI Operatives, their health status, and enable the ones you need.',
     targetSelector: '[data-tour-id="nav-ai-operatives"]',
     route: '/dashboard',
     position: 'right',

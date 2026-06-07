@@ -130,7 +130,7 @@ const guideCategories = [
           'Aura Core (Launch Pricing: $497/mo, was $697): 8 AI Agents — Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing',
           'Aura Boost (Launch Pricing: $897/mo, was $1,097): 12 AI Agents — All Core + Dispatch, Route, ETA, Check-In',
           'Aura Pro (Launch Pricing: $1,797/mo, was $1,997): 16 AI Agents — All Boost + Campaign, Outreach, Social Scheduler Agent, Social Analytics',
-          'Aura Elite (Launch Pricing: $3,097/mo, was $3,497): All 24 AI Agents + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
+          'Aura Elite (Launch Pricing: $3,097/mo, was $3,497): All 10 AI Operatives + 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
           'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
           'All tiers include API Access and Chat Widget'

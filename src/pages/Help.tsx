@@ -639,7 +639,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 Smart AI Agents, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 10 AI Operatives, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>
