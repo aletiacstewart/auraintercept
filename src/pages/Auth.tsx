@@ -28,6 +28,7 @@ import { SmsOptInCheckbox } from '@/components/auth/SmsOptInCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
+import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -77,6 +78,7 @@ export default function Auth() {
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
+  const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
