@@ -1,0 +1,1 @@
+ALTER TABLE public.onboarding_invites ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'admin';
