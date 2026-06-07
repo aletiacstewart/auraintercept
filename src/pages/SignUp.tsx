@@ -37,7 +37,7 @@ type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 
 const VALID_MODES: AuthMode[] = ['platform_admin', 'company', 'employee', 'customer'];
 
-export default function Auth() {
+export default function SignUp() {
   const [searchParams] = useSearchParams();
   
   // Runtime guard for mode - prevents malformed values from falling through
@@ -45,15 +45,12 @@ export default function Auth() {
   const mode: AuthMode = rawMode && VALID_MODES.includes(rawMode as AuthMode) 
     ? (rawMode as AuthMode) 
     : 'company';
-  
-  const rawTab = searchParams.get('tab');
-  const tabParam = rawTab === 'login' || rawTab === 'signup' ? rawTab : null;
+
   const source = searchParams.get('source');
   const tierParam = searchParams.get('tier');
   const industryParam = searchParams.get('industry');
   
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -85,16 +82,16 @@ export default function Auth() {
     setPasswordValidation(result);
   }, []);
 
-  // Sync activeTab with URL params and mode - runs on mount and when params change
+  // Platform Admin has no public signup — redirect to sign-in.
   useEffect(() => {
-    // Force login for QR source or employee mode (bulletproof the flow)
-    if (source === 'qr' || mode === 'employee') {
-      setActiveTab('login');
-    } else if (tabParam) {
-      setActiveTab(tabParam);
-    } else {
-      // Default: signup for company mode
-      setActiveTab('signup');
+    if (mode === 'platform_admin') {
+      navigate('/signin?mode=platform_admin', { replace: true });
+      return;
+    }
+    // QR-flow employees should sign in, not sign up.
+    if (source === 'qr') {
+      navigate(`/signin?mode=employee&source=qr`, { replace: true });
+      return;
     }
     // Reset form fields when mode changes
     setEmail('');
@@ -102,7 +99,7 @@ export default function Auth() {
     setFullName('');
     setCompanyName('');
     setRegistrationCode('');
-  }, [mode, tabParam, source]);
+  }, [mode, source, navigate]);
 
   // Pre-select tier and industry from query params (deep-link from /for-business)
   useEffect(() => {
@@ -113,58 +110,6 @@ export default function Auth() {
       setBusinessIndustry(industryParam);
     }
   }, [tierParam, industryParam]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      emailSchema.parse(email);
-      passwordSchema.parse(password);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        toast({ title: 'Validation Error', description: err.errors[0].message, variant: 'destructive' });
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      toast({ title: 'Login Failed', description: error.message, variant: 'destructive' });
-      setIsLoading(false);
-      return;
-    }
-
-    // Check user role to determine redirect
-    if (authData.user) {
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', authData.user.id)
-        .single();
-
-      toast({ title: 'Welcome back!', description: 'Redirecting...' });
-      
-      if (email.toLowerCase() === 'superadmin@auraintercept.ai' && roleData?.role === 'platform_admin') {
-        // Clear any prior switcher session — fresh login means we own this tab
-        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
-        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
-        navigate('/super-switcher');
-      } else if (roleData?.role === 'demo_rep') {
-        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
-        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
-        navigate('/super-switcher');
-      } else if (roleData?.role === 'customer') {
-        navigate('/customer');
-      } else {
-        navigate('/dashboard');
-      }
-    }
-
-    setIsLoading(false);
-  };
 
   const handlePlatformAdminSignup = async (e: React.FormEvent) => {
     e.preventDefault();
