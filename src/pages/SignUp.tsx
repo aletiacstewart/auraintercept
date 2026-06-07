@@ -669,7 +669,7 @@ export default function SignUp() {
               {/* Debug line for QR troubleshooting - only shows when source=qr */}
               {source === 'qr' && (
                 <p className="mt-2 text-xs font-mono bg-muted px-2 py-1 rounded inline-block">
-                  Mode: {mode} | Tab: {activeTab} | Source: {source}
+                  Mode: {mode} | Source: {source}
                 </p>
               )}
             </div>
@@ -1069,7 +1069,7 @@ export default function SignUp() {
                       variant={mode === 'customer' ? 'default' : 'ghost'} 
                       size="sm" 
                       className={mode === 'customer' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/auth?mode=customer')}
+                      onClick={() => navigate('/signup?mode=customer')}
                     >
                       <UserCircle className="w-4 h-4 mr-1" /> Customer
                     </Button>
@@ -1077,7 +1077,7 @@ export default function SignUp() {
                       variant={mode === 'employee' ? 'default' : 'ghost'} 
                       size="sm" 
                       className={mode === 'employee' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/auth?mode=employee')}
+                      onClick={() => navigate('/signup?mode=employee')}
                     >
                       <Users className="w-4 h-4 mr-1" /> Employee
                     </Button>
@@ -1085,7 +1085,7 @@ export default function SignUp() {
                       variant={mode === 'company' ? 'default' : 'ghost'} 
                       size="sm" 
                       className={mode === 'company' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/auth?mode=company')}
+                      onClick={() => navigate('/signup?mode=company')}
                     >
                       <Building2 className="w-4 h-4 mr-1" /> Company
                     </Button>
@@ -1093,7 +1093,7 @@ export default function SignUp() {
                       variant={mode === 'platform_admin' ? 'default' : 'ghost'} 
                       size="sm" 
                       className={mode === 'platform_admin' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/auth?mode=platform_admin')}
+                      onClick={() => navigate('/signin?mode=platform_admin')}
                     >
                       <Shield className="w-4 h-4 mr-1" /> Platform Admin
                     </Button>
