@@ -11,7 +11,7 @@ const TIERS = [
   { id: 'core', name: 'Core', price: 497 },
   { id: 'boost', name: 'Boost', price: 897 },
   { id: 'pro', name: 'Pro', price: 1797 },
-  { id: 'elite', name: 'Elite', price: 2997 },
+  { id: 'elite', name: 'Elite', price: 3097 },
 ] as const;
 
 // Industry benchmarks (NextPhone 2026, Aura Intercept analysis)
