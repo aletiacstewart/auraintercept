@@ -1183,6 +1183,14 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+      {submitted && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
+          <h2 className="text-lg font-semibold text-foreground">Onboarding submitted ✓</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Your concierge team has been notified and will reach out within 1 business day.
+          </p>
+        </div>
+      )}
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-foreground">Company Onboarding Questionnaire</h1>
@@ -1224,11 +1232,11 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
         ) : (
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitted}
             className="bg-primary hover:bg-primary/90"
           >
             <Send className="mr-2 h-4 w-4" />
-            {isSubmitting ? 'Processing...' : 'Submit via Email'}
+            {submitted ? 'Submitted' : isSubmitting ? 'Submitting…' : token ? 'Submit onboarding' : 'Submit via Email'}
           </Button>
         )}
       </div>
