@@ -558,6 +558,10 @@ export default function Architecture() {
             <style>{`@keyframes cyberDataflowStrip { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
           </div>
 
+          <div className="mb-6">
+            <ElevenLabsToolChecklist />
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <ScrollArea className="w-full">
               <TabsList className="inline-flex w-max mb-4 border border-primary/20 bg-card/60 backdrop-blur-sm">
