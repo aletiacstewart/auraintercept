@@ -195,6 +195,8 @@ serve(async (req) => {
     // Beta invite code validation (server-authoritative)
     let betaTrialDays = 0;
     let betaWaiveOnboarding = false;
+    let betaOnboardingCapCents: number | null = null;
+    let betaCapExpiresAt: Date | null = null;
     if (betaCode) {
       const { data: betaRows, error: betaErr } = await supabaseClient.rpc("validate_beta_code", { p_code: betaCode });
       const row = Array.isArray(betaRows) ? betaRows[0] : betaRows;
@@ -207,14 +209,51 @@ serve(async (req) => {
       }
       betaTrialDays = row.trial_days || 60;
       betaWaiveOnboarding = !!row.waive_onboarding_fee;
-      logStep("Beta code accepted", { betaCode, betaTrialDays, betaWaiveOnboarding });
+      betaOnboardingCapCents = typeof row.onboarding_fee_cap_cents === "number" ? row.onboarding_fee_cap_cents : null;
+      betaCapExpiresAt = row.onboarding_cap_expires_at ? new Date(row.onboarding_cap_expires_at) : null;
+      logStep("Beta code accepted", { betaCode, betaTrialDays, betaWaiveOnboarding, betaOnboardingCapCents, betaCapExpiresAt });
     }
 
-    const lineItems: Array<{ price: string; quantity: number }> = [
+    const lineItems: Array<Stripe.Checkout.SessionCreateParams.LineItem> = [
       { price: selectedTier.price_id, quantity: 1 },
     ];
-    if (isFirstCheckout && selectedTier.onboarding_price_id && !betaWaiveOnboarding) {
-      lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
+    if (isFirstCheckout && selectedTier.onboarding_price_id) {
+      // Beta onboarding cap: if a beta code is applied, the cap hasn't expired,
+      // and the tier's standard onboarding fee exceeds the cap, swap the standard
+      // onboarding price for an inline capped price_data line item.
+      const capActive = !!betaCode && !betaWaiveOnboarding && betaOnboardingCapCents !== null &&
+        (!betaCapExpiresAt || betaCapExpiresAt > new Date());
+      // Fetch standard onboarding price amount from Stripe to compare to cap
+      let useCap = false;
+      if (capActive) {
+        try {
+          const stdPrice = await stripe.prices.retrieve(selectedTier.onboarding_price_id);
+          if ((stdPrice.unit_amount ?? 0) > (betaOnboardingCapCents ?? 0)) {
+            useCap = true;
+          }
+        } catch (e) {
+          logStep("Warning: failed to retrieve onboarding price for cap comparison", { error: (e as Error).message });
+        }
+      }
+      if (betaWaiveOnboarding) {
+        // Fully waived — skip onboarding line item entirely
+      } else if (useCap) {
+        lineItems.push({
+          quantity: 1,
+          price_data: {
+            currency: "usd",
+            unit_amount: betaOnboardingCapCents!,
+            product_data: {
+              name: `Beta Onboarding (capped) — ${selectedTier.name}`,
+              description: `One-time concierge onboarding fee, capped at $${Math.round(
+                (betaOnboardingCapCents ?? 0) / 100,
+              )} under beta code ${betaCode}.`,
+            },
+          },
+        });
+      } else {
+        lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
+      }
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
