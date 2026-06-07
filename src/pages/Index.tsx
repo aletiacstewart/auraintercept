@@ -769,7 +769,7 @@ export default function Index() {
               Connect Everywhere Your Customers Are
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
-              Aura Intercept AI synchronizes your voice, chat, email, and SMS into a 24/7 proactive workforce that captures every lead and booking while your team is in the field.
+              Voice, chat, email, SMS — one 24/7 workforce capturing every lead while your team is in the field.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -802,7 +802,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               The All-in-One AI Center for Service Pros
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI capture, reminders, and workflows in one platform.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {platformFeatures.map((feature) => (
@@ -836,7 +836,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               AI Automation for Field Service Industries
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI that intercepts every inquiry and books directly to your calendar.</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
             {industryCategories.flatMap(cat => cat.industries).map(industry => (
@@ -914,7 +914,7 @@ export default function Index() {
               Choose Your Command Level
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
-              Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
+              Pick your automation level. Bring your own voice, SMS, and payment accounts — billed directly by the provider.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a complimentary audit to help determine which plans best fit your business needs →
@@ -1087,12 +1087,12 @@ export default function Index() {
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2 text-white">3rd Party Integration Costs + Usage Fees</h3>
+              <h3 className="text-xl font-bold mb-2 text-white">3rd-Party Integrations & Usage Fees</h3>
               <p className="text-sm text-white">
-                Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
+                Bring your own provider accounts. Each vendor bills you directly.
               </p>
               <p className="text-xs text-white italic mt-1">
-                All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+                Vendor fees are set by the provider and may change at any time.
               </p>
             </div>
 
