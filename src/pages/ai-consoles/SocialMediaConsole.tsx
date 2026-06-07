@@ -19,7 +19,7 @@ export default function SocialMediaConsole() {
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
   const industryLabel = pack.label || 'service business';
-  const description = `AI-powered social content, scheduling, and analytics for your ${industryLabel.toLowerCase()} business.`;
+  const description = `Plan, post, and track social for your ${industryLabel.toLowerCase()}.`;
 
   return (
     <DashboardLayout>

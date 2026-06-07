@@ -61,8 +61,7 @@ export default function CustomerPortalConsole() {
               <Alert className="bg-amber-500/10 border-amber-500/30">
                 <Eye className="h-4 w-4 text-amber-500" />
                 <AlertDescription className="text-amber-600 dark:text-amber-400">
-                  <span className="font-medium">Admin Preview Mode</span> — You are viewing this console as an administrator. 
-                  In production, customers access their AI Agent Virtual Assistant via the embedded widget on your website.
+                  <span className="font-medium">Admin Preview</span> — Customers see this via the widget on your site.
                 </AlertDescription>
               </Alert>
             )}

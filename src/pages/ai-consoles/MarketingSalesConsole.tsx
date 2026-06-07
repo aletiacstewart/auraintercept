@@ -94,7 +94,7 @@ export default function MarketingSalesConsole() {
             <SpecialistOperativesLauncher
               show={marketingSpecialists}
               title="Marketing Specialists"
-              subtitle="AI specialists that draft listings, menus, review replies, and loyalty offers for your industry."
+              subtitle="Drafts listings, menus, review replies, and loyalty offers."
             />
           </div>
         </FeatureGate>

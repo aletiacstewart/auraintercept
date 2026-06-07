@@ -349,7 +349,7 @@ export default function SpecialistOperativesConsole() {
           <PageHeader
             icon={Sparkles}
             title="Specialist Operatives"
-            description="Industry-specific AI specialists for diagnostics, permits, surveys, and claims"
+            description="Specialists for diagnostics, permits, surveys, and claims."
             featureColor="config"
             badge={
               <Badge variant="outline" className="text-[10px]">
