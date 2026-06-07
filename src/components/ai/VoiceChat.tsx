@@ -563,6 +563,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
           <Button onClick={sendTextMessage} disabled={!textInput.trim() || isSendingText || testIsLoading} size="icon">
             {isSendingText || testIsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
+          <Button
+            type="button"
+            onClick={toggleTts}
+            size="icon"
+            variant="outline"
+            title={ttsEnabled ? "Mute Aura's voice" : "Unmute Aura's voice"}
+            aria-label={ttsEnabled ? "Mute Aura's voice" : "Unmute Aura's voice"}
+          >
+            {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+          </Button>
         </div>
       )}
 
