@@ -67,3 +67,21 @@ export function getOnboardingPrice(tier: TierKey): number {
   const t = getTierPricing(tier);
   return LAUNCH_PRICING.active ? t.onboardingSale : t.onboardingOriginal;
 }
+
+/** Beta onboarding fee cap — applied while a valid beta code is redeemed and
+ * before BETA_ONBOARDING_CAP_EXPIRES_AT. After expiry, beta users pay the
+ * standard tier onboarding fee. The 60-day trial benefit is unaffected. */
+export const BETA_ONBOARDING_CAP_CENTS = 49700;
+export const BETA_ONBOARDING_CAP_AMOUNT = 497;
+export const BETA_ONBOARDING_CAP_EXPIRES_AT = '2026-08-01T00:00:00Z';
+
+export function isBetaCapActive(now: Date = new Date()): boolean {
+  return now < new Date(BETA_ONBOARDING_CAP_EXPIRES_AT);
+}
+
+/** Returns the effective onboarding price for a tier when a beta code is applied. */
+export function getBetaOnboardingPrice(tier: TierKey, now: Date = new Date()): number {
+  const standard = getOnboardingPrice(tier);
+  if (!isBetaCapActive(now)) return standard;
+  return Math.min(standard, BETA_ONBOARDING_CAP_AMOUNT);
+}
