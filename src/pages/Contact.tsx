@@ -92,7 +92,7 @@ export default function Contact() {
               Get in Touch
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Have questions about Aura Intercept? We're here to help your business succeed with AI automation.
+              Questions about Aura Intercept? We're here to help.
             </p>
           </div>
         </section>
@@ -187,7 +187,7 @@ export default function Contact() {
                                 <SelectItem value="starter">Aura Core — $497/mo (was $697 · Launch Pricing)</SelectItem>
                                 <SelectItem value="connect">Aura Boost — $897/mo (was $1,097 · Launch Pricing)</SelectItem>
                                 <SelectItem value="performance">Aura Pro — $1,797/mo (was $1,997 · Launch Pricing)</SelectItem>
-                                <SelectItem value="command">Aura Elite — $2,997/mo (was $3,997 · Launch Pricing)</SelectItem>
+                                <SelectItem value="command">Aura Elite — $3,097/mo (was $3,497 · Launch Pricing)</SelectItem>
                                 <SelectItem value="other">Other / Not Sure</SelectItem>
                               </SelectContent>
                             </Select>
@@ -317,7 +317,7 @@ export default function Contact() {
                   <CardContent className="pt-6">
                     <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
                     <p className="mb-4 opacity-90">
-                      Start your 60-Day Live Trial and see how AI can transform your business. The first 30 days are your onboarding window; the remaining 60 days are full live use.
+                      60-Day Live Trial: 30 days concierge onboarding + 30 days fully live.
                     </p>
                     <Button 
                       variant="secondary" 
