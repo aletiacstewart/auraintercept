@@ -7607,6 +7607,38 @@ async function executeAgentTool(
       };
     }
 
+    case 'send_walkthrough_demo': {
+      console.log('[AI Agent] send_walkthrough_demo args:', args);
+      try {
+        const { data, error } = await supabase.functions.invoke('send-walkthrough-demo', {
+          body: {
+            industry: args.industry,
+            name: args.name,
+            phone: args.phone,
+            email: args.email,
+            company_name: args.company_name,
+            source: 'chat_web',
+          },
+        });
+        if (error) {
+          console.error('[AI Agent] send_walkthrough_demo invoke error:', error);
+          return { ok: false, spoken: "I had trouble sending that demo — a teammate will text it shortly." };
+        }
+        const spoken = (data && typeof (data as any).spoken === 'string')
+          ? (data as any).spoken
+          : "I just sent your live walkthrough link by text and email — tap it whenever you're ready.";
+        return {
+          ok: (data as any)?.ok !== false,
+          spoken,
+          demo_url: (data as any)?.demo_url,
+          industry_label: (data as any)?.industry_label,
+        };
+      } catch (e) {
+        console.error('[AI Agent] send_walkthrough_demo threw:', e);
+        return { ok: false, spoken: "I had trouble sending that demo — a teammate will text it shortly." };
+      }
+    }
+
     case 'get_leads': {
       console.log('[AI Agent] Getting leads with args:', args);
       
