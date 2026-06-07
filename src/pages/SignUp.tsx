@@ -1063,41 +1063,6 @@ export default function SignUp() {
             <div className="space-y-6">
               <Card className="border-border/50 shadow-lg">
                 <CardHeader className="text-center pb-4">
-                  {/* Mode switcher at top */}
-                  <div className="flex flex-wrap justify-center gap-2 text-sm mb-4">
-                    <Button 
-                      variant={mode === 'customer' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      className={mode === 'customer' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/signup?mode=customer')}
-                    >
-                      <UserCircle className="w-4 h-4 mr-1" /> Customer
-                    </Button>
-                    <Button 
-                      variant={mode === 'employee' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      className={mode === 'employee' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/signup?mode=employee')}
-                    >
-                      <Users className="w-4 h-4 mr-1" /> Employee
-                    </Button>
-                    <Button 
-                      variant={mode === 'company' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      className={mode === 'company' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/signup?mode=company')}
-                    >
-                      <Building2 className="w-4 h-4 mr-1" /> Company
-                    </Button>
-                    <Button 
-                      variant={mode === 'platform_admin' ? 'default' : 'ghost'} 
-                      size="sm" 
-                      className={mode === 'platform_admin' ? 'gradient-primary' : ''}
-                      onClick={() => navigate('/signin?mode=platform_admin')}
-                    >
-                      <Shield className="w-4 h-4 mr-1" /> Platform Admin
-                    </Button>
-                  </div>
                   <div className="mx-auto w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-3">
                     <Icon className="w-6 h-6 text-primary-foreground" />
                   </div>
