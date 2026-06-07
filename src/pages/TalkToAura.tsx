@@ -36,6 +36,7 @@ export default function TalkToAura() {
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [voiceStarted] = useState(false);
   const [transcript, setTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  const [useTextMode, setUseTextMode] = useState(false);
 
   const handleTranscript = useCallback((role: 'user' | 'assistant', text: string) => {
     setTranscript(prev => [...prev, { role, text }]);
@@ -226,8 +227,17 @@ export default function TalkToAura() {
                     companyId={AURA_COMPANY_ID}
                     companyName={AURA_COMPANY_NAME}
                     onTranscript={handleTranscript}
-                    testMode={true}
+                    testMode={useTextMode}
                   />
+                  <div className="flex justify-center mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setUseTextMode((v) => !v)}
+                      className="text-xs text-slate-400 hover:text-slate-200 underline underline-offset-2"
+                    >
+                      {useTextMode ? "Switch to voice mode" : "Use text mode instead (no voice credits)"}
+                    </button>
+                  </div>
                 </div>
 
                 {!termsAgreed && !voiceStarted && (
