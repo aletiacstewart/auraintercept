@@ -250,11 +250,20 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       if (!agentId) throw new Error("No ElevenLabs agent configured for this company");
 
       console.log("[VoiceChat] Starting with agentId:", agentId);
+      const isAuraSalesTenant = companyId === '04c57cbe-358e-4036-a3ad-b777a55f5be0';
+      const walkthroughPromptAddendum = isAuraSalesTenant
+        ? `\n\nLIVE WALKTHROUGH DEMO:\nIf the caller asks for a demo, walkthrough, sample, or "try it for my <industry>", do this:\n1. Confirm their industry. Supported: HVAC, plumbing, electrical, roofing, solar, landscaping, pool & spa, pest control, appliance repair, handyman, construction, auto care, security systems, real estate, beauty & wellness, restaurants, personal assistant, fencing. (Home health / hospice / PT / OT are on a HIPAA waitlist — capture them as a lead instead.)\n2. Collect first name and mobile phone number (email optional, company name optional).\n3. Call the send_walkthrough_demo client tool with { industry, name, phone, email?, company_name? }.\n4. Read back the tool's "spoken" field verbatim so the caller hears the confirmation. Never claim the demo was sent unless the tool returned ok:true.`
+        : '';
       await conversation.startSession({
         agentId,
         connectionType: "webrtc",
         overrides: {
-          agent: { language: voiceLanguage },
+          agent: {
+            language: voiceLanguage,
+            ...(walkthroughPromptAddendum
+              ? { prompt: { prompt: walkthroughPromptAddendum } }
+              : {}),
+          },
         },
       });
 
