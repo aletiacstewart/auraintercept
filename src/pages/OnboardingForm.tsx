@@ -143,7 +143,7 @@ export default function OnboardingFormPage() {
           </Badge>
         </div>
       )}
-      <CompanyOnboardingForm />
+      <CompanyOnboardingForm token={isAdmin ? null : token} />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { Building2, User, Clock, Settings, MessageSquare, Calendar, Star, Globe, BarChart3, Users, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import { QUESTIONS, SECTION_ORDER, AuditQuestion } from '@/components/audit/types';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Section labels for display
 const SECTION_LABELS: Record<string, string> = {
@@ -179,10 +180,15 @@ const FORM_SECTIONS = [
   'goals-signature',
 ];
 
-export function CompanyOnboardingForm() {
+interface CompanyOnboardingFormProps {
+  token?: string | null;
+}
+
+export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormProps = {}) {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentSection, setCurrentSection] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const progress = ((currentSection + 1) / FORM_SECTIONS.length) * 100;
 
@@ -235,11 +241,41 @@ export function CompanyOnboardingForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Create a mailto link with form data summary
-      const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
-      const body = encodeURIComponent(generateEmailBody());
-      window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
-      toast.success('Opening your email client to send the form...');
+      if (!token) {
+        // Admin / preview mode: no invite token, fall back to mailto so the form is still usable.
+        const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
+        const body = encodeURIComponent(generateEmailBody());
+        window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
+        toast.success('Preview mode — opening email client (submission not saved).');
+        return;
+      }
+
+      const signer_name = formData.signatureName?.trim() || formData.contactName?.trim();
+      const signer_title = formData.contactTitle?.trim() || 'Owner';
+      if (!signer_name) {
+        toast.error('Please add your name in the signature section before submitting.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('submit-onboarding', {
+        body: {
+          token,
+          form_data: formData,
+          signature: { signer_name, signer_title },
+        },
+      });
+      if (error || (data as any)?.error) {
+        const msg = (data as any)?.error || error?.message || 'submit_failed';
+        if (msg === 'already_submitted') {
+          toast.success('Onboarding already submitted — your concierge team has it.');
+          setSubmitted(true);
+          return;
+        }
+        toast.error(`Submission failed: ${msg}`);
+        return;
+      }
+      setSubmitted(true);
+      toast.success('Onboarding submitted — your concierge team has been notified.');
     } catch (error) {
       toast.error('Failed to process form. Please try again.');
     } finally {
@@ -1147,6 +1183,14 @@ export function CompanyOnboardingForm() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+      {submitted && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
+          <h2 className="text-lg font-semibold text-foreground">Onboarding submitted ✓</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Your concierge team has been notified and will reach out within 1 business day.
+          </p>
+        </div>
+      )}
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-foreground">Company Onboarding Questionnaire</h1>
@@ -1188,11 +1232,11 @@ export function CompanyOnboardingForm() {
         ) : (
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitted}
             className="bg-primary hover:bg-primary/90"
           >
             <Send className="mr-2 h-4 w-4" />
-            {isSubmitting ? 'Processing...' : 'Submit via Email'}
+            {submitted ? 'Submitted' : isSubmitting ? 'Submitting…' : token ? 'Submit onboarding' : 'Submit via Email'}
           </Button>
         )}
       </div>

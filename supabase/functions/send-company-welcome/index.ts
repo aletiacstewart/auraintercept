@@ -172,6 +172,7 @@ Deno.serve(async (req) => {
       company_name,
       recipient_email,
       expires_at: expiresAt,
+      source: 'signup',
     });
     if (insertErr) {
       console.error('[send-company-welcome] invite insert failed', insertErr);

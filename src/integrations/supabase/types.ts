@@ -4209,6 +4209,7 @@ export type Database = {
           expires_at: string
           id: string
           recipient_email: string
+          source: string
           status: string
           submitted_at: string | null
           token: string
@@ -4221,6 +4222,7 @@ export type Database = {
           expires_at?: string
           id?: string
           recipient_email: string
+          source?: string
           status?: string
           submitted_at?: string | null
           token: string
@@ -4233,6 +4235,7 @@ export type Database = {
           expires_at?: string
           id?: string
           recipient_email?: string
+          source?: string
           status?: string
           submitted_at?: string | null
           token?: string
