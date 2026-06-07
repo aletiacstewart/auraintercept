@@ -472,9 +472,11 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
   ),
 };
 
-export const INDUSTRY_LIST = Object.values(INDUSTRY_CONTENT);
+import { filterVisibleIndustries, filterVisibleIds, isIndustryVisible } from './industryVisibility';
 
-export const INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] = [
+export const INDUSTRY_LIST = filterVisibleIndustries(Object.values(INDUSTRY_CONTENT));
+
+const RAW_INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] = [
   { group: 'Essential Trades', emoji: '⚡', ids: ['hvac', 'plumbing', 'electrical', 'solar_energy'] },
   { group: 'Exterior & Structural', emoji: '🏠', ids: ['roofing', 'fencing_decking'] },
   { group: 'Property & Estate', emoji: '🌿', ids: ['landscape_trees', 'pool_spa', 'pest_control'] },
@@ -484,7 +486,12 @@ export const INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] 
   { group: 'Healthcare', emoji: '🩺', ids: ['home_health', 'physical_therapy', 'occupational_therapy', 'hospice'] },
 ];
 
+export const INDUSTRY_GROUPS = RAW_INDUSTRY_GROUPS
+  .map((g) => ({ ...g, ids: filterVisibleIds(g.ids) }))
+  .filter((g) => g.ids.length > 0);
+
 export function getIndustryContent(id: string | null | undefined): IndustryContent {
   if (!id) return INDUSTRY_CONTENT.other;
+  if (!isIndustryVisible(id)) return INDUSTRY_CONTENT.other;
   return INDUSTRY_CONTENT[id] || INDUSTRY_CONTENT.other;
 }
