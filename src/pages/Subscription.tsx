@@ -298,6 +298,27 @@ export default function Subscription() {
     }
   }, [searchParams]);
 
+  // Auto-apply ?beta_code=... when arriving from signup or a shared link.
+  useEffect(() => {
+    const code = searchParams.get('beta_code');
+    if (!code || betaCode) return;
+    (async () => {
+      const { data, error } = await supabase.rpc('validate_beta_code', { p_code: code });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row?.valid) return;
+      setBetaCode({
+        code: code.toUpperCase(),
+        label: row.label ?? null,
+        trial_days: row.trial_days ?? 60,
+        waive_onboarding_fee: !!row.waive_onboarding_fee,
+        onboarding_fee_cap_cents: row.onboarding_fee_cap_cents ?? null,
+        onboarding_cap_expires_at: row.onboarding_cap_expires_at ?? null,
+      });
+      toast.success(`Beta code ${code.toUpperCase()} applied`);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   // Fetch subscription status
   const { data: subscription, isLoading, refetch } = useQuery({
     queryKey: ['subscription-status', user?.id],

@@ -28,6 +28,7 @@ import { SmsOptInCheckbox } from '@/components/auth/SmsOptInCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
+import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -77,6 +78,7 @@ export default function Auth() {
   const [complianceFiles, setComplianceFiles] = useState<File[]>([]);
   // TCPA / 10DLC opt-in for SMS sent BY Aura Intercept (platform messages)
   const [auraSmsOptIn, setAuraSmsOptIn] = useState(false);
+  const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null);
 
   // Callback for password validation changes
   const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
@@ -317,7 +319,8 @@ export default function Auth() {
       const tierToPersist = (selectedTier && (validTiers as readonly string[]).includes(selectedTier))
         ? selectedTier
         : 'starter';
-      const trialEndsAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+      const trialDays = betaCode?.trial_days ?? 60;
+      const trialEndsAt = new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -332,6 +335,8 @@ export default function Auth() {
           trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
+          beta_trial: betaCode ? true : false,
+          beta_code: betaCode?.code ?? null,
           industry_config:
             canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
               ? (buildIndustryConfig(customIndustry) as never)
@@ -456,11 +461,28 @@ export default function Auth() {
         }
       }
 
-      toast({ 
-        title: 'Welcome! 🎉', 
-        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
+      // Best-effort beta-code redemption (server-validates + flips company.beta_trial).
+      if (betaCode) {
+        try {
+          await supabase.rpc('redeem_beta_code', {
+            p_code: betaCode.code,
+            p_company_id: companyData.id,
+          });
+        } catch (redeemErr) {
+          console.warn('Beta code redemption failed (non-fatal):', redeemErr);
+        }
+      }
+
+      toast({
+        title: 'Welcome! 🎉',
+        description: betaCode
+          ? `Beta access unlocked — ${betaCode.trial_days}-day free trial active. Finish checkout to apply your capped beta onboarding.`
+          : 'Your 60-Day Live Trial has started. Enjoy full access to all features!',
       });
-      navigate('/dashboard');
+      const dest = betaCode
+        ? `/dashboard/subscription?beta_code=${encodeURIComponent(betaCode.code)}`
+        : '/dashboard';
+      navigate(dest);
     }
 
     setIsLoading(false);
@@ -1396,6 +1418,20 @@ export default function Auth() {
                           checked={termsAgreed} 
                           onCheckedChange={setTermsAgreed} 
                         />
+                        {mode === 'company' && (
+                          <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                            <p className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                              <Zap className="w-3.5 h-3.5" />
+                              Beta Invite Code (optional)
+                            </p>
+                            <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
+                            {betaCode && (
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                60-day free trial + Beta Onboarding capped at $497 (until Aug 1, 2026) will apply at checkout. 3rd-party fees (SignalWire, ElevenLabs, Resend, Stripe, etc.) are billed directly by each provider and are not included in the trial.
+                              </p>
+                            )}
+                          </div>
+                        )}
                         {mode === 'company' && (
                           <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
                             <p className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">

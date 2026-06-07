@@ -1,61 +1,32 @@
-## Goal
+## Issue
 
-Beta code `BETA-7372424` currently waives the onboarding fee entirely. Change it so that until **Aug 1, 2026**, beta signups pay a **reduced onboarding fee capped at $497** per tier:
+`BetaCodeInput` lives only on `/dashboard/subscription`. New companies signing up at `/auth?mode=company` never see it, so they can't unlock the 60-day trial or $497-capped beta onboarding before they finish signup.
 
-| Tier | Standard onboarding (sale) | Beta onboarding (until Aug 1, 2026) |
-|---|---|---|
-| Core | $249 | $249 (no change — already under cap) |
-| Boost | $449 | $449 (no change — already under cap) |
-| Pro | $899 | **$497** (capped) |
-| Elite | $1,549 | **$497** (capped) |
+## Fix
 
-After Aug 1, 2026 the cap stops applying and beta users pay the standard tier onboarding fee. The 60-day trial benefit stays unchanged before and after that date.
+### 1. Add `BetaCodeInput` to company signup
+File: `src/pages/Auth.tsx`
+- Add state: `const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null)`.
+- Render `<BetaCodeInput applied={betaCode} onApplied={setBetaCode} />` inside the company-mode signup form, placed just above the "Required Acknowledgments" block so it sits with the other commercial fields.
+- When a code is applied, show a short helper line: "60-day free trial + Beta Onboarding capped at $497 will apply at checkout."
 
-## Changes
+### 2. Persist on company creation
+In the `companies` insert at signup, when `betaCode` is set:
+- `beta_trial: true`
+- `beta_code: betaCode.code`
+- Trial length: extend `trialEndsAt` to `now + betaCode.trial_days * 86400000` (60 days) instead of the current 90-day default.
 
-### 1. DB — replace "waive" flag with a capped fee model
-New migration: keep `waive_onboarding_fee` for back-compat but add two new columns to `beta_invite_codes`:
-- `onboarding_fee_cap_cents int` (e.g. 49700)
-- `onboarding_cap_expires_at timestamptz` (Aug 1, 2026 00:00 UTC)
+Also fire a best-effort `supabase.rpc('redeem_beta_code', { p_code, p_company_id })`. Because `redeem_beta_code` is currently `service_role` only, also add a migration to `GRANT EXECUTE ... TO authenticated` (the function is idempotent-guarded and only flips the caller's own row server-side) — or wrap redemption in a tiny `redeem-beta-code` edge function. Pick the GRANT path since it's simpler and the function already revalidates the code and updates by `p_company_id` which is RLS-isolated.
 
-Update the `BETA-7372424` row: `waive_onboarding_fee = false`, `onboarding_fee_cap_cents = 49700`, `onboarding_cap_expires_at = '2026-08-01T00:00:00Z'`.
-
-Update `validate_beta_code()` to also return `onboarding_fee_cap_cents` and `onboarding_cap_expires_at` so the UI and edge function can compute the effective fee.
-
-### 2. Edge function `create-checkout`
-Replace the current "skip onboarding line item" branch with:
-- If `betaCode` valid AND `onboarding_cap_expires_at > now()` AND tier's standard onboarding price > cap:
-  - Drop the standard `onboarding_price_id` line item.
-  - Add a one-time `price_data` line item: `unit_amount = onboarding_fee_cap_cents`, name `"Beta Onboarding (capped) — {Tier}"`.
-- Else: use the standard tier `onboarding_price_id` (Core/Boost stay unchanged; Pro/Elite after Aug 1 use full fee).
-- Trial (60 days) keeps applying for any valid beta code regardless of date.
-
-### 3. UI — `BetaCodeInput` + Subscription page
-- `BetaCodeInput` already shows `applied.waive_onboarding_fee` — change the chip copy to read the effective fee. Add a helper `getEffectiveBetaOnboarding(tier, applied)` in `src/lib/launchPricing.ts` returning `{ amount, capped, expiresAt }`.
-- On `Subscription.tsx` tier cards: when a beta code is applied AND the cap is active AND the tier qualifies, show the onboarding line as `~~$899~~ $497  Beta cap` (Pro) / `~~$1,549~~ $497  Beta cap` (Elite). Append fine print: "Beta onboarding cap ends Aug 1, 2026."
-- `ThirdPartyFeeNotice` copy unchanged.
-
-### 4. Constants
-Add to `src/lib/launchPricing.ts`:
-```ts
-export const BETA_ONBOARDING_CAP_CENTS = 49700;
-export const BETA_ONBOARDING_CAP_EXPIRES_AT = '2026-08-01T00:00:00Z';
-```
-Used by both UI display and (mirrored as guard) by the edge function.
-
-### 5. Memory
-Update `mem://billing/launch-pricing` (and a small note on `Core` index entry) to record the beta cap and its Aug 1, 2026 expiry.
+### 3. Carry code into Subscription page
+After successful signup, when navigating to `/dashboard/subscription`, append `?beta_code=BETA-7372424`. Update `Subscription.tsx` to read `useSearchParams().get('beta_code')` on mount and auto-validate it into `betaCode` state so the user sees the chip + capped onboarding immediately on checkout.
 
 ## Files
 
-- `supabase/migrations/<ts>_beta_onboarding_cap.sql` (new) — alter table, update RPC, update seed row.
-- `supabase/functions/create-checkout/index.ts` — replace waive branch with cap branch using `price_data`.
-- `src/lib/launchPricing.ts` — add cap constants + `getEffectiveBetaOnboarding()` helper.
-- `src/components/billing/BetaCodeInput.tsx` — update applied-chip copy to reference the capped fee, not "FREE".
-- `src/pages/Subscription.tsx` — show capped onboarding strikethrough on Pro/Elite cards when code applied.
-- `mem://billing/launch-pricing` — add Beta Onboarding Cap line.
+- `src/pages/Auth.tsx` — render BetaCodeInput, persist on signup, redirect with `?beta_code`.
+- `src/pages/Subscription.tsx` — auto-apply `?beta_code` URL param.
+- `supabase/migrations/<ts>_grant_redeem_beta_code.sql` — `GRANT EXECUTE ON FUNCTION public.redeem_beta_code(text, uuid) TO authenticated;`
 
 ## Out of scope
 
-- Stripe price IDs: the capped fee uses `price_data` inline (no new permanent Stripe price needed).
-- Existing redeemed companies are not retroactively re-billed; the cap only affects future checkouts.
+No changes to pricing logic, edge function, or the cap rules — those are already wired correctly server-side. This patch is purely surfacing the existing beta entry point on the signup screen.
