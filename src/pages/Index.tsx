@@ -495,7 +495,7 @@ export default function Index() {
 
       <SEO
         title="Aura Intercept | AI Operatives for Service Businesses"
-        description="24 specialized AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
+        description="10 AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
         path="/"
       />
 
@@ -769,7 +769,7 @@ export default function Index() {
               Connect Everywhere Your Customers Are
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
-              Aura Intercept AI synchronizes your voice, chat, email, and SMS into a 24/7 proactive workforce that captures every lead and booking while your team is in the field.
+              Voice, chat, email, SMS — one 24/7 workforce capturing every lead while your team is in the field.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -802,7 +802,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               The All-in-One AI Center for Service Pros
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI capture, reminders, and workflows in one platform.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {platformFeatures.map((feature) => (
@@ -836,7 +836,7 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               AI Automation for Field Service Industries
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI that intercepts every inquiry and books directly to your calendar.</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
             {industryCategories.flatMap(cat => cat.industries).map(industry => (
@@ -857,7 +857,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-10">
             <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
-              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 90-DAY LIVE TRIAL →
+              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 60-DAY LIVE TRIAL →
             </button>
           </div>
         </div>
@@ -914,7 +914,7 @@ export default function Index() {
               Choose Your Command Level
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
-              Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
+              Pick your automation level. Bring your own voice, SMS, and payment accounts — billed directly by the provider.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a complimentary audit to help determine which plans best fit your business needs →
@@ -1016,7 +1016,7 @@ export default function Index() {
                 <p className="text-xs text-white mb-4">16 Smart AI Agents with social media, campaigns, and industry specialists.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents + Industry Specialists</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers (Business Mgmt unlocked)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">All 7 Control Centers (Business Mgmt unlocked)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Quoting + Invoicing + Inventory</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">Insights + Performance Agents</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">50 Employee Accounts</span></div>
@@ -1040,16 +1040,16 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,997</span>
-                  <span className="text-3xl font-bold text-amber-400">$2,997</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,497</span>
+                  <span className="text-3xl font-bold text-amber-400">$3,097</span>
                   <span className="text-white text-sm">/month</span>
                   <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$29,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$30,970/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 8 Control Centers + AI Hub</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 7 Control Centers + AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All Industry Specialists Included</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>
                 </div>
@@ -1087,12 +1087,12 @@ export default function Index() {
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2 text-white">3rd Party Integration Costs + Usage Fees</h3>
+              <h3 className="text-xl font-bold mb-2 text-white">3rd-Party Integrations & Usage Fees</h3>
               <p className="text-sm text-white">
-                Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
+                Bring your own provider accounts. Each vendor bills you directly.
               </p>
               <p className="text-xs text-white italic mt-1">
-                All 3rd-party fees are set by their respective vendors and are subject to change at any time, which may affect the cost of those services for your company.
+                Vendor fees are set by the provider and may change at any time.
               </p>
             </div>
 
