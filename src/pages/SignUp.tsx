@@ -1389,40 +1389,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* Billing/Onboarding Notices - Only show for company mode */}
-          {mode === 'company' && (
-            <div className="mt-8 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
-                  <Headphones className="w-5 h-5 text-cyan-400" />
-                </div>
-                <h4 className="font-semibold text-cyan-400 text-sm mb-2">One-Time Onboarding Fee</h4>
-                 <p className="text-xs text-foreground">
-                   Due at start of the <span className="font-bold text-cyan-300">60-Day Live Trial</span>. <span className="font-bold text-primary">Launch Pricing:</span> <span className="font-bold text-cyan-300">Core <span className="line-through opacity-60">$349</span> $249 · Boost <span className="line-through opacity-60">$549</span> $449 · Pro <span className="line-through opacity-60">$999</span> $899 · Elite <span className="line-through opacity-60">$1,749</span> $1,549</span>. The <span className="font-bold text-cyan-300">first 30 days are dedicated to onboarding</span> — setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC filing, and training — then 30 days of full live use. Non-refundable once onboarding begins.
-                 </p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center mb-3">
-                  <DollarSign className="w-5 h-5 text-amber-500" />
-                </div>
-                <h4 className="font-semibold text-amber-500 text-sm mb-2">Billing Requirement</h4>
-                <p className="text-xs text-foreground">
-                  A valid credit card must be on file for your Aura Intercept subscription and all connected 3rd party accounts.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center mb-3">
-                  <FileText className="w-5 h-5 text-cyan-500" />
-                </div>
-                <h4 className="font-semibold text-cyan-500 text-sm mb-2">Invoice Payments</h4>
-                <p className="text-xs text-foreground">
-                  Connect your own Stripe account to process customer payments. We don't handle payments on your behalf.
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
       <PublicFooter />
