@@ -119,16 +119,16 @@ const PricingSummaryPDF = () => (
     {/* Cover Page */}
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
-      <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete 4-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverTitle}>Pricing Guide</Text>
+      <Text style={styles.coverSubtitle}>4 tiers · Launch Pricing</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>4</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>24</Text>
-          <Text style={styles.coverStatLabel}>Smart AI Agents</Text>
+          <Text style={styles.coverStatNumber}>10</Text>
+          <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>7</Text>
@@ -176,11 +176,9 @@ const PricingSummaryPDF = () => (
     {/* Executive Pricing Summary */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Executive Pricing Summary</Text>
+      <Text style={styles.sectionTitle}>Pricing at a Glance</Text>
       <Text style={styles.paragraph}>
-        Aura Intercept offers three subscription tiers designed to scale with your business needs.
-        All tiers include access to our AI-powered platform with varying levels of smart AI agents,
-        consoles, and features. Annual billing is priced at 10x the monthly rate.
+        Four tiers. Launch Pricing active. Annual billing = 10× monthly rate.
       </Text>
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
@@ -203,8 +201,8 @@ const PricingSummaryPDF = () => (
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
-          <Text style={styles.summaryPrice}>$2,997</Text>
-          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={styles.summaryPrice}>$3,097</Text>
+          <Text style={styles.summaryLabel}>per month (was $3,497)</Text>
           <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 10 AI Operatives</Text>
         </View>
       </View>
@@ -219,7 +217,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { feature: 'Smart AI Agents', core: '8', boost: '12', pro: '16', elite: 'All 24' },
+          { feature: 'AI Operatives', core: '4', boost: '6', pro: '8', elite: 'All 10' },
           { feature: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
           { feature: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
           { feature: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
