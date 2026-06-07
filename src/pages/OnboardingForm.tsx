@@ -4,6 +4,7 @@ import { CompanyOnboardingForm } from '@/components/onboarding/CompanyOnboarding
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Loader2, KeyRound, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -13,10 +14,11 @@ type GateState = 'checking' | 'locked' | 'unlocked';
 export default function OnboardingFormPage() {
   const [params, setParams] = useSearchParams();
   const initialToken = params.get('token') || '';
-  const [state, setState] = useState<GateState>(initialToken ? 'checking' : 'locked');
+  const [state, setState] = useState<GateState>('checking');
   const [token, setToken] = useState(initialToken);
   const [input, setInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const validate = async (t: string) => {
     const trimmed = t.trim();
@@ -35,8 +37,30 @@ export default function OnboardingFormPage() {
   };
 
   useEffect(() => {
-    if (!initialToken) return;
     (async () => {
+      // Platform admins bypass the token gate entirely.
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const uid = userData?.user?.id;
+        if (uid) {
+          const { data: adminFlag } = await supabase.rpc('has_role', {
+            _user_id: uid,
+            _role: 'platform_admin',
+          });
+          if (adminFlag === true) {
+            setIsAdmin(true);
+            setState('unlocked');
+            return;
+          }
+        }
+      } catch {
+        /* non-fatal — fall through to token gate */
+      }
+
+      if (!initialToken) {
+        setState('locked');
+        return;
+      }
       const ok = await validate(initialToken);
       setState(ok ? 'unlocked' : 'locked');
       if (!ok) toast.error('Your onboarding link is invalid or expired. Paste your code below to continue.');
@@ -112,6 +136,13 @@ export default function OnboardingFormPage() {
 
   return (
     <div className="min-h-screen bg-background py-8">
+      {isAdmin && (
+        <div className="max-w-2xl mx-auto px-4 mb-4 flex justify-center">
+          <Badge variant="secondary" className="border-primary/40">
+            <ShieldCheck className="w-3 h-3 mr-1" /> Platform admin preview — gate bypassed
+          </Badge>
+        </div>
+      )}
       <CompanyOnboardingForm />
     </div>
   );
