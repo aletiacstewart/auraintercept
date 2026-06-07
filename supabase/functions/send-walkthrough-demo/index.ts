@@ -139,117 +139,112 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 3. Insert prospect as a Lead on the Aura Intercept tenant so the
-    //    outbound SMS guard accepts the recipient. Best-effort; failure here
-    //    still allows the demo to be created and emailed.
-    try {
-      await admin.from("leads").insert({
-        company_id: AURA_TENANT_COMPANY_ID,
-        name,
-        email,
-        phone: normalizedPhone,
-        source: source === "voice_phone" ? "voice" : "widget",
-        intent: "demo_walkthrough",
-        service_interest: `${industryLabel} live walkthrough`,
-        priority: "hot",
-        score: 85,
-        status: "new",
-      });
-    } catch (leadErr) {
-      console.warn("[send-walkthrough-demo] lead insert failed:", leadErr);
-    }
-
-    // 4. Spin up the real industry-matched demo via the existing trial flow.
-    const trialResp = await admin.functions.invoke("create-demo-trial", {
-      body: {
-        name,
-        email,
-        phone: normalizedPhone,
-        business_name: businessName,
-        industry: canonical,
-        sms_opt_in: true,
-        email_opt_in: false,
-      },
-    });
-    if (trialResp.error || !(trialResp.data as any)?.success) {
-      const err = (trialResp.data as any)?.error ||
-        trialResp.error?.message || "trial_create_failed";
-      // create-demo-trial returns success:false with a friendly message when
-      // the prospect already has an active trial — surface it to Aura.
-      if (typeof err === "string" && err.toLowerCase().includes("already")) {
-        return jsonResponse({
-          ok: true,
-          already_sent: true,
-          spoken:
-            "Looks like you already have an active Aura demo — check your email for the link, or I can have a person walk you through it live.",
+    // 3. Background the heavy provisioning + SMS so we can return to
+    //    ElevenLabs inside its ~20s client-tool timeout window. Aura speaks
+    //    the confirmation immediately; the SMS/email follow within seconds.
+    const provisionAndNotify = async () => {
+      // Best-effort lead insert so SMS guard accepts the recipient.
+      try {
+        await admin.from("leads").insert({
+          company_id: AURA_TENANT_COMPANY_ID,
+          name,
+          email,
+          phone: normalizedPhone,
+          source: source === "voice_phone" ? "voice" : "widget",
+          intent: "demo_walkthrough",
+          service_interest: `${industryLabel} live walkthrough`,
+          priority: "hot",
+          score: 85,
+          status: "new",
         });
+      } catch (leadErr) {
+        console.warn("[send-walkthrough-demo] lead insert failed:", leadErr);
       }
-      console.error("[send-walkthrough-demo] trial create failed:", err);
-      return jsonResponse({
-        ok: false,
-        spoken:
-          "I hit a snag setting up the live demo. Want me to grab your details so a teammate can text you the link in a minute?",
-      });
-    }
 
-    const trial = trialResp.data as {
-      trial_id: string;
-      share_url: string;
-      industry_label: string;
-      expires_at: string;
+      // Spin up the real industry-matched demo via the existing trial flow.
+      const trialResp = await admin.functions.invoke("create-demo-trial", {
+        body: {
+          name,
+          email,
+          phone: normalizedPhone,
+          business_name: businessName,
+          industry: canonical,
+          sms_opt_in: true,
+          email_opt_in: false,
+        },
+      });
+      if (trialResp.error || !(trialResp.data as any)?.success) {
+        const err = (trialResp.data as any)?.error ||
+          trialResp.error?.message || "trial_create_failed";
+        console.error("[send-walkthrough-demo] trial create failed:", err);
+        return;
+      }
+
+      const trial = trialResp.data as {
+        trial_id: string;
+        share_url: string;
+        industry_label: string;
+        expires_at: string;
+      };
+
+      // SMS the share_url via the Aura tenant's SignalWire line.
+      try {
+        const { data: integ } = await admin
+          .from("tenant_integrations")
+          .select("signalwire_phone_number")
+          .eq("company_id", AURA_TENANT_COMPANY_ID)
+          .maybeSingle();
+
+        const fromNumber = integ?.signalwire_phone_number || "";
+        const smsBody =
+          `Hey ${name.split(" ")[0] || ""}, here's your live ${industryLabel} ` +
+          `walkthrough of Aura: ${trial.share_url}\n` +
+          `Tap to open — your demo is pre-loaded with sample ${industryLabel} ` +
+          `jobs and an AI receptionist ready to take calls. Expires in 48h.`;
+
+        const result = await sendGuardedSms({
+          supabase: admin,
+          companyId: AURA_TENANT_COMPANY_ID,
+          from: fromNumber,
+          to: normalizedPhone,
+          body: smsBody,
+          source: "aura",
+          customerName: name,
+        });
+        if (!result.ok) {
+          console.warn(
+            `[send-walkthrough-demo] SMS not sent: ${result.error || result.status}`,
+          );
+        }
+      } catch (smsErr) {
+        console.error("[send-walkthrough-demo] SMS error:", smsErr);
+      }
     };
 
-    // 5. SMS the share_url via the Aura tenant's SignalWire line.
-    let smsStatus: "sent" | "failed" | "blocked" = "failed";
+    // Fire-and-forget — keep the runtime alive until provisioning finishes.
     try {
-      const { data: integ } = await admin
-        .from("tenant_integrations")
-        .select("signalwire_phone_number")
-        .eq("company_id", AURA_TENANT_COMPANY_ID)
-        .maybeSingle();
-
-      const fromNumber = integ?.signalwire_phone_number || "";
-      const smsBody =
-        `Hey ${name.split(" ")[0] || ""}, here's your live ${industryLabel} ` +
-        `walkthrough of Aura: ${trial.share_url}\n` +
-        `Tap to open — your demo is pre-loaded with sample ${industryLabel} ` +
-        `jobs and an AI receptionist ready to take calls. Expires in 48h.`;
-
-      const result = await sendGuardedSms({
-        supabase: admin,
-        companyId: AURA_TENANT_COMPANY_ID,
-        from: fromNumber,
-        to: normalizedPhone,
-        body: smsBody,
-        source: "aura",
-        customerName: name,
-      });
-      smsStatus = result.status;
-      if (!result.ok) {
-        console.warn(
-          `[send-walkthrough-demo] SMS not sent: ${result.error || result.status}`,
-        );
-      }
-    } catch (smsErr) {
-      console.error("[send-walkthrough-demo] SMS error:", smsErr);
+      // @ts-ignore EdgeRuntime is provided by the Supabase Edge runtime.
+      EdgeRuntime.waitUntil(provisionAndNotify());
+    } catch {
+      // Local/dev fallback: still kick it off without awaiting.
+      provisionAndNotify().catch((e) =>
+        console.error("[send-walkthrough-demo] background error:", e),
+      );
     }
 
-    // 6. Voice-friendly confirmation string for Aura to read back.
-    const channelsSent =
-      smsStatus === "sent" ? "text and email" : "email";
+    // 4. Voice-friendly confirmation Aura reads back immediately.
     const spoken =
-      `Perfect, ${name.split(" ")[0] || "there"} — I just sent your live ` +
-      `${industryLabel} walkthrough to your ${channelsSent}. ` +
-      `Tap the link and I'll meet you inside the demo. It's good for 48 hours.`;
+      `Perfect, ${name.split(" ")[0] || "there"} — I'm sending your live ` +
+      `${industryLabel} walkthrough to your text and email right now. ` +
+      `It'll land in a few seconds; tap the link and I'll meet you inside ` +
+      `the demo. It's good for 48 hours.`;
 
     return jsonResponse({
       ok: true,
       spoken,
-      demo_url: trial.share_url,
       industry: canonical,
       industry_label: industryLabel,
-      expires_at: trial.expires_at,
-      sms_status: smsStatus,
+      queued: true,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
