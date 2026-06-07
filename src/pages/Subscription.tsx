@@ -588,6 +588,28 @@ export default function Subscription() {
           </Card>
         ) : null}
 
+        {/* Beta invite code redemption (admins only, pre-subscribe) */}
+        {!isSubscribed && canManageSubscription && (
+          <Card className="border-primary/30 bg-card">
+            <CardContent className="py-4 space-y-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="font-medium text-card-foreground flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Beta tester? Apply your invite code
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Unlocks a 60-day free trial (14–30 days concierge onboarding, then 30 days
+                    full live use) and waives the one-time onboarding fee.
+                  </p>
+                </div>
+              </div>
+              <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
+              <ThirdPartyFeeNotice />
+            </CardContent>
+          </Card>
+        )}
+
         {/* Tier Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {TIERS.map((tier) => (
