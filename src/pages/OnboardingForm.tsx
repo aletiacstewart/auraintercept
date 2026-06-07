@@ -1,44 +1,118 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CompanyOnboardingForm } from '@/components/onboarding/CompanyOnboardingForm';
-import { FastStartWizard } from '@/components/onboarding/FastStartWizard';
 import { Button } from '@/components/ui/button';
-import { Rocket, ClipboardList } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, KeyRound, ShieldCheck } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+type GateState = 'checking' | 'locked' | 'unlocked';
 
 export default function OnboardingFormPage() {
-  const [mode, setMode] = useState<'fast' | 'full'>('fast');
+  const [params, setParams] = useSearchParams();
+  const initialToken = params.get('token') || '';
+  const [state, setState] = useState<GateState>(initialToken ? 'checking' : 'locked');
+  const [token, setToken] = useState(initialToken);
+  const [input, setInput] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const validate = async (t: string) => {
+    const trimmed = t.trim();
+    if (!trimmed) return false;
+    try {
+      const { data, error } = await supabase.functions.invoke('get-onboarding-invite', {
+        body: { token: trimmed },
+      });
+      if (error || (data as any)?.error) {
+        return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    if (!initialToken) return;
+    (async () => {
+      const ok = await validate(initialToken);
+      setState(ok ? 'unlocked' : 'locked');
+      if (!ok) toast.error('Your onboarding link is invalid or expired. Paste your code below to continue.');
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialToken]);
+
+  const handleUnlock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    setSubmitting(true);
+    const ok = await validate(input.trim());
+    setSubmitting(false);
+    if (!ok) {
+      toast.error('That code is invalid or expired.');
+      return;
+    }
+    setToken(input.trim());
+    setParams({ token: input.trim() }, { replace: true });
+    setState('unlocked');
+    toast.success('Onboarding unlocked');
+  };
+
+  if (state === 'checking') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (state === 'locked') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+        <Card className="w-full max-w-md border-primary/30">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+              <ShieldCheck className="w-6 h-6 text-primary" />
+            </div>
+            <CardTitle>Onboarding Access</CardTitle>
+            <CardDescription>
+              Your onboarding code was emailed to you right after signup. Paste it below to open your workbook.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUnlock} className="space-y-3">
+              <div className="relative">
+                <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Paste your onboarding code"
+                  className="pl-9 font-mono"
+                  autoFocus
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={submitting || !input.trim()}>
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
+              </Button>
+              <p className="text-xs text-muted-foreground text-center pt-2">
+                Can't find it? Check your inbox for "Welcome to Aura Intercept" or email{' '}
+                <a href="mailto:ai@auraintercept.ai" className="text-primary hover:underline">
+                  ai@auraintercept.ai
+                </a>
+                .
+              </p>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8">
-      {/* Mode toggle */}
-      <div className="max-w-2xl mx-auto px-4 mb-6 flex items-center justify-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMode('fast')}
-          className={cn(
-            'gap-1.5',
-            mode === 'fast' && 'bg-primary/10 text-primary'
-          )}
-        >
-          <Rocket className="h-4 w-4" />
-          Fast Start (5 min)
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMode('full')}
-          className={cn(
-            'gap-1.5',
-            mode === 'full' && 'bg-primary/10 text-primary'
-          )}
-        >
-          <ClipboardList className="h-4 w-4" />
-          Full Setup
-        </Button>
-      </div>
-
-      {mode === 'fast' ? <FastStartWizard /> : <CompanyOnboardingForm />}
+      <CompanyOnboardingForm />
     </div>
   );
 }
