@@ -431,12 +431,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         if (assistantText) {
           onTranscript?.("assistant", assistantText);
           setTestHistory((prev) => [...prev, { role: "assistant", text: assistantText }]);
+          playAuraVoice(assistantText);
         }
         if (data?.handoff_to) {
           const { followUpText } = await invokeMultiAgentHandoffFollowup(userText, testAgent, data.handoff_to);
           if (followUpText) {
             onTranscript?.("assistant", followUpText);
             setTestHistory((prev) => [...prev, { role: "assistant", text: followUpText }]);
+            playAuraVoice(followUpText);
           }
         }
       } catch (e) {
@@ -449,7 +451,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }
 
     toast({ title: "Voice mode", description: "Use your microphone to talk (or switch to Text Mode to type)." });
-  }, [invokeMultiAgent, invokeMultiAgentHandoffFollowup, onTranscript, testAgent, testIsLoading, testMode, testSessionActive, textInput, toast]);
+  }, [invokeMultiAgent, invokeMultiAgentHandoffFollowup, onTranscript, playAuraVoice, testAgent, testIsLoading, testMode, testSessionActive, textInput, toast]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
