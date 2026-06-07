@@ -7697,6 +7697,8 @@ export type Database = {
         Returns: {
           label: string
           message: string
+          onboarding_cap_expires_at: string
+          onboarding_fee_cap_cents: number
           trial_days: number
           valid: boolean
           waive_onboarding_fee: boolean

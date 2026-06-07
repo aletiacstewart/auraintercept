@@ -5,12 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Sparkles, X, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { BETA_ONBOARDING_CAP_AMOUNT, BETA_ONBOARDING_CAP_EXPIRES_AT, isBetaCapActive } from '@/lib/launchPricing';
 
 export interface BetaCodeResult {
   code: string;
   label: string | null;
   trial_days: number;
   waive_onboarding_fee: boolean;
+  onboarding_fee_cap_cents?: number | null;
+  onboarding_cap_expires_at?: string | null;
 }
 
 interface Props {
@@ -41,6 +44,8 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
         label: row.label ?? null,
         trial_days: row.trial_days ?? 60,
         waive_onboarding_fee: !!row.waive_onboarding_fee,
+        onboarding_fee_cap_cents: row.onboarding_fee_cap_cents ?? null,
+        onboarding_cap_expires_at: row.onboarding_cap_expires_at ?? null,
       });
       toast.success(`Beta access unlocked — ${row.trial_days || 60}-day free trial`);
       setCode('');
@@ -52,6 +57,15 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
   };
 
   if (applied) {
+    const capCents = applied.onboarding_fee_cap_cents ?? null;
+    const capExpires = applied.onboarding_cap_expires_at ?? BETA_ONBOARDING_CAP_EXPIRES_AT;
+    const capStillActive = isBetaCapActive(new Date()) && (!applied.onboarding_cap_expires_at || new Date(applied.onboarding_cap_expires_at) > new Date());
+    const capAmount = capCents ? Math.round(capCents / 100) : BETA_ONBOARDING_CAP_AMOUNT;
+    const onboardingLine = applied.waive_onboarding_fee
+      ? 'Beta Onboarding: FREE'
+      : capStillActive
+        ? `Beta Onboarding capped at $${capAmount} (until ${new Date(capExpires).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})`
+        : 'Standard onboarding fee applies';
     return (
       <div className={className}>
         <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
@@ -62,7 +76,7 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
                 {applied.code} applied
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {applied.trial_days}-day free trial · {applied.waive_onboarding_fee ? 'Beta Onboarding: FREE' : 'Onboarding fee unchanged'}
+                {applied.trial_days}-day free trial · {onboardingLine}
               </div>
             </div>
           </div>
