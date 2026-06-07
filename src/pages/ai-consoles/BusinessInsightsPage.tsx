@@ -30,7 +30,7 @@ export default function BusinessInsightsPage() {
           <PageHeader
             icon={Lightbulb}
             title="Business Insights"
-            description="AI-powered business intelligence and insights"
+            description="Business intelligence at a glance."
             featureColor="analytics"
             action={
               <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-consoles/business-mgt-ops')}>

@@ -87,3 +87,10 @@ Executed in 4 sub-batches (one parallel batch per scope group) once you approve 
 
 - Phase 1: `/mnt/documents/content-audit-v1.md` + `.pdf` with prioritized cut list.
 - Phase 2 (after your approval of the audit): batched edits per scope group, summarized in chat.
+
+## Phase 2 — Executed
+
+- Consoles: stripped "AI-powered…" preambles in Analytics, Social Media, Business Management, Business Insights, Specialist Operatives; tightened Marketing & Customer Portal subtitles/banner.
+- PDFs: shortened cover/intro blurbs and policy paragraph in IntegrationOnboardingPDF and VideoPromptsPDF.
+- Marketing: trimmed About.tsx hero, mission, origin story, core-value descriptions, and corrected stat callouts (10 operatives / 4 tiers). Fixed ForBusiness pricing snapshot to current Launch Pricing (Elite $3,097, was $3,497) and shortened taglines.
+- Auth/onboarding: BetaSignupNotice already canonical from prior turn; OnboardingForm copy verified already tight — no further trim needed.

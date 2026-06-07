@@ -19,7 +19,7 @@ export default function AnalyticsConsole() {
   
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
   const industryLabel = pack.label || 'service business';
-  const description = `AI-powered analytics, reporting, and ${industryLabel.toLowerCase()} business insights.`;
+  const description = `Reports and insights for your ${industryLabel.toLowerCase()}.`;
 
   return (
     <DashboardLayout>

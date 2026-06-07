@@ -47,7 +47,7 @@ export default function BusinessManagementConsole() {
             <PageHeader
               icon={Briefcase}
               title="Business Management Console"
-              description="AI-powered business operations and management tools"
+              description="Run day-to-day operations from one place."
               featureColor="platform"
               showAuraBar
               badge={<ValueBadge label="Automates 60-70% of admin tasks" />}

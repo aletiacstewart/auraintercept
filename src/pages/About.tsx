@@ -20,22 +20,22 @@ const coreValues = [
   {
     icon: Shield,
     title: 'Reliability',
-    description: 'Our AI operatives work 24/7, ensuring your business never misses a beat. Consistent, dependable automation you can count on.',
+    description: 'Operatives work 24/7. Consistent automation you can count on.',
   },
   {
     icon: Lightbulb,
     title: 'Innovation',
-    description: 'We stay at the forefront of AI technology, continuously improving our platform to deliver cutting-edge solutions.',
+    description: 'Continuously improving with the latest in AI.',
   },
   {
     icon: Users,
     title: 'Partnership',
-    description: "Your success is our success. We work alongside you as partners, not just vendors, to achieve your business goals.",
+    description: 'Your success is our success — partners, not vendors.',
   },
   {
     icon: Heart,
     title: 'Care',
-    description: 'We genuinely care about the businesses we serve. Every feature, every update is designed with your needs in mind.',
+    description: 'Every feature is built with your business in mind.',
   },
 ];
 
@@ -46,7 +46,7 @@ export default function About() {
     <div className="min-h-screen flex flex-col bg-background">
       <SEO
         title="About Aura Intercept | AI for Service Businesses"
-        description="Aura Intercept democratizes AI automation for appointment-based service businesses with 24 specialized operatives."
+        description="AI automation for appointment-based service businesses."
         path="/about"
       />
       <PublicHeader />
@@ -61,7 +61,7 @@ export default function About() {
                   Democratizing AI for Service Businesses
                 </h1>
                 <p className="text-xl text-muted-foreground mb-8">
-                  We believe every appointment-based business deserves access to powerful AI automation—not just the enterprise giants.
+                  Every appointment-based business deserves powerful AI — not just the enterprise giants.
                 </p>
                 <Button size="lg" onClick={() => navigate('/auth?mode=company')}>
                   Start Your Journey
@@ -85,9 +85,7 @@ export default function About() {
             <Target className="h-12 w-12 mx-auto mb-6 text-primary" />
             <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              To empower service businesses with intelligent AI operatives that handle the repetitive, 
-              time-consuming tasks—so owners and teams can focus on what they do best: delivering 
-              exceptional service to their customers.
+              Give service businesses AI operatives that handle the repetitive work — so teams can focus on customers.
             </p>
           </div>
         </section>
@@ -104,18 +102,11 @@ export default function About() {
                 <h2 className="text-3xl font-bold mb-6">Our Story</h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Aura Intercept was born in Austin, Texas—a city known for its entrepreneurial spirit 
-                    and innovative tech scene. We saw firsthand how local service businesses struggled 
-                    with the same challenges: missed calls, scheduling headaches, and endless administrative tasks.
+                    Born in Austin. We watched local service businesses lose hours to missed calls,
+                    scheduling, and admin while enterprises ran on AI.
                   </p>
                   <p>
-                    While large corporations had access to sophisticated AI solutions, small and medium 
-                    businesses were left behind. We set out to change that.
-                  </p>
-                  <p>
-                    Today, our AI operatives serve businesses across Texas and beyond—from HVAC companies 
-                    and plumbers to salons and restaurants. Each business gets the same powerful automation 
-                    that was once reserved for Fortune 500 companies.
+                    Today our operatives serve HVAC, plumbers, salons, restaurants and more — Fortune 500 automation, small-business pricing.
                   </p>
                 </div>
               </div>
@@ -124,13 +115,12 @@ export default function About() {
                   <Zap className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-2xl font-bold mb-4">Smart Agents, Automated Service</h3>
                   <p className="text-muted-foreground mb-6">
-                    Our tagline captures our promise: intelligent AI agents that automate your service 
-                    operations, freeing you to grow your business.
+                    Intelligent agents that automate your operations so you can grow.
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary" />
-                      <span>24 specialized AI operatives</span>
+                      <span>10 specialized AI operatives</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary" />
@@ -138,7 +128,7 @@ export default function About() {
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary" />
-                      <span>6 flexible subscription tiers</span>
+                      <span>4 flexible subscription tiers</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -178,7 +168,7 @@ export default function About() {
           <div className="container max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Business?</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Join hundreds of Texas businesses already using Aura Intercept to automate their operations.
+              Join Texas businesses automating with Aura Intercept.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => navigate('/auth?mode=company')}>

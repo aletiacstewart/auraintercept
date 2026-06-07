@@ -64,7 +64,7 @@ const IntegrationOnboardingPDF = () => (
     <Page size="LETTER" style={s.cover}>
       <Text style={s.coverTag}>{t('AURA INTERCEPT')}</Text>
       <Text style={s.coverTitle}>{t('3rd-Party Integration Onboarding Guide')}</Text>
-      <Text style={s.coverSub}>{t('Step-by-step setup for every external account a company needs to connect')}</Text>
+      <Text style={s.coverSub}>{t('Setup steps for every external account you connect.')}</Text>
       <Text style={s.coverDate}>{t(`Generated ${new Date().toLocaleDateString()}`)}</Text>
     </Page>
 
@@ -74,7 +74,7 @@ const IntegrationOnboardingPDF = () => (
       <View style={s.banner}>
         <Text style={s.bannerText}>{t(POLICY_BANNER)}</Text>
       </View>
-      <Text style={s.p}>{t('Concierge Onboarding will configure these accounts on the customer\'s behalf using the customer\'s login credentials and card. Self-serve customers can follow this same guide.')}</Text>
+      <Text style={s.p}>{t('Concierge Onboarding configures these on your behalf using your login and card. Self-serve customers can follow this guide.')}</Text>
 
       <Text style={s.h2}>{t('Setup Order')}</Text>
       {INTEGRATION_PROVIDERS.map((p, i) => (
@@ -144,7 +144,7 @@ const IntegrationOnboardingPDF = () => (
     {/* Final master checklist */}
     <Page size="LETTER" style={s.page}>
       <Text style={s.h1}>{t('Master Verification Checklist')}</Text>
-      <Text style={s.p}>{t('Use this page during handoff. Every box must be checked before the customer is considered fully onboarded.')}</Text>
+      <Text style={s.p}>{t('Check every box at handoff before the customer is considered onboarded.')}</Text>
       {INTEGRATION_PROVIDERS.map((p) => (
         <View key={p.id} style={{ marginBottom: 10 }} wrap={false}>
           <Text style={s.h3}>{t(p.name)}</Text>
