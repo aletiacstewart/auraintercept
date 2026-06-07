@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { Building2, User, Clock, Settings, MessageSquare, Calendar, Star, Globe, BarChart3, Users, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import { QUESTIONS, SECTION_ORDER, AuditQuestion } from '@/components/audit/types';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Section labels for display
 const SECTION_LABELS: Record<string, string> = {
@@ -179,10 +180,15 @@ const FORM_SECTIONS = [
   'goals-signature',
 ];
 
-export function CompanyOnboardingForm() {
+interface CompanyOnboardingFormProps {
+  token?: string | null;
+}
+
+export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormProps = {}) {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentSection, setCurrentSection] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const progress = ((currentSection + 1) / FORM_SECTIONS.length) * 100;
 
