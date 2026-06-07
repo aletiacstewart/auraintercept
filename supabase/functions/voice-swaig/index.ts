@@ -59,6 +59,9 @@ Deno.serve(async (req) => {
       case 'transfer_call':
         return await handleTransferCall(supabase, companyId);
 
+      case 'send_walkthrough_demo':
+        return await handleSendWalkthroughDemo(args, callLogId);
+
       default:
         console.log(`Unknown SWAIG function: ${functionName}`);
         return swaigResponse("I'm not sure how to help with that. Could you tell me what service you're looking for?");
@@ -359,4 +362,46 @@ async function handleTransferCall(
       },
     },
   ]);
+}
+
+// === SEND WALKTHROUGH DEMO ===
+// Phone-call entrypoint for the industry-matched live walkthrough flow.
+// Forwards to the shared send-walkthrough-demo function so web + phone paths
+// share one implementation, then returns the spoken confirmation Aura should
+// read back to the caller.
+async function handleSendWalkthroughDemo(args: any, callLogId: string): Promise<Response> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+  try {
+    const resp = await fetch(`${supabaseUrl}/functions/v1/send-walkthrough-demo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({
+        industry: args.industry,
+        name: args.name,
+        email: args.email,
+        phone: args.phone,
+        company_name: args.company_name,
+        source: 'voice_phone',
+      }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    const spoken = (data && typeof data.spoken === 'string')
+      ? data.spoken
+      : "I sent the live walkthrough link to your text and email. Tap it whenever you're ready.";
+    if (callLogId && data?.demo_url) {
+      const supabase = (await import('npm:@supabase/supabase-js@2')).createClient(supabaseUrl, serviceKey);
+      await supabase.from('call_logs').update({
+        metadata: { demo_walkthrough_url: data.demo_url, demo_industry: data.industry },
+      }).eq('id', callLogId);
+    }
+    return swaigResponse(spoken);
+  } catch (err) {
+    console.error('send_walkthrough_demo SWAIG error:', err);
+    return swaigResponse("I had trouble sending that. Want me to grab your number and have a teammate text it over in a couple minutes?");
+  }
 }

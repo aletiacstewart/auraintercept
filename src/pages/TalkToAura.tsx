@@ -165,6 +165,14 @@ export default function TalkToAura() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 flex items-start gap-2">
+                  <Mic className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-slate-200 leading-relaxed">
+                    <span className="font-semibold text-primary">Tip:</span>{' '}
+                    Tell Aura your industry (HVAC, plumbing, real estate, etc.) and she'll text
+                    you a one-tap link to a live walkthrough demo pre-loaded for your business.
+                  </p>
+                </div>
                 {/* Terms Agreement - with proper visibility */}
                 {!voiceStarted && (
                   <div className="p-4 rounded-lg bg-slate-700/50 border border-slate-600/50">
