@@ -6,6 +6,7 @@ import { MermaidDiagram } from '@/components/architecture/MermaidDiagram';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Network } from 'lucide-react';
+import { ElevenLabsToolChecklist } from '@/components/admin/ElevenLabsToolChecklist';
 
 // Shared classDef block for flowcharts
 const tierStyles = `
