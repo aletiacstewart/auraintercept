@@ -673,7 +673,7 @@ export function FastStartWizard() {
         ) : (
           <Button onClick={handleLaunch} disabled={isSubmitting} size="sm" className="gap-1.5">
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
-            {isSubmitting ? 'Launching...' : 'Launch My 24 AI Agents'}
+            {isSubmitting ? 'Launching...' : 'Launch My AI Operatives'}
           </Button>
         )}
       </div>

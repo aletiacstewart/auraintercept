@@ -432,7 +432,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Agents',
-  description: 'Enable up to 24 Smart AI Agents and configure your knowledge base for your business.',
+  description: 'Enable up to 10 AI Operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -718,9 +718,9 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Under The Hood</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              24 Smart AI Agents
+              10 AI Operatives
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14 }}>The agent network that powers every promise above.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14 }}>The operative network that powers every promise above.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -1046,9 +1046,9 @@ export default function Index() {
                   <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$30,970/year (Save ~20%)</p>
-                <p className="text-xs text-white mb-4">All 24 Smart AI Agents with full-suite automation.</p>
+                <p className="text-xs text-white mb-4">All 10 AI Operatives with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">24 Smart AI Agents (Full Suite)</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">10 AI Operatives (Full Suite)</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All 7 Control Centers + AI Hub</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">All Industry Specialists Included</span></div>
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">Priority Support + Unlimited Employees</span></div>

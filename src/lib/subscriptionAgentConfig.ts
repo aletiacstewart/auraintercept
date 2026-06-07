@@ -110,7 +110,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Elite',
     price: '$3,097/mo',
     originalPrice: '$3,497/mo',
-    description: '24 Smart AI Agents — full suite with predictive analytics & AI Hub',
+    description: '10 AI Operatives — full suite with predictive analytics & AI Hub',
   },
 };
 
