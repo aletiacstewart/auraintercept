@@ -222,6 +222,9 @@ verify_jwt = true
 [functions.voice-swaig]
 verify_jwt = false
 
+[functions.send-walkthrough-demo]
+verify_jwt = false
+
 [functions.voice-post-prompt]
 verify_jwt = false
 
