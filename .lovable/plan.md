@@ -1,27 +1,24 @@
-## Goal
+## Problem
 
-Make the "Talk to Aura" voice widget (and all other places using `PLATFORM_AURA_AGENT_ID`) connect to the sales ElevenLabs ConvAI agent `agent_0501kh52gehge14vjscb5n8j8vhn` instead of the current support agent. UI copy stays "Aura / Talk to Aura".
+The homepage "Talk to Aura" widget (`AuraAvatarChat.tsx`) connects to the sales ElevenLabs agent, which has a `send_walkthrough_demo` client tool configured. The React `useConversation()` call doesn't define `clientTools`, so when the agent tries to invoke it the SDK throws "Client tool with name send_walkthrough_demo is not defined on client".
 
-## Change
+The same tool is already implemented in `src/components/ai/VoiceChat.tsx` (lines 180–217). We just need to mirror it on the avatar widget.
 
-Update the `PLATFORM_AURA_AGENT_ID` edge-function secret:
+## Fix
 
-- Current value: `agent_5301kr2nbajrf5nbw9htby96dqmd`
-- New value: `agent_0501kh52gehge14vjscb5n8j8vhn`
+In `src/components/aura/AuraAvatarChat.tsx`, add a `clientTools` block to `useConversation({...})` with a single `send_walkthrough_demo` handler that:
 
-No code changes needed — `supabase/functions/elevenlabs-aura-token/index.ts` and other token endpoints already read this env var and request a WebRTC conversation token from ElevenLabs for whatever ID is set.
+- Calls `supabase.functions.invoke("send-walkthrough-demo", { body: { industry, name, email, phone, company_name, source: "voice_web" } })`, mapping `phone || mobile || phone_number` and `company_name || business_name`.
+- On success: returns `JSON.stringify({ ok: true, spoken })` using `data.spoken` (fallback to the standard confirmation line). Also shows a toast when `data.demo_url` is present, matching VoiceChat copy.
+- On failure: logs and returns `JSON.stringify({ ok: false, spoken: "I had trouble sending that — can a teammate text the demo link in a couple minutes?" })`.
 
-## Steps
-
-1. Update the `PLATFORM_AURA_AGENT_ID` secret to the sales agent ID via the secrets tool.
-2. Redeploy the affected edge functions so they pick up the new value: `elevenlabs-aura-token` (plus any other functions that read `PLATFORM_AURA_AGENT_ID`, confirmed via grep before deploy).
+No other client tools needed here (booking tools belong to tenant agents, not the sales agent).
 
 ## Validation
 
-Open the homepage, click "Talk to Aura", grant mic permission. Confirm the agent that answers is the sales persona (introduces itself accordingly). Network tab: `elevenlabs-aura-token` returns `{ token, agentId: "agent_0501kh52gehge14vjscb5n8j8vhn" }`.
+Open `/`, click "Talk to Aura", grant mic. Say "Send me an HVAC walkthrough demo, John, +15125551234". The agent collects info, calls `send_walkthrough_demo`, the edge function returns `spoken`, and the agent reads it back. No red toast appears. Network tab shows a 200 from `send-walkthrough-demo`.
 
 ## Out of scope
 
-- No UI copy changes (still says "Aura / Talk to Aura").
-- No new edge functions or new secret keys.
-- Tenant-level ElevenLabs voice agents for customer companies are untouched.
+- No change to `VoiceChat.tsx` or the edge function.
+- No UI copy or visual changes.
