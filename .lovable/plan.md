@@ -1,29 +1,27 @@
-# Plan: ElevenLabs TTS for Talk to Aura text mode
+## Goal
 
-Add ElevenLabs voice playback for Aura's text-mode replies so the chat feels voiced even without burning ConvAI minutes.
+Make the "Talk to Aura" voice widget (and all other places using `PLATFORM_AURA_AGENT_ID`) connect to the sales ElevenLabs ConvAI agent `agent_0501kh52gehge14vjscb5n8j8vhn` instead of the current support agent. UI copy stays "Aura / Talk to Aura".
 
-## Changes
+## Change
 
-1. **New edge function `elevenlabs-tts`** (`supabase/functions/elevenlabs-tts/index.ts`, `verify_jwt = false`)
-   - Body: `{ text: string, voiceId?: string }` (Zod-validated, text ≤ 4000 chars).
-   - Calls `https://api.elevenlabs.io/v1/text-to-speech/{voiceId}/stream?output_format=mp3_44100_128` with `model_id: eleven_turbo_v2_5`, using `ELEVENLABS_API_KEY` from env.
-   - Streams the MP3 body back with `Content-Type: audio/mpeg` + CORS.
-   - Default voice = Sarah (`EXAVITQu4vr4xnSDxMaL`).
+Update the `PLATFORM_AURA_AGENT_ID` edge-function secret:
 
-2. **`src/components/ai/VoiceChat.tsx`** — text-mode playback
-   - Add a small `playAuraVoice(text)` helper that `fetch`es the edge function with `.blob()`, builds a single shared `HTMLAudioElement`, stops any in-flight playback before starting the next clip.
-   - After every assistant message in `sendTextMessage` (both `assistantText` and `followUpText`), call `playAuraVoice(...)`.
-   - Add a "Mute Aura's voice" 🔊/🔇 toggle next to the existing "Switch to voice mode" link; persist preference in `localStorage` (`aura.textmode.tts`). Default = on.
-   - First playback gated behind the existing user-initiated "Start Text Mode" click so browsers don't block autoplay.
+- Current value: `agent_5301kr2nbajrf5nbw9htby96dqmd`
+- New value: `agent_0501kh52gehge14vjscb5n8j8vhn`
 
-3. **No changes** to ConvAI voice mode, browser fallback, or `ai-agent-chat`.
+No code changes needed — `supabase/functions/elevenlabs-aura-token/index.ts` and other token endpoints already read this env var and request a WebRTC conversation token from ElevenLabs for whatever ID is set.
+
+## Steps
+
+1. Update the `PLATFORM_AURA_AGENT_ID` secret to the sales agent ID via the secrets tool.
+2. Redeploy the affected edge functions so they pick up the new value: `elevenlabs-aura-token` (plus any other functions that read `PLATFORM_AURA_AGENT_ID`, confirmed via grep before deploy).
 
 ## Validation
-- Open `/talk-to-aura`, click "Use text mode", agree to terms, click Start Text Mode.
-- Type "send me an HVAC demo, John 5125551212" → Aura's reply text appears AND plays in Sarah's voice.
-- Toggle mute → next reply renders silently.
-- Network tab shows `POST /functions/v1/elevenlabs-tts` returning `audio/mpeg`.
+
+Open the homepage, click "Talk to Aura", grant mic permission. Confirm the agent that answers is the sales persona (introduces itself accordingly). Network tab: `elevenlabs-aura-token` returns `{ token, agentId: "agent_0501kh52gehge14vjscb5n8j8vhn" }`.
 
 ## Out of scope
-- Voice mode (ConvAI) is untouched.
-- No new tables, no user-pickable voice library UI (single default voice; voiceId param is there for future use).
+
+- No UI copy changes (still says "Aura / Talk to Aura").
+- No new edge functions or new secret keys.
+- Tenant-level ElevenLabs voice agents for customer companies are untouched.
