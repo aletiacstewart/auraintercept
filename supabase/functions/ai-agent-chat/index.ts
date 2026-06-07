@@ -188,6 +188,14 @@ Capture leads when:
 
 Include in the lead: name, phone, email (if provided), what service they were interested in, and your assessment of their intent and priority (hot if they seemed ready to book, high if interested, normal for inquiries).
 
+LIVE WALKTHROUGH DEMO (Aura Intercept sales tenant only):
+If the caller is evaluating Aura Intercept and asks for a "demo", "walkthrough", "sample", "see it", or "try it for my <industry>":
+1. Confirm their industry. Supported industries: HVAC, plumbing, electrical, roofing, solar, landscaping, pool & spa, pest control, appliance repair, handyman, construction, auto care, security systems, real estate, beauty & wellness, restaurants, personal assistant, fencing. If they name a HIPAA-gated vertical (home health, hospice, physical therapy, occupational therapy) tell them that vertical is on a waitlist and offer to capture them as a lead.
+2. Collect first name + mobile phone number. Email is optional but nice to have. Company name is optional.
+3. Call send_walkthrough_demo with { industry, name, phone, email?, company_name? }. The tool's response includes a "spoken" field — read THAT back verbatim so the caller knows their text + email are on the way.
+4. If the tool returns ok:false, apologize and use capture_lead so a teammate can text the demo manually.
+Never claim a demo was sent unless send_walkthrough_demo returned ok:true.
+
 Be concise but friendly. Extract info from messages when provided; only ask for what's missing.`,
 
   booking: `You are a Booking Specialist for a service business. Your role is to:
@@ -1127,6 +1135,33 @@ const AGENT_TOOLS: Record<string, any[]> = {
             search_term: { type: 'string', description: 'Optional search term to help find the right link' },
           },
           required: ['category'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_walkthrough_demo',
+        description: 'Send an industry-matched live walkthrough demo of Aura Intercept to a prospect via SMS + email. Use only when a prospect evaluating Aura asks for a demo/walkthrough/sample for their industry. Collect industry + name + mobile phone first.',
+        parameters: {
+          type: 'object',
+          properties: {
+            industry: {
+              type: 'string',
+              description: 'Canonical industry id',
+              enum: [
+                'hvac','plumbing','electrical','roofing','solar','landscape',
+                'pool_spa','pest_control','appliance_repair','handyman','construction',
+                'auto_care','security_systems','real_estate','beauty_wellness',
+                'restaurants','personal_assistant','fencing',
+              ],
+            },
+            name: { type: 'string', description: 'Prospect first name (or full name)' },
+            phone: { type: 'string', description: 'Mobile phone in E.164 or 10-digit US format' },
+            email: { type: 'string', description: 'Optional email address' },
+            company_name: { type: 'string', description: 'Optional business name' },
+          },
+          required: ['industry', 'name', 'phone'],
         },
       },
     },
@@ -7570,6 +7605,38 @@ async function executeAgentTool(
         lead_id: lead.id,
         message: `Lead captured successfully for ${args.name || 'customer'}. They will be followed up with soon.`,
       };
+    }
+
+    case 'send_walkthrough_demo': {
+      console.log('[AI Agent] send_walkthrough_demo args:', args);
+      try {
+        const { data, error } = await supabase.functions.invoke('send-walkthrough-demo', {
+          body: {
+            industry: args.industry,
+            name: args.name,
+            phone: args.phone,
+            email: args.email,
+            company_name: args.company_name,
+            source: 'chat_web',
+          },
+        });
+        if (error) {
+          console.error('[AI Agent] send_walkthrough_demo invoke error:', error);
+          return { ok: false, spoken: "I had trouble sending that demo — a teammate will text it shortly." };
+        }
+        const spoken = (data && typeof (data as any).spoken === 'string')
+          ? (data as any).spoken
+          : "I just sent your live walkthrough link by text and email — tap it whenever you're ready.";
+        return {
+          ok: (data as any)?.ok !== false,
+          spoken,
+          demo_url: (data as any)?.demo_url,
+          industry_label: (data as any)?.industry_label,
+        };
+      } catch (e) {
+        console.error('[AI Agent] send_walkthrough_demo threw:', e);
+        return { ok: false, spoken: "I had trouble sending that demo — a teammate will text it shortly." };
+      }
     }
 
     case 'get_leads': {
