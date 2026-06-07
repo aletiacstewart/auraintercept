@@ -14,6 +14,7 @@ import { AuraAvatarFloating } from '@/components/aura/AuraAvatarFloating';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
+import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 
 const agentCategories = [{
   id: 'customer',
@@ -918,6 +919,11 @@ export default function Index() {
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a complimentary audit to help determine which plans best fit your business needs →
             </Link>
+          </div>
+
+          {/* BETA Sign-Up Notice */}
+          <div className="max-w-5xl mx-auto mb-10">
+            <BetaSignupNotice />
           </div>
 
           {/* 4-Tier Pricing Grid */}
