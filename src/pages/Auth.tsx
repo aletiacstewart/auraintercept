@@ -461,11 +461,28 @@ export default function Auth() {
         }
       }
 
-      toast({ 
-        title: 'Welcome! 🎉', 
-        description: 'Your 60-Day Live Trial has started. Enjoy full access to all features!' 
+      // Best-effort beta-code redemption (server-validates + flips company.beta_trial).
+      if (betaCode) {
+        try {
+          await supabase.rpc('redeem_beta_code', {
+            p_code: betaCode.code,
+            p_company_id: companyData.id,
+          });
+        } catch (redeemErr) {
+          console.warn('Beta code redemption failed (non-fatal):', redeemErr);
+        }
+      }
+
+      toast({
+        title: 'Welcome! 🎉',
+        description: betaCode
+          ? `Beta access unlocked — ${betaCode.trial_days}-day free trial active. Finish checkout to apply your capped beta onboarding.`
+          : 'Your 60-Day Live Trial has started. Enjoy full access to all features!',
       });
-      navigate('/dashboard');
+      const dest = betaCode
+        ? `/dashboard/subscription?beta_code=${encodeURIComponent(betaCode.code)}`
+        : '/dashboard';
+      navigate(dest);
     }
 
     setIsLoading(false);
