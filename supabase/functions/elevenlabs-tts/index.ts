@@ -1,24 +1,40 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
-
+// ElevenLabs TTS proxy — streams MP3 audio for Aura's text-mode replies.
+// Public (verify_jwt = false) so the unauthenticated /talk-to-aura page can call it.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const DEFAULT_VOICE_ID = "cgSgspJ2msm6clMCkdW9"; // Jessica
+const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah
+const MAX_TEXT_LEN = 4000;
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
+  }
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
   try {
-    const { text, voiceId, companyId } = await req.json();
+    const apiKey = Deno.env.get("PLATFORM_ELEVENLABS_API_KEY")
+      || Deno.env.get("ELEVENLABS_API_KEY");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "ELEVENLABS_API_KEY not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const body = await req.json().catch(() => null) as { text?: unknown; voiceId?: unknown } | null;
+    const text = typeof body?.text === "string" ? body.text.trim() : "";
+    const voiceId = typeof body?.voiceId === "string" && body.voiceId.trim()
+      ? body.voiceId.trim()
+      : DEFAULT_VOICE_ID;
 
     if (!text) {
       return new Response(JSON.stringify({ error: "text is required" }), {
@@ -26,74 +42,53 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    // Fetch ElevenLabs API key from tenant_integrations
-    let apiKey = "";
-    let resolvedVoiceId = voiceId || DEFAULT_VOICE_ID;
-
-    if (companyId) {
-      const { data: integration } = await supabase
-        .from("tenant_integrations")
-        .select("elevenlabs_api_key, elevenlabs_voice_id")
-        .eq("company_id", companyId)
-        .maybeSingle();
-
-      if (integration?.elevenlabs_api_key) {
-        apiKey = integration.elevenlabs_api_key;
-      }
-      if (!voiceId && integration?.elevenlabs_voice_id) {
-        resolvedVoiceId = integration.elevenlabs_voice_id;
-      }
-    }
-
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "ElevenLabs API key not configured for this company" }), {
+    if (text.length > MAX_TEXT_LEN) {
+      return new Response(JSON.stringify({ error: `text exceeds ${MAX_TEXT_LEN} chars` }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const ttsResponse = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${resolvedVoiceId}?output_format=mp3_44100_128`,
-      {
-        method: "POST",
-        headers: {
-          "xi-api-key": apiKey,
-          "Content-Type": "application/json",
+    const url = `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream?output_format=mp3_44100_128`;
+    const upstream = await fetch(url, {
+      method: "POST",
+      headers: {
+        "xi-api-key": apiKey,
+        "Content-Type": "application/json",
+        "Accept": "audio/mpeg",
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_turbo_v2_5",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+          style: 0.4,
+          use_speaker_boost: true,
         },
-        body: JSON.stringify({
-          text,
-          model_id: "eleven_turbo_v2_5",
-          voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-            style: 0.5,
-            use_speaker_boost: true,
-          },
-        }),
-      }
-    );
+      }),
+    });
 
-    if (!ttsResponse.ok) {
-      const errText = await ttsResponse.text();
-      console.error("ElevenLabs TTS error:", ttsResponse.status, errText);
-      return new Response(JSON.stringify({ error: "TTS generation failed" }), {
-        status: ttsResponse.status,
+    if (!upstream.ok || !upstream.body) {
+      const errText = await upstream.text().catch(() => "");
+      console.error("[elevenlabs-tts] upstream error", upstream.status, errText);
+      return new Response(JSON.stringify({ error: "tts_failed", status: upstream.status, detail: errText }), {
+        status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const audioBuffer = await ttsResponse.arrayBuffer();
-
-    return new Response(audioBuffer, {
+    return new Response(upstream.body, {
+      status: 200,
       headers: {
         ...corsHeaders,
         "Content-Type": "audio/mpeg",
+        "Cache-Control": "no-store",
       },
     });
   } catch (e) {
-    console.error("elevenlabs-tts error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    console.error("[elevenlabs-tts] threw", e);
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

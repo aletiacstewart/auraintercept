@@ -260,3 +260,6 @@ verify_jwt = false
 
 [functions.send-campaign]
 verify_jwt = true
+
+[functions.elevenlabs-tts]
+verify_jwt = false
