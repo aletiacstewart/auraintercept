@@ -1,32 +1,62 @@
-## Issue
+# Onboarding Email + Token Gate
 
-`BetaCodeInput` lives only on `/dashboard/subscription`. New companies signing up at `/auth?mode=company` never see it, so they can't unlock the 60-day trial or $497-capped beta onboarding before they finish signup.
+## 1. Hide Fast Start toggle on `/onboarding`
 
-## Fix
+`src/pages/OnboardingForm.tsx`
+- Remove the Fast Start / Full Setup toggle UI.
+- Always render `<CompanyOnboardingForm />`. Keep `FastStartWizard` import/component in repo for now (not deleted).
+- Page becomes token-gated (see §2).
 
-### 1. Add `BetaCodeInput` to company signup
-File: `src/pages/Auth.tsx`
-- Add state: `const [betaCode, setBetaCode] = useState<BetaCodeResult | null>(null)`.
-- Render `<BetaCodeInput applied={betaCode} onApplied={setBetaCode} />` inside the company-mode signup form, placed just above the "Required Acknowledgments" block so it sits with the other commercial fields.
-- When a code is applied, show a short helper line: "60-day free trial + Beta Onboarding capped at $497 will apply at checkout."
+## 2. Token-gate the `/onboarding` page
 
-### 2. Persist on company creation
-In the `companies` insert at signup, when `betaCode` is set:
-- `beta_trial: true`
-- `beta_code: betaCode.code`
-- Trial length: extend `trialEndsAt` to `now + betaCode.trial_days * 86400000` (60 days) instead of the current 90-day default.
+`/onboarding` will require a valid invite token before showing the workbook.
 
-Also fire a best-effort `supabase.rpc('redeem_beta_code', { p_code, p_company_id })`. Because `redeem_beta_code` is currently `service_role` only, also add a migration to `GRANT EXECUTE ... TO authenticated` (the function is idempotent-guarded and only flips the caller's own row server-side) — or wrap redemption in a tiny `redeem-beta-code` edge function. Pick the GRANT path since it's simpler and the function already revalidates the code and updates by `p_company_id` which is RLS-isolated.
+- New behavior: `OnboardingForm` reads `?token=...` from URL (or a "paste your code" input when missing).
+- On mount, call existing `get-onboarding-invite` edge function to validate. If invalid/expired → render a "Enter your onboarding code" gate screen with an input + Continue button. If valid → render `<CompanyOnboardingForm />` with the token in context.
+- Gate screen explains: "Your onboarding code was emailed to you at signup. Paste it here to begin."
 
-### 3. Carry code into Subscription page
-After successful signup, when navigating to `/dashboard/subscription`, append `?beta_code=BETA-7372424`. Update `Subscription.tsx` to read `useSearchParams().get('beta_code')` on mount and auto-validate it into `betaCode` state so the user sees the chip + capped onboarding immediately on checkout.
+No new edge function needed — `get-onboarding-invite` already validates tokens server-side.
+
+## 3. Auto-create invite + send welcome email at company signup
+
+`src/pages/Auth.tsx` (company signup success path)
+- After the `companies` insert succeeds, invoke a new edge function `send-company-welcome` with `{ company_id, company_name, recipient_email }`.
+- Non-fatal: log on error, do not block the navigation flow.
+
+New edge function `supabase/functions/send-company-welcome/index.ts` (`verify_jwt = false`, called from client right after auth signup):
+1. Generate a URL-safe 32-byte token (same pattern as `create-onboarding-invite`).
+2. Insert row into `onboarding_invites` (token, company_name, recipient_email, expires_at = +30d). Skip the `created_by` admin requirement.
+3. Build the onboarding link: `https://auraintercept.ai/onboarding?token={token}`.
+4. Generate the onboarding workbook PDF in-function (see §4) and attach to the email.
+5. Send via Resend (gateway) directly so we can pass `attachments` (the existing `sendGuardedEmail` helper doesn't support attachments). Use `RESEND_API_KEY` secret already present.
+6. Subject: `Welcome to Aura Intercept — your onboarding link & workbook`.
+7. Body: greeting, "Open your onboarding workbook" CTA button to the link, note about the attached PDF (printable copy), 30-day expiry, support contact.
+
+## 4. PDF auto-generation
+
+Generate inside the edge function using `pdf-lib` (Deno-compatible, no native deps):
+- Import `https://esm.sh/pdf-lib@1.17.1`.
+- Build a branded multi-page document from the workbook sections already used by `CompanyOnboardingForm` (business profile, contact routing, hours, employees, services, integrations, signature block). Pull section titles + field labels from a small shared constants file `supabase/functions/_shared/onboarding-workbook-sections.ts` so the printed PDF mirrors the online form.
+- Output as Uint8Array → base64 → Resend `attachments: [{ filename: 'Aura-Intercept-Onboarding-Workbook.pdf', content }]`.
+
+The same constants file can later be imported by `CompanyOnboardingForm` for a single source of truth (out of scope for this patch — just create the file).
+
+## 5. Admin path unchanged
+
+`create-onboarding-invite` (platform-admin manual sends) remains as-is for ad-hoc invites; it continues to use the existing `/intake/{token}` link. The new self-serve signup flow uses `/onboarding?token=...` exclusively.
 
 ## Files
 
-- `src/pages/Auth.tsx` — render BetaCodeInput, persist on signup, redirect with `?beta_code`.
-- `src/pages/Subscription.tsx` — auto-apply `?beta_code` URL param.
-- `supabase/migrations/<ts>_grant_redeem_beta_code.sql` — `GRANT EXECUTE ON FUNCTION public.redeem_beta_code(text, uuid) TO authenticated;`
+**Create**
+- `supabase/functions/send-company-welcome/index.ts` — token + PDF + Resend send
+- `supabase/functions/_shared/onboarding-workbook-sections.ts` — section/field metadata for PDF
+- (no migration — `onboarding_invites` already exists)
 
-## Out of scope
+**Edit**
+- `src/pages/OnboardingForm.tsx` — remove toggle, add token gate
+- `src/pages/Auth.tsx` — call `send-company-welcome` after company creation
 
-No changes to pricing logic, edge function, or the cap rules — those are already wired correctly server-side. This patch is purely surfacing the existing beta entry point on the signup screen.
+**Out of scope**
+- No changes to pricing, beta-code, or Subscription page.
+- No edits to `auth.users` or `companies` schema.
+- Fast Start component left in repo (hidden only).

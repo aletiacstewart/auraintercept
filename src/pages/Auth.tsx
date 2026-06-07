@@ -473,6 +473,19 @@ export default function Auth() {
         }
       }
 
+      // Best-effort welcome email with token-gated onboarding link + PDF workbook.
+      try {
+        void supabase.functions.invoke('send-company-welcome', {
+          body: {
+            company_id: companyData.id,
+            company_name: companyName,
+            recipient_email: email,
+          },
+        });
+      } catch (welcomeErr) {
+        console.warn('Welcome email failed (non-fatal):', welcomeErr);
+      }
+
       toast({
         title: 'Welcome! 🎉',
         description: betaCode
