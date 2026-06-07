@@ -312,9 +312,9 @@ export const HOW_TO_USE: Record<string, Content> = {
   aiOperativesHub: {
     title: 'AI Operatives Hub',
     runsAutomatically: [
-      'Coordinates all 24 Smart AI Agents across your 7 consoles.',
-      'Hands off conversations between agents (e.g., Reception → Booking → Dispatch).',
-      'Logs every agent action for transparency and override.',
+      'Coordinates all 10 operatives across your 7 consoles.',
+      'Hands off conversations between operatives (e.g., Front Desk → Booking → Dispatch).',
+      'Logs every action for transparency and override.',
     ],
     whenYouStepIn: [
       'Reviewing handoffs flagged for human approval.',

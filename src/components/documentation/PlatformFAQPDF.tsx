@@ -267,15 +267,15 @@ const PlatformFAQPDF = () => {
       <Page size="A4" style={styles.coverPage}>
         <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
         <Text style={styles.coverTitle}>Platform FAQ</Text>
-        <Text style={styles.coverSubtitle}>Everything You Need to Know About Your AI Business Platform</Text>
+        <Text style={styles.coverSubtitle}>Answers to the questions we get most.</Text>
         <View style={styles.coverStats}>
           <View style={styles.coverStat}>
             <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalTiers}</Text>
             <Text style={styles.coverStatLabel}>Subscription Tiers</Text>
           </View>
           <View style={styles.coverStat}>
-            <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalAgents}</Text>
-            <Text style={styles.coverStatLabel}>Smart AI Agents</Text>
+            <Text style={styles.coverStatNumber}>10</Text>
+            <Text style={styles.coverStatLabel}>AI Operatives</Text>
           </View>
           <View style={styles.coverStat}>
             <Text style={styles.coverStatNumber}>{PLATFORM_STATS.totalConsoles}</Text>
@@ -316,11 +316,9 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.infoBox}>
-          <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>How to Use This Document</Text>
+          <Text style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>How to use</Text>
           <Text style={{ fontSize: 9, lineHeight: 1.5 }}>
-            This FAQ covers the most common questions about the Aura Intercept platform. 
-            Questions are organized by category for easy navigation. For additional help, 
-            contact support or visit the Platform Guides section in your dashboard.
+            Organized by category. For more, see Platform Guides in your dashboard.
           </Text>
         </View>
 
@@ -347,12 +345,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Choose based on your business needs: Aura Core ($497/mo) for solo operators and restaurants, Aura Boost ($897/mo) for small service teams with field operations, Aura Pro ($1,797/mo) for growing companies with multiple technicians, and Aura Elite ($2,997/mo) for large service teams and enterprise operations. All tiers include voice, SMS, and email communication channels."
+          answer="Aura Core ($497/mo, was $697) for solo operators. Aura Boost ($897/mo, was $1,097) for small teams with field ops. Aura Pro ($1,797/mo, was $1,997) for growing companies. Aura Elite ($3,097/mo, was $3,497) for large teams and enterprise. All tiers include voice, SMS, and email."
         />
         
         <FAQItem 
           question="How long does implementation take?"
-          answer="Implementation typically takes 1-2 weeks depending on your tier and complexity. Aura Core and Aura Boost tiers can be live within 3-5 business days. Aura Pro and Aura Elite tiers with field operations may take 2-3 weeks for full configuration and technician training. The first 30 days of the 60-Day Live Trial are dedicated to this onboarding window."
+          answer="1–2 weeks typical. Core/Boost: 3–5 business days. Pro/Elite with field ops: 2–3 weeks. The first 30 days of the 60-Day Live Trial are the concierge onboarding window."
         />
         
         <FAQItem 
@@ -372,8 +370,8 @@ const PlatformFAQPDF = () => {
         <Text style={styles.subsectionTitle}>Getting Started (Continued)</Text>
         
         <FAQItem 
-          question="Is there a free trial available?"
-          answer="Yes! All new company registrations include a 60-Day Live Trial. The first 30 days of the trial are your onboarding window — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — and the remaining 60 days are spent fully live. During the trial, you have full access to all features included in your selected tier. No credit card is required to start your trial."
+          question="Is there a free trial?"
+          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. No credit card required to start; onboarding fee due at start."
         />
         
         <FAQItem 
