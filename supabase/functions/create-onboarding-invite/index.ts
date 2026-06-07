@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
     const token = btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
     const { data: invite, error } = await admin.from('onboarding_invites').insert({
-      token, company_name, recipient_email, created_by: user.id,
+      token, company_name, recipient_email, created_by: user.id, source: 'admin',
     }).select('*').single();
     if (error) throw error;
 
