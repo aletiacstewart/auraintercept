@@ -14,6 +14,7 @@ import { AuraAvatarFloating } from '@/components/aura/AuraAvatarFloating';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
+import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 
 const agentCategories = [{
   id: 'customer',
@@ -920,6 +921,11 @@ export default function Index() {
             </Link>
           </div>
 
+          {/* BETA Sign-Up Notice */}
+          <div className="max-w-5xl mx-auto mb-10">
+            <BetaSignupNotice />
+          </div>
+
           {/* 4-Tier Pricing Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
 
@@ -1076,43 +1082,6 @@ export default function Index() {
             <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>60-Day Live Trial • No credit card required for the trial</p>
             <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
-          </div>
-
-          {/* Beta Testing Announcement */}
-          <div className="mt-10 max-w-3xl mx-auto">
-            <div className="rounded-xl border border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
-              <div className="relative space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
-                    <Zap className="w-3 h-3" /> Beta
-                  </span>
-                  <h3 className="text-lg font-bold text-primary">We're in Beta!</h3>
-                </div>
-                <p className="text-sm text-white leading-relaxed">
-                  We are currently in <span className="font-semibold text-white">Beta</span>. All users who join during the beta period receive a{' '}
-                  <span className="font-semibold text-primary">60-Day Live Trial</span> for testing. All we ask is your honest feedback to help us improve the platform.
-                </p>
-
-                <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3">
-                  <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-warning">Beta Notice:</span> as we refine the platform, help docs, guides, and tutorials may occasionally be out of step with the latest changes. We push updates continuously based on feedback from beta testers like you. For the most current details on pricing, plans, trials, and 3rd-party requirements, always check the <span className="font-semibold text-primary">Homepage</span> first. Thank you for helping us build something great.
-                  </p>
-                </div>
-
-                <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
-                  <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-primary">Why an onboarding fee?</span> Due to the amount of setup and hours it takes to onboard each company, we do require a one-time onboarding fee.
-                  </p>
-                  <p className="text-xs text-white leading-relaxed">
-                    <span className="font-semibold text-white">One-Time Onboarding Fee (due at start of 60-Day Live Trial) — <span className="text-primary">Launch Pricing</span>:</span> Core <span className="line-through text-white/50">$349</span> <span className="font-semibold text-primary">$249</span> • Boost <span className="line-through text-white/50">$549</span> <span className="font-semibold text-primary">$449</span> • Pro <span className="line-through text-white/50">$999</span> <span className="font-semibold text-primary">$899</span> • Elite <span className="line-through text-white/50">$1,749</span> <span className="font-semibold text-primary">$1,549</span>
-                  </p>
-                  <p className="text-[11px] italic text-white/70 leading-relaxed">
-                    Covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. Non-refundable once onboarding begins.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* 3rd Party Integrations */}

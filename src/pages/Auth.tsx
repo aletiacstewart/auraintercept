@@ -29,6 +29,7 @@ import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
 import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
+import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -884,18 +885,8 @@ export default function Auth() {
                 </div>
                 </div>
 
-                {/* Beta Notice */}
-                <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 border border-primary/30 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
-                      <Zap className="w-2.5 h-2.5" /> Beta
-                    </span>
-                    <span className="text-xs font-semibold text-foreground">We're in Beta!</span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    All users who join during the beta period receive <span className="font-semibold text-primary">a 60-Day Live Trial</span> for testing — the <span className="font-semibold text-foreground">first 30 days are dedicated to onboarding</span>, then 30 days of full live use. All we ask is your honest feedback to help us improve the platform.
-                  </p>
-                </div>
+                {/* BETA Sign-Up Notice */}
+                <BetaSignupNotice variant="compact" />
 
                 {/* FCC 10DLC Notice */}
                 <div className="p-3 rounded-lg border border-warning/30 bg-warning/5">
