@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Sparkles, X, AlertTriangle } from 'lucide-react';
+import { Sparkles, X, AlertTriangle, Phone } from 'lucide-react';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { Button } from '@/components/ui/button';
 import { LandingAIChat } from './LandingAIChat';
@@ -106,6 +106,13 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
                 <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
                   <div className="p-3 border-b border-border/40">
                     <AuraAvatarChat variant="inline" />
+                    <a
+                      href="tel:484-737-2424"
+                      className="mt-3 flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-sm font-semibold text-primary transition-colors"
+                    >
+                      <Phone className="w-4 h-4" />
+                      Call Aura's Mobile: 484-737-2424
+                    </a>
                   </div>
                   <div className="p-4 flex-1 min-h-0 flex flex-col">
                     <LandingAIChat
