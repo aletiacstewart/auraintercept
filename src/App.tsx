@@ -120,7 +120,7 @@ import CompanyBlogPost from "./pages/CompanyBlogPost";
 import Contact from "./pages/Contact";
 import ForBusiness from "./pages/ForBusiness";
 import DemoAccess from "./pages/DemoAccess";
-import About from "./pages/About";
+
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BlogManagement from "./pages/BlogManagement";
@@ -204,7 +204,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/talk-to-aura" element={<Navigate to="/contact" replace />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/design-preview" element={<ProtectedRoute requiredRole="platform_admin"><DesignPreview /></ProtectedRoute>} />
-                <Route path="/about" element={<About />} />
+                <Route path="/about" element={<Navigate to="/" replace />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 {/* All Dashboard Routes - Protected */}

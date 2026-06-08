@@ -31,7 +31,6 @@ export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <h4 className="font-semibold mb-4 text-card-foreground">Product</h4>
               <ul className="space-y-2 text-sm text-card-foreground/80">
-                <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-card-foreground transition-colors">Start Trial</button></li>
                 <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-card-foreground transition-colors">Company Subscription</button></li>
                 <li><button onClick={() => navigate('/customer-auth')} className="hover:text-card-foreground transition-colors">Customer Portal</button></li>
               </ul>
@@ -40,7 +39,6 @@ export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <h4 className="font-semibold mb-4 text-card-foreground">Company</h4>
               <ul className="space-y-2 text-sm text-card-foreground/80">
-                <li><button onClick={() => navigate('/about')} className="hover:text-card-foreground transition-colors">About</button></li>
                 <li><button onClick={() => navigate('/blog')} className="hover:text-card-foreground transition-colors">Blog</button></li>
                 <li><button onClick={() => navigate('/contact')} className="hover:text-card-foreground transition-colors">Contact</button></li>
               </ul>

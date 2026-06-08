@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Users, ClipboardCheck, Sparkles, Menu, LogIn, Rocket } from 'lucide-react';
+import { Home, ClipboardCheck, Sparkles, Menu, LogIn, Rocket, Mail } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,11 +52,12 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             <Sparkles className="w-4 h-4 mr-1 text-primary" />
             {t('nav.liveDemo')}
           </Button>
-          <Button variant="outline" className="text-white border-white/30 bg-white/5 hover:text-white hover:bg-white/10" onClick={() => navigate('/customer-auth')}>
-            <Users className="w-4 h-4 mr-2" />
-            {t('nav.customerPortal')}
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/contact')}>
+            <Mail className="w-4 h-4 mr-1" />
+            {t('nav.contact')}
           </Button>
-          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}
+>
             {t('nav.signIn')}
           </Button>
           <Button className="gradient-primary" onClick={() => navigate('/signup?mode=company')}>
@@ -92,9 +93,9 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
                 <Sparkles className="w-4 h-4 mr-2 text-primary" />
                 {t('nav.liveDemo')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/customer-auth')}>
-                <Users className="w-4 h-4 mr-2" />
-                {t('nav.customerPortal')}
+              <DropdownMenuItem onClick={() => navigate('/contact')}>
+                <Mail className="w-4 h-4 mr-2" />
+                {t('nav.contact')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate('/signin')}>
