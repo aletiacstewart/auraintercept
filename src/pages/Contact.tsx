@@ -507,46 +507,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Under-form section: What to Expect + CTA */}
-            <div className="grid md:grid-cols-2 gap-6 mt-8">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    What to Expect
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {[
-                    'Personalized demo of Aura Intercept',
-                    'Discussion of your business needs',
-                    'Custom pricing for your team size',
-                    'Implementation timeline review',
-                    'Q&A with our specialists',
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{item}</span>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card className="bg-primary text-primary-foreground">
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
-                  <p className="mb-4 opacity-90">
-                    60-Day Live Trial: 30 days concierge onboarding + 30 days fully live.
-                  </p>
-                  <Button
-                    variant="secondary"
-                    onClick={() => navigate('/auth?mode=company')}
-                  >
-                    60-Day Live Trial
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </section>
       </main>
