@@ -1,56 +1,44 @@
-## Why Aura said "error" even though SMS + email arrived
+## Goal
 
-The network log confirms `send-walkthrough-demo` returned `{ ok: true, sms_status: "sent" }` and the demo link was delivered. So the function succeeded — but **Aura still spoke an error**.
+The landing page currently renders two floating launchers in the bottom-right corner:
 
-Root cause: **ElevenLabs client-tool timeout**. The ElevenLabs agent has a default client-tool wait of ~20 seconds. Our `send_walkthrough_demo` chain is heavy:
+- `FloatingChatWidget` (MessageCircle bubble) → opens the "Message Aura" text chat (`LandingAIChat`).
+- `AuraAvatarFloating` (Sparkles bubble) → opens the "Talk to Aura" voice avatar (`AuraAvatarChat`).
 
-1. `send-walkthrough-demo` calls `create-demo-trial` synchronously
-2. `create-demo-trial` provisions a full industry-loaded demo company (seeds appointments, leads, KB, agents, profile, etc.) — this consistently takes 20-40s
-3. Then SMS via SignalWire + email via Resend
-4. Only then do we return `{ ok: true, spoken: "..." }`
+Collapse these into a **single Sparkles bubble** that opens **one panel** containing both surfaces — the avatar (so users can still tap "Talk to Aura" to start a live voice call) and the text chat below it.
 
-By the time we return, ElevenLabs has already given up on the tool call and told the agent "tool failed" — so Aura reads back her fallback "I had trouble…" line. Meanwhile the SMS/email still go out because the edge function kept running to completion.
+## Changes
 
-This matches the symptom exactly: ✅ demo link delivered, ❌ Aura apologizes.
+### 1. `src/components/landing/FloatingChatWidget.tsx`
+- Swap the bubble icon from `MessageCircle` to `Sparkles` (lucide-react). Keep the existing cyan gradient, size, pulse animation, and X-when-open behavior.
+- In the open panel (non-multi-agent path, i.e. the public landing), render the `AuraAvatarChat` (variant `inline`, no internal close button) above the existing `LandingAIChat`. Wrap them in a scrollable column so the panel stays within its `h-[620px]` envelope:
+  ```
+  ┌─ Panel ──────────────────┐
+  │ Close X                   │
+  │ [ AuraAvatarChat inline ] │  ← avatar + Talk to Aura button
+  │ ─────────────────────────│
+  │ [ LandingAIChat ]         │  ← Message Aura header + chat
+  │ Report Issue footer       │
+  └──────────────────────────┘
+  ```
+- Slightly increase panel height (e.g. `h-[720px]`, capped with `max-h-[85vh]`) so the avatar + chat fit without internal clipping on the landing page. Keep `w-[400px]`.
+- Multi-agent path (`useMultiAgent && (companyId || companySlug)`) is unchanged — it still renders `UnifiedCustomerConsole` only, since that path is for embedded company widgets where the avatar isn't part of the experience.
 
-## Fix — return fast, finish in the background
+### 2. `src/pages/Index.tsx`
+- Remove the `AuraAvatarFloating` import and its `<AuraAvatarFloating />` render at line 1214. The merged `FloatingChatWidget` covers both surfaces.
 
-Restructure `send-walkthrough-demo` so the HTTP response is sent within ~2 seconds and the heavy work continues via `EdgeRuntime.waitUntil(...)`.
+### 3. `src/components/aura/AuraAvatarFloating.tsx`
+- Leave the file in place (other pages may still use it later); just stop rendering it on the landing. No edits needed unless a follow-up asks to delete it.
 
-### New flow
+## Out of scope
 
-1. **Synchronously (fast, <2s):**
-   - Validate inputs (industry/name/email/phone)
-   - Canonicalize industry, refuse HIPAA-gated verticals
-   - Rate-limit check against `demo_trials`
-   - Build the spoken confirmation string immediately
-   - Return `{ ok: true, spoken, industry, industry_label }` to ElevenLabs
+- No changes to `AuraAvatarChat` internals, the `send-walkthrough-demo` flow, `LandingAIChat`, or any dashboard/console embeds of the avatar.
+- No changes to the multi-agent embedded customer widget path.
+- No copy changes to "Message Aura" / "Talk to Aura" headings inside the panel.
 
-2. **Background (`EdgeRuntime.waitUntil`):**
-   - Insert prospect Lead on Aura tenant
-   - Invoke `create-demo-trial`
-   - Send SignalWire SMS with the share_url
-   - Log failures to console (we no longer need them in the response)
+## Verification
 
-### Spoken copy adjustment
-
-Because the link is now sent moments after Aura speaks (not before), tweak wording slightly so it stays true:
-
-> "Perfect, {firstName} — I'm sending your live {Industry} walkthrough to your text and email right now. It'll land in a few seconds; tap the link and I'll meet you inside the demo. It's good for 48 hours."
-
-### Client tool
-
-`AuraAvatarChat.tsx` already returns `{ ok, spoken }` from the function response — no client change needed. The toast that depends on `demo_url` will simply not fire (the URL is created in the background), which is fine since the user gets the link via SMS/email anyway. We can drop that toast branch or leave it as a no-op.
-
-### Files touched
-
-- `supabase/functions/send-walkthrough-demo/index.ts` — restructure to fast-return + `EdgeRuntime.waitUntil` background work, update `spoken` copy.
-
-No DB migration, no client change required.
-
-### Validation
-
-1. Open `/`, Talk to Aura, request a Plumbing walkthrough demo for a real mobile number.
-2. Aura should speak the confirmation within ~2s of finishing the request.
-3. SMS + email arrive within ~30s (unchanged).
-4. Edge function logs show the tool returned 200 quickly, then background `create-demo-trial` + SMS complete after.
+- Landing page bottom-right shows exactly one bubble with the Sparkles icon.
+- Clicking it opens one panel with the Aura avatar on top (Talk to Aura button works) and the Message Aura text chat below.
+- Clicking X or the bubble again closes the panel.
+- No regressions on dashboard pages that still use `AuraAvatarChat` directly.
