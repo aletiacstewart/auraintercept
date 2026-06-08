@@ -297,7 +297,7 @@ interface CharacterProps {
   expression: Expression;
 }
 
-function AuraCharacter({ size, connected, speaking, mouthOpen, expression }: CharacterProps) {
+export function AuraCharacter({ size, connected, speaking, mouthOpen, expression }: CharacterProps) {
   // Drive ring + portrait directly from amplitude — no fake facial features.
   const amp = Math.max(0, Math.min(1, mouthOpen));
   const ringScale = connected ? 1.02 + amp * 0.1 : 1;

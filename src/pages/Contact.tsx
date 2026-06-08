@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,7 @@ import { Mail, Phone, MapPin, Send, Mic, CheckCircle2, Shield, Clock, Calendar }
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from '@/components/ai/VoiceChat';
+import { AuraCharacter } from '@/components/aura/AuraAvatarChat';
 import { SEO } from '@/components/seo/SEO';
 
 const AURA_COMPANY_ID = '04c57cbe-358e-4036-a3ad-b777a55f5be0';
@@ -44,9 +45,20 @@ export default function Contact() {
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [useTextMode, setUseTextMode] = useState(false);
   const [transcript, setTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  const [auraSpeaking, setAuraSpeaking] = useState(false);
+  const speakingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTranscript = useCallback((role: 'user' | 'assistant', text: string) => {
     setTranscript(prev => [...prev, { role, text }]);
+    if (role === 'assistant') {
+      setAuraSpeaking(true);
+      if (speakingTimerRef.current) clearTimeout(speakingTimerRef.current);
+      speakingTimerRef.current = setTimeout(() => setAuraSpeaking(false), 1400);
+    }
+  }, []);
+
+  useEffect(() => () => {
+    if (speakingTimerRef.current) clearTimeout(speakingTimerRef.current);
   }, []);
 
   const form = useForm<ContactFormData>({
@@ -334,6 +346,20 @@ export default function Contact() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="flex flex-col items-center gap-2 pt-2">
+                      <AuraCharacter
+                        size={140}
+                        connected={transcript.length > 0}
+                        speaking={auraSpeaking}
+                        mouthOpen={auraSpeaking ? 0.6 : 0.15}
+                        expression="happy"
+                      />
+                      <div className="text-center">
+                        <div className="text-sm font-semibold text-foreground">Aura</div>
+                        <div className="text-xs text-muted-foreground">Your AI receptionist</div>
+                      </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-primary/5 border border-primary/30 flex items-start gap-2">
                       <Mic className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                       <p className="text-xs leading-relaxed">
