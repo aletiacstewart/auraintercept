@@ -117,7 +117,6 @@ import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 import CompanyBlog from "./pages/CompanyBlog";
 import CompanyBlogPost from "./pages/CompanyBlogPost";
-import TalkToAura from "./pages/TalkToAura";
 import Contact from "./pages/Contact";
 import ForBusiness from "./pages/ForBusiness";
 import DemoAccess from "./pages/DemoAccess";
