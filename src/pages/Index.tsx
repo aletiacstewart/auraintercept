@@ -1210,7 +1210,6 @@ export default function Index() {
       
       {/* Floating Chat Widget */}
       <FloatingChatWidget />
-      <AuraAvatarFloating />
     </div>
   );
 }
