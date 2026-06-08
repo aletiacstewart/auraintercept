@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { MessageCircle, X, AlertTriangle } from 'lucide-react';
+import { Sparkles, X, AlertTriangle } from 'lucide-react';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { Button } from '@/components/ui/button';
 import { LandingAIChat } from './LandingAIChat';
 import { UnifiedCustomerConsole } from '@/components/customer/UnifiedCustomerConsole';
+import { AuraAvatarChat } from '@/components/aura/AuraAvatarChat';
 import { supabase } from '@/integrations/supabase/client';
 
 interface FloatingChatWidgetProps {
@@ -83,7 +84,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       <div ref={ref}>
         {/* Chat Panel */}
         {isOpen && (
-          <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[620px] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[720px] max-h-[85vh] animate-in slide-in-from-bottom-4 fade-in duration-300">
             <div className="w-full h-full bg-card/95 backdrop-blur-lg border border-primary/30 shadow-2xl rounded-xl overflow-hidden flex flex-col">
               {/* Close Button */}
               <Button
@@ -102,12 +103,17 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
                   isEmbedded={true}
                 />
               ) : (
-                <div className="p-4 flex-1 min-h-0 overflow-hidden flex flex-col">
-                  <LandingAIChat 
-                    websiteId={websiteId}
-                    companyId={companyId}
-                    visitorFingerprint={visitorFingerprint}
-                  />
+                <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+                  <div className="p-3 border-b border-border/40">
+                    <AuraAvatarChat variant="inline" />
+                  </div>
+                  <div className="p-4 flex-1 min-h-0 flex flex-col">
+                    <LandingAIChat
+                      websiteId={websiteId}
+                      companyId={companyId}
+                      visitorFingerprint={visitorFingerprint}
+                    />
+                  </div>
                 </div>
               )}
               
@@ -138,7 +144,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
           {isOpen ? (
             <X className="w-5 h-5 text-white" />
           ) : (
-            <MessageCircle className="w-5 h-5 text-white" />
+            <Sparkles className="w-5 h-5 text-white" />
           )}
         </Button>
       </div>
