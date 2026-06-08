@@ -117,7 +117,6 @@ import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 import CompanyBlog from "./pages/CompanyBlog";
 import CompanyBlogPost from "./pages/CompanyBlogPost";
-import TalkToAura from "./pages/TalkToAura";
 import Contact from "./pages/Contact";
 import ForBusiness from "./pages/ForBusiness";
 import DemoAccess from "./pages/DemoAccess";
@@ -202,7 +201,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />
-                <Route path="/talk-to-aura" element={<TalkToAura />} />
+                <Route path="/talk-to-aura" element={<Navigate to="/contact" replace />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/design-preview" element={<ProtectedRoute requiredRole="platform_admin"><DesignPreview /></ProtectedRoute>} />
                 <Route path="/about" element={<About />} />
