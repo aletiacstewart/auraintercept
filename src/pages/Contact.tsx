@@ -504,6 +504,36 @@ export default function Contact() {
                   </CardContent>
                 </Card>
 
+                {/* Call Aura's Mobile */}
+                <Card className="border-primary/40">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <Phone className="h-5 w-5 text-primary" />
+                      Call Aura's Mobile
+                    </CardTitle>
+                    <CardDescription>
+                      Reach Aura directly on her dedicated mobile line
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-center p-6 rounded-lg bg-primary/10 border border-primary/30">
+                      <a
+                        href="tel:484-737-2424"
+                        className="block text-3xl font-bold text-primary hover:opacity-80 transition-opacity"
+                      >
+                        484-737-2424
+                      </a>
+                    </div>
+                    <a
+                      href="tel:484-737-2424"
+                      className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-primary hover:opacity-90 text-primary-foreground font-semibold transition-opacity"
+                    >
+                      <Phone className="w-5 h-5" />
+                      Call Aura Now
+                    </a>
+                  </CardContent>
+                </Card>
+
               </div>
             </div>
 
