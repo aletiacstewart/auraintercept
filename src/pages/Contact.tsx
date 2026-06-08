@@ -346,6 +346,20 @@ export default function Contact() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="flex flex-col items-center gap-2 pt-2">
+                      <AuraCharacter
+                        size={140}
+                        connected={transcript.length > 0}
+                        speaking={auraSpeaking}
+                        mouthOpen={auraSpeaking ? 0.6 : 0.15}
+                        expression="happy"
+                      />
+                      <div className="text-center">
+                        <div className="text-sm font-semibold text-foreground">Aura</div>
+                        <div className="text-xs text-muted-foreground">Your AI receptionist</div>
+                      </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-primary/5 border border-primary/30 flex items-start gap-2">
                       <Mic className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                       <p className="text-xs leading-relaxed">
