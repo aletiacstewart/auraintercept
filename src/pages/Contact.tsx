@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -11,10 +11,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin, Send, MessageSquare, Mic } from 'lucide-react';
-import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { Mail, Phone, MapPin, Send, Mic, CheckCircle2, Shield, Clock, Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { VoiceChat } from '@/components/ai/VoiceChat';
 import { SEO } from '@/components/seo/SEO';
+
+const AURA_COMPANY_ID = '04c57cbe-358e-4036-a3ad-b777a55f5be0';
+const AURA_COMPANY_NAME = 'Aura Intercept';
+const CONSULTATION_PHONE = '512-737-2424';
+const CONSULTATION_PHONE_MNEMONIC = '512-REP-AiAi';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -31,7 +41,13 @@ export default function Contact() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showChat, setShowChat] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [useTextMode, setUseTextMode] = useState(false);
+  const [transcript, setTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+
+  const handleTranscript = useCallback((role: 'user' | 'assistant', text: string) => {
+    setTranscript(prev => [...prev, { role, text }]);
+  }, []);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -71,8 +87,8 @@ export default function Contact() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SEO
-        title="Contact Aura Intercept | Talk to Our Team"
-        description="Questions about AI automation for your service business? Reach the Aura Intercept team by message, email, or phone."
+        title="Contact Aura Intercept | Talk to Aura"
+        description="Talk to Aura by voice, message us, or call our team. Get a live walkthrough demo tailored to your service business."
         path="/contact"
         jsonLd={{
           "@context": "https://schema.org",
@@ -266,49 +282,183 @@ export default function Contact() {
                   </CardContent>
                 </Card>
 
-                {/* Talk to Aura */}
-                <Card>
-                  <CardHeader>
+                {/* Schedule by Phone */}
+                <Card className="border-amber-500/40">
+                  <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2">
-                      <Mic className="h-5 w-5" />
-                      Talk to Aura (Voice)
+                      <Phone className="h-5 w-5 text-amber-600" />
+                      Schedule by Phone
                     </CardTitle>
                     <CardDescription>
-                      Have a conversation with our AI assistant
+                      Speak directly with our team to schedule your consultation
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Button 
-                      variant="outline" 
-                      className="w-full gap-2"
-                      onClick={() => navigate('/talk-to-aura')}
+                  <CardContent className="space-y-4">
+                    <div className="text-center p-6 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                      <a
+                        href={`tel:${CONSULTATION_PHONE}`}
+                        className="block text-3xl font-bold text-amber-600 hover:text-amber-500 transition-colors"
+                      >
+                        {CONSULTATION_PHONE}
+                      </a>
+                      <p className="text-amber-600/80 text-sm mt-2 font-medium">
+                        ({CONSULTATION_PHONE_MNEMONIC})
+                      </p>
+                    </div>
+                    <a
+                      href={`tel:${CONSULTATION_PHONE}`}
+                      className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-white font-semibold transition-colors"
                     >
-                      <Mic className="mr-2 h-4 w-4" />
-                      Start Voice Chat
-                    </Button>
+                      <Phone className="w-5 h-5" />
+                      Call Now
+                    </a>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted">
+                      <Clock className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium">Business Hours</p>
+                        <p className="text-xs text-muted-foreground">Mon-Fri: 9AM - 6PM CST</p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
-                {/* Message Aura */}
-                <Card>
-                  <CardHeader>
+                {/* Talk to Aura (Voice) */}
+                <Card className="border-primary/40">
+                  <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5" />
-                      Message Aura (Text)
+                      <Mic className="h-5 w-5 text-primary" />
+                      Talk to Aura (Voice)
                     </CardTitle>
                     <CardDescription>
-                      Chat with our AI assistant via text
+                      Use voice chat to schedule your consultation instantly
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => setShowChat(true)}
-                    >
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Start Chat
-                    </Button>
+                  <CardContent className="space-y-4">
+                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/30 flex items-start gap-2">
+                      <Mic className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <p className="text-xs leading-relaxed">
+                        <span className="font-semibold text-primary">Tip:</span>{' '}
+                        Tell Aura your industry (HVAC, plumbing, real estate, etc.) and she'll text
+                        you a one-tap link to a live walkthrough demo pre-loaded for your business.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-lg bg-muted border border-border">
+                      <div className="flex items-start space-x-3">
+                        <Checkbox
+                          id="voice-terms"
+                          checked={termsAgreed}
+                          onCheckedChange={(checked) => setTermsAgreed(checked === true)}
+                          className="mt-0.5"
+                        />
+                        <Label
+                          htmlFor="voice-terms"
+                          className="text-sm font-normal leading-relaxed cursor-pointer"
+                        >
+                          I agree to the{' '}
+                          <Link
+                            to="/terms-of-service"
+                            target="_blank"
+                            className="text-primary hover:underline font-medium"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Terms of Service
+                          </Link>
+                          {' '}and{' '}
+                          <Link
+                            to="/privacy-policy"
+                            target="_blank"
+                            className="text-primary hover:underline font-medium"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Privacy Policy
+                          </Link>
+                        </Label>
+                      </div>
+                      <div className="flex items-start gap-2 mt-3 pt-3 border-t border-border">
+                        <Shield className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-muted-foreground">
+                          Your conversation may be recorded for quality assurance. Voice data is processed securely via ElevenLabs.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={cn(
+                      "transition-opacity duration-300",
+                      !termsAgreed && "opacity-50 pointer-events-none"
+                    )}>
+                      <VoiceChat
+                        companyId={AURA_COMPANY_ID}
+                        companyName={AURA_COMPANY_NAME}
+                        onTranscript={handleTranscript}
+                        testMode={useTextMode}
+                      />
+                      <div className="flex justify-center mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setUseTextMode((v) => !v)}
+                          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                        >
+                          {useTextMode ? "Switch to voice mode" : "Use text mode instead (no voice credits)"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {!termsAgreed && (
+                      <p className="text-xs text-center text-muted-foreground">
+                        Please agree to the terms above to start voice chat
+                      </p>
+                    )}
+
+                    {transcript.length > 0 && (
+                      <div className="border-t border-border pt-4">
+                        <p className="text-sm font-medium mb-2">Transcript</p>
+                        <ScrollArea className="h-[150px]">
+                          <div className="space-y-2">
+                            {transcript.map((msg, idx) => (
+                              <div
+                                key={idx}
+                                className={cn(
+                                  "text-sm p-2 rounded",
+                                  msg.role === 'user'
+                                    ? 'bg-muted ml-4'
+                                    : 'bg-primary/10 mr-4'
+                                )}
+                              >
+                                <span className="font-medium">
+                                  {msg.role === 'user' ? 'You: ' : 'Aura: '}
+                                </span>
+                                {msg.text}
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* What to Expect */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      What to Expect
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {[
+                      'Personalized demo of Aura Intercept',
+                      'Discussion of your business needs',
+                      'Custom pricing for your team size',
+                      'Implementation timeline review',
+                      'Q&A with our specialists',
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{item}</span>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -334,13 +484,6 @@ export default function Contact() {
       </main>
       
       <PublicFooter />
-      
-      {showChat && (
-        <FloatingChatWidget
-          websiteId="aura-intercept-contact"
-          primaryColor="#00E5FF"
-        />
-      )}
     </div>
   );
 }
