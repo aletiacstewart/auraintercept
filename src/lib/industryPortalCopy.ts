@@ -58,6 +58,22 @@ const CLUSTER: Record<IndustryPack['cluster'], PortalCopy> = {
     portalHeaderLabel: 'Patient Portal',
     welcomeSubtitle: 'Schedule visits, message your care team, and view your plan of care.',
   },
+  veterinary: {
+    title: 'Pet Owner Portal',
+    description: 'AI-powered portal for pet owners to book and manage visits',
+    specialistSubtitle: 'Specialists for scheduling, vaccine reminders, and refill questions.',
+    customerNoun: 'Pet Owner', requestNoun: 'Exam Request',
+    portalHeaderLabel: 'Pet Owner Portal',
+    welcomeSubtitle: 'Schedule exams, request refills, and message your care team.',
+  },
+  medical_practice: {
+    title: 'Patient Portal',
+    description: 'AI-powered portal for patients to book and manage visits',
+    specialistSubtitle: 'Patient-facing specialists for scheduling, insurance, and care questions.',
+    customerNoun: 'Patient', requestNoun: 'Visit Request',
+    portalHeaderLabel: 'Patient Portal',
+    welcomeSubtitle: 'Schedule visits, request refills, and message your care team.',
+  },
 };
 
 const OVERRIDES: Record<string, Partial<PortalCopy>> = {
