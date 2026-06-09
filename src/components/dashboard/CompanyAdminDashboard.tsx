@@ -258,6 +258,7 @@ export function CompanyAdminDashboard() {
       <div className="space-y-8 animate-fade-in">
         {/* Trial Banner */}
         <TrialBanner />
+        <MedicalComplianceNotice industryId={pack?.industry_id} />
 
         {/* Header */}
         <PageHeader
