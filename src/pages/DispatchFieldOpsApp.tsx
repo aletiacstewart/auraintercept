@@ -12,6 +12,9 @@ import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { FieldOpsConsole } from '@/components/fieldops/FieldOpsConsole';
 import { z } from 'zod';
 import { InlineFormProvider, InlineFormHost } from '@/components/ui/inline-form-tabs';
+import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { hasFieldTechnicians } from '@/lib/industryCapabilities';
+import { AlertTriangle } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address'),
@@ -26,6 +29,7 @@ const loginSchema = z.object({
  */
 export default function DispatchFieldOpsApp() {
   const { user, companyId, loading } = useAuth();
+  const { pack } = useIndustryPack();
   
   // Login form state
   const [email, setEmail] = useState('');
@@ -255,7 +259,19 @@ export default function DispatchFieldOpsApp() {
 
       {/* Dispatch Field Ops Console - Full height minus header */}
       <main className="flex-1 flex flex-col min-h-0">
-        {companyId ? (
+        {companyId && pack && !hasFieldTechnicians(pack) ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-6 gap-3 text-muted-foreground">
+            <AlertTriangle className="h-8 w-8 text-amber-500" />
+            <p className="text-sm font-medium">Dispatch / GPS isn't part of your industry pack.</p>
+            <p className="text-xs max-w-sm">
+              Your {pack.label} workflow uses appointment booking instead of field dispatch.
+              Open the standard dashboard to manage your schedule.
+            </p>
+            <Button size="sm" onClick={() => (window.location.href = '/dashboard')}>
+              Go to Dashboard
+            </Button>
+          </div>
+        ) : companyId ? (
           <InlineFormProvider>
             <InlineFormHost className="px-4 pt-3" />
             <FieldOpsConsole companyId={companyId} />
