@@ -868,7 +868,7 @@ export default function SignUp() {
                     <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${isAnnualBilling ? 'translate-x-5' : 'translate-x-0'}`} />
                   </button>
                   <span className={`text-xs font-medium transition-colors ${isAnnualBilling ? 'text-foreground' : 'text-muted-foreground'}`}>Annual</span>
-                  {isAnnualBilling && <span className="text-[10px] text-green-500 font-semibold">Save ~20%</span>}
+                  {isAnnualBilling && <span className="text-[10px] text-green-500 font-semibold">Save ~17%</span>}
                 </div>
 
 {/* 4 Tier Rows - Compact Single Line */}

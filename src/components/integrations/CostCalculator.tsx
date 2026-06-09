@@ -568,7 +568,7 @@ export function CostCalculator() {
                             )}
                             {ch.key === 'sms' && (
                               <div className="space-y-1 text-xs">
-                                <p className="font-medium">Twilio SMS</p>
+                                <p className="font-medium">SignalWire SMS</p>
                                 <p>• Phone number: ~$0.50/month</p>
                                 <p>• Per SMS: ~$0.0079 (~1¢)</p>
                                 <p>• {costs.totalReminders} reminders × $0.0079 = {formatCurrencyShort(costs.totalReminders * 0.0079)}</p>
@@ -577,9 +577,9 @@ export function CostCalculator() {
                             )}
                             {ch.key === 'voice' && (
                               <div className="space-y-1 text-xs">
-                                <p className="font-medium">Voice Calls (Twilio + TTS)</p>
+                                <p className="font-medium">Voice Calls (SignalWire + ElevenLabs TTS)</p>
                                 <p>• Phone number: ~$0.50/month</p>
-                                <p>• Twilio voice: ~$0.014/min</p>
+                                <p>• SignalWire voice: ~$0.0095/min</p>
                                 <p>• ElevenLabs TTS: ~$0.30/1K chars</p>
                                 <p className="text-muted-foreground mt-1">85% answer rate, 65% response rate</p>
                               </div>

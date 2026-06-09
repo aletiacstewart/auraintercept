@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, ExternalLink, DollarSign, Zap, Mail, Phone, CreditCard, Search, Share2, Shield } from 'lucide-react';
+import { LAUNCH_PRICING, getOnboardingPrice, getTierPricing } from '@/lib/launchPricing';
 
 interface CostItem {
   id: string;
@@ -208,7 +209,13 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
               <Label htmlFor="ack-concierge" className="flex items-center gap-2 cursor-pointer font-semibold text-sm">
                 <Zap className="h-4 w-4 text-primary" />
                 Concierge Onboarding — Optional Add-On
-                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">{conciergePriceLabel} flat fee</Badge>
+                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">
+                  {showLaunchChip && (
+                    <span className="line-through opacity-60 mr-1">{conciergeOriginalLabel}</span>
+                  )}
+                  {conciergePriceLabel} flat fee
+                  {showLaunchChip && <span className="ml-1 opacity-80">· Launch</span>}
+                </Badge>
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
                 We create and configure each 3rd-party account (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) on your behalf using your login and credit card. You remain the account owner and billing contact at every provider. Includes onboarding call + AI knowledge base setup.

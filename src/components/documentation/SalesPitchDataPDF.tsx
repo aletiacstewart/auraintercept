@@ -850,7 +850,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionLabel}>The Risk Reversal Close</Text>
         <Text style={styles.responseText}>
           "I understand you want to be careful with this decision. Here's what I can offer:{'\n\n'}
-          Start your 60-day trial today. Full access to [tier]. First 30 days = onboarding (we configure everything for you), then 30 days of full live use. If after two weeks you don't see the value—if you're not capturing more leads and saving time—you pay nothing.{'\n\n'}
+          Start your 60-day trial today. Full access to [tier]. First 30 days = onboarding (we configure everything for you), then 30 days of full live use. The one-time onboarding fee is due at trial start and is non-refundable; cancel any time during the live-use window before your first monthly subscription charge.{'\n\n'}
           There's literally zero risk. The only risk is continuing to miss calls while you think about it.{'\n\n'}
           Can I get you started with that trial right now?"
         </Text>
