@@ -70,30 +70,6 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
         command: 'Build a family caregiver support campaign with resources and gentle check-ins, and queue for approval' },
     ],
   },
-  veterinary: {
-    tagline: 'Wellness recall and pet-owner loyalty',
-    description: 'AI-powered recall, vaccine reminders, and new-client campaigns for veterinary practices',
-    campaigns: [
-      { title: 'Vaccine & Wellness Recall', description: 'Bring pets in for due wellness and vaccinations',
-        command: 'Build a vaccine and wellness recall campaign for pets due in the next 60 days and queue for approval' },
-      { title: 'New Pet Owner Welcome', description: 'Onboard new clients with a friendly welcome series',
-        command: 'Build a new pet owner welcome series with first-exam scheduling and care tips, and queue for approval' },
-      { title: 'Dental Health Month', description: 'Promote dental cleanings during awareness months',
-        command: 'Build a dental month promo campaign with cleaning packages and educational content, and queue for approval' },
-    ],
-  },
-  medical_practice: {
-    tagline: 'Compassionate patient growth and retention',
-    description: 'AI-powered annual physical, new patient, and recall campaigns for private medical practices',
-    campaigns: [
-      { title: 'Annual Physical Reminder', description: 'Bring patients in for their yearly visit',
-        command: 'Build an annual physical reminder campaign for patients overdue for a wellness visit, and queue for approval' },
-      { title: 'New Patient Welcome', description: 'Welcome new patients with intake and scheduling',
-        command: 'Build a new patient welcome series with intake forms and first-visit scheduling, and queue for approval' },
-      { title: 'Referral Source Outreach', description: 'Stay top-of-mind with referring specialists',
-        command: 'Build a referral-source outreach campaign to specialists and partner clinics, and queue for approval' },
-    ],
-  },
 };
 
 const OVERRIDES: Record<string, Partial<MarketingPlaybook>> = {
