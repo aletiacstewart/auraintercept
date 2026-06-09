@@ -10,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_LIST } from '@/lib/industryTemplates';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
   EMPTY_CUSTOM_INDUSTRY,
@@ -1164,6 +1165,8 @@ export default function SignUp() {
                             {businessIndustry === 'other' && (
                               <CustomIndustryWizard value={customIndustry} onChange={setCustomIndustry} />
                             )}
+
+                            <MedicalComplianceNotice industryId={businessIndustry} className="mt-2" />
 
                             {/* Compliance documents upload (combined) */}
                             <div className="space-y-1">

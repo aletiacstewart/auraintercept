@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/seo/SEO';
 
@@ -94,6 +95,10 @@ export default function ForBusiness() {
           </Alert>
         </div>
       )}
+
+      <div className="container max-w-5xl mx-auto px-4 mt-4">
+        <MedicalComplianceNotice industryId={industry} />
+      </div>
 
       <main className="flex-1">
         <IndustryHero content={content} onStartDemo={() => setDemoOpen(true)} />
