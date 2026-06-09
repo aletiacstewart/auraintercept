@@ -118,48 +118,6 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       command: 'Find all outstanding patient statements, draft compassionate reminders, and show them for my approval',
     },
   ],
-
-  veterinary: [
-    {
-      id: 'recall-to-exam', label: 'Recall \u2192 Exam \u2192 Follow-Up',
-      description: 'Bring pets in for due wellness, vaccines, or follow-up exams',
-      icon: Phone, steps: ['Find Due Pets', 'Send Recall', 'Book Exam', 'Follow-Up'],
-      command: 'Find pets due for vaccines or wellness exams, send recall messages, and book the next available slot',
-    },
-    {
-      id: 'new-client-intake', label: 'New Client Intake',
-      description: 'Onboard a new pet owner, capture history, and schedule a first exam',
-      icon: Home, steps: ['Capture Info', 'Pet History', 'Schedule First Exam'],
-      command: 'Onboard a new pet owner: capture contact + pet info, request prior records, and book a first exam',
-    },
-    {
-      id: 'invoice-followup', label: 'Invoice Follow-Up',
-      description: 'Chase outstanding invoices with friendly reminders',
-      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
-      command: 'Find all outstanding invoices, draft friendly reminders, and show them for my approval',
-    },
-  ],
-
-  medical_practice: [
-    {
-      id: 'new-patient-intake', label: 'New Patient \u2192 Intake \u2192 Visit',
-      description: 'Convert a new patient inquiry into a verified, scheduled visit',
-      icon: Home, steps: ['Inquiry', 'Insurance Verification', 'Intake Form', 'Schedule Visit'],
-      command: 'Take my newest new-patient inquiry: verify insurance, send intake forms, and schedule the first visit',
-    },
-    {
-      id: 'annual-recall', label: 'Annual Physical Recall',
-      description: 'Bring patients in for their annual wellness visit',
-      icon: Phone, steps: ['Find Due', 'Send Recall', 'Book Visit'],
-      command: 'Find patients overdue for an annual physical, send a recall, and book the next available slot',
-    },
-    {
-      id: 'statement-followup', label: 'Patient Statement Follow-Up',
-      description: 'Chase outstanding patient balances after insurance adjudication',
-      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
-      command: 'Find all outstanding patient statements, draft compassionate reminders, and show them for my approval',
-    },
-  ],
 };
 
 /**
@@ -339,6 +297,48 @@ const INDUSTRY_WORKFLOWS: Partial<Record<string, WorkflowChain[]>> = {
       description: 'Capture catering and private-event leads from voice & chat',
       icon: MessageSquare, steps: ['Capture Lead', 'Send Catering Link', 'Follow-Up'],
       command: 'For new catering or private-event inquiries, capture the lead, send the catering Smart Link, and queue a follow-up',
+    },
+  ],
+
+  veterinary: [
+    {
+      id: 'recall-to-exam', label: 'Recall \u2192 Exam \u2192 Follow-Up',
+      description: 'Bring pets in for due wellness, vaccines, or follow-up exams',
+      icon: Phone, steps: ['Find Due Pets', 'Send Recall', 'Book Exam', 'Follow-Up'],
+      command: 'Find pets due for vaccines or wellness exams, send recall messages, and book the next available slot',
+    },
+    {
+      id: 'new-client-intake', label: 'New Client Intake',
+      description: 'Onboard a new pet owner, capture history, and schedule a first exam',
+      icon: Home, steps: ['Capture Info', 'Pet History', 'Schedule First Exam'],
+      command: 'Onboard a new pet owner: capture contact + pet info, request prior records, and book a first exam',
+    },
+    {
+      id: 'invoice-followup', label: 'Invoice Follow-Up',
+      description: 'Chase outstanding invoices with friendly reminders',
+      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
+      command: 'Find all outstanding invoices, draft friendly reminders, and show them for my approval',
+    },
+  ],
+
+  medical_practice: [
+    {
+      id: 'new-patient-intake', label: 'New Patient \u2192 Intake \u2192 Visit',
+      description: 'Convert a new patient inquiry into a verified, scheduled visit',
+      icon: Home, steps: ['Inquiry', 'Insurance Verification', 'Intake Form', 'Schedule Visit'],
+      command: 'Take my newest new-patient inquiry: verify insurance, send intake forms, and schedule the first visit',
+    },
+    {
+      id: 'annual-recall', label: 'Annual Physical Recall',
+      description: 'Bring patients in for their annual wellness visit',
+      icon: Phone, steps: ['Find Due', 'Send Recall', 'Book Visit'],
+      command: 'Find patients overdue for an annual physical, send a recall, and book the next available slot',
+    },
+    {
+      id: 'statement-followup', label: 'Patient Statement Follow-Up',
+      description: 'Chase outstanding patient balances after insurance adjudication',
+      icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
+      command: 'Find all outstanding patient statements, draft compassionate reminders, and show them for my approval',
     },
   ],
 };
