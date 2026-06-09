@@ -86,7 +86,7 @@ export function GoogleCalendarSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('google_calendar_connections')
-        .select('*')
+        .select('id, company_id, user_id, calendar_id, webhook_channel_id, webhook_resource_id, webhook_expiration, sync_enabled, last_sync_at, last_error, created_at, updated_at')
         .eq('company_id', companyId)
         .maybeSingle();
       if (error) throw error;
