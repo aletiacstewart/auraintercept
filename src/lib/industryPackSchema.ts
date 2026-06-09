@@ -101,7 +101,7 @@ export const promptDeltasSchema = z.record(z.string().min(1), z.string().max(800
 export const packEditableSchema = z.object({
   label: z.string().min(1).max(120),
   description: z.string().max(500).nullable().optional(),
-  cluster: z.enum(['trades', 'outdoor', 'repair', 'booking']),
+  cluster: z.enum(['trades', 'outdoor', 'repair', 'booking', 'home_health']),
   is_active: z.boolean(),
   job_templates: z.array(jobTemplateSchema),
   form_schemas: z.record(z.string().min(1), intakeFormSchemaSchema),

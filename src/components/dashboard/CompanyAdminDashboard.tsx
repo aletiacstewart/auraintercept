@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { useDashboardViewMode } from '@/hooks/useDashboardViewMode';
 import { DashboardViewToggle } from './DashboardViewToggle';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
 import { relabelKpi, getSimpleModeKpis, blueprintKpisToCanonical } from '@/lib/industryKpiLabels';
@@ -257,6 +258,7 @@ export function CompanyAdminDashboard() {
       <div className="space-y-8 animate-fade-in">
         {/* Trial Banner */}
         <TrialBanner />
+        <MedicalComplianceNotice industryId={pack?.industry_id} />
 
         {/* Header */}
         <PageHeader

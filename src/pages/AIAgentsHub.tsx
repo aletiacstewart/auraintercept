@@ -275,7 +275,8 @@ export default function AIAgentsHub() {
   }, [companyId, canManageAgents, loading, subscriptionTier, inTrial, userRole]);
 
   // Agents hidden from non-platform-admin roles
-  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign'];
+  // Use canonical operative IDs (legacy 'inventory'/'campaign' map to these via LEGACY_AGENT_MAP).
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['business_finance', 'outreach', 'inventory', 'campaign'];
   
   // No categories are hidden from company admins — Outreach & Sales is part of
   // the Aura Core operative set, so it must be visible to every paid customer.

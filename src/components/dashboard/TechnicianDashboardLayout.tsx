@@ -68,7 +68,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
     { icon: History, label: `${navLabels.jobNoun} History`, path: '/technician/history' },
     { icon: Clock, label: 'Availability', path: '/technician/availability' },
     { icon: User, label: 'Profile', path: '/technician/profile' },
-    { icon: Smartphone, label: 'Install Field Ops App', path: '/technician/install' },
+    { icon: Smartphone, label: serviceConfig.installAppLabel || 'Install App', path: '/technician/install' },
   ];
 
   const handleSignOut = async () => {
@@ -150,7 +150,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
-                      <p className="text-xs text-sidebar-foreground/60">Technician</p>
+                      <p className="text-xs text-sidebar-foreground/60">{serviceConfig.teamMemberNoun || 'Technician'}</p>
                     </div>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{user?.email}</p>
-                <p className="text-xs text-sidebar-foreground/60">Technician</p>
+                <p className="text-xs text-sidebar-foreground/60">{serviceConfig.teamMemberNoun || 'Technician'}</p>
               </div>
             </div>
           )}

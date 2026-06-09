@@ -177,6 +177,40 @@ const BY_INDUSTRY: Record<string, Partial<Record<EmptyStateSurface, EmptyState>>
       ctaLabel: 'Add a task', ctaRoute: '/dashboard/appointments?new=1',
     },
   },
+  veterinary: {
+    jobs: {
+      icon: Calendar, title: 'No exams scheduled',
+      body: 'Open your exam schedule so pet owners can book online.',
+      ctaLabel: 'Schedule an exam', ctaRoute: '/dashboard/appointments?new=1',
+    },
+    appointments: {
+      icon: Calendar, title: 'No exams booked',
+      body: 'Add availability so clients can reserve exam slots.',
+      ctaLabel: 'Add availability', ctaRoute: '/dashboard/appointments?new=1',
+    },
+    employees: {
+      icon: UserPlus, title: 'No veterinarians yet',
+      body: 'Invite your first veterinarian so you can assign exams.',
+      ctaLabel: 'Invite a veterinarian', ctaRoute: '/dashboard/employees?new=1',
+    },
+  },
+  medical_practice: {
+    jobs: {
+      icon: Calendar, title: 'No visits scheduled',
+      body: 'Open your visit schedule so patients can book online.',
+      ctaLabel: 'Schedule a visit', ctaRoute: '/dashboard/appointments?new=1',
+    },
+    appointments: {
+      icon: Calendar, title: 'No visits booked',
+      body: 'Add availability so patients can reserve visit slots.',
+      ctaLabel: 'Add availability', ctaRoute: '/dashboard/appointments?new=1',
+    },
+    employees: {
+      icon: UserPlus, title: 'No providers yet',
+      body: 'Invite your first provider so you can assign visits.',
+      ctaLabel: 'Invite a provider', ctaRoute: '/dashboard/employees?new=1',
+    },
+  },
 };
 
 export function getIndustryEmptyState(

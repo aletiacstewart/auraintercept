@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { getBusinessWorkflows } from '@/lib/industryWorkflows';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -44,6 +45,7 @@ export default function BusinessManagementConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="business_management">
           <div className="space-y-6">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Briefcase}
               title="Business Management Console"

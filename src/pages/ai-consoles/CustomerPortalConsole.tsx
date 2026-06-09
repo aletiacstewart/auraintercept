@@ -18,6 +18,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { getPortalCopy } from '@/lib/industryPortalCopy';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -56,6 +57,7 @@ export default function CustomerPortalConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="customer_portal">
           <div className="space-y-6">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             {/* Admin Preview Mode Banner */}
             {canManageSettings && (
               <Alert className="bg-amber-500/10 border-amber-500/30">

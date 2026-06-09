@@ -84,6 +84,11 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'home_health',
   'veterinary',
   'medical_practice',
+  'fitness',
+  'mobile_mechanic',
+  'salon',
+  'professional',
+  'saas_platform',
   'other',
 ]);
 

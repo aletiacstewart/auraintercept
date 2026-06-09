@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { getFieldOpsWorkflows } from '@/lib/industryFieldOpsWorkflows';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
@@ -57,6 +58,7 @@ export default function FieldOpsConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="field_operations">
           <div className="space-y-6 animate-fade-in">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={TitleIcon}
               title={title}

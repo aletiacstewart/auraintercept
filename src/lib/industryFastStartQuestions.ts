@@ -127,6 +127,41 @@ export const INDUSTRY_FAST_START_QUESTIONS: Record<string, FastStartQuestion[]> 
 
 };
 
+const HOMECARE_COMMON: FastStartQuestion[] = [
+  { key: 'service_radius', label: 'Service area / radius', placeholder: 'e.g. Greater Boston, 25 mi radius' },
+  { key: 'insurance_billing', label: 'Insurance / billing handled', placeholder: 'e.g. Medicare, BCBS, private pay' },
+  { key: 'intake_process', label: 'How do you intake new patients?', placeholder: 'e.g. referral form + 15-min phone screen' },
+];
+
+INDUSTRY_FAST_START_QUESTIONS.home_health = [
+  ...HOMECARE_COMMON,
+  { key: 'visit_types', label: 'Visit types offered', placeholder: 'e.g. RN, HHA, PT, OT, MSW' },
+];
+INDUSTRY_FAST_START_QUESTIONS.physical_therapy = [
+  ...HOMECARE_COMMON,
+  { key: 'specialties', label: 'PT specialties', placeholder: 'e.g. orthopedic, vestibular, pediatric' },
+];
+INDUSTRY_FAST_START_QUESTIONS.occupational_therapy = [
+  ...HOMECARE_COMMON,
+  { key: 'specialties', label: 'OT specialties', placeholder: 'e.g. hand therapy, pediatric, sensory integration' },
+];
+INDUSTRY_FAST_START_QUESTIONS.hospice = [
+  ...HOMECARE_COMMON,
+  { key: 'levels_of_care', label: 'Levels of care offered', placeholder: 'e.g. routine, respite, continuous, GIP' },
+];
+INDUSTRY_FAST_START_QUESTIONS.veterinary = [
+  { key: 'service_radius', label: 'Service area / city', placeholder: 'e.g. Austin TX' },
+  { key: 'species_treated', label: 'Species you treat', placeholder: 'e.g. dogs, cats, exotics, large animal' },
+  { key: 'after_hours', label: 'After-hours / emergency policy', placeholder: 'e.g. closed nights — refer to ER vet' },
+  { key: 'pricing_style', label: 'How do you quote services?', placeholder: 'e.g. estimate before treatment, deposit for surgery' },
+];
+INDUSTRY_FAST_START_QUESTIONS.medical_practice = [
+  { key: 'service_radius', label: 'Service area / locations', placeholder: 'e.g. single office, downtown' },
+  { key: 'specialties', label: 'Specialties / focus', placeholder: 'e.g. family medicine, pediatrics, internal medicine' },
+  { key: 'insurance_billing', label: 'Insurance accepted', placeholder: 'e.g. Aetna, BCBS, Cigna, Medicare; cash visits' },
+  { key: 'intake_process', label: 'New patient intake process', placeholder: 'e.g. online form + ID/insurance upload, 30-min initial visit' },
+];
+
 export const GENERIC_FAST_START_QUESTIONS: FastStartQuestion[] = [
   { key: 'service_summary', label: 'What services do you offer?', placeholder: 'e.g. brief 1-line description of your top services' },
   { key: 'service_radius', label: 'Service area', placeholder: 'e.g. metro area, ZIP codes, or "national online"' },

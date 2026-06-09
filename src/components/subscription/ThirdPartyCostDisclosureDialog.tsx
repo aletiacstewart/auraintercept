@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, ExternalLink, DollarSign, Zap, Mail, Phone, CreditCard, Search, Share2, Shield } from 'lucide-react';
+import { LAUNCH_PRICING, getOnboardingPrice, getTierPricing } from '@/lib/launchPricing';
 
 interface CostItem {
   id: string;
@@ -97,14 +98,19 @@ interface Props {
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
-  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial; first 30 days of the trial = onboarding window)
+  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial; first 30 days = onboarding window).
+  // Sourced from launchPricing.ts so Launch Pricing toggle stays in sync everywhere.
   const isElite = tierId === 'command' || /elite/i.test(tierName);
   const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
   const isBoost = !isElite && !isPro && (tierId === 'connect' || /boost/i.test(tierName));
-  // Onboarding fee = 50% of monthly price.
-  // Core $349 · Boost $549 · Pro $999 · Elite $1,749
-  const conciergeFee = isElite ? 1749 : isPro ? 999 : isBoost ? 549 : 349;
+  const resolvedTierKey: 'command' | 'performance' | 'connect' | 'starter' =
+    isElite ? 'command' : isPro ? 'performance' : isBoost ? 'connect' : 'starter';
+  const tierPricing = getTierPricing(resolvedTierKey);
+  const conciergeFee = getOnboardingPrice(resolvedTierKey);
+  const conciergeOriginal = tierPricing.onboardingOriginal;
   const conciergePriceLabel = `$${conciergeFee.toLocaleString()}`;
+  const conciergeOriginalLabel = `$${conciergeOriginal.toLocaleString()}`;
+  const showLaunchChip = LAUNCH_PRICING.active && conciergeFee < conciergeOriginal;
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);
 
@@ -203,7 +209,13 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
               <Label htmlFor="ack-concierge" className="flex items-center gap-2 cursor-pointer font-semibold text-sm">
                 <Zap className="h-4 w-4 text-primary" />
                 Concierge Onboarding — Optional Add-On
-                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">{conciergePriceLabel} flat fee</Badge>
+                <Badge className="text-[10px] px-1.5 py-0 bg-primary/20 text-primary border-primary/30">
+                  {showLaunchChip && (
+                    <span className="line-through opacity-60 mr-1">{conciergeOriginalLabel}</span>
+                  )}
+                  {conciergePriceLabel} flat fee
+                  {showLaunchChip && <span className="ml-1 opacity-80">· Launch</span>}
+                </Badge>
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
                 We create and configure each 3rd-party account (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) on your behalf using your login and credit card. You remain the account owner and billing contact at every provider. Includes onboarding call + AI knowledge base setup.
