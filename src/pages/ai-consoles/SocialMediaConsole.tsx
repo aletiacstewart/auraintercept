@@ -11,6 +11,7 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 
 export default function SocialMediaConsole() {
   const { userRole } = useAuth();
@@ -26,6 +27,7 @@ export default function SocialMediaConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="social_media">
           <div className="space-y-6">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Share2}
               title="Social Media Console"

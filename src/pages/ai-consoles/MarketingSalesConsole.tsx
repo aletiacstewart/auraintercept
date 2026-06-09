@@ -13,6 +13,7 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { getMarketingPlaybook } from '@/lib/industryMarketingPlaybooks';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
@@ -49,6 +50,7 @@ export default function MarketingSalesConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="marketing_sales">
           <div className="space-y-6">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Megaphone}
               title="Outreach & Sales Console"

@@ -11,6 +11,7 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 
 export default function AnalyticsConsole() {
   const { userRole } = useAuth();
@@ -26,6 +27,7 @@ export default function AnalyticsConsole() {
       <PageContainer>
         <FeatureGate requiredConsole="analytics_reports">
           <div className="space-y-6">
+            <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={BarChart3}
               title="Analytics & Reports Console"
