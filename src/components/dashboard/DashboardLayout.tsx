@@ -370,6 +370,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           if (item.href === '/dashboard/appointments' && item.roles.includes('company_admin')) {
             return { ...item, label: scheduleLabel };
           }
+          // Industry-aware employee labels (My Jobs / Job History / Install App).
+          if (item.href === '/technician/jobs') {
+            return { ...item, label: `My ${navLabels.jobNounPlural || 'Jobs'}` };
+          }
+          if (item.href === '/technician/history') {
+            return { ...item, label: `${navLabels.jobNoun || 'Job'} History` };
+          }
+          if (item.href === '/technician/install') {
+            return { ...item, label: serviceConfig.installAppLabel || 'Install App' };
+          }
           return item;
         })
         .filter(item => {
@@ -378,6 +388,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           item.href === '/dashboard/ai-consoles/field-ops' ||
           item.href === '/dashboard/dispatch-field-ops'
         )) {
+          return false;
+        }
+        // Hide Specialist Operatives when the industry pack has no extras.
+        if (
+          !isPlatformAdmin &&
+          item.href === '/dashboard/ai-consoles/specialists' &&
+          (industryPack?.extra_operatives?.length ?? 0) === 0
+        ) {
           return false;
         }
         // Restaurants do not use the in-app reservation system — Aura only
