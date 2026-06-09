@@ -1400,10 +1400,10 @@ const TermsAcknowledgementPage = () => {
       </Text>
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
       {[
-        { id: 'core',  label: 'Aura Core  — $249/mo  ·  $249 one-time onboarding' },
-        { id: 'boost', label: 'Aura Boost — $449/mo  ·  $449 one-time onboarding' },
-        { id: 'pro',   label: 'Aura Pro   — $899/mo ·  $899 one-time onboarding' },
-        { id: 'elite', label: 'Aura Elite — $1,549/mo ·  $1,549 one-time onboarding' },
+        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $249 one-time onboarding (Launch Pricing, was $697/$349)' },
+        { id: 'boost', label: 'Aura Boost — $897/mo  ·  $449 one-time onboarding (Launch Pricing, was $1,097/$549)' },
+        { id: 'pro',   label: 'Aura Pro   — $1,797/mo ·  $899 one-time onboarding (Launch Pricing, was $1,997/$999)' },
+        { id: 'elite', label: 'Aura Elite — $3,097/mo ·  $1,549 one-time onboarding (Launch Pricing, was $3,497/$1,749)' },
       ].map((p) => (
         <View key={p.id} style={styles.optionRow}>
           <View style={styles.checkbox} />
@@ -1411,7 +1411,7 @@ const TermsAcknowledgementPage = () => {
         </View>
       ))}
       <Text style={[styles.formNote, { marginLeft: 20, marginTop: 4 }]}>
-        {sanitizePdfText('Billing cycle (check one): [ ] Monthly   [ ] Annual (save ~20%)')}
+        {sanitizePdfText('Billing cycle (check one): [ ] Monthly   [ ] Annual (save ~17%)')}
       </Text>
       <View style={[styles.formRow, { marginTop: 8 }]}>
         <Text style={[styles.formLabel, { width: 180 }]}>{sanitizePdfText('Invoice email for onboarding fee:')}</Text>

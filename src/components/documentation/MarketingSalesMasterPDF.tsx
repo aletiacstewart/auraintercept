@@ -506,7 +506,7 @@ const DISCOVERY_QUESTIONS = [
 ];
 
 const ELEVATOR_PITCH =
-  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $249/mo. Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days.';
+  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $497/mo (Launch Pricing, was $697). Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days, then 30 days of full live use.';
 
 const DEMO_FLOW = [
   '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
@@ -549,7 +549,7 @@ const SMS_TEMPLATES = [
 const TALKING_POINTS = [
   { q: '"Why not just hire a receptionist?"', a: 'A receptionist works ~40 hrs/week; AI Receptionist works 168 — across voice, SMS, email, and chat — and never misses a call. Concierge Onboarding sets it up for you in the first 30 days.' },
   { q: '"What about my existing tools?"', a: 'Aura plugs into Google Calendar, Stripe, your social accounts, and your phone provider. We replace the glue — not the tools you already love.' },
-  { q: '"How fast can we go live?"', a: '30-day concierge onboarding configures voice, SMS, KB, agents, calendars, and integrations. The next 60 days are full live operation under the trial.' },
+  { q: '"How fast can we go live?"', a: '30-day concierge onboarding configures voice, SMS, KB, agents, calendars, and integrations. The next 30 days are full live operation under the trial.' },
   { q: '"Is my data safe?"', a: 'RLS-protected database, security-definer RPCs for any public read, encrypted secrets, scoped third-party tokens. We never resell or pool customer data.' },
   { q: '"What if I outgrow my tier?"', a: 'Upgrade in one click. Operatives, consoles, and employee caps adjust live — no data migration.' },
 ];
@@ -621,7 +621,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
         <Text style={s.p}>
           60-Day Live Trial · The first 30 days are dedicated concierge onboarding
           (account config, agent tuning, KB, 3rd-party activation, training). The
-          remaining 60 days are full live operation. Onboarding fee is due at trial start.
+          remaining 30 days are full live operation. Onboarding fee is due at trial start.
         </Text>
       </View>
       <AutoFooter />

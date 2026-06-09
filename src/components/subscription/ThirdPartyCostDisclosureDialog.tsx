@@ -97,14 +97,19 @@ interface Props {
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
-  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial; first 30 days of the trial = onboarding window)
+  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial; first 30 days = onboarding window).
+  // Sourced from launchPricing.ts so Launch Pricing toggle stays in sync everywhere.
   const isElite = tierId === 'command' || /elite/i.test(tierName);
   const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
   const isBoost = !isElite && !isPro && (tierId === 'connect' || /boost/i.test(tierName));
-  // Onboarding fee = 50% of monthly price.
-  // Core $349 · Boost $549 · Pro $999 · Elite $1,749
-  const conciergeFee = isElite ? 1749 : isPro ? 999 : isBoost ? 549 : 349;
+  const resolvedTierKey: 'command' | 'performance' | 'connect' | 'starter' =
+    isElite ? 'command' : isPro ? 'performance' : isBoost ? 'connect' : 'starter';
+  const tierPricing = getTierPricing(resolvedTierKey);
+  const conciergeFee = getOnboardingPrice(resolvedTierKey);
+  const conciergeOriginal = tierPricing.onboardingOriginal;
   const conciergePriceLabel = `$${conciergeFee.toLocaleString()}`;
+  const conciergeOriginalLabel = `$${conciergeOriginal.toLocaleString()}`;
+  const showLaunchChip = LAUNCH_PRICING.active && conciergeFee < conciergeOriginal;
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const [wantsConcierge, setWantsConcierge] = useState(false);
 
