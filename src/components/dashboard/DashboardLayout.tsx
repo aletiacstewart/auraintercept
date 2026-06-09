@@ -372,10 +372,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           }
           // Industry-aware employee labels (My Jobs / Job History / Install App).
           if (item.href === '/technician/jobs') {
-            return { ...item, label: `My ${navLabels.jobNounPlural || 'Jobs'}` };
+            return { ...item, label: `My ${serviceConfig.jobNounPlural || 'Jobs'}` };
           }
           if (item.href === '/technician/history') {
-            return { ...item, label: `${navLabels.jobNoun || 'Job'} History` };
+            return { ...item, label: `${serviceConfig.jobNoun || 'Job'} History` };
           }
           if (item.href === '/technician/install') {
             return { ...item, label: serviceConfig.installAppLabel || 'Install App' };

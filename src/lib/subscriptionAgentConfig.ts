@@ -39,12 +39,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: [
       'customer_portal', 'marketing_sales', 'creative_web_presence',
-      'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
+      'social_media', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Core',
     price: '$497/mo',
     originalPrice: '$697/mo',
-    description: 'Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence included',
+    description: 'Voice, SMS, email & web chat handled by 5 AI operatives — booking, follow-up, creative content & web presence included',
   },
   connect: {
     // Aura Boost ($1,097/mo · $549 onboarding): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
@@ -64,7 +64,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Boost',
     price: '$897/mo',
     originalPrice: '$1,097/mo',
-    description: 'Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations',
+    description: 'Voice, SMS, email & web chat + 7 AI operatives with dispatch, routing & field operations',
   },
   performance: {
     // Aura Pro ($1,997/mo · $999 onboarding): Boost + Business Finance + Analytics + Admin + Business Management Console.
@@ -89,7 +89,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Pro',
     price: '$1,797/mo',
     originalPrice: '$1,997/mo',
-    description: '16 Smart AI Agents with social media and campaigns (industry specialists included on every plan)',
+    description: '10 AI operatives with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
     // Aura Elite ($3,497/mo · $1,749 onboarding): All 10 consolidated operatives + industry specialists,
