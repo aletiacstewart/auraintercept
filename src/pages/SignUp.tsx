@@ -1166,6 +1166,8 @@ export default function SignUp() {
                               <CustomIndustryWizard value={customIndustry} onChange={setCustomIndustry} />
                             )}
 
+                            <MedicalComplianceNotice industryId={businessIndustry} className="mt-2" />
+
                             {/* Compliance documents upload (combined) */}
                             <div className="space-y-1">
                               <Label className="text-xs">
