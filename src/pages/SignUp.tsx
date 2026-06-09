@@ -10,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_LIST } from '@/lib/industryTemplates';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
   EMPTY_CUSTOM_INDUSTRY,
