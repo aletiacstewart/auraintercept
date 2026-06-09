@@ -91,6 +91,18 @@ const BY_INDUSTRY: Record<string, Partial<AuraFraming>> = {
     emptyJobs: 'No open tasks.',
     appointmentsHeader: 'Scheduled Time Blocks',
   },
+  veterinary: {
+    jobsHeader: 'Today\u2019s Exams',
+    emptyJobs: 'No exams scheduled today.',
+    appointmentsHeader: 'Upcoming Exams',
+    emptyAppointments: 'No upcoming exams.',
+  },
+  medical_practice: {
+    jobsHeader: 'Today\u2019s Visits',
+    emptyJobs: 'No patient visits scheduled today.',
+    appointmentsHeader: 'Upcoming Visits',
+    emptyAppointments: 'No upcoming patient visits.',
+  },
 };
 
 export function getAuraFraming(pack: IndustryPack): AuraFraming {

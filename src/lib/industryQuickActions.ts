@@ -180,6 +180,42 @@ const INDUSTRY_QUICK_ACTIONS: Record<string, QuickAction[]> = {
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
       route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
   ],
+
+  veterinary: [
+    { key: 'scheduleExam', icon: CalendarPlus, label: 'Schedule a pet exam',
+      description: 'Opens the exam scheduler pre-filled for the next available slot.',
+      route: '/dashboard/appointments?new=1' },
+    { key: 'newReferrals', icon: Phone, label: 'Follow up with new pet owners',
+      description: 'Shows new client requests from the last 24h and drafts replies.',
+      route: '/dashboard/leads' },
+    { key: 'todaysSchedule', icon: Map, label: "Open today's exam schedule",
+      description: 'Shows today\u2019s exams across the team.',
+      route: '/dashboard/appointments' },
+    { key: 'overdueStatements', icon: FileText, label: 'Chase overdue invoices',
+      description: 'Jumps to invoices filtered to overdue.',
+      route: '/dashboard/invoices?status=overdue' },
+    { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
+      description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
+      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+  ],
+
+  medical_practice: [
+    { key: 'scheduleVisit', icon: CalendarPlus, label: 'Schedule a patient visit',
+      description: 'Opens the visit scheduler pre-filled for the next available slot.',
+      route: '/dashboard/appointments?new=1' },
+    { key: 'newReferrals', icon: Phone, label: 'Follow up with new patients',
+      description: 'Shows new patient inquiries from the last 24h and drafts replies.',
+      route: '/dashboard/leads' },
+    { key: 'todaysSchedule', icon: Map, label: "Open today's visit schedule",
+      description: 'Shows today\u2019s patient visits across the practice.',
+      route: '/dashboard/appointments' },
+    { key: 'overdueStatements', icon: FileText, label: 'Chase overdue statements',
+      description: 'Jumps to patient statements filtered to overdue.',
+      route: '/dashboard/invoices?status=overdue' },
+    { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
+      description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
+      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+  ],
 };
 
 /** Resolve the 6 quick actions for a given industry pack. */
