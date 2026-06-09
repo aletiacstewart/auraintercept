@@ -9,11 +9,24 @@
  * To re-enable: empty the set below, regen sitemap, reseed demos.
  */
 export const HIPAA_GATED_INDUSTRIES = new Set<string>([
+  // Medical verticals are now visible platform-wide. They surface a
+  // "HIPAA + BAA compliance in progress" notice via
+  // <MedicalComplianceNotice /> until full medical AI receptionist +
+  // scheduling ships. Re-add an id here to fully hide a vertical again.
+]);
+
+// Verticals that still require the HIPAA/BAA "coming soon" disclosure.
+export const MEDICAL_COMPLIANCE_PENDING_INDUSTRIES = new Set<string>([
   'home_health',
   'physical_therapy',
   'occupational_therapy',
   'hospice',
 ]);
+
+export function isMedicalCompliancePending(id: string | null | undefined): boolean {
+  if (!id) return false;
+  return MEDICAL_COMPLIANCE_PENDING_INDUSTRIES.has(id);
+}
 
 export function isIndustryVisible(id: string | null | undefined): boolean {
   if (!id) return true;
