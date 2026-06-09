@@ -178,6 +178,8 @@ const INDUSTRY_OVERRIDES: Record<string, IndustryNavLabels> = {
   landscape:        { techView: 'Crew View',       dispatchView: 'Route View',     teamMemberNoun: 'Crew Member',jobNoun: 'Visit' },
   pool_spa:         { techView: 'Tech View',       dispatchView: 'Route View',     teamMemberNoun: 'Pool Tech',  jobNoun: 'Service Visit' },
   pest_control:     { techView: 'Tech View',       dispatchView: 'Route View',     teamMemberNoun: 'Pest Tech',  jobNoun: 'Treatment Visit' },
+  veterinary:       { techView: 'Vet View',        dispatchView: 'Exam Schedule',  teamMemberNoun: 'Veterinarian', jobNoun: 'Exam' },
+  medical_practice: { techView: 'Provider View',   dispatchView: 'Visit Schedule', teamMemberNoun: 'Provider',     jobNoun: 'Visit' },
 };
 
 export function getNavLabels(pack: IndustryPack): IndustryNavLabels {

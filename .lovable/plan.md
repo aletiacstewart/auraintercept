@@ -1,33 +1,63 @@
 ## Goal
-Re-enable the four medical verticals currently hidden by the HIPAA gate (home_health, physical_therapy, occupational_therapy, hospice) across the entire platform, and surface a clear note that HIPAA + BAA compliance is in progress with medical AI receptionist & scheduling coming soon.
+Add two new canonical industries — `veterinary` and `medical_practice` — that mirror the `home_health` console experience but **without** field dispatch or GPS routing (booking-cluster behavior). Both surface the existing HIPAA/BAA "coming soon" notice.
 
 ## Changes
 
-### 1. Unhide the medical industries
-`src/lib/industryVisibility.ts` — empty the `HIPAA_GATED_INDUSTRIES` set so:
-- `isIndustryVisible()` returns true for all industries
-- `INDUSTRY_LIST` in `industryTemplates.ts` and `industryMarketingContent.ts` automatically include the 4 medical verticals
-- Industry dropdown picker, marketing industry selector, signup, audit, demo seeder, and sitemap all show them again
+### 1. Canonical IDs
+`src/lib/industryIdAliases.ts` + `supabase/functions/_shared/industry-aliases.ts` (kept in sync):
+- Add `veterinary` and `medical_practice` to `CANONICAL_INDUSTRY_IDS`.
+- Add aliases: `vet`, `vets`, `animal_hospital` → `veterinary`; `medical_office`, `doctor`, `clinic`, `physician`, `private_practice` → `medical_practice`.
 
-No other code changes needed — the gate is centralized.
+### 2. Visibility + compliance notice
+`src/lib/industryVisibility.ts`:
+- Add both IDs to `MEDICAL_COMPLIANCE_PENDING_INDUSTRIES` so `<MedicalComplianceNotice />` renders for them.
+- Leave `HIPAA_GATED_INDUSTRIES` empty (visible platform-wide).
 
-### 2. Add the "HIPAA/BAA coming soon" note
-Add a new shared component `src/components/marketing/MedicalComplianceNotice.tsx`:
-- Small Alert/Callout (shield icon, primary accent border)
-- Copy: "Medical & healthcare verticals — We're actively completing HIPAA compliance and BAA agreements. Medical AI receptionists and patient scheduling will be available soon. Contact us to join the early-access list."
-- "Contact us" links to `/contact`
+### 3. Booking-cluster capability gating (no dispatch / GPS)
+`src/lib/industryCapabilities.ts`:
+- `hasFieldTechnicians()` → add `veterinary`, `medical_practice` to NO_TECH set.
+- `usesQuotes()` → add both to NO_QUOTES.
+- `usesInventory()` → add both to NO_INVENTORY (no parts stock).
+- Leave leads + appointments enabled (they take bookings + new patient inquiries).
 
-Render it conditionally (only when the selected industry is one of the 4 medical IDs) on:
-- `src/pages/ForBusiness.tsx` (industry marketing page) — under the industry hero
-- `src/components/marketing/IndustryDropdownPicker.tsx` — a small inline hint under the trigger when a medical industry is picked (optional sibling render handled by parent)
-- Signup industry-pick step (whichever component renders the industry picker during signup)
+This automatically:
+- Hides "Assign Technician" field (per `assign-technician-visibility` memory)
+- Routes Field Operations console to the appointment-board variant (not dispatch/GPS)
+- Hides Smart Dispatch / Re-optimize Routes workflows
 
-I'll confirm the exact signup file path while implementing; the notice component is reusable so it can drop in wherever the medical IDs appear.
+### 4. Marketing surfaces
+`src/lib/industryMarketingContent.ts` + `src/lib/industryTemplates.ts`:
+- Add cards/dropdown entries for both verticals in the Healthcare group (alongside the other 4 medical IDs).
+- Emoji: 🐾 veterinary, 🩺 medical_practice. Short tagline + bullet list mirroring `home_health` tone but patient/pet-focused.
 
-### 3. Memory update
-Update `mem://architecture/...` (the existing HIPAA-gated memory note) to reflect that medical verticals are now visible with a compliance-in-progress notice, rather than hidden.
+### 5. Industry template packs (DB)
+New migration that inserts two rows into `industry_template_packs` cloned from `home_health`, with:
+- `cluster = 'booking'` (instead of trades/repair)
+- `operating_model = 'appointment_booking'`
+- Terminology overrides: vet → "patient/pet owner", "appointment", "exam"; medical_practice → "patient", "appointment", "visit"
+- `quote_template` / `invoice_template` adjusted (visit/exam line items, no parts)
+- KPI + nav labels reuse healthcare wording
+
+### 6. Industry pack supporting libs (one-line additions where they key off industry_id)
+Touch only the maps that already list `home_health` so the new IDs inherit sensible defaults — no new content authoring required for v1:
+- `industryEmptyStates.ts`, `industryQuickActions.ts`, `industryFastStartQuestions.ts`, `industryHelpContent.ts`, `industryNavLabels.ts`, `industryKpiLabels.ts`, `industryAnalyticsPresets.ts`, `industryPortalCopy.ts`, `industryVoiceGreetings.ts`, `industryAuraSuggestions.ts`, `industryRolePreview.ts`.
+- Each entry reuses or lightly adapts the `home_health` block. Vet copy says "pets/patients"; medical practice says "patients".
+
+### 7. Demo seeder + sitemap
+- `src/pages/DemoAccountSeeder.tsx` / seeder script: add 3 demo accounts each (admin / employee / customer), password `aidemo*!`, per existing registry pattern. Tier: Boost (matches other healthcare demos).
+- Sitemap regenerates automatically on next build via `scripts/generate-sitemap.ts`.
+
+### 8. Memory updates
+- Update `mem://architecture/industry-id-canonical-standard` — bump industry count to 20 and list both new IDs.
+- Update `mem://features/forms/assign-technician-visibility` — add both IDs to the no-dispatch list.
+- Update `mem://platform-operations/demo-account-registry` — bump count, add 6 new accounts (2 industries × 3 roles).
 
 ## Out of scope
-- No backend/RLS changes
-- No new industry packs or operative changes
-- Sitemap regen happens automatically on next build via existing script
+- Real HIPAA/BAA paperwork — the existing `MedicalComplianceNotice` continues to flag "coming soon".
+- New AI operatives or edge functions — both industries reuse the existing booking/receptionist agents.
+- Custom industry icons beyond emoji.
+
+## Technical notes
+- `hasFieldTechnicians()` returning false is what flips Field Operations from dispatch/GPS to the appointment-board view (see `src/pages/FieldOperations.tsx`), so we get the "same console minus dispatch/GPS" behavior for free.
+- All IDs flow through `toCanonicalIndustryId()` per the canonical-naming standard, so no drift.
+- Booking-cluster classification also hides Smart Dispatch workflow buttons and the "Assign Technician" field automatically.

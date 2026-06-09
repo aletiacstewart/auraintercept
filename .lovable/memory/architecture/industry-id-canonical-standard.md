@@ -5,10 +5,19 @@ type: feature
 ---
 The single source of truth for industry IDs is `industry_template_packs.industry_id`.
 
-## Canonical IDs (18)
+## Canonical IDs (24)
 hvac, plumbing, electrical, roofing, solar, landscape, pool_spa, pest_control,
 appliance_repair, handyman, construction, auto_care, security_systems,
-real_estate, beauty_wellness, restaurants, personal_assistant, fencing.
+real_estate, beauty_wellness, restaurants, personal_assistant, fencing,
+home_health, physical_therapy, occupational_therapy, hospice,
+veterinary, medical_practice.
+
+Healthcare verticals (home_health, physical_therapy, occupational_therapy,
+hospice, veterinary, medical_practice) surface the HIPAA/BAA "coming soon"
+notice via `<MedicalComplianceNotice />`. `veterinary` and `medical_practice`
+share `home_health` cluster + console layout but are listed in NO_TECH /
+NO_INVENTORY / NO_QUOTES (industryCapabilities.ts) so dispatch + GPS UI are
+hidden — patients/pets come to the clinic.
 
 ## Rule
 Every write to `companies.industry_vertical` MUST go through

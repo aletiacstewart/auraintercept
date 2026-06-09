@@ -38,6 +38,8 @@ export const INDUSTRY_ROI_DEFAULTS: Record<string, IndustryRoiDefaults> = {
   physical_therapy: { technicians: 5, avgJobValue: 145, callsPerDay: 20, technicianLabel: '# of therapists', jobLabel: 'Avg visit value ($)' },
   occupational_therapy: { technicians: 5, avgJobValue: 150, callsPerDay: 18, technicianLabel: '# of therapists', jobLabel: 'Avg visit value ($)' },
   hospice: { technicians: 8, avgJobValue: 195, callsPerDay: 14, technicianLabel: '# of caregivers', jobLabel: 'Avg visit value ($)' },
+  veterinary: { technicians: 4, avgJobValue: 185, callsPerDay: 22, technicianLabel: '# of veterinarians', jobLabel: 'Avg visit value ($)' },
+  medical_practice: { technicians: 4, avgJobValue: 210, callsPerDay: 28, technicianLabel: '# of providers', jobLabel: 'Avg visit value ($)' },
   other: DEFAULT,
 };
 

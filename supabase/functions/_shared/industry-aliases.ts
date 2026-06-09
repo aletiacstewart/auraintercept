@@ -25,6 +25,20 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   home_care: 'home_health',
   homecare: 'home_health',
   home_health_care: 'home_health',
+  vet: 'veterinary',
+  vets: 'veterinary',
+  veterinarian: 'veterinary',
+  veterinarians: 'veterinary',
+  animal_hospital: 'veterinary',
+  medical_office: 'medical_practice',
+  medical_offices: 'medical_practice',
+  doctor: 'medical_practice',
+  doctors_office: 'medical_practice',
+  clinic: 'medical_practice',
+  physician: 'medical_practice',
+  physicians: 'medical_practice',
+  private_practice: 'medical_practice',
+  private_medical_practice: 'medical_practice',
 };
 
 export const CANONICAL_INDUSTRY_IDS = new Set<string>([
@@ -33,6 +47,7 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'auto_care', 'security_systems', 'real_estate', 'beauty_wellness',
   'restaurants', 'personal_assistant', 'fencing',
   'physical_therapy', 'occupational_therapy', 'hospice', 'home_health',
+  'veterinary', 'medical_practice',
 ]);
 
 /**

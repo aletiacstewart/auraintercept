@@ -43,6 +43,8 @@ const INDUSTRY_TO_BUCKET: Record<string, Bucket> = {
   physical_therapy: 'healthcare',
   occupational_therapy: 'healthcare',
   hospice: 'healthcare',
+  veterinary: 'healthcare',
+  medical_practice: 'healthcare',
 
   other: 'other',
 };

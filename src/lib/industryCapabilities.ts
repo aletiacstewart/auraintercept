@@ -19,6 +19,8 @@ export function hasFieldTechnicians(pack: IndustryPack | null | undefined): bool
   const NO_TECH = new Set([
     'restaurants', 'real_estate', 'beauty_wellness', 'salon', 'fitness',
     'professional', 'personal_assistant',
+    // Medical verticals that serve patients on-site (no field dispatch / GPS).
+    'veterinary', 'medical_practice',
   ]);
   if (NO_TECH.has(pack.industry_id)) return false;
   return true;
@@ -29,6 +31,7 @@ export function hasFieldTechnicians(pack: IndustryPack | null | undefined): bool
 const NO_QUOTES = new Set([
   'restaurants', 'real_estate', 'beauty_wellness', 'salon', 'fitness',
   'home_health', 'personal_assistant',
+  'veterinary', 'medical_practice',
 ]);
 export function usesQuotes(pack: IndustryPack | null | undefined): boolean {
   if (!pack) return true;
@@ -47,6 +50,7 @@ export function usesLeads(pack: IndustryPack | null | undefined): boolean {
 const NO_INVENTORY = new Set([
   'restaurants', 'real_estate', 'beauty_wellness', 'salon', 'fitness',
   'professional', 'personal_assistant',
+  'veterinary', 'medical_practice',
 ]);
 export function usesInventory(pack: IndustryPack | null | undefined): boolean {
   if (!pack) return true;

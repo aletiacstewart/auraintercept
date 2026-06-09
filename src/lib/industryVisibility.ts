@@ -21,6 +21,8 @@ export const MEDICAL_COMPLIANCE_PENDING_INDUSTRIES = new Set<string>([
   'physical_therapy',
   'occupational_therapy',
   'hospice',
+  'veterinary',
+  'medical_practice',
 ]);
 
 export function isMedicalCompliancePending(id: string | null | undefined): boolean {
