@@ -2405,7 +2405,6 @@ export type Database = {
           expires_at: string
           id: string
           industry: string
-          password: string | null
           prospect_email: string
           prospect_name: string
           prospect_phone: string | null
@@ -2426,7 +2425,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry: string
-          password?: string | null
           prospect_email: string
           prospect_name: string
           prospect_phone?: string | null
@@ -2447,7 +2445,6 @@ export type Database = {
           expires_at?: string
           id?: string
           industry?: string
-          password?: string | null
           prospect_email?: string
           prospect_name?: string
           prospect_phone?: string | null
@@ -7166,6 +7163,10 @@ export type Database = {
           usage_percentage: number
         }[]
       }
+      company_has_stripe_connection: {
+        Args: { _company_id: string }
+        Returns: boolean
+      }
       customer_has_company_access: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
@@ -7235,6 +7236,10 @@ export type Database = {
           status: string
           updated_at: string
         }[]
+      }
+      get_company_calendar_feed_token: {
+        Args: { _company_id: string }
+        Returns: string
       }
       get_company_feature_flags: {
         Args: { p_company_id: string }
@@ -7648,6 +7653,10 @@ export type Database = {
       }
       regenerate_customer_token: {
         Args: { p_appointment_id: string }
+        Returns: string
+      }
+      rotate_company_calendar_feed_token: {
+        Args: { _company_id: string }
         Returns: string
       }
       search_intake_data: {
