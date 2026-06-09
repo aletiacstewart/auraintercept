@@ -36,6 +36,22 @@ export const INDUSTRY_ID_ALIASES: Record<string, string> = {
   home_care: 'home_health',
   homecare: 'home_health',
   home_health_care: 'home_health',
+  // veterinary aliases
+  vet: 'veterinary',
+  vets: 'veterinary',
+  veterinarian: 'veterinary',
+  veterinarians: 'veterinary',
+  animal_hospital: 'veterinary',
+  // private medical practice aliases
+  medical_office: 'medical_practice',
+  medical_offices: 'medical_practice',
+  doctor: 'medical_practice',
+  doctors_office: 'medical_practice',
+  clinic: 'medical_practice',
+  physician: 'medical_practice',
+  physicians: 'medical_practice',
+  private_practice: 'medical_practice',
+  private_medical_practice: 'medical_practice',
 };
 
 /**
@@ -66,6 +82,8 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
   'occupational_therapy',
   'hospice',
   'home_health',
+  'veterinary',
+  'medical_practice',
   'other',
 ]);
 
