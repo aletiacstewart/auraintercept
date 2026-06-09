@@ -635,6 +635,55 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
       ],
     },
   },
+  veterinary: {
+    id: 'veterinary',
+    label: 'Veterinary',
+    icon: '🐾',
+    color: '#14B8A6',
+    templates: {
+      instagram: [
+        "🐶 Wellness exams keep tails wagging. Book your pet's annual today!",
+        "🐱 Dental month is here — 10% off cleanings all month.",
+      ],
+      facebook: [
+        "Sick pet? We answer 24/7 and triage urgent visits same-day. Book online or text us.",
+        "Vaccines, microchipping, dental — full wellness in one visit. Most insurance accepted.",
+      ],
+      linkedin: [
+        "Full-service small-animal veterinary practice. Wellness, surgery, dentistry, and urgent care.",
+      ],
+      tiktok: [
+        "POV: it's your pet's first vet visit 🐾",
+      ],
+      sms: [
+        "Hi {name}, {pet}'s exam is scheduled for {date} at {time}. Reply YES to confirm.",
+        "Reminder: {pet} is due for vaccines. Reply BOOK to schedule.",
+      ],
+    },
+  },
+  medical_practice: {
+    id: 'medical_practice',
+    label: 'Private Medical Practice',
+    icon: '🩺',
+    color: '#0EA5E9',
+    templates: {
+      instagram: [
+        "🩺 Same-week appointments available. Most insurance accepted.",
+        "💉 Flu season is here — book your shot in 30 seconds.",
+      ],
+      facebook: [
+        "Welcoming new patients! Annual physicals, sick visits, and telehealth — all online booking.",
+      ],
+      linkedin: [
+        "Independent primary care practice partnering with referring specialists and payers for continuity of care.",
+      ],
+      tiktok: [],
+      sms: [
+        "Hi {name}, your visit is scheduled for {date} at {time}. Reply YES to confirm.",
+        "Reminder: please arrive 10 minutes early with your insurance card.",
+      ],
+    },
+  },
 };
 
 import { filterVisibleIndustries, isIndustryVisible } from './industryVisibility';
