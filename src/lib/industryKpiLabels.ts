@@ -39,6 +39,8 @@ const OVERRIDES: Record<string, KpiLabelMap> = {
   beauty_wellness: { Appointments: 'Chair Bookings', Customers: 'Clients', Employees: 'Stylists' },
   restaurants: { Appointments: 'Reservations', Customers: 'Guests', Employees: 'Staff', Inventory: 'Stock On Hand' },
   personal_assistant: { Appointments: 'Sessions', Customers: 'Clients', Employees: 'Assistants' },
+  veterinary:       { Appointments: 'Exams Scheduled', Customers: 'Patients', Employees: 'Veterinarians' },
+  medical_practice: { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Providers' },
 };
 
 export function getKpiLabelMap(pack: IndustryPack): KpiLabelMap {
