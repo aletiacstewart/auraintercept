@@ -374,7 +374,6 @@ Deno.serve(async (req) => {
       admin_email: adminEmail,
       employee_email: employeeEmail,
       customer_email: customerEmail,
-      password: PASSWORD,
       sms_opt_in: !!sms_opt_in,
       email_opt_in: !!email_opt_in,
       expires_at: expiresAt,

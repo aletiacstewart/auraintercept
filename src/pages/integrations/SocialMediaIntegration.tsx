@@ -125,7 +125,7 @@ export default function SocialMediaIntegration() {
       if (!companyId) return [];
       const { data, error } = await supabase
         .from('social_accounts')
-        .select('*')
+        .select('id, company_id, platform, platform_account_id, platform_account_name, platform_page_id, connected_by, connected_at, last_used_at, last_error, is_active, permissions_granted, created_at, updated_at')
         .eq('company_id', companyId)
         .eq('is_active', true);
       if (error) throw error;
