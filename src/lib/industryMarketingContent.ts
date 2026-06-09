@@ -452,6 +452,40 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     { source: 'referral', intent: 'booking', serviceInterest: 'RN Case Manager Visit', priority: 'hot', score: 95 },
     HOUSTON, { primary: '#6366F1', secondary: '#A5B4FC' },
   ),
+  veterinary: make(
+    'veterinary', 'Veterinary', '🐾', 'Healthcare',
+    {
+      headline: 'Every pet parent answered. Every exam on the books.',
+      subheadline: 'Aura answers calls and texts 24/7, books wellness visits and sick exams, and sends reminders so the schedule stays full.',
+    },
+    [
+      { title: 'Never miss a sick-pet call', description: 'Aura answers after-hours and overflow calls, triages urgency, and books or escalates instantly.' },
+      { title: 'Vaccine + wellness reminders', description: 'Automatic SMS reminders for annual exams, vaccines, dentals, and refill pickups — no spreadsheet.' },
+      { title: 'Fill cancellations fast', description: 'When a slot opens, Aura offers it to waitlisted patients by text within minutes.' },
+    ],
+    ['My dog is limping and I want to bring her in today.', 'Bella is due for her annual — what do you have this week?', 'Can I refill Max\'s heartworm prevention?'],
+    ['Wellness Exam', 'Sick Visit', 'Vaccinations', 'Dental Cleaning', 'Prescription Refill'],
+    { service: 'Wellness Exam', whenOffsetHours: 26, notes: 'Annual exam — Bella (Lab, 4y). Vaccines due: DHPP, Rabies.' },
+    { source: 'voice', intent: 'booking', serviceInterest: 'Wellness Exam', priority: 'high', score: 82 },
+    ORLANDO, { primary: '#14B8A6', secondary: '#5EEAD4' },
+  ),
+  medical_practice: make(
+    'medical_practice', 'Private Medical Practice', '🩺', 'Healthcare',
+    {
+      headline: 'Patients booked. Front desk freed up.',
+      subheadline: 'Aura answers patient calls 24/7, verifies insurance, books and reschedules visits, and sends reminders — so your front desk can focus on the people in the lobby.',
+    },
+    [
+      { title: 'Never miss a new patient', description: 'Aura answers after-hours and overflow calls, captures intake, and books the first visit.' },
+      { title: 'Insurance + intake on the call', description: 'Captures payer, plan, referring provider, and reason for visit before the call ends.' },
+      { title: 'Cut no-shows', description: 'Multi-touch reminders and easy reschedule links keep the schedule tight without front-desk overhead.' },
+    ],
+    ['I\'m a new patient and need to schedule a physical.', 'Do you take Aetna? I was referred by Dr. Patel.', 'I need to reschedule my Tuesday appointment.'],
+    ['New Patient Visit', 'Follow-Up Visit', 'Annual Physical', 'Telehealth Visit', 'Lab Review'],
+    { service: 'New Patient Visit', whenOffsetHours: 30, notes: 'New patient intake — insurance verified, referring physician on file.' },
+    { source: 'chat', intent: 'booking', serviceInterest: 'New Patient Visit', priority: 'high', score: 84 },
+    DALLAS, { primary: '#0EA5E9', secondary: '#7DD3FC' },
+  ),
   // ─── Catch-all ────────────────────────────────────────────────────
   other: make(
     'other', 'Other', '🏢', 'Other',
@@ -483,7 +517,7 @@ const RAW_INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] = [
   { group: 'Specialized Home', emoji: '🛠', ids: ['appliance_repair', 'handyman_cleaning', 'construction'] },
   { group: 'Mobile & Commercial', emoji: '🚗', ids: ['auto_care', 'security_systems', 'real_estate'] },
   { group: 'Wellness & Personal', emoji: '💆', ids: ['beauty_wellness', 'restaurants', 'personal_assistant'] },
-  { group: 'Healthcare', emoji: '🩺', ids: ['home_health', 'physical_therapy', 'occupational_therapy', 'hospice'] },
+  { group: 'Healthcare', emoji: '🩺', ids: ['home_health', 'physical_therapy', 'occupational_therapy', 'hospice', 'veterinary', 'medical_practice'] },
 ];
 
 export const INDUSTRY_GROUPS = RAW_INDUSTRY_GROUPS
