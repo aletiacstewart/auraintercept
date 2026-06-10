@@ -175,6 +175,7 @@ const navGroups: NavGroup[] = [
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Social Media', icon: Share2, href: '/dashboard/integrations/social', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'CRM', icon: Database, href: '/dashboard/integrations/crm', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'All Integrations', icon: Puzzle, href: '/dashboard/3rd-party-overview', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
       { label: 'AI Research', icon: Search, href: '/dashboard/integrations/tavily', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
