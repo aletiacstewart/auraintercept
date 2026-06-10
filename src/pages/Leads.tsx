@@ -163,10 +163,24 @@ export default function Leads() {
           featureColor="leads"
           showAuraBar
           action={
-            <Button data-voice-label="New Lead" onClick={() => setIsAddLeadOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              New Lead
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/dashboard/leads/import">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/dashboard/integrations/crm">
+                  <Database className="w-4 h-4 mr-2" />
+                  Connect CRM
+                </Link>
+              </Button>
+              <Button data-voice-label="New Lead" onClick={() => setIsAddLeadOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                New Lead
+              </Button>
+            </div>
           }
         />
         <InlineFormHost />
