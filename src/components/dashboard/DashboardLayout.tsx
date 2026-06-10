@@ -55,6 +55,7 @@ import {
   Bug,
   Share2,
   Search,
+  Database,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
