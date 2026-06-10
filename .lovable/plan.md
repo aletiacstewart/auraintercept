@@ -1,106 +1,115 @@
-# Platform Consistency Remediation Plan
 
-Two parallel deep audits surfaced ~100 findings. Below is the prioritized fix plan, grouped so it can ship in 4 phased PRs. Lower-confidence auditor claims will be verified before edits (noted as "verify first").
+## Goal
 
----
+Give every company two new lead-management capabilities, available to all industries:
 
-## Phase 1 — Pricing, Trial & 3rd-Party Copy (highest customer-trust impact)
+1. **Connect a CRM** — generic webhook/API option plus first-class setup for HubSpot, Salesforce, Zoho CRM, and Pipedrive, with two-way sync (push new Aura leads + pull existing CRM contacts and keep them in sync).
+2. **Bulk Lead Upload** — admins upload old leads as CSV, Excel (.xlsx/.xls), PDF, or Word (.docx). The Leads AI agent parses, normalizes, and either auto-adds (with dedupe) or routes to a review queue, depending on a per-company toggle.
 
-### 1A. Wrong/stale prices
-- **`src/components/documentation/CompanyOnboardingPDF.tsx` L1403–1406** — tier cards show onboarding fee as the monthly price (Core "$249/mo" etc.). Rewrite to `Core $497/mo · $249 one-time onboarding` and same for Boost/Pro/Elite, sourced from `launchPricing.ts`.
-- **`src/components/documentation/MarketingSalesMasterPDF.tsx` L509** — "starting at $249/mo" → "starting at $497/mo".
-- **`src/components/subscription/ThirdPartyCostDisclosureDialog.tsx` L105–107, L206** — replace hardcoded original onboarding fees ($349/$549/$999/$1,749) with `getOnboardingPrice(tier)` from `launchPricing.ts`; render `~~original~~ launch` with "Launch Pricing" chip.
-- **`src/components/integrations/CostCalculator.tsx` L582, L571, L580, L301** — rename customer-facing "Twilio" → "SignalWire"; rename internal `twilioCost` → `signalwireCost`; update voice rate to SignalWire's published range.
-- **`src/pages/SignUp.tsx` L871** — annual savings claim "Save ~20%" → "Save ~17%" (10× monthly math).
-
-### 1B. Trial wording (60-Day Live Trial)
-- **`.lovable/memory/marketing/pricing/canonical-four-tier-model.md`** — rewrite to match `trial-period-standard.md` (60-day, 30+30) and fix Elite to $3,497/$3,097.
-- **`src/components/documentation/MarketingSalesMasterPDF.tsx` L517, L552, L622–624** — remove every "remaining 60 days / run live for 60" phrasing; trial is 30d onboarding + 30d live.
-- **`src/components/documentation/SalesPitchDataPDF.tsx` L853** — strip the "two weeks money-back" line; replace with non-refundable-onboarding wording.
-
-### 1C. Forbidden 3rd-party language & disclosure gaps
-- **`src/components/integrations/CostCalculator.tsx` L60, L159–160** — rename `overagePer1000` → `extraPer1000`; rename `freeEmails` → `resendFreeTierLimit`; reframe comments as "billed by Resend directly".
-- **`src/components/documentation/WebsiteCopyPDF.tsx` L586** — "no per-call charges" → "no per-call charges from Aura; SignalWire bills your account at their rates".
-- **`src/components/documentation/PlatformDocumentPDF.tsx`** — append 3rd-party-costs caveat to ROI net figure.
-- **`src/components/onboarding/CompanyOnboardingForm.tsx` L860**, **`GoLiveTimeline.tsx` L89–90**, **`AgentHowToGuide.tsx` L109, L155** — replace remaining "Twilio" references with "SignalWire" and add "your own account, billed directly" disclosure.
-- **Customer-facing strings**: `SMSChat.tsx` L126, `TestCallDialog.tsx` L145–146, `ReminderSettings.tsx` L160 & L345 — replace "Twilio" with "SignalWire".
-
-### 1D. Launch Pricing chip / strikethrough
-- **`SalesPitchDataPDF.tsx` tier cards** and **`MarketingSalesMasterPDF.tsx` L639** — render `was $X → $Y/mo (Launch Pricing)` using `LAUNCH_PRICING`/`SUBSCRIPTION_TIERS`.
-- **`PricingSummaryPDF.tsx` L112–115** — rename misleading `connect`/`performance` aliases to `core`/`boost`/`pro`/`elite`.
+Per-customer 3rd-party policy still applies: customer connects their own CRM account/API key; Aura never resells.
 
 ---
 
-## Phase 2 — Medical Compliance Notice Surfacing
+## Phase 1 — Data model
 
-- **`src/components/marketing/MedicalComplianceNotice.tsx`** — verify export name and that imports use `MedicalComplianceNotice` (audit flagged an `n` alias; **verify first** — likely a search artifact).
-- Render `<MedicalComplianceNotice industryId={pack?.industry_id} />` at the top of every dashboard surface for industries in `MEDICAL_COMPLIANCE_PENDING_INDUSTRIES` (home_health, physical_therapy, occupational_therapy, hospice, veterinary, medical_practice):
-  - `Dashboard.tsx` / `CompanyAdminDashboard.tsx`
-  - `ai-consoles/CustomerPortalConsole.tsx`
-  - `ai-consoles/MarketingSalesConsole.tsx`
-  - `ai-consoles/FieldOpsConsole.tsx`
-  - `ai-consoles/BusinessManagementConsole.tsx`
-  - Technician dashboard layout
+New tables (migration, with grants + RLS scoped to `company_id`):
 
----
+- `crm_connections` — `company_id`, `provider` (`hubspot|salesforce|zoho|pipedrive|generic`), `status`, `auth_type` (`oauth|api_key|webhook`), `credentials_ref` (encrypted JSON / secret name), `sync_direction` (`two_way` default), `last_sync_at`, `last_error`, `external_account_label`, `settings` (jsonb: field mappings, default pipeline, owner).
+- `crm_sync_log` — `connection_id`, `direction` (`in|out`), `entity` (`lead|contact`), `external_id`, `lead_id`, `status`, `error`, `payload_summary`.
+- `lead_import_jobs` — `company_id`, `uploaded_by`, `source_filename`, `mime_type`, `storage_path`, `mode` (`auto|review`), `status` (`uploaded|parsing|ready_for_review|importing|completed|failed`), `total_rows`, `imported_count`, `duplicate_count`, `error_count`, `parser_notes`.
+- `lead_import_rows` — `job_id`, `row_index`, `raw` (jsonb), `normalized` (jsonb: name/email/phone/address/source/notes/tags), `dedupe_match_lead_id`, `decision` (`pending|approved|rejected|imported|duplicate`), `error`.
+- `companies.lead_import_mode` (`auto|review`, default `review`) — admin toggle.
 
-## Phase 3 — Industry Pack Parity (esp. veterinary & medical_practice)
+Storage bucket: `lead-imports` (private), RLS so a company only sees its own files.
 
-### 3A. Wire vet/medical into every per-industry lib (currently fall back to defaults)
-Add entries for `veterinary` and `medical_practice` (mirror `home_health` with pet/patient language) in:
-- `src/lib/industryVoiceGreetings.ts`
-- `src/lib/industryFastStartQuestions.ts` (also add `home_health`, `physical_therapy`, `occupational_therapy`, `hospice`)
-- `src/lib/industryAuraFraming.ts`
-- `src/lib/industryEmptyStates.ts`
-- `src/lib/industryQuickActions.ts`
-- `src/lib/industryMarketingPlaybooks.ts`
-- `src/lib/industryWorkflows.ts`
-- `src/lib/industryAgentMap.ts` `INDUSTRY_OVERRIDES`
-- `src/lib/industryAnalyticsPresets.ts`
-- `src/lib/industryKpiLabels.ts` — add `Jobs: 'Exams'` (vet) / `Jobs: 'Visits'` (medical)
-- `src/lib/industryTemplates.ts` — add missing `fitness`, `mobile_mechanic`, `salon`, `professional`
-
-### 3B. Schema & canonical-ID alignment (verify first)
-- **`src/lib/industryPackSchema.ts` cluster enum** — auditor says it's `['trades','outdoor','repair','booking']` and rejects `home_health`. Verify; if true, add `'home_health'` (or rename to `'healthcare'`) and ensure DB packs validate.
-- **`src/lib/industryIdAliases.ts CANONICAL_INDUSTRY_IDS`** — verify missing `fitness`, `mobile_mechanic`, `salon`, `professional`, `saas_platform`; add any truly absent.
+Existing `leads` table gains optional `external_crm_id` + `external_crm_provider` (nullable) for sync correlation.
 
 ---
 
-## Phase 4 — Console / Sidebar / Operative Cleanup
+## Phase 2 — Edge functions
 
-### 4A. Console gating
-- **`src/pages/DispatchFieldOpsApp.tsx`** — gate by `hasFieldTechnicians(pack)` / `console_visibility.field_ops`; redirect non-field industries to booking flow.
-- **`src/pages/ai-consoles/SpecialistOperativesConsole.tsx`** — filter the static 14-item `SPECIALISTS_RAW` against `pack.extra_operatives`; show empty state otherwise.
-- **`src/lib/subscriptionAgentConfig.ts` L40–43** — remove `field_operations` from `starter.consoles` (no dispatch agents in that tier).
-- **`DashboardLayout.tsx` L147** vs config — reconcile `analytics_reports` tier (sidebar says `command`, config says `starter`).
+- `crm-oauth-start` / `crm-oauth-callback` — per-provider OAuth handshakes (HubSpot, Salesforce via gateway; Zoho/Pipedrive via per-customer API key form when OAuth isn't wired).
+- `crm-sync-leads` — scheduled + on-demand; pushes new/updated Aura leads → CRM and pulls recent CRM contacts → Aura `leads` (dedupe by email/phone, then `external_crm_id`).
+- `crm-test-connection` — validates credentials, returns account label + pipelines.
+- `lead-import-parse` — invoked after upload. Routes by mime type:
+  - CSV → `csv-parse`
+  - XLSX/XLS → `xlsx` (SheetJS) in function
+  - PDF → text extraction via existing PDF utility, then LLM normalization
+  - DOCX → `unzipit` + `xml` text extract, then LLM normalization
+  Calls Lovable AI Gateway (`google/gemini-2.5-flash`) with a strict JSON schema (name/email/phone/address/source/notes/tags) to normalize rows. Writes `lead_import_rows`.
+- `lead-import-commit` — for `auto` mode runs immediately after parse; for `review` mode runs when admin clicks Approve. Inserts into `leads`, marks duplicates, triggers CRM push if a connection exists.
 
-### 4B. Sidebar industry-aware labels
-- **`DashboardLayout.tsx` L119, L121, L135, L138–139, L167** — drive labels from `navLabels`/`serviceConfig`: `My Jobs` → `My ${jobNounPlural}`, `Job History`, `Field Ops` group header, `Technician View`/`Dispatch View`, `Install App`.
-- **L148** — hide "Specialist Operatives" sidebar link when `pack.extra_operatives` is empty.
-- **`TechnicianDashboardLayout.tsx` L71, L153, L291** — replace hardcoded "Technician" / "Install Field Ops App" with `navLabels.teamMemberNoun` / `serviceConfig.installAppLabel`.
-
-### 4C. Operative model cleanup
-- **`src/lib/agentStyles.ts` L15–51** — normalize legacy IDs through `normalizeAgentName` before label lookup OR remove the legacy entries (decide: remove preferred).
-- **`src/pages/AIAgentsHub.tsx` L122–126, L278** — add `admin` to displayed operatives at performance+; replace legacy `['inventory','campaign']` with canonical `['business_finance','outreach']`.
-- **`src/lib/subscriptionAgentConfig.ts` L47/L67/L92 descriptions** — change "8/12/16 Smart AI Agents" → operative counts (5/7/10).
-- **`AGENT_DEPENDENCIES` / `CONSOLE_REQUIRED_AGENTS`** — add `admin` operative entries.
-- **`supabase/functions/initialize-company-agents/index.ts`** — stop seeding legacy 24-agent IDs alongside canonical operatives for new companies (existing data left alone for now to avoid scope creep).
-
-### 4D. Handoff routing safety
-- **`src/lib/auraRunBus.ts`** and **`supabase/functions/ai-orchestrator/index.ts`** — apply `normalizeAgentName()` / `LEGACY_AGENT_MAP` at event entry so legacy IDs (`booking`, `route`, `lead`, etc.) reach the canonical handler.
+All functions follow project standards (CORS, zod validation, `verify_jwt=false` with internal auth where applicable, `200 OK` on sub failures).
 
 ---
 
-## Out of scope / explicitly skipped
-- Auditor claimed the 8 standard memory files are missing — they are present in `mem://index.md`; treating that finding as a false positive.
-- No DB migrations to delete legacy `company_agents` rows in this pass (separate cleanup task).
-- No new specialist operatives invented for vet/medical (`vaccine_reminder`, etc.) — only wire what already exists.
+## Phase 3 — UI
 
-## Verification before edits
-- Re-read each cited file before patching (audits may have stale line numbers).
-- Spot-check `MedicalComplianceNotice` export and `industryPackSchema` cluster enum (auditor confidence was lower).
-- After Phase 1 PDFs, re-render at least one PDF and visually confirm.
+New page **Settings → Integrations → CRM** (`/dashboard/integrations/crm`):
 
-## Approximate scope
-- ~30 files touched across Phase 1, ~6 across Phase 2, ~12 across Phase 3, ~10 across Phase 4.
-- No new dependencies, no schema migrations required (Phase 3B may add one enum value).
+- Card per provider: HubSpot, Salesforce, Zoho CRM, Pipedrive, Generic (Webhook + API Key). Each card shows status, last sync, "Connect / Disconnect / Test / Sync now" buttons.
+- Each card opens a side sheet with:
+  - Provider-specific step-by-step setup instructions (where to get API key, OAuth scopes, what URL to paste).
+  - 3rd-party cost/billing disclosure block (reuse `ThirdPartyCostDisclosureDialog` pattern).
+  - Field-mapping editor (Aura field ↔ CRM field) with smart defaults.
+  - Sync direction selector (defaults to two-way).
+- Generic CRM card shows: inbound webhook URL (Aura → your CRM) + outbound endpoint config (your CRM → Aura via signed webhook) + sample payload.
+
+New page **Leads → Import** (`/dashboard/leads/import`) — also reachable from Leads empty state:
+
+- Dropzone accepting `.csv .xlsx .xls .pdf .docx` (max 20 MB).
+- Per-upload toggle: "Auto-add & dedupe" vs "Review before import" (defaults from company setting).
+- Progress states: Uploading → Parsing (Leads AI) → Ready / Imported.
+- Review table (only in review mode): per-row editable fields, duplicate badge with link to existing lead, bulk approve / reject.
+- History tab listing past import jobs with counts.
+
+Admin toggle for default import mode lives in **Settings → Leads**.
+
+---
+
+## Phase 4 — Leads AI agent wiring
+
+- Extend `leads` operative prompt with import + CRM context: "When an import job finishes you may be asked to summarize, deduplicate, or enrich rows."
+- Add quick-action: from any console, "Import old leads" routes to `/dashboard/leads/import`.
+- Add quick-action: "Connect CRM" routes to CRM settings.
+
+---
+
+## Phase 5 — Memory + docs
+
+- Update `mem://integrations/3rd-party-requirements-standard` to add CRM providers (customer-owned account, separate billing) and new feature memory `mem://features/leads/crm-and-bulk-import-v1` describing providers, sync model, and import flow.
+
+---
+
+## Out of scope
+
+- Real-time webhooks from every CRM (initial release uses 5-min cron pull + on-demand sync).
+- Marketplace-grade OAuth apps for Zoho/Pipedrive — those start as per-customer API key; HubSpot/Salesforce use existing gateway connectors.
+- Email/calendar sync from CRMs (leads/contacts only).
+
+---
+
+## Technical notes
+
+```text
+upload (UI) ──► storage bucket: lead-imports
+                       │
+                       ▼
+              lead-import-parse (edge fn)
+              ├─ csv / xlsx → direct rows
+              └─ pdf / docx → text → Lovable AI → rows
+                       │
+                       ▼
+              lead_import_rows  (normalized JSON)
+                       │
+       mode=auto  ┌────┴────┐  mode=review
+                  ▼         ▼
+       lead-import-commit   UI review → approve → commit
+                  │
+                  ▼
+              public.leads  ──► crm-sync-leads (push if connected)
+
+CRM pull: cron → crm-sync-leads → upsert into leads (dedupe email/phone, store external_crm_id)
+```
+
+Standards followed: GRANTs + RLS in same migration, secrets via `add_secret`/connectors (HubSpot + Salesforce gateways already documented), DOMPurify on any rendered file content, no mock data, 60-day trial copy preserved, no "bundled/overage/absorbed" language anywhere in the CRM or import UI.

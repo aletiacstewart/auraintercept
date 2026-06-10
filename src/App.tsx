@@ -82,6 +82,8 @@ import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetail from "./pages/CampaignDetail";
 import Leads from "./pages/Leads";
+import LeadsImport from "./pages/LeadsImport";
+import CRMIntegration from "./pages/integrations/CRMIntegration";
 // BusinessOpsHub merged into BusinessOperations
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
@@ -226,6 +228,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/integrations/calendar" element={<ProtectedRoute><CalendarIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/social" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/tavily" element={<ProtectedRoute><TavilyIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent" element={<ProtectedRoute><AIAgent /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
@@ -264,6 +267,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
                 <Route path="/dashboard/campaigns/:id" element={<ProtectedRoute><CampaignDetail /></ProtectedRoute>} />
                 <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
+                <Route path="/dashboard/leads/import" element={<ProtectedRoute><LeadsImport /></ProtectedRoute>} />
                 <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                 <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
                 <Route path="/dashboard/email-limits" element={<ProtectedRoute><EmailLimits /></ProtectedRoute>} />
