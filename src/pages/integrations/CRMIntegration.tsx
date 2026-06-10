@@ -46,7 +46,7 @@ export default function CRMIntegration() {
 
   const openSetup = (id: CrmProviderId) => {
     const existing = connections.find((c: any) => c.provider === id);
-    setCreds(existing?.credentials || {});
+    setCreds(((existing?.credentials as Record<string, string>) || {}) as Record<string, string>);
     setSyncDirection((existing?.sync_direction as any) || "two_way");
     setOpenProvider(id);
   };
