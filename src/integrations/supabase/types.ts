@@ -1061,6 +1061,7 @@ export type Database = {
           last_sms_optout_alert_at: string | null
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
+          lead_import_mode: string
           logo_url: string | null
           manager_name: string | null
           missed_call_action: string | null
@@ -1207,6 +1208,7 @@ export type Database = {
           last_sms_optout_alert_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
+          lead_import_mode?: string
           logo_url?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
@@ -1353,6 +1355,7 @@ export type Database = {
           last_sms_optout_alert_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
+          lead_import_mode?: string
           logo_url?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
@@ -1865,6 +1868,143 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_connections: {
+        Row: {
+          auth_type: string
+          company_id: string
+          created_at: string
+          created_by: string | null
+          credentials: Json
+          external_account_label: string | null
+          id: string
+          last_error: string | null
+          last_sync_at: string | null
+          provider: string
+          settings: Json
+          status: string
+          sync_direction: string
+          updated_at: string
+        }
+        Insert: {
+          auth_type?: string
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          credentials?: Json
+          external_account_label?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          provider: string
+          settings?: Json
+          status?: string
+          sync_direction?: string
+          updated_at?: string
+        }
+        Update: {
+          auth_type?: string
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          credentials?: Json
+          external_account_label?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          provider?: string
+          settings?: Json
+          status?: string
+          sync_direction?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_connections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_connections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_sync_log: {
+        Row: {
+          company_id: string
+          connection_id: string
+          created_at: string
+          direction: string
+          entity: string
+          error: string | null
+          external_id: string | null
+          id: string
+          lead_id: string | null
+          payload_summary: Json | null
+          status: string
+        }
+        Insert: {
+          company_id: string
+          connection_id: string
+          created_at?: string
+          direction: string
+          entity?: string
+          error?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          payload_summary?: Json | null
+          status: string
+        }
+        Update: {
+          company_id?: string
+          connection_id?: string
+          created_at?: string
+          direction?: string
+          entity?: string
+          error?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          payload_summary?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_sync_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_sync_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_sync_log_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "crm_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_sync_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -3903,6 +4043,156 @@ export type Database = {
           },
         ]
       }
+      lead_import_jobs: {
+        Row: {
+          company_id: string
+          created_at: string
+          duplicate_count: number
+          error_count: number
+          id: string
+          imported_count: number
+          mime_type: string | null
+          mode: string
+          parser_notes: string | null
+          source_filename: string
+          status: string
+          storage_path: string
+          total_rows: number
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          duplicate_count?: number
+          error_count?: number
+          id?: string
+          imported_count?: number
+          mime_type?: string | null
+          mode?: string
+          parser_notes?: string | null
+          source_filename: string
+          status?: string
+          storage_path: string
+          total_rows?: number
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          duplicate_count?: number
+          error_count?: number
+          id?: string
+          imported_count?: number
+          mime_type?: string | null
+          mode?: string
+          parser_notes?: string | null
+          source_filename?: string
+          status?: string
+          storage_path?: string
+          total_rows?: number
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_import_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_import_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_import_rows: {
+        Row: {
+          company_id: string
+          created_at: string
+          decision: string
+          dedupe_match_lead_id: string | null
+          error: string | null
+          id: string
+          imported_lead_id: string | null
+          job_id: string
+          normalized: Json
+          raw: Json
+          row_index: number
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          decision?: string
+          dedupe_match_lead_id?: string | null
+          error?: string | null
+          id?: string
+          imported_lead_id?: string | null
+          job_id: string
+          normalized?: Json
+          raw?: Json
+          row_index: number
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          decision?: string
+          dedupe_match_lead_id?: string | null
+          error?: string | null
+          id?: string
+          imported_lead_id?: string | null
+          job_id?: string
+          normalized?: Json
+          raw?: Json
+          row_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_import_rows_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_import_rows_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_import_rows_dedupe_match_lead_id_fkey"
+            columns: ["dedupe_match_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_import_rows_imported_lead_id_fkey"
+            columns: ["imported_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_import_rows_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "lead_import_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
@@ -3918,6 +4208,8 @@ export type Database = {
           crm_lead_id: string | null
           crm_provider: string | null
           email: string | null
+          external_crm_id: string | null
+          external_crm_provider: string | null
           follow_up_at: string | null
           id: string
           intake_data: Json
@@ -3953,6 +4245,8 @@ export type Database = {
           crm_lead_id?: string | null
           crm_provider?: string | null
           email?: string | null
+          external_crm_id?: string | null
+          external_crm_provider?: string | null
           follow_up_at?: string | null
           id?: string
           intake_data?: Json
@@ -3988,6 +4282,8 @@ export type Database = {
           crm_lead_id?: string | null
           crm_provider?: string | null
           email?: string | null
+          external_crm_id?: string | null
+          external_crm_provider?: string | null
           follow_up_at?: string | null
           id?: string
           intake_data?: Json
