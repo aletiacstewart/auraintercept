@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 import { 
   Users, 
   Phone, 
@@ -28,6 +29,8 @@ import {
   XCircle,
   Flame,
   Plus,
+  Upload,
+  Database,
 } from 'lucide-react';
 import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalyticsSection } from '@/components/leads';
 import { IndustryEmptyState } from '@/components/shared/IndustryEmptyState';
