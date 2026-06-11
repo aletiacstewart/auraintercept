@@ -1149,8 +1149,8 @@ const IndustryIntakePage = () => (
     {['Brokerage / MLS:', 'Listing types (resi/comm/lease):', 'Lead-routing rules:', 'Showing-coordinator contact:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 170 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
     ))}
-    <Text style={styles.subsectionTitle}>{sanitizePdfText('Healthcare / Wellness (med spa, dental, chiro, gym, salon)')}</Text>
-    {['Appointment types + durations:', 'Insurance accepted (Y/N + carriers):', 'HIPAA contact / privacy officer:', 'New-patient intake form URL:'].map(l => (
+    <Text style={styles.subsectionTitle}>{sanitizePdfText('Wellness & Personal Care (med spa, gym, salon, beauty)')}</Text>
+    {['Appointment types + durations:', 'Membership / package pricing:', 'Booking platform URL:', 'New-client intake form URL:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 170 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
     ))}
   </Page>
