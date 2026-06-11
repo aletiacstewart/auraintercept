@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { INDUSTRY_LIST } from '@/lib/industryMarketingContent';
+import { filterVisibleIndustries } from '@/lib/industryVisibility';
 
 interface IndustrySelectorProps {
   selected: string;
@@ -8,6 +9,7 @@ interface IndustrySelectorProps {
 }
 
 export function IndustrySelector({ selected, onChange }: IndustrySelectorProps) {
+  const industries = filterVisibleIndustries(INDUSTRY_LIST);
   return (
     <div className="sticky top-[64px] z-40 bg-background/95 backdrop-blur border-b border-border/40 py-3">
       <div className="container max-w-7xl mx-auto px-4">
@@ -15,7 +17,7 @@ export function IndustrySelector({ selected, onChange }: IndustrySelectorProps) 
           <span className="text-sm font-medium text-muted-foreground whitespace-nowrap mr-2">
             I'm a:
           </span>
-          {INDUSTRY_LIST.map((ind) => (
+          {industries.map((ind) => (
             <Button
               key={ind.id}
               variant={selected === ind.id ? 'default' : 'outline'}
