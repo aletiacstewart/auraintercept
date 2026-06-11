@@ -9,10 +9,15 @@
  * To re-enable: empty the set below, regen sitemap, reseed demos.
  */
 export const HIPAA_GATED_INDUSTRIES = new Set<string>([
-  // Medical verticals are now visible platform-wide. They surface a
-  // "HIPAA + BAA compliance in progress" notice via
-  // <MedicalComplianceNotice /> until full medical AI receptionist +
-  // scheduling ships. Re-add an id here to fully hide a vertical again.
+  // Medical verticals are HIDDEN platform-wide until HIPAA + BAA compliance
+  // and the medical AI receptionist + patient scheduling features ship.
+  // Empty this set to re-enable; existing company rows are untouched.
+  'home_health',
+  'physical_therapy',
+  'occupational_therapy',
+  'hospice',
+  'veterinary',
+  'medical_practice',
 ]);
 
 // Verticals that still require the HIPAA/BAA "coming soon" disclosure.

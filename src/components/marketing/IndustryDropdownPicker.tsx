@@ -1,5 +1,6 @@
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INDUSTRY_CONTENT, INDUSTRY_GROUPS } from '@/lib/industryMarketingContent';
+import { filterVisibleIds } from '@/lib/industryVisibility';
 
 interface IndustryDropdownPickerProps {
   value: string;
@@ -19,13 +20,16 @@ export function IndustryDropdownPicker({ value, onChange }: IndustryDropdownPick
         </SelectValue>
       </SelectTrigger>
       <SelectContent className="max-h-[60vh]">
-        {INDUSTRY_GROUPS.map((g) => (
+        {INDUSTRY_GROUPS.map((g) => {
+          const ids = filterVisibleIds(g.ids);
+          if (ids.length === 0) return null;
+          return (
           <SelectGroup key={g.group}>
             <SelectLabel className="flex items-center gap-1.5 text-primary font-bold uppercase tracking-wider text-xs underline underline-offset-4 decoration-primary/60 py-1.5">
               <span>{g.emoji}</span>
               <span>{g.group}</span>
             </SelectLabel>
-            {g.ids.map((id) => {
+            {ids.map((id) => {
               const ind = INDUSTRY_CONTENT[id];
               if (!ind) return null;
               return (
@@ -38,7 +42,8 @@ export function IndustryDropdownPicker({ value, onChange }: IndustryDropdownPick
               );
             })}
           </SelectGroup>
-        ))}
+          );
+        })}
       </SelectContent>
     </Select>
   );

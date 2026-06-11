@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { INDUSTRY_LIST, type IndustryTemplate } from '@/lib/industryTemplates';
+import { filterVisibleIndustries } from '@/lib/industryVisibility';
 import { cn } from '@/lib/utils';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,7 +44,7 @@ export function IndustryTemplateSelector({ onSelectTemplate, className }: Indust
   // Platform admins keep the full list to preview every vertical.
   const companyIndustry = INDUSTRY_LIST.find(i => i.id === pack?.industry_id) ?? null;
   const visibleIndustries = isPlatformAdmin
-    ? INDUSTRY_LIST
+    ? filterVisibleIndustries(INDUSTRY_LIST)
     : (companyIndustry ? [companyIndustry] : []);
   const lockedToSingle = !isPlatformAdmin && visibleIndustries.length === 1;
 

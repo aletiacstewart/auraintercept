@@ -57,6 +57,7 @@ export const CANONICAL_INDUSTRY_IDS = new Set<string>([
  */
 export const HIPAA_GATED_INDUSTRIES = new Set<string>([
   'home_health', 'physical_therapy', 'occupational_therapy', 'hospice',
+  'veterinary', 'medical_practice',
 ]);
 
 export function isIndustryHipaaGated(id: string | null | undefined): boolean {
