@@ -918,7 +918,7 @@ export default function Index() {
                 <Badge className="mb-2 bg-teal-500/20 text-teal-400 border-teal-500/30 text-[10px]">Entry Level</Badge>
                 <h3 className="text-lg font-bold mb-1 text-teal-400">Aura Core</h3>
                 <p className="text-[10px] text-white mb-1">Core booking & web presence</p>
-                <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, single-location service businesses, and home-health / therapy practices.</p>
+                <p className="text-[10px] text-white italic mb-2">Best for solo operators, restaurants, and single-location service businesses.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
                   <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$697</span>
                   <span className="text-3xl font-bold text-teal-400">$497</span>
