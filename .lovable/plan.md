@@ -1,66 +1,47 @@
-# Standardize 10 Operatives / 24 Agents Across the Platform
+## Goal
+Verify that **every** plan (Core / Boost / Pro / Elite) requires an industry at signup, and that once selected, the dashboard, consoles, agents, terminology, KPIs, forms and empty states adapt to that industry **regardless of tier**.
 
-## Canonical phrasing (single source of truth)
+## What I found so far
 
-- **Long form:** "24 AI agents organized into 10 Operatives"
-- **Short chip / inline:** "10 Operatives · 24 Agents"
-- **Operative count only** (cards, taglines): "10 AI Operatives"
-- Never write "19 agents", "8 agents", "12 agents", "all 24 agents" as standalone tier descriptors. Tier cards use operative counts; PDFs may add the agent breakdown in parentheses.
+**Signup (`src/pages/SignUp.tsx`)**
+- Industry is enforced for every tier: `canonicalIndustry` is validated via `toCanonicalIndustryId` + `isCanonicalIndustryId`; missing/invalid → toast + abort (line 254–263). Good.
+- Tier is independent (`starter | connect | performance | command`) — industry gate runs before company insert for all four.
+- "Other / Custom" path stores `industry_config` JSON; canonical check still passes because `other` is canonical.
+- `initialize-company-agents` is invoked post-insert so the operatives hub reflects tier × industry.
 
-## Per-tier counts (canonical)
+**Industry → UI plumbing (already wired)**
+- `useIndustryPack(companyId)` → resolves the per-vertical pack (widgets, terminology, console_visibility, form_schemas, quote/invoice templates, agent_prompt_deltas, extra_operatives).
+- `resolveCompanyWorkspace` → operating_model + activeConsoles + KPIs + agentActions per company.
+- Edge prompt injection: `_shared/industry-pack.ts` and `_shared/workspace.ts` decorate voice/SMS/chat prompts.
+- Capability gates: `hasFieldTechnicians`, `usesQuotes`, `usesLeads`, `usesInventory`, `usesAppointments`, `usesCompaniesB2B`.
+- Surfaces already industry-aware (per memory + grep): CompanyAdminDashboard, EmployeeDashboard, AuraCommandCenter, IndustryWidgetGrid, FieldOperations, Quotes, Invoices, Leads, Customers, Inventory, Messages, CallHistory, AIAgentsHub, SpecialistOperativesConsole, AppointmentConsole, SocialMediaConsole, CustomerPortalConsole, BusinessManagementConsole, AnalyticsConsole.
 
-Derived from `TIER_AGENT_CONFIG` in `src/lib/subscriptionAgentConfig.ts`:
+## Audit checklist I will run
 
-| Tier | Operatives | Agents | Card label | PDF label |
-|---|---|---|---|---|
-| Core (`starter`) | 5 | 12 | "5 AI Operatives" | "5 Operatives · 12 Agents" |
-| Boost (`connect`) | 7 | 15 | "7 AI Operatives" | "7 Operatives · 15 Agents" |
-| Pro (`performance`) | 10 | 22 | "10 AI Operatives" | "10 Operatives · 22 Agents" |
-| Elite (`command`) | 10 | 24 | "10 AI Operatives" | "10 Operatives · 24 Agents (full suite + AI Hub)" |
+1. **Signup gate parity** — confirm every entry path enforces industry:
+   - `/signup` (SignUp.tsx) ✓ already gated
+   - `/auth` (Auth.tsx) — verify; if it can create a company, it must require industry too
+   - `OnboardingForm.tsx`, `FastStartWizard.tsx`, `WelcomeModal.tsx`, `admin/OnboardingInvites.tsx` — verify any path that writes `companies` requires `industry_vertical`
+   - Beta-code / invite signups — same gate
+2. **Tier independence** — confirm `useIndustryPack` and `resolveCompanyWorkspace` are not short-circuited by tier anywhere (grep for `subscription_tier` near pack/console gating). Specialists already confirmed available on all tiers (`specialists-all-plans.md`).
+3. **Console adaptation coverage** — for each top-level console route, confirm it reads `useIndustryPack` (or capability helpers) and not hardcoded labels: FieldOps, BusinessMgmt, Analytics, MarketingSales, SocialMedia, CustomerPortal, AIAgentsHub, Operations router (Appointment/Pipeline/Receptionist/Custom).
+4. **Terminology** — spot-check that forms (Quotes/Invoices/Leads/Customers/Inventory) pre-fill from `pack.terminology` and `pack.quote_template` / `invoice_template`.
+5. **Edge runtime** — confirm voice/SMS edge functions call `loadIndustryPackForCompany` + `applyIndustryPackToPrompt` (already standardized per memory).
+6. **DB trigger** — confirm `trg_seed_industry_pack_kb` fires on `industry_vertical` set so KB seeds at signup.
 
-(Final per-tier counts will be re-derived from `TIER_AGENT_CONFIG` during the edit pass; if the live config differs from the table above, the live config wins and the table is the only thing that changes.)
+## Fixes I'll apply if gaps surface
 
-## Files to update
+- Add `industry_vertical` required validation to any signup/onboarding path missing it (toast + abort, identical UX to SignUp.tsx).
+- Wrap any console still using hardcoded labels with `useIndustryPack` / capability helpers.
+- Patch any tier-gated `useIndustryPack` usage so the pack always loads (tier only affects operative count, never industry adaptation).
+- Add a single regression test asserting: company created on each of the 4 tiers + each cluster returns the correct `activeConsoles` + `terminology` from `resolveCompanyWorkspace`.
 
-**Cards / marketing UI (operatives only):**
-- `src/pages/Index.tsx` — already mostly clean; normalize "10 AI operatives" capitalization to "10 AI Operatives"; keep "See the 24 agents that power this" link.
-- `src/pages/Subscription.tsx:148, 857` — replace "Core … 8 AI agents" / "Elite … all 24 agents" with operative counts (and "(full suite of 24 agents)" only for Elite).
-- `src/pages/Help.tsx:691` — rephrase "Full suite of 24 agents…" to "All 10 AI Operatives (24 agents)…".
-- `src/pages/AIAgentsHub.tsx`, `src/pages/DesignPreview.tsx`, `src/pages/PlatformGuides.tsx:133,192`, `src/pages/Architecture.tsx`, `src/pages/ExportDocumentation.tsx` — normalize to canonical phrasing.
-- `src/components/landing/CompetitiveDifferentiation.tsx` — already canonical, leave.
+## Deliverable
 
-**PDFs (operatives + agents, dual-count where it adds clarity):**
-- `src/components/documentation/PricingSummaryPDF.tsx` — per-tier headers add "(X Operatives · Y Agents)"; "All 10 AI Operatives" stays for Elite; tagline lines normalized.
-- `src/components/documentation/WebsiteCopyPDF.tsx` — already uses dual form; normalize stragglers and meta descriptions to "10 AI Operatives (24 agents)".
-- `src/components/documentation/PlatformDocumentPDF.tsx` — confirm comment + slide titles use "24-agent / 10-operative".
-- `src/components/documentation/ComprehensiveGuidesPDF.tsx`, `PlatformFAQPDF.tsx`, `CompanyOnboardingPDF.tsx`, `MarketingSalesMasterPDF.tsx`, `SalesPitchDataPDF.tsx`, `VideoScriptsPDF.tsx`, `SocialMediaContentPackPDF.tsx`, `BrandAssetGuidePDF.tsx` — sweep for "19 agents", "8 agents", "12 agents", "all 24 agents" and replace with canonical phrasing.
-
-**Code/library strings:**
-- `src/lib/helpSystemPrompt.ts`, `src/lib/helpContentConfig.ts`, `src/lib/documentationConfig.ts`, `src/lib/howToUseContent.ts`, `src/lib/videoPromptsData.ts`, `src/lib/subscriptionAgentConfig.ts` (description fields only) — normalize phrasing.
-- `supabase/functions/ai-agent-chat/index.ts:3438` — Elite description normalized to "All 10 AI Operatives (24 agents) + enterprise features".
-
-**Memory + canonical docs:**
-- `.lovable/memory/architecture/canonical-naming-registry.md` — update per-tier lines to include operative + agent counts.
-- `.lovable/memory/architecture/ai-agent/twenty-four-agent-model-standard.md` — reaffirm canonical phrasing rule.
-- `.lovable/memory/index.md` Core section — already says "24 agents = 10 operatives"; add: "Canonical phrasing: '24 AI agents organized into 10 Operatives'. Cards show operatives only; PDFs may show both."
-
-**Locales:**
-- `src/locales/en/marketing.json`, `src/locales/es/marketing.json` — no count strings today; add a shared `operativesShort` / `operativesLong` key for reuse and verify ES translation.
+- Short audit report posted in chat (per-surface ✓ / ✗).
+- Code patches for any ✗ items above.
+- One new vitest covering tier×industry → workspace resolution.
 
 ## Out of scope
 
-- No pricing, Stripe, edge-function billing logic, or tier-gating changes.
-- No changes to the underlying agent IDs, operative IDs, or `TIER_AGENT_CONFIG` arrays.
-- No homepage layout/design changes — copy normalization only.
-
-## Verification
-
-After edits, run:
-
-```text
-rg -n -i '\b(19|20|21|22|23|25)\s*(ai\s*)?agents\b|\(8 agents\)|\(12 agents\)|all 24 agents\b' src/ supabase/functions/ .lovable/memory/
-```
-
-Expected: zero hits (except inside the canonical phrase "24 agents organized into 10 Operatives").
-
-Spot-check rendered PDFs (PricingSummary, WebsiteCopy, PlatformDocument) by visual review; confirm cards on `/`, `/subscription`, `/dashboard/export-docs` show operative counts.
+- New industries, new tiers, pricing changes, marketing copy.
