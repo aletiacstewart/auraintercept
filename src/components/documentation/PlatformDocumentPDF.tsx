@@ -504,7 +504,7 @@ const agents = {
     { name: 'Revenue Agent', desc: 'Financial trend tracking and analysis. Spots revenue opportunities.' },
     { name: 'Forecast Agent', desc: 'AI-powered demand and revenue predictions. Plan with confidence.' },
   ],
-  // Social Media agents are premium add-ons (not included in core 19)
+  // Social Media agents are premium add-ons (not included in the core 24-agent / 10-operative model)
   socialMediaAddons: [
     { name: 'Creative Content Agent', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, GMB, and SMS.' },
     { name: 'Social Scheduler Agent', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
@@ -1301,7 +1301,7 @@ const PlatformDocumentPDF = () => (
           Follow a business owner through a typical day.{"\n"}
           Show Aura handling: morning calls, scheduling, dispatch, reminders, reviews.{"\n"}
           Owner checks dashboard, sees everything running smoothly.{"\n"}
-          "19 AI agents. Zero stress. All day, every day."
+          "10 AI Operatives (24 specialist agents). Zero stress. All day, every day."
         </Text>
       </View>
 
@@ -1360,14 +1360,14 @@ const PlatformDocumentPDF = () => (
           "Still missing customer calls?{"\n\n"}
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
-          automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
+          automatic reminders. 10 AI Operatives (24 specialist agents) working for you around the clock.{"\n\n"}
           Free 60-day trial (first 30 days = onboarding). No credit card. Start now"
         </Text>
       </View>
 
       <Text style={styles.subsectionTitle}>Carousel Post Ideas</Text>
-      <BulletPoint>Slide 1: "19 AI Agents for Your Service Business"</BulletPoint>
-      <BulletPoint>Slide 2-7: One agent per slide with icon and benefit</BulletPoint>
+      <BulletPoint>Slide 1: "10 AI Operatives for Your Service Business"</BulletPoint>
+      <BulletPoint>Slide 2-7: One operative per slide with icon and benefit</BulletPoint>
       <BulletPoint>Slide 8: "All working together 24/7"</BulletPoint>
       <BulletPoint>Slide 9: CTA with 60-Day Live Trial offer</BulletPoint>
 
@@ -1430,7 +1430,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Dark: Deep Indigo (#1e1b4b) - Professional, sophisticated</BulletPoint>
 
       <Text style={styles.subsectionTitle}>Visual Elements to Create</Text>
-      <BulletPoint>Agent icons for each of the 19 AI agents</BulletPoint>
+      <BulletPoint>Icons for each of the 10 AI Operatives (24 underlying specialist agents)</BulletPoint>
       <BulletPoint>Console screenshots (anonymized demo data)</BulletPoint>
       <BulletPoint>Comparison tables (Before/After)</BulletPoint>
       <BulletPoint>Customer journey maps</BulletPoint>
