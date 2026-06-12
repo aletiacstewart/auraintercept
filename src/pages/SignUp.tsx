@@ -1346,16 +1346,13 @@ export default function SignUp() {
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   One-Time Onboarding Fee (required)
                                   <span className="ml-auto inline-flex items-baseline gap-1.5">
-                                    <span className="text-[10px] text-muted-foreground line-through decoration-destructive/70">
-                                      {selectedTier === 'starter' ? '$497' : selectedTier === 'connect' ? '$497' : selectedTier === 'performance' ? '$497' : selectedTier === 'command' ? '$497' : '$497–$497'}
-                                    </span>
                                     <span className="text-primary font-bold">
-                                      {selectedTier === 'starter' ? '$497' : selectedTier === 'connect' ? '$497' : selectedTier === 'performance' ? '$497' : selectedTier === 'command' ? '$497' : '$497–$497'}
+                                      $497
                                     </span>
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Beta Pricing</span> per tier: <span className="font-semibold text-foreground">Core <span className="line-through text-muted-foreground">$497</span> $497 · Boost <span className="line-through text-muted-foreground">$497</span> $497 · Pro <span className="line-through text-muted-foreground">$497</span> $497 · Elite <span className="line-through text-muted-foreground">$497</span> $497</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Flat $497 onboarding fee for every tier</span> — Core, Boost, Pro, and Elite.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
