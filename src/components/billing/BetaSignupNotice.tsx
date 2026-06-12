@@ -44,32 +44,28 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
           <span className="line-through text-foreground/50">$697</span>{' '}
           <span className="text-primary font-semibold">$497/mo</span>
           {' · '}
-          Onboarding <span className="line-through text-foreground/50">$497</span>{' '}
-          <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$497</span>
         </li>
         <li>
           <span className="font-semibold">Boost:</span>{' '}
           <span className="line-through text-foreground/50">$1,394</span>{' '}
           <span className="text-primary font-semibold">$994/mo</span>
           {' · '}
-          Onboarding <span className="line-through text-foreground/50">$497</span>{' '}
-          <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$497</span>
         </li>
         <li>
           <span className="font-semibold">Pro:</span>{' '}
           <span className="line-through text-foreground/50">$2,788</span>{' '}
           <span className="text-primary font-semibold">$1,988/mo</span>
           {' · '}
-          Onboarding <span className="line-through text-foreground/50">$497</span>{' '}
-          <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$497</span>
         </li>
         <li>
           <span className="font-semibold">Elite:</span>{' '}
           <span className="line-through text-foreground/50">$5,576</span>{' '}
           <span className="text-primary font-semibold">$3,979/mo</span>
           {' · '}
-          Onboarding <span className="line-through text-foreground/50">$497</span>{' '}
-          <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$497</span>
         </li>
       </ul>
 
