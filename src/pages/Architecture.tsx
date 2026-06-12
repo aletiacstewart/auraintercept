@@ -6,7 +6,6 @@ import { MermaidDiagram } from '@/components/architecture/MermaidDiagram';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Network } from 'lucide-react';
-import { ElevenLabsToolChecklist } from '@/components/admin/ElevenLabsToolChecklist';
 
 // Shared classDef block for flowcharts
 const tierStyles = `
@@ -556,10 +555,6 @@ export default function Architecture() {
               }}
             />
             <style>{`@keyframes cyberDataflowStrip { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
-          </div>
-
-          <div className="mb-6">
-            <ElevenLabsToolChecklist />
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
