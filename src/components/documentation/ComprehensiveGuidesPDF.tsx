@@ -1024,7 +1024,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Elite ($3,979/mo): All 10 AI Operatives, 7 consoles + AI Operatives Hub, unlimited employees</Text>
+          <Text style={styles.bulletText}>Aura Elite ($3,979/mo, was $5,576): All 10 AI Operatives · 7 Consoles + AI Operatives Hub · Unlimited employees</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>
