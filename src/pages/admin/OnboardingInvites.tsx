@@ -344,6 +344,7 @@ export default function OnboardingInvites() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
