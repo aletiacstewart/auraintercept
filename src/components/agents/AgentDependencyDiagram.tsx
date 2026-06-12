@@ -58,7 +58,7 @@ flowchart TB
         Marketing["📣 Marketing Agent"]
     end
     
-    subgraph BOOST["🔵 BOOST — $897/mo (was $1,097)"]
+    subgraph BOOST["🔵 BOOST — $994/mo (was $1,394)"]
         direction TB
         Dispatch["🚚 Dispatch/GPS Console"]
         Route["🗺️ Route Agent"]
@@ -66,7 +66,7 @@ flowchart TB
         Checkin["✅ Check-in Agent"]
     end
     
-    subgraph PRO["🟣 PRO — $1,797/mo (was $1,997)"]
+    subgraph PRO["🟣 PRO — $1,988/mo (was $2,788)"]
         direction TB
         Campaign["📣 Campaign Agent"]
         Outreach["📧 Outreach Agent"]
@@ -76,7 +76,7 @@ flowchart TB
         Quoting["💼 Quoting Agent"]
     end
 
-    subgraph ELITE["🟡 ELITE — $3,097/mo (was $3,497)"]
+    subgraph ELITE["🟡 ELITE — $3,979/mo (was $5,576)"]
         direction TB
         Invoice["💳 Invoice Agent"]
         Inventory["📦 Inventory Agent"]
@@ -158,15 +158,15 @@ flowchart TB
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-sky-600" />
-            <span className="text-sm text-card-foreground">Boost ($897/mo · was $1,097)</span>
+            <span className="text-sm text-card-foreground">Boost ($994/mo · was $1,394)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-card-foreground">Pro ($1,797/mo · was $1,997)</span>
+            <span className="text-sm text-card-foreground">Pro ($1,988/mo · was $2,788)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-card-foreground">Elite ($3,097/mo · was $3,497)</span>
+            <span className="text-sm text-card-foreground">Elite ($3,979/mo · was $5,576)</span>
           </div>
         </div>
       </CardContent>

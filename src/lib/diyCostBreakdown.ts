@@ -65,7 +65,7 @@ export const DIY_BREAKDOWN: DiyTierBreakdown[] = [
     { label: 'Basic analytics dashboard', low: 0, high: 70 },
     { label: 'Setup contractor (one-time)', low: 1500, high: 4000, oneTime: true },
   ]),
-  build('boost', 'Aura Boost', 897, [
+  build('boost', 'Aura Boost', 994, [
     { label: 'Everything in Core stack', low: 470, high: 1570 },
     { label: 'Dispatch software (Housecall Pro / Jobber)', low: 99, high: 400 },
     { label: 'Route optimization (Onfleet / Routific)', low: 40, high: 150 },
@@ -74,7 +74,7 @@ export const DIY_BREAKDOWN: DiyTierBreakdown[] = [
     { label: 'Zapier / Make integrations', low: 50, high: 150 },
     { label: 'Setup contractor (one-time)', low: 1500, high: 4000, oneTime: true },
   ]),
-  build('pro', 'Aura Pro', 1797, [
+  build('pro', 'Aura Pro', 1988, [
     { label: 'Everything in Boost stack', low: 800, high: 2750 },
     { label: 'CRM (HubSpot Pro / Salesforce)', low: 450, high: 1200 },
     { label: 'Marketing automation (ActiveCampaign / Marketo Engage)', low: 200, high: 600 },
@@ -83,7 +83,7 @@ export const DIY_BREAKDOWN: DiyTierBreakdown[] = [
     { label: 'AI contractor retainer', low: 500, high: 1500 },
     { label: 'Setup + integration build (one-time)', low: 5000, high: 12000, oneTime: true },
   ]),
-  build('elite', 'Aura Elite', 3097, [
+  build('elite', 'Aura Elite', 3979, [
     { label: 'Everything in Pro stack', low: 2300, high: 6850 },
     { label: 'Enterprise voice AI (custom build)', low: 400, high: 1500 },
     { label: 'Invoice + billing automation', low: 200, high: 500 },

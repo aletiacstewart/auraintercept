@@ -22,9 +22,9 @@ const STORAGE_KEY = 'aura.forbusiness.industry';
 
 const PRICING_TIERS = [
   { name: 'Aura Core',  originalPrice: '$697',   price: '$497',   tagline: '3 consoles',            tier: 'starter' },
-  { name: 'Aura Boost', originalPrice: '$1,097', price: '$897',   tagline: '5 consoles',            tier: 'connect' },
-  { name: 'Aura Pro',   originalPrice: '$1,997', price: '$1,797', tagline: '5 consoles',            tier: 'performance' },
-  { name: 'Aura Elite', originalPrice: '$3,497', price: '$3,097', tagline: '7 consoles + AI Hub',   tier: 'command' },
+  { name: 'Aura Boost', originalPrice: '$1,394', price: '$994',   tagline: '5 consoles',            tier: 'connect' },
+  { name: 'Aura Pro',   originalPrice: '$2,788', price: '$1,988', tagline: '5 consoles',            tier: 'performance' },
+  { name: 'Aura Elite', originalPrice: '$5,576', price: '$3,979', tagline: '7 consoles + AI Hub',   tier: 'command' },
 ] as const;
 
 export default function ForBusiness() {
@@ -138,7 +138,7 @@ export default function ForBusiness() {
                           {t.price}
                           <span className="text-[10px] font-normal text-muted-foreground">/mo</span>
                         </div>
-                        <div className="text-[9px] uppercase tracking-wide font-semibold text-primary">Launch Pricing</div>
+                        <div className="text-[9px] uppercase tracking-wide font-semibold text-primary">Beta Pricing</div>
                       </div>
                       <p className="text-[10px] text-muted-foreground leading-tight min-h-[24px]">
                         {t.tagline}

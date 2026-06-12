@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 // Brand terms that must NEVER be translated (mirrors edge function list).
 export const BRAND_TERMS = [
   'Aura', 'Aura Intercept', 'Operative', 'Operatives',
-  'Core', 'Boost', 'Pro', 'Elite', 'Launch Pricing',
+  'Core', 'Boost', 'Pro', 'Elite', 'Beta Pricing',
   'Cyber-Sentry', 'SignalWire', 'ElevenLabs', 'Tavily', 'Stripe', 'Resend',
 ];
 

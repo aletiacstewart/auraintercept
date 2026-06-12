@@ -217,7 +217,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   CORE: {
     tier: 'CORE',
     label: 'Aura Core',
-    price: '$497/mo (Launch Pricing — was $697)',
+    price: '$497/mo (Beta Pricing — was $697)',
     description: '8 Smart AI Agents that staff your Front Desk 24/7 — perfect for solo operators, restaurants, salons & personal services.',
     keyFeatures: [
       'Front Desk: 24/7 voice, text & email triage',
@@ -230,12 +230,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 8,
     consoleCount: 3,
     employeeLimit: 'Up to 10 employees',
-    implementationFee: '$249 (Launch Pricing — was $349)',
+    implementationFee: '$497 (Beta Pricing — was $497)',
   },
   BOOST: {
     tier: 'BOOST',
     label: 'Aura Boost',
-    price: '$897/mo (Launch Pricing — was $1,097)',
+    price: '$994/mo (Beta Pricing — was $1,394)',
     description: '12 Smart AI Agents that add On The Way (dispatch, routing & ETAs) for small service teams in the field.',
     keyFeatures: [
       'Everything in Core, plus:',
@@ -247,12 +247,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 12,
     consoleCount: 5,
     employeeLimit: 'Up to 25 employees',
-    implementationFee: '$449 (Launch Pricing — was $549)',
+    implementationFee: '$497 (Beta Pricing — was $497)',
   },
   PRO: {
     tier: 'PRO',
     label: 'Aura Pro',
-    price: '$1,797/mo (Launch Pricing — was $1,997)',
+    price: '$1,988/mo (Beta Pricing — was $2,788)',
     description: '16 Smart AI Agents adding full Marketing automation, Outreach & deeper Reports for scaling field teams.',
     keyFeatures: [
       'Everything in Boost, plus:',
@@ -264,12 +264,12 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 16,
     consoleCount: 5,
     employeeLimit: 'Up to 50 employees',
-    implementationFee: '$899 (Launch Pricing — was $999)',
+    implementationFee: '$497 (Beta Pricing — was $497)',
   },
   ELITE: {
     tier: 'ELITE',
     label: 'Aura Elite',
-    price: '$3,097/mo (Launch Pricing — was $3,497)',
+    price: '$3,979/mo (Beta Pricing — was $5,576)',
     description: 'Full 24-agent suite — adds Billing (quotes, invoices, inventory) and full Reports for large teams & enterprise operations.',
     keyFeatures: [
       'Everything in Pro, plus:',
@@ -281,7 +281,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 24,
     consoleCount: 7,
     employeeLimit: 'Unlimited employees',
-    implementationFee: '$1,549 (Launch Pricing — was $1,749)',
+    implementationFee: '$497 (Beta Pricing — was $497)',
   },
 };
 

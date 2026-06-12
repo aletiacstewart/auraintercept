@@ -447,7 +447,7 @@ export default function PublicOnboardingIntake() {
                           <div className="text-xs text-muted-foreground mt-1">
                             <span className="line-through decoration-destructive/70">${p.originalMonthly.toLocaleString()}</span>{' '}
                             <span className="text-primary font-semibold">${p.monthly.toLocaleString()}</span>/mo · ${p.annual.toLocaleString()}/yr
-                            <span className="ml-1 text-[9px] uppercase font-semibold text-primary">Launch Pricing</span>
+                            <span className="ml-1 text-[9px] uppercase font-semibold text-primary">Beta Pricing</span>
                           </div>
                           <div className="text-xs text-foreground mt-1">
                             One-time onboarding:{' '}

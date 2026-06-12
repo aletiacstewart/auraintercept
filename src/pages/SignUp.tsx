@@ -874,10 +874,10 @@ export default function SignUp() {
 {/* 4 Tier Rows - Compact Single Line */}
                 <div className="space-y-1">
                   {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$414', annualTotal: '$4,970', savings: '$994',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,097', monthlyPrice: '$897',   annualPrice: '$748', annualTotal: '$8,970', savings: '$1,794', color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$1,997', monthlyPrice: '$1,797', annualPrice: '$1,498', annualTotal: '$17,970', savings: '$3,594', color: 'purple', popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$3,497', monthlyPrice: '$3,097', annualPrice: '$2,581', annualTotal: '$30,970', savings: '$6,194', color: 'amber', popular: false },
+                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$398', annualTotal: '$4,771', savings: '$1,193',   color: 'teal',   popular: false },
+                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,394', monthlyPrice: '$994',   annualPrice: '$795', annualTotal: '$9,542', savings: '$2,386', color: 'primary', popular: true  },
+                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple', popular: false },
+                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber', popular: false },
                   ].map(t => (
                     <div
                       key={t.id}
@@ -951,7 +951,7 @@ export default function SignUp() {
                 )}
                 {isAnnualBilling && !selectedTier && (
                   <p className="text-xs text-center text-green-500">
-                    💰 Billed annually — save up to $6,194/year
+                    💰 Billed annually — save up to $9,550/year
                   </p>
                 )}
 
@@ -1346,16 +1346,13 @@ export default function SignUp() {
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   One-Time Onboarding Fee (required)
                                   <span className="ml-auto inline-flex items-baseline gap-1.5">
-                                    <span className="text-[10px] text-muted-foreground line-through decoration-destructive/70">
-                                      {selectedTier === 'starter' ? '$349' : selectedTier === 'connect' ? '$549' : selectedTier === 'performance' ? '$999' : selectedTier === 'command' ? '$1,749' : '$349–$1,749'}
-                                    </span>
                                     <span className="text-primary font-bold">
-                                      {selectedTier === 'starter' ? '$249' : selectedTier === 'connect' ? '$449' : selectedTier === 'performance' ? '$899' : selectedTier === 'command' ? '$1,549' : '$249–$1,549'}
+                                      $497
                                     </span>
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Launch Pricing</span> per tier: <span className="font-semibold text-foreground">Core <span className="line-through text-muted-foreground">$349</span> $249 · Boost <span className="line-through text-muted-foreground">$549</span> $449 · Pro <span className="line-through text-muted-foreground">$999</span> $899 · Elite <span className="line-through text-muted-foreground">$1,749</span> $1,549</span>.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Flat $497 onboarding fee for every tier</span> — Core, Boost, Pro, and Elite.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.

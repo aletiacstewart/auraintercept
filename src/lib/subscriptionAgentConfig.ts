@@ -28,7 +28,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($697/mo · $349 onboarding): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
+    // Aura Core ($697/mo · $497 onboarding): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
     // industry specialists (auto-activated by industry pack). 10 employees.
     agents: [
       'triage',
@@ -47,7 +47,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Voice, SMS, email & web chat handled by 5 AI operatives — booking, follow-up, creative content & web presence included',
   },
   connect: {
-    // Aura Boost ($1,097/mo · $549 onboarding): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
+    // Aura Boost ($1,394/mo · $497 onboarding): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
     agents: [
       'triage',
       'customer_journey',
@@ -62,12 +62,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Boost',
-    price: '$897/mo',
-    originalPrice: '$1,097/mo',
+    price: '$994/mo',
+    originalPrice: '$1,394/mo',
     description: 'Voice, SMS, email & web chat + 7 AI operatives with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Pro ($1,997/mo · $999 onboarding): Boost + Business Finance + Analytics + Admin + Business Management Console.
+    // Aura Pro ($2,788/mo · $497 onboarding): Boost + Business Finance + Analytics + Admin + Business Management Console.
     // 50 employees.
     agents: [
       'triage',
@@ -87,12 +87,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'business_management', 'ai_operatives_hub',
     ],
     label: 'Aura Pro',
-    price: '$1,797/mo',
-    originalPrice: '$1,997/mo',
+    price: '$1,988/mo',
+    originalPrice: '$2,788/mo',
     description: '10 AI operatives with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
-    // Aura Elite ($3,497/mo · $1,749 onboarding): All 10 consolidated operatives + industry specialists,
+    // Aura Elite ($5,576/mo · $497 onboarding): All 10 consolidated operatives + industry specialists,
     // all 7 consoles + AI Hub, unlimited employees.
     agents: [
       'triage',
@@ -108,8 +108,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Elite',
-    price: '$3,097/mo',
-    originalPrice: '$3,497/mo',
+    price: '$3,979/mo',
+    originalPrice: '$5,576/mo',
     description: '10 AI Operatives — full suite with predictive analytics & AI Hub',
   },
 };
@@ -342,7 +342,7 @@ export function normalizeAgentName(agentType: string): string {
 
 // === INDUSTRY SPECIALIST OPERATIVES ===
 // 4 specialist agents enabled per-industry via industry_template_packs.extra_operatives.
-// Always require Performance ($1,997) tier minimum (or trial). They never appear in TIER_AGENT_CONFIG
+// Always require Performance ($2,788) tier minimum (or trial). They never appear in TIER_AGENT_CONFIG
 // because they are opted-in by industry pack rather than by tier alone.
 export const INDUSTRY_SPECIALIST_OPERATIVES = [
   // Field/repair specialists (existing)

@@ -582,7 +582,7 @@ export const VideoScriptsPDF: React.FC = () => (
             → Every lead gets followed up{'\n'}
             → Every job gets scheduled efficiently{'\n'}
             → Every customer gets a great experience{'\n\n'}
-            Starting at $897/month. Most customers see ROI in week one.{'\n\n'}
+            Starting at $994/month. Most customers see ROI in week one.{'\n\n'}
             Ready to see this with your own data?"
           </Text>
         </View>

@@ -18,49 +18,49 @@ const QUICK_REFERENCE_DATA = [
     agent: 'Booking Agent', 
     requires: ['AI Receptionist'], 
     tier: 'Aura Core', 
-    cost: '$897/mo (was $1,097)', 
+    cost: '$994/mo (was $1,394)', 
     notes: 'Enables online booking' 
   },
   { 
     agent: 'ETA Agent', 
     requires: ['Dispatch/GPS Console', 'Route Agent'], 
     tier: 'Aura Boost', 
-    cost: '$897/mo (was $1,097)', 
+    cost: '$994/mo (was $1,394)', 
     notes: 'Full field ops chain' 
   },
   { 
     agent: 'Invoice Agent', 
     requires: ['Quoting Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$3,979/mo (was $5,576)', 
     notes: 'Billing automation' 
   },
   { 
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$3,979/mo (was $5,576)', 
     notes: 'Full analytics suite' 
   },
   { 
     agent: 'Social Scheduler Agent', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,797/mo (was $1,997)', 
+    cost: '$1,988/mo (was $2,788)', 
     notes: 'Social media automation' 
   },
   { 
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,097/mo (was $3,497)', 
+    cost: '$3,979/mo (was $5,576)', 
     notes: 'KPI tracking' 
   },
   { 
     agent: 'Social Analytics', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,797/mo (was $1,997)', 
+    cost: '$1,988/mo (was $2,788)', 
     notes: 'Engagement metrics' 
   },
 ];

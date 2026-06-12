@@ -900,7 +900,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Launch Pricing: Core $497 (was $697) · Boost $897 (was $1,097) · Pro $1,797 (was $1,997) · Elite $3,097 (was $3,497) / month. Onboarding fee = 50% of monthly: Core $249 · Boost $449 · Pro $899 · Elite $1,549, due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 50% of monthly: Core $497 · Boost $497 · Pro $497 · Elite $497, due at start.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 
@@ -1400,10 +1400,10 @@ const TermsAcknowledgementPage = () => {
       </Text>
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
       {[
-        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $249 one-time onboarding (Launch Pricing, was $697/$349)' },
-        { id: 'boost', label: 'Aura Boost — $897/mo  ·  $449 one-time onboarding (Launch Pricing, was $1,097/$549)' },
-        { id: 'pro',   label: 'Aura Pro   — $1,797/mo ·  $899 one-time onboarding (Launch Pricing, was $1,997/$999)' },
-        { id: 'elite', label: 'Aura Elite — $3,097/mo ·  $1,549 one-time onboarding (Launch Pricing, was $3,497/$1,749)' },
+        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $497 one-time onboarding (Beta Pricing, was $697/$497)' },
+        { id: 'boost', label: 'Aura Boost — $994/mo  ·  $497 one-time onboarding (Beta Pricing, was $1,394/$497)' },
+        { id: 'pro',   label: 'Aura Pro   — $1,988/mo ·  $497 one-time onboarding (Beta Pricing, was $2,788/$497)' },
+        { id: 'elite', label: 'Aura Elite — $3,979/mo ·  $497 one-time onboarding (Beta Pricing, was $5,576/$497)' },
       ].map((p) => (
         <View key={p.id} style={styles.optionRow}>
           <View style={styles.checkbox} />

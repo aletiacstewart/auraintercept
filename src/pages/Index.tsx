@@ -923,9 +923,9 @@ export default function Index() {
                   <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$697</span>
                   <span className="text-3xl font-bold text-teal-400">$497</span>
                   <span className="text-white text-sm">/month</span>
-                  <span className="text-[9px] uppercase tracking-wide font-semibold text-teal-300 bg-teal-500/15 border border-teal-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
+                  <span className="text-[9px] uppercase tracking-wide font-semibold text-teal-300 bg-teal-500/15 border border-teal-400/30 rounded-full px-2 py-0.5">Beta Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$4,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$4,771/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat handled by 8 Smart AI Agents — booking, follow-up, creative content & web presence.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" /><span className="text-xs text-white">8 Smart AI Agents + Industry Specialists</span></div>
@@ -941,7 +941,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through text-white/50">$349</span> <span className="font-semibold">$249</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold">$497</span> (flat for every tier)</p>
               </CardContent>
             </Card>
 
@@ -954,12 +954,12 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Field service automation</p>
                 <p className="text-[10px] text-white italic mb-2">Best for small service teams — HVAC, plumbing, electrical, field service.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$1,097</span>
-                  <span className="text-3xl font-bold text-cyan-400">$897</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$1,394</span>
+                  <span className="text-3xl font-bold text-cyan-400">$994</span>
                   <span className="text-white text-sm">/month</span>
-                  <span className="text-[9px] uppercase tracking-wide font-semibold text-cyan-300 bg-cyan-500/15 border border-cyan-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
+                  <span className="text-[9px] uppercase tracking-wide font-semibold text-cyan-300 bg-cyan-500/15 border border-cyan-400/30 rounded-full px-2 py-0.5">Beta Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$8,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$9,542/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">Voice, SMS, email & web chat + 12 Smart AI Agents with dispatch, routing & field operations.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" /><span className="text-xs text-white">12 Smart AI Agents + Industry Specialists</span></div>
@@ -975,7 +975,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through text-white/50">$549</span> <span className="font-semibold">$449</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold">$497</span> (flat for every tier)</p>
               </CardContent>
             </Card>
 
@@ -988,12 +988,12 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Full business management</p>
                 <p className="text-[10px] text-white italic mb-2">Best for growing companies with field teams and multiple technicians.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$1,997</span>
-                  <span className="text-3xl font-bold text-purple-400">$1,797</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$2,788</span>
+                  <span className="text-3xl font-bold text-purple-400">$1,988</span>
                   <span className="text-white text-sm">/month</span>
-                  <span className="text-[9px] uppercase tracking-wide font-semibold text-purple-300 bg-purple-500/15 border border-purple-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
+                  <span className="text-[9px] uppercase tracking-wide font-semibold text-purple-300 bg-purple-500/15 border border-purple-400/30 rounded-full px-2 py-0.5">Beta Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$17,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$19,085/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">16 Smart AI Agents with social media, campaigns, and industry specialists.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" /><span className="text-xs text-white">16 Smart AI Agents + Industry Specialists</span></div>
@@ -1008,7 +1008,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through text-white/50">$999</span> <span className="font-semibold">$899</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold">$497</span> (flat for every tier)</p>
               </CardContent>
             </Card>
 
@@ -1021,12 +1021,12 @@ export default function Index() {
                 <p className="text-[10px] text-amber-400/80 mb-1">Full Suite / Enterprise</p>
                 <p className="text-[10px] text-white italic mb-2">Best for large service teams, property management firms, and enterprise operations.</p>
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$3,497</span>
-                  <span className="text-3xl font-bold text-amber-400">$3,097</span>
+                  <span className="text-base text-white/60 line-through decoration-2 decoration-rose-400/70">$5,576</span>
+                  <span className="text-3xl font-bold text-amber-400">$3,979</span>
                   <span className="text-white text-sm">/month</span>
-                  <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Launch Pricing</span>
+                  <span className="text-[9px] uppercase tracking-wide font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/30 rounded-full px-2 py-0.5">Beta Pricing</span>
                 </div>
-                <p className="text-xs text-secondary mb-3">$30,970/year (Save ~20%)</p>
+                <p className="text-xs text-secondary mb-3">$38,198/year (Save ~20%)</p>
                 <p className="text-xs text-white mb-4">All 10 AI Operatives with full-suite automation.</p>
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" /><span className="text-xs text-white">10 AI Operatives (Full Suite)</span></div>
@@ -1040,7 +1040,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through text-white/50">$1,749</span> <span className="font-semibold">$1,549</span></p>
+                <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold">$497</span> (flat for every tier)</p>
               </CardContent>
             </Card>
           </div>

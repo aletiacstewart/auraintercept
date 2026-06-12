@@ -184,10 +184,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
-      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
-      { name: 'One-Time Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
+      { name: 'Monthly Price (Beta Pricing)', starter: '~~$697~~ $497', connect: '~~$1,394~~ $994', performance: '~~$2,788~~ $1,988', command: '~~$5,576~~ $3,979' },
+      { name: 'Annual Price', starter: '$4,771/year', connect: '$9,542/year', performance: '$19,085/year', command: '$38,198/year' },
+      { name: 'Annual Savings', starter: 'Save ~$1,193', connect: 'Save ~$2,386', performance: 'Save ~$4,771', command: 'Save ~$9,550' },
+      { name: 'One-Time Onboarding Fee (Beta Pricing)', starter: '~~$497~~ $497', connect: '~~$497~~ $497', performance: '~~$497~~ $497', command: '~~$497~~ $497' },
     ],
   },
 ];
@@ -328,15 +328,15 @@ export const PricingComparisonTable = () => {
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-xs">
               <div className="text-cyan-300">Aura Boost</div>
-              <div className="text-[10px] font-normal text-cyan-300/70"><span className="line-through opacity-70">$1,097</span> $897/mo · 12 agents</div>
+              <div className="text-[10px] font-normal text-cyan-300/70"><span className="line-through opacity-70">$1,394</span> $994/mo · 12 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-purple-500/20 border-x border-purple-400/30 text-xs">
               <div className="text-purple-300">Aura Pro</div>
-              <div className="text-[10px] font-normal text-purple-300/70"><span className="line-through opacity-70">$1,997</span> $1,797/mo · 16 agents</div>
+              <div className="text-[10px] font-normal text-purple-300/70"><span className="line-through opacity-70">$2,788</span> $1,988/mo · 16 agents</div>
             </th>
             <th className="text-center py-2.5 px-2 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-xs">
               <div className="text-amber-300">Aura Elite</div>
-              <div className="text-[10px] font-normal text-amber-300/70"><span className="line-through opacity-70">$3,497</span> $3,097/mo · 24</div>
+              <div className="text-[10px] font-normal text-amber-300/70"><span className="line-through opacity-70">$5,576</span> $3,979/mo · 24</div>
             </th>
           </tr>
         </thead>

@@ -7,7 +7,7 @@ interface SalePriceProps {
   kind?: 'monthly' | 'onboarding';
   /** Append e.g. "/mo" or "one-time" after the price. */
   suffix?: string;
-  /** Hide the "Launch Pricing" chip (keep strikethrough). */
+  /** Hide the "Beta Pricing" chip (keep strikethrough). */
   hideChip?: boolean;
   /** Render inline vs stacked. */
   layout?: 'inline' | 'stacked';
