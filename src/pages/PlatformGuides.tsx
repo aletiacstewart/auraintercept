@@ -127,10 +127,10 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Core (Beta Pricing: $497/mo, was $697): 4 AI Operatives · 3 Consoles — Front Desk, Booking, Follow-Up, Reviews, Creative Content, Web Presence, Lead, Marketing',
-          'Aura Boost (Beta Pricing: $994/mo, was $1,394): 6 AI Operatives · 5 Consoles — All Core + Dispatch, Route, ETA, Check-In',
-          'Aura Pro (Beta Pricing: $1,988/mo, was $2,788): 8 AI Operatives · 5 Consoles — All Boost + Campaign, Outreach, Social Scheduler, Social Analytics',
-          'Aura Elite (Beta Pricing: $3,979/mo, was $5,576): All 10 AI Operatives (24 specialist agents) · 7 Consoles + AI Hub + Advanced Analytics & Forecasting',
+          'Aura Core (Beta Pricing: $497/mo, was $697): 5 AI Operatives · 3 Consoles — Receptionist, Customer Journey, Outreach, Creative Content, Web Presence',
+          'Aura Boost (Beta Pricing: $994/mo, was $1,394): 7 AI Operatives · 5 Consoles — All Core + Dispatch + Field Navigation',
+          'Aura Pro (Beta Pricing: $1,988/mo, was $2,788): 10 AI Operatives · 7 Consoles — All Boost + Business Finance, Analytics Intelligence, Admin',
+          'Aura Elite (Beta Pricing: $3,979/mo, was $5,576): All 10 AI Operatives (24 agents) · 7 Consoles + AI Operatives Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
           'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
           'All tiers include API Access and Chat Widget'
@@ -189,10 +189,10 @@ const guideCategories = [
     featureColor: 'feature-config',
     guides: [
       {
-        title: 'AI Operatives Overview (24 Agents)',
+        title: 'AI Operatives Overview — 24 Agents organized into 10 Operatives',
         duration: '15 min',
         steps: [
-          'The platform includes 24 AI Operatives organized into functional groups:',
+          'The platform ships 24 AI agents organized into 10 Operatives, grouped into functional stacks:',
           '1. Customer Portal Stack (Core): AI Receptionist, Booking, Follow-Up, Review',
           '2. Creative & Web Stack (Core): Creative Content, Web Presence, Lead, Marketing',
           '3. Field Ops Stack (Boost): Dispatch, Route, ETA, Check-In',

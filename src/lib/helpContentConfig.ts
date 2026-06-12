@@ -397,7 +397,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   connect: {
     title: 'Aura Boost',
-    description: '12 AI Agents with dispatch, routing & field operations.',
+    description: '7 AI Operatives with dispatch, routing & field operations.',
     highlights: [
       'Everything in Aura Core',
       'Dispatch/GPS Console + Route Agent + ETA Agent + Check-In Agent',
@@ -409,7 +409,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   performance: {
     title: 'Aura Pro',
-    description: '16 AI Agents with social media, campaigns, and industry specialist agents.',
+    description: '10 AI Operatives with social media, campaigns, and industry specialist agents.',
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
@@ -420,7 +420,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   command: {
     title: 'Aura Elite',
-    description: 'Full 24-agent suite with advanced analytics, AI Hub & unlimited employees.',
+    description: 'All 10 AI Operatives (24 agents) — full suite with advanced analytics, AI Hub & unlimited employees.',
     highlights: [
       'Everything in Aura Pro',
       'Invoice + Inventory + Insights + Performance Agents',

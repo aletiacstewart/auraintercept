@@ -1,58 +1,66 @@
-# Documentation Audit — Align All Exports with Homepage
+# Standardize 10 Operatives / 24 Agents Across the Platform
 
-A pricing-only sweep already ran. This audit focuses on **non-price content drift** between PDFs/downloads and what the homepage and SignUp page actually say.
+## Canonical phrasing (single source of truth)
 
-## Findings (with file:line)
+- **Long form:** "24 AI agents organized into 10 Operatives"
+- **Short chip / inline:** "10 Operatives · 24 Agents"
+- **Operative count only** (cards, taglines): "10 AI Operatives"
+- Never write "19 agents", "8 agents", "12 agents", "all 24 agents" as standalone tier descriptors. Tier cards use operative counts; PDFs may add the agent breakdown in parentheses.
 
-### 1. Wrong agent count — "19 AI agents" (canonical = 24 agents / 10 operatives)
-- `src/components/documentation/PlatformDocumentPDF.tsx:507` — "core 19"
-- `src/components/documentation/PlatformDocumentPDF.tsx:1304` — tagline "19 AI agents. Zero stress."
-- `src/components/documentation/PlatformDocumentPDF.tsx:1363` — body copy "19 AI agents working for you"
-- `src/components/documentation/PlatformDocumentPDF.tsx:1433` — "Agent icons for each of the 19 AI agents"
+## Per-tier counts (canonical)
 
-### 2. Inconsistent per-tier agent counts
-- `src/components/documentation/PricingSummaryPDF.tsx:358` — "Everything in Core (8 agents)"
-- `src/components/documentation/PricingSummaryPDF.tsx:396` — "Everything in Boost (12 agents)"
-- `src/components/documentation/ComprehensiveGuidesPDF.tsx:1015` — "Aura Core ($497/mo): 8 agents…"
-- `src/components/documentation/ComprehensiveGuidesPDF.tsx:1019` — "Aura Boost ($994/mo): 12 agents…"
+Derived from `TIER_AGENT_CONFIG` in `src/lib/subscriptionAgentConfig.ts`:
 
-Homepage / SignUp describe consoles + operatives, not raw agent counts. Replace with operative-based language (matches `mem://architecture/ai-agent/twenty-four-agent-model-standard`).
+| Tier | Operatives | Agents | Card label | PDF label |
+|---|---|---|---|---|
+| Core (`starter`) | 5 | 12 | "5 AI Operatives" | "5 Operatives · 12 Agents" |
+| Boost (`connect`) | 7 | 15 | "7 AI Operatives" | "7 Operatives · 15 Agents" |
+| Pro (`performance`) | 10 | 22 | "10 AI Operatives" | "10 Operatives · 22 Agents" |
+| Elite (`command`) | 10 | 24 | "10 AI Operatives" | "10 Operatives · 24 Agents (full suite + AI Hub)" |
 
-### 3. Annual billing math drift ("10× monthly" vs homepage "~20% off")
-SignUp + Index show annual = ~9.6× monthly (~20% savings). These say 10×:
-- `src/pages/PlatformGuides.tsx:138`
-- `src/components/documentation/PricingSummaryPDF.tsx:181, 241, 468`
-- `src/components/documentation/PlatformFAQPDF.tsx:461` — also claims "17%" + "10x" in same sentence (self-contradictory)
+(Final per-tier counts will be re-derived from `TIER_AGENT_CONFIG` during the edit pass; if the live config differs from the table above, the live config wins and the table is the only thing that changes.)
 
-### 4. Onboarding fee description drift (canonical = flat $497)
-- `src/components/documentation/CompanyOnboardingPDF.tsx:1347–1348` — "onboarding fee equal to the selected tier's monthly price"
-- Same file `:1391` — agreement line repeats the per-tier-price wording
+## Files to update
 
-Should read: flat $497 one-time, due at start of 60-Day Live Trial, non-refundable once onboarding begins.
+**Cards / marketing UI (operatives only):**
+- `src/pages/Index.tsx` — already mostly clean; normalize "10 AI operatives" capitalization to "10 AI Operatives"; keep "See the 24 agents that power this" link.
+- `src/pages/Subscription.tsx:148, 857` — replace "Core … 8 AI agents" / "Elite … all 24 agents" with operative counts (and "(full suite of 24 agents)" only for Elite).
+- `src/pages/Help.tsx:691` — rephrase "Full suite of 24 agents…" to "All 10 AI Operatives (24 agents)…".
+- `src/pages/AIAgentsHub.tsx`, `src/pages/DesignPreview.tsx`, `src/pages/PlatformGuides.tsx:133,192`, `src/pages/Architecture.tsx`, `src/pages/ExportDocumentation.tsx` — normalize to canonical phrasing.
+- `src/components/landing/CompetitiveDifferentiation.tsx` — already canonical, leave.
 
-### 5. Spot-check confirmed clean
-- All `$` strings across `src/components/documentation/` resolve to the current matrix (Core 697/497, Boost 1394/994, Pro 2788/1988, Elite 5576/3979, onboarding $497, annuals 4,771 / 9,542 / 19,085 / 38,198, savings 1,193 / 2,386 / 4,771 / 9,550).
-- No legacy launch-pricing strings ($349/$549/$999/$1,749/$897/$1,797/$3,097/$1,097/$1,997/$3,497) remain.
-- Trial wording ("60-Day Live Trial", "first 30 days = onboarding") consistent across PDFs and homepage.
+**PDFs (operatives + agents, dual-count where it adds clarity):**
+- `src/components/documentation/PricingSummaryPDF.tsx` — per-tier headers add "(X Operatives · Y Agents)"; "All 10 AI Operatives" stays for Elite; tagline lines normalized.
+- `src/components/documentation/WebsiteCopyPDF.tsx` — already uses dual form; normalize stragglers and meta descriptions to "10 AI Operatives (24 agents)".
+- `src/components/documentation/PlatformDocumentPDF.tsx` — confirm comment + slide titles use "24-agent / 10-operative".
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx`, `PlatformFAQPDF.tsx`, `CompanyOnboardingPDF.tsx`, `MarketingSalesMasterPDF.tsx`, `SalesPitchDataPDF.tsx`, `VideoScriptsPDF.tsx`, `SocialMediaContentPackPDF.tsx`, `BrandAssetGuidePDF.tsx` — sweep for "19 agents", "8 agents", "12 agents", "all 24 agents" and replace with canonical phrasing.
 
-## Fixes
+**Code/library strings:**
+- `src/lib/helpSystemPrompt.ts`, `src/lib/helpContentConfig.ts`, `src/lib/documentationConfig.ts`, `src/lib/howToUseContent.ts`, `src/lib/videoPromptsData.ts`, `src/lib/subscriptionAgentConfig.ts` (description fields only) — normalize phrasing.
+- `supabase/functions/ai-agent-chat/index.ts:3438` — Elite description normalized to "All 10 AI Operatives (24 agents) + enterprise features".
 
-**`PlatformDocumentPDF.tsx`** — replace all four "19 AI agents" mentions with "24 specialist agents organized as 10 AI Operatives" (or short form "10 AI Operatives" in the tagline). Update the `// not included in core 19` comment.
+**Memory + canonical docs:**
+- `.lovable/memory/architecture/canonical-naming-registry.md` — update per-tier lines to include operative + agent counts.
+- `.lovable/memory/architecture/ai-agent/twenty-four-agent-model-standard.md` — reaffirm canonical phrasing rule.
+- `.lovable/memory/index.md` Core section — already says "24 agents = 10 operatives"; add: "Canonical phrasing: '24 AI agents organized into 10 Operatives'. Cards show operatives only; PDFs may show both."
 
-**`PricingSummaryPDF.tsx`** — replace "(8 agents)" / "(12 agents)" with operative-based wording matching homepage tier cards ("Front Desk + Field Ops operatives", etc.). Reword the three "10× / 10x monthly rate" lines to "annual billing saves ~20% (billed upfront)".
-
-**`ComprehensiveGuidesPDF.tsx`** — rewrite the two tier-summary bullets to drop raw agent counts in favor of operative/console language; verify the "Annual billing saves ~20%" line stays as-is.
-
-**`PlatformFAQPDF.tsx`** — fix the annual-billing FAQ answer to: "Save ~20% with annual billing (billed upfront). Example: Aura Elite annual is $38,198/year (saves $9,550 vs paying monthly)."
-
-**`PlatformGuides.tsx`** — change tip from "Annual billing = 10x monthly rate" to "Annual billing saves ~20% vs monthly".
-
-**`CompanyOnboardingPDF.tsx`** — rewrite section 3 body and the agreement bullet to: "A one-time **flat $497 onboarding fee** (same for every tier: Core, Boost, Pro, Elite) is due at the start of the 60-Day Live Trial and is non-refundable once onboarding begins. It covers Concierge Onboarding services and platform configuration."
+**Locales:**
+- `src/locales/en/marketing.json`, `src/locales/es/marketing.json` — no count strings today; add a shared `operativesShort` / `operativesLong` key for reuse and verify ES translation.
 
 ## Out of scope
-- No pricing matrix changes (already correct).
-- No Stripe / edge-function changes.
-- No homepage edits — homepage is the source of truth.
+
+- No pricing, Stripe, edge-function billing logic, or tier-gating changes.
+- No changes to the underlying agent IDs, operative IDs, or `TIER_AGENT_CONFIG` arrays.
+- No homepage layout/design changes — copy normalization only.
 
 ## Verification
-After edits, re-run `rg -n '19 (AI )?agents|10x monthly|10× monthly|\(8 agents\)|\(12 agents\)|monthly price' src/components/documentation/ src/pages/` and confirm zero hits.
+
+After edits, run:
+
+```text
+rg -n -i '\b(19|20|21|22|23|25)\s*(ai\s*)?agents\b|\(8 agents\)|\(12 agents\)|all 24 agents\b' src/ supabase/functions/ .lovable/memory/
+```
+
+Expected: zero hits (except inside the canonical phrase "24 agents organized into 10 Operatives").
+
+Spot-check rendered PDFs (PricingSummary, WebsiteCopy, PlatformDocument) by visual review; confirm cards on `/`, `/subscription`, `/dashboard/export-docs` show operative counts.

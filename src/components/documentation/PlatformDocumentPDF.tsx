@@ -1441,7 +1441,7 @@ const PlatformDocumentPDF = () => (
     {/* Final CTA Page */}
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>Ready to Transform Your Business?</Text>
-      <Text style={styles.coverSubtitle}>19 AI Agents Working 24/7 For You</Text>
+      <Text style={styles.coverSubtitle}>24 AI Agents organized into 10 Operatives — Working 24/7 For You</Text>
       
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>

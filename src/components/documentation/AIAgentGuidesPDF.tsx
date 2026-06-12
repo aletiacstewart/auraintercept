@@ -1232,7 +1232,7 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.sectionTitle}>Complete Agent Summary</Text>
       
       <Text style={styles.paragraph}>
-        Quick reference of all 19 AI Agents, organized by console. Use this table to see at a glance 
+        Quick reference of all 24 AI agents (organized into 10 Operatives), grouped by console. Use this table to see at a glance
         which agents work independently and which need other agents enabled.
       </Text>
 

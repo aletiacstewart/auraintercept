@@ -676,19 +676,19 @@ export default function Help() {
                           <ul className="space-y-3 text-sm">
                             <li>
                               <strong className="text-card-foreground">Aura Core (<span className="line-through text-muted-foreground">$697</span> $497/mo · Beta Pricing):</strong>
-                              <p className="mt-1">8 AI Agents: Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing. Perfect for solo operators.</p>
+                              <p className="mt-1">5 AI Operatives: Receptionist, Customer Journey, Outreach, Creative Content, Web Presence. Perfect for solo operators.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Boost (<span className="line-through text-muted-foreground">$1,394</span> $994/mo · Beta Pricing):</strong>
-                              <p className="mt-1">12 AI Agents: All Core agents + Dispatch, Route, ETA, Check-In. Adds field operations and advanced scheduling.</p>
+                              <p className="mt-1">7 AI Operatives: All Core operatives + Dispatch + Field Navigation. Adds field operations and advanced scheduling.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Pro (<span className="line-through text-muted-foreground">$2,788</span> $1,988/mo · Beta Pricing):</strong>
-                              <p className="mt-1">16 AI Agents: All Boost agents + Campaign, Outreach, Social Scheduler Agent, Social Analytics. Full marketing and outreach automation.</p>
+                              <p className="mt-1">10 AI Operatives: All Boost operatives + Business Finance, Analytics Intelligence, Admin. Full business management automation.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Elite (<span className="line-through text-muted-foreground">$5,576</span> $3,979/mo · Beta Pricing):</strong>
-                              <p className="mt-1">Full suite of 24 agents including Invoice, Inventory, Insights, Performance, Revenue, Forecast + Predictive AI Hub.</p>
+                              <p className="mt-1">All 10 AI Operatives (24 agents) — full suite including Invoice, Inventory, Insights, Revenue, Forecast + Predictive AI Hub.</p>
                             </li>
                           </ul>
                         </div>
