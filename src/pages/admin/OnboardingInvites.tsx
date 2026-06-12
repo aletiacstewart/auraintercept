@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Copy, Loader2, Send, ExternalLink, FlaskConical, FileDown, Eye, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import jsPDF from 'jspdf';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 
 type Invite = {
   id: string;
@@ -198,7 +199,8 @@ export default function OnboardingInvites() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <DashboardLayout>
+      <div className="max-w-5xl mx-auto p-6 space-y-6">
       <header>
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -342,6 +344,7 @@ export default function OnboardingInvites() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
