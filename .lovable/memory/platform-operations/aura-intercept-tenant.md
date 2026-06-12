@@ -10,7 +10,7 @@ The platform owner runs its own SaaS business as a tenant on Aura Intercept.
 
 ## Identity
 - Company: `Aura Intercept` · slug `aura-intercept` · id `04c57cbe-358e-4036-a3ad-b777a55f5be0`
-- Tier: `command` (Elite — all 24 agents)
+- Tier: `command` (Elite — all 10 AI Operatives / 24 agents)
 - Industry vertical: `saas_platform` (19th pack, cluster `booking`)
 - `is_demo = false` · `public_app_url = https://auraintercept.ai`
 

@@ -12,7 +12,11 @@ Source-of-truth files (DO NOT drift from these):
   - `supabase/functions/initialize-company-agents/index.ts`
   - `supabase/functions/seed-demo-accounts-v2/index.ts`
 
-## Canonical operative model (10 consolidated operatives)
+## Canonical operative model (24 AI agents organized into 10 Operatives)
+
+**Canonical phrasing:** "24 AI agents organized into 10 Operatives".
+Cards/marketing use operative counts (Core 5 · Boost 7 · Pro 10 · Elite 10).
+PDFs may add the platform-wide agent count (24) for clarity.
 
 The UI and tier gating are driven by the **10 consolidated operatives**.
 Legacy 24-agent IDs (booking/lead/route/etc.) are accepted as input aliases
