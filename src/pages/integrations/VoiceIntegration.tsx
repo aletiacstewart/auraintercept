@@ -7,6 +7,7 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
+import { ElevenLabsToolChecklist } from '@/components/admin/ElevenLabsToolChecklist';
 import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -224,6 +225,11 @@ export default function VoiceIntegration() {
               companyId={companyId} 
               agentId={integrations?.elevenlabs_agent_id || undefined}
             />
+          )}
+
+          {/* ElevenLabs Client Tool Checklist (send_walkthrough_demo) */}
+          {integrations?.elevenlabs_api_key && (
+            <ElevenLabsToolChecklist />
           )}
 
           {/* Setup Form */}
