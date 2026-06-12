@@ -178,26 +178,26 @@ const PricingSummaryPDF = () => (
       <Header title="Aura Intercept - Pricing Guide" />
       <Text style={styles.sectionTitle}>Pricing at a Glance</Text>
       <Text style={styles.paragraph}>
-        Four tiers. Beta Pricing active. Annual billing = 10× monthly rate.
+        Four tiers. Beta Pricing active. Annual billing saves ~20% vs monthly (billed upfront).
       </Text>
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
           <Text style={styles.summaryPrice}>$497</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 AI Agents</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>4 AI Operatives · 3 Consoles</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BOOST</Text>
           <Text style={styles.summaryPrice}>$994</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>12 AI Agents</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>6 AI Operatives · 5 Consoles</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PRO</Text>
           <Text style={styles.summaryPrice}>$1,988</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>16 AI Agents</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 AI Operatives · 5 Consoles</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
@@ -238,7 +238,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>One-Time Onboarding Fee</Text>
         <Text style={styles.noticeText}>
-          Core $497 · Boost $497 · Pro $497 · Elite $497. Due at start of the 60-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 30 days of full live use. Non-refundable once onboarding begins. Annual billing = 10x monthly rate.
+          Flat $497 for every tier (Core, Boost, Pro, Elite). Due at start of the 60-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 30 days of full live use. Non-refundable once onboarding begins. Annual billing saves ~20% vs monthly (billed upfront).
         </Text>
       </View>
       <View style={styles.footer}>
@@ -355,7 +355,7 @@ const PricingSummaryPDF = () => (
       </View>
       <Text style={styles.subsectionTitle}>Included Smart AI Agents (12)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Core (8 agents), plus:</FeatureItem>
+        <FeatureItem>Everything in Core (4 operatives, 3 consoles), plus:</FeatureItem>
         <FeatureItem>Dispatch/GPS Console - Smart job assignment by skills and proximity</FeatureItem>
         <FeatureItem>Route Agent - Optimal route planning</FeatureItem>
         <FeatureItem>ETA Agent - Real-time arrival estimates</FeatureItem>
@@ -393,7 +393,7 @@ const PricingSummaryPDF = () => (
       </View>
       <Text style={styles.subsectionTitle}>Included Smart AI Agents (16)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Everything in Boost (12 agents), plus:</FeatureItem>
+        <FeatureItem>Everything in Boost (6 operatives, 5 consoles), plus:</FeatureItem>
         <FeatureItem>Campaign Agent - Automated campaign creation</FeatureItem>
         <FeatureItem>Outreach Agent - Sales outreach automation</FeatureItem>
         <FeatureItem>Social Scheduler Agent - Social media scheduling</FeatureItem>
@@ -465,8 +465,8 @@ const PricingSummaryPDF = () => (
       <Header title="Aura Intercept - Pricing Guide" />
       <Text style={styles.sectionTitle}>Annual Discount Savings</Text>
       <Text style={styles.paragraph}>
-        Save by choosing annual billing (10x monthly rate). All plans include the same features
-        whether you choose monthly or annual billing.
+        Annual billing saves ~20% vs paying monthly (billed upfront). All plans include the same
+        features whether you choose monthly or annual billing.
       </Text>
       <Text style={styles.subsectionTitle}>Monthly vs Annual Comparison</Text>
       <View style={styles.table}>

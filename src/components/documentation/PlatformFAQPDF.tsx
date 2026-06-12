@@ -453,12 +453,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer={`One-time onboarding fees are due at the start of your 60-Day Live Trial and vary by tier: Core ($${SUBSCRIPTION_TIERS.aura_core?.implementationFee ?? 249}), Boost ($${SUBSCRIPTION_TIERS.aura_boost?.implementationFee ?? 449}), Pro ($${SUBSCRIPTION_TIERS.aura_pro?.implementationFee ?? 899}), and Elite ($${SUBSCRIPTION_TIERS.aura_elite?.implementationFee ?? 1549}). The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — so the remaining 60 days are spent fully live.`}
+          answer="A one-time flat $497 onboarding fee applies to every tier (Core, Boost, Pro, and Elite). It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use."
         />
         
         <FAQItem 
           question="Are there annual billing discounts?"
-          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $38,198/year (saving ~$9,550 vs monthly). Annual plans are billed upfront and include priority support."
+          answer="Yes — save ~20% with annual billing (billed upfront). For example, Aura Elite annual is $38,198/year (saves $9,550 vs paying monthly). Annual plans include priority support."
         />
         
         <FAQItem 

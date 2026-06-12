@@ -1,74 +1,58 @@
+# Documentation Audit — Align All Exports with Homepage
 
-## New Pricing Matrix
+A pricing-only sweep already ran. This audit focuses on **non-price content drift** between PDFs/downloads and what the homepage and SignUp page actually say.
 
-| Tier  | Normal (strikethrough) | Beta (billed)   | Annual Normal (~20% off ×12) | Annual Beta (~20% off ×12) |
-|-------|------------------------|-----------------|------------------------------|----------------------------|
-| Core  | $697 / mo              | $497 / mo       | $6,691                       | $4,771                     |
-| Boost | $1,394 / mo            | $994 / mo       | $13,382                      | $9,542                     |
-| Pro   | $2,788 / mo            | $1,988 / mo     | $26,765                      | $19,085                    |
-| Elite | $5,576 / mo            | $3,979 / mo     | $53,530                      | $38,198                    |
+## Findings (with file:line)
 
-Annual = `round(monthly × 12 × 0.8)`. Both monthly and annual show strikethrough normal + billed beta + "Beta Pricing" chip everywhere.
+### 1. Wrong agent count — "19 AI agents" (canonical = 24 agents / 10 operatives)
+- `src/components/documentation/PlatformDocumentPDF.tsx:507` — "core 19"
+- `src/components/documentation/PlatformDocumentPDF.tsx:1304` — tagline "19 AI agents. Zero stress."
+- `src/components/documentation/PlatformDocumentPDF.tsx:1363` — body copy "19 AI agents working for you"
+- `src/components/documentation/PlatformDocumentPDF.tsx:1433` — "Agent icons for each of the 19 AI agents"
 
-### Blocker — need from you before implementing
-**Onboarding (one-time) fees:** you chose "I'll specify exact amounts". Please reply with 8 numbers in this format:
-`Core: normal $___ / beta $___ · Boost: $___ / $___ · Pro: $___ / $___ · Elite: $___ / $___`
-(For reference, current values are Core 349/249, Boost 549/449, Pro 999/899, Elite 1749/1549.)
+### 2. Inconsistent per-tier agent counts
+- `src/components/documentation/PricingSummaryPDF.tsx:358` — "Everything in Core (8 agents)"
+- `src/components/documentation/PricingSummaryPDF.tsx:396` — "Everything in Boost (12 agents)"
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx:1015` — "Aura Core ($497/mo): 8 agents…"
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx:1019` — "Aura Boost ($994/mo): 12 agents…"
 
----
+Homepage / SignUp describe consoles + operatives, not raw agent counts. Replace with operative-based language (matches `mem://architecture/ai-agent/twenty-four-agent-model-standard`).
 
-## Scope of Changes
+### 3. Annual billing math drift ("10× monthly" vs homepage "~20% off")
+SignUp + Index show annual = ~9.6× monthly (~20% savings). These say 10×:
+- `src/pages/PlatformGuides.tsx:138`
+- `src/components/documentation/PricingSummaryPDF.tsx:181, 241, 468`
+- `src/components/documentation/PlatformFAQPDF.tsx:461` — also claims "17%" + "10x" in same sentence (self-contradictory)
 
-### 1. Source-of-truth pricing layer
-- Rewrite `src/lib/launchPricing.ts` to the new matrix. Rename label `Launch Pricing` → `Beta Pricing`. Keep `LAUNCH_PRICING.active` toggle.
-- Add `annualOriginal` / `annualSale` per tier (computed but stored explicitly so PDFs/Stripe don't drift).
-- Update `mem://billing/launch-pricing` and the Core memory line to the new numbers.
-- Update `mem://marketing/pricing/canonical-four-tier-model`.
+### 4. Onboarding fee description drift (canonical = flat $497)
+- `src/components/documentation/CompanyOnboardingPDF.tsx:1347–1348` — "onboarding fee equal to the selected tier's monthly price"
+- Same file `:1391` — agreement line repeats the per-tier-price wording
 
-### 2. Stripe (8 new prices + migration)
-- Create 8 new products/prices: 4 normal + 4 beta, monthly recurring. (Annual prices created in a second pass once monthly is live; flag below.)
-- Wire new `price_*` IDs into `src/lib/launchPricing.ts` and the edge functions that resolve tier → price ID (`create-checkout`, `check-subscription`, `LEGACY_TIER_MAP`).
-- Keep existing `Tee*` and `Tdvk*` IDs in `LEGACY_TIER_MAP` so check-subscription still recognizes them as the same tier.
-- **Migrate existing active subs** to the new monthly beta price via a one-off edge function `migrate-subs-to-beta-2026`: lists active subs, matches old price → new beta price, calls `stripe.subscriptions.update` with `proration_behavior: 'none'` (no surprise charges, applies at next renewal). Run once, log results.
-- Decision needed on annual: confirm you want me to also create 8 annual prices now, or monthly-only for this pass.
+Should read: flat $497 one-time, due at start of 60-Day Live Trial, non-refundable once onboarding begins.
 
-### 3. UI / marketing surfaces
-Update every place that hardcodes a price string. Most read from `launchPricing.ts` and `SalePrice`/`SalePriceInline` and update automatically; the rest need manual edits:
-- `src/components/agents/TierComparisonCards.tsx` — strikethrough + sale row at bottom.
-- `src/lib/diyCostBreakdown.ts` — `auraMonthly` per tier (497 → 497, 897 → 994, 1797 → 1988, 3097 → 3979). DIY comparison line items unchanged.
-- `src/pages/Index.tsx`, `src/pages/SignUp.tsx`, `src/pages/ForBusiness.tsx`, `src/pages/Calculators.tsx`, pricing sections of marketing components.
-- Tier comparison / upgrade-delta copy ($300, $500, $1000 deltas → $497, $994, $1991).
-- Any "Save ~20%" annual copy verified against new numbers.
+### 5. Spot-check confirmed clean
+- All `$` strings across `src/components/documentation/` resolve to the current matrix (Core 697/497, Boost 1394/994, Pro 2788/1988, Elite 5576/3979, onboarding $497, annuals 4,771 / 9,542 / 19,085 / 38,198, savings 1,193 / 2,386 / 4,771 / 9,550).
+- No legacy launch-pricing strings ($349/$549/$999/$1,749/$897/$1,797/$3,097/$1,097/$1,997/$3,497) remain.
+- Trial wording ("60-Day Live Trial", "first 30 days = onboarding") consistent across PDFs and homepage.
 
-### 4. PDFs & documents
-Regenerate-on-render PDFs that embed pricing:
-- `src/components/documentation/CompanyOnboardingPDF.tsx`
-- Outreach toolkit PDFs under `src/components/documentation/*` (audit checklist, sales packet, etc.) — sweep for `$697|$1,?097|$1,?997|$3,?497|$497|$897|$1,?797|$3,?097` and replace via central helpers.
-- `src/lib/documentationConfig.ts` `implementationFee` per tier ← new onboarding numbers.
-- Audit / `AuditReport.tsx` pricing call-outs.
+## Fixes
 
-### 5. Database
-- Migration: update `companies.subscription_tier_price` (or equivalent cached price columns) for active rows to the new beta monthly amount keyed by tier.
-- Insert (not migration): backfill `subscription_events` with a `pricing_migration_2026_beta` row per affected company for audit trail.
-- Refresh demo seeder so `/dashboard/demo-seeder` reflects new prices.
+**`PlatformDocumentPDF.tsx`** — replace all four "19 AI agents" mentions with "24 specialist agents organized as 10 AI Operatives" (or short form "10 AI Operatives" in the tagline). Update the `// not included in core 19` comment.
 
-### 6. Memory updates
-- `mem://billing/launch-pricing` → new numbers + new Stripe price IDs + note about migration.
-- `mem://marketing/pricing/canonical-four-tier-model` → new normal/beta tables.
-- Update Core rule line in `mem://index.md`.
+**`PricingSummaryPDF.tsx`** — replace "(8 agents)" / "(12 agents)" with operative-based wording matching homepage tier cards ("Front Desk + Field Ops operatives", etc.). Reword the three "10× / 10x monthly rate" lines to "annual billing saves ~20% (billed upfront)".
 
----
+**`ComprehensiveGuidesPDF.tsx`** — rewrite the two tier-summary bullets to drop raw agent counts in favor of operative/console language; verify the "Annual billing saves ~20%" line stays as-is.
 
-## Verification checklist (run after build)
-1. `/` homepage and `/sign-up` show strikethrough normal + beta price for all 4 tiers, both monthly and annual.
-2. Tier comparison card row shows `~$697 $497`, `~$1,394 $994`, `~$2,788 $1,988`, `~$5,576 $3,979`.
-3. `create-checkout` for each tier returns a session with the new beta `price_*`.
-4. `check-subscription` correctly maps both legacy and new price IDs to the same tier label.
-5. Generated `CompanyOnboardingPDF` and audit PDF show new pricing and new onboarding fees.
-6. Existing test subscriber on Stripe sandbox auto-renews at the new beta price after migration script run.
+**`PlatformFAQPDF.tsx`** — fix the annual-billing FAQ answer to: "Save ~20% with annual billing (billed upfront). Example: Aura Elite annual is $38,198/year (saves $9,550 vs paying monthly)."
 
----
+**`PlatformGuides.tsx`** — change tip from "Annual billing = 10x monthly rate" to "Annual billing saves ~20% vs monthly".
 
-## Reply before I start
-1. The 8 onboarding amounts (required).
-2. Annual Stripe prices now, or monthly-only first pass?
+**`CompanyOnboardingPDF.tsx`** — rewrite section 3 body and the agreement bullet to: "A one-time **flat $497 onboarding fee** (same for every tier: Core, Boost, Pro, Elite) is due at the start of the 60-Day Live Trial and is non-refundable once onboarding begins. It covers Concierge Onboarding services and platform configuration."
+
+## Out of scope
+- No pricing matrix changes (already correct).
+- No Stripe / edge-function changes.
+- No homepage edits — homepage is the source of truth.
+
+## Verification
+After edits, re-run `rg -n '19 (AI )?agents|10x monthly|10× monthly|\(8 agents\)|\(12 agents\)|monthly price' src/components/documentation/ src/pages/` and confirm zero hits.
