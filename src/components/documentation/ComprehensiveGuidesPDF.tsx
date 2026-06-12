@@ -1012,15 +1012,15 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>Subscription Tiers (4-Tier Growth Ladder)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Core ($497/mo): 8 agents, 3 consoles, 10 employees</Text>
+          <Text style={styles.bulletText}>Aura Core ($497/mo, was $697): 4 AI Operatives · 3 Consoles · 10 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Boost ($994/mo): 12 agents, 5 consoles, 25 employees</Text>
+          <Text style={styles.bulletText}>Aura Boost ($994/mo, was $1,394): 6 AI Operatives · 5 Consoles · 25 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Pro ($1,988/mo): 16 agents, 5 consoles, 50 employees</Text>
+          <Text style={styles.bulletText}>Aura Pro ($1,988/mo, was $2,788): 8 AI Operatives · 5 Consoles · 50 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
