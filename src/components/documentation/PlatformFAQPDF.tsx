@@ -458,7 +458,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Are there annual billing discounts?"
-          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $38,198/year (saving ~$9,550 vs monthly). Annual plans are billed upfront and include priority support."
+          answer="Yes — save ~20% with annual billing (billed upfront). For example, Aura Elite annual is $38,198/year (saves $9,550 vs paying monthly). Annual plans include priority support."
         />
         
         <FAQItem 
