@@ -89,7 +89,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Pro',
     price: '$1,988/mo',
     originalPrice: '$2,788/mo',
-    description: '10 AI operatives with business management, analytics & admin (industry specialists included on every plan)',
+    description: '10 AI Operatives with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
     // Aura Elite ($5,576/mo · $497 onboarding): All 10 consolidated operatives + industry specialists,

@@ -477,7 +477,7 @@ export default function Index() {
 
       <SEO
         title="Aura Intercept | AI Operatives for Service Businesses"
-        description="10 AI operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
+        description="10 AI Operatives across 7 consoles automate calls, scheduling, field ops, billing, marketing, and analytics."
         path="/"
       />
 
