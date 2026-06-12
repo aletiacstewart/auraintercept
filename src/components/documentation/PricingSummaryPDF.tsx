@@ -306,7 +306,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.pricingTierName}>Aura Core</Text>
         <Text style={styles.pricingPrice}>$497/month</Text>
         <Text style={styles.pricingAnnual}>or $4,771/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$994 with annual billing</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,193 with annual billing</Text>
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>{connect.bestFor}</Text>
       </View>
@@ -478,7 +478,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Savings</Text>
         </View>
         {[
-          { tier: 'Aura Core', monthly: '$497', yearlyPath: '$5,964', annual: '$4,771', savings: '$994' },
+          { tier: 'Aura Core', monthly: '$497', yearlyPath: '$5,964', annual: '$4,771', savings: '$1,193' },
           { tier: 'Aura Boost', monthly: '$994', yearlyPath: '$11,928', annual: '$9,542', savings: '$2,386' },
           { tier: 'Aura Pro', monthly: '$1,988', yearlyPath: '$23,856', annual: '$19,085', savings: '$4,771' },
           { tier: 'Aura Elite', monthly: '$3,979', yearlyPath: '$47,748', annual: '$38,198', savings: '$9,550' },
