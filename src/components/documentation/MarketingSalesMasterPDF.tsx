@@ -506,7 +506,7 @@ const DISCOVERY_QUESTIONS = [
 ];
 
 const ELEVATOR_PITCH =
-  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $497/mo (Launch Pricing, was $697). Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days, then 30 days of full live use.';
+  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $497/mo (Beta Pricing, was $697). Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days, then 30 days of full live use.';
 
 const DEMO_FLOW = [
   '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
@@ -519,9 +519,9 @@ const DEMO_FLOW = [
 
 const TIER_FIT = [
   { who: '1–10 employees, no field techs, owner-operator', tier: 'Aura Core ($497/mo)' },
-  { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($897/mo)' },
-  { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,797/mo)' },
-  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($3,097/mo)' },
+  { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($994/mo)' },
+  { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,988/mo)' },
+  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($3,979/mo)' },
 ];
 
 const OBJECTIONS_EXTRA = [
@@ -557,10 +557,10 @@ const TALKING_POINTS = [
 const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
-  { key: 'starter', onboarding: '$249 one-time', employees: '10 employees' },
-  { key: 'connect', onboarding: '$449 one-time', employees: '25 employees' },
-  { key: 'performance', onboarding: '$899 one-time', employees: '50 employees' },
-  { key: 'command', onboarding: '$1,549 one-time', employees: 'Unlimited employees' },
+  { key: 'starter', onboarding: '$497 one-time', employees: '10 employees' },
+  { key: 'connect', onboarding: '$497 one-time', employees: '25 employees' },
+  { key: 'performance', onboarding: '$497 one-time', employees: '50 employees' },
+  { key: 'command', onboarding: '$497 one-time', employees: 'Unlimited employees' },
 ];
 
 const opName = (id: string) => OPERATIVES.find(o => o.id === id)?.name ?? id;

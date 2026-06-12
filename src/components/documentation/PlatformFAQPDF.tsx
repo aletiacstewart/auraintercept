@@ -345,7 +345,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What subscription plan is right for my business?"
-          answer="Aura Core ($497/mo, was $697) for solo operators. Aura Boost ($897/mo, was $1,097) for small teams with field ops. Aura Pro ($1,797/mo, was $1,997) for growing companies. Aura Elite ($3,097/mo, was $3,497) for large teams and enterprise. All tiers include voice, SMS, and email."
+          answer="Aura Core ($497/mo, was $697) for solo operators. Aura Boost ($994/mo, was $1,394) for small teams with field ops. Aura Pro ($1,988/mo, was $2,788) for growing companies. Aura Elite ($3,979/mo, was $5,576) for large teams and enterprise. All tiers include voice, SMS, and email."
         />
         
         <FAQItem 
@@ -458,7 +458,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Are there annual billing discounts?"
-          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $30,970/year (saving ~$6,194 vs monthly). Annual plans are billed upfront and include priority support."
+          answer="Yes! Save approximately 17% with annual billing (10x monthly rate). For example, Aura Elite annual is $38,198/year (saving ~$9,550 vs monthly). Annual plans are billed upfront and include priority support."
         />
         
         <FAQItem 

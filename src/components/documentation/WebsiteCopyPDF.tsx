@@ -504,7 +504,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Boost - $897/mo</Text>
+        <Text style={styles.copyLabel}>Aura Boost - $994/mo</Text>
         <Text style={styles.copyHeadline}>Field Operations Power</Text>
         <Text style={styles.copyBody}>
           Built for service teams that dispatch. HVAC, plumbing, and field service businesses scale with intelligent routing.{'\n\n'}
@@ -524,7 +524,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro - $1,797/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro - $1,988/mo</Text>
         <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
           Scale your brand with campaigns and social media for growing companies.{'\n\n'}
@@ -538,7 +538,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Elite - $3,097/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $3,979/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 10 AI Operatives suite (24 underlying specialist agents) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
@@ -583,7 +583,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 60-Day Live Trial: $249 Core, $449 Boost, $899 Pro, $1,549 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. No per-call charges from Aura — SignalWire, ElevenLabs, Resend, Stripe, etc. bill your accounts directly at their published rates.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 60-Day Live Trial: $497 Core, $497 Boost, $497 Pro, $497 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. No per-call charges from Aura — SignalWire, ElevenLabs, Resend, Stripe, etc. bill your accounts directly at their published rates.</Text>
       </View>
 
       <View style={styles.faqCard}>

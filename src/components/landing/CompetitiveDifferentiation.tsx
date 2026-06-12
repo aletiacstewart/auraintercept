@@ -38,7 +38,7 @@ const categories: ComparisonCategory[] = [
       { feature: 'Works 24/7/365', traditional: false, aura: true },
       { feature: 'Never Calls in Sick', traditional: false, aura: true },
       { feature: 'Handles Unlimited Calls', traditional: false, aura: true },
-      { feature: 'Monthly Cost', traditional: '$3,500-$5,000', aura: 'From $497 (Launch Pricing)' },
+      { feature: 'Monthly Cost', traditional: '$3,500-$5,000', aura: 'From $497 (Beta Pricing)' },
       { feature: 'Training Required', traditional: 'Weeks/months', aura: 'Instant' },
     ],
   },

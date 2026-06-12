@@ -79,7 +79,7 @@ const TIERS = [
     name: 'Aura Core',
     originalMonthlyPrice: '$697',
     monthlyPrice: '$497',
-    annualPrice: '$4,970',
+    annualPrice: '$4,771',
     annualSavings: 'Save ~$994',
     description: 'Solo operators, restaurants, single-location',
     popular: false,
@@ -97,10 +97,10 @@ const TIERS = [
   {
     id: 'connect',
     name: 'Aura Boost',
-    originalMonthlyPrice: '$1,097',
-    monthlyPrice: '$897',
-    annualPrice: '$8,970',
-    annualSavings: 'Save ~$1,794',
+    originalMonthlyPrice: '$1,394',
+    monthlyPrice: '$994',
+    annualPrice: '$9,542',
+    annualSavings: 'Save ~$2,386',
     description: 'HVAC, plumbing, field service teams',
     popular: true,
     agentCount: 12,
@@ -117,10 +117,10 @@ const TIERS = [
   {
     id: 'performance',
     name: 'Aura Pro',
-    originalMonthlyPrice: '$1,997',
-    monthlyPrice: '$1,797',
-    annualPrice: '$17,970',
-    annualSavings: 'Save ~$3,594',
+    originalMonthlyPrice: '$2,788',
+    monthlyPrice: '$1,988',
+    annualPrice: '$19,085',
+    annualSavings: 'Save ~$4,771',
     description: 'Growing companies with field teams',
     popular: false,
     agentCount: 16,
@@ -136,10 +136,10 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Elite',
-    originalMonthlyPrice: '$3,497',
-    monthlyPrice: '$3,097',
-    annualPrice: '$30,970',
-    annualSavings: 'Save ~$6,194',
+    originalMonthlyPrice: '$5,576',
+    monthlyPrice: '$3,979',
+    annualPrice: '$38,198',
+    annualSavings: 'Save ~$9,550',
     description: 'Full suite, enterprise',
     popular: false,
     agentCount: 24,
@@ -261,10 +261,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price (Launch Pricing)', starter: '~~$697~~ $497', connect: '~~$1,097~~ $897', performance: '~~$1,997~~ $1,797', command: '~~$3,497~~ $3,097' },
-      { name: 'Annual Price', starter: '$4,970/year', connect: '$8,970/year', performance: '$17,970/year', command: '$30,970/year' },
-      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$1,794', performance: 'Save ~$3,594', command: 'Save ~$6,194' },
-      { name: 'Onboarding Fee (Launch Pricing)', starter: '~~$349~~ $249', connect: '~~$549~~ $449', performance: '~~$999~~ $899', command: '~~$1,749~~ $1,549' },
+      { name: 'Monthly Price (Beta Pricing)', starter: '~~$697~~ $497', connect: '~~$1,394~~ $994', performance: '~~$2,788~~ $1,988', command: '~~$5,576~~ $3,979' },
+      { name: 'Annual Price', starter: '$4,771/year', connect: '$9,542/year', performance: '$19,085/year', command: '$38,198/year' },
+      { name: 'Annual Savings', starter: 'Save ~$994', connect: 'Save ~$2,386', performance: 'Save ~$4,771', command: 'Save ~$9,550' },
+      { name: 'Onboarding Fee (Beta Pricing)', starter: '~~$497~~ $497', connect: '~~$497~~ $497', performance: '~~$497~~ $497', command: '~~$497~~ $497' },
     ],
   },
 ];
@@ -428,7 +428,7 @@ export default function Subscription() {
     const isSavings = value.includes('Save');
     const isAddon = value.includes('Add-on') || value.startsWith('+$');
     const isOptional = value === 'Optional';
-    // Support `~~old~~ new` markdown-style strikethrough for Launch Pricing rows.
+    // Support `~~old~~ new` markdown-style strikethrough for Beta Pricing rows.
     const strikeMatch = typeof value === 'string' ? value.match(/^~~(.+?)~~\s+(.+)$/) : null;
     
     let textClass = 'text-card-foreground text-xs';
@@ -669,7 +669,7 @@ export default function Subscription() {
                   </div>
                   <div className="mt-1 flex justify-center">
                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary border border-primary/20">
-                      Launch Pricing
+                      Beta Pricing
                     </span>
                   </div>
                   <div className="mt-1 text-sm">
@@ -739,15 +739,15 @@ export default function Subscription() {
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold bg-primary/20 border-x border-primary/30 text-xs">
                         <div className="text-primary">Boost</div>
-                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,097</span> <span className="text-primary font-semibold">$897</span>/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,394</span> <span className="text-primary font-semibold">$994</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Pro</div>
-                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$1,997</span> <span className="text-primary font-semibold">$1,797</span>/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$2,788</span> <span className="text-primary font-semibold">$1,988</span>/mo</div>
                       </th>
                       <th className="text-center py-2.5 px-2 font-semibold text-card-foreground text-xs">
                         <div>Elite</div>
-                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$3,497</span> <span className="text-primary font-semibold">$3,097</span>/mo</div>
+                        <div className="text-[10px] font-normal"><span className="line-through text-muted-foreground">$5,576</span> <span className="text-primary font-semibold">$3,979</span>/mo</div>
                       </th>
                     </tr>
                   </thead>
@@ -803,11 +803,11 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">
-                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-primary font-semibold">Launch Pricing:</span>{' '}
-                  Core <span className="line-through">$349</span> <span className="text-foreground font-semibold">$249</span> ·{' '}
-                  Boost <span className="line-through">$549</span> <span className="text-foreground font-semibold">$449</span> ·{' '}
-                  Pro <span className="line-through">$999</span> <span className="text-foreground font-semibold">$899</span> ·{' '}
-                  Elite <span className="line-through">$1,749</span> <span className="text-foreground font-semibold">$1,549</span>
+                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-primary font-semibold">Beta Pricing:</span>{' '}
+                  Core <span className="line-through">$497</span> <span className="text-foreground font-semibold">$497</span> ·{' '}
+                  Boost <span className="line-through">$497</span> <span className="text-foreground font-semibold">$497</span> ·{' '}
+                  Pro <span className="line-through">$497</span> <span className="text-foreground font-semibold">$497</span> ·{' '}
+                  Elite <span className="line-through">$497</span> <span className="text-foreground font-semibold">$497</span>
                 </span>
               </div>
             </div>
@@ -858,7 +858,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What's the difference between Core, Boost, Pro, and Elite?</h4>
               <p className="text-sm text-muted-foreground">
-                <span className="text-primary font-semibold">Launch Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,097 → <span className="font-semibold">$897/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $1,997 → <span className="font-semibold">$1,797/mo</span>) adds campaign, outreach, and social media. Elite (was $3,497 → <span className="font-semibold">$3,097/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 60-Day Live Trial.
+                <span className="text-primary font-semibold">Beta Pricing:</span> Core (was $697 → <span className="font-semibold">$497/mo</span>) includes 8 AI agents ideal for solo operators and restaurants. Boost (was $1,394 → <span className="font-semibold">$994/mo</span>) adds dispatch, routing, and field operations — perfect for HVAC, plumbing, and field service. Pro (was $2,788 → <span className="font-semibold">$1,988/mo</span>) adds campaign, outreach, and social media. Elite (was $5,576 → <span className="font-semibold">$3,979/mo</span>) includes all 24 agents plus admin, quoting, invoicing, inventory, predictive analytics, and AI Hub for enterprise teams. Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insurance Claim, Listing Writer, Recall, Menu Writer, etc.) auto-activate based on your industry on every plan — including the 60-Day Live Trial.
               </p>
             </div>
             <div>
