@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,9 +23,19 @@ const MAX_BYTES = 20 * 1024 * 1024;
 export default function LeadsImport() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const [searchParams] = useSearchParams();
   const [autoMode, setAutoMode] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [activeJob, setActiveJob] = useState<string | null>(null);
+  const [defaultTab, setDefaultTab] = useState<string>('history');
+
+  useEffect(() => {
+    const jobParam = searchParams.get('job');
+    if (jobParam) {
+      setActiveJob(jobParam);
+      setDefaultTab('review');
+    }
+  }, [searchParams]);
 
   const { data: profile } = useQuery({
     queryKey: ["profile-co", user?.id],
@@ -160,7 +170,7 @@ export default function LeadsImport() {
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="history">
+          <Tabs value={defaultTab} onValueChange={setDefaultTab}>
             <TabsList>
               <TabsTrigger value="history">Import history</TabsTrigger>
               <TabsTrigger value="review" disabled={!activeJob}>Review {activeJob ? `(${rows.filter((r: any) => r.decision === "pending").length})` : ""}</TabsTrigger>

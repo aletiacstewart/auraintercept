@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { X, UserPlus, Send, Mail, MessageSquare, Phone } from 'lucide-react';
+import { X, UserPlus, Send, Mail, MessageSquare, Phone, Upload, Loader2, FileSpreadsheet } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import {
@@ -23,9 +25,62 @@ interface LeadFormProps {
   onSuccess?: (data: { name: string; source: string }) => void;
 }
 
+const BULK_ACCEPT = '.csv,.xlsx,.xls,.pdf,.docx';
+const BULK_MAX_BYTES = 20 * 1024 * 1024;
+
 export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack(companyId);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [bulkAuto, setBulkAuto] = useState(false);
+  const [bulkUploading, setBulkUploading] = useState(false);
+
+  const handleBulkUpload = async (file: File) => {
+    if (!companyId) return;
+    if (file.size > BULK_MAX_BYTES) {
+      toast.error('File too large (20MB max)');
+      return;
+    }
+    setBulkUploading(true);
+    try {
+      const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, '_');
+      const path = `${companyId}/${Date.now()}-${safeName}`;
+      const { error: upErr } = await supabase.storage.from('lead-imports').upload(path, file);
+      if (upErr) throw upErr;
+      const { data: userData } = await supabase.auth.getUser();
+      const { data: job, error: jobErr } = await supabase
+        .from('lead_import_jobs')
+        .insert({
+          company_id: companyId,
+          uploaded_by: userData.user?.id,
+          source_filename: file.name,
+          mime_type: file.type,
+          storage_path: path,
+          mode: bulkAuto ? 'auto' : 'review',
+          status: 'uploaded',
+        })
+        .select()
+        .single();
+      if (jobErr) throw jobErr;
+      await supabase.functions.invoke('lead-import-parse', { body: { job_id: job.id } });
+      toast.success(
+        bulkAuto ? 'Uploaded — Aura is importing your leads' : 'Uploaded — review parsed rows on the import page',
+        {
+          action: {
+            label: 'Open',
+            onClick: () => window.location.assign(`/dashboard/leads/import?job=${job.id}`),
+          },
+        },
+      );
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['lead-import-jobs', companyId] });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      toast.error('Upload failed: ' + msg);
+    } finally {
+      setBulkUploading(false);
+    }
+  };
 
   // For lead capture we prefer an explicit `lead_intake` schema if the pack
   // defines one; otherwise fall back to the first available form schema so
@@ -169,6 +224,61 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
       </CardHeader>
       <CardContent className="bg-muted/50 rounded-b-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Bulk upload (PDF, CSV, Excel, Word) */}
+          <div className="rounded-md border border-dashed border-border bg-background/60 p-3 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm text-foreground/80">
+                <FileSpreadsheet className="h-4 w-4 text-primary" />
+                <span className="font-medium">Bulk upload leads</span>
+                <span className="text-xs text-muted-foreground">PDF, CSV, Excel, Word · 20MB</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="bulk-auto" className="text-xs text-foreground/70 cursor-pointer">
+                  Auto-add
+                </Label>
+                <Switch id="bulk-auto" checked={bulkAuto} onCheckedChange={setBulkAuto} />
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                {bulkAuto
+                  ? 'Imports immediately and skips duplicates.'
+                  : 'Parses the file so you can review rows before importing.'}
+              </p>
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={bulkUploading}
+                >
+                  {bulkUploading ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-1" />
+                  )}
+                  {bulkUploading ? 'Uploading…' : 'Upload file'}
+                </Button>
+                <Button type="button" size="sm" variant="ghost" asChild>
+                  <RouterLink to="/dashboard/leads/import">History</RouterLink>
+                </Button>
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={BULK_ACCEPT}
+              className="hidden"
+              disabled={bulkUploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void handleBulkUpload(f);
+                e.target.value = '';
+              }}
+            />
+          </div>
+
           {/* Name */}
           <div className="space-y-2">
             <Label className="text-foreground/70">Name *</Label>
