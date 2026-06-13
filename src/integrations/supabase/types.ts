@@ -1063,6 +1063,7 @@ export type Database = {
           last_weekly_digest_at: string | null
           lead_import_mode: string
           logo_url: string | null
+          managed_by_admin_id: string | null
           manager_name: string | null
           missed_call_action: string | null
           missed_call_callback_script: string | null
@@ -1210,6 +1211,7 @@ export type Database = {
           last_weekly_digest_at?: string | null
           lead_import_mode?: string
           logo_url?: string | null
+          managed_by_admin_id?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
           missed_call_callback_script?: string | null
@@ -1357,6 +1359,7 @@ export type Database = {
           last_weekly_digest_at?: string | null
           lead_import_mode?: string
           logo_url?: string | null
+          managed_by_admin_id?: string | null
           manager_name?: string | null
           missed_call_action?: string | null
           missed_call_callback_script?: string | null

@@ -90,14 +90,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', userId)
-        .maybeSingle();
+        .eq('user_id', userId);
 
       if (roleError) {
         console.error('Failed to load user role:', roleError);
       }
 
-      setUserRole(roleData?.role ?? null);
+      // A user may hold multiple roles (e.g. auraintercept@gmail.com is both
+      // platform_admin and company_admin). Pick the highest-privilege role so
+      // the dashboard routes to the platform overview.
+      const ROLE_PRIORITY: AppRole[] = [
+        'platform_admin' as AppRole,
+        'company_admin' as AppRole,
+        'employee' as AppRole,
+        'customer' as AppRole,
+      ];
+      const roles: AppRole[] = (roleData ?? []).map((r: { role: AppRole }) => r.role);
+      const active = ROLE_PRIORITY.find((r) => roles.includes(r)) ?? roles[0] ?? null;
+      setUserRole(active);
 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
