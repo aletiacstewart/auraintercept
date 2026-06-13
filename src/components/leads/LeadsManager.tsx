@@ -144,7 +144,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
             onOpenChange={setIsAddLeadOpen}
             className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0"
           >
-            {companyId && (
+            {companyId ? (
               <LeadForm
                 companyId={companyId}
                 onCancel={() => setIsAddLeadOpen(false)}
@@ -153,6 +153,20 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
                   queryClient.invalidateQueries({ queryKey: ['leads'] });
                 }}
               />
+            ) : (
+              <div className="p-6 space-y-3 text-sm">
+                <p className="text-foreground">
+                  No company is attached to your account, so we can't save a lead.
+                </p>
+                <p className="text-foreground/70">
+                  Switch into a specific company (Super Switcher) or sign in as a company admin to add leads.
+                </p>
+                <div className="pt-2">
+                  <Button variant="outline" size="sm" onClick={() => setIsAddLeadOpen(false)}>
+                    Close
+                  </Button>
+                </div>
+              </div>
             )}
           </FormShell>
           {onClose && (
