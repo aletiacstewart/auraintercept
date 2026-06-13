@@ -1,47 +1,27 @@
 ## Goal
-Verify that **every** plan (Core / Boost / Pro / Elite) requires an industry at signup, and that once selected, the dashboard, consoles, agents, terminology, KPIs, forms and empty states adapt to that industry **regardless of tier**.
+Add a PDF / CSV / Excel / Word upload button directly to the Add New Lead form so users can bulk-import without leaving the form.
 
-## What I found so far
+## Approach
+The bulk-import infrastructure already exists at `/dashboard/leads/import` (`LeadsImport.tsx`) — it uploads to the `lead-imports` storage bucket, creates a `lead_import_jobs` row, and invokes the `lead-import-parse` edge function. We'll reuse it.
 
-**Signup (`src/pages/SignUp.tsx`)**
-- Industry is enforced for every tier: `canonicalIndustry` is validated via `toCanonicalIndustryId` + `isCanonicalIndustryId`; missing/invalid → toast + abort (line 254–263). Good.
-- Tier is independent (`starter | connect | performance | command`) — industry gate runs before company insert for all four.
-- "Other / Custom" path stores `industry_config` JSON; canonical check still passes because `other` is canonical.
-- `initialize-company-agents` is invoked post-insert so the operatives hub reflects tier × industry.
+## Changes
+**`src/components/marketing/forms/LeadForm.tsx`**
+- Add a compact "Bulk upload (PDF, CSV, Excel, Word)" section near the top of the form (above the Name field), separated by a divider.
+- Hidden `<input type="file" accept=".csv,.xlsx,.xls,.pdf,.docx">` triggered by an outline `Button` with `Upload` icon.
+- A small toggle (Switch) for "Auto-add & dedupe" vs "Review before import" (defaults to Review).
+- 20MB client-side size check matching the existing bucket policy.
+- On file selection:
+  1. Upload to `lead-imports` bucket at `${companyId}/${Date.now()}-${name}`.
+  2. Insert `lead_import_jobs` row (mode = auto|review).
+  3. Invoke `lead-import-parse` edge function.
+  4. Toast success and offer a "Review imported rows" link to `/dashboard/leads/import?job=<id>` (or just `/dashboard/leads/import`).
+- Loading spinner state while uploading.
+- Invalidate the `leads` query on success.
 
-**Industry → UI plumbing (already wired)**
-- `useIndustryPack(companyId)` → resolves the per-vertical pack (widgets, terminology, console_visibility, form_schemas, quote/invoice templates, agent_prompt_deltas, extra_operatives).
-- `resolveCompanyWorkspace` → operating_model + activeConsoles + KPIs + agentActions per company.
-- Edge prompt injection: `_shared/industry-pack.ts` and `_shared/workspace.ts` decorate voice/SMS/chat prompts.
-- Capability gates: `hasFieldTechnicians`, `usesQuotes`, `usesLeads`, `usesInventory`, `usesAppointments`, `usesCompaniesB2B`.
-- Surfaces already industry-aware (per memory + grep): CompanyAdminDashboard, EmployeeDashboard, AuraCommandCenter, IndustryWidgetGrid, FieldOperations, Quotes, Invoices, Leads, Customers, Inventory, Messages, CallHistory, AIAgentsHub, SpecialistOperativesConsole, AppointmentConsole, SocialMediaConsole, CustomerPortalConsole, BusinessManagementConsole, AnalyticsConsole.
-
-## Audit checklist I will run
-
-1. **Signup gate parity** — confirm every entry path enforces industry:
-   - `/signup` (SignUp.tsx) ✓ already gated
-   - `/auth` (Auth.tsx) — verify; if it can create a company, it must require industry too
-   - `OnboardingForm.tsx`, `FastStartWizard.tsx`, `WelcomeModal.tsx`, `admin/OnboardingInvites.tsx` — verify any path that writes `companies` requires `industry_vertical`
-   - Beta-code / invite signups — same gate
-2. **Tier independence** — confirm `useIndustryPack` and `resolveCompanyWorkspace` are not short-circuited by tier anywhere (grep for `subscription_tier` near pack/console gating). Specialists already confirmed available on all tiers (`specialists-all-plans.md`).
-3. **Console adaptation coverage** — for each top-level console route, confirm it reads `useIndustryPack` (or capability helpers) and not hardcoded labels: FieldOps, BusinessMgmt, Analytics, MarketingSales, SocialMedia, CustomerPortal, AIAgentsHub, Operations router (Appointment/Pipeline/Receptionist/Custom).
-4. **Terminology** — spot-check that forms (Quotes/Invoices/Leads/Customers/Inventory) pre-fill from `pack.terminology` and `pack.quote_template` / `invoice_template`.
-5. **Edge runtime** — confirm voice/SMS edge functions call `loadIndustryPackForCompany` + `applyIndustryPackToPrompt` (already standardized per memory).
-6. **DB trigger** — confirm `trg_seed_industry_pack_kb` fires on `industry_vertical` set so KB seeds at signup.
-
-## Fixes I'll apply if gaps surface
-
-- Add `industry_vertical` required validation to any signup/onboarding path missing it (toast + abort, identical UX to SignUp.tsx).
-- Wrap any console still using hardcoded labels with `useIndustryPack` / capability helpers.
-- Patch any tier-gated `useIndustryPack` usage so the pack always loads (tier only affects operative count, never industry adaptation).
-- Add a single regression test asserting: company created on each of the 4 tiers + each cluster returns the correct `activeConsoles` + `terminology` from `resolveCompanyWorkspace`.
-
-## Deliverable
-
-- Short audit report posted in chat (per-surface ✓ / ✗).
-- Code patches for any ✗ items above.
-- One new vitest covering tier×industry → workspace resolution.
+**`src/pages/LeadsImport.tsx`** (small)
+- Read `?job=<id>` from the URL on mount and set it as `activeJob` + auto-switch to the Review tab — so the deep link from the form lands users directly on the parsed rows.
 
 ## Out of scope
-
-- New industries, new tiers, pricing changes, marketing copy.
+- No changes to the edge function, bucket, schema, or the existing `/dashboard/leads/import` page beyond the deep-link handling.
+- No new dependencies.
+- Single-lead manual entry flow is unchanged.

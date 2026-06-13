@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { X, UserPlus, Send, Mail, MessageSquare, Phone } from 'lucide-react';
+import { X, UserPlus, Send, Mail, MessageSquare, Phone, Upload, Loader2, FileSpreadsheet } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import {
@@ -23,9 +25,62 @@ interface LeadFormProps {
   onSuccess?: (data: { name: string; source: string }) => void;
 }
 
+const BULK_ACCEPT = '.csv,.xlsx,.xls,.pdf,.docx';
+const BULK_MAX_BYTES = 20 * 1024 * 1024;
+
 export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack(companyId);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [bulkAuto, setBulkAuto] = useState(false);
+  const [bulkUploading, setBulkUploading] = useState(false);
+
+  const handleBulkUpload = async (file: File) => {
+    if (!companyId) return;
+    if (file.size > BULK_MAX_BYTES) {
+      toast.error('File too large (20MB max)');
+      return;
+    }
+    setBulkUploading(true);
+    try {
+      const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, '_');
+      const path = `${companyId}/${Date.now()}-${safeName}`;
+      const { error: upErr } = await supabase.storage.from('lead-imports').upload(path, file);
+      if (upErr) throw upErr;
+      const { data: userData } = await supabase.auth.getUser();
+      const { data: job, error: jobErr } = await supabase
+        .from('lead_import_jobs')
+        .insert({
+          company_id: companyId,
+          uploaded_by: userData.user?.id,
+          source_filename: file.name,
+          mime_type: file.type,
+          storage_path: path,
+          mode: bulkAuto ? 'auto' : 'review',
+          status: 'uploaded',
+        })
+        .select()
+        .single();
+      if (jobErr) throw jobErr;
+      await supabase.functions.invoke('lead-import-parse', { body: { job_id: job.id } });
+      toast.success(
+        bulkAuto ? 'Uploaded — Aura is importing your leads' : 'Uploaded — review parsed rows on the import page',
+        {
+          action: {
+            label: 'Open',
+            onClick: () => window.location.assign(`/dashboard/leads/import?job=${job.id}`),
+          },
+        },
+      );
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['lead-import-jobs', companyId] });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      toast.error('Upload failed: ' + msg);
+    } finally {
+      setBulkUploading(false);
+    }
+  };
 
   // For lead capture we prefer an explicit `lead_intake` schema if the pack
   // defines one; otherwise fall back to the first available form schema so
