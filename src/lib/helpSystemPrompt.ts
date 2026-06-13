@@ -11,10 +11,10 @@ import { SubscriptionTier } from './subscriptionAgentConfig';
  */
 
 const TIER_LABEL: Record<Exclude<SubscriptionTier, 'free'>, string> = {
-  starter: 'Aura Core ($497/mo · $497 onboarding · Beta Pricing — was $697 + $497)',
+  starter: 'Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697 + $497)',
   connect: 'Aura Boost ($994/mo · $497 onboarding · Beta Pricing — was $1,394 + $497)',
-  performance: 'Aura Pro ($1,988/mo · $497 onboarding · Beta Pricing — was $2,788 + $497)',
-  command: 'Aura Elite ($3,979/mo · $497 onboarding · Beta Pricing — was $5,576 + $497)',
+  performance: 'Aura Pro ($1,988/mo · $994 onboarding · Beta Pricing — was $2,788 + $497)',
+  command: 'Aura Elite ($3,979/mo · $1,990 onboarding · Beta Pricing — was $5,576 + $497)',
 };
 
 function renderTierSection(): string {
