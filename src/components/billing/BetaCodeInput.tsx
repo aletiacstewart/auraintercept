@@ -57,15 +57,9 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
   };
 
   if (applied) {
-    const capCents = applied.onboarding_fee_cap_cents ?? null;
-    const capExpires = applied.onboarding_cap_expires_at ?? BETA_ONBOARDING_CAP_EXPIRES_AT;
-    const capStillActive = isBetaCapActive(new Date()) && (!applied.onboarding_cap_expires_at || new Date(applied.onboarding_cap_expires_at) > new Date());
-    const capAmount = capCents ? Math.round(capCents / 100) : BETA_ONBOARDING_CAP_AMOUNT;
     const onboardingLine = applied.waive_onboarding_fee
       ? 'Beta Onboarding: FREE'
-      : capStillActive
-        ? `Beta Onboarding capped at $${capAmount} (until ${new Date(capExpires).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})`
-        : 'Standard onboarding fee applies';
+      : 'Beta onboarding = 50% of monthly (per tier)';
     return (
       <div className={className}>
         <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
