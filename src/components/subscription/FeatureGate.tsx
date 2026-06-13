@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSubscription, SubscriptionTier, Feature } from '@/hooks/useSubscription';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock, Sparkles } from 'lucide-react';
@@ -34,9 +35,17 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
   showUpgradePrompt = true,
 }) => {
   const { isAtLeastTier, hasFeature, canAccessConsole, canAccessAgent, subscriptionTier, getTierInfo, getConsoleRequiredTier, getAgentRequiredTier } = useSubscription();
+  const { loading: authLoading, subscriptionTier: rawTier, user } = useAuth();
   const navigate = useNavigate();
 
   const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
+
+  // While auth/subscription is still resolving, render a neutral skeleton
+  // instead of flashing the Upgrade card. `rawTier === null` means
+  // check-subscription hasn't returned yet.
+  if (user && (authLoading || rawTier === null)) {
+    return <div className="h-32 animate-pulse rounded-md bg-muted/30" aria-hidden="true" />;
+  }
 
   // Determine access based on what's required
   let hasAccess = true;
@@ -101,9 +110,15 @@ export const FeatureGateInline: React.FC<{
   children: React.ReactNode;
 }> = ({ requiredTier, requiredFeature, requiredConsole, requiredAgent, children }) => {
   const { isAtLeastTier, hasFeature, canAccessConsole, canAccessAgent } = useSubscription();
+  const { loading: authLoading, subscriptionTier: rawTier, user } = useAuth();
   const navigate = useNavigate();
 
   const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
+
+  // Don't lock content (with hover-to-upgrade) until tier is actually known.
+  if (user && (authLoading || rawTier === null)) {
+    return <>{children}</>;
+  }
 
   let hasAccess = true;
   if (requiredConsole) {
