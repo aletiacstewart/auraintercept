@@ -81,6 +81,7 @@ export const useSubscription = () => {
   };
 
   const subscriptionTier = normalizeSubscriptionTier(authTier);
+  const tierLoaded = authTier !== null && authTier !== undefined;
 
   const hasFeature = (feature: Feature): boolean => {
     return TIER_FEATURES[subscriptionTier]?.includes(feature) ?? false;
@@ -160,6 +161,7 @@ export const useSubscription = () => {
   return {
     subscribed,
     subscriptionTier,
+    tierLoaded,
     subscriptionEnd,
     inTrial,
     trialEndsAt,

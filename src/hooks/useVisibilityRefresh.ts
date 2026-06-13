@@ -7,7 +7,30 @@ import { useQueryClient } from '@tanstack/react-query';
  * 
  * This helps the Lovable preview show the latest changes after code deploys.
  */
-export const useVisibilityRefresh = (staleThresholdMs: number = 60000) => {
+// Only these query-key prefixes are safe to refresh on visibility change.
+// Auth / role / subscription / company queries are excluded so feature
+// gates don't flip to "Upgrade Required" while data is refetching.
+const REFRESHABLE_PREFIXES = [
+  'notifications',
+  'staff-notifications',
+  'dashboard-metrics',
+  'leads',
+  'appointments',
+  'jobs',
+  'messages',
+  'calls',
+  'invoices',
+  'quotes',
+];
+
+const hasOpenModal = () => {
+  if (typeof document === 'undefined') return false;
+  return !!document.querySelector(
+    '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]'
+  );
+};
+
+export const useVisibilityRefresh = (staleThresholdMs: number = 300_000) => {
   const queryClient = useQueryClient();
   const lastVisibleRef = useRef(Date.now());
 
@@ -18,8 +41,13 @@ export const useVisibilityRefresh = (staleThresholdMs: number = 60000) => {
         
         // If hidden for longer than threshold, invalidate all queries
         if (hiddenDuration > staleThresholdMs) {
-          console.log(`[VisibilityRefresh] Tab was hidden for ${Math.round(hiddenDuration / 1000)}s, invalidating queries`);
-          queryClient.invalidateQueries();
+          if (hasOpenModal()) return;
+          console.log(
+            `[VisibilityRefresh] Tab was hidden for ${Math.round(hiddenDuration / 1000)}s, invalidating safe queries`
+          );
+          REFRESHABLE_PREFIXES.forEach((prefix) => {
+            queryClient.invalidateQueries({ queryKey: [prefix] });
+          });
         }
       }
     };
@@ -40,8 +68,10 @@ export const useVisibilityRefresh = (staleThresholdMs: number = 60000) => {
     const handlePageShow = (event: PageTransitionEvent) => {
       // Handle bfcache restores
       if (event.persisted) {
-        console.log('[VisibilityRefresh] Page restored from bfcache, invalidating queries');
-        queryClient.invalidateQueries();
+        console.log('[VisibilityRefresh] Page restored from bfcache, invalidating safe queries');
+        REFRESHABLE_PREFIXES.forEach((prefix) => {
+          queryClient.invalidateQueries({ queryKey: [prefix] });
+        });
       }
     };
 

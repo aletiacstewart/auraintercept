@@ -1,34 +1,65 @@
-## Goal
-Make `auraintercept@gmail.com` see every new company signup in real time — on their dashboard, by email, and via a persistent ownership link — without breaking their existing `company_admin` tenant access.
+## Problem
 
-## Key constraint (from memory)
-Identity Split memory says `ai@auraintercept.ai` is the canonical Lovable `platform_admin` and `auraintercept@gmail.com` is the Aura Intercept tenant `company_admin`. This change explicitly grants `auraintercept@gmail.com` the `platform_admin` role in ADDITION to its existing `company_admin` role so it has platform-wide oversight. The identity-split memory will be updated to record the dual-role grant.
+While demoing or working inside dashboards/consoles, three separate things conspire to make the app:
+- randomly reload the page mid-action, and
+- briefly flash "Upgrade Required" cards on features the account actually has.
 
-## Changes
+### Root causes found in the code
 
-### 1. Database migration — dual role + ownership link
-- Insert `user_roles` row granting `platform_admin` to user `5e877645-4201-49f5-9fca-9efe06548ff9` (`auraintercept@gmail.com`). Existing `company_admin` row stays.
-- Add column `companies.managed_by_admin_id uuid` (nullable, no FK to auth.users per Cloud rules).
-- Trigger `trg_assign_company_owner` on `INSERT` to `companies`: sets `managed_by_admin_id` to the first `user_roles.user_id` with role `platform_admin` (deterministic by `created_at`) when the inserter did not provide one and `is_demo = false`.
-- Trigger `trg_notify_platform_admins_on_signup` on `INSERT` to `companies` (skip `is_demo`): inserts a row into existing `staff_notifications` for every `platform_admin` user with `type='new_company_signup'`, payload `{ company_id, name, tier, industry, trial_ends_at }`. Also fires `pg_net.http_post` to the new edge function below.
-- GRANTs unchanged (companies already has them).
+1. **`src/hooks/useDeploymentAutoReload.ts`** polls `/` every 20s and calls `window.location.reload()` whenever the built asset hash changes. In the Lovable preview, new bundles ship constantly, so this fires mid-demo. It also reloads on every `vite:ws:connect` HMR reconnect (very common in the preview iframe). The console logs `[DeploymentAutoReload] New deployment detected, reloading...` match exactly what the user is seeing.
 
-### 2. Edge function `notify-platform-on-signup`
-- Receives `{ company_id }`, loads company + every `platform_admin` profile email, sends a single Resend email with subject `New Aura signup: {name} ({tier} / {industry})` and a deep link `https://auraintercept.ai/dashboard/companies`. `verify_jwt = false`, input-validated, idempotent on company_id (skip if `metadata.signup_notified_at` already set on the company).
+2. **`src/hooks/useVisibilityRefresh.ts`** calls `queryClient.invalidateQueries()` (ALL queries) after the tab has been hidden ≥60s. That triggers a refetch storm: subscription, role, company, gating queries all go `pending` together, and any `FeatureGate` whose tier-check returns `false` during that brief window renders the "Upgrade Required" card. Once data resolves the page swaps again — looking like a "random refresh + upgrade pop-up."
 
-### 3. Auth context — support dual roles
-- `fetchUserData` currently calls `.maybeSingle()` on `user_roles` which fails if a user has 2+ roles. Switch to fetch all rows, prefer `platform_admin` > `company_admin` > others when setting the active `userRole`. No other code changes — every consumer keeps reading a single `userRole`.
+3. **`src/components/subscription/FeatureGate.tsx` + `src/hooks/useSubscription.ts`** treat an unresolved subscription as `'free'`. `AuthContext` starts with `subscriptionTier = null`; `normalizeSubscriptionTier(null)` returns `'free'`; every gated console renders the upgrade card until `check-subscription` resolves (~½–1s on cold loads, longer after the invalidation storm above).
 
-### 4. Platform Admin Dashboard widget — "New Signups (last 7 days)"
-- New card in `PlatformAdminDashboard.tsx` above the existing snapshot.
-- Lists up to 10 most recent non-demo `companies` with: name, tier badge, industry chip, trial day `n/60`, signup time, and two buttons: `Open in Switcher` (routes through `useSuperSwitcher` → that company's dashboard) and `View profile` (→ `/dashboard/companies` filtered).
-- Live via React Query with `refetchInterval: 60_000`; deduped against the staff_notifications bell so the badge count clears when admin views the widget.
+## Fix
 
-### 5. Memory update
-- Patch `mem://auth/admin-identity` to record: `auraintercept@gmail.com` now holds BOTH `company_admin` (Aura Intercept tenant) AND `platform_admin` (oversight of all signups). `ai@auraintercept.ai` remains the canonical Lovable platform admin.
+Make all three layers demo-safe.
+
+### 1. Tame the auto-reloader
+
+`src/hooks/useDeploymentAutoReload.ts`:
+- Suppress reloads when the user is **actively interacting** (mouse/keyboard within the last 30s) or has an open dialog/modal — defer until idle.
+- Suppress reloads entirely for **demo sessions** (`user_metadata.aura_demo_trial === true`) and while a Super Switcher transition is in flight.
+- Replace the unconditional `vite:ws:connect` `window.location.reload()` with the same idle/demo guard (preview-only HMR reconnect should not nuke a live demo).
+- Keep the existing dedupe (`lastReloadedSignature`) so the reload only happens once per real deploy.
+
+### 2. Narrow the visibility refresh
+
+`src/hooks/useVisibilityRefresh.ts`:
+- Replace blanket `queryClient.invalidateQueries()` with a targeted allow-list of safe-to-refresh keys (notifications, dashboard metrics, lists). Auth/subscription/role/company queries are explicitly excluded so gates do not re-flip to "free."
+- Raise default threshold from 60s to 5 min and ignore the event when a modal/sheet is open.
+
+### 3. Stop the upgrade flash
+
+`src/components/subscription/FeatureGate.tsx`:
+- Read `useAuth()` and, while `loading` is true **or** `subscriptionTier === null` (subscription check not back yet), render a lightweight skeleton (`<div className="h-32 animate-pulse rounded-md bg-muted/30" />`) instead of the Upgrade card.
+- Same guard for `FeatureGateInline` — render the children dimmed (no upgrade hover) until tier is known.
+
+`src/hooks/useSubscription.ts`:
+- Expose a `tierLoaded` boolean (`authTier !== null`) so other call sites (e.g. `FeatureGate`) can wait for the first resolution before locking content.
+
+### 4. Tiny supporting touch
+
+`src/contexts/AuthContext.tsx`:
+- No behavioral change; only ensure `subscriptionTier` stays `null` (not `'free'`) until `check-subscription` returns, so the new `tierLoaded` flag works correctly. (Already the case — verified.)
 
 ## Out of scope
-- No change to who can sign up, the trial length, pricing, or the signup form itself.
-- No changes to demo seeding (still `is_demo=true`, still excluded from signup notifications).
-- No new sub-admin / company assignment UI — `managed_by_admin_id` is set automatically and surfaced read-only for now.
-- No SMS/push notification on signup (only email + in-app bell).
+
+- No changes to billing, Stripe, trial math, signup, leads form, or notification system.
+- No changes to demo seeder, Super Switcher, or role priority logic.
+- No new tables or migrations.
+
+## Files touched
+
+- `src/hooks/useDeploymentAutoReload.ts`
+- `src/hooks/useVisibilityRefresh.ts`
+- `src/components/subscription/FeatureGate.tsx`
+- `src/hooks/useSubscription.ts`
+
+## Verification
+
+- Open `/dashboard` as a demo user, leave the tab for 5+ minutes, return — no auto-reload, no upgrade flash.
+- Trigger an HMR reconnect in preview while a modal is open — no reload.
+- Visit a console gated above the current tier — Upgrade card still shows (correct), but only after subscription resolves (no flash on tier-included consoles).
+- Console no longer logs `New deployment detected, reloading...` mid-session.
