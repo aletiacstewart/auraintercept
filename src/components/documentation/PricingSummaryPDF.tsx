@@ -370,7 +370,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$497 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$497 one-time onboarding fee (50% of monthly; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -407,7 +407,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$497 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$994 one-time onboarding fee (50% of monthly; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$497 one-time onboarding fee (due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$1,990 one-time onboarding fee (50% of monthly; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -578,10 +578,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$497', includes: 'Guided setup (due at start of 60-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Boost', fee: '$497', includes: 'Onboarding, setup, training (due at start of 60-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Pro', fee: '$497', includes: 'Onboarding, setup, training, industry tuning (due at start of 60-Day Live Trial; first 30 days = onboarding)' },
-          { tier: 'Aura Elite', fee: '$497', includes: 'Enterprise onboarding, custom setup (due at start of 60-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Core', fee: '$249', includes: 'Guided setup (50% of monthly; due at start of 60-Day Live Trial; first 30 days = onboarding)' },
+          { tier: 'Aura Boost', fee: '$497', includes: 'Onboarding, setup, training (50% of monthly; due at start of 60-Day Live Trial)' },
+          { tier: 'Aura Pro', fee: '$994', includes: 'Onboarding, setup, training, industry tuning (50% of monthly; due at start of 60-Day Live Trial)' },
+          { tier: 'Aura Elite', fee: '$1,990', includes: 'Enterprise onboarding, custom setup (50% of monthly; due at start of 60-Day Live Trial)' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>
