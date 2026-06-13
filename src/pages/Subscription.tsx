@@ -145,7 +145,7 @@ const TIERS = [
     agentCount: 24,
     consoleCount: 8,
     highlights: [
-      '10 AI Operatives (Full Suite)',
+      '24 Smart AI Agents (Full Suite)',
       'All 8 Control Centers + AI Hub',
       'Revenue + Forecast Agents',
       'Priority Support',
