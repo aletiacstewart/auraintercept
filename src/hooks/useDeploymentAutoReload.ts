@@ -1,5 +1,50 @@
 import { useEffect, useRef } from 'react';
 
+// Track recent user interaction so we don't reload mid-action.
+let lastInteractionAt = Date.now();
+if (typeof window !== 'undefined') {
+  const bump = () => { lastInteractionAt = Date.now(); };
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel'].forEach((evt) => {
+    window.addEventListener(evt, bump, { passive: true });
+  });
+}
+
+const isUserActive = (idleMs = 30_000) =>
+  Date.now() - lastInteractionAt < idleMs;
+
+const hasOpenModal = () => {
+  if (typeof document === 'undefined') return false;
+  return !!document.querySelector(
+    '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"], [data-state="open"][data-radix-popper-content-wrapper]'
+  );
+};
+
+const isDemoSession = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const raw = Object.keys(window.localStorage).find((k) => k.includes('-auth-token'));
+    if (!raw) return false;
+    const v = window.localStorage.getItem(raw);
+    if (!v) return false;
+    const parsed = JSON.parse(v);
+    return !!parsed?.user?.user_metadata?.aura_demo_trial;
+  } catch {
+    return false;
+  }
+};
+
+const isSwitching = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    return !!sessionStorage.getItem('aura_super_switcher_switching');
+  } catch {
+    return false;
+  }
+};
+
+const shouldDeferReload = () =>
+  isDemoSession() || isSwitching() || isUserActive() || hasOpenModal();
+
 /**
  * Hook that detects when a new frontend bundle has been deployed
  * and automatically reloads the page to pick up the latest changes.
@@ -118,6 +163,13 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
               return;
             }
 
+            if (shouldDeferReload()) {
+              // Don't disrupt an active demo / user interaction / open modal.
+              // We'll retry on the next poll tick.
+              console.log('[DeploymentAutoReload] Deferring reload (user active / demo / modal open)');
+              return;
+            }
+
             console.log('[DeploymentAutoReload] New deployment detected, reloading...');
             sessionStorage.setItem('lastReloadedSignature', newSignature);
             hasReloadedRef.current = true;
@@ -183,8 +235,13 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
 // This prevents hook count mismatches during hot reloads
 if (import.meta.hot) {
   import.meta.hot.on('vite:ws:connect', () => {
+    if (shouldDeferReload()) {
+      console.log('[DeploymentAutoReload] Vite reconnected — deferring reload (user active / demo / modal)');
+      return;
+    }
     console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
     setTimeout(() => {
+      if (shouldDeferReload()) return;
       window.location.reload();
     }, 500);
   });
