@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Sparkles, X, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { BETA_ONBOARDING_CAP_AMOUNT, BETA_ONBOARDING_CAP_EXPIRES_AT, isBetaCapActive } from '@/lib/launchPricing';
 
 export interface BetaCodeResult {
   code: string;
