@@ -224,6 +224,61 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
       </CardHeader>
       <CardContent className="bg-muted/50 rounded-b-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Bulk upload (PDF, CSV, Excel, Word) */}
+          <div className="rounded-md border border-dashed border-border bg-background/60 p-3 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm text-foreground/80">
+                <FileSpreadsheet className="h-4 w-4 text-primary" />
+                <span className="font-medium">Bulk upload leads</span>
+                <span className="text-xs text-muted-foreground">PDF, CSV, Excel, Word · 20MB</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="bulk-auto" className="text-xs text-foreground/70 cursor-pointer">
+                  Auto-add
+                </Label>
+                <Switch id="bulk-auto" checked={bulkAuto} onCheckedChange={setBulkAuto} />
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                {bulkAuto
+                  ? 'Imports immediately and skips duplicates.'
+                  : 'Parses the file so you can review rows before importing.'}
+              </p>
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={bulkUploading}
+                >
+                  {bulkUploading ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-1" />
+                  )}
+                  {bulkUploading ? 'Uploading…' : 'Upload file'}
+                </Button>
+                <Button type="button" size="sm" variant="ghost" asChild>
+                  <RouterLink to="/dashboard/leads/import">History</RouterLink>
+                </Button>
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={BULK_ACCEPT}
+              className="hidden"
+              disabled={bulkUploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void handleBulkUpload(f);
+                e.target.value = '';
+              }}
+            />
+          </div>
+
           {/* Name */}
           <div className="space-y-2">
             <Label className="text-foreground/70">Name *</Label>
