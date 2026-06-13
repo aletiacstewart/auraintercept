@@ -1,65 +1,92 @@
-## Problem
+## Goal
 
-While demoing or working inside dashboards/consoles, three separate things conspire to make the app:
-- randomly reload the page mid-action, and
-- briefly flash "Upgrade Required" cards on features the account actually has.
+Change beta onboarding from a flat **$497 for all tiers** to **50% of each tier's beta monthly price**:
 
-### Root causes found in the code
+| Tier  | Beta monthly | New onboarding (50%) |
+|-------|--------------|----------------------|
+| Core  | $497         | **$249**             |
+| Boost | $994         | **$497**             |
+| Pro   | $1,988       | **$994**             |
+| Elite | $3,979       | **$1,990**           |
 
-1. **`src/hooks/useDeploymentAutoReload.ts`** polls `/` every 20s and calls `window.location.reload()` whenever the built asset hash changes. In the Lovable preview, new bundles ship constantly, so this fires mid-demo. It also reloads on every `vite:ws:connect` HMR reconnect (very common in the preview iframe). The console logs `[DeploymentAutoReload] New deployment detected, reloading...` match exactly what the user is seeing.
+Onboarding "standard" (struck-through) values stay where they are today on each tier (no change to the strikethrough column).
 
-2. **`src/hooks/useVisibilityRefresh.ts`** calls `queryClient.invalidateQueries()` (ALL queries) after the tab has been hidden ≥60s. That triggers a refetch storm: subscription, role, company, gating queries all go `pending` together, and any `FeatureGate` whose tier-check returns `false` during that brief window renders the "Upgrade Required" card. Once data resolves the page swaps again — looking like a "random refresh + upgrade pop-up."
+## 1. Source-of-truth pricing
 
-3. **`src/components/subscription/FeatureGate.tsx` + `src/hooks/useSubscription.ts`** treat an unresolved subscription as `'free'`. `AuthContext` starts with `subscriptionTier = null`; `normalizeSubscriptionTier(null)` returns `'free'`; every gated console renders the upgrade card until `check-subscription` resolves (~½–1s on cold loads, longer after the invalidation storm above).
+**`src/lib/launchPricing.ts`** — update each tier's `onboardingSale`:
+- starter: 249
+- connect: 497
+- performance: 994
+- command: 1990
 
-## Fix
+Retire the flat $497 cap concept:
+- Set `BETA_ONBOARDING_CAP_CENTS = 0`, `BETA_ONBOARDING_CAP_AMOUNT = 0`.
+- Rewrite `isBetaCapActive()` to return `false` and `getBetaOnboardingPrice()` to just return `getOnboardingPrice(tier)`. Keep exports so nothing breaks.
+- Update the file-header comment matrix.
 
-Make all three layers demo-safe.
+## 2. Stripe + checkout
 
-### 1. Tame the auto-reloader
+**Create four new one-time onboarding prices in Stripe** (one per tier), via `stripe--create_stripe_product_and_price`:
+- Aura Core Onboarding — $249
+- Aura Boost Onboarding — $497
+- Aura Pro Onboarding — $994
+- Aura Elite Onboarding — $1,990
 
-`src/hooks/useDeploymentAutoReload.ts`:
-- Suppress reloads when the user is **actively interacting** (mouse/keyboard within the last 30s) or has an open dialog/modal — defer until idle.
-- Suppress reloads entirely for **demo sessions** (`user_metadata.aura_demo_trial === true`) and while a Super Switcher transition is in flight.
-- Replace the unconditional `vite:ws:connect` `window.location.reload()` with the same idle/demo guard (preview-only HMR reconnect should not nuke a live demo).
-- Keep the existing dedupe (`lastReloadedSignature`) so the reload only happens once per real deploy.
+**`supabase/functions/create-checkout/index.ts`**:
+- Remove `FLAT_ONBOARDING_PRICE_ID`. Give each tier (`CORE`, `BOOST`, `PRO`, `ELITE`) its own `onboarding_price_id` from the new Stripe prices.
+- Strip the beta-cap branch (lines ~221–257): since onboarding is now already tier-specific and lower than any previously-quoted cap, just push `{ price: selectedTier.onboarding_price_id, quantity: 1 }` (still honoring `betaWaiveOnboarding`).
+- Update the header comment block to the new matrix.
 
-### 2. Narrow the visibility refresh
+**`src/components/billing/BetaCodeInput.tsx`** — drop the "capped at $X" string; replace with neutral copy ("Beta pricing applied — 60-day live trial").
 
-`src/hooks/useVisibilityRefresh.ts`:
-- Replace blanket `queryClient.invalidateQueries()` with a targeted allow-list of safe-to-refresh keys (notifications, dashboard metrics, lists). Auth/subscription/role/company queries are explicitly excluded so gates do not re-flip to "free."
-- Raise default threshold from 60s to 5 min and ignore the event when a modal/sheet is open.
+## 3. Marketing copy — replace "flat $497 onboarding" everywhere
 
-### 3. Stop the upgrade flash
+Update to per-tier values (Core $249 / Boost $497 / Pro $994 / Elite $1,990):
 
-`src/components/subscription/FeatureGate.tsx`:
-- Read `useAuth()` and, while `loading` is true **or** `subscriptionTier === null` (subscription check not back yet), render a lightweight skeleton (`<div className="h-32 animate-pulse rounded-md bg-muted/30" />`) instead of the Upgrade card.
-- Same guard for `FeatureGateInline` — render the children dimmed (no upgrade hover) until tier is known.
+- `src/components/billing/BetaSignupNotice.tsx` — change the bullet list onboarding column to per-tier; rewrite the "capped at $497 regardless of tier" sentence to "onboarding is 50% of your beta monthly price (one-time)".
+- `src/components/landing/PricingComparisonTable.tsx`
+- `src/components/landing/CompetitiveDifferentiation.tsx`
+- `src/components/agents/TierComparisonCards.tsx` (upgrade summary footer)
+- `src/components/marketing/IndustryROICalculator.tsx`
+- `src/pages/Index.tsx`, `src/pages/ForBusiness.tsx`, `src/pages/Subscription.tsx`, `src/pages/SignUp.tsx`, `src/pages/PublicOnboardingIntake.tsx`, `src/pages/Contact.tsx`, `src/pages/Help.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/TermsOfService.tsx`, `src/pages/ExportDocumentation.tsx`
+- AI/system-prompt copy: `src/lib/helpSystemPrompt.ts`, `supabase/functions/ai-agent-chat/index.ts`, `supabase/functions/landing-chat/index.ts`, `supabase/functions/trial-reminders/index.ts`
 
-`src/hooks/useSubscription.ts`:
-- Expose a `tierLoaded` boolean (`authTier !== null`) so other call sites (e.g. `FeatureGate`) can wait for the first resolution before locking content.
+Wherever possible, replace hard-coded "$497" onboarding strings with `getOnboardingPrice(tier)` / `getTierPricing(tier).onboardingSale` so future changes are one-file.
 
-### 4. Tiny supporting touch
+## 4. Exported PDFs / documents
 
-`src/contexts/AuthContext.tsx`:
-- No behavioral change; only ensure `subscriptionTier` stays `null` (not `'free'`) until `check-subscription` returns, so the new `tierLoaded` flag works correctly. (Already the case — verified.)
+Regenerate the onboarding-fee references in:
+- `src/components/documentation/PricingSummaryPDF.tsx`
+- `src/components/documentation/PlatformFAQPDF.tsx`
+- `src/components/documentation/PlatformDocumentPDF.tsx`
+- `src/components/documentation/CompanyOnboardingPDF.tsx`
+- `src/components/documentation/ComprehensiveGuidesPDF.tsx`
+- `src/components/documentation/MarketingSalesMasterPDF.tsx`
+- `src/components/documentation/SalesPitchDataPDF.tsx`
+- `src/components/documentation/AIAgentGuidesPDF.tsx`
+- `src/components/documentation/WebsiteCopyPDF.tsx`
+- `src/components/documentation/SocialMediaContentPackPDF.tsx`
+- `src/components/documentation/VideoScriptsPDF.tsx`
+- `src/components/documentation/BrandAssetGuidePDF.tsx`
 
-## Out of scope
+Each gets a per-tier onboarding table replacing the "flat $497 onboarding" / "$497 capped" language.
 
-- No changes to billing, Stripe, trial math, signup, leads form, or notification system.
-- No changes to demo seeder, Super Switcher, or role priority logic.
-- No new tables or migrations.
+## 5. Memory updates
 
-## Files touched
+- `mem://index.md` Core block: rewrite the launch-pricing line to "Onboarding = 50% of beta monthly: Core $249 / Boost $497 / Pro $994 / Elite $1,990 (originals struck through unchanged)."
+- `mem://billing/launch-pricing` — same per-tier onboarding values; remove the flat-$497 cap note; add the four new Stripe onboarding price IDs created in Step 2.
+- `mem://product/trial-period-standard` — update "onboarding fee due at start" examples.
+- `mem://legal/third-party-fee-disclaimer` — no change (third-party policy unaffected).
 
-- `src/hooks/useDeploymentAutoReload.ts`
-- `src/hooks/useVisibilityRefresh.ts`
-- `src/components/subscription/FeatureGate.tsx`
-- `src/hooks/useSubscription.ts`
+## 6. Out of scope
 
-## Verification
+- Monthly tier prices, annual prices, struck-through originals — unchanged.
+- Trial length / trial mechanics — unchanged (still 60-day).
+- Subscription tiers, agent counts, feature gating — unchanged.
+- Existing subscribers on the prior $497 onboarding line item — already paid; no retro changes.
 
-- Open `/dashboard` as a demo user, leave the tab for 5+ minutes, return — no auto-reload, no upgrade flash.
-- Trigger an HMR reconnect in preview while a modal is open — no reload.
-- Visit a console gated above the current tier — Upgrade card still shows (correct), but only after subscription resolves (no flash on tier-included consoles).
-- Console no longer logs `New deployment detected, reloading...` mid-session.
+## Technical notes
+
+- Need 4 new Stripe onboarding price IDs before swapping in `create-checkout/index.ts`. Old `price_1ThWTnJ9fo9y8fGHWnT31XSF` stays defined-but-unused for any historic invoice references.
+- After the migration of strings, run `rg "\$497.*onboard|flat \$497|capped at \$497"` to confirm no stragglers remain.
+- No DB schema changes; `beta_codes.onboarding_fee_cap_cents` column stays but the cap branch is dead code — leaving the column intact preserves historical row data.

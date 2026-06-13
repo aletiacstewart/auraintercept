@@ -7,7 +7,8 @@ interface BetaSignupNoticeProps {
 
 /**
  * Unified BETA Sign-Up notice — explains 60-Day Live Trial, Beta Pricing,
- * capped beta onboarding fee, 3rd-party billing pass-through, and what the
+ * tier-specific beta onboarding fee (50% of beta monthly), 3rd-party
+ * billing pass-through, and what the
  * onboarding fee covers. Used on the public homepage (above pricing plans)
  * and on the company signup form (above the tier selector).
  */
@@ -32,8 +33,8 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
         <span className="font-semibold text-primary">60-Day Live Trial</span>{' '}
         (30 days concierge onboarding + 30 days full live use). During beta,
         your one-time onboarding fee is{' '}
-        <span className="font-semibold text-primary">capped at $497</span>{' '}
-        regardless of tier, and you lock in{' '}
+        <span className="font-semibold text-primary">50% of your beta monthly price</span>{' '}
+        (per tier, see below), and you lock in{' '}
         <span className="font-semibold text-primary">Beta Pricing</span> on
         your monthly plan:
       </p>
@@ -44,7 +45,7 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
           <span className="line-through text-foreground/50">$697</span>{' '}
           <span className="text-primary font-semibold">$497/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$249</span>
         </li>
         <li>
           <span className="font-semibold">Boost:</span>{' '}
@@ -58,14 +59,14 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
           <span className="line-through text-foreground/50">$2,788</span>{' '}
           <span className="text-primary font-semibold">$1,988/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$994</span>
         </li>
         <li>
           <span className="font-semibold">Elite:</span>{' '}
           <span className="line-through text-foreground/50">$5,576</span>{' '}
           <span className="text-primary font-semibold">$3,979/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="text-primary font-semibold">$1,990</span>
         </li>
       </ul>
 

@@ -14,31 +14,31 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // BETA PRICING (active, billed): Core $497 · Boost $994 · Pro $1,988 · Elite $3,979.
 // Standard (struck-through display only): $697 / $1,394 / $2,788 / $5,576.
-// Onboarding fee: flat $497 one-time for ALL tiers (single shared price ID).
-const FLAT_ONBOARDING_PRICE_ID = "price_1ThWTnJ9fo9y8fGHWnT31XSF";
+// Onboarding fee (Beta, one-time, 50% of beta monthly per tier):
+//   Core $249 · Boost $497 · Pro $994 · Elite $1,990.
 const CORE = {
   name: "Aura Core",
   price: 49700,
   price_id: "price_1ThWTeJ9fo9y8fGHfDU4ZNq8",
-  onboarding_price_id: FLAT_ONBOARDING_PRICE_ID,
+  onboarding_price_id: "price_1ThwUIJ9fo9y8fGHjmUhJtDw", // $249
 };
 const BOOST = {
   name: "Aura Boost",
   price: 99400,
   price_id: "price_1ThWTfJ9fo9y8fGHsbLQp0Za",
-  onboarding_price_id: FLAT_ONBOARDING_PRICE_ID,
+  onboarding_price_id: "price_1ThwUJJ9fo9y8fGHvVRIyQCb", // $497
 };
 const PRO = {
   name: "Aura Pro",
   price: 198800,
   price_id: "price_1ThWTgJ9fo9y8fGHgoZLc8qu",
-  onboarding_price_id: FLAT_ONBOARDING_PRICE_ID,
+  onboarding_price_id: "price_1ThwUKJ9fo9y8fGHc8oQuO7u", // $994
 };
 const ELITE = {
   name: "Aura Elite",
   price: 397900,
   price_id: "price_1ThWThJ9fo9y8fGHGSowuwkR",
-  onboarding_price_id: FLAT_ONBOARDING_PRICE_ID,
+  onboarding_price_id: "price_1ThwULJ9fo9y8fGHYwbM6gWn", // $1,990
 };
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
@@ -219,40 +219,10 @@ serve(async (req) => {
       { price: selectedTier.price_id, quantity: 1 },
     ];
     if (isFirstCheckout && selectedTier.onboarding_price_id) {
-      // Beta onboarding cap: if a beta code is applied, the cap hasn't expired,
-      // and the tier's standard onboarding fee exceeds the cap, swap the standard
-      // onboarding price for an inline capped price_data line item.
-      const capActive = !!betaCode && !betaWaiveOnboarding && betaOnboardingCapCents !== null &&
-        (!betaCapExpiresAt || betaCapExpiresAt > new Date());
-      // Fetch standard onboarding price amount from Stripe to compare to cap
-      let useCap = false;
-      if (capActive) {
-        try {
-          const stdPrice = await stripe.prices.retrieve(selectedTier.onboarding_price_id);
-          if ((stdPrice.unit_amount ?? 0) > (betaOnboardingCapCents ?? 0)) {
-            useCap = true;
-          }
-        } catch (e) {
-          logStep("Warning: failed to retrieve onboarding price for cap comparison", { error: (e as Error).message });
-        }
-      }
-      if (betaWaiveOnboarding) {
-        // Fully waived — skip onboarding line item entirely
-      } else if (useCap) {
-        lineItems.push({
-          quantity: 1,
-          price_data: {
-            currency: "usd",
-            unit_amount: betaOnboardingCapCents!,
-            product_data: {
-              name: `Beta Onboarding (capped) — ${selectedTier.name}`,
-              description: `One-time concierge onboarding fee, capped at $${Math.round(
-                (betaOnboardingCapCents ?? 0) / 100,
-              )} under beta code ${betaCode}.`,
-            },
-          },
-        });
-      } else {
+      // Onboarding is now tier-specific (50% of beta monthly per tier);
+      // legacy beta-cap branch removed. A beta code can still fully waive
+      // the onboarding fee via `beta_codes.waive_onboarding_fee`.
+      if (!betaWaiveOnboarding) {
         lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
       }
     }

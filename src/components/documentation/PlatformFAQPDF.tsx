@@ -453,7 +453,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer="A one-time flat $497 onboarding fee applies to every tier (Core, Boost, Pro, and Elite). It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use."
+          answer="The one-time onboarding fee is 50% of your beta monthly price: Core $249, Boost $497, Pro $994, Elite $1,990. It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use."
         />
         
         <FAQItem 

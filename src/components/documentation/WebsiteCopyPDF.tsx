@@ -583,7 +583,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee due at the start of your 60-Day Live Trial: $497 Core, $497 Boost, $497 Pro, $497 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. No per-call charges from Aura — SignalWire, ElevenLabs, Resend, Stripe, etc. bill your accounts directly at their published rates.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee equal to 50% of your monthly, due at the start of your 60-Day Live Trial: $249 Core, $497 Boost, $994 Pro, $1,990 Elite. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. No per-call charges from Aura — SignalWire, ElevenLabs, Resend, Stripe, etc. bill your accounts directly at their published rates.</Text>
       </View>
 
       <View style={styles.faqCard}>
