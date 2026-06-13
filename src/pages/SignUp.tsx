@@ -1267,7 +1267,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-day free trial + Beta Onboarding capped at $497 (until Aug 1, 2026) will apply at checkout. 3rd-party fees (SignalWire, ElevenLabs, Resend, Stripe, etc.) are billed directly by each provider and are not included in the trial.
+                                60-day free trial + Beta Onboarding = 50% of beta monthly (Core $249 · Boost $497 · Pro $994 · Elite $1,990) will apply at checkout. 3rd-party fees (SignalWire, ElevenLabs, Resend, Stripe, etc.) are billed directly by each provider and are not included in the trial.
                               </p>
                             )}
                           </div>
@@ -1347,12 +1347,14 @@ export default function SignUp() {
                                   One-Time Onboarding Fee (required)
                                   <span className="ml-auto inline-flex items-baseline gap-1.5">
                                     <span className="text-primary font-bold">
-                                      $497
+                                      {selectedTier
+                                        ? `$${{ starter: 249, connect: 497, performance: 994, command: 1990 }[selectedTier].toLocaleString()}`
+                                        : 'from $249'}
                                     </span>
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Flat $497 onboarding fee for every tier</span> — Core, Boost, Pro, and Elite.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Beta onboarding = 50% of your monthly</span> — Core $249 · Boost $497 · Pro $994 · Elite $1,990.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.
