@@ -3411,14 +3411,14 @@ serve(async (req) => {
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Core ($497/mo · $249 onboarding — Launch Pricing, was $697 + $349): 8 agents — AI receptionist, customer journey, outreach, creative
+      // Aura Core ($497/mo · $249 onboarding — Beta Pricing, was $697/$497): 8 agents — AI receptionist, customer journey, outreach, creative
       starter: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
         'creative_content',             // Creative Content
         'web_presence',                 // Creative & Web Presence
       ],
-      // Aura Boost ($897/mo · $449 onboarding — Launch Pricing, was $1,097 + $549): 12 agents — adds field ops (dispatch + field navigation)
+      // Aura Boost ($994/mo · $497 onboarding — Beta Pricing, was $1,394/$497): 12 agents — adds field ops (dispatch + field navigation)
       connect: [
         'triage', 'customer_journey',   // Customer Portal
         'outreach',                     // Marketing & Sales
@@ -3426,7 +3426,7 @@ serve(async (req) => {
         'web_presence',                 // Creative & Web Presence
         'dispatch', 'field_navigation', // Field Operations
       ],
-      // Aura Pro ($1,797/mo · $899 onboarding — Launch Pricing, was $1,997 + $999): 16 agents — adds campaign, outreach, social
+      // Aura Pro ($1,988/mo · $994 onboarding — Beta Pricing, was $2,788/$497): 16 agents — adds campaign, outreach, social
       performance: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
@@ -3435,7 +3435,7 @@ serve(async (req) => {
         'business_finance', 'admin',               // Business Operations
         'analytics_intelligence',                  // Analytics & Reports
       ],
-      // Aura Elite ($2,997/mo · $1,549 onboarding — Launch Pricing, was $3,997 + $1,749): All 24 agents (10 operative groups) + enterprise features
+      // Aura Elite ($3,979/mo · $1,990 onboarding — Beta Pricing, was $5,576/$497): All 24 agents (10 operative groups) + enterprise features
       command: [
         'triage', 'customer_journey',              // Customer Portal
         'dispatch', 'field_navigation',            // Field Operations
