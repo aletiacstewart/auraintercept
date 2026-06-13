@@ -9,7 +9,9 @@
  *   Pro    | $2,788 / mo       | $1,988 / mo
  *   Elite  | $5,576 / mo       | $3,979 / mo
  *
- * Onboarding (one-time): flat $497 for ALL tiers, both standard and beta.
+ * Onboarding (one-time, Beta): 50% of beta monthly per tier:
+ *   Core $249 · Boost $497 · Pro $994 · Elite $1,990
+ * Onboarding (standard / struck-through): $497 flat across all tiers.
  * Annual = round(monthly × 12 × 0.8) (~20% savings).
  */
 
@@ -34,7 +36,7 @@ export const LAUNCH_PRICING = {
       original: 697,
       sale: 497,
       onboardingOriginal: 497,
-      onboardingSale: 497,
+      onboardingSale: 249,
       annualOriginal: 6691,
       annualSale: 4771,
     },
@@ -52,7 +54,7 @@ export const LAUNCH_PRICING = {
       original: 2788,
       sale: 1988,
       onboardingOriginal: 497,
-      onboardingSale: 497,
+      onboardingSale: 994,
       annualOriginal: 26765,
       annualSale: 19085,
     },
@@ -61,7 +63,7 @@ export const LAUNCH_PRICING = {
       original: 5576,
       sale: 3979,
       onboardingOriginal: 497,
-      onboardingSale: 497,
+      onboardingSale: 1990,
       annualOriginal: 53530,
       annualSale: 38198,
     },
@@ -88,11 +90,11 @@ export function getOnboardingPrice(tier: TierKey): number {
   return LAUNCH_PRICING.active ? t.onboardingSale : t.onboardingOriginal;
 }
 
-/** Beta onboarding fee cap — onboarding is now a flat $497 for every tier
- * (standard AND beta), so the cap matches the price and is effectively a no-op.
- * Kept here for backward compatibility with code that imports these constants. */
-export const BETA_ONBOARDING_CAP_CENTS = 49700;
-export const BETA_ONBOARDING_CAP_AMOUNT = 497;
+/** Beta onboarding cap — DEPRECATED. Onboarding is now tier-specific
+ * (50% of beta monthly), so there is no separate cap to enforce. These
+ * exports remain for backward compatibility with older imports. */
+export const BETA_ONBOARDING_CAP_CENTS = 0;
+export const BETA_ONBOARDING_CAP_AMOUNT = 0;
 export const BETA_ONBOARDING_CAP_EXPIRES_AT = '2026-08-01T00:00:00Z';
 
 /** Returns the effective billed annual price (respects active flag). */
@@ -102,12 +104,14 @@ export function getAnnualPrice(tier: TierKey): number {
 }
 
 export function isBetaCapActive(now: Date = new Date()): boolean {
-  return now < new Date(BETA_ONBOARDING_CAP_EXPIRES_AT);
+  // Deprecated — per-tier onboarding pricing supersedes the cap mechanism.
+  void now;
+  return false;
 }
 
 /** Returns the effective onboarding price for a tier when a beta code is applied. */
 export function getBetaOnboardingPrice(tier: TierKey, now: Date = new Date()): number {
-  const standard = getOnboardingPrice(tier);
-  if (!isBetaCapActive(now)) return standard;
-  return Math.min(standard, BETA_ONBOARDING_CAP_AMOUNT);
+  void now;
+  // Per-tier onboarding pricing already reflects beta — no extra cap.
+  return getOnboardingPrice(tier);
 }
