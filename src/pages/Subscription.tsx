@@ -264,7 +264,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price (Beta Pricing)', starter: '~~$697~~ $497', connect: '~~$1,394~~ $994', performance: '~~$2,788~~ $1,988', command: '~~$5,576~~ $3,979' },
       { name: 'Annual Price', starter: '$4,771/year', connect: '$9,542/year', performance: '$19,085/year', command: '$38,198/year' },
       { name: 'Annual Savings', starter: 'Save ~$1,193', connect: 'Save ~$2,386', performance: 'Save ~$4,771', command: 'Save ~$9,550' },
-      { name: 'Onboarding Fee (Beta Pricing)', starter: '~~$497~~ $497', connect: '~~$497~~ $497', performance: '~~$497~~ $497', command: '~~$497~~ $497' },
+      { name: 'Onboarding Fee (Beta Pricing)', starter: '~~$497~~ $249', connect: '~~$497~~ $497', performance: '~~$497~~ $994', command: '~~$497~~ $1,990' },
     ],
   },
 ];
@@ -803,7 +803,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">
-                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-foreground font-semibold">$497 flat</span> for every tier (Core, Boost, Pro, Elite).
+                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-foreground font-semibold">50% of beta monthly</span>: Core $249 · Boost $497 · Pro $994 · Elite $1,990.
                 </span>
               </div>
             </div>
