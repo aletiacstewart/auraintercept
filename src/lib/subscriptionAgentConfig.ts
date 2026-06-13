@@ -28,7 +28,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($697/mo · $497 onboarding): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
+    // Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
     // industry specialists (auto-activated by industry pack). 10 employees.
     agents: [
       'triage',
@@ -47,7 +47,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Voice, SMS, email & web chat handled by 5 AI operatives — booking, follow-up, creative content & web presence included',
   },
   connect: {
-    // Aura Boost ($1,394/mo · $497 onboarding): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
+    // Aura Boost ($994/mo · $497 onboarding · Beta Pricing — was $1,394): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
     agents: [
       'triage',
       'customer_journey',
@@ -67,7 +67,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Voice, SMS, email & web chat + 7 AI operatives with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Pro ($2,788/mo · $497 onboarding): Boost + Business Finance + Analytics + Admin + Business Management Console.
+    // Aura Pro ($1,988/mo · $994 onboarding · Beta Pricing — was $2,788): Boost + Business Finance + Analytics + Admin + Business Management Console.
     // 50 employees.
     agents: [
       'triage',
@@ -92,7 +92,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: '10 AI Operatives with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
-    // Aura Elite ($5,576/mo · $497 onboarding): All 10 consolidated operatives + industry specialists,
+    // Aura Elite ($3,979/mo · $1,990 onboarding · Beta Pricing — was $5,576): All 10 consolidated operatives + industry specialists,
     // all 7 consoles + AI Hub, unlimited employees.
     agents: [
       'triage',
