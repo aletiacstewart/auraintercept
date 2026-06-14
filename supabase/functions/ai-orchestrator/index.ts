@@ -365,28 +365,81 @@ async function handleHandoff(
   if (!context) {
     throw new Error('Context not found');
   }
-  
-  // Add to handoff history
+
+  // Hydrate context_data with the customer's recent voice + SMS history so
+  // the receiving agent sees everything the previous channels know.
+  const normalizedPhone = (context.customer_phone || '').replace(/\D/g, '');
+  const normalizedEmail = (context.customer_email || '').trim().toLowerCase();
+
+  let recentCalls: any[] = [];
+  let recentSms: any[] = [];
+  if (normalizedPhone) {
+    const { data: calls } = await supabase
+      .from('call_logs')
+      .select('id, started_at, ended_at, direction, status, summary, transcript, recording_url, duration_seconds')
+      .eq('company_id', companyId)
+      .or(
+        `customer_phone.eq.${context.customer_phone},from_number.eq.${context.customer_phone},to_number.eq.${context.customer_phone}`,
+      )
+      .order('started_at', { ascending: false })
+      .limit(5);
+    recentCalls = calls || [];
+
+    const { data: sms } = await supabase
+      .from('sms_logs')
+      .select('id, created_at, direction, message, from_number, to_number, status')
+      .eq('company_id', companyId)
+      .or(`from_number.eq.${context.customer_phone},to_number.eq.${context.customer_phone}`)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    recentSms = sms || [];
+  }
+
+  // Cap transcript history to last 50 turns to bound row size.
+  const existingTranscript: any[] = Array.isArray(context.context_data?.transcript)
+    ? context.context_data.transcript
+    : [];
+  const cappedTranscript = existingTranscript.slice(-50);
+
+  const hydratedContextData = {
+    ...(context.context_data || {}),
+    ...(payload.additional_context || {}),
+    transcript: cappedTranscript,
+    history: {
+      recent_calls: recentCalls,
+      recent_sms: recentSms,
+      hydrated_at: new Date().toISOString(),
+    },
+    customer_identity: {
+      name: context.customer_name,
+      email: normalizedEmail || null,
+      phone: context.customer_phone || null,
+    },
+  };
+
+  // Add to handoff history with a summary of what's being carried forward.
+  const carriedKeys = Object.keys(hydratedContextData).filter(
+    (k) => k !== 'transcript' && k !== 'history',
+  );
   const handoffEntry = {
     from_agent: context.active_agent,
     to_agent: toAgent,
     reason: payload.reason || 'Agent handoff',
     timestamp: new Date().toISOString(),
     context_snapshot: payload.context_snapshot || {},
+    carried_keys: carriedKeys,
+    summary: `Carrying ${recentCalls.length} call(s), ${recentSms.length} sms, ${cappedTranscript.length} chat turn(s).`,
   };
-  
+
   const updatedHistory = [...(context.handoff_history || []), handoffEntry];
-  
+
   // Update context with new active agent
   const { data, error } = await supabase
     .from('ai_agent_context')
     .update({
       active_agent: toAgent,
       handoff_history: updatedHistory,
-      context_data: {
-        ...context.context_data,
-        ...payload.additional_context,
-      },
+      context_data: hydratedContextData,
       updated_at: new Date().toISOString(),
     })
     .eq('id', contextId)

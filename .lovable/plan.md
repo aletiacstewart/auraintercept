@@ -1,92 +1,71 @@
 ## Goal
+When the customer talks to any AI agent (chat, voice call, SMS), everything they say — intent, items discussed, address, notes, quoted prices — must survive every handoff and auto-prefill the next agent's quote, invoice, appointment, or follow-up. Today the orchestrator already tracks `ai_agent_context.context_data` + `handoff_history`, but call/chat/SMS logs aren't merged in, and `BusinessQuoteForm` / `InvoiceForm` ignore that context entirely.
 
-Change beta onboarding from a flat **$497 for all tiers** to **50% of each tier's beta monthly price**:
+## What we'll build
 
-| Tier  | Beta monthly | New onboarding (50%) |
-|-------|--------------|----------------------|
-| Core  | $497         | **$249**             |
-| Boost | $994         | **$497**             |
-| Pro   | $1,988       | **$994**             |
-| Elite | $3,979       | **$1,990**           |
+### 1. Unified customer interaction history (backend)
+- Add SECURITY DEFINER RPC `get_customer_interaction_history(p_company_id, p_email, p_phone, p_limit)` that returns a single timeline merging:
+  - `ai_agent_context` (context_data, active_agent, handoff_history)
+  - `ai_agent_logs` (per-agent actions, input/output)
+  - `call_logs` (transcript, summary, recording_url)
+  - `sms_logs`
+  - `site_chat_logs`
+  - latest `appointments.intake_data`
+- Returns normalized rows: `{ kind, when, agent, summary, payload, context_id }`.
+- Grants: `authenticated` + `service_role`. Scoped via `get_user_company_id` / dispatch access.
 
-Onboarding "standard" (struck-through) values stay where they are today on each tier (no change to the strikethrough column).
+### 2. Stronger handoff payloads (orchestrator)
+File: `supabase/functions/ai-orchestrator/index.ts`
+- In `handleHandoff`, hydrate `context_data` before writing by pulling the most recent `call_logs.transcript`/`summary`, `site_chat_logs`, and `sms_logs` matching the context's `customer_email`/`customer_phone`, and merging them into `context_data.history` (capped to last N entries).
+- Add `context_data.last_quote_request`, `context_data.last_invoice_request`, `context_data.items_discussed[]`, `context_data.address`, `context_data.preferred_datetime`, populated by the source agent (filled by `ai-agent-chat` and `voice-handler` on each turn — see step 3).
+- Persist `handoff_history` entries with `summary` + `carried_keys` so downstream agents see "what's already known".
 
-## 1. Source-of-truth pricing
+### 3. Producers write structured context every turn
+Touch:
+- `supabase/functions/ai-agent-chat/index.ts`
+- `supabase/functions/voice-handler/index.ts`
+- `supabase/functions/elevenlabs-post-call/index.ts`
+- `supabase/functions/widget-api/index.ts` (chat widget)
+- SMS inbound handler (existing keyword/auto-responder path)
 
-**`src/lib/launchPricing.ts`** — update each tier's `onboardingSale`:
-- starter: 249
-- connect: 497
-- performance: 994
-- command: 1990
+Each writes/updates `ai_agent_context` keyed on `(company_id, customer_email|customer_phone)`:
+- Append turn to `context_data.transcript[]`
+- Detect intent (quote / invoice / booking / follow-up) and set `context_data.last_intent`
+- Extract address, requested service, line items via the model's tool-call output and persist into `context_data.items_discussed`
 
-Retire the flat $497 cap concept:
-- Set `BETA_ONBOARDING_CAP_CENTS = 0`, `BETA_ONBOARDING_CAP_AMOUNT = 0`.
-- Rewrite `isBetaCapActive()` to return `false` and `getBetaOnboardingPrice()` to just return `getOnboardingPrice(tier)`. Keep exports so nothing breaks.
-- Update the file-header comment matrix.
+### 4. Quote & Invoice forms read context
+Files: `src/components/billing/forms/BusinessQuoteForm.tsx`, `InvoiceForm.tsx`, `src/components/ai/QuoteForm.tsx`
+- New optional props: `contextId?: string`, `customerEmail?`, `customerPhone?`.
+- New hook `useCustomerInteractionHistory({ email, phone })` calls the RPC above.
+- On mount, when context/customer is provided:
+  - Prefill name/email/phone/address from `ai_agent_context` or latest appointment.
+  - Prefill `line_items` from `context_data.items_discussed` (falling back to industry pack template as today).
+  - Prefill `notes` with a short auto-summary: "From AI Receptionist call on Jun 12 — customer asked about …".
+  - Render a collapsible "Conversation context" panel showing the last call transcript snippet, last chat turns, and last SMS. Read-only.
+- Store `source_context_id` on the created quote/invoice so we can trace back.
 
-## 2. Stripe + checkout
+### 5. Schema additions
+Migration:
+- `ALTER TABLE quotes ADD COLUMN source_context_id uuid REFERENCES ai_agent_context(id) ON DELETE SET NULL;`
+- `ALTER TABLE invoices ADD COLUMN source_context_id uuid REFERENCES ai_agent_context(id) ON DELETE SET NULL;`
+- `ALTER TABLE call_logs ADD COLUMN context_id uuid REFERENCES ai_agent_context(id) ON DELETE SET NULL;` (so calls join the timeline cleanly)
+- Indexes on the new FK columns.
+- No new tables, no new policies (RLS inherits via existing company-scoped policies; new columns are nullable).
 
-**Create four new one-time onboarding prices in Stripe** (one per tier), via `stripe--create_stripe_product_and_price`:
-- Aura Core Onboarding — $249
-- Aura Boost Onboarding — $497
-- Aura Pro Onboarding — $994
-- Aura Elite Onboarding — $1,990
+### 6. Console surfacing
+- In `BusinessOpsAgentConsole`, `BillingAgentConsole`, and `FieldOpsAgentConsole`: when the agent opens Quote/Invoice forms from a chat thread, pass the active `contextId` automatically.
+- In `BookingAgentConsole`: same — booking confirmation writes `items_discussed` back into context for the next agent.
 
-**`supabase/functions/create-checkout/index.ts`**:
-- Remove `FLAT_ONBOARDING_PRICE_ID`. Give each tier (`CORE`, `BOOST`, `PRO`, `ELITE`) its own `onboarding_price_id` from the new Stripe prices.
-- Strip the beta-cap branch (lines ~221–257): since onboarding is now already tier-specific and lower than any previously-quoted cap, just push `{ price: selectedTier.onboarding_price_id, quantity: 1 }` (still honoring `betaWaiveOnboarding`).
-- Update the header comment block to the new matrix.
+### 7. Tests
+- Extend `src/hooks/useAIAgentOrchestrator.test.ts` with a handoff scenario asserting `context_data.transcript` + `items_discussed` survive a two-step handoff.
+- New Deno test for the RPC: seed a chat + call + sms for one customer, expect a merged timeline.
 
-**`src/components/billing/BetaCodeInput.tsx`** — drop the "capped at $X" string; replace with neutral copy ("Beta pricing applied — 60-day live trial").
+## Out of scope
+- Changing tier/agent gating, pricing, onboarding flows.
+- Rewriting the chat or call UIs themselves.
+- Cross-company sharing (still strictly scoped by `company_id`).
+- Embeddings / semantic recall — straight chronological merge only.
 
-## 3. Marketing copy — replace "flat $497 onboarding" everywhere
-
-Update to per-tier values (Core $249 / Boost $497 / Pro $994 / Elite $1,990):
-
-- `src/components/billing/BetaSignupNotice.tsx` — change the bullet list onboarding column to per-tier; rewrite the "capped at $497 regardless of tier" sentence to "onboarding is 50% of your beta monthly price (one-time)".
-- `src/components/landing/PricingComparisonTable.tsx`
-- `src/components/landing/CompetitiveDifferentiation.tsx`
-- `src/components/agents/TierComparisonCards.tsx` (upgrade summary footer)
-- `src/components/marketing/IndustryROICalculator.tsx`
-- `src/pages/Index.tsx`, `src/pages/ForBusiness.tsx`, `src/pages/Subscription.tsx`, `src/pages/SignUp.tsx`, `src/pages/PublicOnboardingIntake.tsx`, `src/pages/Contact.tsx`, `src/pages/Help.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/TermsOfService.tsx`, `src/pages/ExportDocumentation.tsx`
-- AI/system-prompt copy: `src/lib/helpSystemPrompt.ts`, `supabase/functions/ai-agent-chat/index.ts`, `supabase/functions/landing-chat/index.ts`, `supabase/functions/trial-reminders/index.ts`
-
-Wherever possible, replace hard-coded "$497" onboarding strings with `getOnboardingPrice(tier)` / `getTierPricing(tier).onboardingSale` so future changes are one-file.
-
-## 4. Exported PDFs / documents
-
-Regenerate the onboarding-fee references in:
-- `src/components/documentation/PricingSummaryPDF.tsx`
-- `src/components/documentation/PlatformFAQPDF.tsx`
-- `src/components/documentation/PlatformDocumentPDF.tsx`
-- `src/components/documentation/CompanyOnboardingPDF.tsx`
-- `src/components/documentation/ComprehensiveGuidesPDF.tsx`
-- `src/components/documentation/MarketingSalesMasterPDF.tsx`
-- `src/components/documentation/SalesPitchDataPDF.tsx`
-- `src/components/documentation/AIAgentGuidesPDF.tsx`
-- `src/components/documentation/WebsiteCopyPDF.tsx`
-- `src/components/documentation/SocialMediaContentPackPDF.tsx`
-- `src/components/documentation/VideoScriptsPDF.tsx`
-- `src/components/documentation/BrandAssetGuidePDF.tsx`
-
-Each gets a per-tier onboarding table replacing the "flat $497 onboarding" / "$497 capped" language.
-
-## 5. Memory updates
-
-- `mem://index.md` Core block: rewrite the launch-pricing line to "Onboarding = 50% of beta monthly: Core $249 / Boost $497 / Pro $994 / Elite $1,990 (originals struck through unchanged)."
-- `mem://billing/launch-pricing` — same per-tier onboarding values; remove the flat-$497 cap note; add the four new Stripe onboarding price IDs created in Step 2.
-- `mem://product/trial-period-standard` — update "onboarding fee due at start" examples.
-- `mem://legal/third-party-fee-disclaimer` — no change (third-party policy unaffected).
-
-## 6. Out of scope
-
-- Monthly tier prices, annual prices, struck-through originals — unchanged.
-- Trial length / trial mechanics — unchanged (still 60-day).
-- Subscription tiers, agent counts, feature gating — unchanged.
-- Existing subscribers on the prior $497 onboarding line item — already paid; no retro changes.
-
-## Technical notes
-
-- Need 4 new Stripe onboarding price IDs before swapping in `create-checkout/index.ts`. Old `price_1ThWTnJ9fo9y8fGHWnT31XSF` stays defined-but-unused for any historic invoice references.
-- After the migration of strings, run `rg "\$497.*onboard|flat \$497|capped at \$497"` to confirm no stragglers remain.
-- No DB schema changes; `beta_codes.onboarding_fee_cap_cents` column stays but the cap branch is dead code — leaving the column intact preserves historical row data.
+## Risk notes
+- Transcript bloat in `context_data`: cap at 50 most-recent turns; older turns stay in `call_logs`/`site_chat_logs`.
+- Backfill: existing rows have no `source_context_id`; that's fine, the column is nullable.

@@ -777,6 +777,7 @@ export type Database = {
           appointment_id: string | null
           call_sid: string | null
           company_id: string
+          context_id: string | null
           created_at: string
           customer_name: string | null
           customer_phone: string | null
@@ -802,6 +803,7 @@ export type Database = {
           appointment_id?: string | null
           call_sid?: string | null
           company_id: string
+          context_id?: string | null
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
@@ -827,6 +829,7 @@ export type Database = {
           appointment_id?: string | null
           call_sid?: string | null
           company_id?: string
+          context_id?: string | null
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
@@ -867,6 +870,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_context_id_fkey"
+            columns: ["context_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agent_context"
             referencedColumns: ["id"]
           },
         ]
@@ -3569,6 +3579,7 @@ export type Database = {
           payment_link_url: string | null
           payment_method: string | null
           quote_id: string | null
+          source_context_id: string | null
           status: string
           stripe_payment_intent_id: string | null
           subtotal: number
@@ -3596,6 +3607,7 @@ export type Database = {
           payment_link_url?: string | null
           payment_method?: string | null
           quote_id?: string | null
+          source_context_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           subtotal?: number
@@ -3623,6 +3635,7 @@ export type Database = {
           payment_link_url?: string | null
           payment_method?: string | null
           quote_id?: string | null
+          source_context_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           subtotal?: number
@@ -3644,6 +3657,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_source_context_id_fkey"
+            columns: ["source_context_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agent_context"
             referencedColumns: ["id"]
           },
         ]
@@ -5050,6 +5070,7 @@ export type Database = {
           customer_user_id: string | null
           id: string
           notes: string | null
+          source_context_id: string | null
           status: string
           subtotal: number
           tax_amount: number | null
@@ -5069,6 +5090,7 @@ export type Database = {
           customer_user_id?: string | null
           id?: string
           notes?: string | null
+          source_context_id?: string | null
           status?: string
           subtotal?: number
           tax_amount?: number | null
@@ -5088,6 +5110,7 @@ export type Database = {
           customer_user_id?: string | null
           id?: string
           notes?: string | null
+          source_context_id?: string | null
           status?: string
           subtotal?: number
           tax_amount?: number | null
@@ -5102,6 +5125,13 @@ export type Database = {
             columns: ["appointment_id"]
             isOneToOne: false
             referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_source_context_id_fkey"
+            columns: ["source_context_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agent_context"
             referencedColumns: ["id"]
           },
         ]
@@ -7630,6 +7660,22 @@ export type Database = {
           slug: string
           subscription_tier: string
           trial_ends_at: string
+        }[]
+      }
+      get_customer_interaction_history: {
+        Args: {
+          p_company_id: string
+          p_email?: string
+          p_limit?: number
+          p_phone?: string
+        }
+        Returns: {
+          agent: string
+          context_id: string
+          kind: string
+          occurred_at: string
+          payload: Json
+          summary: string
         }[]
       }
       get_demo_trial_access: {

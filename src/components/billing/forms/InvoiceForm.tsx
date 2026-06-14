@@ -15,6 +15,12 @@ import { toast } from 'sonner';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getAppointmentRules } from '@/lib/industryFormSchemas';
+import {
+  useCustomerInteractionHistory,
+  deriveDiscussedItems,
+  buildContextNote,
+} from '@/hooks/useCustomerInteractionHistory';
+import { ConversationContextPanel } from '@/components/billing/ConversationContextPanel';
 
 export interface InvoiceFormData {
   appointmentId: string | null;
@@ -71,6 +77,11 @@ interface InvoiceFormProps {
   isLoading?: boolean;
   showBackButton?: boolean;
   mode?: 'ai' | 'direct';
+  contextId?: string | null;
+  prefillEmail?: string | null;
+  prefillPhone?: string | null;
+  prefillName?: string | null;
+  prefillAddress?: string | null;
 }
 
 export function InvoiceForm({ 
@@ -80,7 +91,12 @@ export function InvoiceForm({
   onSuccess,
   isLoading = false,
   showBackButton = true,
-  mode = 'ai'
+  mode = 'ai',
+  contextId = null,
+  prefillEmail = null,
+  prefillPhone = null,
+  prefillName = null,
+  prefillAddress = null,
 }: InvoiceFormProps) {
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack();
@@ -89,10 +105,10 @@ export function InvoiceForm({
   const invoiceTemplate = (pack?.invoice_template as { line_items?: Array<{ description: string; quantity?: number; unit_price?: number }> } | undefined) || {};
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJobs, setSelectedJobs] = useState<SelectedJob[]>([]);
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerName, setCustomerName] = useState(prefillName || '');
+  const [customerPhone, setCustomerPhone] = useState(prefillPhone || '');
+  const [customerEmail, setCustomerEmail] = useState(prefillEmail || '');
+  const [customerAddress, setCustomerAddress] = useState(prefillAddress || '');
   const [serviceType, setServiceType] = useState('');
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
@@ -104,6 +120,44 @@ export function InvoiceForm({
     { id: generateLineItemId(), description: '', quantity: 1, unit_price: 0, appointmentId: null }
   ]);
   const prevSelectedJobsRef = useRef<string[]>([]);
+
+  // Pull AI conversation / call / SMS history for this customer
+  const { data: history, isLoading: historyLoading } = useCustomerInteractionHistory({
+    companyId,
+    email: customerEmail || prefillEmail,
+    phone: customerPhone || prefillPhone,
+    enabled: mode === 'direct',
+  });
+
+  const prefilledFromContextRef = useRef(false);
+  useEffect(() => {
+    if (mode !== 'direct') return;
+    if (prefilledFromContextRef.current) return;
+    if (!history?.length) return;
+    const ctx = history.find((h) => h.kind === 'ai_context');
+    const payload = ctx?.payload || {};
+    if (!customerName && payload?.customer_name) setCustomerName(payload.customer_name);
+    if (!customerAddress && payload?.context_data?.address) setCustomerAddress(payload.context_data.address);
+    const items = deriveDiscussedItems(history);
+    if (items.length > 0) {
+      const isEmpty = lineItems.length === 1 && !lineItems[0].description && !lineItems[0].unit_price;
+      if (isEmpty) {
+        setLineItems(items.map((it) => ({
+          id: generateLineItemId(),
+          description: it.description,
+          quantity: it.quantity,
+          unit_price: it.unit_price,
+          appointmentId: null,
+        })));
+      }
+    }
+    if (!notes) {
+      const note = buildContextNote(history);
+      if (note) setNotes(note);
+    }
+    prefilledFromContextRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history, mode]);
 
   // Pre-fill line items from industry pack invoice_template (direct mode, when blank)
   useEffect(() => {
@@ -275,6 +329,7 @@ export function InvoiceForm({
           due_date: dueDate.toISOString(),
           status: 'draft',
           appointment_id: primaryAppointmentId,
+          source_context_id: contextId || null,
         })
         .select()
         .single();
@@ -451,6 +506,10 @@ export function InvoiceForm({
         <Receipt className="h-5 w-5 text-primary" />
         <h3 className="font-semibold text-foreground">{mode === 'direct' ? `Create ${invoiceNoun}` : `Generate ${invoiceNoun}`}</h3>
       </div>
+
+      {mode === 'direct' && (history?.length || historyLoading) ? (
+        <ConversationContextPanel history={history} isLoading={historyLoading} />
+      ) : null}
 
       {/* Selected Jobs Display */}
       {selectedJobs.length > 0 && (
