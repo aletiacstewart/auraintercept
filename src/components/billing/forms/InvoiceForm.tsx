@@ -507,6 +507,10 @@ export function InvoiceForm({
         <h3 className="font-semibold text-foreground">{mode === 'direct' ? `Create ${invoiceNoun}` : `Generate ${invoiceNoun}`}</h3>
       </div>
 
+      {mode === 'direct' && (history?.length || historyLoading) ? (
+        <ConversationContextPanel history={history} isLoading={historyLoading} />
+      ) : null}
+
       {/* Selected Jobs Display */}
       {selectedJobs.length > 0 && (
         <div className="space-y-1">
