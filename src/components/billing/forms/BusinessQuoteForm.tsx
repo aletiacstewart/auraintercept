@@ -12,6 +12,12 @@ import { toast } from 'sonner';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getAppointmentRules } from '@/lib/industryFormSchemas';
+import {
+  useCustomerInteractionHistory,
+  deriveDiscussedItems,
+  buildContextNote,
+} from '@/hooks/useCustomerInteractionHistory';
+import { ConversationContextPanel } from '@/components/billing/ConversationContextPanel';
 
 interface Service {
   id: string;
@@ -39,6 +45,13 @@ interface BusinessQuoteFormProps {
   isLoading?: boolean;
   showBackButton?: boolean;
   mode?: 'ai' | 'direct'; // 'ai' sends to AI agent, 'direct' creates quote directly
+  /** Link the new quote back to an AI conversation. */
+  contextId?: string | null;
+  /** Prefill identity + items from the customer's recent AI/voice/SMS history. */
+  prefillEmail?: string | null;
+  prefillPhone?: string | null;
+  prefillName?: string | null;
+  prefillAddress?: string | null;
 }
 
 export function BusinessQuoteForm({ 
@@ -48,17 +61,22 @@ export function BusinessQuoteForm({
   onSuccess,
   isLoading = false, 
   showBackButton = true,
-  mode = 'ai'
+  mode = 'ai',
+  contextId = null,
+  prefillEmail = null,
+  prefillPhone = null,
+  prefillName = null,
+  prefillAddress = null,
 }: BusinessQuoteFormProps) {
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack();
   const quoteNoun = (pack?.terminology as Record<string, string> | undefined)?.quote || 'Quote';
   const showAddress = getAppointmentRules(pack).address_required !== false;
   const quoteTemplate = (pack?.quote_template as { line_items?: Array<{ description: string; quantity?: number; unit_price?: number }> } | undefined) || {};
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerName, setCustomerName] = useState(prefillName || '');
+  const [customerPhone, setCustomerPhone] = useState(prefillPhone || '');
+  const [customerEmail, setCustomerEmail] = useState(prefillEmail || '');
+  const [customerAddress, setCustomerAddress] = useState(prefillAddress || '');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [issueDescription, setIssueDescription] = useState('');
   const [sendEmail, setSendEmail] = useState(true);
@@ -68,6 +86,38 @@ export function BusinessQuoteForm({
   const [lineItems, setLineItems] = useState<{description: string; quantity: number; unit_price: number}[]>([
     { description: '', quantity: 1, unit_price: 0 }
   ]);
+
+  // Pull AI conversation / call / SMS history for this customer
+  const { data: history, isLoading: historyLoading } = useCustomerInteractionHistory({
+    companyId,
+    email: customerEmail || prefillEmail,
+    phone: customerPhone || prefillPhone,
+    enabled: mode === 'direct',
+  });
+
+  // One-shot prefill from AI context: items + note + identity (only if blank)
+  const prefilledFromContextRef = React.useRef(false);
+  React.useEffect(() => {
+    if (mode !== 'direct') return;
+    if (prefilledFromContextRef.current) return;
+    if (!history?.length) return;
+    const ctx = history.find((h) => h.kind === 'ai_context');
+    const payload = ctx?.payload || {};
+    const identity = payload.customer_identity || payload;
+    if (!customerName && identity?.customer_name) setCustomerName(identity.customer_name);
+    if (!customerAddress && payload?.context_data?.address) setCustomerAddress(payload.context_data.address);
+    const items = deriveDiscussedItems(history);
+    if (items.length > 0) {
+      const isEmpty = lineItems.length === 1 && !lineItems[0].description && !lineItems[0].unit_price;
+      if (isEmpty) setLineItems(items);
+    }
+    if (!issueDescription) {
+      const note = buildContextNote(history);
+      if (note) setIssueDescription(note);
+    }
+    prefilledFromContextRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history, mode]);
 
   // Pre-fill line items from industry pack template (direct mode only, when blank)
   React.useEffect(() => {
@@ -135,6 +185,7 @@ export function BusinessQuoteForm({
           total_amount: subtotal + taxAmount,
           valid_until: validUntil.toISOString(),
           status: 'draft',
+          source_context_id: contextId || null,
         })
         .select()
         .single();
