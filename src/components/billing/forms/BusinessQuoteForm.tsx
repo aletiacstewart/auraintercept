@@ -306,6 +306,10 @@ export function BusinessQuoteForm({
         <h3 className="font-semibold text-foreground">Create {quoteNoun}</h3>
       </div>
 
+      {mode === 'direct' && (history?.length || historyLoading) ? (
+        <ConversationContextPanel history={history} isLoading={historyLoading} />
+      ) : null}
+
       <div className="space-y-3 min-w-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
           <Input
