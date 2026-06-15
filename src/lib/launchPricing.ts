@@ -9,9 +9,13 @@
  *   Pro    | $2,788 / mo       | $1,988 / mo
  *   Elite  | $5,576 / mo       | $3,979 / mo
  *
- * Onboarding (one-time, Beta): 50% of beta monthly per tier:
- *   Core $249 · Boost $497 · Pro $994 · Elite $1,990
- * Onboarding (standard / struck-through): $497 flat across all tiers.
+ * Onboarding (one-time): equals ONE MONTH of the plan (struck-through original),
+ * then 50% OFF during Beta — sale price billed:
+ *   Tier   | Original (1 mo, struck) | Beta Sale (billed, 50% off)
+ *   Core   | $497                    | $249
+ *   Boost  | $994                    | $497
+ *   Pro    | $1,988                  | $994
+ *   Elite  | $3,979                  | $1,990
  * Annual = round(monthly × 12 × 0.8) (~20% savings).
  */
 
@@ -44,7 +48,7 @@ export const LAUNCH_PRICING = {
       name: 'Aura Boost',
       original: 1394,
       sale: 994,
-      onboardingOriginal: 497,
+      onboardingOriginal: 994,
       onboardingSale: 497,
       annualOriginal: 13382,
       annualSale: 9542,
@@ -53,7 +57,7 @@ export const LAUNCH_PRICING = {
       name: 'Aura Pro',
       original: 2788,
       sale: 1988,
-      onboardingOriginal: 497,
+      onboardingOriginal: 1988,
       onboardingSale: 994,
       annualOriginal: 26765,
       annualSale: 19085,
@@ -62,7 +66,7 @@ export const LAUNCH_PRICING = {
       name: 'Aura Elite',
       original: 5576,
       sale: 3979,
-      onboardingOriginal: 497,
+      onboardingOriginal: 3979,
       onboardingSale: 1990,
       annualOriginal: 53530,
       annualSale: 38198,

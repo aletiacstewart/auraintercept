@@ -230,7 +230,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 8,
     consoleCount: 3,
     employeeLimit: 'Up to 10 employees',
-    implementationFee: '$497 (Beta Pricing — was $497)',
+    implementationFee: '$249 one-time (50% OFF — was $497)',
   },
   BOOST: {
     tier: 'BOOST',
@@ -247,7 +247,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 12,
     consoleCount: 5,
     employeeLimit: 'Up to 25 employees',
-    implementationFee: '$497 (Beta Pricing — was $497)',
+    implementationFee: '$497 one-time (50% OFF — was $994)',
   },
   PRO: {
     tier: 'PRO',
@@ -264,7 +264,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 16,
     consoleCount: 5,
     employeeLimit: 'Up to 50 employees',
-    implementationFee: '$497 (Beta Pricing — was $497)',
+    implementationFee: '$994 one-time (50% OFF — was $1,988)',
   },
   ELITE: {
     tier: 'ELITE',
@@ -281,7 +281,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     agentCount: 24,
     consoleCount: 7,
     employeeLimit: 'Unlimited employees',
-    implementationFee: '$497 (Beta Pricing — was $497)',
+    implementationFee: '$1,990 one-time (50% OFF — was $3,979)',
   },
 };
 
