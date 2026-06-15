@@ -900,7 +900,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 50% of monthly: Core $249 · Boost $497 · Pro $994 · Elite $1,990, due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 1 month of plan, 50% OFF during Beta: Core $249 (was $497) · Boost $497 (was $994) · Pro $994 (was $1,988) · Elite $1,990 (was $3,979), due at start.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 
@@ -1345,7 +1345,7 @@ const SmartWebsitePage = () => (
 const TOS_CLAUSES: Array<{ title: string; body: string }> = [
   { title: '1. Services', body: 'Aura Intercept provides an AI-powered customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
   { title: '2. Subscription & 60-Day Live Trial', body: 'Subscription begins on the date the onboarding fee is paid. A 60-Day Live Trial period applies; the platform is fully active during the trial. Cancellation must occur in writing before the next monthly billing date.' },
-  { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to 50% of your beta monthly applies per tier: Core $249, Boost $497, Pro $994, Elite $1,990. It is due at the start of the 60-Day Live Trial and is non-refundable once onboarding begins. The fee covers Concierge Onboarding services and platform configuration.' },
+  { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to one month of your plan applies, with 50% OFF during Beta: Core $249 (was $497), Boost $497 (was $994), Pro $994 (was $1,988), Elite $1,990 (was $3,979). It is due at the start of the 60-Day Live Trial and is non-refundable once onboarding begins. The fee covers Concierge Onboarding services and platform configuration.' },
   { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms, Google Workspace, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells or marks up third-party usage charges.' },
   { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
   { title: '6. Customer Data & Privacy', body: 'Customer retains ownership of all customer data uploaded to the Platform. Aura Intercept processes data per the Privacy Policy and applicable law (CCPA, GDPR where relevant). Customer is the data controller; Aura Intercept is the data processor.' },
@@ -1388,7 +1388,7 @@ const TermsAcknowledgementPage = () => {
     'I have read and agree to the Aura Intercept Privacy Policy at auraintercept.ai/privacy-policy.',
     'I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account and credit card and will be invoiced to me DIRECTLY and SEPARATELY from my Aura plan fee.',
     'I authorize Aura Intercept Concierge Onboarding to configure these third-party accounts on my behalf using credentials I provide.',
-    'I agree to the 60-Day Live Trial terms; the tier-specific onboarding fee (50% of beta monthly: Core $249 / Boost $497 / Pro $994 / Elite $1,990) is due at the start of the trial and is non-refundable once onboarding begins.',
+    'I agree to the 60-Day Live Trial terms; the tier-specific onboarding fee (1 month of plan, 50% OFF during Beta — Core $249 / Boost $497 / Pro $994 / Elite $1,990) is due at the start of the trial and is non-refundable once onboarding begins.',
     'I confirm that I am an authorized signer with legal authority to bind the Company named below.',
   ];
   return (
@@ -1400,10 +1400,10 @@ const TermsAcknowledgementPage = () => {
       </Text>
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
       {[
-        { id: 'core',  label: 'Aura Core  — $497/mo  ·  $249 one-time onboarding (Beta Pricing, was $697/$497)' },
-        { id: 'boost', label: 'Aura Boost — $994/mo  ·  $497 one-time onboarding (Beta Pricing, was $1,394/$497)' },
-        { id: 'pro',   label: 'Aura Pro   — $1,988/mo ·  $994 one-time onboarding (Beta Pricing, was $2,788/$497)' },
-        { id: 'elite', label: 'Aura Elite — $3,979/mo ·  $1,990 one-time onboarding (Beta Pricing, was $5,576/$497)' },
+        { id: 'core',  label: 'Aura Core  — $497/mo (was $697)  ·  $249 one-time onboarding (50% OFF — was $497)' },
+        { id: 'boost', label: 'Aura Boost — $994/mo (was $1,394)  ·  $497 one-time onboarding (50% OFF — was $994)' },
+        { id: 'pro',   label: 'Aura Pro   — $1,988/mo (was $2,788) ·  $994 one-time onboarding (50% OFF — was $1,988)' },
+        { id: 'elite', label: 'Aura Elite — $3,979/mo (was $5,576) ·  $1,990 one-time onboarding (50% OFF — was $3,979)' },
       ].map((p) => (
         <View key={p.id} style={styles.optionRow}>
           <View style={styles.checkbox} />
