@@ -1,51 +1,42 @@
-## Onboarding Fee Restructure + 3rd-Party Trial Disclosure Update
+## Simplify Pricing Plan Boxes (Homepage)
 
-### 1. New Onboarding Pricing Model
-Onboarding fee = **1 month of plan price (struck through) → 50% off shown as sale**.
+The 4 plan cards in `src/pages/Index.tsx` (lines ~915–1045) currently repeat info that's already in the Beta Sign-Up notice above them AND repeat the same agent/voice/SMS/email/chat line in two places inside each card. Trim each card to a single, distinct, scannable feature list.
 
-| Tier  | Monthly (Beta) | Onboarding Original (struck) | Onboarding Sale (billed) |
-|-------|---------------|------------------------------|--------------------------|
-| Core  | $497          | ~~$497~~                     | **$249**                 |
-| Boost | $994          | ~~$994~~                     | **$497**                 |
-| Pro   | $1,988        | ~~$1,988~~                   | **$994**                 |
-| Elite | $3,979        | ~~$3,979~~                   | **$1,990**               |
+### What's duplicated today
+1. **Provider channels** ("Voice + SMS + Email + Web Chat (your provider accounts)") — already covered by the Beta notice's 3rd-party paragraph.
+2. **Agent count + channel list in the tagline paragraph** repeats the first feature row ("X Smart AI Agents + Industry Specialists").
+3. **Industry Specialists** appears as both "X Smart AI Agents + Industry Specialists" AND a separate "All Industry Specialists Included" row on Elite.
+4. **"Beta Pricing" chip + strikethrough monthly + onboarding line** — onboarding strikethrough is already in the Beta notice grid; keep it on the card (still useful at point of CTA) but remove the redundant tagline.
 
-Sale prices remain unchanged (already 50% of beta monthly). Only the **struck-through "original"** changes from a flat $497 to match each tier's monthly. This makes the discount story consistent: "1st month onboarding fee, 50% off during beta."
+### Per-card edits
 
-### 2. Files to Update
-**Source of truth (single edit cascades):**
-- `src/lib/launchPricing.ts` — set `onboardingOriginal` per tier (497/994/1988/3979).
+**Aura Core**
+- Remove tagline paragraph (line 929: "Voice, SMS, email & web chat handled by 8 Smart AI Agents…").
+- Remove feature row: "Voice + SMS + Email + Web Chat (your provider accounts)".
+- Keep: 8 Smart AI Agents + Industry Specialists · 7 Control Centers (Field Ops, Social, Analytics) · Triage + Booking + Follow-Up + Review · Creative Content + Web Presence · 10 Employee Accounts.
 
-**Display surfaces verifying the new struck price:**
-- `src/components/subscription/ThirdPartyCostDisclosureDialog.tsx`
-- `src/components/billing/BetaSignupNotice.tsx`, `BetaCodeInput.tsx`
-- `src/components/landing/PricingComparisonTable.tsx`
-- `src/pages/Index.tsx`, `SignUp.tsx`, `Subscription.tsx`, `TermsOfService.tsx`
-- `src/components/documentation/*PDF.tsx` (CompanyOnboarding, MarketingSalesMaster, PlatformDocument, PlatformFAQ, PricingSummary, WebsiteCopy)
-- `src/lib/helpSystemPrompt.ts`, `src/lib/subscriptionAgentConfig.ts`
-- `supabase/functions/ai-agent-chat/index.ts`, `landing-chat/index.ts`, `create-checkout/index.ts`
-- `.lovable/plan.md` and memory: `marketing/pricing/canonical-four-tier-model.md`
+**Aura Boost**
+- Remove tagline paragraph (line 963).
+- Remove feature row: "Voice + SMS + Email + Web Chat (your provider accounts)".
+- Keep: 12 Smart AI Agents + Industry Specialists · 7 Control Centers · Dispatch + Route + ETA + Check-In · Service Management + Social Media + Analytics · 25 Employee Accounts.
 
-**Stripe:** Onboarding price IDs already exist per tier (legacy + beta). Audit `create-checkout` to ensure the correct **per-tier** onboarding price is charged (not the flat $497 ID). If a per-tier Stripe price doesn't exist for an onboarding amount, create it via Stripe tools.
+**Aura Pro**
+- Remove tagline paragraph (line 997: "16 Smart AI Agents with social media…") — agent count already in first feature row.
+- Keep: 16 Smart AI Agents + Industry Specialists · All 7 Control Centers (Business Mgmt unlocked) · Quoting + Invoicing + Inventory · Insights + Performance Agents · 50 Employee Accounts.
 
-### 3. 3rd-Party Fee Disclosure — Rewrite (Trial Clarity)
-Update copy everywhere it appears to make clear that **3rd-party usage fees are billed during the trial, per actual usage, by each vendor**.
+**Aura Elite**
+- Remove tagline paragraph (line 1030: "All 10 AI Operatives with full-suite automation.") — restated by feature rows.
+- Remove redundant "All Industry Specialists Included" row (merge into agent row → "24 Smart AI Agents + All Industry Specialists").
+- Keep: 24 Smart AI Agents + All Industry Specialists · All 7 Control Centers + AI Hub · Priority Support + Unlimited Employees.
 
-**New canonical paragraph:**
-> **3rd-party services are billed separately by each vendor — including during your 60-Day Live Trial.** Voice & SMS (SignalWire), AI voice (ElevenLabs), email (Resend), web research (Tavily), payments (Stripe), A2P 10DLC, and social APIs each require your own account with a valid credit card on file. You'll be invoiced **directly by each provider on a pay-as-you-go basis** for actual usage (per call, per text, per email, per voice minute, per search, per transaction). Aura's plan fee covers the platform only — we never resell, mark up, or absorb vendor charges, and these usage fees apply during your trial period.
+### Kept as-is on every card
+- Tier badge, name, "Best for…" italic line
+- Strikethrough monthly + sale price + Beta Pricing chip + annual line
+- CTA button, See More Details toggle
+- Footer line: "Platform only — providers billed separately · Onboarding: ~~$X~~ $Y (50% OFF — Beta)"
 
-**Short variant** (forms, footers, chips):
-> 3rd-party usage (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go, billed directly by each vendor — including during your trial.
-
-Files: `src/components/billing/ThirdPartyFeeNotice.tsx`, `ThirdPartyCostDisclosureDialog.tsx`, signup page, Subscription page, ToS, all PDFs above, FAQ PDF, landing-chat & ai-agent-chat system prompts, memory `legal/third-party-fee-disclaimer.md`.
-
-### 4. Out of Scope
-- No changes to monthly plan prices, annual prices, or tier features.
-- No new Stripe products (only new prices if needed for tier-specific onboarding sale amounts that don't already exist).
-- 60-Day Live Trial mechanics unchanged.
+### Files
+- `src/pages/Index.tsx` only. No logic, no pricing, no other surfaces touched.
 
 ### Verification
-- `bun run build` clean.
-- Spot-check Index, SignUp, Subscription pages render new struck onboarding values.
-- Generate one PDF (PricingSummary) and confirm new copy.
-- Grep for "$497 flat" / "flat $497" / "flat fee" onboarding mentions and clean any stragglers.
+Reload `/`, confirm each card now shows ~4–5 feature rows (down from 6), no duplicate agent/channel mentions, and Beta notice above still carries the channel disclosure.
