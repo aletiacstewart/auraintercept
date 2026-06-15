@@ -8,9 +8,14 @@ All third-party services are customer pass-through. The customer brings their ow
 DIRECTLY by that provider, separately from their Aura subscription. Aura never resells, marks up,
 or absorbs provider usage.
 
+Third-party usage fees apply on a pay-as-you-go basis for actual usage (per voice minute, per text,
+per email, per voice character, per search, per transaction) and ARE BILLED DURING THE 60-DAY LIVE
+TRIAL — the trial covers only the Aura platform, never third-party usage.
+
 Approved copy for any UI / PDF / quote that mentions a third-party cost:
 - "Billed directly by <provider> using your own account — not included in your Aura plan."
 - "Customer pass-through — no Aura markup."
+- "Pay-as-you-go, billed directly by each vendor — including during your trial."
 
 Forbidden copy (do NOT use anywhere — UI, PDFs, marketing, sales scripts):
 - "bundled in your plan"
