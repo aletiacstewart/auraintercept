@@ -1053,9 +1053,9 @@ export default function Index() {
           </Collapsible>
 
           <div className="mt-8 text-center">
-            <p className="text-sm mb-2" style={{ color: "#FFFFFF" }}>60-Day Live Trial • No credit card required for the trial</p>
-            <p className="text-xs mb-2" style={{ color: "#FFFFFF" }}>All we ask is your honest feedback on features and that you report any issues you find.</p>
-            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>Additional employees: <span className="font-medium">$25 per 10 employees</span></p>
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
+              Additional employees: <span className="font-medium">$25 per 10 employees</span>
+            </p>
           </div>
 
           {/* 3rd Party Integrations */}
@@ -1174,9 +1174,13 @@ export default function Index() {
               </div>
             </div>
 
-            <p className="text-[10px] text-white italic font-bold text-center mt-4">
-              Every 3rd-party provider above (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires your own account with a valid credit card on file. Each provider bills you directly through automatic billing on your card, separately from your Aura plan fee.
-            </p>
+            {/* Trial summary — moved to bottom of pricing + 3rd-party section */}
+            <div className="mt-8 rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
+              <p className="text-sm font-semibold text-white mb-1">60-Day Live Trial</p>
+              <p className="text-xs text-white/85">
+                30 days concierge onboarding + 30 days full live use. Onboarding fee is due at start of trial; a valid credit card is required for the onboarding fee and for each 3rd-party provider account.
+              </p>
+            </div>
           </div>
         </div>
       </section>
