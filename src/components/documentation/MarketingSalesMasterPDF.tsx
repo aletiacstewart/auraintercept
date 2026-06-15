@@ -557,10 +557,10 @@ const TALKING_POINTS = [
 const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
-  { key: 'starter', onboarding: '$249 one-time (50% of monthly)', employees: '10 employees' },
-  { key: 'connect', onboarding: '$497 one-time (50% of monthly)', employees: '25 employees' },
-  { key: 'performance', onboarding: '$994 one-time (50% of monthly)', employees: '50 employees' },
-  { key: 'command', onboarding: '$1,990 one-time (50% of monthly)', employees: 'Unlimited employees' },
+  { key: 'starter', onboarding: '$249 one-time (50% OFF — was $497)', employees: '10 employees' },
+  { key: 'connect', onboarding: '$497 one-time (50% OFF — was $994)', employees: '25 employees' },
+  { key: 'performance', onboarding: '$994 one-time (50% OFF — was $1,988)', employees: '50 employees' },
+  { key: 'command', onboarding: '$1,990 one-time (50% OFF — was $3,979)', employees: 'Unlimited employees' },
 ];
 
 const opName = (id: string) => OPERATIVES.find(o => o.id === id)?.name ?? id;

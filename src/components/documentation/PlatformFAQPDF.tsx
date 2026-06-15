@@ -453,7 +453,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer="The one-time onboarding fee is 50% of your beta monthly price: Core $249, Boost $497, Pro $994, Elite $1,990. It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use."
+          answer="The one-time onboarding fee equals one month of your plan, with 50% OFF during Beta: Core $249 (was $497), Boost $497 (was $994), Pro $994 (was $1,988), Elite $1,990 (was $3,979). It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card, including during the trial."
         />
         
         <FAQItem 

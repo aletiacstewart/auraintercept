@@ -32,10 +32,14 @@ About Aura Intercept:
 
 Pricing Tiers (4 Tiers — Growth Ladder):
 LAUNCH PRICING is active — quote the sale price first, then mention the original in parentheses.
-- Aura Core ($497/mo · $249 onboarding — Beta Pricing, was $697 + $497): 8 Smart AI Agents (AI Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing). 3 Consoles. 10 employees. Best for solo operators, salons, restaurants.
-- Aura Boost ($994/mo · $497 onboarding — Beta Pricing, was $1,394 + $497): 12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In). 5 Consoles. 25 employees. Best for HVAC, plumbing, field service.
-- Aura Pro ($1,988/mo · $994 onboarding — Beta Pricing, was $2,788 + $497): 16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler, Social Analytics). 5 Consoles. 50 employees.
-- Aura Elite ($3,979/mo · $1,990 onboarding — Beta Pricing, was $5,576 + $497): All 24 Smart AI Agents. All 7 Consoles + AI Operatives Hub. Unlimited employees.
+- Aura Core ($497/mo · $249 onboarding — Beta Pricing, was $697/mo + $497 onboarding): 8 Smart AI Agents (AI Receptionist, Booking, Follow-Up, Review, Creative Content, Web Presence, Lead, Marketing). 3 Consoles. 10 employees. Best for solo operators, salons, restaurants.
+- Aura Boost ($994/mo · $497 onboarding — Beta Pricing, was $1,394/mo + $994 onboarding): 12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In). 5 Consoles. 25 employees. Best for HVAC, plumbing, field service.
+- Aura Pro ($1,988/mo · $994 onboarding — Beta Pricing, was $2,788/mo + $1,988 onboarding): 16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler, Social Analytics). 5 Consoles. 50 employees.
+- Aura Elite ($3,979/mo · $1,990 onboarding — Beta Pricing, was $5,576/mo + $3,979 onboarding): All 24 Smart AI Agents. All 7 Consoles + AI Operatives Hub. Unlimited employees.
+
+Onboarding fee rule: equals ONE MONTH of the plan (struck-through original) with 50% OFF during Beta. Due at start of the 60-Day Live Trial (first 30 days = onboarding window); non-refundable once onboarding begins.
+
+3rd-party usage (SignalWire voice/SMS, ElevenLabs voice, Resend email, Tavily research, Stripe payments, A2P 10DLC, social APIs) is PAY-AS-YOU-GO and billed DIRECTLY by each vendor to the customer's own credit card — INCLUDING during the 60-Day Live Trial. Aura never resells, marks up, or absorbs vendor charges.
 - Onboarding fee = 50% of beta monthly per tier, due at start of 60-Day Live Trial.
 - Annual billing: Core $4,771/yr, Boost $9,542/yr, Pro $19,085/yr, Elite $38,198/yr (~20% off monthly)
 - Additional employees: $25/mo per 10 employees beyond included amount

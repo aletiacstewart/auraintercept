@@ -45,37 +45,43 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
           <span className="line-through text-foreground/50">$697</span>{' '}
           <span className="text-primary font-semibold">$497/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$249</span>
+          Onboarding <span className="line-through text-foreground/50">$497</span>{' '}
+          <span className="text-primary font-semibold">$249</span>
         </li>
         <li>
           <span className="font-semibold">Boost:</span>{' '}
           <span className="line-through text-foreground/50">$1,394</span>{' '}
           <span className="text-primary font-semibold">$994/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$497</span>
+          Onboarding <span className="line-through text-foreground/50">$994</span>{' '}
+          <span className="text-primary font-semibold">$497</span>
         </li>
         <li>
           <span className="font-semibold">Pro:</span>{' '}
           <span className="line-through text-foreground/50">$2,788</span>{' '}
           <span className="text-primary font-semibold">$1,988/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$994</span>
+          Onboarding <span className="line-through text-foreground/50">$1,988</span>{' '}
+          <span className="text-primary font-semibold">$994</span>
         </li>
         <li>
           <span className="font-semibold">Elite:</span>{' '}
           <span className="line-through text-foreground/50">$5,576</span>{' '}
           <span className="text-primary font-semibold">$3,979/mo</span>
           {' · '}
-          Onboarding <span className="text-primary font-semibold">$1,990</span>
+          Onboarding <span className="line-through text-foreground/50">$3,979</span>{' '}
+          <span className="text-primary font-semibold">$1,990</span>
         </li>
       </ul>
 
       <p className={`text-foreground/80 leading-relaxed ${compact ? 'text-[10px]' : 'text-xs'}`}>
-        <span className="font-semibold text-foreground">3rd-party providers</span>{' '}
-        (SignalWire, ElevenLabs, Resend, Tavily, Stripe) require your own
-        account with a valid credit card and bill you directly — separate from
-        your Aura plan fee. Aura never resells, marks up, or invoices 3rd-party
-        usage.
+        <span className="font-semibold text-foreground">3rd-party usage is pay-as-you-go</span>{' '}
+        — SignalWire (voice/SMS), ElevenLabs (AI voice), Resend (email), Tavily
+        (web research), Stripe (payments), A2P 10DLC, and social APIs each require
+        your own account with a valid credit card on file. You're invoiced
+        directly by each provider for actual usage (per minute, per text, per
+        email, per search, per transaction) — <span className="font-semibold text-foreground">including during your 60-Day Live Trial</span>.
+        Aura never resells, marks up, or absorbs vendor charges.
       </p>
 
       <p className={`text-foreground/80 leading-relaxed italic ${compact ? 'text-[10px]' : 'text-xs'}`}>
