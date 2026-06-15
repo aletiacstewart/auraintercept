@@ -803,7 +803,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">
-                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-foreground font-semibold">50% of beta monthly</span>: Core $249 · Boost $497 · Pro $994 · Elite $1,990.
+                  Onboarding Fee (one-time, due at start of 60-Day Live Trial) — <span className="text-foreground font-semibold">equals 1 month of your plan, 50% OFF during Beta</span>: Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990.
                 </span>
               </div>
             </div>

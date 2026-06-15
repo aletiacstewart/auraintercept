@@ -1267,7 +1267,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-day free trial + Beta Onboarding = 50% of beta monthly (Core $249 · Boost $497 · Pro $994 · Elite $1,990) will apply at checkout. 3rd-party fees (SignalWire, ElevenLabs, Resend, Stripe, etc.) are billed directly by each provider and are not included in the trial.
+                                60-day free trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 50% OFF</span> (Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
                               </p>
                             )}
                           </div>
@@ -1354,7 +1354,7 @@ export default function SignUp() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days of the trial are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Beta onboarding = 50% of your monthly</span> — Core $249 · Boost $497 · Pro $994 · Elite $1,990.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding = 1 month of your plan, 50% OFF during Beta</span>: Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.

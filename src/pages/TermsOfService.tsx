@@ -62,14 +62,14 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscription plans range from <span className="line-through">$697 to $5,576</span> <strong>$497 to $3,979</strong> per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite). <em>Beta Pricing is currently active.</em></li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 60-Day Live Trial. <strong>50% of your beta monthly</strong> — Aura Core $249, Aura Boost $497, Aura Pro $994, Aura Elite $1,990. Onboarding fees are non-refundable once onboarding is completed.</li>
+              <li><strong className="text-foreground">One-time onboarding fee</strong> is due at the start of your 60-Day Live Trial. The onboarding fee equals one month of your plan and is <strong>50% OFF during Beta</strong> — Aura Core <span className="line-through">$497</span> <strong>$249</strong>, Aura Boost <span className="line-through">$994</span> <strong>$497</strong>, Aura Pro <span className="line-through">$1,988</span> <strong>$994</strong>, Aura Elite <span className="line-through">$3,979</span> <strong>$1,990</strong>. Onboarding fees are non-refundable once onboarding is completed.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
-              <li>Trial covers the Aura platform only. SMS, voice, email, and AI research require your own accounts at SignalWire, ElevenLabs, Resend, and Tavily — those providers will bill you directly for any usage during or after the trial.</li>
+              <li>The trial covers the Aura <strong>platform</strong> only. Voice, SMS, email, AI voice, web research, payments, A2P 10DLC, and social APIs all require your own accounts at SignalWire, ElevenLabs, Resend, Tavily, Stripe, and the relevant networks. Each provider bills you <strong>directly on a pay-as-you-go basis</strong> for actual usage (per call, per text, per email, per voice minute, per search, per transaction) — <strong>including during the trial period</strong>.</li>
               <li>You may cancel any time during the 60-day trial at no charge.</li>
             </ul>
 
