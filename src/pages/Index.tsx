@@ -1070,15 +1070,44 @@ export default function Index() {
               </p>
             </div>
 
-            {/* SMS System — FCC 10DLC Compliance (moved from Beta panel) */}
+            {/* SMS System — FCC 10DLC Compliance */}
             <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 p-4">
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                <div className="space-y-1">
+                <div className="w-full space-y-3">
                   <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
-                  <p className="text-xs text-white leading-relaxed">
-                    Our platform handles A2P 10DLC registration on your behalf via SignalWire (your CSP). <span className="font-medium text-white">10DLC (10-Digit Long Code)</span> is the US carrier registration standard for business SMS — unregistered traffic is filtered or blocked by carriers. <span className="font-medium text-white">Pass-through fees (billed directly by SignalWire / The Campaign Registry):</span> brand registration <span className="font-medium">$4.50 (one-time)</span> · campaign <span className="font-medium">$1.50–$30/month</span> depending on use case (first 3 months charged upfront) · DCA vetting <span className="font-medium">$7.50 per submission</span> (re-charged if a campaign is rejected and re-submitted) · optional brand vetting <span className="font-medium">$40</span> to raise T-Mobile throughput caps. Typical all-in: <span className="font-medium">$16–$42</span> to go live. T-Mobile also charges a <span className="font-medium">$250</span> non-use fee for any campaign with no SMS to a T-Mobile handset in 60 consecutive days. <span className="font-medium text-white">Approval timeline:</span> typically 3–5 business days end-to-end when the submission is clean, but it can take 1–2+ weeks if SignalWire's review team or the Direct Connect Aggregator (DCA) requires changes and re-vetting — there is no guaranteed turnaround. <span className="font-medium text-white">You provide:</span> EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc documentation, a valid brand website, opt-in / opt-out language, accurate sample messages, and a help message.
+
+                  <p className="text-xs text-white/90 leading-relaxed">
+                    10DLC (10-Digit Long Code) is the US carrier standard for business SMS. We register your brand and campaigns through SignalWire on your behalf. Unregistered messages are filtered or blocked by carriers.
                   </p>
+
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="rounded-md bg-black/20 p-3 space-y-1.5">
+                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Pass-Through Fees</p>
+                      <ul className="text-[11px] text-white/90 space-y-1 list-disc list-inside">
+                        <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span></li>
+                        <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span> (first 3 months upfront)</li>
+                        <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission</li>
+                        <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises T-Mobile caps)</li>
+                        <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> (no SMS in 60 days)</li>
+                      </ul>
+                      <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$42</span> to go live</p>
+                    </div>
+
+                    <div className="rounded-md bg-black/20 p-3 space-y-1.5">
+                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Approval & What You Provide</p>
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-[11px] font-medium text-white">Timeline</p>
+                          <p className="text-[11px] text-white/80">3–5 business days when clean. 1–2+ weeks if re-vetting is needed. No guaranteed turnaround.</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-medium text-white">Required Documents</p>
+                          <p className="text-[11px] text-white/80">EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc docs, brand website, opt-in/opt-out language, sample messages, and a help message.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
