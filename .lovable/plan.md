@@ -1,70 +1,81 @@
 ## Goal
 
-Give Aura — on the Aura Intercept marketing site (Message Aura chat + Talk to Aura voice / mobile number) — a strong sales pitch that:
-1. Answers questions from the Aura Intercept knowledge base (features, 4-tier pricing, beta sale, 60-day trial, 3rd-party pass-through, onboarding, integrations).
-2. Actively qualifies the visitor and pushes them toward booking a call with a live salesperson.
+Sweep every place where Aura Intercept describes pricing, trial, onboarding length, or third-party costs and bring it in line with the canonical source of truth (homepage + sign-up + memory). No copy may contradict these four rules:
 
-Scope: **Aura Intercept's own Aura only.** Customer company agents are configured separately and are not touched here.
+1. **Pricing (Beta active)** — Core **$497/mo** (was $697), Boost **$994/mo** (was $1,394), Pro **$1,988/mo** (was $2,788), Elite **$3,979/mo** (was $5,576). Per-tier onboarding fee at 50% off during Beta (Core $249 / Boost $497 / Pro $994 / Elite $1,990). Always show original strikethrough + sale + "Beta Pricing" chip.
+2. **Trial** — **60-Day Live Trial** = 30 days concierge onboarding + 30 days full live use. Onboarding fee is due at start. Never "90-day", never "no credit card required".
+3. **Third-party fees** — SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social: customer's **own account**, billed **directly by the provider**, **not bundled**, **no Aura markup**, **billed even during the trial**. Forbidden words: "bundled", "included minutes/texts/credits", "overage", "absorbed", "no carrier fees".
+4. **Implementation** — **14–30 days** (concierge onboarding window). Never "under an hour", never "24–72 hours".
 
-## What changes
+## What gets fixed
 
-### 1. New shared prompt module — `supabase/functions/_shared/aura-intercept-sales-prompt.ts`
-Single source of truth used by the website chat and copy-pasted into the ElevenLabs voice agent dashboard for Talk to Aura. Contains:
+### 1. Aura Intercept FAQ table (database)
 
-- **Identity:** "I'm Aura, the AI receptionist that runs on the Aura Intercept platform. I'm also a live demo — what you're experiencing right now is what your customers would get."
-- **Knowledge base** (pulled from current homepage + export docs, kept in sync with existing `landing-chat` content):
-  - 24 Smart AI Agents → 10 Operatives across 7 Consoles + Operatives Hub
-  - 4 tiers with Beta Pricing (strike-through originals): Core $497 / Boost $994 / Pro $1,988 / Elite $3,979 + 50% off onboarding
-  - 60-Day Live Trial (30d concierge onboarding + 30d full live use), onboarding fee due at start, non-refundable once onboarding begins
-  - 3rd-party pass-through policy (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) — customer's own accounts, billed directly, never marked up
-  - Channels: Message Aura (text, all tiers), Talk to Aura (voice, all paid tiers), AI Receptionist (inbound calls/SMS)
-  - Industries: HVAC, plumbing, electrical, landscaping, restaurants, salons, and other appointment-based service businesses
-- **Sales playbook (the pitch):**
-  - Open with a hook tied to lost revenue from missed calls / after-hours leads
-  - Discover: ask 1–2 qualifying questions (industry, team size, current pain — missed calls, no-shows, slow follow-up)
-  - Map pain → specific operative (Receptionist, Booking, Follow-Up, Dispatch, Review, etc.)
-  - Recommend a tier based on team size and needs (use the 4-tier map)
-  - Always anchor on the beta sale price + 60-day trial as the risk-reversal
-  - Be transparent about 3rd-party costs being separate (never "bundled")
-- **Conversion CTAs (always offer one at the end of a meaningful exchange):**
-  - Primary: "Want me to set up a 15-minute call with our team? I just need your name, email, and best number."
-  - Secondary: "I can also text or email you a personalized walkthrough — what's the best number/email?"
-  - Tertiary: "Or hit the Sign In button to start your 60-day trial yourself."
-- **Guardrails:** stay in Aura Intercept scope, don't pretend to be a human, don't quote 3rd-party usage prices, never promise to absorb vendor fees, escalate to live sales when asked.
-- **Voice-specific tweaks** (separate export): shorter sentences, no markdown, spell out prices ("four hundred ninety-seven dollars a month"), confirm contact info by repeating digits back.
+Update the `faqs` rows for company `04c57cbe-358e-4036-a3ad-b777a55f5be0` via migration. Every answer touching trial / pricing / third-party / onboarding gets rewritten. Confirmed offenders include:
 
-### 2. `supabase/functions/landing-chat/index.ts`
-Replace the inline `AURA_SYSTEM_PROMPT` with the import from the shared module (text variant). No behavior change beyond the upgraded prompt.
+- "Are there extra fees for SMS, voice, or email?" → rewrite to customer-pass-through wording.
+- "Is there a free trial?" / "Is there a free trial available?" / "What happens when my 90-day trial ends?" → 60-Day Live Trial wording, onboarding fee due at start.
+- "Do I need a SignalWire or ElevenLabs account?" → Yes, you bring your own (or Concierge sets it up with your card).
+- "Do I need to pay for integrations separately?" → Yes — pass-through to each provider.
+- "How long does onboarding take?" / "How long does implementation take?" → 14–30 days concierge.
+- "How do I get started with Aura Intercept?" → new 5-step flow without "90-day" and without "bundled".
+- "What subscription plan is right for my business?" / "What subscription plans are available?" / "What is included in the Boost tier specifically?" → new Beta prices with originals struck through, no $197/$497/$997/$1,997 anywhere.
+- "Are there setup or implementation fees?" → Yes — one-time onboarding fee per tier (50% off during Beta), due at start of trial.
+- "Are there annual billing discounts?" → keep ~20% language, refresh numbers from `launchPricing.ts`.
+- "Can I white-label the platform?" / tier-specific answers → re-checked against current tier matrix.
 
-### 3. Lead capture from chat — `supabase/functions/landing-capture-lead/index.ts` (new, optional but recommended)
-When Aura collects name + email + phone in chat, the frontend posts to this function which inserts into the existing `leads` table tagged `source = 'talk_to_aura_website'`, so sales actually gets the handoff. Surfaces in the existing leads console.
+Any other FAQ row whose answer mentions `90`, `bundle`, `$197`, `$997`, `$1,997`, `no credit card`, `under an hour`, `24–72 hours`, `carrier fees` is rewritten in the same migration.
 
-- Adds a small tool-ish flow: the chat UI watches for a structured `[[LEAD]]{json}[[/LEAD]]` marker the model emits, parses it, posts to the function, and replaces the marker with a friendly confirmation in the bubble.
-- Same pattern documented in the voice prompt so ElevenLabs can call an equivalent client tool (already wired via `VoiceChat` → `voice-agent-tools`).
+### 2. Export Documentation PDFs (`src/components/documentation/*`)
 
-### 4. Talk to Aura voice agent (ElevenLabs)
-The ElevenLabs agent is configured in the ElevenLabs dashboard (Aura Intercept's own agent ID, used by the marketing site voice widget and the published phone number). The shared prompt module exports a `VOICE_PROMPT` constant; we add a small admin-only page section at `/dashboard/integrations/voice` (or extend the existing `ElevenLabsToolChecklist`) with a **"Copy Talk to Aura sales prompt"** button so the latest prompt can be pasted into the ElevenLabs agent in one click. No code can push to ElevenLabs without their API setup; the copy-paste workflow keeps this single-source-of-truth.
+Sweep and rewrite the same four topics in:
 
-### 5. Docs
-Add the sales pitch + KB summary to `src/components/documentation/SalesPitchDataPDF.tsx` so it appears in the Export Documentation bundle, and reference it from `helpContentConfig.ts` under "Talk to Aura".
+- `PlatformFAQPDF.tsx`
+- `SalesPitchDataPDF.tsx`
+- `PricingSummaryPDF.tsx`
+- `ComprehensiveGuidesPDF.tsx`
+- `MarketingSalesMasterPDF.tsx`
+- `CompanyOnboardingPDF.tsx`
+- `PlatformDocumentPDF.tsx`
+- `WebsiteCopyPDF.tsx`
+- `VideoScriptsPDF.tsx`
+- `SocialMediaContentPackPDF.tsx`
+- `AIAgentGuidesPDF.tsx`
+- `BrandAssetGuidePDF.tsx`
 
-## Files touched
+Pricing references will be sourced from `src/lib/launchPricing.ts` (already canonical) instead of hard-coded numbers wherever practical; otherwise the numbers above are pasted in with the strike-through original.
 
-```text
-NEW  supabase/functions/_shared/aura-intercept-sales-prompt.ts
-EDIT supabase/functions/landing-chat/index.ts
-NEW  supabase/functions/landing-capture-lead/index.ts
-EDIT src/components/landing/LandingAIChat.tsx        (parse [[LEAD]] marker, call capture fn)
-EDIT src/components/landing/FloatingChatWidget.tsx   (same parsing if it renders independently)
-EDIT src/components/admin/ElevenLabsToolChecklist.tsx (Copy voice prompt button)
-EDIT src/components/documentation/SalesPitchDataPDF.tsx
-EDIT src/lib/helpContentConfig.ts
-```
+### 3. Landing / sign-up / shared sales prompts
 
-No database migrations (reuses `leads`). No new secrets. Stays inside the "Aura Intercept only" scope — customer company agents continue to use their own per-company prompts.
+- `src/lib/auraInterceptSalesPrompt.ts`
+- `supabase/functions/_shared/aura-intercept-sales-prompt.ts`
+- `supabase/functions/ai-agent-chat/index.ts` (any inline KB blurbs)
+- `src/pages/Index.tsx`, `src/pages/ForBusiness.tsx`, `src/pages/SignUp.tsx`, `src/pages/Subscription.tsx`, `src/pages/Help.tsx`, `src/pages/Contact.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/PublicOnboardingIntake.tsx`
+- `src/components/landing/PricingComparisonTable.tsx`, `CompetitiveDifferentiation.tsx`
+- `src/components/billing/BetaSignupNotice.tsx`, `BetaCodeInput.tsx`
+- `src/components/dashboard/TrialBanner.tsx`
+- `src/components/agents/TierComparisonCards.tsx`, `AgentRequirementCalculator.tsx`
+- `src/components/marketing/IndustryROICalculator.tsx`
+- `src/lib/diyCostBreakdown.ts`, `src/lib/subscriptionAgentConfig.ts`, `src/lib/industryMarketingContent.ts`, `src/lib/industryMarketingPlaybooks.ts`, `src/lib/helpSystemPrompt.ts`, `src/lib/auditFindings.ts`
+- `supabase/functions/trial-reminders/index.ts`, `supabase/functions/check-subscription/index.ts`, `supabase/functions/create-checkout/index.ts`
+
+Each file is grep-audited for the offending strings (`90-day`, `90 day`, `no credit card`, `bundle`, `bundled`, `$197`, `$997`, `$1,997`, `under an hour`, `24–72 hours`, `carrier fees`) and rewritten in place.
+
+### 4. Knowledge Base uploads UI
+
+`src/pages/KnowledgeBase.tsx` (and the FAQ editor) gets a small banner: "Aura Intercept canonical answers" with a one-click "Reset to canonical" action that re-applies the migration's answers to the 6 most-edited rows, so future drift can be undone without a developer.
+
+### 5. Verification
+
+- Re-run `rg` for each forbidden phrase across `src/`, `supabase/functions/`, and the `faqs` table — must return zero hits in user-facing copy.
+- Spot-check: open `/dashboard/knowledge`, the 3 FAQs in the screenshots, and the Export Documentation page; confirm wording matches.
 
 ## Out of scope
 
-- Per-industry / per-customer-company agent prompts (handled separately at company onboarding).
-- Changing pricing, tier structure, or the 60-day trial mechanics.
-- Building a calendar booker inside chat (Aura just captures contact info → live sales follows up).
+- Re-pricing or restructuring tiers (numbers come from existing `launchPricing.ts` / memory — not changed here).
+- Per-customer-company FAQs and KBs (only the Aura Intercept tenant `04c57cbe-…` is touched).
+- ElevenLabs voice prompt content (already refreshed in the prior turn; will re-verify it has no offending phrases).
+
+## Deliverable
+
+One SQL migration (FAQ rewrites) + one round of source edits across the files above + verification grep report, all aligned to the 4 rules at the top.

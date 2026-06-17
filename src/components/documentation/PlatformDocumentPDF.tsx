@@ -1261,8 +1261,8 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
-          "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
-          that's $6,000/month in lost revenue. Aura Core starts at $497/month — and there's a 60-Day Live Trial with no credit card required (first 30 days are dedicated to onboarding, then 30 days of full live use)."
+          "Let's do the math together. If you miss just 5 calls per week at $300 average job,
+          that's $6,000/month in lost revenue. Aura Core is $497/month (Beta — was $697) with a one-time $249 onboarding fee. You get a 60-Day Live Trial — 30 days of concierge onboarding, then 30 days of full live use — before your monthly plan begins."
         </Text>
       </View>
 
@@ -1275,7 +1275,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 60-Day Live Trial today—no credit card required. First 30 days = onboarding, then 30 days of full live use."</BulletPoint>
+      <BulletPoint>"Let's start your 60-Day Live Trial today. Your one-time onboarding fee is due at the start, then 30 days of concierge onboarding and 30 days of full live use before your monthly plan begins."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>
