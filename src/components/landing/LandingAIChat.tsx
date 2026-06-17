@@ -176,6 +176,17 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
       }
     }
 
+    // Detect lead-handoff marker → POST to capture function and rewrite the bubble.
+    const match = assistantContent.match(LEAD_MARKER_RE);
+    if (match) {
+      const result = await captureLeadFromMarker(match[1].trim());
+      const cleaned = assistantContent.replace(LEAD_MARKER_RE, result.text).trim();
+      assistantContent = cleaned;
+      setMessages(prev => prev.map((m, i) =>
+        i === prev.length - 1 && m.role === 'assistant' ? { ...m, content: cleaned } : m
+      ));
+    }
+
     // Track assistant response
     if (assistantContent) {
       await trackMessage('assistant', assistantContent);
