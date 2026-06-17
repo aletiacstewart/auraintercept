@@ -1,81 +1,86 @@
 ## Goal
+Replace free-text "Industry/Business Type" and "Job Title" inputs on the onboarding page (and matching PDF fields) with structured dropdowns that work for every supported industry.
 
-Sweep every place where Aura Intercept describes pricing, trial, onboarding length, or third-party costs and bring it in line with the canonical source of truth (homepage + sign-up + memory). No copy may contradict these four rules:
+## Scope
+- `src/components/onboarding/CompanyOnboardingForm.tsx` — the live web form on `/onboarding`.
+- `src/components/documentation/CompanyOnboardingPDF.tsx` — the printable intake PDF.
+- New shared data file: `src/lib/industryJobTitles.ts`.
 
-1. **Pricing (Beta active)** — Core **$497/mo** (was $697), Boost **$994/mo** (was $1,394), Pro **$1,988/mo** (was $2,788), Elite **$3,979/mo** (was $5,576). Per-tier onboarding fee at 50% off during Beta (Core $249 / Boost $497 / Pro $994 / Elite $1,990). Always show original strikethrough + sale + "Beta Pricing" chip.
-2. **Trial** — **60-Day Live Trial** = 30 days concierge onboarding + 30 days full live use. Onboarding fee is due at start. Never "90-day", never "no credit card required".
-3. **Third-party fees** — SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social: customer's **own account**, billed **directly by the provider**, **not bundled**, **no Aura markup**, **billed even during the trial**. Forbidden words: "bundled", "included minutes/texts/credits", "overage", "absorbed", "no carrier fees".
-4. **Implementation** — **14–30 days** (concierge onboarding window). Never "under an hour", never "24–72 hours".
+## 1. Industry dropdown
+Replace the `<Input placeholder="HVAC, Plumbing, Salon, etc.">` with the existing canonical industry list rendered as a grouped `<Select>` (same pattern as `src/components/marketing/IndustryDropdownPicker.tsx`):
 
-## What gets fixed
+- Source: `INDUSTRY_GROUPS` + `INDUSTRY_CONTENT` from `src/lib/industryMarketingContent.ts` (already filtered to 24 canonical IDs, grouped into Core Trades / Outdoor & Property / Repair & Service / Booking-First / Healthcare).
+- Store the canonical industry ID in `formData.industryType` (still required).
+- Include the "Other" option for catch-all.
+- Show emoji + label per option, group headers per cluster.
 
-### 1. Aura Intercept FAQ table (database)
+## 2. Job Title dropdown (industry-aware, categorized)
+Replace the `<Input placeholder="Owner, Manager, etc.">` with a grouped `<Select>` whose contents adapt to the selected industry.
 
-Update the `faqs` rows for company `04c57cbe-358e-4036-a3ad-b777a55f5be0` via migration. Every answer touching trial / pricing / third-party / onboarding gets rewritten. Confirmed offenders include:
+New file `src/lib/industryJobTitles.ts` exports:
 
-- "Are there extra fees for SMS, voice, or email?" → rewrite to customer-pass-through wording.
-- "Is there a free trial?" / "Is there a free trial available?" / "What happens when my 90-day trial ends?" → 60-Day Live Trial wording, onboarding fee due at start.
-- "Do I need a SignalWire or ElevenLabs account?" → Yes, you bring your own (or Concierge sets it up with your card).
-- "Do I need to pay for integrations separately?" → Yes — pass-through to each provider.
-- "How long does onboarding take?" / "How long does implementation take?" → 14–30 days concierge.
-- "How do I get started with Aura Intercept?" → new 5-step flow without "90-day" and without "bundled".
-- "What subscription plan is right for my business?" / "What subscription plans are available?" / "What is included in the Boost tier specifically?" → new Beta prices with originals struck through, no $197/$497/$997/$1,997 anywhere.
-- "Are there setup or implementation fees?" → Yes — one-time onboarding fee per tier (50% off during Beta), due at start of trial.
-- "Are there annual billing discounts?" → keep ~20% language, refresh numbers from `launchPricing.ts`.
-- "Can I white-label the platform?" / tier-specific answers → re-checked against current tier matrix.
+```ts
+export const UNIVERSAL_TITLES = [
+  'Owner', 'Co-Owner', 'CEO', 'President',
+  'General Manager', 'Operations Manager', 'Office Manager',
+  'Admin / Receptionist', 'Sales Manager', 'Sales Rep',
+  'Marketing Manager', 'Customer Service Lead', 'Bookkeeper / Accountant',
+];
 
-Any other FAQ row whose answer mentions `90`, `bundle`, `$197`, `$997`, `$1,997`, `no credit card`, `under an hour`, `24–72 hours`, `carrier fees` is rewritten in the same migration.
+export const INDUSTRY_TITLES: Record<string, string[]> = {
+  hvac: ['Service Manager', 'Lead Technician', 'HVAC Technician', 'Install Crew Lead', 'Dispatcher'],
+  plumbing: ['Master Plumber', 'Journeyman Plumber', 'Apprentice', 'Service Manager', 'Dispatcher'],
+  electrical: ['Master Electrician', 'Journeyman Electrician', 'Apprentice', 'Estimator', 'Dispatcher'],
+  roofing: ['Project Manager', 'Estimator', 'Crew Lead', 'Roofer', 'Insurance Claims Specialist'],
+  solar: ['Solar Consultant', 'Designer', 'Installer Lead', 'Site Surveyor', 'Permitting Coordinator'],
+  landscape: ['Crew Lead', 'Landscaper', 'Arborist', 'Irrigation Tech', 'Designer'],
+  pool_spa: ['Service Tech', 'Route Manager', 'Equipment Specialist'],
+  pest_control: ['Lead Technician', 'Termite Specialist', 'Route Manager'],
+  appliance_repair: ['Lead Technician', 'Appliance Tech', 'Parts Manager'],
+  handyman: ['Lead Handyman', 'Handyman', 'Cleaner', 'Crew Lead'],
+  construction: ['Project Manager', 'Estimator', 'Foreman', 'Carpenter', 'Painter'],
+  auto_care: ['Service Advisor', 'Master Tech', 'Mechanic', 'Service Manager'],
+  security_systems: ['Install Tech', 'Monitoring Specialist', 'Sales Consultant'],
+  real_estate: ['Broker', 'Realtor / Agent', 'Listing Coordinator', 'Transaction Coordinator'],
+  beauty_wellness: ['Salon Owner', 'Stylist', 'Colorist', 'Nail Technician', 'Esthetician', 'Massage Therapist'],
+  restaurants: ['Owner', 'General Manager', 'Chef / Kitchen Manager', 'Front of House Manager', 'Host'],
+  personal_assistant: ['Executive Assistant', 'Personal Assistant', 'Concierge'],
+  fencing: ['Project Manager', 'Estimator', 'Install Crew Lead', 'Installer'],
+  home_health: ['Director of Nursing', 'RN Case Manager', 'LPN', 'Home Health Aide', 'Scheduler'],
+  physical_therapy: ['Clinic Director', 'Physical Therapist (PT)', 'PT Assistant (PTA)', 'Front Desk'],
+  occupational_therapy: ['Clinic Director', 'Occupational Therapist (OT)', 'OT Assistant (COTA)', 'Front Desk'],
+  hospice: ['Hospice Director', 'RN Case Manager', 'Chaplain', 'Social Worker', 'Aide'],
+  veterinary: ['Veterinarian (DVM)', 'Vet Tech', 'Practice Manager', 'Front Desk'],
+  medical_practice: ['Physician (MD/DO)', 'Nurse Practitioner', 'Medical Assistant', 'Practice Manager', 'Front Desk'],
+};
 
-### 2. Export Documentation PDFs (`src/components/documentation/*`)
+export function getTitlesForIndustry(id?: string) {
+  return {
+    universal: UNIVERSAL_TITLES,
+    industry: (id && INDUSTRY_TITLES[id]) || [],
+  };
+}
+```
 
-Sweep and rewrite the same four topics in:
+Dropdown UI:
+- Group 1 header: "Leadership & Operations" → `UNIVERSAL_TITLES`.
+- Group 2 header: `${INDUSTRY_CONTENT[id].label} Roles` (only shown when an industry is selected and has entries).
+- Group 3: single "Other (type below)" item that reveals a small inline text input to capture a custom title (stored in same `contactTitle` field).
+- If no industry selected yet, only show the Leadership group + Other.
 
-- `PlatformFAQPDF.tsx`
-- `SalesPitchDataPDF.tsx`
-- `PricingSummaryPDF.tsx`
-- `ComprehensiveGuidesPDF.tsx`
-- `MarketingSalesMasterPDF.tsx`
-- `CompanyOnboardingPDF.tsx`
-- `PlatformDocumentPDF.tsx`
-- `WebsiteCopyPDF.tsx`
-- `VideoScriptsPDF.tsx`
-- `SocialMediaContentPackPDF.tsx`
-- `AIAgentGuidesPDF.tsx`
-- `BrandAssetGuidePDF.tsx`
+## 3. PDF updates (`CompanyOnboardingPDF.tsx`)
+The PDF currently renders both fields as blank lines/labels for users to fill in by hand. To keep it usable as a printable intake while reflecting the new dropdowns:
 
-Pricing references will be sourced from `src/lib/launchPricing.ts` (already canonical) instead of hard-coded numbers wherever practical; otherwise the numbers above are pasted in with the strike-through original.
+- Under "Industry/Business Type:" replace the blank line with a checkbox-style list grouped by cluster (Core Trades / Outdoor & Property / Repair & Service / Booking-First / Healthcare / Other) using the same source data, rendered with the existing `formCheckbox` style (see how other multi-option intake pages already render).
+- Under "Job Title:" render the `UNIVERSAL_TITLES` list as checkboxes plus a "Industry-specific role: ______" write-in line (we can't show all 24 industry role lists without bloating the PDF).
+- Pull industry options from `INDUSTRY_GROUPS` so the PDF and form stay in sync automatically.
 
-### 3. Landing / sign-up / shared sales prompts
+## 4. Out of scope
+- No changes to backend storage, RLS, or how `companies.industry_vertical` is normalized (existing `toCanonicalIndustryId` already covers it — we'll already be writing canonical IDs from the dropdown).
+- No changes to Auth signup, Fast Start wizard, or any other intake surface.
+- No copy/pricing edits.
 
-- `src/lib/auraInterceptSalesPrompt.ts`
-- `supabase/functions/_shared/aura-intercept-sales-prompt.ts`
-- `supabase/functions/ai-agent-chat/index.ts` (any inline KB blurbs)
-- `src/pages/Index.tsx`, `src/pages/ForBusiness.tsx`, `src/pages/SignUp.tsx`, `src/pages/Subscription.tsx`, `src/pages/Help.tsx`, `src/pages/Contact.tsx`, `src/pages/PlatformGuides.tsx`, `src/pages/PublicOnboardingIntake.tsx`
-- `src/components/landing/PricingComparisonTable.tsx`, `CompetitiveDifferentiation.tsx`
-- `src/components/billing/BetaSignupNotice.tsx`, `BetaCodeInput.tsx`
-- `src/components/dashboard/TrialBanner.tsx`
-- `src/components/agents/TierComparisonCards.tsx`, `AgentRequirementCalculator.tsx`
-- `src/components/marketing/IndustryROICalculator.tsx`
-- `src/lib/diyCostBreakdown.ts`, `src/lib/subscriptionAgentConfig.ts`, `src/lib/industryMarketingContent.ts`, `src/lib/industryMarketingPlaybooks.ts`, `src/lib/helpSystemPrompt.ts`, `src/lib/auditFindings.ts`
-- `supabase/functions/trial-reminders/index.ts`, `supabase/functions/check-subscription/index.ts`, `supabase/functions/create-checkout/index.ts`
-
-Each file is grep-audited for the offending strings (`90-day`, `90 day`, `no credit card`, `bundle`, `bundled`, `$197`, `$997`, `$1,997`, `under an hour`, `24–72 hours`, `carrier fees`) and rewritten in place.
-
-### 4. Knowledge Base uploads UI
-
-`src/pages/KnowledgeBase.tsx` (and the FAQ editor) gets a small banner: "Aura Intercept canonical answers" with a one-click "Reset to canonical" action that re-applies the migration's answers to the 6 most-edited rows, so future drift can be undone without a developer.
-
-### 5. Verification
-
-- Re-run `rg` for each forbidden phrase across `src/`, `supabase/functions/`, and the `faqs` table — must return zero hits in user-facing copy.
-- Spot-check: open `/dashboard/knowledge`, the 3 FAQs in the screenshots, and the Export Documentation page; confirm wording matches.
-
-## Out of scope
-
-- Re-pricing or restructuring tiers (numbers come from existing `launchPricing.ts` / memory — not changed here).
-- Per-customer-company FAQs and KBs (only the Aura Intercept tenant `04c57cbe-…` is touched).
-- ElevenLabs voice prompt content (already refreshed in the prior turn; will re-verify it has no offending phrases).
-
-## Deliverable
-
-One SQL migration (FAQ rewrites) + one round of source edits across the files above + verification grep report, all aligned to the 4 rules at the top.
+## Verification
+- Manually open `/onboarding`: industry dropdown shows grouped list, selecting an industry repopulates the job-title dropdown's second group, "Other" reveals a custom-text field.
+- Export the PDF from `/onboarding` and confirm both fields render the new structured option lists without overflowing the page.
+- `rg "placeholder=\"HVAC, Plumbing, Salon" src/` and `rg "placeholder=\"Owner, Manager" src/` return no results.
