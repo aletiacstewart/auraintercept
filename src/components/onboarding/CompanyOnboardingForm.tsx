@@ -438,7 +438,7 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                 <SelectTrigger id="industryType">
                   <SelectValue placeholder="Select your industry" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[60vh]">
+                <SelectContent className="max-h-[60vh]" side="bottom" avoidCollisions={false}>
                   {INDUSTRY_GROUPS.map((g) => (
                     <SelectGroup key={g.group}>
                       <SelectLabel className="flex items-center gap-1.5">
@@ -526,7 +526,7 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                       <SelectTrigger id="contactTitle">
                         <SelectValue placeholder="Select a job title" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-[60vh]">
+                      <SelectContent className="max-h-[60vh]" side="bottom" avoidCollisions={false}>
                         <SelectGroup>
                           <SelectLabel>Leadership &amp; Operations</SelectLabel>
                           {UNIVERSAL_TITLES.map((t) => (
