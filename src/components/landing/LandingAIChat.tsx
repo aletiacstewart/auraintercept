@@ -247,10 +247,21 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
           <Bot className="w-5 h-5 text-primary" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-primary">Message Aura</h3>
           <p className="text-xs text-muted-foreground">Always available to help</p>
         </div>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={showDemoVideo}
+          disabled={!!lastIsVideo}
+          className="shrink-0 gap-1.5 h-8"
+        >
+          <PlayCircle className="w-4 h-4" />
+          <span className="text-xs">Watch demo</span>
+        </Button>
       </div>
 
       {/* Messages */}
@@ -268,6 +279,17 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
               <p className="text-sm whitespace-pre-wrap break-words">
                 {message.content.replace(LEAD_MARKER_RE, '…sending your info…')}
               </p>
+              {message.videoUrl && (
+                <video
+                  src={message.videoUrl}
+                  controls
+                  playsInline
+                  muted
+                  autoPlay
+                  preload="metadata"
+                  className="w-full rounded-md mt-2 max-h-[260px] bg-black"
+                />
+              )}
             </div>
           ))}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
