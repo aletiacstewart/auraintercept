@@ -24,6 +24,34 @@ interface LandingAIChatProps {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-chat`;
+const LEAD_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-capture-lead`;
+
+const LEAD_MARKER_RE = /\[\[LEAD\]\]([\s\S]*?)\[\[\/LEAD\]\]/;
+
+async function captureLeadFromMarker(raw: string): Promise<{ ok: boolean; text: string }> {
+  try {
+    const payload = JSON.parse(raw);
+    const res = await fetch(LEAD_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({ ...payload, source: 'talk_to_aura_website' }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return {
+      ok: true,
+      text: '✅ Sent to our sales team — someone will reach out within one business day.',
+    };
+  } catch (e) {
+    console.error('[LandingAIChat] lead capture failed:', e);
+    return {
+      ok: false,
+      text: '⚠️ I had trouble sending that to our team — please email sales@auraintercept.ai and we’ll follow up right away.',
+    };
+  }
+}
 
 export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   websiteId,
