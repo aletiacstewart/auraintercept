@@ -1,86 +1,47 @@
 ## Goal
-Replace free-text "Industry/Business Type" and "Job Title" inputs on the onboarding page (and matching PDF fields) with structured dropdowns that work for every supported industry.
+When a visitor uses the **Message Aura** floating chat on the public marketing site (homepage, Smart Website, Company Blog), Aura can play the uploaded `AI_Main.mp4` walkthrough video inline in the chat — either automatically when the visitor asks for more info, or anytime via a persistent "Watch demo" button.
 
-## Scope
-- `src/components/onboarding/CompanyOnboardingForm.tsx` — the live web form on `/onboarding`.
-- `src/components/documentation/CompanyOnboardingPDF.tsx` — the printable intake PDF.
-- New shared data file: `src/lib/industryJobTitles.ts`.
+Scope: public marketing chat only (FloatingChatWidget → LandingAIChat). No changes to in-app Aura, customer portal, voice agent, edge functions, or pricing.
 
-## 1. Industry dropdown
-Replace the `<Input placeholder="HVAC, Plumbing, Salon, etc.">` with the existing canonical industry list rendered as a grouped `<Select>` (same pattern as `src/components/marketing/IndustryDropdownPicker.tsx`):
+## Changes
 
-- Source: `INDUSTRY_GROUPS` + `INDUSTRY_CONTENT` from `src/lib/industryMarketingContent.ts` (already filtered to 24 canonical IDs, grouped into Core Trades / Outdoor & Property / Repair & Service / Booking-First / Healthcare).
-- Store the canonical industry ID in `formData.industryType` (still required).
-- Include the "Other" option for catch-all.
-- Show emoji + label per option, group headers per cluster.
+### 1. Upload the video to the CDN
+- Run `lovable-assets create --file /mnt/user-uploads/AI_Main.mp4 --filename aura-walkthrough.mp4 > src/assets/aura-walkthrough.mp4.asset.json`
+- Pointer is imported in code; binary stays out of the repo.
 
-## 2. Job Title dropdown (industry-aware, categorized)
-Replace the `<Input placeholder="Owner, Manager, etc.">` with a grouped `<Select>` whose contents adapt to the selected industry.
+### 2. Extend chat message model (`src/components/landing/LandingAIChat.tsx`)
+- Add an optional `videoUrl?: string` field to the local `Message` type so an assistant bubble can carry a video.
+- Add a helper `appendDemoVideoMessage()` that pushes an assistant message:
+  - `content`: "Here's a quick 60-second walkthrough of how Aura works. Want me to answer any specific questions after?"
+  - `videoUrl`: the CDN URL from the asset pointer.
 
-New file `src/lib/industryJobTitles.ts` exports:
+### 3. Persistent "Watch demo" button
+- In the chat header (next to "Message Aura"), add a small ghost button with a Play icon labeled **"Watch demo"**.
+- Clicking it calls `appendDemoVideoMessage()` (no LLM call, instant). Disabled while a video bubble is already the most recent assistant message to avoid spamming.
 
-```ts
-export const UNIVERSAL_TITLES = [
-  'Owner', 'Co-Owner', 'CEO', 'President',
-  'General Manager', 'Operations Manager', 'Office Manager',
-  'Admin / Receptionist', 'Sales Manager', 'Sales Rep',
-  'Marketing Manager', 'Customer Service Lead', 'Bookkeeper / Accountant',
-];
+### 4. Auto-detect intent on user input
+- In `handleSubmit`, before calling `streamChat`, run a lightweight regex against the trimmed user input:
+  - Pattern (case-insensitive): `/(watch|show|see|play).*(demo|video|walkthrough)|more info(rmation)?|tell me more|how does (it|aura) work|can i see|show me/`
+- If matched AND the last assistant message does not already contain a video, call `appendDemoVideoMessage()` first, then still send the user's message to the LLM so Aura also replies in text.
 
-export const INDUSTRY_TITLES: Record<string, string[]> = {
-  hvac: ['Service Manager', 'Lead Technician', 'HVAC Technician', 'Install Crew Lead', 'Dispatcher'],
-  plumbing: ['Master Plumber', 'Journeyman Plumber', 'Apprentice', 'Service Manager', 'Dispatcher'],
-  electrical: ['Master Electrician', 'Journeyman Electrician', 'Apprentice', 'Estimator', 'Dispatcher'],
-  roofing: ['Project Manager', 'Estimator', 'Crew Lead', 'Roofer', 'Insurance Claims Specialist'],
-  solar: ['Solar Consultant', 'Designer', 'Installer Lead', 'Site Surveyor', 'Permitting Coordinator'],
-  landscape: ['Crew Lead', 'Landscaper', 'Arborist', 'Irrigation Tech', 'Designer'],
-  pool_spa: ['Service Tech', 'Route Manager', 'Equipment Specialist'],
-  pest_control: ['Lead Technician', 'Termite Specialist', 'Route Manager'],
-  appliance_repair: ['Lead Technician', 'Appliance Tech', 'Parts Manager'],
-  handyman: ['Lead Handyman', 'Handyman', 'Cleaner', 'Crew Lead'],
-  construction: ['Project Manager', 'Estimator', 'Foreman', 'Carpenter', 'Painter'],
-  auto_care: ['Service Advisor', 'Master Tech', 'Mechanic', 'Service Manager'],
-  security_systems: ['Install Tech', 'Monitoring Specialist', 'Sales Consultant'],
-  real_estate: ['Broker', 'Realtor / Agent', 'Listing Coordinator', 'Transaction Coordinator'],
-  beauty_wellness: ['Salon Owner', 'Stylist', 'Colorist', 'Nail Technician', 'Esthetician', 'Massage Therapist'],
-  restaurants: ['Owner', 'General Manager', 'Chef / Kitchen Manager', 'Front of House Manager', 'Host'],
-  personal_assistant: ['Executive Assistant', 'Personal Assistant', 'Concierge'],
-  fencing: ['Project Manager', 'Estimator', 'Install Crew Lead', 'Installer'],
-  home_health: ['Director of Nursing', 'RN Case Manager', 'LPN', 'Home Health Aide', 'Scheduler'],
-  physical_therapy: ['Clinic Director', 'Physical Therapist (PT)', 'PT Assistant (PTA)', 'Front Desk'],
-  occupational_therapy: ['Clinic Director', 'Occupational Therapist (OT)', 'OT Assistant (COTA)', 'Front Desk'],
-  hospice: ['Hospice Director', 'RN Case Manager', 'Chaplain', 'Social Worker', 'Aide'],
-  veterinary: ['Veterinarian (DVM)', 'Vet Tech', 'Practice Manager', 'Front Desk'],
-  medical_practice: ['Physician (MD/DO)', 'Nurse Practitioner', 'Medical Assistant', 'Practice Manager', 'Front Desk'],
-};
+### 5. Render inline video bubble
+- In the messages map, when `message.videoUrl` is present, render the text paragraph followed by a `<video>` element:
+  - `src={message.videoUrl}` `controls` `playsInline` `muted` `autoPlay` `preload="metadata"`
+  - Styled inside the existing white assistant bubble: `w-full rounded-md mt-2 max-h-[260px] bg-black`
+  - Wrapped at `max-w-[85%]` like other bubbles, with rounded corners and shadow.
+- Falls back gracefully (controls visible) if autoplay-muted is blocked.
 
-export function getTitlesForIndustry(id?: string) {
-  return {
-    universal: UNIVERSAL_TITLES,
-    industry: (id && INDUSTRY_TITLES[id]) || [],
-  };
-}
-```
+### 6. No other surfaces touched
+- `AuraAvatarChat`, voice chat, edge functions, system prompts, in-app Aura, customer portal — unchanged.
 
-Dropdown UI:
-- Group 1 header: "Leadership & Operations" → `UNIVERSAL_TITLES`.
-- Group 2 header: `${INDUSTRY_CONTENT[id].label} Roles` (only shown when an industry is selected and has entries).
-- Group 3: single "Other (type below)" item that reveals a small inline text input to capture a custom title (stored in same `contactTitle` field).
-- If no industry selected yet, only show the Leadership group + Other.
-
-## 3. PDF updates (`CompanyOnboardingPDF.tsx`)
-The PDF currently renders both fields as blank lines/labels for users to fill in by hand. To keep it usable as a printable intake while reflecting the new dropdowns:
-
-- Under "Industry/Business Type:" replace the blank line with a checkbox-style list grouped by cluster (Core Trades / Outdoor & Property / Repair & Service / Booking-First / Healthcare / Other) using the same source data, rendered with the existing `formCheckbox` style (see how other multi-option intake pages already render).
-- Under "Job Title:" render the `UNIVERSAL_TITLES` list as checkboxes plus a "Industry-specific role: ______" write-in line (we can't show all 24 industry role lists without bloating the PDF).
-- Pull industry options from `INDUSTRY_GROUPS` so the PDF and form stay in sync automatically.
-
-## 4. Out of scope
-- No changes to backend storage, RLS, or how `companies.industry_vertical` is normalized (existing `toCanonicalIndustryId` already covers it — we'll already be writing canonical IDs from the dropdown).
-- No changes to Auth signup, Fast Start wizard, or any other intake surface.
-- No copy/pricing edits.
+## Technical notes
+- Asset URL accessed via `import auraWalkthrough from '@/assets/aura-walkthrough.mp4.asset.json'` then `auraWalkthrough.url`.
+- Autoplay uses `muted` to satisfy browser autoplay policies; user can unmute via native controls.
+- Intent regex is intentionally narrow to avoid surprise video popups; the explicit button covers the rest.
+- No new dependencies, no DB migrations, no edge function changes.
 
 ## Verification
-- Manually open `/onboarding`: industry dropdown shows grouped list, selecting an industry repopulates the job-title dropdown's second group, "Other" reveals a custom-text field.
-- Export the PDF from `/onboarding` and confirm both fields render the new structured option lists without overflowing the page.
-- `rg "placeholder=\"HVAC, Plumbing, Salon" src/` and `rg "placeholder=\"Owner, Manager" src/` return no results.
+- Open homepage → click floating Aura button → header shows "Watch demo" → click plays video inline, muted, with controls.
+- Type "show me a demo" or "tell me more" → video bubble appears, then Aura's text reply streams in below.
+- Type a normal question (e.g. "what's pricing?") → no video, just text reply.
+- Reload, repeat in the Smart Website and Company Blog floating widgets (same component) — works identically.
