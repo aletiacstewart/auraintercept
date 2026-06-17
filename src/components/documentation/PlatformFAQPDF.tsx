@@ -371,7 +371,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a free trial?"
-          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. No credit card required to start; onboarding fee due at start."
+          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Your one-time per-tier onboarding fee (50% off during Beta — Core $249 · Boost $497 · Pro $994 · Elite $1,990) is due at the start of the trial. Your monthly plan only begins after day 60."
         />
         
         <FAQItem 
@@ -494,7 +494,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What's included in the Aura Core tier specifically?"
-          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 197}/mo) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses.`}
+          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $249 (Beta, was $497), due at start of the 60-Day Live Trial.`}
         />
 
         <View style={styles.warningBox}>
