@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Check, ExternalLink, Wrench } from "lucide-react";
+import { AURA_INTERCEPT_VOICE_PROMPT } from "@/lib/auraInterceptSalesPrompt";
 
 const TOOL_NAME = "send_walkthrough_demo";
 
@@ -126,6 +127,21 @@ export function ElevenLabsToolChecklist() {
               <ExternalLink className="h-3 w-3" /> Test on /talk-to-aura
             </a>
           </Button>
+        </div>
+
+        <div className="space-y-2 pt-4 border-t border-border">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h4 className="text-sm font-semibold text-primary">Talk to Aura — Sales Prompt</h4>
+              <p className="text-xs text-muted-foreground">
+                Paste this as the system prompt on the Aura Intercept ElevenLabs agent
+                (the one used by the website voice widget and inbound phone number).
+                Aura Intercept only — customer companies use their own per-company prompts.
+              </p>
+            </div>
+            <CopyButton text={AURA_INTERCEPT_VOICE_PROMPT} label="Copy voice prompt" />
+          </div>
+          <pre className="text-xs bg-muted/40 border border-border rounded p-2 overflow-x-auto whitespace-pre-wrap max-h-72">{AURA_INTERCEPT_VOICE_PROMPT}</pre>
         </div>
       </CardContent>
     </Card>

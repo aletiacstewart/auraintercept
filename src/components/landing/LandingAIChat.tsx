@@ -24,6 +24,34 @@ interface LandingAIChatProps {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-chat`;
+const LEAD_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-capture-lead`;
+
+const LEAD_MARKER_RE = /\[\[LEAD\]\]([\s\S]*?)\[\[\/LEAD\]\]/;
+
+async function captureLeadFromMarker(raw: string): Promise<{ ok: boolean; text: string }> {
+  try {
+    const payload = JSON.parse(raw);
+    const res = await fetch(LEAD_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({ ...payload, source: 'talk_to_aura_website' }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return {
+      ok: true,
+      text: '✅ Sent to our sales team — someone will reach out within one business day.',
+    };
+  } catch (e) {
+    console.error('[LandingAIChat] lead capture failed:', e);
+    return {
+      ok: false,
+      text: '⚠️ I had trouble sending that to our team — please email sales@auraintercept.ai and we’ll follow up right away.',
+    };
+  }
+}
 
 export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   websiteId,
@@ -148,6 +176,17 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
       }
     }
 
+    // Detect lead-handoff marker → POST to capture function and rewrite the bubble.
+    const match = assistantContent.match(LEAD_MARKER_RE);
+    if (match) {
+      const result = await captureLeadFromMarker(match[1].trim());
+      const cleaned = assistantContent.replace(LEAD_MARKER_RE, result.text).trim();
+      assistantContent = cleaned;
+      setMessages(prev => prev.map((m, i) =>
+        i === prev.length - 1 && m.role === 'assistant' ? { ...m, content: cleaned } : m
+      ));
+    }
+
     // Track assistant response
     if (assistantContent) {
       await trackMessage('assistant', assistantContent);
@@ -206,7 +245,9 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
                   : 'bg-white text-[hsl(220,60%,25%)]'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {message.content.replace(LEAD_MARKER_RE, '…sending your info…')}
+              </p>
             </div>
           ))}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
