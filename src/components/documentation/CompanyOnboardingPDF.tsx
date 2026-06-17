@@ -389,6 +389,7 @@ const CompanyProfilePage = () => (
       <Text style={styles.formLabel}>{sanitizePdfText('Industry/Business Type:')}</Text>
       <View style={styles.formLine} />
     </View>
+    <Text style={styles.formNote}>{sanitizePdfText('(Circle one: HVAC, Plumbing, Electrical, Solar, Roofing, Fencing & Decking, Landscape & Trees, Pool & Spa, Pest Control, Appliance Repair, Handyman & Cleaning, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Home Health, Physical Therapy, Occupational Therapy, Hospice, Veterinary, Medical Practice, Other)')}</Text>
     
     <View style={styles.formRow}>
       <Text style={styles.formLabel}>{sanitizePdfText('Years in Business:')}</Text>
@@ -406,6 +407,7 @@ const CompanyProfilePage = () => (
       <Text style={styles.formLabel}>{sanitizePdfText('Job Title:')}</Text>
       <View style={styles.formLine} />
     </View>
+    <Text style={styles.formNote}>{sanitizePdfText('(Common: Owner, Co-Owner, CEO, President, General Manager, Operations Manager, Office Manager, Admin / Receptionist, Sales Manager, Sales Rep, Marketing Manager, Customer Service Lead, Bookkeeper. Or write in your industry-specific role.)')}</Text>
     
     <View style={styles.formRow}>
       <Text style={styles.formLabel}>{sanitizePdfText('Email Address:')}</Text>

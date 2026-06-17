@@ -7,6 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SelectGroup, SelectLabel } from '@/components/ui/select';
+import { INDUSTRY_CONTENT, INDUSTRY_GROUPS } from '@/lib/industryMarketingContent';
+import { UNIVERSAL_TITLES, getIndustryTitles, OTHER_TITLE_VALUE } from '@/lib/industryJobTitles';
 import { Progress } from '@/components/ui/progress';
 import { Building2, User, Clock, Settings, MessageSquare, Calendar, Star, Globe, BarChart3, Users, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import { QUESTIONS, SECTION_ORDER, AuditQuestion } from '@/components/audit/types';
@@ -417,13 +420,51 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
             </div>
             <div className="space-y-2">
               <Label htmlFor="industryType">Industry/Business Type *</Label>
-              <Input
-                id="industryType"
+              <Select
                 value={formData.industryType}
-                onChange={(e) => updateField('industryType', e.target.value)}
-                placeholder="HVAC, Plumbing, Salon, etc."
-                required
-              />
+                onValueChange={(v) => {
+                  updateField('industryType', v);
+                  // Reset job title if it's not a universal one and industry changed
+                  if (
+                    formData.contactTitle &&
+                    !UNIVERSAL_TITLES.includes(formData.contactTitle) &&
+                    !getIndustryTitles(v).includes(formData.contactTitle) &&
+                    formData.contactTitle !== OTHER_TITLE_VALUE
+                  ) {
+                    // keep custom typed values
+                  }
+                }}
+              >
+                <SelectTrigger id="industryType">
+                  <SelectValue placeholder="Select your industry" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[60vh]">
+                  {INDUSTRY_GROUPS.map((g) => (
+                    <SelectGroup key={g.group}>
+                      <SelectLabel className="flex items-center gap-1.5">
+                        <span>{g.emoji}</span>
+                        <span>{g.group}</span>
+                      </SelectLabel>
+                      {g.ids.map((id) => {
+                        const ind = INDUSTRY_CONTENT[id];
+                        if (!ind) return null;
+                        return (
+                          <SelectItem key={id} value={id}>
+                            <span className="flex items-center gap-2">
+                              <span>{ind.emoji}</span>
+                              <span>{ind.label}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  ))}
+                  <SelectGroup>
+                    <SelectLabel>Other</SelectLabel>
+                    <SelectItem value="other">🏢 Not listed / Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="yearsInBusiness">Years in Business</Label>
@@ -461,12 +502,62 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactTitle">Job Title</Label>
-              <Input
-                id="contactTitle"
-                value={formData.contactTitle}
-                onChange={(e) => updateField('contactTitle', e.target.value)}
-                placeholder="Owner, Manager, etc."
-              />
+              {(() => {
+                const industryRoles = getIndustryTitles(formData.industryType);
+                const knownTitles = new Set<string>([...UNIVERSAL_TITLES, ...industryRoles]);
+                const isCustom =
+                  !!formData.contactTitle && !knownTitles.has(formData.contactTitle);
+                const selectValue = isCustom ? OTHER_TITLE_VALUE : formData.contactTitle;
+                const industryLabel = formData.industryType
+                  ? INDUSTRY_CONTENT[formData.industryType]?.label
+                  : null;
+                return (
+                  <>
+                    <Select
+                      value={selectValue}
+                      onValueChange={(v) => {
+                        if (v === OTHER_TITLE_VALUE) {
+                          updateField('contactTitle', '');
+                        } else {
+                          updateField('contactTitle', v);
+                        }
+                      }}
+                    >
+                      <SelectTrigger id="contactTitle">
+                        <SelectValue placeholder="Select a job title" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[60vh]">
+                        <SelectGroup>
+                          <SelectLabel>Leadership &amp; Operations</SelectLabel>
+                          {UNIVERSAL_TITLES.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectGroup>
+                        {industryRoles.length > 0 && industryLabel && (
+                          <SelectGroup>
+                            <SelectLabel>{industryLabel} Roles</SelectLabel>
+                            {industryRoles.map((t) => (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        <SelectGroup>
+                          <SelectLabel>Other</SelectLabel>
+                          <SelectItem value={OTHER_TITLE_VALUE}>Other (type below)</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {(isCustom || selectValue === OTHER_TITLE_VALUE) && (
+                      <Input
+                        className="mt-2"
+                        value={formData.contactTitle}
+                        onChange={(e) => updateField('contactTitle', e.target.value)}
+                        placeholder="Enter your job title"
+                      />
+                    )}
+                  </>
+                );
+              })()}
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactEmail">Email Address *</Label>
