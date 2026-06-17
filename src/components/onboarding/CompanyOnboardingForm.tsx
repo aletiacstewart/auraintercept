@@ -502,12 +502,62 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactTitle">Job Title</Label>
-              <Input
-                id="contactTitle"
-                value={formData.contactTitle}
-                onChange={(e) => updateField('contactTitle', e.target.value)}
-                placeholder="Owner, Manager, etc."
-              />
+              {(() => {
+                const industryRoles = getIndustryTitles(formData.industryType);
+                const knownTitles = new Set<string>([...UNIVERSAL_TITLES, ...industryRoles]);
+                const isCustom =
+                  !!formData.contactTitle && !knownTitles.has(formData.contactTitle);
+                const selectValue = isCustom ? OTHER_TITLE_VALUE : formData.contactTitle;
+                const industryLabel = formData.industryType
+                  ? INDUSTRY_CONTENT[formData.industryType]?.label
+                  : null;
+                return (
+                  <>
+                    <Select
+                      value={selectValue}
+                      onValueChange={(v) => {
+                        if (v === OTHER_TITLE_VALUE) {
+                          updateField('contactTitle', '');
+                        } else {
+                          updateField('contactTitle', v);
+                        }
+                      }}
+                    >
+                      <SelectTrigger id="contactTitle">
+                        <SelectValue placeholder="Select a job title" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[60vh]">
+                        <SelectGroup>
+                          <SelectLabel>Leadership &amp; Operations</SelectLabel>
+                          {UNIVERSAL_TITLES.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectGroup>
+                        {industryRoles.length > 0 && industryLabel && (
+                          <SelectGroup>
+                            <SelectLabel>{industryLabel} Roles</SelectLabel>
+                            {industryRoles.map((t) => (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        <SelectGroup>
+                          <SelectLabel>Other</SelectLabel>
+                          <SelectItem value={OTHER_TITLE_VALUE}>Other (type below)</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {(isCustom || selectValue === OTHER_TITLE_VALUE) && (
+                      <Input
+                        className="mt-2"
+                        value={formData.contactTitle}
+                        onChange={(e) => updateField('contactTitle', e.target.value)}
+                        placeholder="Enter your job title"
+                      />
+                    )}
+                  </>
+                );
+              })()}
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactEmail">Email Address *</Label>
