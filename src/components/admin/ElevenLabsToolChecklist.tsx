@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Check, ExternalLink, Wrench } from "lucide-react";
+import { AURA_INTERCEPT_VOICE_PROMPT } from "@/lib/auraInterceptSalesPrompt";
 
 const TOOL_NAME = "send_walkthrough_demo";
 
