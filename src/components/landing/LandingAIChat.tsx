@@ -245,7 +245,9 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
                   : 'bg-white text-[hsl(220,60%,25%)]'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {message.content.replace(LEAD_MARKER_RE, '…sending your info…')}
+              </p>
             </div>
           ))}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
