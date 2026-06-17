@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Bot, Send, Loader2, Mic, MicOff } from 'lucide-react';
+import { Bot, Send, Loader2, Mic, MicOff, PlayCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,10 +8,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { cn } from '@/lib/utils';
+import auraWalkthrough from '@/assets/aura-walkthrough.mp4.asset.json';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  videoUrl?: string;
 }
 
 interface LandingAIChatProps {
@@ -27,6 +29,14 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-chat
 const LEAD_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-capture-lead`;
 
 const LEAD_MARKER_RE = /\[\[LEAD\]\]([\s\S]*?)\[\[\/LEAD\]\]/;
+
+const DEMO_INTENT_RE = /(watch|show|see|play).{0,20}(demo|video|walkthrough)|more info(rmation)?|tell me more|how does (it|aura|this) work|can i see|show me how/i;
+const DEMO_VIDEO_MESSAGE: Message = {
+  role: 'assistant',
+  content:
+    "Here's a quick walkthrough of how Aura works. Press play below — want me to answer any specific questions after?",
+  videoUrl: auraWalkthrough.url,
+};
 
 async function captureLeadFromMarker(raw: string): Promise<{ ok: boolean; text: string }> {
   try {
@@ -71,6 +81,14 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   });
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const lastIsVideo = messages[messages.length - 1]?.videoUrl;
+  const showDemoVideo = useCallback(() => {
+    setMessages(prev => {
+      if (prev[prev.length - 1]?.videoUrl) return prev;
+      return [...prev, DEMO_VIDEO_MESSAGE];
+    });
+  }, []);
 
   // Browser speech-to-text — appends final transcripts to the input field
   const voice = useVoiceInput({
@@ -198,7 +216,9 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
     if (!input.trim() || isLoading || !termsAgreed) return;
 
     const userMessage: Message = { role: 'user', content: input.trim() };
-    const newMessages = [...messages, userMessage];
+    const wantsDemo = DEMO_INTENT_RE.test(userMessage.content) && !lastIsVideo;
+    const baseMessages = [...messages, userMessage];
+    const newMessages = wantsDemo ? [...baseMessages, DEMO_VIDEO_MESSAGE] : baseMessages;
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
@@ -207,7 +227,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
     await trackMessage('user', userMessage.content);
 
     try {
-      await streamChat(newMessages);
+      await streamChat(baseMessages);
     } catch (error) {
       console.error('Chat error:', error);
       toast({
