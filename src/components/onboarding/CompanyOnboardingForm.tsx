@@ -420,13 +420,51 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
             </div>
             <div className="space-y-2">
               <Label htmlFor="industryType">Industry/Business Type *</Label>
-              <Input
-                id="industryType"
+              <Select
                 value={formData.industryType}
-                onChange={(e) => updateField('industryType', e.target.value)}
-                placeholder="HVAC, Plumbing, Salon, etc."
-                required
-              />
+                onValueChange={(v) => {
+                  updateField('industryType', v);
+                  // Reset job title if it's not a universal one and industry changed
+                  if (
+                    formData.contactTitle &&
+                    !UNIVERSAL_TITLES.includes(formData.contactTitle) &&
+                    !getIndustryTitles(v).includes(formData.contactTitle) &&
+                    formData.contactTitle !== OTHER_TITLE_VALUE
+                  ) {
+                    // keep custom typed values
+                  }
+                }}
+              >
+                <SelectTrigger id="industryType">
+                  <SelectValue placeholder="Select your industry" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[60vh]">
+                  {INDUSTRY_GROUPS.map((g) => (
+                    <SelectGroup key={g.group}>
+                      <SelectLabel className="flex items-center gap-1.5">
+                        <span>{g.emoji}</span>
+                        <span>{g.group}</span>
+                      </SelectLabel>
+                      {g.ids.map((id) => {
+                        const ind = INDUSTRY_CONTENT[id];
+                        if (!ind) return null;
+                        return (
+                          <SelectItem key={id} value={id}>
+                            <span className="flex items-center gap-2">
+                              <span>{ind.emoji}</span>
+                              <span>{ind.label}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  ))}
+                  <SelectGroup>
+                    <SelectLabel>Other</SelectLabel>
+                    <SelectItem value="other">🏢 Not listed / Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="yearsInBusiness">Years in Business</Label>
