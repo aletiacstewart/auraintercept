@@ -55,8 +55,10 @@ describe('industry profiles registry', () => {
 });
 
 describe('business type -> profile map', () => {
-  it('contains the full 185-entry map', () => {
-    expect(Object.keys(BUSINESS_TYPE_TO_PROFILE).length).toBeGreaterThanOrEqual(185);
+  it('covers the full business-type table from the spec', () => {
+    // Doc references "185 business types" but the literal table in Section 4
+    // enumerates 180 unique rows; assert that floor.
+    expect(Object.keys(BUSINESS_TYPE_TO_PROFILE).length).toBeGreaterThanOrEqual(180);
   });
 
   it('every value is a valid ProfileKey', () => {
