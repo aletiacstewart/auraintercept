@@ -29,6 +29,7 @@ import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus, CalendarClock } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useProfileGates } from '@/hooks/useProfileGates';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
