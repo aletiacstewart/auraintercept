@@ -48,12 +48,37 @@ Deno.serve(async (req) => {
     const collectionResults = data.data_collection_results || {};
     let customerName = '';
     let customerPhone = '';
+    let customerEmail = '';
+    let serviceAddress = '';
+    let intentRaw = '';
 
     if (collectionResults.customer_name) {
       customerName = collectionResults.customer_name.value || '';
     }
     if (collectionResults.customer_phone || collectionResults.phone_number) {
       customerPhone = (collectionResults.customer_phone?.value || collectionResults.phone_number?.value || '');
+    }
+    if (collectionResults.customer_email || collectionResults.email) {
+      customerEmail = (collectionResults.customer_email?.value || collectionResults.email?.value || '');
+    }
+    if (collectionResults.service_address || collectionResults.address) {
+      serviceAddress = (collectionResults.service_address?.value || collectionResults.address?.value || '');
+    }
+    if (collectionResults.intent || collectionResults.call_intent) {
+      intentRaw = (collectionResults.intent?.value || collectionResults.call_intent?.value || '');
+    }
+
+    // Build a normalized intake_answers map from every data_collection_results entry.
+    // ElevenLabs returns each as { value, rationale, json_schema, ... } — keep the value.
+    const intakeAnswers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(collectionResults)) {
+      const value =
+        v && typeof v === 'object' && 'value' in (v as any)
+          ? (v as any).value
+          : v;
+      if (value !== null && value !== undefined && value !== '') {
+        intakeAnswers[k] = typeof value === 'string' ? value : JSON.stringify(value);
+      }
     }
 
     // Map agent_id to company_id via tenant_integrations
@@ -77,7 +102,7 @@ Deno.serve(async (req) => {
     }
 
     // Insert call log
-    const { error: insertError } = await supabase.from('call_logs').insert({
+    const { data: insertedCall, error: insertError } = await supabase.from('call_logs').insert({
       company_id: companyId,
       direction: 'inbound',
       status: 'completed',
@@ -92,8 +117,12 @@ Deno.serve(async (req) => {
         conversation_id: conversationId,
         agent_id: agentId,
         source: 'elevenlabs_web',
+        intake_answers: intakeAnswers,
+        intent: intentRaw || null,
+        service_address: serviceAddress || null,
+        customer_email: customerEmail || null,
       },
-    });
+    }).select('id').maybeSingle();
 
     if (insertError) {
       console.error('Failed to insert call log:', insertError);
@@ -101,6 +130,31 @@ Deno.serve(async (req) => {
     }
 
     console.log(`Post-call log saved for company ${companyId}, conversation ${conversationId}`);
+
+    // If the caller provided enough info to be useful, create/refresh a lead.
+    // We only insert when we have at least a name or phone — anything less is noise.
+    if (customerName || customerPhone) {
+      const leadPayload: Record<string, unknown> = {
+        company_id: companyId,
+        name: customerName || 'Unknown caller',
+        phone: customerPhone || null,
+        email: customerEmail || null,
+        source: 'ai_receptionist',
+        status: 'new',
+        notes: summary || null,
+        metadata: {
+          call_log_id: insertedCall?.id || null,
+          conversation_id: conversationId,
+          intake_answers: intakeAnswers,
+          intent: intentRaw || null,
+          service_address: serviceAddress || null,
+        },
+      };
+      const { error: leadErr } = await supabase.from('leads').insert(leadPayload);
+      if (leadErr) {
+        console.error('Failed to insert lead from receptionist call:', leadErr);
+      }
+    }
 
     return new Response(
       JSON.stringify({ success: true }),
