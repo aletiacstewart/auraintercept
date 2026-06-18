@@ -41,6 +41,40 @@ export default function VideoConsole() {
 
   const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success('Copied'); };
 
+  async function logSession(opts: {
+    url: string;
+    direction: 'outbound' | 'inbound';
+    appointmentId?: string;
+    customerName?: string | null;
+    customerEmail?: string | null;
+  }) {
+    if (!companyId) return;
+    try {
+      await supabase.from('call_logs').insert({
+        company_id: companyId,
+        direction: opts.direction,
+        status: 'in_progress',
+        purpose: 'video-meeting',
+        customer_name: opts.customerName || null,
+        metadata: {
+          source: 'video_console',
+          provider: 'jitsi',
+          meeting_url: opts.url,
+          appointment_id: opts.appointmentId || null,
+          customer_email: opts.customerEmail || null,
+        },
+      });
+      if (opts.appointmentId) {
+        await supabase
+          .from('appointments')
+          .update({ status: 'in_progress' })
+          .eq('id', opts.appointmentId);
+      }
+    } catch (e) {
+      console.error('Failed to log video session', e);
+    }
+  }
+
   return (
     <DashboardLayout>
       <PageContainer>
@@ -64,10 +98,14 @@ export default function VideoConsole() {
                 <span className="truncate flex-1">{meetingUrl}</span>
                 <Button size="sm" variant="ghost" onClick={() => copy(meetingUrl)}><Copy className="h-4 w-4" /></Button>
               </div>
-              <Button asChild className="w-full">
-                <a href={meetingUrl} target="_blank" rel="noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" /> Open meeting room
-                </a>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  logSession({ url: meetingUrl, direction: 'outbound' });
+                  window.open(meetingUrl, '_blank', 'noreferrer');
+                }}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" /> Open meeting room
               </Button>
               <p className="text-xs text-muted-foreground">
                 Share the link with attendees. Anyone with the link can join.
@@ -88,7 +126,10 @@ export default function VideoConsole() {
               <Button
                 className="w-full"
                 disabled={!joinUrl}
-                onClick={() => window.open(joinUrl, '_blank', 'noreferrer')}
+                onClick={() => {
+                  logSession({ url: joinUrl, direction: 'inbound' });
+                  window.open(joinUrl, '_blank', 'noreferrer');
+                }}
               >
                 Join now
               </Button>
@@ -121,6 +162,13 @@ export default function VideoConsole() {
                         variant="outline"
                         onClick={() => {
                           const url = `https://meet.jit.si/aura-${a.id.slice(0, 8)}`;
+                          logSession({
+                            url,
+                            direction: 'outbound',
+                            appointmentId: a.id,
+                            customerName: a.customer_name,
+                            customerEmail: a.customer_email,
+                          });
                           window.open(url, '_blank', 'noreferrer');
                         }}
                       >
