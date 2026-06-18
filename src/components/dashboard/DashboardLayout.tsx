@@ -391,6 +391,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           return item;
         })
         .filter(item => {
+        // Profile-driven console gating: hide AI consoles not enabled by
+        // the company's profile spec. Platform admin always sees them.
+        if (!isPlatformAdmin && !navItemAllowedByProfile(item.href, profileSpec)) {
+          return false;
+        }
         // Industry-pack override: booking-only verticals hide field-ops & dispatch.
         if (fieldOpsHidden && (
           item.href === '/dashboard/ai-consoles/field-ops' ||
