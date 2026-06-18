@@ -1,6 +1,31 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { PROFILE_SPECS, getProfileSpec, ProfileKey } from '@/lib/industryProfiles';
+import { getProfileForBusinessType } from '@/lib/businessTypeProfileMap';
+
+/**
+ * Merges canonical profile `labelOverrides` (technician/job/quote) into a
+ * pack's `terminology` map. Profile overrides win when set, otherwise the
+ * pack's own terminology is preserved. Keeps a stable `appointment` key
+ * by reusing the profile `job` label only when the pack didn't supply one.
+ */
+function applyProfileTerminology(
+  pack: IndustryPack,
+  profileKey: ProfileKey | null,
+): IndustryPack {
+  if (!profileKey) return pack;
+  const spec = getProfileSpec(profileKey);
+  const overrides = spec.labelOverrides ?? {};
+  const merged: Record<string, string> = { ...(pack.terminology || {}) };
+  if (overrides.technician) merged.technician = overrides.technician;
+  if (overrides.job) {
+    merged.job = overrides.job;
+    if (!pack.terminology?.appointment) merged.appointment = overrides.job;
+  }
+  if (overrides.quote) merged.quote = overrides.quote;
+  return { ...pack, terminology: merged };
+}
 
 export interface IndustryPack {
   id: string;
@@ -95,6 +120,28 @@ const DEFAULT_PACK: IndustryPack = {
 const packCache = new Map<string, IndustryPack>();
 const publicPackCache = new Map<string, IndustryPack>();
 
+// Tiny in-memory cache so we don't refetch companies.profile_key per render.
+const companyProfileKeyCache = new Map<string, ProfileKey>();
+
+async function resolveProfileKey(companyId: string): Promise<ProfileKey> {
+  const cached = companyProfileKeyCache.get(companyId);
+  if (cached) return cached;
+  const { data } = await supabase
+    .from('companies')
+    .select('profile_key, industry_vertical')
+    .eq('id', companyId)
+    .maybeSingle();
+  const row = data as { profile_key?: string | null; industry_vertical?: string | null } | null;
+  let resolved: ProfileKey = 'PROFILE_D';
+  if (row?.profile_key && row.profile_key in PROFILE_SPECS) {
+    resolved = row.profile_key as ProfileKey;
+  } else if (row?.industry_vertical) {
+    resolved = getProfileForBusinessType(row.industry_vertical);
+  }
+  companyProfileKeyCache.set(companyId, resolved);
+  return resolved;
+}
+
 /**
  * Resolves the current company's industry template pack.
  * Returns the generic default pack if the company has no industry set
@@ -133,7 +180,10 @@ export function useIndustryPack(companyIdOverride?: string | null) {
       } else {
         const row = Array.isArray(data) ? data[0] : data;
         if (row && row.industry_id) {
-          const next = { ...DEFAULT_PACK, ...row } as IndustryPack;
+          const base = { ...DEFAULT_PACK, ...row } as IndustryPack;
+          const profileKey = await resolveProfileKey(companyId);
+          if (cancelled) return;
+          const next = applyProfileTerminology(base, profileKey);
           packCache.set(companyId, next);
           setPack(next);
         } else {
