@@ -17,6 +17,7 @@ import {
 import { toast } from 'sonner';
 import { AgentInfo } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 
 const PHASE_CONFIG = [
   {
@@ -75,6 +76,35 @@ const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['business_finance', 'outreach'];
 // Phases hidden entirely from non-platform-admin roles
 const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Outreach & Sales, Analytics & Intelligence
 
+// Granular AgentId (from ProfileSpec.agentsHidden) → consolidated operative types
+// used by ai_agent_configs / BatchAgentActivation phases.
+const GRANULAR_TO_OPERATIVE: Record<string, string> = {
+  ai_receptionist: 'triage',
+  booking_agent: 'customer_journey',
+  follow_up_agent: 'customer_journey',
+  review_agent: 'customer_journey',
+  dispatch_gps: 'dispatch',
+  check_in_agent: 'dispatch',
+  route_agent: 'field_navigation',
+  eta_agent: 'field_navigation',
+  admin_agent: 'admin',
+  quoting_agent: 'business_finance',
+  invoice_agent: 'business_finance',
+  inventory_agent: 'business_finance',
+  campaign_agent: 'outreach',
+  lead_agent: 'outreach',
+  marketing_agent: 'outreach',
+  creative_agent: 'creative_content',
+  social_media_agent: 'creative_content',
+  social_media_scheduler: 'creative_content',
+  social_media_analytics: 'creative_content',
+  web_presence_agent: 'web_presence',
+  insights_agent: 'analytics_intelligence',
+  performance_agent: 'analytics_intelligence',
+  revenue_agent: 'analytics_intelligence',
+  forecast_agent: 'analytics_intelligence',
+};
+
 interface BatchAgentActivationProps {
   agents: AgentInfo[];
   onActivatePhase: (agentTypes: string[]) => Promise<void>;
@@ -83,27 +113,47 @@ interface BatchAgentActivationProps {
 
 export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }: BatchAgentActivationProps) {
   const { userRole } = useAuth();
+  const { spec: profileSpec } = useCompanyProfile();
   const [selectedPhases, setSelectedPhases] = useState<number[]>([]);
   const [activating, setActivating] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const agentMap = new Map(agents.map(a => [a.type, a]));
 
+  // Operatives the profile hides entirely. Computed by collapsing every
+  // granular AgentId in profileSpec.agentsHidden to its operative, then
+  // keeping only operatives whose every contributing granular agent is hidden.
+  const profileHiddenOperatives = useMemo(() => {
+    if (userRole === 'platform_admin') return new Set<string>();
+    const hiddenGran = new Set(profileSpec.agentsHidden);
+    const contributors: Record<string, string[]> = {};
+    for (const [gran, op] of Object.entries(GRANULAR_TO_OPERATIVE)) {
+      (contributors[op] ||= []).push(gran);
+    }
+    const out = new Set<string>();
+    for (const [op, grans] of Object.entries(contributors)) {
+      if (grans.every((g) => hiddenGran.has(g as never))) out.add(op);
+    }
+    return out;
+  }, [profileSpec, userRole]);
+
   // Filter phases and agents based on user role
   const filteredPhaseConfig = useMemo(() => {
-    if (userRole === 'platform_admin') {
-      return PHASE_CONFIG;
-    }
-
-    // Filter out hidden phases for company_admin and employee
-    return PHASE_CONFIG
-      .filter(phase => !HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN.includes(phase.phase))
+    const base = userRole === 'platform_admin'
+      ? PHASE_CONFIG
+      : PHASE_CONFIG
+          .filter(phase => !HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN.includes(phase.phase))
+          .map(phase => ({
+            ...phase,
+            agents: phase.agents.filter(agent => !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(agent))
+          }));
+    return base
       .map(phase => ({
         ...phase,
-        agents: phase.agents.filter(agent => !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(agent))
+        agents: phase.agents.filter(a => !profileHiddenOperatives.has(a)),
       }))
-      .filter(phase => phase.agents.length > 0); // Remove phases with no visible agents
-  }, [userRole]);
+      .filter(phase => phase.agents.length > 0);
+  }, [userRole, profileHiddenOperatives]);
 
   const togglePhase = (phase: number) => {
     setSelectedPhases(prev => 
