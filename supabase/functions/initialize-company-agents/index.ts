@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
     const companyId: string | undefined = body?.company_id;
     const allCompanies: boolean = body?.all_companies === true;
 
-    let companies: Array<{ id: string; subscription_tier: string | null; industry_vertical: string | null }> = [];
+    let companies: Array<{ id: string; subscription_tier: string | null; industry_vertical: string | null; profile_key: string | null }> = [];
 
     if (allCompanies) {
       const { data, error } = await admin
