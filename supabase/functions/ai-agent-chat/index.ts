@@ -3491,7 +3491,7 @@ serve(async (req) => {
     // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
       .from('companies')
-      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name, industry_vertical')
+      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name, industry_vertical, profile_key')
       .eq('id', companyId)
       .single();
 
