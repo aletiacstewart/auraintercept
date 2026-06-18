@@ -68,6 +68,7 @@ interface Appointment {
 export function AppointmentCalendar() {
   const { user, userRole, companyId } = useAuth();
   const { pack } = useIndustryPack(companyId);
+  const { hideDispatch, technicianNoun } = useProfileGates();
   const isFieldDispatch = hasFieldTechnicians(pack);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'company_admin' || userRole === 'platform_admin';
@@ -876,7 +877,7 @@ export function AppointmentCalendar() {
                     <p className="text-sm font-medium">Assigned Technician</p>
                     <p className="text-sm text-foreground">{selectedAppointment.job_employee_name}</p>
                   </div>
-                  {isAdmin && selectedAppointment.status === 'scheduled' && (
+                  {isAdmin && !hideDispatch && selectedAppointment.status === 'scheduled' && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -889,14 +890,14 @@ export function AppointmentCalendar() {
               )}
 
               {/* Assign Technician Button for Admins */}
-              {isAdmin && selectedAppointment.status === 'scheduled' && !selectedAppointment.job_employee_id && (
+              {isAdmin && !hideDispatch && selectedAppointment.status === 'scheduled' && !selectedAppointment.job_employee_id && (
                 <Button
                   variant="outline"
                   className="w-full"
                   onClick={() => setAssignDialogOpen(true)}
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Assign Technician
+                  Assign {technicianNoun}
                 </Button>
               )}
 
