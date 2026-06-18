@@ -401,7 +401,7 @@ async function handleIncoming(
   // Get company info including call routing settings
   const { data: company } = await supabase
     .from('companies')
-    .select('name, ai_voice_greeting, ai_agent_prompt, call_routing_mode, business_phone, ring_timeout_seconds, default_language, supported_languages')
+    .select('name, ai_voice_greeting, ai_agent_prompt, call_routing_mode, business_phone, ring_timeout_seconds, default_language, supported_languages, profile_key')
     .eq('id', company_id)
     .single();
 
