@@ -5,6 +5,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useCompanyProfile } from '@/hooks/useCompanyProfile';
+import { navItemAllowedByProfile } from '@/lib/profileConsoleMap';
 import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { Button } from '@/components/ui/button';
@@ -309,6 +311,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // receptionist_only / custom). This is what makes the sidebar truly
   // industry-adaptive instead of just renaming labels.
   const { workspace } = useWorkspace();
+  // Profile-driven console visibility (Phase 2 of canonical profile rollout).
+  // The company's profile spec (PROFILE_A..PROFILE_J) declares which
+  // C1..C6 consoles belong in the sidebar. Platform admin bypasses this.
+  const { spec: profileSpec } = useCompanyProfile();
   const operatingModel = workspace?.operatingModel ?? 'field_dispatch';
   const operationsLabelByModel: Record<string, string> = {
     field_dispatch: navLabels.dispatchView || 'Dispatch View',
@@ -385,6 +391,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           return item;
         })
         .filter(item => {
+        // Profile-driven console gating: hide AI consoles not enabled by
+        // the company's profile spec. Platform admin always sees them.
+        if (!isPlatformAdmin && !navItemAllowedByProfile(item.href, profileSpec)) {
+          return false;
+        }
         // Industry-pack override: booking-only verticals hide field-ops & dispatch.
         if (fieldOpsHidden && (
           item.href === '/dashboard/ai-consoles/field-ops' ||
