@@ -27,6 +27,7 @@ import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Badge } from '@/components/ui/badge';
 import { IndustryWidgetGrid } from './IndustryWidgetGrid';
+import { ProfileWidgetGrid } from './ProfileWidgetGrid';
 import { relabelKpi, getSimpleModeKpis, blueprintKpisToCanonical } from '@/lib/industryKpiLabels';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import {
@@ -315,6 +316,7 @@ export function CompanyAdminDashboard() {
         )}
 
         {/* Industry-tailored widgets driven by the company's template pack */}
+        <ProfileWidgetGrid />
         <IndustryWidgetGrid />
 
         {/* Company guide download + logo — Pro mode only (clutter for daily users) */}
