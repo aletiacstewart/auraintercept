@@ -5,6 +5,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useCompanyProfile } from '@/hooks/useCompanyProfile';
+import { navItemAllowedByProfile } from '@/lib/profileConsoleMap';
 import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { Button } from '@/components/ui/button';
