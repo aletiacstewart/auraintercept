@@ -311,6 +311,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // receptionist_only / custom). This is what makes the sidebar truly
   // industry-adaptive instead of just renaming labels.
   const { workspace } = useWorkspace();
+  // Profile-driven console visibility (Phase 2 of canonical profile rollout).
+  // The company's profile spec (PROFILE_A..PROFILE_J) declares which
+  // C1..C6 consoles belong in the sidebar. Platform admin bypasses this.
+  const { spec: profileSpec } = useCompanyProfile();
   const operatingModel = workspace?.operatingModel ?? 'field_dispatch';
   const operationsLabelByModel: Record<string, string> = {
     field_dispatch: navLabels.dispatchView || 'Dispatch View',
