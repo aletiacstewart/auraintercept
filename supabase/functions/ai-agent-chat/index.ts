@@ -3449,12 +3449,22 @@ serve(async (req) => {
 
     // INDUSTRY SPECIALIST OPERATIVES — Pro/Elite tier, gated AND opted-in via industry pack
     // Allowed only when the company's industry_template_pack lists them in extra_operatives
-    const INDUSTRY_SPECIALIST_OPERATIVES = ['diagnostic', 'permit_code', 'site_survey', 'insurance_claim'];
+    const INDUSTRY_SPECIALIST_OPERATIVES = [
+      'diagnostic', 'permit_code', 'site_survey', 'insurance_claim',
+      'listing_writer', 'offer_drafter', 'comp_analyst',
+      'style_consultant', 'loyalty_coach',
+      'menu_writer', 'reservation_optimizer',
+      'task_triager', 'calendar_optimizer',
+      'review_responder',
+    ];
     const SPECIALIST_MIN_TIER: Record<string, string> = {
-      diagnostic: 'performance',
-      permit_code: 'performance',
-      site_survey: 'performance',
-      insurance_claim: 'performance',
+      diagnostic: 'performance', permit_code: 'performance',
+      site_survey: 'performance', insurance_claim: 'performance',
+      listing_writer: 'performance', offer_drafter: 'performance', comp_analyst: 'performance',
+      style_consultant: 'performance', loyalty_coach: 'performance',
+      menu_writer: 'performance', reservation_optimizer: 'performance',
+      task_triager: 'performance', calendar_optimizer: 'performance',
+      review_responder: 'connect',
     };
 
     // Legacy tier name → canonical tier mapping
@@ -3743,6 +3753,16 @@ serve(async (req) => {
       permit_code: 'You are a Permit & Code specialist. Help determine whether a job requires a permit, what local code applies, and outline the permit-pull steps.',
       site_survey: 'You are a Site Survey & Quote specialist. Walk customers through pre-install survey requirements (measurements, photos, access, utilities) and produce a takeoff-ready scope.',
       insurance_claim: 'You are an Insurance Claim specialist. Help document damage with photos, dates, cause-of-loss, and produce claim-ready summaries for the carrier.',
+      listing_writer: 'You are a Listing Writer specialist for a real-estate business. Given property facts (beds, baths, sqft, lot, features, neighborhood), draft compelling, MLS-safe listing descriptions, attention-grabbing headlines, and 3–5 feature bullets. Never invent facts not provided. Match the brand voice when available.',
+      offer_drafter: 'You are an Offer Drafter specialist for a real-estate business. Compose offer letters, counter-offers, and contingency language. Surface key terms (price, EMD, financing, inspection, close date, contingencies) clearly. Always remind the user to have an attorney/broker review before sending.',
+      comp_analyst: 'You are a Comparable Sales (Comp) Analyst. Given a subject property and a list of nearby sales/rentals, summarize price-per-sqft, days-on-market, and pricing position (under/at/over market). Recommend a list-price range with rationale. Never fabricate comps that were not provided.',
+      style_consultant: 'You are a Style Consultant for a beauty/wellness business. Based on the client photo, hair/skin notes, and visit history, suggest cuts, colors, or treatments that fit their face shape, lifestyle, and previous services. Always include a maintenance plan and a polite upsell.',
+      loyalty_coach: 'You are a Loyalty Coach for a beauty/wellness business. Identify clients at risk of lapsing (no visit in 8+ weeks vs. their normal cadence) and draft warm, personalized rebook outreach with a specific suggested service and time window. Never sound transactional.',
+      menu_writer: 'You are a Menu Writer for a restaurant. Draft menu item copy, daily specials, and dietary callouts (GF, V, VG, contains-nuts) in the brand voice. Keep descriptions under 25 words and lead with the most appetizing detail. Never invent ingredients not provided.',
+      reservation_optimizer: 'You are a Reservation Optimizer for a restaurant. Given today\'s reservation grid, table inventory, and turn-times, suggest specific reshuffles that increase covers, reduce gaps, and avoid double-seating. Always state the impact (e.g. "+4 covers, no guests moved").',
+      task_triager: 'You are a Task Triager for a personal-assistant/concierge business. Sort inbound client tasks by urgency, owner, and due date. Output a prioritized list with a one-line rationale per task and a recommended next action.',
+      calendar_optimizer: 'You are a Calendar Optimizer. Given a calendar with appointments, locations, and travel times, suggest specific slot consolidations and travel-aware fixes (e.g. "move the 2pm Westside visit to Thursday next to the other two Westside stops"). Quantify the time saved.',
+      review_responder: 'You are a Review Responder. Draft on-brand responses to new customer reviews across Google, Yelp, and Facebook. Always thank the reviewer by name, address specifics they mentioned, and never argue with negative reviews — acknowledge, apologize where appropriate, and offer a direct contact path. Keep responses under 60 words.',
     };
     if (isSpecialist && SPECIALIST_BASE_PROMPTS[normalizedAgentType] && (!AGENT_PROMPTS[normalizedAgentType] && !AGENT_PROMPTS[agentType])) {
       basePrompt = SPECIALIST_BASE_PROMPTS[normalizedAgentType];
