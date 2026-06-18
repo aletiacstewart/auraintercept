@@ -1,47 +1,21 @@
-## Goal
-When a visitor uses the **Message Aura** floating chat on the public marketing site (homepage, Smart Website, Company Blog), Aura can play the uploaded `AI_Main.mp4` walkthrough video inline in the chat — either automatically when the visitor asks for more info, or anytime via a persistent "Watch demo" button.
+## Problem
 
-Scope: public marketing chat only (FloatingChatWidget → LandingAIChat). No changes to in-app Aura, customer portal, voice agent, edge functions, or pricing.
+In the floating "Message Aura" widget, the top section (Aura avatar, "Talk to Aura" button, phone CTA, "Message Aura" header, demo video bubble) consumes the full 720px panel height. The parent wrapper uses `overflow-y-auto`, so the inner `LandingAIChat` (message list + composer) gets pushed below the visible area and the user has to scroll the whole panel just to see the input.
 
-## Changes
+## Fix (single file: `src/components/landing/FloatingChatWidget.tsx`)
 
-### 1. Upload the video to the CDN
-- Run `lovable-assets create --file /mnt/user-uploads/AI_Main.mp4 --filename aura-walkthrough.mp4 > src/assets/aura-walkthrough.mp4.asset.json`
-- Pointer is imported in code; binary stays out of the repo.
+1. Remove `overflow-y-auto` from the inner column wrapper and convert it to a strict flex column (`flex-1 min-h-0 flex flex-col`) so the chat region claims real height instead of overflowing.
+2. Wrap the top "AuraAvatarChat + Call Aura's Mobile" block in a `shrink-0` container so it stays a fixed-height header.
+3. Give the `LandingAIChat` wrapper `flex-1 min-h-0` so its internal `ScrollArea` (messages) actually has room to render and scroll inside the panel.
+4. Make the avatar header more compact in this embedded context: pass a `compact` prop to `AuraAvatarChat` (inline variant) that reduces the avatar size and removes the large vertical padding so it doesn't dominate the panel. If adding a prop is out of scope, instead constrain the header block with `max-h-[280px] overflow-hidden` and shrink the avatar via CSS class override.
+5. Keep the bottom "Report Issue" footer as `shrink-0` (already is, just confirm).
 
-### 2. Extend chat message model (`src/components/landing/LandingAIChat.tsx`)
-- Add an optional `videoUrl?: string` field to the local `Message` type so an assistant bubble can carry a video.
-- Add a helper `appendDemoVideoMessage()` that pushes an assistant message:
-  - `content`: "Here's a quick 60-second walkthrough of how Aura works. Want me to answer any specific questions after?"
-  - `videoUrl`: the CDN URL from the asset pointer.
-
-### 3. Persistent "Watch demo" button
-- In the chat header (next to "Message Aura"), add a small ghost button with a Play icon labeled **"Watch demo"**.
-- Clicking it calls `appendDemoVideoMessage()` (no LLM call, instant). Disabled while a video bubble is already the most recent assistant message to avoid spamming.
-
-### 4. Auto-detect intent on user input
-- In `handleSubmit`, before calling `streamChat`, run a lightweight regex against the trimmed user input:
-  - Pattern (case-insensitive): `/(watch|show|see|play).*(demo|video|walkthrough)|more info(rmation)?|tell me more|how does (it|aura) work|can i see|show me/`
-- If matched AND the last assistant message does not already contain a video, call `appendDemoVideoMessage()` first, then still send the user's message to the LLM so Aura also replies in text.
-
-### 5. Render inline video bubble
-- In the messages map, when `message.videoUrl` is present, render the text paragraph followed by a `<video>` element:
-  - `src={message.videoUrl}` `controls` `playsInline` `muted` `autoPlay` `preload="metadata"`
-  - Styled inside the existing white assistant bubble: `w-full rounded-md mt-2 max-h-[260px] bg-black`
-  - Wrapped at `max-w-[85%]` like other bubbles, with rounded corners and shadow.
-- Falls back gracefully (controls visible) if autoplay-muted is blocked.
-
-### 6. No other surfaces touched
-- `AuraAvatarChat`, voice chat, edge functions, system prompts, in-app Aura, customer portal — unchanged.
-
-## Technical notes
-- Asset URL accessed via `import auraWalkthrough from '@/assets/aura-walkthrough.mp4.asset.json'` then `auraWalkthrough.url`.
-- Autoplay uses `muted` to satisfy browser autoplay policies; user can unmute via native controls.
-- Intent regex is intentionally narrow to avoid surprise video popups; the explicit button covers the rest.
-- No new dependencies, no DB migrations, no edge function changes.
+No business logic, no changes to LandingAIChat, AuraAvatarChat internals (other than honoring the new `compact` flag if we add it), or any other surface.
 
 ## Verification
-- Open homepage → click floating Aura button → header shows "Watch demo" → click plays video inline, muted, with controls.
-- Type "show me a demo" or "tell me more" → video bubble appears, then Aura's text reply streams in below.
-- Type a normal question (e.g. "what's pricing?") → no video, just text reply.
-- Reload, repeat in the Smart Website and Company Blog floating widgets (same component) — works identically.
+
+- Open homepage → click the floating Aura button.
+- Confirm the message list, composer input, mic, and send button are visible without scrolling the panel.
+- Send a message → reply streams inside a scrollable message area, header stays fixed, composer stays pinned at the bottom.
+- Click "Watch demo" → video appears inside the scrollable message area, not pushing the input off-screen.
+- Resize viewport down to ~700px tall → panel respects `max-h-[85vh]`, chat remains usable.
