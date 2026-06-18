@@ -115,7 +115,7 @@ export const BUSINESS_TYPE_TO_PROFILE: Record<string, ProfileKey> = {
   'waterproofing contractor': 'PROFILE_C',
   'stucco contractor': 'PROFILE_C',
   'solar panel installer': 'PROFILE_C',
-  'accessibility remodeler (ramps, lifts)': 'PROFILE_C',
+  'accessibility remodeler ramps lifts': 'PROFILE_C',
   'countertop installer': 'PROFILE_C',
   'home addition contractor': 'PROFILE_C',
 
@@ -217,8 +217,8 @@ export const BUSINESS_TYPE_TO_PROFILE: Record<string, ProfileKey> = {
   'house sitter': 'PROFILE_D',
   'nanny / child care agency': 'PROFILE_D',
   'meal prep / personal chef': 'PROFILE_D',
-  'wedding planner (home/venue visits)': 'PROFILE_I',
-  'photographer (real estate/events)': 'PROFILE_D',
+  'wedding planner home/venue visits': 'PROFILE_I',
+  'photographer real estate/events': 'PROFILE_D',
 
   // Delivery & On-Site Logistics
   'furniture delivery & assembly': 'PROFILE_F',
@@ -244,7 +244,7 @@ export const BUSINESS_TYPE_TO_PROFILE: Record<string, ProfileKey> = {
   'bounce house / party rental delivery': 'PROFILE_I',
   'portable restroom rental': 'PROFILE_I',
   'dj / mobile entertainment service': 'PROFILE_I',
-  'catering service (on-site)': 'PROFILE_I',
+  'catering service on-site': 'PROFILE_I',
   'photo booth rental': 'PROFILE_I',
 };
 
