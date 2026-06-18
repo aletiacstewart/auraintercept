@@ -1,21 +1,26 @@
-## Problem
+Approved direction: **option A** — full 185-row business-type → profile table in source-controlled TS, with optional DB column override.
 
-In the floating "Message Aura" widget, the top section (Aura avatar, "Talk to Aura" button, phone CTA, "Message Aura" header, demo video bubble) consumes the full 720px panel height. The parent wrapper uses `overflow-y-auto`, so the inner `LandingAIChat` (message list + composer) gets pushed below the visible area and the user has to scroll the whole panel just to see the input.
+## Phase 1 — Canonical Profile Registry (this rollout)
 
-## Fix (single file: `src/components/landing/FloatingChatWidget.tsx`)
+**New files**
+- `src/lib/industryProfiles.ts` — `ProfileKey = 'PROFILE_A'…'PROFILE_J'`, plus `PROFILE_SPECS[ProfileKey]` containing:
+  - `consoles: ConsoleId[]` (subset of C1–C7)
+  - `agentsAlwaysOn`, `agentsDefaultOn`, `agentsDefaultOff`, `agentsHidden`, `agentsOptional` (string[])
+  - `dashboardWidgets: string[]` (primary widget order)
+  - `receptionistScriptId: string`
+  - `labelOverrides: { technician?, job?, quote?, hideDispatch?, hideRoute? }`
+- `src/lib/businessTypeProfileMap.ts` — full 185-entry `Record<string, ProfileKey>` parsed from doc Section 4 (pages 19–29). Includes `getProfileForBusinessType(vertical)` with normalization (lowercase, strip punctuation, alias lookup via `industryIdAliases`) and `PROFILE_D` fallback.
+- `src/hooks/useCompanyProfile.ts` — returns `{ profileKey, spec, loading }`. Source priority: `companies.profile_key` (override) → map lookup on `companies.industry_vertical` → `PROFILE_D`.
 
-1. Remove `overflow-y-auto` from the inner column wrapper and convert it to a strict flex column (`flex-1 min-h-0 flex flex-col`) so the chat region claims real height instead of overflowing.
-2. Wrap the top "AuraAvatarChat + Call Aura's Mobile" block in a `shrink-0` container so it stays a fixed-height header.
-3. Give the `LandingAIChat` wrapper `flex-1 min-h-0` so its internal `ScrollArea` (messages) actually has room to render and scroll inside the panel.
-4. Make the avatar header more compact in this embedded context: pass a `compact` prop to `AuraAvatarChat` (inline variant) that reduces the avatar size and removes the large vertical padding so it doesn't dominate the panel. If adding a prop is out of scope, instead constrain the header block with `max-h-[280px] overflow-hidden` and shrink the avatar via CSS class override.
-5. Keep the bottom "Report Issue" footer as `shrink-0` (already is, just confirm).
+**Migration**
+- Add nullable `profile_key text` column to `public.companies` and `public.industry_template_packs`.
+- Backfill `companies.profile_key` from `industry_vertical` via a one-shot UPDATE using a CASE built from the same 185-row map (generated SQL).
+- Add a CHECK-equivalent via trigger limiting values to PROFILE_A…PROFILE_J.
 
-No business logic, no changes to LandingAIChat, AuraAvatarChat internals (other than honoring the new `compact` flag if we add it), or any other surface.
+**Tests**
+- `src/lib/__tests__/industryProfiles.test.ts` — for every entry in the 185-map, assert the resolved spec has consoles per Section 3 and that `getProfileForBusinessType` is case/alias tolerant. Spot-check Profile A/B/C/D/E/I expectations from the spec.
 
-## Verification
+**Out of scope for Phase 1** (queued for later phases per the approved plan)
+- Sidebar removal, agent lock/hide enforcement, dashboard widget swap, receptionist scripts, label-remap wiring, functional audit.
 
-- Open homepage → click the floating Aura button.
-- Confirm the message list, composer input, mic, and send button are visible without scrolling the panel.
-- Send a message → reply streams inside a scrollable message area, header stays fixed, composer stays pinned at the bottom.
-- Click "Watch demo" → video appears inside the scrollable message area, not pushing the input off-screen.
-- Resize viewport down to ~700px tall → panel respects `max-h-[85vh]`, chat remains usable.
+I'll start by writing the migration (needs approval), then push the TS files + hook + tests in one batch after the migration runs and types regenerate.

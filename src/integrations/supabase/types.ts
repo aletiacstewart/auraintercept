@@ -1094,6 +1094,7 @@ export type Database = {
           phone: string | null
           phone_number_setup_type: string | null
           primary_color: string | null
+          profile_key: string | null
           public_app_url: string | null
           quarterly_digest_day: number | null
           quarterly_digest_email: string | null
@@ -1242,6 +1243,7 @@ export type Database = {
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
+          profile_key?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null
           quarterly_digest_email?: string | null
@@ -1390,6 +1392,7 @@ export type Database = {
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
+          profile_key?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null
           quarterly_digest_email?: string | null
@@ -3260,6 +3263,7 @@ export type Database = {
           kb_seed_documents: Json
           label: string
           min_tier_per_extra: Json
+          profile_key: string | null
           quote_template: Json
           service_catalog: Json
           service_type_options: Json
@@ -3288,6 +3292,7 @@ export type Database = {
           kb_seed_documents?: Json
           label: string
           min_tier_per_extra?: Json
+          profile_key?: string | null
           quote_template?: Json
           service_catalog?: Json
           service_type_options?: Json
@@ -3316,6 +3321,7 @@ export type Database = {
           kb_seed_documents?: Json
           label?: string
           min_tier_per_extra?: Json
+          profile_key?: string | null
           quote_template?: Json
           service_catalog?: Json
           service_type_options?: Json
@@ -7603,6 +7609,7 @@ export type Database = {
           kb_seed_documents: Json
           label: string
           min_tier_per_extra: Json
+          profile_key: string | null
           quote_template: Json
           service_catalog: Json
           service_type_options: Json
