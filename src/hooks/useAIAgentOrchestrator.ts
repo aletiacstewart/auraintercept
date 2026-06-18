@@ -3,6 +3,51 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { normalizeAgentName } from '@/lib/subscriptionAgentConfig';
+import { PROFILE_SPECS, getProfileSpec, ProfileKey } from '@/lib/industryProfiles';
+import { getProfileForBusinessType } from '@/lib/businessTypeProfileMap';
+
+/**
+ * Granular AgentId (from PROFILE_SPECS.agentsAlwaysOn) → consolidated
+ * operative type used by ai_agent_configs. Keep in sync with the same map
+ * in `BatchAgentActivation.tsx`.
+ */
+const GRANULAR_TO_OPERATIVE: Record<string, string> = {
+  ai_receptionist: 'triage',
+  booking_agent: 'customer_journey',
+  follow_up_agent: 'customer_journey',
+  review_agent: 'customer_journey',
+  dispatch_gps: 'dispatch',
+  check_in_agent: 'dispatch',
+  route_agent: 'field_navigation',
+  eta_agent: 'field_navigation',
+  admin_agent: 'admin',
+  quoting_agent: 'business_finance',
+  invoice_agent: 'business_finance',
+  inventory_agent: 'business_finance',
+  campaign_agent: 'outreach',
+  lead_agent: 'outreach',
+  marketing_agent: 'outreach',
+  creative_agent: 'creative_content',
+  social_media_agent: 'creative_content',
+  social_media_scheduler: 'creative_content',
+  social_media_analytics: 'creative_content',
+  web_presence_agent: 'web_presence',
+  insights_agent: 'analytics_intelligence',
+  performance_agent: 'analytics_intelligence',
+  revenue_agent: 'analytics_intelligence',
+  forecast_agent: 'analytics_intelligence',
+};
+
+/** Operatives that are Always-On for the given profile. */
+function alwaysOnOperativesForProfile(key: ProfileKey | null): Set<string> {
+  const spec = getProfileSpec(key);
+  const out = new Set<string>();
+  for (const gran of spec.agentsAlwaysOn) {
+    const op = GRANULAR_TO_OPERATIVE[gran];
+    if (op) out.add(op);
+  }
+  return out;
+}
 
 export interface AgentInfo {
   type: string;
@@ -195,6 +240,29 @@ export function useAIAgentOrchestrator() {
         variant: 'destructive',
       });
       return;
+    }
+
+    // Phase 7 — Always-On lock. Refuse to disable operatives the company's
+    // profile marks as Always-On. Enabling is always allowed.
+    if (!enabled) {
+      const { data: row } = await supabase
+        .from('companies')
+        .select('profile_key, industry_vertical')
+        .eq('id', companyId)
+        .maybeSingle();
+      const r = row as { profile_key?: string | null; industry_vertical?: string | null } | null;
+      let profileKey: ProfileKey | null = null;
+      if (r?.profile_key && r.profile_key in PROFILE_SPECS) profileKey = r.profile_key as ProfileKey;
+      else if (r?.industry_vertical) profileKey = getProfileForBusinessType(r.industry_vertical);
+      const alwaysOn = alwaysOnOperativesForProfile(profileKey);
+      if (alwaysOn.has(agentType)) {
+        toast({
+          title: 'Required operative',
+          description: `${agentType} is required for your industry profile and cannot be turned off.`,
+          variant: 'destructive',
+        });
+        return;
+      }
     }
     
     try {
