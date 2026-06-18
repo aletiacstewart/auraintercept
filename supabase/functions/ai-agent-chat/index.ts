@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { buildReceptionistPromptAddon } from "../_shared/receptionist-scripts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -3491,7 +3492,7 @@ serve(async (req) => {
     // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
       .from('companies')
-      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name, industry_vertical')
+      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name, industry_vertical, profile_key')
       .eq('id', companyId)
       .single();
 
@@ -3959,6 +3960,9 @@ Current Context: ${JSON.stringify(contextData)}
 ${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
 ${languageDirective}
+${(agentType === 'triage' || agentType === 'ai_receptionist' || agentType === 'customer_journey') && !isInternalAgent
+  ? buildReceptionistPromptAddon((company as { profile_key?: string | null } | null)?.profile_key ?? null, company?.name || 'Our Company')
+  : ''}
 
 CRITICAL RULES:
 ${isInternalAgent ? `- Provide data and analytics directly without customer-service language

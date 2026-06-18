@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2"; // voice-handler SWM
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt, type IndustryPackLite } from "../_shared/industry-pack.ts";
 import { loadCompanyWorkspace, buildIndustryPromptSnippet, type CompanyWorkspaceContext } from "../_shared/workspace.ts";
 import { verifySignalWireRequest, recordSignatureFailure } from "../_shared/signalwire-signature.ts";
+import { buildReceptionistPromptAddon, renderScriptGreeting } from "../_shared/receptionist-scripts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,6 +50,7 @@ function buildPhoneSystemPrompt(
   services: any[],
   pack: IndustryPackLite | null = null,
   workspace: CompanyWorkspaceContext | null = null,
+  profileKey: string | null = null,
 ): string {
   const context = agentPrompt ? agentPrompt.replace(/technician/gi, 'team member') : `a helpful AI assistant for ${companyName}`;
   
@@ -75,7 +77,9 @@ Guidelines:
 - NEVER re-ask for information the caller has already provided in this conversation. If you collected their name, phone number, or email earlier, use it — do not ask again.
 - Do NOT ask "would you like to leave your contact info" if you already have it from earlier in the conversation.`;
   const withPack = applyIndustryPackToPrompt(base, pack, 'voice');
-  return withPack + buildIndustryPromptSnippet(workspace, 'voice_receptionist');
+  return withPack
+    + buildIndustryPromptSnippet(workspace, 'voice_receptionist')
+    + buildReceptionistPromptAddon(profileKey, companyName);
 }
 
 // Build the SWML document for SignalWire's native AI agent
@@ -90,8 +94,10 @@ function buildSWMLDocument(
   workspace: CompanyWorkspaceContext | null = null,
 ): object {
   const companyName = company?.name || 'our company';
-  const greeting = company?.ai_voice_greeting || `Thank you for calling ${companyName}. How can I help you today?`;
-  const systemPrompt = buildPhoneSystemPrompt(companyName, company?.ai_agent_prompt || null, services, pack, workspace);
+  const profileKey: string | null = company?.profile_key || null;
+  const greeting = company?.ai_voice_greeting
+    || renderScriptGreeting(profileKey, companyName);
+  const systemPrompt = buildPhoneSystemPrompt(companyName, company?.ai_agent_prompt || null, services, pack, workspace, profileKey);
 
   const swaigUrl = `${supabaseUrl}/functions/v1/voice-swaig`;
   const postPromptUrl = `${supabaseUrl}/functions/v1/voice-post-prompt`;
@@ -395,7 +401,7 @@ async function handleIncoming(
   // Get company info including call routing settings
   const { data: company } = await supabase
     .from('companies')
-    .select('name, ai_voice_greeting, ai_agent_prompt, call_routing_mode, business_phone, ring_timeout_seconds, default_language, supported_languages')
+    .select('name, ai_voice_greeting, ai_agent_prompt, call_routing_mode, business_phone, ring_timeout_seconds, default_language, supported_languages, profile_key')
     .eq('id', company_id)
     .single();
 
