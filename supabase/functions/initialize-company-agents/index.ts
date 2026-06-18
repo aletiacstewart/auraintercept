@@ -46,6 +46,23 @@ function normalizeTier(t: string | null | undefined): string {
   return TIER_ALIASES[t.toLowerCase()] ?? 'starter';
 }
 
+// Profile policy (mirror of src/lib/industryProfiles.ts).
+// Lists operative-level agent_types that must be SKIPPED when initializing
+// for a company whose profile_key matches. Derived from agentsHidden in the
+// canonical ProfileSpec, collapsed to consolidated + legacy ids.
+const PROFILE_HIDDEN_AGENT_TYPES: Record<string, string[]> = {
+  PROFILE_A: [],
+  PROFILE_B: [],
+  PROFILE_C: [],
+  PROFILE_D: ['dispatch', 'checkin', 'field_navigation', 'route', 'eta'],
+  PROFILE_E: ['dispatch', 'checkin', 'field_navigation', 'route', 'eta'],
+  PROFILE_F: [],
+  PROFILE_G: [],
+  PROFILE_H: [],
+  PROFILE_I: ['dispatch', 'checkin', 'field_navigation', 'route', 'eta'],
+  PROFILE_J: [],
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -65,7 +82,7 @@ Deno.serve(async (req) => {
     if (allCompanies) {
       const { data, error } = await admin
         .from('companies')
-        .select('id, subscription_tier, industry_vertical');
+        .select('id, subscription_tier, industry_vertical, profile_key');
       if (error) throw error;
       companies = data ?? [];
     } else {
@@ -76,7 +93,7 @@ Deno.serve(async (req) => {
       }
       const { data, error } = await admin
         .from('companies')
-        .select('id, subscription_tier, industry_vertical')
+        .select('id, subscription_tier, industry_vertical, profile_key')
         .eq('id', companyId)
         .maybeSingle();
       if (error) throw error;
@@ -88,7 +105,7 @@ Deno.serve(async (req) => {
       companies = [data];
     }
 
-    const results: Array<{ company_id: string; activated: number; tier: string }> = [];
+    const results: Array<{ company_id: string; activated: number; tier: string; profile?: string }> = [];
 
     for (const c of companies) {
       const tier = normalizeTier(c.subscription_tier);
@@ -115,7 +132,16 @@ Deno.serve(async (req) => {
         }
       }
 
-      const all = Array.from(new Set([...tierAgents, ...extras]));
+      let all = Array.from(new Set([...tierAgents, ...extras]));
+
+      // Apply profile policy — strip operatives the profile hides.
+      const profileKey = (c as { profile_key?: string | null }).profile_key;
+      if (profileKey && PROFILE_HIDDEN_AGENT_TYPES[profileKey]) {
+        const hidden = new Set(PROFILE_HIDDEN_AGENT_TYPES[profileKey]);
+        if (hidden.size > 0) {
+          all = all.filter((op) => !hidden.has(op));
+        }
+      }
 
       // Upsert each row as enabled. Do not delete other rows so we never
       // disable something an admin manually toggled on.
@@ -136,7 +162,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      results.push({ company_id: c.id, activated: rows.length, tier });
+      results.push({ company_id: c.id, activated: rows.length, tier, profile: profileKey ?? undefined });
     }
 
     return new Response(JSON.stringify({ success: true, count: results.length, results }), {
