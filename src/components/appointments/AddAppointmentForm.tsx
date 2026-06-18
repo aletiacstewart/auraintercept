@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useProfileGates } from '@/hooks/useProfileGates';
 import { DynamicIntakeFields } from '@/components/forms/DynamicIntakeFields';
 import { resolveFormSchema, validateIntake, getAppointmentRules } from '@/lib/industryFormSchemas';
 import { getIndustryFieldLabel } from '@/lib/industryFieldLabels';
@@ -65,6 +66,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const { pack } = useIndustryPack();
+  const { hideDispatch } = useProfileGates();
   const rules = React.useMemo(() => getAppointmentRules(pack), [pack]);
   const TIME_SLOTS = React.useMemo(
     () => buildTimeSlots(
@@ -384,7 +386,7 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           </div>
 
           {/* Assign Technician — only shown for verticals that dispatch field staff */}
-          {hasFieldTechnicians(pack) && pack && (
+          {hasFieldTechnicians(pack) && pack && !hideDispatch && (
             <div className="space-y-2">
               <Label className="text-foreground/70">Assign {getNavLabels(pack!).teamMemberNoun} (optional)</Label>
               <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
