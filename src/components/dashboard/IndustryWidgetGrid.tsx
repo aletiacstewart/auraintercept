@@ -7,6 +7,7 @@ import {
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useNavigate } from 'react-router-dom';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import { useIndustryWidgetCounts } from '@/hooks/useIndustryWidgetCounts';
 
 // Widget registry: id → { label, icon, description, primary CTA }
 // Phase 2 ships full content for trades widgets. Outdoor/Repair/Booking widgets
@@ -170,6 +171,8 @@ const WIDGET_REGISTRY: Record<string, WidgetSpec> = {
 export function IndustryWidgetGrid() {
   const { pack, loading } = useIndustryPack();
   const navigate = useNavigate();
+  const widgetIds = pack?.dashboard_widgets ?? [];
+  const { counts } = useIndustryWidgetCounts(widgetIds);
 
   if (loading || !pack || pack.industry_id === 'generic' || !pack.dashboard_widgets?.length) {
     return null;
@@ -200,6 +203,7 @@ export function IndustryWidgetGrid() {
             if (!w) return null;
             const Icon = w.icon;
             const clickable = !!w.cta;
+            const count = counts[id];
             return (
               <button
                 key={id}
@@ -213,6 +217,11 @@ export function IndustryWidgetGrid() {
               >
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  {typeof count === 'number' && (
+                    <span className="text-sm font-semibold text-primary tabular-nums">
+                      {count}
+                    </span>
+                  )}
                   {w.comingSoon && (
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
                       soon
