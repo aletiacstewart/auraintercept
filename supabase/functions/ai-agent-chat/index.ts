@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { buildReceptionistPromptAddon } from "../_shared/receptionist-scripts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -3959,6 +3960,9 @@ Current Context: ${JSON.stringify(contextData)}
 ${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
 ${languageDirective}
+${(agentType === 'triage' || agentType === 'ai_receptionist' || agentType === 'customer_journey') && !isInternalAgent
+  ? buildReceptionistPromptAddon((company as { profile_key?: string | null } | null)?.profile_key ?? null, company?.name || 'Our Company')
+  : ''}
 
 CRITICAL RULES:
 ${isInternalAgent ? `- Provide data and analytics directly without customer-service language
