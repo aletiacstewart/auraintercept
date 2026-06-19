@@ -12,6 +12,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
+import { MarketingMatrixCards } from '@/components/marketing/MarketingMatrixCards';
 
 export default function SocialMediaConsole() {
   const { userRole } = useAuth();
@@ -54,6 +55,7 @@ export default function SocialMediaConsole() {
             />
             
             <SocialMediaAgentConsole />
+            <MarketingMatrixCards socialOnly />
           </div>
         </FeatureGate>
       </PageContainer>
