@@ -256,8 +256,14 @@ export default function SignUp() {
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
       // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
-      const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
-      if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
+      // `businessIndustry` may be a canonical id ('hvac') OR a raw 185-type
+      // business-type key ('hvac contractor'). Map to canonical via the
+      // business-type registry, fall back to alias resolution.
+      const rawBusinessType = businessIndustry?.trim() || '';
+      const canonicalIndustry =
+        getPackIdForBusinessType(rawBusinessType) ||
+        toCanonicalIndustryId(rawBusinessType);
+      if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry) || canonicalIndustry === 'default') {
         toast({
           title: 'Industry required',
           description: 'Please select your industry from the dropdown so we can set up the right console, agents, and templates.',
