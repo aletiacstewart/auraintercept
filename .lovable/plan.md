@@ -1,26 +1,24 @@
-Approved direction: **option A** — full 185-row business-type → profile table in source-controlled TS, with optional DB column override.
+Plan: Close Remaining Mock-to-Live Gaps in Core Product
 
-## Phase 1 — Canonical Profile Registry (this rollout)
+1. Customer Segments Persistence
+   - Create `customer_segments` table in public schema with RLS (company_id, name, criteria JSONB, created_by, timestamps).
+   - Add GRANTs for authenticated/service_role.
+   - Wire `CustomerSegmentsForm` to read/write real segments via Supabase instead of `MOCK_SEGMENTS` local state.
+   - Keep the existing live preview count logic (queries appointments/invoices for matching criteria).
+   - Wire "Send Email Campaign" and "Send SMS Campaign" buttons to actual campaign creation flow (or campaign-draft state) rather than toast-only.
 
-**New files**
-- `src/lib/industryProfiles.ts` — `ProfileKey = 'PROFILE_A'…'PROFILE_J'`, plus `PROFILE_SPECS[ProfileKey]` containing:
-  - `consoles: ConsoleId[]` (subset of C1–C7)
-  - `agentsAlwaysOn`, `agentsDefaultOn`, `agentsDefaultOff`, `agentsHidden`, `agentsOptional` (string[])
-  - `dashboardWidgets: string[]` (primary widget order)
-  - `receptionistScriptId: string`
-  - `labelOverrides: { technician?, job?, quote?, hideDispatch?, hideRoute? }`
-- `src/lib/businessTypeProfileMap.ts` — full 185-entry `Record<string, ProfileKey>` parsed from doc Section 4 (pages 19–29). Includes `getProfileForBusinessType(vertical)` with normalization (lowercase, strip punctuation, alias lookup via `industryIdAliases`) and `PROFILE_D` fallback.
-- `src/hooks/useCompanyProfile.ts` — returns `{ profileKey, spec, loading }`. Source priority: `companies.profile_key` (override) → map lookup on `companies.industry_vertical` → `PROFILE_D`.
+2. Social Content Engine — Publishing Pipeline Check
+   - Audit `ContentEngineConsole` and social operatives to confirm whether generated posts currently stop at "draft" or can actually publish via connected OAuth accounts.
+   - If publishing is still mock/demo-only, wire the "Publish" action to the social adapter edge function that handles Meta/LinkedIn/Google Business posting.
+   - Ensure published posts are logged to a `social_posts` table with timestamp, platform, and status.
 
-**Migration**
-- Add nullable `profile_key text` column to `public.companies` and `public.industry_template_packs`.
-- Backfill `companies.profile_key` from `industry_vertical` via a one-shot UPDATE using a CASE built from the same 185-row map (generated SQL).
-- Add a CHECK-equivalent via trigger limiting values to PROFILE_A…PROFILE_J.
+3. Final Sweep for Core-Facing Mock Data
+   - Run a targeted search for any remaining hardcoded fallback data in non-demo, non-admin-gated user paths.
+   - Replace or guard anything found with real queries or empty states.
 
-**Tests**
-- `src/lib/__tests__/industryProfiles.test.ts` — for every entry in the 185-map, assert the resolved spec has consoles per Section 3 and that `getProfileForBusinessType` is case/alias tolerant. Spot-check Profile A/B/C/D/E/I expectations from the spec.
+4. Verification
+   - All existing 69 tests continue to pass.
+   - Build succeeds with zero new TypeScript errors.
+   - Spot-check Customer Segments CRUD and Social publishing flows in preview.
 
-**Out of scope for Phase 1** (queued for later phases per the approved plan)
-- Sidebar removal, agent lock/hide enforcement, dashboard widget swap, receptionist scripts, label-remap wiring, functional audit.
-
-I'll start by writing the migration (needs approval), then push the TS files + hook + tests in one batch after the migration runs and types regenerate.
+Scope: This plan does NOT add new features or redesign UI. It only hardens existing surfaces so every core product path is backed by live database data.
