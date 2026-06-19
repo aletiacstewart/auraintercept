@@ -7,9 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { INDUSTRY_LIST } from '@/lib/industryTemplates';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import {
+  BUSINESS_TYPE_GROUPS,
+  BUSINESS_TYPES,
+  getPackIdForBusinessType,
+  BUSINESS_TYPE_COUNT,
+} from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
