@@ -13,7 +13,6 @@ import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
-import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 /**
  * Marketing Platform Guide industry taxonomy — 22 category groups covering
  * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
