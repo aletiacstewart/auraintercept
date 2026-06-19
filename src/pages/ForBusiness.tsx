@@ -18,6 +18,7 @@ import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/seo/SEO';
+import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
@@ -185,6 +186,7 @@ export default function ForBusiness() {
       <PublicFooter />
 
       <StartDemoDialog open={demoOpen} onOpenChange={setDemoOpen} industryId={industry} />
+      <FloatingChatWidget autoOpenAfterMs={6000} autoOpenStorageKey="aura_autoopen_livedemo" />
     </div>
   );
 }
