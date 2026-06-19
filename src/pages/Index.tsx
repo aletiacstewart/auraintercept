@@ -332,20 +332,6 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
   neonRgb: '168,85,247'
 }];
-const HOMEPAGE_INDUSTRIES = INDUSTRY_GROUPS.flatMap((g) =>
-  g.ids
-    .filter((id) => id !== 'default' && id !== 'other' && INDUSTRY_CONTENT[id])
-    .map((id) => {
-      const c = INDUSTRY_CONTENT[id];
-      return {
-        id,
-        name: c.label,
-        group: g.group,
-        description: c.hero.subheadline.split('.')[0].slice(0, 60),
-        icon: INDUSTRY_ICONS[id] ?? Sparkles,
-      };
-    }),
-);
 const howItWorks = [{
   step: 1,
   title: 'Sign Up & Configure',
