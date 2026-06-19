@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
+import { MarketingFocusStrip } from '@/components/marketing/MarketingMatrixCards';
 
 /**
  * Profile-driven dashboard widgets.
@@ -116,6 +117,7 @@ export function ProfileWidgetGrid() {
   if (loading || !spec?.dashboardWidgets?.length) return null;
 
   return (
+    <div className="space-y-4">
     <Card className="border-primary/20 bg-card/60">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -151,5 +153,7 @@ export function ProfileWidgetGrid() {
         </div>
       </CardContent>
     </Card>
+    <MarketingFocusStrip />
+    </div>
   );
 }
