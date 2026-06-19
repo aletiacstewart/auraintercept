@@ -638,7 +638,7 @@ export default function Index() {
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#00E5FF", marginBottom: 8 }}>{item.title}</div>
                   <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.6 }}>{item.description}</p>
                 </div>
-                {index < howItWorks.length - 1 && (
+                {index !== 3 && index < howItWorks.length - 1 && (
                   <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
                     <ChevronRight size={20} style={{ color: "rgba(0,229,255,0.3)" }} />
                   </div>
