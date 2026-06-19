@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,35 +48,10 @@ interface CustomerSegment {
   createdAt: string;
 }
 
-// Mock segments for demo (in production, these would come from a database table)
-const MOCK_SEGMENTS: CustomerSegment[] = [
-  {
-    id: '1',
-    name: 'High Value Customers',
-    criteria: { lastServiceDays: '90', minSpend: '500', maxSpend: '', serviceTypes: [], status: 'active' },
-    customerCount: 45,
-    createdAt: '2024-01-15',
-  },
-  {
-    id: '2',
-    name: 'Inactive (90+ days)',
-    criteria: { lastServiceDays: '90', minSpend: '', maxSpend: '', serviceTypes: [], status: 'inactive' },
-    customerCount: 128,
-    createdAt: '2024-01-10',
-  },
-  {
-    id: '3',
-    name: 'New Customers',
-    criteria: { lastServiceDays: '30', minSpend: '', maxSpend: '', serviceTypes: [], status: 'active' },
-    customerCount: 32,
-    createdAt: '2024-02-01',
-  },
-];
-
 export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ companyId, onCancel }) => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('browse');
   const [searchQuery, setSearchQuery] = useState('');
-  const [segments, setSegments] = useState<CustomerSegment[]>(MOCK_SEGMENTS);
   const [isCreating, setIsCreating] = useState(false);
   
   // New segment form state
@@ -101,6 +76,26 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
         .eq('company_id', companyId)
         .eq('is_active', true);
       return data || [];
+    },
+  });
+
+  // Fetch persisted segments
+  const { data: segments = [] } = useQuery<CustomerSegment[]>({
+    queryKey: ['customer_segments', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('customer_segments' as any)
+        .select('id, name, criteria, customer_count, created_at')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        criteria: r.criteria as SegmentCriteria,
+        customerCount: r.customer_count ?? 0,
+        createdAt: (r.created_at || '').split('T')[0],
+      }));
     },
   });
 
@@ -143,22 +138,21 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
 
     setIsCreating(true);
     try {
-      // In production, save to database
-      const newSegment: CustomerSegment = {
-        id: Date.now().toString(),
-        name: segmentName,
-        criteria: {
-          lastServiceDays,
-          minSpend,
-          maxSpend,
-          serviceTypes: selectedServiceTypes,
-          status: customerStatus,
-        },
-        customerCount: previewCount || 0,
-        createdAt: new Date().toISOString().split('T')[0],
+      const criteria: SegmentCriteria = {
+        lastServiceDays,
+        minSpend,
+        maxSpend,
+        serviceTypes: selectedServiceTypes,
+        status: customerStatus,
       };
-
-      setSegments([newSegment, ...segments]);
+      const { error } = await supabase.from('customer_segments' as any).insert({
+        company_id: companyId,
+        name: segmentName,
+        criteria: criteria as any,
+        customer_count: previewCount || 0,
+      });
+      if (error) throw error;
+      await queryClient.invalidateQueries({ queryKey: ['customer_segments', companyId] });
       toast.success('Segment created successfully');
       
       // Reset form
@@ -170,15 +164,21 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
       setCustomerStatus('all');
       setPreviewCount(null);
       setActiveTab('browse');
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Failed to create segment:', error);
       toast.error('Failed to create segment');
     } finally {
       setIsCreating(false);
     }
   };
 
-  const handleDeleteSegment = (id: string) => {
-    setSegments(segments.filter(s => s.id !== id));
+  const handleDeleteSegment = async (id: string) => {
+    const { error } = await supabase.from('customer_segments' as any).delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to delete segment');
+      return;
+    }
+    await queryClient.invalidateQueries({ queryKey: ['customer_segments', companyId] });
     toast.success('Segment deleted');
   };
 
