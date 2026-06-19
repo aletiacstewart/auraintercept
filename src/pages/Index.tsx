@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse, PawPrint, Sparkles, type LucideIcon } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -14,6 +14,34 @@ import { PricingComparisonTable } from '@/components/landing/PricingComparisonTa
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
+import { INDUSTRY_GROUPS, INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
+
+const INDUSTRY_ICONS: Record<string, LucideIcon> = {
+  hvac: Flame,
+  plumbing: Droplet,
+  electrical: Zap,
+  solar: Sun,
+  roofing: Home,
+  fencing: Fence,
+  landscape: TreeDeciduous,
+  pool_spa: Waves,
+  pest_control: Bug,
+  appliance_repair: Refrigerator,
+  handyman: Hammer,
+  construction: HardHat,
+  auto_care: Car,
+  security_systems: Camera,
+  real_estate: Building2,
+  beauty_wellness: Scissors,
+  restaurants: UtensilsCrossed,
+  personal_assistant: Bot,
+  home_health: Stethoscope,
+  physical_therapy: HeartPulse,
+  occupational_therapy: HeartHandshake,
+  hospice: HeartHandshake,
+  veterinary: PawPrint,
+  medical_practice: Stethoscope,
+};
 
 const agentCategories = [{
   id: 'customer',
@@ -303,109 +331,20 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
   neonRgb: '168,85,247'
 }];
-const industryCategories = [{
-  category: 'Essential Trades',
-  emoji: '⚡',
-  subtitle: 'High-Urgency',
-  industries: [{
-    name: 'HVAC',
-    icon: Flame,
-    description: 'Heating, Ventilation, & AC'
-  }, {
-    name: 'Plumbing',
-    icon: Droplet,
-    description: 'Emergency & Installations'
-  }, {
-    name: 'Electrical',
-    icon: Zap,
-    description: 'Residential & Commercial'
-  }, {
-    name: 'Solar Energy',
-    icon: Sun,
-    description: 'Panels & Maintenance'
-  }]
-}, {
-  category: 'Exterior & Structural',
-  emoji: '🏠',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Roofing',
-    icon: Home,
-    description: 'Repair & Storm Damage'
-  }, {
-    name: 'Fencing & Decking',
-    icon: Fence,
-    description: 'Perimeter Solutions'
-  }]
-}, {
-  category: 'Property & Estate',
-  emoji: '🌿',
-  subtitle: 'Maintenance',
-  industries: [{
-    name: 'Landscape & Trees',
-    icon: TreeDeciduous,
-    description: 'Design, Trimming, & Removal'
-  }, {
-    name: 'Pool & Spa',
-    icon: Waves,
-    description: 'Chemistry & Equipment'
-  }, {
-    name: 'Pest Control',
-    icon: Bug,
-    description: 'Residential & Commercial'
-  }]
-}, {
-  category: 'Specialized Home',
-  emoji: '🛠',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Appliance Repair',
-    icon: Refrigerator,
-    description: 'Kitchen & Laundry'
-  }, {
-    name: 'Handyman & Cleaning',
-    icon: Hammer,
-    description: 'Repair & Janitorial'
-  }, {
-    name: 'Construction',
-    icon: HardHat,
-    description: 'Painting, Flooring, Tile & Trim'
-  }]
-}, {
-  category: 'Mobile & Commercial',
-  emoji: '🚗',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Auto Care',
-    icon: Car,
-    description: 'Detailing & Repair'
-  }, {
-    name: 'Security Systems',
-    icon: Camera,
-    description: 'Cameras & Alarms'
-  }, {
-    name: 'Real Estate',
-    icon: Building2,
-    description: 'Residential & Commercial'
-  }]
-}, {
-  category: 'Wellness & Personal',
-  emoji: '💆',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Beauty & Wellness',
-    icon: Scissors,
-    description: 'Salons & Massage'
-  }, {
-    name: 'Restaurants',
-    icon: UtensilsCrossed,
-    description: 'Cafes & Food Service'
-  }, {
-    name: 'Personal Assistant',
-    icon: Bot,
-    description: 'Calendar & Scheduling'
-  }]
-}];
+const HOMEPAGE_INDUSTRIES = INDUSTRY_GROUPS.flatMap((g) =>
+  g.ids
+    .filter((id) => id !== 'default' && id !== 'other' && INDUSTRY_CONTENT[id])
+    .map((id) => {
+      const c = INDUSTRY_CONTENT[id];
+      return {
+        id,
+        name: c.label,
+        group: g.group,
+        description: c.hero.subheadline.split('.')[0].slice(0, 60),
+        icon: INDUSTRY_ICONS[id] ?? Sparkles,
+      };
+    }),
+);
 const howItWorks = [{
   step: 1,
   title: 'Sign Up & Configure',
@@ -821,8 +760,8 @@ export default function Index() {
             <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI that intercepts every inquiry and books directly to your calendar.</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
-            {industryCategories.flatMap(cat => cat.industries).map(industry => (
-              <div key={industry.name} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
+            {HOMEPAGE_INDUSTRIES.map(industry => (
+              <div key={industry.id} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
