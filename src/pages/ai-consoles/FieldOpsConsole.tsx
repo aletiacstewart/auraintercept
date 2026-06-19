@@ -18,6 +18,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
+import { BusinessTypeContextStrip } from '@/components/marketing/BusinessTypeContextStrip';
 import { getFieldOpsWorkflows } from '@/lib/industryFieldOpsWorkflows';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
@@ -93,6 +94,11 @@ export default function FieldOpsConsole() {
                 toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
                 submitQuery(cmd);
               }}
+            />
+
+            <BusinessTypeContextStrip
+              subtitle="Field workflow tuned for your business type"
+              showNotes
             />
 
             <FieldOpsAgentConsole />

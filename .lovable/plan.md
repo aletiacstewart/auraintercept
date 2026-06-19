@@ -1,55 +1,54 @@
-## Goal
-Today the platform already routes every company through a **PROFILE_A–J** spec (consoles + agents + widget set) using `getProfileForBusinessType()` against all 185 business types from the spec doc. That part works.
+## Current state (audit)
 
-What is **not** yet generated from the uploaded `AuraIntercept_MarketingPlatformGuide.xlsx`:
+Only **3 surfaces** consume the new 185-business-type marketing matrix (`marketingPlatformMatrix.ts`) generated from your uploaded `AuraIntercept_MarketingPlatformGuide.xlsx`:
 
-- Per-business-type **channel priorities** (P/S/O across GMB, Facebook, IG, TikTok, LinkedIn, YouTube, Nextdoor, Yelp, Angi, Thumbtack, Google Ads, Meta Ads, SEO, Email, SMS, Referral, Direct Mail).
-- Per-business-type **Best Ad Format**, **Top Content Types**, **Key Marketing Notes**.
-- Per-industry-group **Top Paid Channel / Top Organic Channel** (from the "Top Platforms by Industry Group" sheet).
+| Surface | Uses new matrix? |
+|---|---|
+| Marketing & Sales console (C4) | Yes — channel mix + ad/content guidance |
+| Social Media console (C5) | Yes — social-only channel chips + content pillars |
+| Dashboard (`ProfileWidgetGrid`) | Yes — compact "Marketing focus" strip |
+| **Field Ops console (C2)** | No — only `useIndustryPack` (cluster-level) |
+| **Business Management console (C3)** | No — only `useIndustryPack` |
+| **Customer Portal console (C6)** | No — only `useIndustryPack` |
+| **Analytics console (C7)** | No — only profile/industry presets |
+| **Specialist Operatives console** | No |
+| **Sub-pages**: KPI Dashboard, Revenue, Performance, Demand Forecast, Customer Insights, Business Insights, New Lead | No |
 
-Marketing & Outreach console and Social Media console currently only show **cluster-level** copy from `industryMarketingPlaybooks.ts`. Dashboard widgets come from profile-level lists only. This plan threads the xlsx data through to those surfaces.
+The 4-tier pricing, profile gating (A–J), and agent visibility are already correctly wired to all 185 types via `getProfileForBusinessType()`. What's missing is **per-business-type content** on the non-marketing consoles.
 
-## Changes
+So the honest answer: **no — only the two marketing consoles and the dashboard strip are wired to the new data.** The other consoles still read cluster/profile-level copy.
 
-### 1. New data registry — `src/lib/marketingPlatformMatrix.ts`
-- Generated from the xlsx (build-time `scripts/build-marketing-matrix.ts` reads `/mnt/user-uploads/AuraIntercept_MarketingPlatformGuide.xlsx` and writes a typed TS module; checked into the repo so runtime has no xlsx dependency).
-- Exports:
-  - `CHANNELS` — ordered channel list with display labels + icon keys.
-  - `BUSINESS_TYPE_MATRIX: Record<normalizedBusinessType, MatrixRow>` — `{ category, priorities: Record<Channel,'P'|'S'|'O'|'-'>, bestAdFormat, topContentTypes, keyNotes }`.
-  - `GROUP_PLATFORM_SUMMARY: Record<Category, { primaries[], secondaries[], topPaid, topOrganic }>` — from the third sheet.
-  - `getMatrixForBusinessType(input)` — normalizes via existing `normalizeBusinessType`, falls back to `getGroupSummary(category)` via the existing `getProfileForBusinessType` category map, then to a generic "service business" default.
+## Plan — extend per-business-type data to the remaining consoles
 
-### 2. Marketing & Sales console (C4) — `src/pages/ai-consoles/MarketingSalesConsole.tsx`
-- Resolve business type from `companies.industry_config.business_type` (already stored at signup) with `industry_vertical` fallback.
-- Render a new **"Recommended Channel Mix"** card under the existing playbook header:
-  - Grid of channel chips, color-coded P (primary), S (secondary), O (optional), dimmed for "—".
-  - Highlight badges for `Top Paid Channel` and `Top Organic Channel` from group summary.
-- Render a **"Content & Ad Guidance"** card with `bestAdFormat`, `topContentTypes`, `keyNotes` straight from the matrix.
-- Existing cluster playbook stays as the "Suggested Campaigns" section.
+### 1. Field Ops console (C2) — `FieldOpsConsole.tsx`
+- Add a "Field workflow tuned for your business type" panel using `useCompanyBusinessType` + `getProfileForBusinessType` to surface:
+  - Crew/technician noun from `labelOverrides`
+  - Job-flow hints from the matrix `keyNotes` field
+  - Whether dispatch / route / ETA agents are enabled (already in profile spec)
+- New shared component `BusinessTypeContextStrip` (read-only, theme tokens only).
 
-### 3. Social Media console (C5) — `src/pages/ai-consoles/SocialMediaConsole.tsx`
-- Add the same channel-priority chips but filtered to the **social** subset (Facebook, IG, TikTok, LinkedIn, YouTube, Nextdoor, Yelp).
-- Re-use `topContentTypes` from the matrix as the "Content Pillars" panel.
+### 2. Business Management console (C3) — `BusinessManagementConsole.tsx`
+- Add the same `BusinessTypeContextStrip` plus a "Recommended operatives for your business type" list derived from `PROFILE_SPECS[profileKey].agentsAlwaysOn + agentsDefaultOn` so admins see exactly which AI operatives are recommended for their specific business type.
 
-### 4. Dashboard — `src/components/dashboard/ProfileWidgetGrid.tsx`
-- Below the existing profile-priority widgets, add a compact **"Marketing focus for your business type"** strip that shows the 3 highest-priority channels and the top organic + paid channel for the resolved business type. Hidden when the resolver cannot find a match (so generic profiles still render cleanly).
+### 3. Customer Portal console (C6) — `CustomerPortalConsole.tsx`
+- Surface industry-tuned portal copy already in `industryPortalCopy.ts` but currently only used in some places. Pull through the resolved business type so e.g. "Pet Groomer" sees pet-profile language, "DJ" sees event language, etc.
 
-### 5. Resolver helper — extend `src/lib/businessTypeProfileMap.ts`
-- Add `getCategoryForBusinessType(input)` returning the matrix category ("HVAC & Mechanical", etc.) so the dashboard / marketing console can look up the group summary without duplicating the lookup table.
+### 4. Analytics console (C7) + sub-pages
+- `AnalyticsConsole.tsx`, `KpiDashboardPage.tsx`, `RevenueAnalysisPage.tsx`, `PerformanceReportPage.tsx`, `DemandForecastPage.tsx`, `CustomerInsightsPage.tsx`, `BusinessInsightsPage.tsx`:
+  - Pass resolved business type to existing `industryAnalyticsPresets` lookup so KPI labels, revenue groupings, and forecast seasonality match the specific business type (not just the cluster).
+  - Add a small "Benchmarks for {businessType}" header reading from `GROUP_PLATFORM_SUMMARY` (topPaid / topOrganic) so analytics shows which channel to credit conversions against.
 
-### 6. Sidebar / consoles audit
-Already correct: `navItemAllowedByProfile` + `profileHasConsole` hide consoles the profile doesn't list, and `initialize-company-agents` strips hidden agents. No changes needed — this plan just confirms it's in place.
+### 5. Specialist Operatives console
+- Show only the specialists relevant to the resolved business type using the matrix `category` field + `PROFILE_SPECS[key].agentsHidden`.
+
+### 6. New helper — `src/lib/businessTypeConsoleContext.ts`
+- Single function `getConsoleContext(businessType)` returning `{ profileKey, profileSpec, matrixRow, groupSummary, labelOverrides }` so every console resolves the same way (no duplicate lookups).
 
 ### 7. Tests
-- Snapshot tests for `getMatrixForBusinessType` on representative inputs across each of the 18 categories (plumber, hvac, roofer, lawn care, mover, real estate agent, dj/event, pet groomer, etc.).
-- A test asserting **every** entry in `BUSINESS_TYPE_TO_PROFILE` resolves to a non-default matrix row.
+- Snapshot test asserting each of the 7 consoles renders a non-empty business-type context block for a sample type from each of the 18 categories.
+- Test asserting every entry in `BUSINESS_TYPE_TO_PROFILE` resolves to a console context with a defined `profileSpec`.
 
 ## Out of scope
-- No DB migrations (the matrix is static; companies already store `industry_vertical` + `industry_config.business_type`).
-- No changes to the 4-tier pricing, the C1/C2/C3/C6/C7 consoles, or the Profile A–J definitions themselves.
-- No edits to the homepage / signup industry pickers (already updated in earlier turns).
-
-## Technical detail
-- Build script writes a deterministic, sorted TS file so diffs are reviewable.
-- Channel chip styling uses theme tokens only (`bg-primary/15`, `bg-secondary/15`, `bg-muted`) — no hard-coded colors, per Cyber-Sentry rules.
-- All new strings render through existing `useIndustryPack` terminology where applicable (e.g. "Job" vs "Project" vs "Appointment").
+- No changes to pricing, agent definitions, profile A–J specs, sidebar gating, or the marketing/social consoles (already done).
+- No DB migrations — all data is static.
+- No homepage / signup picker changes.
