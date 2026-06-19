@@ -617,7 +617,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
             </div>
             <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Get Started in 4 Simple Steps
+              Get Started in 8 Simple Steps
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
           </div>
