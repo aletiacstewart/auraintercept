@@ -218,13 +218,13 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
         </Button>
       )}
 
-      <AuraCharacter
+      {variant === 'compact' ? null : <AuraCharacter
         size={variant === 'inline' ? 140 : 160}
         connected={isConnected}
         speaking={isSpeaking}
         mouthOpen={mouthOpen}
         expression={expression}
-      />
+      />}
 
       <div className="text-center">
         <div className="text-sm font-semibold text-foreground">Aura</div>
