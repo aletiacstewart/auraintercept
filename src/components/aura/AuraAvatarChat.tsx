@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import auraAvatarImg from '@/assets/aura-avatar.png';
 import { useTranslation } from 'react-i18next';
 
-type Variant = 'hero' | 'floating' | 'inline';
+type Variant = 'hero' | 'floating' | 'inline' | 'compact';
 type Expression = 'neutral' | 'listening' | 'thinking' | 'happy' | 'concerned';
 
 interface AuraAvatarChatProps {
