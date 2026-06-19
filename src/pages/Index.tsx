@@ -14,34 +14,35 @@ import { PricingComparisonTable } from '@/components/landing/PricingComparisonTa
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
-import { INDUSTRY_GROUPS, INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
-
-const INDUSTRY_ICONS: Record<string, LucideIcon> = {
-  hvac: Flame,
-  plumbing: Droplet,
-  electrical: Zap,
-  solar: Sun,
-  roofing: Home,
-  fencing: Fence,
-  landscape: TreeDeciduous,
-  pool_spa: Waves,
-  pest_control: Bug,
-  appliance_repair: Refrigerator,
-  handyman: Hammer,
-  construction: HardHat,
-  auto_care: Car,
-  security_systems: Camera,
-  real_estate: Building2,
-  beauty_wellness: Scissors,
-  restaurants: UtensilsCrossed,
-  personal_assistant: Bot,
-  home_health: Stethoscope,
-  physical_therapy: HeartPulse,
-  occupational_therapy: HeartHandshake,
-  hospice: HeartHandshake,
-  veterinary: PawPrint,
-  medical_practice: Stethoscope,
-};
+/**
+ * Marketing Platform Guide industry taxonomy — 22 category groups covering
+ * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
+ * Keep counts and labels in sync with that workbook.
+ */
+const MARKETING_INDUSTRY_CATEGORIES: { name: string; icon: LucideIcon; count: number; description: string }[] = [
+  { name: 'HVAC & Mechanical',         icon: Flame,         count: 6,  description: 'AC, heating, ducts, mechanical' },
+  { name: 'Plumbing',                  icon: Droplet,       count: 7,  description: 'Plumbers, septic, well, drain' },
+  { name: 'Electrical',                icon: Zap,           count: 8,  description: 'Electricians, solar, EV, smart home' },
+  { name: 'Roofing & Exterior',        icon: Home,          count: 12, description: 'Roof, siding, gutters, paint' },
+  { name: 'Landscaping & Outdoor',     icon: TreeDeciduous, count: 13, description: 'Lawn, trees, pool, pest, snow' },
+  { name: 'Cleaning & Restoration',    icon: Sparkles,      count: 13, description: 'House, carpet, water/fire damage' },
+  { name: 'Construction & Remodeling', icon: HardHat,       count: 22, description: 'GC, kitchens, baths, flooring' },
+  { name: 'Home Inspection & Safety',  icon: Shield,        count: 11, description: 'Inspectors, chimney, locksmith, alarms' },
+  { name: 'Appliance & Tech Services', icon: Refrigerator,  count: 8,  description: 'Appliance, computer, TV, WiFi' },
+  { name: 'Moving & Junk Removal',     icon: Truck,         count: 9,  description: 'Movers, junk, towing, waste' },
+  { name: 'Auto Services (Mobile)',    icon: Car,           count: 9,  description: 'Detail, glass, oil, mobile mechanic' },
+  { name: 'Pet & Animal Services',     icon: PawPrint,      count: 8,  description: 'Groomers, trainers, vets, sitters' },
+  { name: 'Health & Wellness',         icon: HeartPulse,    count: 1,  description: 'In-home massage & therapists' },
+  { name: 'Specialty Trades',          icon: Hammer,        count: 13, description: 'Handyman, carpenter, pool, masonry' },
+  { name: 'Utility & Infrastructure',  icon: Building2,     count: 5,  description: 'Propane, water, utility contractors' },
+  { name: 'Real Estate & Property',    icon: MapPin,        count: 11, description: 'Agents, mortgage, title, mgmt' },
+  { name: 'In-Home Personal Services', icon: Users,         count: 9,  description: 'Trainer, tutor, nanny, chef' },
+  { name: 'Delivery & On-Site Logistics', icon: Send,       count: 4,  description: 'Furniture, fuel, water delivery' },
+  { name: 'Insurance & Assessment',    icon: FileText,      count: 4,  description: 'Home/auto, adjusters, appraisers' },
+  { name: 'Senior & Lifestyle',        icon: HeartHandshake,count: 5,  description: 'Senior move, organize, energy audit' },
+  { name: 'Event & Temporary',         icon: Megaphone,     count: 6,  description: 'Tents, party, DJ, catering, photo' },
+  { name: 'Beauty, Restaurants & Pro Services', icon: Scissors, count: 5, description: 'Salon, food, personal assist, B2B' },
+];
 
 const agentCategories = [{
   id: 'customer',
@@ -331,20 +332,6 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
   neonRgb: '168,85,247'
 }];
-const HOMEPAGE_INDUSTRIES = INDUSTRY_GROUPS.flatMap((g) =>
-  g.ids
-    .filter((id) => id !== 'default' && id !== 'other' && INDUSTRY_CONTENT[id])
-    .map((id) => {
-      const c = INDUSTRY_CONTENT[id];
-      return {
-        id,
-        name: c.label,
-        group: g.group,
-        description: c.hero.subheadline.split('.')[0].slice(0, 60),
-        icon: INDUSTRY_ICONS[id] ?? Sparkles,
-      };
-    }),
-);
 const howItWorks = [{
   step: 1,
   title: 'Sign Up & Configure',
@@ -757,22 +744,25 @@ export default function Index() {
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               AI Automation for Field Service Industries
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>White-label AI that intercepts every inquiry and books directly to your calendar.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 560, margin: "0 auto" }}>
+              22 industry categories. 185+ business types. White-label AI that intercepts every inquiry and books directly to your calendar.
+            </p>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
-            {HOMEPAGE_INDUSTRIES.map(industry => (
-              <div key={industry.id} style={{ borderRadius: 10, padding: "10px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            {MARKETING_INDUSTRY_CATEGORIES.map(cat => (
+              <div key={cat.name} style={{ borderRadius: 10, padding: "12px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
-                <div style={{ position: "relative", width: 28, height: 28, margin: "0 auto 6px" }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <industry.icon size={13} style={{ color: "#00E5FF", position: "relative", zIndex: 1 }} />
+                <div style={{ position: "relative", width: 32, height: 32, margin: "0 auto 6px" }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <cat.icon size={15} style={{ color: "#00E5FF", position: "relative", zIndex: 1 }} />
                   </div>
                   <span className="absolute inset-0 rounded-lg animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                 </div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: "#00E5FF" }}>{industry.name}</div>
-                <p style={{ fontSize: 8, color: "#FFFFFF", lineHeight: 1.3 }} className="hidden sm:block">{industry.description}</p>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#00E5FF", lineHeight: 1.2 }}>{cat.name}</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#00E5FF", opacity: 0.7, marginTop: 2 }}>{cat.count} business types</div>
+                <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.3, marginTop: 4 }} className="hidden sm:block">{cat.description}</p>
               </div>
             ))}
           </div>
