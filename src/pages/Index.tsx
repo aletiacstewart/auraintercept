@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse, PawPrint, Sparkles, type LucideIcon } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse, PawPrint, Sparkles, Play, Plug, BookOpen, type LucideIcon } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -285,23 +285,43 @@ const communicationChannels = [{
 }];
 const howItWorks = [{
   step: 1,
-  title: 'Sign Up & Configure',
-  description: 'Create your company profile with custom branding, services, and business hours.',
-  icon: Building2
+  title: 'Live Demo',
+  description: 'Experience a live walkthrough of Aura Intercept tailored to your business.',
+  icon: Play
 }, {
   step: 2,
-  title: 'Activate AI Agents',
-  description: 'Enable up to 10 AI Operatives and configure your knowledge base for your business.',
-  icon: Bot
+  title: 'Choose Plan',
+  description: 'Select the tier that matches your team size and automation goals.',
+  icon: CheckCircle2
 }, {
   step: 3,
-  title: 'Connect Customers',
-  description: 'Share your customer portal link or embed Message Aura (Text) on your website.',
+  title: 'On Boarding',
+  description: 'Get your company profile, branding, and services configured by our team.',
   icon: Users
 }, {
   step: 4,
-  title: 'Automate & Scale',
-  description: 'AI handles bookings, field ops, and business analytics 24/7 while you focus on growth.',
+  title: 'Setup Dashboards',
+  description: 'Personalize your command center with the consoles and metrics that matter.',
+  icon: BarChart3
+}, {
+  step: 5,
+  title: '3rd Party Integrations',
+  description: 'Connect your existing voice, SMS, email, and payment providers.',
+  icon: Plug
+}, {
+  step: 6,
+  title: 'Knowledge Base',
+  description: 'Train your AI Operatives with your business rules, FAQs, and workflows.',
+  icon: BookOpen
+}, {
+  step: 7,
+  title: 'Connect Customers',
+  description: 'Launch your customer portal and embed Message Aura on your website.',
+  icon: MessageSquare
+}, {
+  step: 8,
+  title: 'Automate',
+  description: 'Let AI handle bookings, dispatch, follow-ups, and analytics around the clock.',
   icon: Zap
 }];
 const heroStats = [{
@@ -597,7 +617,7 @@ export default function Index() {
               <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
             </div>
             <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Get Started in 4 Simple Steps
+              Get Started in 8 Simple Steps
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
           </div>
@@ -618,7 +638,7 @@ export default function Index() {
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#00E5FF", marginBottom: 8 }}>{item.title}</div>
                   <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.6 }}>{item.description}</p>
                 </div>
-                {index < howItWorks.length - 1 && (
+                {index !== 3 && index < howItWorks.length - 1 && (
                   <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
                     <ChevronRight size={20} style={{ color: "rgba(0,229,255,0.3)" }} />
                   </div>
