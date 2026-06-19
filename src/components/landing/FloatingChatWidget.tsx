@@ -22,6 +22,10 @@ interface FloatingChatWidgetProps {
   primaryColor?: string;
   /** Use full multi-agent system instead of basic landing chat */
   useMultiAgent?: boolean;
+  /** Auto-open the widget after N ms on mount (one-shot per session per storage key). */
+  autoOpenAfterMs?: number;
+  /** sessionStorage key used to gate the auto-open so it fires once per visit. */
+  autoOpenStorageKey?: string;
 }
 
 export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatWidgetProps>(
@@ -34,6 +38,8 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       visitorFingerprint,
       primaryColor,
       useMultiAgent = false,
+      autoOpenAfterMs,
+      autoOpenStorageKey,
     },
     ref
   ) => {
@@ -76,6 +82,23 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       }
     }, [isOpen]);
 
+    // Auto-open on Home / Live Demo / Free Audit — once per browser session.
+    useEffect(() => {
+      if (!autoOpenAfterMs || autoOpenAfterMs <= 0) return;
+      if (typeof window === 'undefined') return;
+      const key = autoOpenStorageKey || 'aura_autoopen_default';
+      try {
+        if (sessionStorage.getItem(key) === '1') return;
+      } catch {/* ignore */}
+      const t = setTimeout(() => {
+        try { sessionStorage.setItem(key, '1'); } catch {/* ignore */}
+        setIsOpen(true);
+        trackChatOpen();
+      }, autoOpenAfterMs);
+      return () => clearTimeout(t);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoOpenAfterMs, autoOpenStorageKey]);
+
     const buttonStyle = primaryColor 
       ? { background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }
       : { background: 'linear-gradient(135deg, #00E5FF, #46a2d3)' };
@@ -84,7 +107,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       <div ref={ref}>
         {/* Chat Panel */}
         {isOpen && (
-          <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[720px] max-h-[85vh] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="fixed bottom-24 right-6 z-50 w-[420px] h-[640px] max-h-[88vh] animate-in slide-in-from-bottom-4 fade-in duration-300">
             <div className="w-full h-full bg-card/95 backdrop-blur-lg border border-primary/30 shadow-2xl rounded-xl overflow-hidden flex flex-col">
               {/* Close Button */}
               <Button
@@ -104,13 +127,13 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
                 />
               ) : (
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <div className="p-3 border-b border-border/40 shrink-0 max-h-[44vh] overflow-y-auto">
-                    <AuraAvatarChat variant="inline" />
+                  <div className="p-3 pr-10 border-b border-border/40 shrink-0 space-y-2">
+                    <AuraAvatarChat variant="compact" />
                     <a
                       href="tel:484-737-2424"
-                      className="mt-3 flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-sm font-semibold text-primary transition-colors"
+                      className="flex items-center justify-center gap-2 w-full py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs font-semibold text-primary transition-colors"
                     >
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-3.5 h-3.5" />
                       Call Aura's Mobile: 484-737-2424
                     </a>
                   </div>
