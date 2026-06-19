@@ -7,9 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { INDUSTRY_LIST } from '@/lib/industryTemplates';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
+import {
+  BUSINESS_TYPE_GROUPS,
+  BUSINESS_TYPES,
+  getPackIdForBusinessType,
+  BUSINESS_TYPE_COUNT,
+} from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
@@ -251,8 +256,14 @@ export default function SignUp() {
       // and the industry they selected. Both drive console/dashboard/agent unlocks downstream
       // (subscription_tier feeds tier gating; industry_vertical fires trg_seed_industry_pack_kb
       // and powers useIndustryPack everywhere). 60-day trial regardless of tier.
-      const canonicalIndustry = toCanonicalIndustryId(businessIndustry);
-      if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry)) {
+      // `businessIndustry` may be a canonical id ('hvac') OR a raw 185-type
+      // business-type key ('hvac contractor'). Map to canonical via the
+      // business-type registry, fall back to alias resolution.
+      const rawBusinessType = businessIndustry?.trim() || '';
+      const canonicalIndustry =
+        getPackIdForBusinessType(rawBusinessType) ||
+        toCanonicalIndustryId(rawBusinessType);
+      if (!canonicalIndustry || !isCanonicalIndustryId(canonicalIndustry) || canonicalIndustry === 'default') {
         toast({
           title: 'Industry required',
           description: 'Please select your industry from the dropdown so we can set up the right console, agents, and templates.',
@@ -283,10 +294,18 @@ export default function SignUp() {
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
           beta_trial: betaCode ? true : false,
           beta_code: betaCode?.code ?? null,
-          industry_config:
-            canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
-              ? (buildIndustryConfig(customIndustry) as never)
-              : null,
+          // Always persist the precise business_type the user picked so the
+          // profile resolver and templating can use the 185-type taxonomy.
+          industry_config: (() => {
+            const base: Record<string, unknown> = {};
+            if (rawBusinessType && rawBusinessType !== canonicalIndustry) {
+              base.business_type = rawBusinessType;
+            }
+            if (canonicalIndustry === 'other' && customIndustry.primary_offering.trim()) {
+              Object.assign(base, buildIndustryConfig(customIndustry));
+            }
+            return (Object.keys(base).length > 0 ? base : null) as never;
+          })(),
         })
         .select()
         .single();
@@ -1145,17 +1164,31 @@ export default function SignUp() {
                                 </Select>
                               </div>
                               <div className="space-y-1">
-                                <Label className="text-xs">Business Industry</Label>
+                                <Label className="text-xs">Business Industry <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span></Label>
                                 <Select value={businessIndustry} onValueChange={setBusinessIndustry}>
                                   <SelectTrigger className="text-xs h-8">
-                                    <SelectValue placeholder="Select industry…" />
+                                    <SelectValue placeholder="Select your business type…">
+                                      {(() => {
+                                        const entry = BUSINESS_TYPES.find((b) => b.key === businessIndustry);
+                                        return entry ? entry.label : (businessIndustry === 'other' ? '✨ Other / Custom' : 'Select your business type…');
+                                      })()}
+                                    </SelectValue>
                                   </SelectTrigger>
-                                  <SelectContent className="max-h-48">
-                                    {[...INDUSTRY_LIST]
-                                      .sort((a, b) => a.label.localeCompare(b.label))
-                                      .map(ind => (
-                                        <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
-                                      ))}
+                                  <SelectContent className="max-h-[60vh]">
+                                    {BUSINESS_TYPE_GROUPS.map((g) => (
+                                      <SelectGroup key={g.category}>
+                                        <SelectLabel className="flex items-center gap-1.5 text-primary font-bold uppercase tracking-wider text-[10px] py-1">
+                                          <span>{g.emoji}</span>
+                                          <span>{g.category}</span>
+                                          <span className="ml-auto text-muted-foreground/70 normal-case font-normal">{g.items.length}</span>
+                                        </SelectLabel>
+                                        {g.items.map((b) => (
+                                          <SelectItem key={b.key} value={b.key} className="text-xs">
+                                            {b.label}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectGroup>
+                                    ))}
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>

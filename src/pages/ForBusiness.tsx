@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
+import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/seo/SEO';
@@ -57,7 +58,11 @@ export default function ForBusiness() {
     }
   }, [industry, searchParams, setSearchParams]);
 
-  const content = useMemo(() => getIndustryContent(industry), [industry]);
+  // `industry` may be either a canonical pack id (e.g. 'hvac') or a raw
+  // business-type key from the 185-type registry (e.g. 'hvac contractor').
+  // Resolve to the nearest pack before rendering demo content.
+  const packId = useMemo(() => getPackIdForBusinessType(industry) || industry, [industry]);
+  const content = useMemo(() => getIndustryContent(packId), [packId]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
