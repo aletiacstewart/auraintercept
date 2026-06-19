@@ -2,6 +2,7 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { AgentOpportunityAudit } from "@/components/audit/AgentOpportunityAudit";
 import { SEO } from "@/components/seo/SEO";
+import { FloatingChatWidget } from "@/components/landing/FloatingChatWidget";
 
 export default function OpportunityAudit() {
   return (
@@ -34,6 +35,7 @@ export default function OpportunityAudit() {
         </div>
       </main>
       <PublicFooter />
+      <FloatingChatWidget autoOpenAfterMs={6000} autoOpenStorageKey="aura_autoopen_audit" />
     </div>
   );
 }
