@@ -17,6 +17,7 @@ import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianc
 import { getMarketingPlaybook } from '@/lib/industryMarketingPlaybooks';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
+import { MarketingMatrixCards } from '@/components/marketing/MarketingMatrixCards';
 
 // Cluster-aware marketing specialists. Surfaces the AI roles most useful for
 // outreach campaigns in each industry cluster (Phase 4 contextual surfacing).
@@ -92,6 +93,8 @@ export default function MarketingSalesConsole() {
             />
             
             <MarketingSalesAgentConsole />
+
+            <MarketingMatrixCards />
 
             <SpecialistOperativesLauncher
               show={marketingSpecialists}
