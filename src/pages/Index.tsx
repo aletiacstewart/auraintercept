@@ -285,23 +285,43 @@ const communicationChannels = [{
 }];
 const howItWorks = [{
   step: 1,
-  title: 'Sign Up & Configure',
-  description: 'Create your company profile with custom branding, services, and business hours.',
-  icon: Building2
+  title: 'Live Demo',
+  description: 'Experience a live walkthrough of Aura Intercept tailored to your business.',
+  icon: Play
 }, {
   step: 2,
-  title: 'Activate AI Agents',
-  description: 'Enable up to 10 AI Operatives and configure your knowledge base for your business.',
-  icon: Bot
+  title: 'Choose Plan',
+  description: 'Select the tier that matches your team size and automation goals.',
+  icon: CheckCircle2
 }, {
   step: 3,
-  title: 'Connect Customers',
-  description: 'Share your customer portal link or embed Message Aura (Text) on your website.',
+  title: 'On Boarding',
+  description: 'Get your company profile, branding, and services configured by our team.',
   icon: Users
 }, {
   step: 4,
-  title: 'Automate & Scale',
-  description: 'AI handles bookings, field ops, and business analytics 24/7 while you focus on growth.',
+  title: 'Setup Dashboards',
+  description: 'Personalize your command center with the consoles and metrics that matter.',
+  icon: BarChart3
+}, {
+  step: 5,
+  title: '3rd Party Integrations',
+  description: 'Connect your existing voice, SMS, email, and payment providers.',
+  icon: Plug
+}, {
+  step: 6,
+  title: 'Knowledge Base',
+  description: 'Train your AI Operatives with your business rules, FAQs, and workflows.',
+  icon: BookOpen
+}, {
+  step: 7,
+  title: 'Connect Customers',
+  description: 'Launch your customer portal and embed Message Aura on your website.',
+  icon: MessageSquare
+}, {
+  step: 8,
+  title: 'Automate',
+  description: 'Let AI handle bookings, dispatch, follow-ups, and analytics around the clock.',
   icon: Zap
 }];
 const heroStats = [{
