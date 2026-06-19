@@ -1147,7 +1147,7 @@ export default function Index() {
       <PublicFooter />
       
       {/* Floating Chat Widget */}
-      <FloatingChatWidget />
+      <FloatingChatWidget autoOpenAfterMs={6000} autoOpenStorageKey="aura_autoopen_home" />
     </div>
   );
 }

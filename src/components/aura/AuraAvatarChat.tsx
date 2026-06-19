@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import auraAvatarImg from '@/assets/aura-avatar.png';
 import { useTranslation } from 'react-i18next';
 
-type Variant = 'hero' | 'floating' | 'inline';
+type Variant = 'hero' | 'floating' | 'inline' | 'compact';
 type Expression = 'neutral' | 'listening' | 'thinking' | 'happy' | 'concerned';
 
 interface AuraAvatarChatProps {
@@ -203,6 +203,70 @@ export function AuraAvatarChat({ variant = 'inline', className, onClose }: AuraA
     variant === 'inline' && 'w-full',
     className,
   );
+
+  // Compact horizontal layout: avatar left, name/status + Talk button right.
+  if (variant === 'compact') {
+    return (
+      <div
+        className={cn(
+          'relative flex items-center gap-3 rounded-xl border border-primary/30 bg-card/80 backdrop-blur-md p-3 shadow-lg w-full',
+          className,
+        )}
+      >
+        <div className="shrink-0">
+          <AuraCharacter
+            size={72}
+            connected={isConnected}
+            speaking={isSpeaking}
+            mouthOpen={mouthOpen}
+            expression={expression}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold text-foreground leading-tight">Aura</div>
+          <div className="text-[11px] text-muted-foreground leading-tight mb-2 truncate">
+            {connecting
+              ? 'Connecting…'
+              : isConnected
+                ? isSpeaking ? 'Speaking' : 'Listening'
+                : 'Tap to talk live'}
+          </div>
+          {!isConnected ? (
+            <Button
+              size="sm"
+              onClick={start}
+              disabled={connecting}
+              className="rounded-full px-3 h-8 text-xs w-full"
+            >
+              <Phone className="mr-1.5 h-3.5 w-3.5" />
+              {connecting ? 'Connecting…' : 'Talk to Aura'}
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleMute}
+                className="rounded-full h-8 w-8"
+                aria-label={muted ? 'Unmute' : 'Mute'}
+              >
+                {muted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+              </Button>
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={stop}
+                className="rounded-full h-8 w-8"
+                aria-label="End call"
+              >
+                <PhoneOff className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={wrapClass}>
