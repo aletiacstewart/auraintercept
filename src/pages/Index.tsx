@@ -16,6 +16,36 @@ import { SEO } from '@/components/seo/SEO';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 import { INDUSTRY_GROUPS, INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
 
+/**
+ * Marketing Platform Guide industry taxonomy — 22 category groups covering
+ * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
+ * Keep counts and labels in sync with that workbook.
+ */
+const MARKETING_INDUSTRY_CATEGORIES: { name: string; icon: LucideIcon; count: number; description: string }[] = [
+  { name: 'HVAC & Mechanical',         icon: Flame,         count: 6,  description: 'AC, heating, ducts, mechanical' },
+  { name: 'Plumbing',                  icon: Droplet,       count: 7,  description: 'Plumbers, septic, well, drain' },
+  { name: 'Electrical',                icon: Zap,           count: 8,  description: 'Electricians, solar, EV, smart home' },
+  { name: 'Roofing & Exterior',        icon: Home,          count: 12, description: 'Roof, siding, gutters, paint' },
+  { name: 'Landscaping & Outdoor',     icon: TreeDeciduous, count: 13, description: 'Lawn, trees, pool, pest, snow' },
+  { name: 'Cleaning & Restoration',    icon: Sparkles,      count: 13, description: 'House, carpet, water/fire damage' },
+  { name: 'Construction & Remodeling', icon: HardHat,       count: 22, description: 'GC, kitchens, baths, flooring' },
+  { name: 'Home Inspection & Safety',  icon: Shield,        count: 11, description: 'Inspectors, chimney, locksmith, alarms' },
+  { name: 'Appliance & Tech Services', icon: Refrigerator,  count: 8,  description: 'Appliance, computer, TV, WiFi' },
+  { name: 'Moving & Junk Removal',     icon: Truck,         count: 9,  description: 'Movers, junk, towing, waste' },
+  { name: 'Auto Services (Mobile)',    icon: Car,           count: 9,  description: 'Detail, glass, oil, mobile mechanic' },
+  { name: 'Pet & Animal Services',     icon: PawPrint,      count: 8,  description: 'Groomers, trainers, vets, sitters' },
+  { name: 'Health & Wellness',         icon: HeartPulse,    count: 1,  description: 'In-home massage & therapists' },
+  { name: 'Specialty Trades',          icon: Hammer,        count: 13, description: 'Handyman, carpenter, pool, masonry' },
+  { name: 'Utility & Infrastructure',  icon: Building2,     count: 5,  description: 'Propane, water, utility contractors' },
+  { name: 'Real Estate & Property',    icon: MapPin,        count: 11, description: 'Agents, mortgage, title, mgmt' },
+  { name: 'In-Home Personal Services', icon: Users,         count: 9,  description: 'Trainer, tutor, nanny, chef' },
+  { name: 'Delivery & On-Site Logistics', icon: Send,       count: 4,  description: 'Furniture, fuel, water delivery' },
+  { name: 'Insurance & Assessment',    icon: FileText,      count: 4,  description: 'Home/auto, adjusters, appraisers' },
+  { name: 'Senior & Lifestyle',        icon: HeartHandshake,count: 5,  description: 'Senior move, organize, energy audit' },
+  { name: 'Event & Temporary',         icon: Megaphone,     count: 6,  description: 'Tents, party, DJ, catering, photo' },
+  { name: 'Beauty, Restaurants & Pro Services', icon: Scissors, count: 5, description: 'Salon, food, personal assist, B2B' },
+];
+
 const INDUSTRY_ICONS: Record<string, LucideIcon> = {
   hvac: Flame,
   plumbing: Droplet,
