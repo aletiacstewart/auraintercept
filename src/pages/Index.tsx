@@ -254,55 +254,6 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Website builder', 'Blog management', 'SEO optimization', 'Multi-channel content']
 }];
-const platformFeatures = [{
-  icon: Globe,
-  title: 'Customer Portal',
-  description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
-}, {
-  icon: Globe,
-  title: 'Web Presence Manager',
-  description: 'AI-powered branded web presence with Message Aura (Text), Talk to Aura (Voice), and booking.'
-}, {
-  icon: Target,
-  title: 'Lead Capture & Scoring',
-  description: 'Automatically capture and score leads from AI interactions with smart follow-up automation.'
-}, {
-  icon: Bell,
-  title: 'Smart Reminders',
-  description: 'Email, SMS, and voice reminders help reduce no-shows and appointment issues.'
-}, {
-  icon: Smartphone,
-  title: 'Mobile-First Design',
-  description: 'Technician consoles optimized for field work on any device.'
-}, {
-  icon: Brain,
-  title: 'AI Powered Ops',
-  description: 'Intelligent agent handoffs with context preservation across conversations.'
-}, {
-  icon: Lock,
-  title: 'Enterprise Security',
-  description: 'Row-level security and role-based access protect sensitive data.'
-}, {
-  icon: Send,
-  title: 'Social Media',
-  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge. Own API auto-posting also available.'
-}, {
-  icon: FileText,
-  title: 'Quotes & Invoicing',
-  description: 'Generate professional quotes and invoices with automated payment tracking.'
-}, {
-  icon: Calendar,
-  title: 'Smart Scheduling',
-  description: 'AI-optimized appointment scheduling with calendar sync and availability management.'
-}, {
-  icon: MapPin,
-  title: 'Route Optimization',
-  description: 'Intelligent routing for field technicians to minimize drive time and maximize efficiency.'
-}, {
-  icon: Bot,
-  title: 'Personal Assistant',
-  description: 'AI-powered scheduling assistant with direct calendar sync for booking appointments.'
-}];
 const communicationChannels = [{
   icon: Mic,
   title: 'Talk to Aura (Voice)',
