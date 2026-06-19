@@ -331,109 +331,20 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
   neonRgb: '168,85,247'
 }];
-const industryCategories = [{
-  category: 'Essential Trades',
-  emoji: '⚡',
-  subtitle: 'High-Urgency',
-  industries: [{
-    name: 'HVAC',
-    icon: Flame,
-    description: 'Heating, Ventilation, & AC'
-  }, {
-    name: 'Plumbing',
-    icon: Droplet,
-    description: 'Emergency & Installations'
-  }, {
-    name: 'Electrical',
-    icon: Zap,
-    description: 'Residential & Commercial'
-  }, {
-    name: 'Solar Energy',
-    icon: Sun,
-    description: 'Panels & Maintenance'
-  }]
-}, {
-  category: 'Exterior & Structural',
-  emoji: '🏠',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Roofing',
-    icon: Home,
-    description: 'Repair & Storm Damage'
-  }, {
-    name: 'Fencing & Decking',
-    icon: Fence,
-    description: 'Perimeter Solutions'
-  }]
-}, {
-  category: 'Property & Estate',
-  emoji: '🌿',
-  subtitle: 'Maintenance',
-  industries: [{
-    name: 'Landscape & Trees',
-    icon: TreeDeciduous,
-    description: 'Design, Trimming, & Removal'
-  }, {
-    name: 'Pool & Spa',
-    icon: Waves,
-    description: 'Chemistry & Equipment'
-  }, {
-    name: 'Pest Control',
-    icon: Bug,
-    description: 'Residential & Commercial'
-  }]
-}, {
-  category: 'Specialized Home',
-  emoji: '🛠',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Appliance Repair',
-    icon: Refrigerator,
-    description: 'Kitchen & Laundry'
-  }, {
-    name: 'Handyman & Cleaning',
-    icon: Hammer,
-    description: 'Repair & Janitorial'
-  }, {
-    name: 'Construction',
-    icon: HardHat,
-    description: 'Painting, Flooring, Tile & Trim'
-  }]
-}, {
-  category: 'Mobile & Commercial',
-  emoji: '🚗',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Auto Care',
-    icon: Car,
-    description: 'Detailing & Repair'
-  }, {
-    name: 'Security Systems',
-    icon: Camera,
-    description: 'Cameras & Alarms'
-  }, {
-    name: 'Real Estate',
-    icon: Building2,
-    description: 'Residential & Commercial'
-  }]
-}, {
-  category: 'Wellness & Personal',
-  emoji: '💆',
-  subtitle: 'Services',
-  industries: [{
-    name: 'Beauty & Wellness',
-    icon: Scissors,
-    description: 'Salons & Massage'
-  }, {
-    name: 'Restaurants',
-    icon: UtensilsCrossed,
-    description: 'Cafes & Food Service'
-  }, {
-    name: 'Personal Assistant',
-    icon: Bot,
-    description: 'Calendar & Scheduling'
-  }]
-}];
+const HOMEPAGE_INDUSTRIES = INDUSTRY_GROUPS.flatMap((g) =>
+  g.ids
+    .filter((id) => id !== 'default' && id !== 'other' && INDUSTRY_CONTENT[id])
+    .map((id) => {
+      const c = INDUSTRY_CONTENT[id];
+      return {
+        id,
+        name: c.label,
+        group: g.group,
+        description: c.hero.subheadline.split('.')[0].slice(0, 60),
+        icon: INDUSTRY_ICONS[id] ?? Sparkles,
+      };
+    }),
+);
 const howItWorks = [{
   step: 1,
   title: 'Sign Up & Configure',
