@@ -511,10 +511,10 @@ import { filterVisibleIndustries, filterVisibleIds, isIndustryVisible } from './
 export const INDUSTRY_LIST = filterVisibleIndustries(Object.values(INDUSTRY_CONTENT));
 
 const RAW_INDUSTRY_GROUPS: { group: string; emoji: string; ids: string[] }[] = [
-  { group: 'Essential Trades', emoji: '⚡', ids: ['hvac', 'plumbing', 'electrical', 'solar_energy'] },
-  { group: 'Exterior & Structural', emoji: '🏠', ids: ['roofing', 'fencing_decking'] },
-  { group: 'Property & Estate', emoji: '🌿', ids: ['landscape_trees', 'pool_spa', 'pest_control'] },
-  { group: 'Specialized Home', emoji: '🛠', ids: ['appliance_repair', 'handyman_cleaning', 'construction'] },
+  { group: 'Essential Trades', emoji: '⚡', ids: ['hvac', 'plumbing', 'electrical', 'solar'] },
+  { group: 'Exterior & Structural', emoji: '🏠', ids: ['roofing', 'fencing'] },
+  { group: 'Property & Estate', emoji: '🌿', ids: ['landscape', 'pool_spa', 'pest_control'] },
+  { group: 'Specialized Home', emoji: '🛠', ids: ['appliance_repair', 'handyman', 'construction'] },
   { group: 'Mobile & Commercial', emoji: '🚗', ids: ['auto_care', 'security_systems', 'real_estate'] },
   { group: 'Wellness & Personal', emoji: '💆', ids: ['beauty_wellness', 'restaurants', 'personal_assistant'] },
   { group: 'Healthcare', emoji: '🩺', ids: ['home_health', 'physical_therapy', 'occupational_therapy', 'hospice', 'veterinary', 'medical_practice'] },
