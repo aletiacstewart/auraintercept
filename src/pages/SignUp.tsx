@@ -1164,17 +1164,31 @@ export default function SignUp() {
                                 </Select>
                               </div>
                               <div className="space-y-1">
-                                <Label className="text-xs">Business Industry</Label>
+                                <Label className="text-xs">Business Industry <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span></Label>
                                 <Select value={businessIndustry} onValueChange={setBusinessIndustry}>
                                   <SelectTrigger className="text-xs h-8">
-                                    <SelectValue placeholder="Select industry…" />
+                                    <SelectValue placeholder="Select your business type…">
+                                      {(() => {
+                                        const entry = BUSINESS_TYPES.find((b) => b.key === businessIndustry);
+                                        return entry ? entry.label : (businessIndustry === 'other' ? '✨ Other / Custom' : 'Select your business type…');
+                                      })()}
+                                    </SelectValue>
                                   </SelectTrigger>
-                                  <SelectContent className="max-h-48">
-                                    {[...INDUSTRY_LIST]
-                                      .sort((a, b) => a.label.localeCompare(b.label))
-                                      .map(ind => (
-                                        <SelectItem key={ind.id} value={ind.id} className="text-xs">{ind.icon} {ind.label}</SelectItem>
-                                      ))}
+                                  <SelectContent className="max-h-[60vh]">
+                                    {BUSINESS_TYPE_GROUPS.map((g) => (
+                                      <SelectGroup key={g.category}>
+                                        <SelectLabel className="flex items-center gap-1.5 text-primary font-bold uppercase tracking-wider text-[10px] py-1">
+                                          <span>{g.emoji}</span>
+                                          <span>{g.category}</span>
+                                          <span className="ml-auto text-muted-foreground/70 normal-case font-normal">{g.items.length}</span>
+                                        </SelectLabel>
+                                        {g.items.map((b) => (
+                                          <SelectItem key={b.key} value={b.key} className="text-xs">
+                                            {b.label}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectGroup>
+                                    ))}
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
