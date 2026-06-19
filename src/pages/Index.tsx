@@ -14,8 +14,6 @@ import { PricingComparisonTable } from '@/components/landing/PricingComparisonTa
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
-import { INDUSTRY_GROUPS, INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
-
 /**
  * Marketing Platform Guide industry taxonomy — 22 category groups covering
  * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
@@ -45,33 +43,6 @@ const MARKETING_INDUSTRY_CATEGORIES: { name: string; icon: LucideIcon; count: nu
   { name: 'Event & Temporary',         icon: Megaphone,     count: 6,  description: 'Tents, party, DJ, catering, photo' },
   { name: 'Beauty, Restaurants & Pro Services', icon: Scissors, count: 5, description: 'Salon, food, personal assist, B2B' },
 ];
-
-const INDUSTRY_ICONS: Record<string, LucideIcon> = {
-  hvac: Flame,
-  plumbing: Droplet,
-  electrical: Zap,
-  solar: Sun,
-  roofing: Home,
-  fencing: Fence,
-  landscape: TreeDeciduous,
-  pool_spa: Waves,
-  pest_control: Bug,
-  appliance_repair: Refrigerator,
-  handyman: Hammer,
-  construction: HardHat,
-  auto_care: Car,
-  security_systems: Camera,
-  real_estate: Building2,
-  beauty_wellness: Scissors,
-  restaurants: UtensilsCrossed,
-  personal_assistant: Bot,
-  home_health: Stethoscope,
-  physical_therapy: HeartPulse,
-  occupational_therapy: HeartHandshake,
-  hospice: HeartHandshake,
-  veterinary: PawPrint,
-  medical_practice: Stethoscope,
-};
 
 const agentCategories = [{
   id: 'customer',
