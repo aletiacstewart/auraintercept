@@ -12,6 +12,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
+import { BusinessTypeContextStrip } from '@/components/marketing/BusinessTypeContextStrip';
 
 export default function AnalyticsConsole() {
   const { userRole } = useAuth();
@@ -54,6 +55,7 @@ export default function AnalyticsConsole() {
             />
             
             <AnalyticsAgentConsole />
+            <BusinessTypeContextStrip subtitle="Benchmarks for your business type" />
           </div>
         </FeatureGate>
       </PageContainer>

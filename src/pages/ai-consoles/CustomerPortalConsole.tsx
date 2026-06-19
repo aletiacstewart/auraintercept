@@ -19,6 +19,7 @@ import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
+import { BusinessTypeContextStrip } from '@/components/marketing/BusinessTypeContextStrip';
 import { getPortalCopy } from '@/lib/industryPortalCopy';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -127,6 +128,7 @@ export default function CustomerPortalConsole() {
             
             <div className={showPreview ? 'flex gap-6' : ''}>
               <div className={showPreview ? 'flex-1 min-w-0' : ''}>
+                <BusinessTypeContextStrip subtitle="Customer experience tuned for your business type" />
                 {viewMode === 'customer' ? (
                   <AIAgentConsole allowCompanySelection={userRole === 'platform_admin' || userRole === 'company_admin'} />
                 ) : (

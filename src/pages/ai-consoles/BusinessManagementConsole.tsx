@@ -18,6 +18,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
+import { BusinessTypeContextStrip } from '@/components/marketing/BusinessTypeContextStrip';
 import { getBusinessWorkflows } from '@/lib/industryWorkflows';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 
@@ -80,6 +81,11 @@ export default function BusinessManagementConsole() {
                 toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
                 submitQuery(cmd);
               }}
+            />
+
+            <BusinessTypeContextStrip
+              subtitle="Operations tuned for your business type"
+              showOperatives
             />
 
             <BusinessOpsAgentConsole />
