@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
 
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, MapPin, FileText, DollarSign, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Navigation, Truck, Search, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, Scissors, UtensilsCrossed, Palette, Share2, Stethoscope, HeartHandshake, HeartPulse, PawPrint, Sparkles, type LucideIcon } from 'lucide-react';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -14,6 +14,34 @@ import { PricingComparisonTable } from '@/components/landing/PricingComparisonTa
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
+import { INDUSTRY_GROUPS, INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
+
+const INDUSTRY_ICONS: Record<string, LucideIcon> = {
+  hvac: Flame,
+  plumbing: Droplet,
+  electrical: Zap,
+  solar: Sun,
+  roofing: Home,
+  fencing: Fence,
+  landscape: TreeDeciduous,
+  pool_spa: Waves,
+  pest_control: Bug,
+  appliance_repair: Refrigerator,
+  handyman: Hammer,
+  construction: HardHat,
+  auto_care: Car,
+  security_systems: Camera,
+  real_estate: Building2,
+  beauty_wellness: Scissors,
+  restaurants: UtensilsCrossed,
+  personal_assistant: Bot,
+  home_health: Stethoscope,
+  physical_therapy: HeartPulse,
+  occupational_therapy: HeartHandshake,
+  hospice: HeartHandshake,
+  veterinary: PawPrint,
+  medical_practice: Stethoscope,
+};
 
 const agentCategories = [{
   id: 'customer',
