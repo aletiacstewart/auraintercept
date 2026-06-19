@@ -13,7 +13,6 @@ import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { SEO } from '@/components/seo/SEO';
-import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
 /**
  * Marketing Platform Guide industry taxonomy — 22 category groups covering
  * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
@@ -667,11 +666,6 @@ export default function Index() {
             </Link>
           </div>
 
-          {/* BETA Sign-Up Notice */}
-          <div className="max-w-5xl mx-auto mb-10">
-            <BetaSignupNotice />
-          </div>
-
           {/* 4-Tier Pricing Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
 
@@ -822,45 +816,77 @@ export default function Index() {
             </p>
           </div>
 
-          {/* 3rd Party Integrations */}
-          <div className="mt-16 max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2 text-white">3rd-Party Integrations & Usage Fees</h3>
-              <p className="text-sm text-white">
-                Bring your own provider accounts. Each vendor bills you directly.
+          {/* Consolidated: BETA Sign-Up + Trial + 3rd-Party intro + 10DLC details */}
+          <div className="mt-12 max-w-5xl mx-auto">
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 md:p-6 space-y-4">
+              {/* Header */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 border border-primary/30 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+                  <Zap className="w-3 h-3" /> Beta
+                </span>
+                <h3 className="text-base md:text-lg font-bold text-primary">
+                  BETA Sign-Up — 60-Day Live Trial &amp; 3rd-Party Integrations
+                </h3>
+              </div>
+
+              {/* Trial + pricing summary */}
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div className="rounded-md bg-black/20 p-3">
+                  <p className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">60-Day Live Trial</p>
+                  <p className="text-[11px] text-white/85 leading-relaxed">30 days concierge onboarding + 30 days full live use.</p>
+                </div>
+                <div className="rounded-md bg-black/20 p-3">
+                  <p className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Beta Pricing Locked In</p>
+                  <p className="text-[11px] text-white/85 leading-relaxed">Lock in beta monthly pricing on your tier (see plans above).</p>
+                </div>
+                <div className="rounded-md bg-black/20 p-3">
+                  <p className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Onboarding Fee</p>
+                  <p className="text-[11px] text-white/85 leading-relaxed">50% of your beta monthly price — due at start of trial, non-refundable once onboarding begins.</p>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-white/75 leading-relaxed">
+                <span className="font-semibold text-white">Onboarding covers:</span> account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC compliance filing, and your initial training session.
               </p>
-              <p className="text-xs text-white italic mt-1">
-                Vendor fees are set by the provider and may change at any time.
-              </p>
-            </div>
 
-            {/* SMS System — FCC 10DLC Compliance */}
-            <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 p-4">
-              <div className="flex items-start gap-3">
-                <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                <div className="w-full space-y-3">
-                  <h4 className="text-sm font-semibold text-warning">SMS System — FCC 10DLC Compliance</h4>
+              {/* Divider */}
+              <div className="border-t border-white/10" />
 
-                  <p className="text-xs text-white/90 leading-relaxed">
-                    10DLC (10-Digit Long Code) is the US carrier standard for business SMS. We register your brand and campaigns through SignalWire on your behalf. Unregistered messages are filtered or blocked by carriers.
-                  </p>
+              {/* 3rd-Party intro */}
+              <div>
+                <h4 className="text-sm font-semibold text-white mb-1">3rd-Party Integrations &amp; Usage Fees</h4>
+                <p className="text-xs text-white/85 leading-relaxed">
+                  Bring your own provider accounts (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social). Each vendor bills you directly, pay-as-you-go — <span className="font-semibold text-white">including during your trial</span>. A valid credit card is required on every provider account. Vendor fees are set by the provider and may change at any time.
+                </p>
+              </div>
 
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="rounded-md bg-black/20 p-3 space-y-1.5">
-                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Pass-Through Fees</p>
-                      <ul className="text-[11px] text-white/90 space-y-1 list-disc list-inside">
-                        <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span></li>
-                        <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span> (first 3 months upfront)</li>
-                        <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission</li>
-                        <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises T-Mobile caps)</li>
-                        <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> (no SMS in 60 days)</li>
-                      </ul>
-                      <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$42</span> to go live</p>
+              {/* SMS / 10DLC details */}
+              <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                  <div className="w-full space-y-3">
+                    <div>
+                      <h5 className="text-sm font-semibold text-warning">SMS / 10DLC Compliance — required for SMS</h5>
+                      <p className="text-[11px] text-white/85 leading-relaxed mt-1">
+                        10DLC is the US carrier standard for business SMS. We register your brand &amp; campaigns through SignalWire on your behalf. Unregistered messages are filtered or blocked.
+                      </p>
                     </div>
 
-                    <div className="rounded-md bg-black/20 p-3 space-y-1.5">
-                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Approval & What You Provide</p>
-                      <div className="space-y-2">
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="rounded-md bg-black/20 p-3 space-y-1.5">
+                        <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Pass-Through Fees</p>
+                        <ul className="text-[11px] text-white/90 space-y-1 list-disc list-inside">
+                          <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span></li>
+                          <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span> (first 3 mo upfront)</li>
+                          <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission</li>
+                          <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises T-Mobile caps)</li>
+                          <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> (no SMS in 60 days)</li>
+                        </ul>
+                        <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$42</span> to go live</p>
+                      </div>
+
+                      <div className="rounded-md bg-black/20 p-3 space-y-2">
+                        <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Approval &amp; What You Provide</p>
                         <div>
                           <p className="text-[11px] font-medium text-white">Timeline</p>
                           <p className="text-[11px] text-white/80">3–5 business days when clean. 1–2+ weeks if re-vetting is needed. No guaranteed turnaround.</p>
@@ -875,6 +901,10 @@ export default function Index() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Vendor cards grid */}
+          <div className="mt-8 max-w-4xl mx-auto">
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Ordered from lowest to highest cost */}
@@ -925,10 +955,8 @@ export default function Index() {
                   <Shield className="w-3.5 h-3.5 text-amber-400" />
                   <span className="font-semibold text-xs text-amber-400">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration</p>
-                <p className="text-[10px] text-amber-300 font-medium">Brand $4.50 one-time · Campaign fee varies (first 3 mo upfront) · Monthly maintenance</p>
-                <p className="text-[10px] text-white">T-Mobile $250/mo for inactive campaigns (60 consecutive days)</p>
-                <p className="text-[10px] text-white">Approval: 3–5 business days when clean · up to 1–2+ weeks with revisions · Required on all tiers</p>
+                <p className="text-[10px] text-white mb-1">US SMS Carrier Registration — required for SMS on all tiers.</p>
+                <p className="text-[10px] text-amber-300 font-medium">See 10DLC fee &amp; approval details above.</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -967,13 +995,6 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Trial summary — moved to bottom of pricing + 3rd-party section */}
-            <div className="mt-8 rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
-              <p className="text-sm font-semibold text-white mb-1">60-Day Live Trial</p>
-              <p className="text-xs text-white/85">
-                30 days concierge onboarding + 30 days full live use. Onboarding fee is due at start of trial; a valid credit card is required for the onboarding fee and for each 3rd-party provider account.
-              </p>
-            </div>
           </div>
         </div>
       </section>
