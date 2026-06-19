@@ -667,11 +667,6 @@ export default function Index() {
             </Link>
           </div>
 
-          {/* BETA Sign-Up Notice */}
-          <div className="max-w-5xl mx-auto mb-10">
-            <BetaSignupNotice />
-          </div>
-
           {/* 4-Tier Pricing Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
 
