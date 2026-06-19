@@ -294,10 +294,18 @@ export default function SignUp() {
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,
           beta_trial: betaCode ? true : false,
           beta_code: betaCode?.code ?? null,
-          industry_config:
-            canonicalIndustry === 'other' && customIndustry.primary_offering.trim()
-              ? (buildIndustryConfig(customIndustry) as never)
-              : null,
+          // Always persist the precise business_type the user picked so the
+          // profile resolver and templating can use the 185-type taxonomy.
+          industry_config: (() => {
+            const base: Record<string, unknown> = {};
+            if (rawBusinessType && rawBusinessType !== canonicalIndustry) {
+              base.business_type = rawBusinessType;
+            }
+            if (canonicalIndustry === 'other' && customIndustry.primary_offering.trim()) {
+              Object.assign(base, buildIndustryConfig(customIndustry));
+            }
+            return (Object.keys(base).length > 0 ? base : null) as never;
+          })(),
         })
         .select()
         .single();
