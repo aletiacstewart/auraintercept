@@ -610,37 +610,37 @@ export default function Index() {
       </section>
 
       {/* How It Works */}
-      <section style={{ padding: "64px 0" }}>
+      <section style={{ padding: "32px 0" }}>
         <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
+          <div className="text-center mb-6">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 12px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 8 }}>
+              <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
             </div>
-            <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <h2 style={{ fontSize: "clamp(18px, 3vw, 28px)", fontWeight: 800, margin: "0 0 6px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Get Started in 8 Simple Steps
             </h2>
-            <p style={{ color: "#FFFFFF", maxWidth: 480, margin: "0 auto" }}>From signup to full automation in minutes, not months.</p>
+            <p style={{ color: "#FFFFFF", maxWidth: 480, margin: "0 auto", fontSize: 13 }}>From signup to full automation in minutes, not months.</p>
           </div>
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-3">
             {howItWorks.map((item, index) => (
               <div key={item.step} className="relative">
-                <div style={{ borderRadius: 16, padding: "28px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)", transition: "all 0.3s ease", height: "100%" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 30px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.35)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; }}
+                <div style={{ borderRadius: 10, padding: "14px 10px", textAlign: "center", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(24px)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.15), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease", height: "100%" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 20px rgba(0,229,255,0.15), 0 0 0 1px rgba(0,229,255,0.3)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; }}
                 >
-                  <div style={{ position: "relative", width: 52, height: 52, margin: "0 auto 16px" }}>
-                    <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #00E5FF, #00E5FF)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(0,229,255,0.4)" }}>
-                      <item.icon size={24} style={{ color: "white", position: "relative", zIndex: 1 }} />
+                  <div style={{ position: "relative", width: 36, height: 36, margin: "0 auto 8px" }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #00E5FF, #00E5FF)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(0,229,255,0.3)" }}>
+                      <item.icon size={16} style={{ color: "white", position: "relative", zIndex: 1 }} />
                     </div>
-                    <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 16, background: "rgba(0,229,255,0.4)", opacity: 0.25 }} />
+                    <span className="animate-ping" style={{ position: "absolute", inset: 0, borderRadius: 10, background: "rgba(0,229,255,0.4)", opacity: 0.25 }} />
                   </div>
-                  <div style={{ fontSize: 11, color: "#00E5FF", letterSpacing: 2, marginBottom: 6, fontWeight: 600 }}>STEP {item.step}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#00E5FF", marginBottom: 8 }}>{item.title}</div>
-                  <p style={{ fontSize: 13, color: "#FFFFFF", lineHeight: 1.6 }}>{item.description}</p>
+                  <div style={{ fontSize: 9, color: "#00E5FF", letterSpacing: 1.5, marginBottom: 3, fontWeight: 600 }}>STEP {item.step}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#00E5FF", marginBottom: 3 }}>{item.title}</div>
+                  <p style={{ fontSize: 11, color: "#FFFFFF", lineHeight: 1.4 }}>{item.description}</p>
                 </div>
                 {index !== 3 && index < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                    <ChevronRight size={20} style={{ color: "rgba(0,229,255,0.3)" }} />
+                  <div className="hidden md:block absolute top-1/2 -right-1.5 transform -translate-y-1/2 z-10">
+                    <ChevronRight size={14} style={{ color: "rgba(0,229,255,0.3)" }} />
                   </div>
                 )}
               </div>
