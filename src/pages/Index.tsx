@@ -254,55 +254,6 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Website builder', 'Blog management', 'SEO optimization', 'Multi-channel content']
 }];
-const platformFeatures = [{
-  icon: Globe,
-  title: 'Customer Portal',
-  description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
-}, {
-  icon: Globe,
-  title: 'Web Presence Manager',
-  description: 'AI-powered branded web presence with Message Aura (Text), Talk to Aura (Voice), and booking.'
-}, {
-  icon: Target,
-  title: 'Lead Capture & Scoring',
-  description: 'Automatically capture and score leads from AI interactions with smart follow-up automation.'
-}, {
-  icon: Bell,
-  title: 'Smart Reminders',
-  description: 'Email, SMS, and voice reminders help reduce no-shows and appointment issues.'
-}, {
-  icon: Smartphone,
-  title: 'Mobile-First Design',
-  description: 'Technician consoles optimized for field work on any device.'
-}, {
-  icon: Brain,
-  title: 'AI Powered Ops',
-  description: 'Intelligent agent handoffs with context preservation across conversations.'
-}, {
-  icon: Lock,
-  title: 'Enterprise Security',
-  description: 'Row-level security and role-based access protect sensitive data.'
-}, {
-  icon: Send,
-  title: 'Social Media',
-  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge. Own API auto-posting also available.'
-}, {
-  icon: FileText,
-  title: 'Quotes & Invoicing',
-  description: 'Generate professional quotes and invoices with automated payment tracking.'
-}, {
-  icon: Calendar,
-  title: 'Smart Scheduling',
-  description: 'AI-optimized appointment scheduling with calendar sync and availability management.'
-}, {
-  icon: MapPin,
-  title: 'Route Optimization',
-  description: 'Intelligent routing for field technicians to minimize drive time and maximize efficiency.'
-}, {
-  icon: Bot,
-  title: 'Personal Assistant',
-  description: 'AI-powered scheduling assistant with direct calendar sync for booking appointments.'
-}];
 const communicationChannels = [{
   icon: Mic,
   title: 'Talk to Aura (Voice)',
@@ -597,39 +548,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Platform Features */}
-      <section style={{ padding: "56px 0" }}>
-        <div className="container max-w-6xl mx-auto px-6">
-          <div className="text-center mb-8">
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Platform Features</span>
-            </div>
-            <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              The All-in-One AI Center for Service Pros
-            </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>Multi-channel AI capture, reminders, and workflows in one platform.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-            {platformFeatures.map((feature) => (
-              <div key={feature.title} style={{ borderRadius: 12, padding: "14px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)", transition: "all 0.3s ease" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 24px rgba(0,229,255,0.3), 0 0 0 1px rgba(0,229,255,0.4)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.15), 0 0 18px rgba(0,229,255,0.06)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  <div style={{ position: "relative", width: 26, height: 26, flexShrink: 0 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 7, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <feature.icon size={12} style={{ color: "#00E5FF", position: "relative", zIndex: 1 }} />
-                    </div>
-                    <span className="absolute inset-0 rounded-md animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
-                  </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#00E5FF" }}>{feature.title}</span>
-                </div>
-                <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.5 }}>{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Industries */}
       <section style={{ padding: "56px 0", background: "rgba(0,229,255,0.02)" }}>
