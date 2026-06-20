@@ -46,7 +46,7 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
         onboarding_fee_cap_cents: row.onboarding_fee_cap_cents ?? null,
         onboarding_cap_expires_at: row.onboarding_cap_expires_at ?? null,
       });
-      toast.success(`Beta access unlocked — ${row.trial_days || 60}-day free trial`);
+      toast.success(`Beta access unlocked — ${row.trial_days || 60}-day Live Trial`);
       setCode('');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Failed to validate code');
@@ -69,7 +69,7 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
                 {applied.code} applied
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {applied.trial_days}-day free trial · {onboardingLine}
+                {applied.trial_days}-day Live Trial · {onboardingLine}
               </div>
             </div>
           </div>

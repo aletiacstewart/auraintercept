@@ -95,7 +95,7 @@ export function TrialBanner() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/20 text-primary">
-              Free Trial
+              Live Trial
             </span>
             {isCritical && (
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/20 text-red-500">
@@ -107,7 +107,7 @@ export function TrialBanner() {
           <h3 className="font-semibold text-lg">
             {timeRemaining?.days === 0 
               ? "Your trial ends today!" 
-              : `${timeRemaining?.days} day${timeRemaining?.days !== 1 ? 's' : ''} left in your free trial`
+              : `${timeRemaining?.days} day${timeRemaining?.days !== 1 ? 's' : ''} left in your 60-Day Live Trial`
             }
           </h3>
 
