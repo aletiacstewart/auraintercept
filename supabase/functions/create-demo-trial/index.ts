@@ -8,7 +8,8 @@ const corsHeaders = {
 };
 
 const PASSWORD = 'auratrial*!';
-const TRIAL_HOURS = 48;
+// 60-Day Live Demo — sandbox demo company stays live for 60 days
+const TRIAL_HOURS = 60 * 24;
 const PUBLIC_URL = 'https://auraintercept.ai';
 
 function buildDemoEmailHtml(opts: {
@@ -39,9 +40,9 @@ function buildDemoEmailHtml(opts: {
   `;
   return `<!doctype html><html><body style="margin:0;background:#040a14;color:#e5e7eb;font-family:-apple-system,Segoe UI,Roboto,sans-serif;">
     <div style="max-width:560px;margin:0 auto;padding:28px 20px;">
-      <h1 style="color:#22d3ee;font-size:22px;margin:0 0 6px;">Your ${industryLabel} demo is live</h1>
+      <h1 style="color:#22d3ee;font-size:22px;margin:0 0 6px;">Your ${industryLabel} Live Demo is ready</h1>
       <p style="color:#9ca3af;margin:0 0 18px;font-size:14px;">
-        Hey ${name}, your 48-hour Aura Intercept demo for <b style="color:#e5e7eb;">${businessName}</b> is ready. Open it on your laptop, then scan/forward this email to your phone to try the technician + customer mobile experience.
+        Hey ${name}, your 60-day Aura Intercept Live Demo for <b style="color:#e5e7eb;">${businessName}</b> is ready. Open it on your laptop, then scan/forward this email to your phone to try the technician + customer mobile experience.
       </p>
       <div style="background:#0b1220;border:1px solid #22d3ee;border-radius:8px;padding:14px 16px;margin-bottom:14px;">
         <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#22d3ee;font-weight:700;">One-tap demo link</div>
@@ -58,7 +59,7 @@ function buildDemoEmailHtml(opts: {
         ${row('Customer Portal', customerEmail, '/customer-portal')}
       </table>
       <p style="color:#6b7280;font-size:11px;margin-top:18px;line-height:1.5;">
-        After 48 hours your demo company is automatically deleted. Want to keep your data? Upgrade anytime from the demo banner.
+        After 60 days your demo company is automatically deleted. Want to keep your data? Upgrade anytime from the demo banner.
       </p>
     </div>
   </body></html>`;
@@ -80,7 +81,7 @@ function buildDemoEmailText(opts: {
   return [
     `Hi ${name},`,
     ``,
-    `Your 48-hour Aura Intercept ${industryLabel} demo for ${businessName} is ready.`,
+    `Your 60-day Aura Intercept ${industryLabel} Live Demo for ${businessName} is ready.`,
     ``,
     `One-tap demo link (open on your phone):`,
     `${shareUrl}`,
@@ -93,7 +94,7 @@ function buildDemoEmailText(opts: {
     `  Technician App:   ${employeeEmail}`,
     `  Customer Portal:  ${customerEmail}`,
     ``,
-    `After 48 hours the demo company is automatically deleted.`,
+    `After 60 days the demo company is automatically deleted.`,
     `— Aura Intercept`,
   ].join('\n');
 }
@@ -394,7 +395,7 @@ Deno.serve(async (req) => {
         await resend.emails.send({
           from: 'Aura Intercept <ai@auraintercept.ai>',
           to: [email],
-          subject: `Your ${ind.label} demo is ready — 48 hours of Aura Intercept`,
+          subject: `Your ${ind.label} Live Demo is ready — 60 days of Aura Intercept`,
           html: buildDemoEmailHtml({
             name,
             businessName: business_name,
