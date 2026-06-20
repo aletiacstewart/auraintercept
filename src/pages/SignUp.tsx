@@ -111,6 +111,10 @@ export default function SignUp() {
   useEffect(() => {
     if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
       setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
+    } else if (industryParam) {
+      // Live Demo deep-link (industry preselected, no explicit tier) → default to Elite
+      // for the 60-day trial. User can downgrade before day 60.
+      setSelectedTier('command');
     }
     if (industryParam) {
       setBusinessIndustry(industryParam);
@@ -841,7 +845,7 @@ export default function SignUp() {
                       <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Pick any plan below — all agents, consoles, and integrations for your industry are on. Upgrade or downgrade anytime.
+                      Your 60-Day Live Demo runs on <span className="font-semibold text-foreground">Aura Elite</span> by default — every agent, console, and integration unlocked. <span className="font-semibold text-foreground">Downgrade to Core, Boost, or Pro anytime before day 60</span>, or your card is charged at the Elite rate.
                     </p>
                     <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
                       <span className="font-semibold text-foreground">First 30 days = concierge onboarding</span> (setup, KB, 3rd-party activation, training). <span className="font-semibold text-foreground">Remaining 30 days = fully live</span>.
@@ -1330,7 +1334,7 @@ export default function SignUp() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee.
+                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee — <span className="font-medium text-foreground">including during the 60-Day Live Demo</span>. If I cancel Aura, I am responsible for <span className="font-medium text-foreground">canceling each 3rd-party account separately</span>; Aura cannot close them on my behalf.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">

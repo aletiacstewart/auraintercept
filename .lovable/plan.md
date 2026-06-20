@@ -1,96 +1,58 @@
-
 ## Goal
 
-Unify every demo/trial surface under one offer:
+Stop seeding fake data into Live Demo accounts, kill the standalone Live Demo intake form, and route every "Try the Live Demo" CTA through the real signup page — pre-filling the chosen industry, defaulting the 60-day trial to the Elite tier, and surfacing a 3rd-party fee/cancellation notice.
 
-- **Live Demo — 60 days** (30 days concierge onboarding + 30 days fully live use)
-- Onboarding fee due at start (existing rule, unchanged)
-- No more "24-hour demo", "14-day trial", "90-day trial", "Free Trial", or "No credit card required" anywhere
+## 1. Route Live Demo CTAs to real signup
 
-Keep the canonical "30 + 30" structure (memory unchanged).
+**`src/pages/ForBusiness.tsx`**
+- Remove `<StartDemoDialog>` mount and `demoOpen` state.
+- Change every "Try Demo / Start Live Demo" handler (RolePreviewRow `onTryDemo`, hero CTA, sticky CTA) to `navigate('/auth?mode=company&tab=signup&tier=command&industry=' + industry)`.
+- Update subhead copy: "60-Day Live Demo on Aura Elite — downgrade or cancel anytime before day 60."
 
----
+**`src/components/marketing/StartDemoDialog.tsx`**
+- Delete file (no other consumers — verified via rg).
 
-## 1. Backend — extend sandbox demo to 60 days
+**Other CTAs (`Index.tsx`, `IndustryHero.tsx`, `DemoAccess.tsx`, `ai-consoles/*` "Start Demo" buttons, marketing PDFs)**
+- Repoint any `/demo`, `create-demo-trial` invocation, or `StartDemoDialog` trigger to the same `/auth?mode=company&tab=signup&tier=command&industry={id}` deep link.
+- Leave `/demo/:trialId` (DemoAccess credentials page) intact for already-issued demo links but stop generating new ones.
 
-`demo_trials` records currently expire at +24h.
+## 2. Signup defaults Elite for 60-day trial
 
-- **Migration** — update default `expires_at` for new demo_trials rows to `now() + interval '60 days'`. Backfill existing un-expired rows to +60 days from `created_at`. Update any cron/cleanup function that hard-deletes at 24h to use 60 days.
-- **`supabase/functions/seed-demo-accounts-v2/index.ts`** — change the 24h expiry constant to 60 days.
-- **`supabase/functions/send-walkthrough-demo/index.ts`** — replace 24h copy with 60-day copy in the welcome email body.
-- **`src/components/common/DemoExpiryBanner.tsx`** + **`src/hooks/useDemoSession.ts`** — update banner math/labels from "24 hours" / "Xh remaining" to "60 days" / "Xd remaining".
+**`src/pages/SignUp.tsx`**
+- When `tierParam` is absent, default `selectedTier` to `'command'` (Elite) instead of Core, only when arriving from a `?industry=` deep link (preserve existing default for organic signups — confirm with user if they want Elite as universal default).
+- Keep existing industry pre-fill logic (already supported via `industryParam`).
+- Under the tier selector add a callout: "Your 60-Day Live Demo runs on Aura Elite. Downgrade to Core / Boost / Pro anytime before day 60 or your card is charged Elite."
+- Add a required checkbox above submit: "I understand 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own accounts and card on file. All provider usage fees during the 60-Day Live Demo are billed directly to me by each provider. If I cancel Aura I am responsible for canceling these provider accounts separately." Block submit until checked.
 
-## 2. Edge functions — purge "free trial" wording
+## 3. Strip seeded data from live-demo (real signup) accounts
 
-- **`supabase/functions/trial-reminders/index.ts`** — rewrite subjects/bodies: drop "free trial", "90-day", switch to "60-Day Live Trial"; reminder cadence stays 14/7/1 (memory standard).
-- **`supabase/functions/submit-onboarding/index.ts`** — already says "60-Day Live Trial"; sweep remaining "free" mentions.
-- **`supabase/functions/send-company-welcome/index.ts`**, **`resend-webhook/index.ts`**, **`check-unsubscribe-alerts/index.ts`**, **`ai-agent-chat/index.ts`**, **`voice-handler/index.ts`**, **`voice-booking-agent/index.ts`**, **`social-oauth/index.ts`** — replace stray "24-hour demo", "free trial", "90-day" strings with the unified wording.
+The "live demo" the user is talking about now == a real company created via SignUp. Those must start empty.
 
-## 3. Legacy SQL migration (overwrite old FAQ/AI prompt seeds)
+- **Confirm:** `SignUp.tsx` currently does NOT call `seed-demo-accounts-v2` — only `/dashboard/demo-seeder` (platform_admin) and the cron do. Verified via rg.
+- **Guardrail:** add an explicit `is_demo: false` on the company insert in `SignUp.tsx` so the seed-demo job (which scopes by `is_demo = true`) can never touch it.
+- **Empty-state copy:** rely on existing `IndustryEmptyState` everywhere — no changes needed; just confirm Leads/Quotes/Invoices/Customers/Inventory/Jobs surfaces render the empty state for a 0-row company (already do per memory `industry-empty-states`).
+- **Sandbox `demo_trials` flow:** leave `create-demo-trial` + `DemoAccess` + `seed-demo-accounts-v2` in place for the legacy 78-account demo registry (used by sales-rep logins), but stop linking to it from public marketing. Add a banner on `/demo` route: "Public Live Demo has moved — [Start your 60-Day Live Demo →](/auth?mode=company&tab=signup&tier=command)".
 
-New migration (`*_unify_trial_copy.sql`) that runs `UPDATE` statements against:
+## 4. Trial-end downgrade flow
 
-- `faqs` — rewrite any answer containing "90-day", "free trial", "no credit card" to the 60-Day Live Trial wording.
-- `companies.ai_agent_prompt`, `companies.about_paragraph` — rewrite the Aura Intercept tenant rows (and any other rows still holding the legacy 90-day pricing string) to current pricing + "60-Day Live Trial".
-- `industry_template_packs` / `industry_blueprints` — sweep any pricing/trial copy fields with the same patterns.
+**`src/pages/Subscription.tsx` + `TrialBanner.tsx`**
+- During trial show: "Day X of 60 on Aura Elite. Pick your plan before day 60 or you'll be charged $3,979/mo + $1,990 onboarding."
+- Surface a "Downgrade plan" button that opens the tier picker.
+- No new Stripe logic — existing checkout/portal handles the downgrade.
 
-(Pure data-fix migration; no schema changes; no GRANT changes.)
+## 5. Verification
 
-## 4. Frontend marketing & dashboard copy
-
-Search-and-replace pass across these files (copy-only edits, no logic changes):
-
-**Demo / sandbox rebrand (24-hour → Live Demo · 60 days):**
-- `src/components/marketing/StartDemoDialog.tsx` (dialog title, toast, footer line)
-- `src/components/marketing/DemoCredentialsCard.tsx` (share blurb, expiry note)
-- `src/components/marketing/IndustryHero.tsx` ("Full access for 24 hours" → "Full access for 60 days")
-- `src/components/marketing/IntegrationStatusPanel.tsx`
-- `src/pages/ForBusiness.tsx` (hero meta description, CTA buttons, value-prop line)
-- `src/pages/DemoAccess.tsx` (page subtitle if present)
-
-**Trial copy normalization (90-day / 14-day / "Free Trial" → 60-Day Live Trial):**
-- `src/locales/es/common.json` — `"startFreeTrial": "Prueba en vivo de 90 días"` → `"Prueba en vivo de 60 días"`
-- `src/locales/en/auth.json` — "Start your free trial in 60 seconds" → "Start your 60-Day Live Trial in 60 seconds"
-- `src/pages/TermsOfService.tsx` — "Free Trial" heading + body lines retain mechanics but drop "Free" wording
-- `src/pages/Subscription.tsx` — "No credit card required" line removed; "Unlocks a 60-day free trial" → "Unlocks the 60-Day Live Trial"
-- `src/pages/Help.tsx` — "What's included in the free trial?" → "What's included in the 60-Day Live Trial?"
-- `src/pages/SignUp.tsx`, `src/pages/Index.tsx`, `src/pages/Contact.tsx`, `src/pages/PublicOnboardingIntake.tsx`, `src/pages/AgentDetailPage.tsx`, `src/pages/SpecialistOperativesConsole.tsx`, `src/pages/PrivacyPolicy.tsx`, `src/pages/DesignPreview.tsx`, `src/pages/SmartWebsite.tsx` — sweep stray "Free Trial" / "no credit card" / "14-day" / "90-day".
-- `src/lib/auraInterceptSalesPrompt.ts`, `src/lib/subscriptionAgentConfig.ts`, `src/lib/industryFastStartQuestions.ts`, `src/lib/industryMarketingContent.ts`, `src/lib/industryMarketingPlaybooks.ts`, `src/lib/industryWorkflows.ts`, `src/lib/integrationOnboardingData.ts` — same sweep.
-- `supabase/functions/_shared/aura-intercept-sales-prompt.ts` — mirror sales prompt edit.
-- `public/llms.txt` — already correct, double-check.
-
-## 5. PDFs / documentation
-
-Update copy in:
-- `PlatformFAQPDF.tsx`, `PlatformDocumentPDF.tsx`, `CompanyOnboardingPDF.tsx`
-- `WebsiteCopyPDF.tsx` ("Ready in 24 Hours" → "Live in 60 days")
-- `VideoScriptsPDF.tsx`, `SocialMediaContentPackPDF.tsx`, `SalesPitchDataPDF.tsx`, `IndustryMarketingKitPDF.tsx`, `MarketingSalesMasterPDF.tsx`, `PricingSummaryPDF.tsx`
-- `src/pages/VideoPromptsPage.tsx`
-
-Replacement table:
-
-```text
-24-hour demo / 24h demo         -> Live Demo (60 days)
-24 hours. Full access.          -> 60 days. Full access.
-Free Trial / free trial         -> 60-Day Live Trial
-Start your free trial           -> Start your 60-Day Live Trial
-Start Free Trial                -> Start Live Trial
-90-day free trial / 90 day      -> 60-Day Live Trial
-14-day trial                    -> 60-Day Live Trial
-No credit card required         -> (remove line)
-```
-
-(Skip purely-functional "24 hours" strings: business-hours editors, reminder windows, alert windows, hashtag `#24HourService`, "within 24 hours" support SLA, calendar sync delay text. These are not trial copy.)
-
-## 6. Verification
-
-- `rg -ni "free trial|24-hour demo|14-day trial|90-day|no credit card required" src public supabase` returns zero non-functional hits.
-- Manual visual check via Playwright on `/`, `/for-business`, `/subscription`, `/help`, `/terms`, `/sign-up`, `/demo-access/<id>`.
+- `rg "StartDemoDialog|create-demo-trial" src` returns only `DemoAccess.tsx`, `SuperSwitcher`, and the edge function itself.
+- Manual: click every "Live Demo" CTA on `/for-business`, `/`, industry hero — all land on `/auth?mode=company&tab=signup&tier=command&industry=<id>` with industry + Elite pre-selected and the 3rd-party checkbox visible.
+- Create a fresh signup, confirm dashboard renders empty states (no seeded leads/jobs/customers).
 - TypeScript build passes.
 
 ## Out of scope
 
-- Pricing/tier values, Stripe price IDs, RBAC, schema changes.
-- Onboarding window stays "30 days concierge + 30 days live" (per your answer).
-- Functional 24-hour windows (alerts, reminders, business hours) remain untouched.
-- Spanish copy beyond the one `common.json` key flagged above.
+- Pricing values, Stripe price IDs, RBAC, schema changes.
+- The legacy 78-account demo registry at `/dashboard/demo-seeder` (sales-rep tool) stays as-is.
+- Auto-downgrade at day 60 — user picks manually; if no action, existing Stripe billing kicks in at Elite (matches current behavior).
+
+## Open question
+
+Should Elite be the default tier for **all** organic signups too (anyone hitting `/auth?tab=signup` with no `?tier=`), or only when arriving from a Live Demo deep link? Current plan: only deep-link path defaults to Elite. Confirm if you want it universal.

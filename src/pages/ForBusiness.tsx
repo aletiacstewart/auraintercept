@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { IndustryDropdownPicker } from '@/components/marketing/IndustryDropdownPicker';
@@ -7,7 +7,6 @@ import { IntegrationStatusPanel } from '@/components/marketing/IntegrationStatus
 import { IndustryHero } from '@/components/marketing/IndustryHero';
 import { IndustryValueProps } from '@/components/marketing/IndustryValueProps';
 import { RolePreviewRow } from '@/components/marketing/RolePreviewRow';
-import { StartDemoDialog } from '@/components/marketing/StartDemoDialog';
 import { IndustryROICalculator } from '@/components/marketing/IndustryROICalculator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,14 +30,21 @@ const PRICING_TIERS = [
 
 export default function ForBusiness() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   // Always default to generic Aura Intercept content. Only honor an explicit
   // ?industry= query param (e.g. from marketing links). Never read from
   // localStorage on load — that caused returning visitors to skip the default.
   const initial = searchParams.get('industry') || 'default';
   const [industry, setIndustry] = useState<string>(initial);
-  const [demoOpen, setDemoOpen] = useState(false);
 
   const expired = searchParams.get('expired') === '1';
+
+  const startLiveDemo = () => {
+    const ind = industry && industry !== 'default' ? industry : '';
+    const qs = new URLSearchParams({ mode: 'company', tab: 'signup', tier: 'command' });
+    if (ind) qs.set('industry', ind);
+    navigate(`/auth?${qs.toString()}`);
+  };
 
   useEffect(() => {
     const current = searchParams.get('industry');
@@ -81,7 +87,7 @@ export default function ForBusiness() {
               <Zap className="w-3 h-3" /> Dynamic Demo Page
             </span>
             <span className="text-xs text-muted-foreground">
-              Pick Your Industry from the dropdown and start your 60-day Live Demo.
+              Pick your industry and start your 60-Day Live Demo on Aura Elite — downgrade or cancel anytime before day 60.
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -107,9 +113,9 @@ export default function ForBusiness() {
       </div>
 
       <main className="flex-1">
-        <IndustryHero content={content} onStartDemo={() => setDemoOpen(true)} />
+        <IndustryHero content={content} onStartDemo={startLiveDemo} />
         <IndustryValueProps content={content} />
-        <RolePreviewRow industryId={industry} onTryDemo={() => setDemoOpen(true)} />
+        <RolePreviewRow industryId={industry} onTryDemo={startLiveDemo} />
         <IntegrationStatusPanel />
 
         {/* Industry ROI calculator */}
@@ -170,7 +176,7 @@ export default function ForBusiness() {
               60 days. Full access. Owner, technician, and customer views — all yours.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" variant="gradient" onClick={() => setDemoOpen(true)}>
+              <Button size="lg" variant="gradient" onClick={startLiveDemo}>
                 <Sparkles className="w-5 h-5" /> Start your 60-day Live Demo
               </Button>
               <Button size="lg" variant="outline" asChild>
@@ -185,7 +191,6 @@ export default function ForBusiness() {
 
       <PublicFooter />
 
-      <StartDemoDialog open={demoOpen} onOpenChange={setDemoOpen} industryId={industry} />
       <FloatingChatWidget autoOpenAfterMs={6000} autoOpenStorageKey="aura_autoopen_livedemo" />
     </div>
   );
