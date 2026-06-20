@@ -63,7 +63,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
       }
       if (!data?.success) throw new Error(data?.error || 'Failed to start demo');
       setResult(data as DemoCredentialsResult);
-      toast.success('Demo ready! Your 24-hour trial just started.');
+      toast.success('Live Demo ready! Your 60-day demo just started.');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Failed to start demo';
       toast.error(msg);
@@ -94,7 +94,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
         {result ? (
           <>
             <DialogHeader>
-              <DialogTitle>Your 24-hour demo is ready</DialogTitle>
+              <DialogTitle>Your Live Demo is ready</DialogTitle>
               <DialogDescription>
                 Three logins below — try Aura as the owner, a tech, and a customer.
               </DialogDescription>
@@ -106,10 +106,10 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                Start your 24-hour {industryLabel} demo
+                Start your 60-day {industryLabel} Live Demo
               </DialogTitle>
               <DialogDescription>
-                We'll spin up a fully-loaded demo company in seconds. No credit card required.
+                We'll spin up a fully-loaded demo company in seconds.
               </DialogDescription>
             </DialogHeader>
             <div className="text-xs px-3 py-2 rounded-md bg-primary/10 text-foreground border border-primary/20">
@@ -183,7 +183,7 @@ export function StartDemoDialog({ open, onOpenChange, industryId }: StartDemoDia
                 )}
               </Button>
               <p className="text-[11px] text-muted-foreground text-center leading-tight">
-                All 3 demo links (Owner Dashboard, Technician App, Customer Portal) will be emailed to you and stay active for 24 hours.
+                All 3 demo links (Owner Dashboard, Technician App, Customer Portal) will be emailed to you and stay active for 60 days.
               </p>
             </form>
           </>
