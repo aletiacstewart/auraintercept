@@ -34,7 +34,7 @@ export function IndustryHero({ content, onStartDemo }: IndustryHeroProps) {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mt-4">
-          No credit card. No commitment. Full access for 24 hours.
+          No commitment. Full access for 60 days.
         </p>
       </div>
     </section>

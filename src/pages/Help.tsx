@@ -634,7 +634,7 @@ export default function Help() {
                       <AccordionTrigger>
                         <div className="flex items-center gap-2">
                           <Sparkles className="w-4 h-4" />
-                          What's included in the free trial?
+                          What's included in the 60-Day Live Trial?
                         </div>
                       </AccordionTrigger>
                       <AccordionContent>

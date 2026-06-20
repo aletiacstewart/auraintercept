@@ -620,7 +620,7 @@ export default function Subscription() {
                     Beta tester? Apply your invite code
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Unlocks a 60-day free trial (14–30 days concierge onboarding, then 30 days
+                    Unlocks the 60-Day Live Trial (30 days concierge onboarding, then 30 days
                     full live use) and waives the one-time onboarding fee.
                   </p>
                 </div>
@@ -792,7 +792,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-card-foreground font-medium">60-Day Live Trial</span>
-                <span className="text-muted-foreground">No credit card required</span>
+                <span className="text-muted-foreground">Cancel anytime during the trial</span>
               </div>
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">

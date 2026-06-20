@@ -13,7 +13,7 @@ export function IntegrationStatusPanel() {
             Every demo is 100% mock data
           </h2>
           <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
-            No real customers, calls, texts, emails, or charges. Everything below runs against your isolated 24-hour demo company.
+            No real customers, calls, texts, emails, or charges. Everything below runs against your isolated 60-day Live Demo company.
           </p>
         </div>
 

@@ -66,9 +66,9 @@ export default function TermsOfService() {
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
-            <h3 className="text-xl font-semibold mt-4 mb-3">Free Trial</h3>
+            <h3 className="text-xl font-semibold mt-4 mb-3">60-Day Live Trial</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access. No credit card is required to start.</li>
+              <li>New accounts receive a <strong className="text-foreground">60-Day Live Trial</strong> with full platform access (30 days concierge onboarding + 30 days fully live).</li>
               <li>The trial covers the Aura <strong>platform</strong> only. Voice, SMS, email, AI voice, web research, payments, A2P 10DLC, and social APIs all require your own accounts at SignalWire, ElevenLabs, Resend, Tavily, Stripe, and the relevant networks. Each provider bills you <strong>directly on a pay-as-you-go basis</strong> for actual usage (per call, per text, per email, per voice minute, per search, per transaction) — <strong>including during the trial period</strong>.</li>
               <li>You may cancel any time during the 60-day trial at no charge.</li>
             </ul>
