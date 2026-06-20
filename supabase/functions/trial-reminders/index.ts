@@ -155,7 +155,7 @@ serve(async (req) => {
           companyId: company.id,
           from: FROM_ADDRESS,
           to: admins[0].email,
-          subject: `Your free trial has ended - ${company.name}`,
+          subject: `Your 60-Day Live Trial has ended - ${company.name}`,
           html: getExpiredEmailHtml(company.name),
           template: 'trial_expired',
           priority: 'critical',
@@ -195,11 +195,11 @@ serve(async (req) => {
 function getEmailSubject(reminderType: string, companyName: string): string {
   switch (reminderType) {
     case '7-day':
-      return `Your 60-day free trial ends in 7 days - Subscribe to keep your AI Agent`;
+      return `Your 60-Day Live Trial ends in 7 days - Subscribe to keep your AI Agent`;
     case '3-day':
       return `Only 3 days left! Subscribe to continue using Aura Intercept`;
     case '1-day':
-      return `⚠️ Last day of your free trial - ${companyName}`;
+      return `⚠️ Last day of your 60-Day Live Trial - ${companyName}`;
     default:
       return `Trial reminder - ${companyName}`;
   }
@@ -232,7 +232,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
         
         <h2>Hi ${companyName},</h2>
         
-        <p>Your free trial is ending soon!</p>
+        <p>Your 60-Day Live Trial is ending soon!</p>
         
         <div class="countdown">${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left</div>
         
@@ -284,7 +284,7 @@ function getExpiredEmailHtml(companyName: string): string {
         <h2>Hi \${companyName},</h2>
         
         <div class="alert">
-          <strong>Your free trial has ended.</strong>
+          <strong>Your 60-Day Live Trial has ended.</strong>
           <p>Your access to premium features has been restricted.</p>
         </div>
         

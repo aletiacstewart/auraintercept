@@ -977,7 +977,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
       <Bullet>Days 1–30: Concierge onboarding — account config, agent tuning, KB build, 3rd-party activation, team training.</Bullet>
       <Bullet>Days 31–90: Full live operation — every operative live across the customer's actual channels.</Bullet>
       <Bullet>Onboarding fee due at trial start. Monthly billing begins after the trial.</Bullet>
-      <Bullet>No credit card required to start the trial signup; required to activate 3rd-party providers.</Bullet>
+      <Bullet>3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe) require your own account and card on file — billed by each provider directly.</Bullet>
 
       <Text style={s.h2}>Talking points / objection handling</Text>
       {TALKING_POINTS.map((t, i) => (

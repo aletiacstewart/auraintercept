@@ -578,7 +578,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>Can I try before I commit?</Text>
-        <Text style={styles.faqAnswer}>Absolutely. We offer a 60-Day Live Trial with full access to your chosen tier. The first 30 days are dedicated to onboarding — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — then 30 days of full live use. No credit card required to start. Most customers see ROI within the first week of going live—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
+        <Text style={styles.faqAnswer}>Absolutely. We offer a 60-Day Live Trial with full access to your chosen tier. The first 30 days are dedicated to onboarding — account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation, and training — then 30 days of full live use. Most customers see ROI within the first week of going live—often from a single recovered lead that would have otherwise gone to voicemail.</Text>
       </View>
 
       <View style={styles.faqCard}>

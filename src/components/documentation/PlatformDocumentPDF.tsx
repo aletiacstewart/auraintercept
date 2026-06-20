@@ -932,7 +932,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.ctaBox}>
         <Text style={styles.ctaTitle}>Ready to Transform Your Business?</Text>
-        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 60-Day Live Trial today. No credit card required. The first 30 days are dedicated to onboarding, then 30 days of full live use.</Text></Text>
+        <Text style={styles.ctaText}><Text style={styles.ctaText}>Start your 60-Day Live Trial today. The first 30 days are dedicated to concierge onboarding, then 30 days of full live use.</Text></Text>
       </View>
     </Page>
 
@@ -1361,7 +1361,7 @@ const PlatformDocumentPDF = () => (
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 10 AI Operatives (24 specialist agents) working for you around the clock.{"\n\n"}
-          Free 60-day trial (first 30 days = onboarding). No credit card. Start now"
+          60-Day Live Trial (first 30 days = onboarding). Start now"
         </Text>
       </View>
 

@@ -454,7 +454,7 @@ export default function SignUp() {
       toast({
         title: 'Welcome! 🎉',
         description: betaCode
-          ? `Beta access unlocked — ${betaCode.trial_days}-day free trial active. Finish checkout to apply your capped beta onboarding.`
+          ? `Beta access unlocked — ${betaCode.trial_days}-day Live Trial active. Finish checkout to apply your capped beta onboarding.`
           : 'Your 60-Day Live Trial has started. Enjoy full access to all features!',
       });
       const dest = betaCode
@@ -821,10 +821,10 @@ export default function SignUp() {
                   </div>
                 </div>
 
-                {/* Free Account Note */}
+                {/* Customer Account Note */}
                 <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                   <p className="text-xs text-center text-foreground">
-                    <span className="font-medium text-green-600">Customer accounts are always complimentary</span> — one account works with all registered companies!
+                    <span className="font-medium text-green-600">Customer accounts work across every company you do business with</span> — one login, all your providers.
                   </p>
                 </div>
               </div>
@@ -832,7 +832,7 @@ export default function SignUp() {
             {/* Left Column - What's Included (only for company mode) */}
             {mode === 'company' && (
               <div className="space-y-4 h-fit">
-                {/* Free Trial Banner */}
+                {/* 60-Day Live Trial Banner */}
                 <div className="p-4 rounded-xl bg-gradient-to-br from-primary/20 via-purple-500/15 to-amber-500/10 border border-primary/30 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl" />
                   <div className="relative">
@@ -841,7 +841,7 @@ export default function SignUp() {
                       <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Pick any plan below — all agents, consoles, and integrations for your industry are on. No credit card. Upgrade or downgrade anytime.
+                      Pick any plan below — all agents, consoles, and integrations for your industry are on. Upgrade or downgrade anytime.
                     </p>
                     <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
                       <span className="font-semibold text-foreground">First 30 days = concierge onboarding</span> (setup, KB, 3rd-party activation, training). <span className="font-semibold text-foreground">Remaining 30 days = fully live</span>.
@@ -1300,7 +1300,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-day free trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 50% OFF</span> (Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
+                                60-Day Live Trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 50% OFF</span> (Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
                               </p>
                             )}
                           </div>
@@ -1409,7 +1409,7 @@ export default function SignUp() {
                           <p className="text-xs text-center text-muted-foreground mt-2">
                             {selectedTier 
                               ? 'You will be redirected to Stripe to complete payment'
-                              : '60-Day Live Trial (first 30 days = onboarding) • No credit card required for the trial • Cancel anytime'}
+                              : '60-Day Live Trial (first 30 days = onboarding) • Cancel anytime'}
                           </p>
                         )}
                   </form>

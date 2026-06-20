@@ -1,7 +1,7 @@
 // send-walkthrough-demo
 //
 // Voice-driven entrypoint that turns a "Talk to Aura" conversation into a
-// real, industry-matched 24-hour live walkthrough demo. Aura captures the
+// real, industry-matched 60-day Live Demo walkthrough. Aura captures the
 // caller's industry + name + phone + email, then calls this function. It:
 //
 //   1. Canonicalizes the industry and refuses HIPAA-gated verticals.
