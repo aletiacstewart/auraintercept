@@ -413,7 +413,7 @@ const INDUSTRIES: IndustryDef[] = [
       { title: 'Reducing Churn With Health Scores', excerpt: 'Three signals, one weekly review.', content: '## Signals\n\nProduct usage, support sentiment, exec sponsor engagement.' },
     ],
     [
-      { name: 'Free 14-Day Trial', promo_code: 'SAAS14', discount_value: 0, message: 'Start a free 14-day trial — no card required.', subject: 'Try It Free for 14 Days' },
+      { name: '60-Day Live Trial', promo_code: 'LIVE60', discount_value: 0, message: 'Start your 60-Day Live Trial — 30 days concierge onboarding + 30 days fully live.', subject: 'Start Your 60-Day Live Trial' },
       { name: 'Annual Plan Discount', promo_code: 'SAASYEAR', discount_value: 20, message: 'Save 20% when you upgrade to an annual plan.', subject: 'Annual Plans — 20% Off' },
     ],
   ),

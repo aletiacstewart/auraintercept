@@ -400,7 +400,7 @@ export function isSpecialistOperative(agentType: string): agentType is IndustryS
 }
 
 // Specialist operatives are industry-specific and available on ALL plans
-// (including the free trial). Activation is driven by the industry pack, not by tier.
+// (including the 60-Day Live Trial). Activation is driven by the industry pack, not by tier.
 export const SPECIALIST_MIN_TIER: SubscriptionTier = 'free';
 
 export function getSpecialistRequiredTier(): SubscriptionTier {

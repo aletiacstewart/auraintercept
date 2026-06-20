@@ -370,7 +370,7 @@ const PlatformFAQPDF = () => {
         <Text style={styles.subsectionTitle}>Getting Started (Continued)</Text>
         
         <FAQItem 
-          question="Is there a free trial?"
+          question="Is there a Live Trial?"
           answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Your one-time per-tier onboarding fee (50% off during Beta — Core $249 · Boost $497 · Pro $994 · Elite $1,990) is due at the start of the trial. Your monthly plan only begins after day 60."
         />
         

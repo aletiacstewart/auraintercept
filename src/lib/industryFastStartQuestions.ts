@@ -96,7 +96,7 @@ export const INDUSTRY_FAST_START_QUESTIONS: Record<string, FastStartQuestion[]> 
   saas_platform: [
     { key: 'product_summary', label: 'What does your product do?', placeholder: 'e.g. inventory management for small e-com brands' },
     { key: 'icp', label: 'Ideal customer profile', placeholder: 'e.g. Shopify stores doing $1M-$20M/yr' },
-    { key: 'pricing_style', label: 'Pricing model', placeholder: 'e.g. $99/$299/$799 monthly tiers, 14-day trial' },
+    { key: 'pricing_style', label: 'Pricing model', placeholder: 'e.g. $99/$299/$799 monthly tiers, 60-Day Live Trial' },
     { key: 'support_sla', label: 'Support SLA', placeholder: 'e.g. 4-hr response Mon-Fri, 24-hr weekends' },
   ],
   personal_assistant: [
