@@ -1,64 +1,31 @@
-## Goal
-Combine four overlapping boxes on the homepage pricing area into one clean section, placed **below** the 4 pricing cards. Remove duplicated content.
+## Audit Results
 
-## Boxes being merged
-1. **BETA Sign-Up — Limited Time** (currently above the pricing grid via `<BetaSignupNotice />`)
-2. **SMS System — FCC 10DLC Compliance** (below pricing)
-3. **3rd-Party Integrations & Usage Fees** intro header (below pricing)
-4. **60-Day Live Trial** summary box (bottom of section)
+I scanned every PDF generator under `src/components/documentation/` plus `public/llms.txt`, `src/locales/en/marketing.json`, and the AI prompt files (`helpSystemPrompt.ts`, `auraInterceptSalesPrompt.ts`, `subscriptionAgentConfig.ts`).
 
-## Duplicates to drop
-- "60-Day Live Trial" explained 3 times → keep once
-- "Bring your own provider accounts / billed directly" said in beta notice, 3rd-party header, and again on each vendor card → keep one concise line
-- "A2P 10DLC" detailed in both the SMS compliance box AND the A2P vendor card → keep details only in the merged section; trim the A2P card to a brief pointer
-- Repeated "valid credit card required" → state once
+**Good news — already correct everywhere checked:**
+- Pricing: all 16 PDFs use the current Beta numbers ($497 / $994 / $1,988 / $3,979) with the original prices ($697 / $1,394 / $2,788 / $5,576) properly shown as strikethrough/"was" callouts.
+- Trial: every PDF uses "60-Day Live Trial" with the 30-day onboarding + 30-day live-use split. No "90-day" trial language remains in any PDF, page, or prompt.
+- Onboarding fees: all PDFs show the per-tier 50%-off onboarding ($249 / $497 / $994 / $1,990) with strikethrough originals.
+- Tier names: no legacy "Starter / Connect / Performance / Command" names leaked into customer-facing PDFs.
 
-## New consolidated layout (single bordered card below pricing grid)
+**Stale items I did find (only 2):**
 
-```text
-┌─ BETA ─ BETA Sign-Up — Limited Time ───────────────────────────┐
-│                                                                │
-│ 60-Day Live Trial · Beta Pricing locked in · Onboarding = 50% │
-│ of beta monthly (due at start, non-refundable once started)    │
-│                                                                │
-│ What onboarding covers: account config, AI agent setup,        │
-│ knowledge-base build-out, 3rd-party activation, A2P 10DLC      │
-│ filing, initial training.                                      │
-│                                                                │
-│ ─────────────────────────────────────────────────────────────  │
-│ 3rd-Party Integrations — bring your own accounts, vendor       │
-│ bills you directly (pay-as-you-go, incl. during trial).        │
-│ Valid credit card required on each provider.                   │
-│                                                                │
-│  ┌─ SMS / 10DLC Compliance (required for SMS) ──────────────┐ │
-│  │ Pass-through fees           │ Approval & docs            │ │
-│  │ • Brand reg $4.50 one-time  │ Timeline: 3–5 biz days     │ │
-│  │ • Campaign $1.50–$30/mo     │ (1–2+ wks if re-vetting)   │ │
-│  │ • DCA vetting $7.50         │ Docs: EIN, legal name,     │ │
-│  │ • Opt. vetting $40          │ DBA, website, opt-in/out,  │ │
-│  │ • T-Mobile non-use $250     │ sample + help messages     │ │
-│  │ Typical all-in: $16–$42     │                            │ │
-│  └────────────────────────────────────────────────────────────┘│
-└────────────────────────────────────────────────────────────────┘
-```
+1. **`PlatformFAQPDF.tsx` line 470-471** — the "What happens when my trial ends?" answer says: *"You'll receive email reminders at 30 days, 7 days, and 1 day before trial expiration."* That reminder cadence was written for the old 90-day trial. For a 60-day trial it should be **14 days, 7 days, and 1 day**.
 
-The vendor cards grid (Google Calendar, Resend, ElevenLabs, SignalWire, A2P, Stripe, Social, Tavily) stays below this consolidated card, unchanged except the A2P card trimmed to one line that references the section above.
+2. **`industryMarketingContent.ts` line 308** — *"Aura nudges automatically over 30/60/90 days"* — this is about cold-lead nudging cadence, **not** trial length, so it's actually fine. Leaving as-is unless you want it changed.
 
-## File changes (single file)
-**`src/pages/Index.tsx`**
-1. Remove the `<BetaSignupNotice />` block (lines ~670–673) from above the pricing grid.
-2. Replace the existing "3rd Party Integrations" header + "SMS System — FCC 10DLC Compliance" box + bottom "60-Day Live Trial" summary with one unified card containing:
-   - BETA chip + heading
-   - Trial / pricing / onboarding paragraph
-   - Onboarding-covers paragraph
-   - Divider
-   - 3rd-party intro line (one sentence)
-   - SMS/10DLC two-column compact block (kept, since it's the only place with the fee table)
-3. Trim the A2P vendor card to: "Required for SMS — see 10DLC details above. $4.50 brand reg + campaign fees."
-4. Keep the vendor grid below.
+(Note: `MarketingSalesMasterPDF.tsx` mentions "60–90 days to self-serve" — that's an objection-handling line about how long DIY setup takes, not trial length. Leaving as-is.)
 
-No changes to `BetaSignupNotice.tsx` (component still used on `/auth` signup page). No copy changes to vendor cards beyond the A2P trim.
+## Plan
 
-## Out of scope
-- Pricing tier cards, comparison table, employee-add-on copy
-- Other pages that import `BetaSignupNotice` (SignUp form keeps it)
+Single one-line fix:
+
+- **`src/components/documentation/PlatformFAQPDF.tsx`** — change the trial-ending reminder cadence from `"30 days, 7 days, and 1 day"` to `"14 days, 7 days, and 1 day"` so it matches the 60-Day Live Trial.
+
+That's the only stale doc content I found. After approval I'll apply the edit and re-grep all PDFs to confirm zero remaining "90-day trial" / old-pricing references.
+
+If you also want me to:
+- (a) rewrite the "30/60/90 days" cold-lead nudge line in `industryMarketingContent.ts`, or
+- (b) re-render any specific PDF for visual QA,
+
+say the word and I'll add it to the fix.
