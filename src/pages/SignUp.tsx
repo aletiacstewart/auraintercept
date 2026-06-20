@@ -111,6 +111,10 @@ export default function SignUp() {
   useEffect(() => {
     if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
       setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
+    } else if (industryParam) {
+      // Live Demo deep-link (industry preselected, no explicit tier) → default to Elite
+      // for the 60-day trial. User can downgrade before day 60.
+      setSelectedTier('command');
     }
     if (industryParam) {
       setBusinessIndustry(industryParam);
@@ -1330,7 +1334,7 @@ export default function SignUp() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee.
+                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee — <span className="font-medium text-foreground">including during the 60-Day Live Demo</span>. If I cancel Aura, I am responsible for <span className="font-medium text-foreground">canceling each 3rd-party account separately</span>; Aura cannot close them on my behalf.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
