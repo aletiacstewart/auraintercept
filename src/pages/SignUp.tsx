@@ -845,7 +845,7 @@ export default function SignUp() {
                       <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Pick any plan below — all agents, consoles, and integrations for your industry are on. Upgrade or downgrade anytime.
+                      Your 60-Day Live Demo runs on <span className="font-semibold text-foreground">Aura Elite</span> by default — every agent, console, and integration unlocked. <span className="font-semibold text-foreground">Downgrade to Core, Boost, or Pro anytime before day 60</span>, or your card is charged at the Elite rate.
                     </p>
                     <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
                       <span className="font-semibold text-foreground">First 30 days = concierge onboarding</span> (setup, KB, 3rd-party activation, training). <span className="font-semibold text-foreground">Remaining 30 days = fully live</span>.
