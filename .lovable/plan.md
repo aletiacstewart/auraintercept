@@ -1,31 +1,30 @@
-## Audit Results
+# Add "Why Do I Need My Own Accounts?" Explainer
 
-I scanned every PDF generator under `src/components/documentation/` plus `public/llms.txt`, `src/locales/en/marketing.json`, and the AI prompt files (`helpSystemPrompt.ts`, `auraInterceptSalesPrompt.ts`, `subscriptionAgentConfig.ts`).
+Add the new explainer (short answer + cost table + competitor comparison + 6-question mini-FAQ) to the FAQ PDF, the Company Onboarding PDF, the Integration Onboarding PDF, and the signup flow so prospects and new customers see the same answer everywhere it's asked.
 
-**Good news — already correct everywhere checked:**
-- Pricing: all 16 PDFs use the current Beta numbers ($497 / $994 / $1,988 / $3,979) with the original prices ($697 / $1,394 / $2,788 / $5,576) properly shown as strikethrough/"was" callouts.
-- Trial: every PDF uses "60-Day Live Trial" with the 30-day onboarding + 30-day live-use split. No "90-day" trial language remains in any PDF, page, or prompt.
-- Onboarding fees: all PDFs show the per-tier 50%-off onboarding ($249 / $497 / $994 / $1,990) with strikethrough originals.
-- Tier names: no legacy "Starter / Connect / Performance / Command" names leaked into customer-facing PDFs.
+## Where it lands
 
-**Stale items I did find (only 2):**
+1. **`src/components/documentation/PlatformFAQPDF.tsx`** — Section 7 (Billing) or new "Why Your Own Accounts?" subsection right after the existing third-party cost FAQ (~line 492). Adds:
+   - A "Why do I need my own accounts for SignalWire, ElevenLabs, and Resend?" anchor Q&A with the short answer
+   - "What this actually costs" provider table (SignalWire / ElevenLabs / Resend / total + one-time 10DLC note)
+   - "How this compares" 3-column table (AuraIntercept vs ServiceTitan vs Jobber) for phone, AI receptionist, marketing, transparency
+   - The 6 follow-up Q&As (why not bundle / extra setup / low volume / high volume / switch providers / do you mark up)
 
-1. **`PlatformFAQPDF.tsx` line 470-471** — the "What happens when my trial ends?" answer says: *"You'll receive email reminders at 30 days, 7 days, and 1 day before trial expiration."* That reminder cadence was written for the old 90-day trial. For a 60-day trial it should be **14 days, 7 days, and 1 day**.
+2. **`src/components/documentation/CompanyOnboardingPDF.tsx`** — Insert a "Why You Hold These Accounts" page right before the existing Third-Party Provider Accounts section (~line 638 / 912). Same short answer + cost table + comparison + condensed 3-question FAQ (skip the duplicates already covered in their consent block).
 
-2. **`industryMarketingContent.ts` line 308** — *"Aura nudges automatically over 30/60/90 days"* — this is about cold-lead nudging cadence, **not** trial length, so it's actually fine. Leaving as-is unless you want it changed.
+3. **`src/components/documentation/IntegrationOnboardingPDF.tsx`** — Add a 1-page intro at the top reusing the short answer + cost table only (the per-provider setup steps already exist below).
 
-(Note: `MarketingSalesMasterPDF.tsx` mentions "60–90 days to self-serve" — that's an objection-handling line about how long DIY setup takes, not trial length. Leaving as-is.)
+4. **Signup / Index page** — In `src/pages/Index.tsx`, add a collapsible "Why my own accounts?" disclosure inside (or directly below) the consolidated BETA / 3rd-Party card, linking to the same short answer + cost table. Keeps the marketing page in sync without bloating it.
 
-## Plan
+## Content normalization
 
-Single one-line fix:
+- Use existing `LAUNCH_PRICING` / canonical tier names — no new pricing.
+- Keep approved third-party language ("billed directly by the provider", "your own account", "we never mark up"). Do not use "bundled / overage / absorbed" per the third-party fee policy.
+- Competitor table is labeled "as of public pricing, June 2026 — verify with vendor" footnote to stay defensible.
+- Reuse `sanitizePdfText`, `BulletPoint`, and existing table styles in each PDF — no new components.
 
-- **`src/components/documentation/PlatformFAQPDF.tsx`** — change the trial-ending reminder cadence from `"30 days, 7 days, and 1 day"` to `"14 days, 7 days, and 1 day"` so it matches the 60-Day Live Trial.
+## Out of scope
 
-That's the only stale doc content I found. After approval I'll apply the edit and re-grep all PDFs to confirm zero remaining "90-day trial" / old-pricing references.
-
-If you also want me to:
-- (a) rewrite the "30/60/90 days" cold-lead nudge line in `industryMarketingContent.ts`, or
-- (b) re-render any specific PDF for visual QA,
-
-say the word and I'll add it to the fix.
+- No changes to Stripe pricing, tier definitions, or the consent/legal checkboxes.
+- No new routes, no edge functions, no schema changes.
+- Spanish translation not added in this pass (existing PDFs are English-only).

@@ -860,6 +860,41 @@ export default function Index() {
                 </p>
               </div>
 
+              {/* Why my own accounts? — collapsible explainer */}
+              <details className="rounded-md bg-black/20 border border-white/10 p-3 group">
+                <summary className="cursor-pointer text-xs font-semibold text-primary list-none flex items-center justify-between">
+                  <span>Why do I need my own accounts for SignalWire, ElevenLabs, and Resend?</span>
+                  <span className="text-white/60 text-[10px] group-open:hidden">show</span>
+                  <span className="text-white/60 text-[10px] hidden group-open:inline">hide</span>
+                </summary>
+                <div className="mt-3 space-y-3 text-[11px] text-white/85 leading-relaxed">
+                  <p>
+                    You're not paying us a markup on your phone, voice, or email costs. You hold those accounts directly and pay the provider their actual rate — the same rate any business pays. We don't add a margin and resell it back to you as a mystery line item.
+                  </p>
+                  <p>
+                    Other platforms (ServiceTitan, Jobber) bundle these into flat-fee add-ons regardless of usage. You never see the underlying cost. We'd rather show you the real number.
+                  </p>
+                  <div className="rounded bg-white/5 p-2">
+                    <p className="text-[10px] font-semibold text-white uppercase tracking-wide mb-1">Typical monthly cost (small service business)</p>
+                    <ul className="text-[11px] space-y-0.5">
+                      <li><span className="font-semibold text-white">SignalWire</span> — phone + calls + SMS · ~$15-30/mo</li>
+                      <li><span className="font-semibold text-white">ElevenLabs</span> — Talk to Aura voice · $22/mo (Creator)</li>
+                      <li><span className="font-semibold text-white">Resend</span> — email · free to 3,000, then $20/mo</li>
+                      <li><span className="font-semibold text-white">Total</span> — roughly $35-70/mo, scales with phone activity</li>
+                    </ul>
+                    <p className="text-[10px] text-white/60 mt-1">Plus one-time A2P 10DLC carrier registration (~$10/mo ongoing) — required for business SMS.</p>
+                  </div>
+                  <ul className="text-[11px] space-y-1.5">
+                    <li><span className="font-semibold text-white">Why not bundle it?</span> We keep our platform fee separate so neither number is inflated. Your Aura bill never fluctuates with call volume.</li>
+                    <li><span className="font-semibold text-white">Extra setup?</span> A little. Concierge Onboarding can create and configure these for you using your login and card.</li>
+                    <li><span className="font-semibold text-white">Low call volume?</span> Costs scale down — ElevenLabs starts at $5/mo, Resend is free under 3,000 emails.</li>
+                    <li><span className="font-semibold text-white">High call volume?</span> Costs scale up, but a bundled flat fee would too — with a markup baked in. We'll model your numbers before you commit.</li>
+                    <li><span className="font-semibold text-white">Switch providers later?</span> We're actively adding alternative provider options. Ask onboarding.</li>
+                    <li><span className="font-semibold text-white">Do you mark up?</span> No. You're billed directly by each vendor on your own card. We never see or touch that money.</li>
+                  </ul>
+                </div>
+              </details>
+
               {/* SMS / 10DLC details */}
               <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
                 <div className="flex items-start gap-3">

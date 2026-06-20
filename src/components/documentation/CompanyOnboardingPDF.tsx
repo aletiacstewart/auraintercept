@@ -966,6 +966,77 @@ const DocumentChecklistPage = () => {
   );
 };
 
+const WhyYourOwnAccountsPage = () => (
+  <Page size="A4" style={styles.page}>
+    <PageHeader title="Why You Hold These Accounts" pageNum={4} />
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Why Do I Need My Own Accounts for SignalWire, ElevenLabs, and Resend?')}</Text>
+
+    <Text style={styles.paragraph}>
+      {sanitizePdfText("You're not paying us a markup on your phone, voice, or email costs. You hold those accounts directly and pay the provider their actual rate — the same rate any business pays. We don't add a margin on top and resell it back to you as a mystery line item.")}
+    </Text>
+    <Text style={styles.paragraph}>
+      {sanitizePdfText('Other platforms bundle these costs into proprietary add-ons ("Phones Pro," "AI Receptionist," "Marketing Pro") and charge a flat monthly fee regardless of usage. You never see the underlying cost. We\'d rather show you the real number.')}
+    </Text>
+
+    <Text style={styles.subsectionTitle}>{sanitizePdfText('What this actually costs (typical small service business)')}</Text>
+    <View style={styles.table}>
+      <View style={styles.tableHeader}>
+        <Text style={[styles.tableHeaderCell, { width: 80 }]}>{sanitizePdfText('Provider')}</Text>
+        <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('What it covers')}</Text>
+        <Text style={[styles.tableHeaderCell, { width: 140 }]}>{sanitizePdfText('Typical monthly')}</Text>
+      </View>
+      {[
+        ['SignalWire', 'Phone number, inbound/outbound calls, SMS', '~$15-30/mo'],
+        ['ElevenLabs', 'Talk to Aura voice synthesis', '$22/mo (Creator)'],
+        ['Resend', 'Email confirmations, reminders, campaigns', 'Free to 3k - then $20/mo'],
+        ['Total', 'Scales with how busy your phones are', '~$35-70/mo'],
+      ].map(([n, p, c]) => (
+        <View key={n} style={styles.tableRow}>
+          <Text style={[styles.tableCell, { width: 80, fontWeight: 600 }]}>{sanitizePdfText(n)}</Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(p)}</Text>
+          <Text style={[styles.tableCell, { width: 140 }]}>{sanitizePdfText(c)}</Text>
+        </View>
+      ))}
+    </View>
+    <Text style={styles.formNote}>
+      {sanitizePdfText('One-time setup: SignalWire A2P 10DLC carrier registration (required for business SMS) — small one-time brand fee + ~$10/mo ongoing. Carrier requirement, not specific to Aura.')}
+    </Text>
+
+    <Text style={styles.subsectionTitle}>{sanitizePdfText('How this compares')}</Text>
+    <View style={styles.table}>
+      <View style={styles.tableHeader}>
+        <Text style={[styles.tableHeaderCell, { width: 80 }]}>{sanitizePdfText('Item')}</Text>
+        <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('AuraIntercept')}</Text>
+        <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('ServiceTitan')}</Text>
+        <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Jobber')}</Text>
+      </View>
+      {[
+        ['Phone / voice', 'Provider cost direct (~$15-30/mo)', '"Phones Pro" add-on, $100-300/mo flat', 'Bundled into $199+/mo Grow tier'],
+        ['AI receptionist', 'Included (you cover voice ~$22/mo)', 'Not standard - separate cost', '$99/mo flat add-on'],
+        ['Marketing', 'Included in your Aura tier', '"Marketing Pro," $200-600+/mo', '"Marketing Suite," $79/mo'],
+        ['Transparency', 'You see actual provider invoices', 'Bundled - underlying cost hidden', 'Bundled - underlying cost hidden'],
+      ].map(([item, a, st, jb]) => (
+        <View key={item} style={styles.tableRow}>
+          <Text style={[styles.tableCell, { width: 80, fontWeight: 600 }]}>{sanitizePdfText(item)}</Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(a)}</Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(st)}</Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(jb)}</Text>
+        </View>
+      ))}
+    </View>
+    <Text style={styles.formNote}>
+      {sanitizePdfText('Based on public competitor pricing as of June 2026 — verify with vendor.')}
+    </Text>
+
+    <View style={styles.infoBox}>
+      <Text style={styles.infoBoxTitle}>{sanitizePdfText('Short answer to the 3 questions we hear most')}</Text>
+      <Text style={styles.infoBoxText}>
+        {sanitizePdfText('1) Why not bundle it? — We keep our platform fee separate so neither number is inflated. Your Aura bill never fluctuates with call volume.\n2) Extra setup work? — A little. Concierge Onboarding can create and configure these accounts for you using your login and card.\n3) Do you mark up provider costs? — No. You\'re billed directly by SignalWire, ElevenLabs, and Resend on your own card. We never see or touch that money.')}
+      </Text>
+    </View>
+  </Page>
+);
+
 const ThirdPartyAccountsPage = () => {
   const providers = [
     { name: 'SignalWire', purpose: 'Voice calls + SMS', signup: 'signalwire.com', required: 'All tiers' },
@@ -1520,6 +1591,7 @@ export const CompanyOnboardingPDF = () => (
     <CoverPage />
     <HowToUsePage />
     <DocumentChecklistPage />
+    <WhyYourOwnAccountsPage />
     <ThirdPartyAccountsPage />
     <A2P10DLCPage />
     <SocialAccountsPage />

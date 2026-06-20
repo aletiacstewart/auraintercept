@@ -86,6 +86,33 @@ const IntegrationOnboardingPDF = () => (
       <Text style={s.footer} fixed render={({ pageNumber, totalPages }) => t(`Aura Intercept - Integration Onboarding - Page ${pageNumber} of ${totalPages}`)} />
     </Page>
 
+    {/* Why You Hold These Accounts */}
+    <Page size="LETTER" style={s.page}>
+      <Text style={s.h1}>{t('Why Do I Need My Own Accounts for SignalWire, ElevenLabs, and Resend?')}</Text>
+      <Text style={s.p}>{t("You're not paying us a markup on your phone, voice, or email costs. You hold those accounts directly and pay the provider their actual rate — the same rate any business pays. We don't add a margin on top and resell it back to you as a mystery line item.")}</Text>
+      <Text style={s.p}>{t('Other platforms (ServiceTitan, Jobber) bundle these costs into flat-fee add-ons regardless of your actual usage. You never see the underlying cost. We\'d rather show you the real number.')}</Text>
+
+      <Text style={s.h2}>{t('Typical monthly cost (small service business)')}</Text>
+      {[
+        ['SignalWire', 'Phone number, calls, SMS', '~$15-30/mo'],
+        ['ElevenLabs', 'Talk to Aura voice synthesis', '$22/mo (Creator)'],
+        ['Resend', 'Email confirmations & campaigns', 'Free to 3k - then $20/mo'],
+        ['Total', 'Scales with phone activity', '~$35-70/mo'],
+      ].map(([name, what, cost]) => (
+        <View key={name} style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.lightGray, paddingVertical: 4 }}>
+          <Text style={{ width: 80, fontSize: 9, fontWeight: 700, color: colors.dark }}>{t(name)}</Text>
+          <Text style={{ flex: 1, fontSize: 9, color: colors.dark }}>{t(what)}</Text>
+          <Text style={{ width: 130, fontSize: 9, color: colors.dark }}>{t(cost)}</Text>
+        </View>
+      ))}
+      <Text style={s.small}>{t('Plus one-time SignalWire A2P 10DLC carrier registration (~$10/mo ongoing) — required for business SMS.')}</Text>
+
+      <Text style={s.h3}>{t('The bottom line')}</Text>
+      <Text style={s.p}>{t('You pay each provider directly on your own card. Aura never marks up, resells, or invoices third-party usage. Concierge Onboarding can create and configure these accounts on your behalf using your login and card.')}</Text>
+
+      <Text style={s.footer} fixed render={({ pageNumber, totalPages }) => t(`Aura Intercept - Integration Onboarding - Page ${pageNumber} of ${totalPages}`)} />
+    </Page>
+
     {/* One page per provider */}
     {INTEGRATION_PROVIDERS.map((p, idx) => (
       <Page key={p.id} size="LETTER" style={s.page}>

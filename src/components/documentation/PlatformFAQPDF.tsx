@@ -512,6 +512,129 @@ const PlatformFAQPDF = () => {
         </View>
       </Page>
 
+      {/* Why Your Own Accounts? (SignalWire / ElevenLabs / Resend explainer) */}
+      <Page size="A4" style={styles.page}>
+        <Header title="Aura Intercept - Platform FAQ" />
+        <Text style={styles.sectionTitle}>Why Do I Need My Own Accounts for SignalWire, ElevenLabs, and Resend?</Text>
+
+        <Text style={styles.paragraph}>
+          {sanitizePdfText("You're not paying us a markup on your phone, voice, or email costs. You hold those accounts directly and pay the provider their actual rate — the same rate any business pays. We don't add a margin on top and resell it back to you as a mystery line item.")}
+        </Text>
+        <Text style={styles.paragraph}>
+          {sanitizePdfText('Other platforms in this space do it differently. ServiceTitan and Jobber bundle these costs into proprietary-sounding add-ons — "Phones Pro," "AI Receptionist," "Marketing Pro" — and charge a flat monthly fee regardless of your actual usage. You never see what the underlying cost actually is. We\'d rather show you the real number.')}
+        </Text>
+
+        <Text style={styles.subsectionTitle}>What this actually costs (typical small service business)</Text>
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderCell, { width: 90 }]}>Provider</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>What it covers</Text>
+            <Text style={[styles.tableHeaderCell, { width: 150 }]}>Typical monthly</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>SignalWire</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Phone number, inbound/outbound calls, SMS</Text>
+            <Text style={[styles.tableCell, { width: 150 }]}>~$15-30/mo</Text>
+          </View>
+          <View style={styles.tableRowAlt}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>ElevenLabs</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Talk to Aura voice synthesis</Text>
+            <Text style={[styles.tableCell, { width: 150 }]}>$22/mo (Creator)</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>Resend</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Email confirmations, reminders, campaigns</Text>
+            <Text style={[styles.tableCell, { width: 150 }]}>Free to 3k · then $20/mo</Text>
+          </View>
+          <View style={styles.tableRowAlt}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>Total</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Scales with how busy your phones are</Text>
+            <Text style={[styles.tableCell, { width: 150, fontWeight: 700 }]}>~$35-70/mo</Text>
+          </View>
+        </View>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 10 }}>
+          {sanitizePdfText('One-time setup: SignalWire A2P 10DLC carrier registration (required for business SMS) — small one-time brand fee + ~$10/mo ongoing. Carrier requirement, not specific to Aura.')}
+        </Text>
+
+        <Text style={styles.subsectionTitle}>How this compares</Text>
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderCell, { width: 90 }]}>Item</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>AuraIntercept</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>ServiceTitan</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Jobber</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>Phone / voice</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Provider cost direct (~$15-30/mo)</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>"Phones Pro" add-on, $100-300/mo flat</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Bundled into $199+/mo Grow tier</Text>
+          </View>
+          <View style={styles.tableRowAlt}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>AI receptionist</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Included (you cover voice ~$22/mo)</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Not standard — separate cost</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>$99/mo flat add-on</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>Marketing</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Included in your Aura tier</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>"Marketing Pro," $200-600+/mo</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>"Marketing Suite," $79/mo</Text>
+          </View>
+          <View style={styles.tableRowAlt}>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 700 }]}>Transparency</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>You see your actual provider invoices</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Bundled — underlying cost hidden</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>Bundled — underlying cost hidden</Text>
+          </View>
+        </View>
+        <Text style={{ fontSize: 8, color: colors.gray, fontStyle: 'italic', marginBottom: 10 }}>
+          {sanitizePdfText('Based on public competitor pricing as of June 2026 — verify with vendor.')}
+        </Text>
+
+        <View style={styles.footer}>
+          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+        </View>
+      </Page>
+
+      {/* Why Your Own Accounts? — Follow-up FAQ */}
+      <Page size="A4" style={styles.page}>
+        <Header title="Aura Intercept - Platform FAQ" />
+        <Text style={styles.subsectionTitle}>Why Your Own Accounts? (Follow-up Questions)</Text>
+
+        <FAQItem
+          question="Why don't you just include this in the Aura subscription price?"
+          answer="We could — and mark it up like everyone else does. We'd rather keep our platform fee separate from your usage costs so neither number is inflated to cover the other. It also means your AuraIntercept bill doesn't fluctuate based on how many calls you get this month."
+        />
+        <FAQItem
+          question="Is this more setup work for me?"
+          answer="A little, yes — you'll create accounts with SignalWire, ElevenLabs, and Resend during onboarding. Our Concierge Onboarding can do this for you using your login and card if you'd rather not handle it yourself. Either way, it's a one-time setup, not an ongoing hassle."
+        />
+        <FAQItem
+          question="What if my call volume is really low — am I still paying all three?"
+          answer="Yes, but at low volume the costs are correspondingly low. A phone number and minimal usage runs a few dollars; ElevenLabs has tiers as low as $5/month; Resend is free under 3,000 emails. You're not locked into a high flat fee just because the option exists."
+        />
+        <FAQItem
+          question="What if my call volume is really high — could this get expensive?"
+          answer="At very high volume, yes, usage costs scale up — but so would a bundled flat-fee add-on charging for that same usage, just with a markup baked in. We're happy to walk through realistic numbers for your specific call volume before you commit."
+        />
+        <FAQItem
+          question="Can I switch providers later if I find something cheaper?"
+          answer="This is something we're actively exploring — adding alternative provider options (lower-cost telephony, alternative email providers) for businesses that want to optimize further. Ask your onboarding contact about current options."
+        />
+        <FAQItem
+          question="Do you ever mark up these provider costs?"
+          answer="No. You're billed directly by SignalWire, ElevenLabs, and Resend, using your own account and your own card. We never see or touch that money."
+        />
+
+        <View style={styles.footer}>
+          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+        </View>
+      </Page>
+
       {/* Section 3: AI Operatives & Features */}
       <Page size="A4" style={styles.page}>
         <Header title="Aura Intercept - Platform FAQ" />
