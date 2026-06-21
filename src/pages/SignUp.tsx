@@ -15,6 +15,7 @@ import {
   getPackIdForBusinessType,
   BUSINESS_TYPE_COUNT,
 } from '@/lib/businessTypeRegistry';
+import { INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
@@ -55,6 +56,18 @@ export default function SignUp() {
   const source = searchParams.get('source');
   const tierParam = searchParams.get('tier');
   const industryParam = searchParams.get('industry');
+
+  // Live-Demo deep-link from /for-business: presence of ?industry= locks the
+  // signup onto the 60-Day Live Demo on Aura Elite. Tier picker becomes read-only.
+  const isLiveDemoFlow = !!industryParam;
+  const resolvedDemoPackId = industryParam ? getPackIdForBusinessType(industryParam) : null;
+  const resolvedDemoPack = resolvedDemoPackId
+    ? (INDUSTRY_CONTENT[resolvedDemoPackId] || INDUSTRY_CONTENT.default)
+    : null;
+  const resolvedDemoBusinessType = industryParam
+    ? BUSINESS_TYPES.find((b) => b.key === industryParam)
+    : null;
+  const industryPreselectValid = !!resolvedDemoBusinessType;
   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -109,17 +122,16 @@ export default function SignUp() {
 
   // Pre-select tier and industry from query params (deep-link from /for-business)
   useEffect(() => {
-    if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
-      setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
-    } else if (industryParam) {
-      // Live Demo deep-link (industry preselected, no explicit tier) → default to Elite
-      // for the 60-day trial. User can downgrade before day 60.
+    if (isLiveDemoFlow) {
+      // Live Demo always runs on Elite for the 60-day trial.
       setSelectedTier('command');
+    } else if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
+      setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
     }
     if (industryParam) {
       setBusinessIndustry(industryParam);
     }
-  }, [tierParam, industryParam]);
+  }, [tierParam, industryParam, isLiveDemoFlow]);
 
   const handlePlatformAdminSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -895,24 +907,42 @@ export default function SignUp() {
                 </div>
 
 {/* 4 Tier Rows - Compact Single Line */}
+                {isLiveDemoFlow && (
+                  <div className="p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 text-[11px] leading-snug">
+                    <p className="font-semibold text-amber-300 mb-0.5">
+                      🚀 Your 60-Day Live Demo runs on Aura Elite
+                    </p>
+                    <p className="text-amber-200/90">
+                      Every agent, console, and integration unlocked for 60 days — no credit card charged during the trial.
+                      Downgrade to Core, Boost, or Pro (or cancel) anytime before day 60.
+                    </p>
+                  </div>
+                )}
                 <div className="space-y-1">
                   {[
                     { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$398', annualTotal: '$4,771', savings: '$1,193',   color: 'teal',   popular: false },
                     { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,394', monthlyPrice: '$994',   annualPrice: '$795', annualTotal: '$9,542', savings: '$2,386', color: 'primary', popular: true  },
                     { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple', popular: false },
                     { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber', popular: false },
-                  ].map(t => (
+                  ].map(t => {
+                    const lockedOut = isLiveDemoFlow && t.id !== 'command';
+                    return (
                     <div
                       key={t.id}
-                      onClick={() => setSelectedTier(selectedTier === t.id ? null : t.id as 'starter' | 'connect' | 'performance' | 'command')}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border cursor-pointer transition-all relative ${
+                      onClick={() => {
+                        if (isLiveDemoFlow) return;
+                        setSelectedTier(selectedTier === t.id ? null : t.id as 'starter' | 'connect' | 'performance' | 'command');
+                      }}
+                      className={`flex items-center justify-between px-2.5 py-1.5 rounded border transition-all relative ${
+                        lockedOut ? 'opacity-50 cursor-not-allowed border-border/30 bg-card/40' :
+                        isLiveDemoFlow ? 'cursor-default border-amber-500 bg-amber-500/10' :
                         t.popular
                           ? selectedTier === t.id
                             ? 'border-primary bg-primary/10'
                             : 'border-primary/40 bg-primary/5 hover:border-primary'
                           : selectedTier === t.id
                             ? `border-${t.color}-500 bg-${t.color}-500/10`
-                            : `border-border/40 bg-card/60 hover:border-${t.color}-500/40`
+                            : `border-border/40 bg-card/60 cursor-pointer hover:border-${t.color}-500/40`
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -925,6 +955,12 @@ export default function SignUp() {
                         </div>
                         <span className={`text-xs font-semibold truncate ${t.popular ? 'text-foreground' : 'text-card-foreground'}`}>{t.name}</span>
                         {t.popular && <span className="text-[8px] px-1 py-0.5 rounded gradient-primary text-primary-foreground font-medium shrink-0">Popular</span>}
+                        {isLiveDemoFlow && t.id === 'command' && (
+                          <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500 text-amber-950 font-bold shrink-0">YOUR TRIAL</span>
+                        )}
+                        {lockedOut && (
+                          <span className="text-[8px] px-1 py-0.5 rounded bg-muted text-muted-foreground font-medium shrink-0">Switch after day 60</span>
+                        )}
                         <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
@@ -947,7 +983,8 @@ export default function SignUp() {
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Selection Info */}
@@ -1168,9 +1205,18 @@ export default function SignUp() {
                                 </Select>
                               </div>
                               <div className="space-y-1">
-                                <Label className="text-xs">Business Industry <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span></Label>
-                                <Select value={businessIndustry} onValueChange={setBusinessIndustry}>
-                                  <SelectTrigger className="text-xs h-8">
+                                <Label className="text-xs flex items-center gap-1.5 flex-wrap">
+                                  <span>Business Industry</span>
+                                  {industryPreselectValid ? (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-semibold uppercase tracking-wide">
+                                      Pre-selected from your Live Demo pick
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span>
+                                  )}
+                                </Label>
+                                <Select value={businessIndustry} onValueChange={setBusinessIndustry} disabled={industryPreselectValid}>
+                                  <SelectTrigger className={`text-xs h-8 ${industryPreselectValid ? 'border-amber-500/40 bg-amber-500/5' : ''}`}>
                                     <SelectValue placeholder="Select your business type…">
                                       {(() => {
                                         const entry = BUSINESS_TYPES.find((b) => b.key === businessIndustry);
@@ -1196,6 +1242,11 @@ export default function SignUp() {
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                {industryPreselectValid && resolvedDemoPack && (
+                                  <p className="text-[10px] text-muted-foreground leading-snug pt-0.5">
+                                    <span className="text-amber-300">{resolvedDemoPack.emoji} {resolvedDemoPack.label}</span> — your dashboards, consoles, KPIs, and Aura prompts will be tuned for this industry. Change after signup from Settings → Industry.
+                                  </p>
+                                )}
                               </div>
                             </div>
 
