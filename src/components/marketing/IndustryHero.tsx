@@ -24,7 +24,7 @@ export function IndustryHero({ content, onStartDemo }: IndustryHeroProps) {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button size="lg" variant="gradient" onClick={onStartDemo} className="text-base">
             <Sparkles className="w-5 h-5" />
-            Try the demo (48 hrs free)
+            Start 60-Day Live Demo
           </Button>
           <Button size="lg" variant="outline" asChild className="text-base">
             <a href="tel:+15127372424">

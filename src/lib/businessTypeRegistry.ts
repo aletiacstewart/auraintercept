@@ -206,6 +206,8 @@ export const BUSINESS_TYPE_CATEGORY: Record<string, string> = {
   'meal prep / personal chef': 'In-Home Personal Services',
   'wedding planner home/venue visits': 'In-Home Personal Services',
   'photographer real estate/events': 'In-Home Personal Services',
+  'personal assistant': 'In-Home Personal Services',
+  'executive assistant': 'In-Home Personal Services',
   // Delivery & On-Site Logistics
   'furniture delivery & assembly': 'Delivery & On-Site Logistics',
   'appliance delivery & installation': 'Delivery & On-Site Logistics',
@@ -327,6 +329,8 @@ export const BUSINESS_TYPE_TO_PACK: Record<string, string> = {
   'mobile veterinarian': 'veterinary',
   'massage therapist': 'beauty_wellness',
   'personal trainer': 'beauty_wellness',
+  'personal assistant': 'beauty_wellness',
+  'executive assistant': 'beauty_wellness',
 };
 
 /** Default pack per category for any type not in BUSINESS_TYPE_TO_PACK. */
