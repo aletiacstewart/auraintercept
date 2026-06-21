@@ -1205,9 +1205,18 @@ export default function SignUp() {
                                 </Select>
                               </div>
                               <div className="space-y-1">
-                                <Label className="text-xs">Business Industry <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span></Label>
-                                <Select value={businessIndustry} onValueChange={setBusinessIndustry}>
-                                  <SelectTrigger className="text-xs h-8">
+                                <Label className="text-xs flex items-center gap-1.5 flex-wrap">
+                                  <span>Business Industry</span>
+                                  {industryPreselectValid ? (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-semibold uppercase tracking-wide">
+                                      Pre-selected from your Live Demo pick
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span>
+                                  )}
+                                </Label>
+                                <Select value={businessIndustry} onValueChange={setBusinessIndustry} disabled={industryPreselectValid}>
+                                  <SelectTrigger className={`text-xs h-8 ${industryPreselectValid ? 'border-amber-500/40 bg-amber-500/5' : ''}`}>
                                     <SelectValue placeholder="Select your business type…">
                                       {(() => {
                                         const entry = BUSINESS_TYPES.find((b) => b.key === businessIndustry);
@@ -1233,6 +1242,11 @@ export default function SignUp() {
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                {industryPreselectValid && resolvedDemoPack && (
+                                  <p className="text-[10px] text-muted-foreground leading-snug pt-0.5">
+                                    <span className="text-amber-300">{resolvedDemoPack.emoji} {resolvedDemoPack.label}</span> — your dashboards, consoles, KPIs, and Aura prompts will be tuned for this industry. Change after signup from Settings → Industry.
+                                  </p>
+                                )}
                               </div>
                             </div>
 
