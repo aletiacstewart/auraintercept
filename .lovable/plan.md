@@ -1,58 +1,31 @@
-## Goal
+## Problem
 
-Stop seeding fake data into Live Demo accounts, kill the standalone Live Demo intake form, and route every "Try the Live Demo" CTA through the real signup page — pre-filling the chosen industry, defaulting the 60-day trial to the Elite tier, and surfacing a 3rd-party fee/cancellation notice.
+`useDeploymentAutoReload` and the module-level Vite HMR handler in `src/hooks/useDeploymentAutoReload.ts` are firing full-page `window.location.reload()` calls while you click through the sidebar, consoles, and demo pages. Two specific triggers cause the "random refreshes":
 
-## 1. Route Live Demo CTAs to real signup
+1. **Vite HMR reconnect handler** — every time the dev server pushes an HMR update (which happens constantly while we make edits, and also on transient websocket drops), the module-level `vite:ws:connect` listener calls `window.location.reload()` after a 500 ms delay. `shouldDeferReload()` only blocks it if the mouse moved in the last 30 s, the tab is a demo session, a Radix modal is open, or SuperSwitcher is switching — plain navigation does NOT count as "active", so a fresh page mount after a click is wide open to being reloaded.
+2. **Deployment poller** — fetches `/?_ts=…` every 20 s and reloads when the bundle hash changes. In dev, Vite rewrites script hashes on every restart, so the poller keeps thinking there is a "new deployment" and reloads.
 
-**`src/pages/ForBusiness.tsx`**
-- Remove `<StartDemoDialog>` mount and `demoOpen` state.
-- Change every "Try Demo / Start Live Demo" handler (RolePreviewRow `onTryDemo`, hero CTA, sticky CTA) to `navigate('/auth?mode=company&tab=signup&tier=command&industry=' + industry)`.
-- Update subhead copy: "60-Day Live Demo on Aura Elite — downgrade or cancel anytime before day 60."
+`useVisibilityRefresh` is fine (it only invalidates queries after 5 min hidden).
 
-**`src/components/marketing/StartDemoDialog.tsx`**
-- Delete file (no other consumers — verified via rg).
+## Fix
 
-**Other CTAs (`Index.tsx`, `IndustryHero.tsx`, `DemoAccess.tsx`, `ai-consoles/*` "Start Demo" buttons, marketing PDFs)**
-- Repoint any `/demo`, `create-demo-trial` invocation, or `StartDemoDialog` trigger to the same `/auth?mode=company&tab=signup&tier=command&industry={id}` deep link.
-- Leave `/demo/:trialId` (DemoAccess credentials page) intact for already-issued demo links but stop generating new ones.
+Edit `src/hooks/useDeploymentAutoReload.ts` only — no other files.
 
-## 2. Signup defaults Elite for 60-day trial
+1. **Disable the entire hook in dev / preview.** Wrap both the `useEffect` body and the module-level `import.meta.hot` block in `if (import.meta.env.PROD) { … }`. Lovable's preview iframe already reloads on real publishes via its own infra, and the dev sandbox handles HMR through Vite — we don't need a second reload loop on top of it. This eliminates the random refreshes during navigation in the preview.
 
-**`src/pages/SignUp.tsx`**
-- When `tierParam` is absent, default `selectedTier` to `'command'` (Elite) instead of Core, only when arriving from a `?industry=` deep link (preserve existing default for organic signups — confirm with user if they want Elite as universal default).
-- Keep existing industry pre-fill logic (already supported via `industryParam`).
-- Under the tier selector add a callout: "Your 60-Day Live Demo runs on Aura Elite. Downgrade to Core / Boost / Pro anytime before day 60 or your card is charged Elite."
-- Add a required checkbox above submit: "I understand 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own accounts and card on file. All provider usage fees during the 60-Day Live Demo are billed directly to me by each provider. If I cancel Aura I am responsible for canceling these provider accounts separately." Block submit until checked.
+2. **Tighten the production path** so the same thing can't happen on the published site mid-click:
+   - Treat the most recent route change as activity. Add a `lastRouteChangeAt` timestamp that updates on `popstate` and on `history.pushState` / `replaceState` (monkey-patch once at module load), and include `Date.now() - lastRouteChangeAt < 15_000` in `shouldDeferReload()`.
+   - Require **3** consecutive signature mismatches (up from 2) and bump `pollIntervalMs` default from 20 s to 60 s so transient CDN swaps don't trigger.
+   - In the `vite:ws:connect` handler (still PROD-gated out, but for completeness) keep the existing defer checks.
 
-## 3. Strip seeded data from live-demo (real signup) accounts
+3. **Leave `useVisibilityRefresh` and every other file untouched.**
 
-The "live demo" the user is talking about now == a real company created via SignUp. Those must start empty.
+## Verification
 
-- **Confirm:** `SignUp.tsx` currently does NOT call `seed-demo-accounts-v2` — only `/dashboard/demo-seeder` (platform_admin) and the cron do. Verified via rg.
-- **Guardrail:** add an explicit `is_demo: false` on the company insert in `SignUp.tsx` so the seed-demo job (which scopes by `is_demo = true`) can never touch it.
-- **Empty-state copy:** rely on existing `IndustryEmptyState` everywhere — no changes needed; just confirm Leads/Quotes/Invoices/Customers/Inventory/Jobs surfaces render the empty state for a 0-row company (already do per memory `industry-empty-states`).
-- **Sandbox `demo_trials` flow:** leave `create-demo-trial` + `DemoAccess` + `seed-demo-accounts-v2` in place for the legacy 78-account demo registry (used by sales-rep logins), but stop linking to it from public marketing. Add a banner on `/demo` route: "Public Live Demo has moved — [Start your 60-Day Live Demo →](/auth?mode=company&tab=signup&tier=command)".
-
-## 4. Trial-end downgrade flow
-
-**`src/pages/Subscription.tsx` + `TrialBanner.tsx`**
-- During trial show: "Day X of 60 on Aura Elite. Pick your plan before day 60 or you'll be charged $3,979/mo + $1,990 onboarding."
-- Surface a "Downgrade plan" button that opens the tier picker.
-- No new Stripe logic — existing checkout/portal handles the downgrade.
-
-## 5. Verification
-
-- `rg "StartDemoDialog|create-demo-trial" src` returns only `DemoAccess.tsx`, `SuperSwitcher`, and the edge function itself.
-- Manual: click every "Live Demo" CTA on `/for-business`, `/`, industry hero — all land on `/auth?mode=company&tab=signup&tier=command&industry=<id>` with industry + Elite pre-selected and the 3rd-party checkbox visible.
-- Create a fresh signup, confirm dashboard renders empty states (no seeded leads/jobs/customers).
-- TypeScript build passes.
-
-## Out of scope
-
-- Pricing values, Stripe price IDs, RBAC, schema changes.
-- The legacy 78-account demo registry at `/dashboard/demo-seeder` (sales-rep tool) stays as-is.
-- Auto-downgrade at day 60 — user picks manually; if no action, existing Stripe billing kicks in at Elite (matches current behavior).
+- Navigate sidebar → consoles → demo pages in the preview: no `[DeploymentAutoReload]` reload logs, no white-flash refresh.
+- `grep` confirms no other call sites of `useDeploymentAutoReload` need changes.
+- Build passes.
 
 ## Open question
 
-Should Elite be the default tier for **all** organic signups too (anyone hitting `/auth?tab=signup` with no `?tier=`), or only when arriving from a Live Demo deep link? Current plan: only deep-link path defaults to Elite. Confirm if you want it universal.
+Do you want the deployment auto-reload to keep running on the **published** site (`auraintercept.ai`), just with the stricter rules above? Or fully off everywhere and rely on users refreshing manually after a deploy? Default in this plan: keep it on in production with the stricter rules, off in dev/preview.

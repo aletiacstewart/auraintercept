@@ -2,15 +2,37 @@ import { useEffect, useRef } from 'react';
 
 // Track recent user interaction so we don't reload mid-action.
 let lastInteractionAt = Date.now();
+let lastRouteChangeAt = Date.now();
 if (typeof window !== 'undefined') {
   const bump = () => { lastInteractionAt = Date.now(); };
   ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel'].forEach((evt) => {
     window.addEventListener(evt, bump, { passive: true });
   });
+
+  // Treat SPA navigations as activity so a reload never interrupts a click-through.
+  const bumpRoute = () => { lastRouteChangeAt = Date.now(); };
+  window.addEventListener('popstate', bumpRoute);
+  try {
+    const origPush = window.history.pushState;
+    const origReplace = window.history.replaceState;
+    window.history.pushState = function (...args) {
+      bumpRoute();
+      return origPush.apply(this, args as Parameters<typeof origPush>);
+    };
+    window.history.replaceState = function (...args) {
+      bumpRoute();
+      return origReplace.apply(this, args as Parameters<typeof origReplace>);
+    };
+  } catch {
+    // ignore — non-fatal
+  }
 }
 
 const isUserActive = (idleMs = 30_000) =>
   Date.now() - lastInteractionAt < idleMs;
+
+const isRouteChanging = (windowMs = 15_000) =>
+  Date.now() - lastRouteChangeAt < windowMs;
 
 const hasOpenModal = () => {
   if (typeof document === 'undefined') return false;
@@ -43,7 +65,7 @@ const isSwitching = () => {
 };
 
 const shouldDeferReload = () =>
-  isDemoSession() || isSwitching() || isUserActive() || hasOpenModal();
+  isDemoSession() || isSwitching() || isUserActive() || isRouteChanging() || hasOpenModal();
 
 /**
  * Hook that detects when a new frontend bundle has been deployed
@@ -52,13 +74,20 @@ const shouldDeferReload = () =>
  * This is especially useful in the Lovable preview iframe where
  * React Query's refetchOnWindowFocus doesn't reliably trigger.
  */
-export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
+export const useDeploymentAutoReload = (pollIntervalMs: number = 60000) => {
   const lastSignatureRef = useRef<string | null>(null);
   const consecutiveMatchRef = useRef<number>(0);
   const hasReloadedRef = useRef<boolean>(false);
   const failureCountRef = useRef<number>(0);
 
   useEffect(() => {
+    // Only run in production. In dev/preview, Vite HMR + Lovable's own preview
+    // refresh handle bundle changes; a second reload loop here just causes
+    // surprise full-page refreshes mid-navigation.
+    if (!import.meta.env.PROD) {
+      return;
+    }
+
     // Get the current build signature from the DOM
     const getCurrentSignature = (): string | null => {
       const scripts = document.querySelectorAll('script[type="module"][src]');
@@ -154,7 +183,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
           // Use consecutive match to avoid reload on transient differences
           consecutiveMatchRef.current++;
           
-          if (consecutiveMatchRef.current >= 2) {
+          if (consecutiveMatchRef.current >= 3) {
             // Store signature to prevent reload loops
             const reloadedSignature = sessionStorage.getItem('lastReloadedSignature');
             if (reloadedSignature === newSignature) {
@@ -233,7 +262,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
 
 // Handle Vite HMR reconnection at module level (outside React)
 // This prevents hook count mismatches during hot reloads
-if (import.meta.hot) {
+if (import.meta.hot && import.meta.env.PROD) {
   import.meta.hot.on('vite:ws:connect', () => {
     if (shouldDeferReload()) {
       console.log('[DeploymentAutoReload] Vite reconnected — deferring reload (user active / demo / modal)');
