@@ -219,6 +219,8 @@ export const BUSINESS_TYPE_TO_PROFILE: Record<string, ProfileKey> = {
   'meal prep / personal chef': 'PROFILE_D',
   'wedding planner home/venue visits': 'PROFILE_I',
   'photographer real estate/events': 'PROFILE_D',
+  'personal assistant': 'PROFILE_D',
+  'executive assistant': 'PROFILE_D',
 
   // Delivery & On-Site Logistics
   'furniture delivery & assembly': 'PROFILE_F',

@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { CheckCircle2, Info } from 'lucide-react';
 import { DEMO_FEATURE_STATUS, DEMO_FEATURE_DISCLAIMER } from '@/lib/demoFeatureStatus';
 
 export function IntegrationStatusPanel() {
@@ -10,30 +10,27 @@ export function IntegrationStatusPanel() {
         <div className="text-center mb-4">
           <Badge variant="outline" className="mb-1">Demo Transparency</Badge>
           <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-            Every demo is 100% mock data
+            Every demo runs on 100% live data
           </h2>
           <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
-            No real customers, calls, texts, emails, or charges. Everything below runs against your isolated 60-day Live Demo company.
+            Every record in your 60-Day Live Demo is real data you add yourself or that a concierge specialist sets up for you during onboarding — no pre-seeded mock data, no fake customers.
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {DEMO_FEATURE_STATUS.map((row) => {
-            const isLive = row.status === 'live';
             return (
               <Card key={row.id} className="border-border/60">
                 <CardContent className="p-2.5">
                   <div className="flex items-start gap-2">
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                      isLive ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {isLive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-primary/15 text-primary">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <h3 className="font-semibold text-xs text-foreground leading-tight">{row.feature}</h3>
-                        <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
-                          MOCK DEMO
+                        <Badge variant="secondary" className="text-[9px] px-1.5 py-0 bg-primary/15 text-primary">
+                          LIVE
                         </Badge>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">{row.description}</p>

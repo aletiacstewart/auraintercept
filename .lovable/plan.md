@@ -1,31 +1,46 @@
-## Problem
+## Two fixes
 
-`useDeploymentAutoReload` and the module-level Vite HMR handler in `src/hooks/useDeploymentAutoReload.ts` are firing full-page `window.location.reload()` calls while you click through the sidebar, consoles, and demo pages. Two specific triggers cause the "random refreshes":
+### 1. Add "Personal Assistant" to every industry dropdown
 
-1. **Vite HMR reconnect handler** — every time the dev server pushes an HMR update (which happens constantly while we make edits, and also on transient websocket drops), the module-level `vite:ws:connect` listener calls `window.location.reload()` after a 500 ms delay. `shouldDeferReload()` only blocks it if the mouse moved in the last 30 s, the tab is a demo session, a Radix modal is open, or SuperSwitcher is switching — plain navigation does NOT count as "active", so a fresh page mount after a click is wide open to being reloaded.
-2. **Deployment poller** — fetches `/?_ts=…` every 20 s and reloads when the bundle hash changes. In dev, Vite rewrites script hashes on every restart, so the poller keeps thinking there is a "new deployment" and reloads.
+The marketing/onboarding dropdowns (`IndustryDropdownPicker` on `/for-business` and `SignUp.tsx`) are built from `src/lib/businessTypeRegistry.ts`, which derives its list from `BUSINESS_TYPE_TO_PROFILE` in `src/lib/businessTypeProfileMap.ts`. Neither contains a `personal assistant` entry, so it cannot appear.
 
-`useVisibilityRefresh` is fine (it only invalidates queries after 5 min hidden).
+Add `personal assistant` (and the common adjacent variant `executive assistant`) to:
 
-## Fix
+- `src/lib/businessTypeProfileMap.ts` → `BUSINESS_TYPE_TO_PROFILE`: map both to `PROFILE_D` (booking/intake, no field crew), matching the existing pattern used by `personal organizer` and `wedding planner`.
+- `src/lib/businessTypeRegistry.ts`:
+  - `BUSINESS_TYPE_CATEGORY`: assign both to `'In-Home Personal Services'` (the existing category that already groups `house sitter`, `nanny`, `personal chef`, `wedding planner`, etc., and uses the 👤 emoji).
+  - `BUSINESS_TYPE_TO_PACK`: map both to `'beauty_wellness'` (the category default pack — closest existing booking-first pack; we are not creating a new industry pack here).
+- Leave `BusinessTypeSelector.tsx` alone — it already has a `personal_assistant` tile in its own (separate, legacy) catalog.
+- Sanity check: `BUSINESS_TYPE_GROUPS` is built off the registry, so the picker on `/for-business` and the SignUp business-type select will both pick the new entries up automatically.
 
-Edit `src/hooks/useDeploymentAutoReload.ts` only — no other files.
+### 2. Flip "100% mock data" → "100% live data" everywhere on demo surfaces, and fix the "48 hrs free" button
 
-1. **Disable the entire hook in dev / preview.** Wrap both the `useEffect` body and the module-level `import.meta.hot` block in `if (import.meta.env.PROD) { … }`. Lovable's preview iframe already reloads on real publishes via its own infra, and the dev sandbox handles HMR through Vite — we don't need a second reload loop on top of it. This eliminates the random refreshes during navigation in the preview.
+Per your direction: demos are NOT pre-seeded mock — every record is real data the customer enters themselves, or that a concierge specialist enters during onboarding. Nothing is simulated.
 
-2. **Tighten the production path** so the same thing can't happen on the published site mid-click:
-   - Treat the most recent route change as activity. Add a `lastRouteChangeAt` timestamp that updates on `popstate` and on `history.pushState` / `replaceState` (monkey-patch once at module load), and include `Date.now() - lastRouteChangeAt < 15_000` in `shouldDeferReload()`.
-   - Require **3** consecutive signature mismatches (up from 2) and bump `pollIntervalMs` default from 20 s to 60 s so transient CDN swaps don't trigger.
-   - In the `vite:ws:connect` handler (still PROD-gated out, but for completeness) keep the existing defer checks.
+Files to update:
 
-3. **Leave `useVisibilityRefresh` and every other file untouched.**
+- **`src/components/marketing/IndustryHero.tsx`** — button copy `Try the demo (48 hrs free)` → `Start 60-Day Live Demo`. Keep the sub-line "No commitment. Full access for 60 days."
+- **`src/components/marketing/IntegrationStatusPanel.tsx`**:
+  - Section heading: "Every demo is 100% mock data" → "Every demo runs on 100% live data".
+  - Sub-copy: "No real customers, calls, texts, emails, or charges. Everything below runs against your isolated 60-day Live Demo company." → "Every record in your 60-Day Live Demo is real data you add yourself or that a concierge specialist sets up for you during onboarding — no pre-seeded mock data, no fake customers."
+  - Badge per card: `MOCK DEMO` → `LIVE`.
+  - Icon/colour: switch the `AlertCircle` + muted styling to `CheckCircle2` + primary styling (i.e. drop the mock branch — treat every row as live).
+- **`src/lib/demoFeatureStatus.ts`** — rewrite each row's `status` to `'live'` and rewrite each `description` to reflect live behaviour (descriptions below). Keep the `requires` lines as-is — they describe the customer's own 3rd-party accounts, which is still accurate. Rewrite `DEMO_FEATURE_DISCLAIMER` to: *"Your 60-Day Live Demo runs entirely on live data — either entered by you in-app or set up on your behalf by a concierge specialist during onboarding. Aura connects to 3rd-party providers (SignalWire, ElevenLabs, Resend, Stripe, Google, Meta/LinkedIn/TikTok) using your own accounts; usage on those providers is billed by them directly to your card."*
 
-## Verification
+  New per-row descriptions (replace mock framing):
+  - dashboard → "Real jobs, leads, customers, and analytics — everything you enter (or that your concierge specialist enters during onboarding) is live in your company."
+  - aura_chat → "Aura answers using your real company knowledge base and books real appointments into your calendar."
+  - image_gen → "Real AI-generated images saved to your company's content library, ready to publish from the Content Engine."
+  - voice_inbound → "Real inbound calls hit your SignalWire number, Aura answers via your ElevenLabs voice, and every call logs to your dashboard."
+  - sms_outbound → "Real SMS sends through your A2P-registered SignalWire number — auto-responders, follow-ups, and broadcasts go to real customers."
+  - email → "Real email delivery through your Resend account and verified sending domain."
+  - gcal → "Two-way sync with the Google Calendar you connect — events created in Aura appear on your calendar and vice-versa."
+  - stripe → "Real Stripe checkout against your connected products and prices — invoices and subscriptions charge live."
+  - social → "Posts publish live to the Meta / LinkedIn / TikTok / Google Business profiles you connect from the Content Engine."
 
-- Navigate sidebar → consoles → demo pages in the preview: no `[DeploymentAutoReload]` reload logs, no white-flash refresh.
-- `grep` confirms no other call sites of `useDeploymentAutoReload` need changes.
-- Build passes.
+- Sweep verification: `rg -n "48 hr|48hr|mock data|MOCK DEMO|Pre-seeded|isolated 60-day Live Demo company|simulated" src/ supabase/` returns zero hits after the edits (existing `seed-demo-accounts-v2` registry tool used by sales reps for the 78 canned demo accounts is **out of scope** — that's a separate platform-admin path).
 
-## Open question
+## Out of scope
 
-Do you want the deployment auto-reload to keep running on the **published** site (`auraintercept.ai`), just with the stricter rules above? Or fully off everywhere and rely on users refreshing manually after a deploy? Default in this plan: keep it on in production with the stricter rules, off in dev/preview.
+- The legacy 78-account sales-rep demo registry (`/dashboard/demo-seeder`, `seed-demo-accounts-v2`) is not part of the public Live Demo flow and is left untouched.
+- No backend / RLS / Stripe / edge function changes are required for either fix.
