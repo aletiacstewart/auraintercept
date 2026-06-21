@@ -56,6 +56,18 @@ export default function SignUp() {
   const source = searchParams.get('source');
   const tierParam = searchParams.get('tier');
   const industryParam = searchParams.get('industry');
+
+  // Live-Demo deep-link from /for-business: presence of ?industry= locks the
+  // signup onto the 60-Day Live Demo on Aura Elite. Tier picker becomes read-only.
+  const isLiveDemoFlow = !!industryParam;
+  const resolvedDemoPackId = industryParam ? getPackIdForBusinessType(industryParam) : null;
+  const resolvedDemoPack = resolvedDemoPackId
+    ? (INDUSTRY_CONTENT[resolvedDemoPackId] || INDUSTRY_CONTENT.default)
+    : null;
+  const resolvedDemoBusinessType = industryParam
+    ? BUSINESS_TYPES.find((b) => b.key === industryParam)
+    : null;
+  const industryPreselectValid = !!resolvedDemoBusinessType;
   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -110,17 +122,16 @@ export default function SignUp() {
 
   // Pre-select tier and industry from query params (deep-link from /for-business)
   useEffect(() => {
-    if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
-      setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
-    } else if (industryParam) {
-      // Live Demo deep-link (industry preselected, no explicit tier) → default to Elite
-      // for the 60-day trial. User can downgrade before day 60.
+    if (isLiveDemoFlow) {
+      // Live Demo always runs on Elite for the 60-day trial.
       setSelectedTier('command');
+    } else if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
+      setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
     }
     if (industryParam) {
       setBusinessIndustry(industryParam);
     }
-  }, [tierParam, industryParam]);
+  }, [tierParam, industryParam, isLiveDemoFlow]);
 
   const handlePlatformAdminSignup = async (e: React.FormEvent) => {
     e.preventDefault();
