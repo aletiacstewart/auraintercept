@@ -15,6 +15,7 @@ import {
   getPackIdForBusinessType,
   BUSINESS_TYPE_COUNT,
 } from '@/lib/businessTypeRegistry';
+import { INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,

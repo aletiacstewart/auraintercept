@@ -236,7 +236,9 @@ serve(async (req) => {
     }
 
     if (inTrial) {
-      const trialTier = companyData?.subscription_tier || 'starter';
+      // Default trial tier to 'command' (Elite) so a NULL/legacy company row
+      // never silently drops a Live Demo user to Starter mid-trial.
+      const trialTier = companyData?.subscription_tier || 'command';
       logStep("Company in active trial, returning selected tier", { trialTier });
       return new Response(JSON.stringify({
         subscribed: true,
