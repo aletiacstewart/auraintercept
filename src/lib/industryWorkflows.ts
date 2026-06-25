@@ -225,18 +225,59 @@ const INDUSTRY_WORKFLOWS: Partial<Record<string, WorkflowChain[]>> = {
       description: 'Move new trial signups toward activation and a paid upgrade',
       icon: ArrowRightLeft, steps: ['Trial', 'Onboard', 'Activate', 'Upgrade'],
       command: 'For my newest trial signups, send the onboarding sequence, track activation milestones, and queue upgrade offers when ready',
+      actions: [
+        {
+          agent_id: 'outreach', action_type: 'draft_email', channel: 'email', label: 'Onboarding email',
+          risk_tier: 'low', confidence: 0.9,
+          payload: { to: '{{lead_email}}', subject: 'Get started with {{company_name}}', body: 'Hi {{customer_name}},\n\nWelcome to your trial. Here are the 3 steps to activate your account…\n\n— {{company_name}}' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: 'Day-2 nudge SMS',
+          risk_tier: 'low', confidence: 0.85,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, this is {{company_name}}. Need a hand activating your trial? Reply HELP and we will guide you.' },
+        },
+        {
+          agent_id: 'billing', action_type: 'draft_email', channel: 'email', label: 'Upgrade offer',
+          risk_tier: 'medium', confidence: 0.78, est_value_usd: 99,
+          payload: { to: '{{lead_email}}', subject: 'Ready to upgrade {{company_name}}?', body: 'Hi {{customer_name}},\n\nYou hit your activation milestones — here is a tailored upgrade plan for you.\n\n— {{company_name}}' },
+        },
+      ],
     },
     {
       id: 'inbound-demo', label: 'Inbound → Demo → Follow-Up',
       description: 'Capture an inbound lead, book a demo, and run the follow-up',
       icon: Phone, steps: ['Capture', 'Book Demo', 'Follow-Up'],
       command: 'Take my newest inbound lead, book a product demo on my calendar, and queue a personalized follow-up sequence',
+      actions: [
+        {
+          agent_id: 'scheduler', action_type: 'create_appointment', channel: 'appointment', label: 'Product demo',
+          risk_tier: 'low', confidence: 0.86,
+          payload: { customer_name: '{{customer_name}}', service_type: 'Product demo', notes: 'Auto-booked from inbound lead.' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_email', channel: 'email', label: 'Demo confirmation',
+          risk_tier: 'low', confidence: 0.92,
+          payload: { to: '{{lead_email}}', subject: 'Your demo with {{company_name}} is confirmed', body: 'Hi {{customer_name}},\n\nYour demo is set for {{appointment_time}}. Talk soon!\n\n— {{company_name}}' },
+        },
+      ],
     },
     {
       id: 'renewal-churn-save', label: 'Renewal / Churn Save',
       description: 'Spot at-risk accounts and run a save play before they churn',
       icon: Star, steps: ['Score Risk', 'Draft Outreach', 'Offer'],
       command: 'Identify at-risk customers approaching renewal, draft a save-play outreach for each, and show me for approval',
+      actions: [
+        {
+          agent_id: 'retention', action_type: 'draft_email', channel: 'email', label: 'Save-play email',
+          risk_tier: 'medium', confidence: 0.8, est_value_usd: 200,
+          payload: { to: '{{lead_email}}', subject: 'A note from {{company_name}}', body: 'Hi {{customer_name}},\n\nWe noticed you have not been as active recently. Here is a tailored offer to keep you on board.\n\n— {{company_name}}' },
+        },
+        {
+          agent_id: 'retention', action_type: 'draft_sms', channel: 'sms', label: 'Save-play SMS',
+          risk_tier: 'medium', confidence: 0.78,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, this is {{company_name}}. Just checking in — anything we can help with before your renewal?' },
+        },
+      ],
     },
   ],
 
