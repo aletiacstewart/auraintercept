@@ -107,7 +107,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       <div ref={ref}>
         {/* Chat Panel */}
         {isOpen && (
-          <div className="fixed bottom-24 right-6 z-50 w-[420px] h-[640px] max-h-[88vh] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="fixed bottom-24 left-3 right-3 sm:left-auto sm:right-6 z-50 sm:w-[420px] h-[calc(100dvh-7.5rem)] sm:h-[640px] max-h-[88dvh] animate-in slide-in-from-bottom-4 fade-in duration-300">
             <div className="w-full h-full bg-card/95 backdrop-blur-lg border border-primary/30 shadow-2xl rounded-xl overflow-hidden flex flex-col">
               {/* Close Button */}
               <Button
