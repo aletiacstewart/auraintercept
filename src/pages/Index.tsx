@@ -18,29 +18,29 @@ import { SEO } from '@/components/seo/SEO';
  * 185 business types. Source of truth: AuraIntercept_MarketingPlatformGuide.xlsx.
  * Keep counts and labels in sync with that workbook.
  */
-const MARKETING_INDUSTRY_CATEGORIES: { name: string; icon: LucideIcon; count: number; description: string }[] = [
-  { name: 'HVAC & Mechanical',         icon: Flame,         count: 6,  description: 'AC, heating, ducts, mechanical' },
-  { name: 'Plumbing',                  icon: Droplet,       count: 7,  description: 'Plumbers, septic, well, drain' },
-  { name: 'Electrical',                icon: Zap,           count: 8,  description: 'Electricians, solar, EV, smart home' },
-  { name: 'Roofing & Exterior',        icon: Home,          count: 12, description: 'Roof, siding, gutters, paint' },
-  { name: 'Landscaping & Outdoor',     icon: TreeDeciduous, count: 13, description: 'Lawn, trees, pool, pest, snow' },
-  { name: 'Cleaning & Restoration',    icon: Sparkles,      count: 13, description: 'House, carpet, water/fire damage' },
-  { name: 'Construction & Remodeling', icon: HardHat,       count: 22, description: 'GC, kitchens, baths, flooring' },
-  { name: 'Home Inspection & Safety',  icon: Shield,        count: 11, description: 'Inspectors, chimney, locksmith, alarms' },
-  { name: 'Appliance & Tech Services', icon: Refrigerator,  count: 8,  description: 'Appliance, computer, TV, WiFi' },
-  { name: 'Moving & Junk Removal',     icon: Truck,         count: 9,  description: 'Movers, junk, towing, waste' },
-  { name: 'Auto Services (Mobile)',    icon: Car,           count: 9,  description: 'Detail, glass, oil, mobile mechanic' },
-  { name: 'Pet & Animal Services',     icon: PawPrint,      count: 8,  description: 'Groomers, trainers, vets, sitters' },
-  { name: 'Health & Wellness',         icon: HeartPulse,    count: 1,  description: 'In-home massage & therapists' },
-  { name: 'Specialty Trades',          icon: Hammer,        count: 13, description: 'Handyman, carpenter, pool, masonry' },
-  { name: 'Utility & Infrastructure',  icon: Building2,     count: 5,  description: 'Propane, water, utility contractors' },
-  { name: 'Real Estate & Property',    icon: MapPin,        count: 11, description: 'Agents, mortgage, title, mgmt' },
-  { name: 'In-Home Personal Services', icon: Users,         count: 9,  description: 'Trainer, tutor, nanny, chef' },
-  { name: 'Delivery & On-Site Logistics', icon: Send,       count: 4,  description: 'Furniture, fuel, water delivery' },
-  { name: 'Insurance & Assessment',    icon: FileText,      count: 4,  description: 'Home/auto, adjusters, appraisers' },
-  { name: 'Senior & Lifestyle',        icon: HeartHandshake,count: 5,  description: 'Senior move, organize, energy audit' },
-  { name: 'Event & Temporary',         icon: Megaphone,     count: 6,  description: 'Tents, party, DJ, catering, photo' },
-  { name: 'Beauty, Restaurants & Pro Services', icon: Scissors, count: 5, description: 'Salon, food, personal assist, B2B' },
+const MARKETING_INDUSTRY_CATEGORIES: { name: string; icon: LucideIcon; count: number; description: string; demoPack: string }[] = [
+  { name: 'HVAC & Mechanical',         icon: Flame,         count: 6,  description: 'AC, heating, ducts, mechanical',         demoPack: 'hvac' },
+  { name: 'Plumbing',                  icon: Droplet,       count: 7,  description: 'Plumbers, septic, well, drain',          demoPack: 'plumbing' },
+  { name: 'Electrical',                icon: Zap,           count: 8,  description: 'Electricians, solar, EV, smart home',    demoPack: 'electrical' },
+  { name: 'Roofing & Exterior',        icon: Home,          count: 12, description: 'Roof, siding, gutters, paint',           demoPack: 'roofing' },
+  { name: 'Landscaping & Outdoor',     icon: TreeDeciduous, count: 13, description: 'Lawn, trees, pool, pest, snow',          demoPack: 'landscape' },
+  { name: 'Cleaning & Restoration',    icon: Sparkles,      count: 13, description: 'House, carpet, water/fire damage',       demoPack: 'handyman' },
+  { name: 'Construction & Remodeling', icon: HardHat,       count: 22, description: 'GC, kitchens, baths, flooring',          demoPack: 'construction' },
+  { name: 'Home Inspection & Safety',  icon: Shield,        count: 11, description: 'Inspectors, chimney, locksmith, alarms', demoPack: 'security_systems' },
+  { name: 'Appliance & Tech Services', icon: Refrigerator,  count: 8,  description: 'Appliance, computer, TV, WiFi',          demoPack: 'appliance_repair' },
+  { name: 'Moving & Junk Removal',     icon: Truck,         count: 9,  description: 'Movers, junk, towing, waste',            demoPack: 'handyman' },
+  { name: 'Auto Services (Mobile)',    icon: Car,           count: 9,  description: 'Detail, glass, oil, mobile mechanic',    demoPack: 'auto_care' },
+  { name: 'Pet & Animal Services',     icon: PawPrint,      count: 8,  description: 'Groomers, trainers, vets, sitters',      demoPack: 'veterinary' },
+  { name: 'Health & Wellness',         icon: HeartPulse,    count: 1,  description: 'In-home massage & therapists',           demoPack: 'beauty_wellness' },
+  { name: 'Specialty Trades',          icon: Hammer,        count: 13, description: 'Handyman, carpenter, pool, masonry',     demoPack: 'handyman' },
+  { name: 'Utility & Infrastructure',  icon: Building2,     count: 5,  description: 'Propane, water, utility contractors',    demoPack: 'plumbing' },
+  { name: 'Real Estate & Property',    icon: MapPin,        count: 11, description: 'Agents, mortgage, title, mgmt',          demoPack: 'real_estate' },
+  { name: 'In-Home Personal Services', icon: Users,         count: 9,  description: 'Trainer, tutor, nanny, chef',            demoPack: 'personal_assistant' },
+  { name: 'Delivery & On-Site Logistics', icon: Send,       count: 4,  description: 'Furniture, fuel, water delivery',        demoPack: 'handyman' },
+  { name: 'Insurance & Assessment',    icon: FileText,      count: 4,  description: 'Home/auto, adjusters, appraisers',       demoPack: 'real_estate' },
+  { name: 'Senior & Lifestyle',        icon: HeartHandshake,count: 5,  description: 'Senior move, organize, energy audit',    demoPack: 'home_health' },
+  { name: 'Event & Temporary',         icon: Megaphone,     count: 6,  description: 'Tents, party, DJ, catering, photo',      demoPack: 'beauty_wellness' },
+  { name: 'Beauty, Restaurants & Pro Services', icon: Scissors, count: 5, description: 'Salon, food, personal assist, B2B',  demoPack: 'restaurants' },
 ];
 
 const agentCategories = [{
@@ -584,9 +584,9 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
             {MARKETING_INDUSTRY_CATEGORIES.map(cat => (
-              <div key={cat.name} style={{ borderRadius: 10, padding: "12px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
+              <button key={cat.name} type="button" onClick={() => navigate(`/for-business?industry=${cat.demoPack}`)} aria-label={`See live demo for ${cat.name}`} style={{ cursor: "pointer", borderRadius: 10, padding: "12px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; e.currentTarget.style.border = "1px solid rgba(0,229,255,0.2)"; e.currentTarget.style.transform = "translateY(0)"; }}
               >
                 <div style={{ position: "relative", width: 32, height: 32, margin: "0 auto 6px" }}>
                   <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -597,7 +597,7 @@ export default function Index() {
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#00E5FF", lineHeight: 1.2 }}>{cat.name}</div>
                 <div style={{ fontSize: 9, fontWeight: 600, color: "#00E5FF", opacity: 0.7, marginTop: 2 }}>{cat.count} business types</div>
                 <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.3, marginTop: 4 }} className="hidden sm:block">{cat.description}</p>
-              </div>
+              </button>
             ))}
           </div>
           <div className="text-center mt-10">
