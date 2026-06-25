@@ -131,9 +131,14 @@ export default function FieldOperations() {
           {isDispatch && (
             <WorkflowChainButtons
               chains={DISPATCH_WORKFLOWS}
-              onTrigger={(cmd) => {
-                toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
-                submitQuery(cmd);
+              onTrigger={(chain) => {
+                if (chain.actions && chain.actions.length > 0) {
+                  toast.info('Aura is drafting actions…', { description: chain.label });
+                  void runChain(chain);
+                } else {
+                  toast.info('Running workflow…', { description: chain.command.slice(0, 80) + '…' });
+                  submitQuery(chain.command);
+                }
               }}
             />
           )}
