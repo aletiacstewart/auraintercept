@@ -188,6 +188,7 @@ export default function Invoices() {
           }
         />
         <InlineFormHost />
+        <PendingAuraDraftsPanel channel="invoice" title="Pending Aura Invoice Drafts" />
         <FormShell
           id="invoice-create"
           title="Create Invoice"
