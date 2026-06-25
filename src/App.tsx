@@ -223,6 +223,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 
                 <Route path="/dashboard/availability" element={<ProtectedRoute><EmployeeAvailability /></ProtectedRoute>} />
                 <Route path="/dashboard/appointments" element={<ProtectedRoute><EmployeeAppointments /></ProtectedRoute>} />
+                <Route path="/appointments" element={<Navigate to="/dashboard/appointments" replace />} />
                 
                 <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                 <Route path="/dashboard/3rd-party-overview" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
