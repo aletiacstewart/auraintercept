@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { ActionPreview } from '@/components/automation/ActionPreview';
 
 type Channel = 'sms' | 'email' | 'appointment' | 'invoice';
 
@@ -88,8 +89,9 @@ export function PendingAuraDraftsPanel({ channel, title }: Props) {
           const summary =
             a.payload?.message || a.payload?.subject || a.payload?.label || a.action_type;
           return (
-            <div key={a.id} className="flex items-start gap-3 rounded-md border bg-background p-3">
-              <div className="flex-1 min-w-0">
+            <div key={a.id} className="rounded-md border bg-background p-3 space-y-2">
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <Badge variant="outline" className="text-[10px]">{a.agent_id}</Badge>
                   <Badge
@@ -106,7 +108,7 @@ export function PendingAuraDraftsPanel({ channel, title }: Props) {
                 {a.result_summary && (
                   <p className="text-xs text-muted-foreground mt-0.5">{a.result_summary}</p>
                 )}
-              </div>
+                </div>
               {a.status === 'pending' && (
                 <div className="flex gap-1 flex-shrink-0">
                   <Button
@@ -127,6 +129,15 @@ export function PendingAuraDraftsPanel({ channel, title }: Props) {
                   </Button>
                 </div>
               )}
+              </div>
+              <details>
+                  <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                    View preview
+                  </summary>
+                  <div className="mt-2">
+                    <ActionPreview actionType={a.action_type} payload={(a.payload ?? {}) as Record<string, unknown>} />
+                  </div>
+              </details>
             </div>
           );
         })}
