@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { ActionPreview } from '@/components/automation/ActionPreview';
 
 type Channel = 'sms' | 'email' | 'appointment' | 'invoice';
 
@@ -127,6 +128,16 @@ export function PendingAuraDraftsPanel({ channel, title }: Props) {
                   </Button>
                 </div>
               )}
+              <div className="w-full mt-2">
+                <details>
+                  <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                    View preview
+                  </summary>
+                  <div className="mt-2">
+                    <ActionPreview actionType={a.action_type} payload={(a.payload ?? {}) as Record<string, unknown>} />
+                  </div>
+                </details>
+              </div>
             </div>
           );
         })}
