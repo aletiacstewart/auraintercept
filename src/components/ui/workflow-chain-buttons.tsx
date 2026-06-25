@@ -2,9 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Zap, ExternalLink } from 'lucide-react';
+import { ArrowRight, Zap, ExternalLink, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { RunWithAuraConfirmDialog } from '@/components/ai/RunWithAuraConfirmDialog';
+import { Badge } from '@/components/ui/badge';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export type WorkflowSideEffectChannel =
   | 'sms'
@@ -68,11 +72,60 @@ interface WorkflowChainButtonsProps {
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
   const navigate = useNavigate();
   const [pending, setPending] = React.useState<WorkflowChain | null>(null);
+  const { companyId } = useAuth();
+  const qc = useQueryClient();
+
+  const { data: pendingCount = 0 } = useQuery({
+    queryKey: ['workflow-pending-actions', companyId],
+    enabled: !!companyId,
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('agent_proposed_actions')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', companyId!)
+        .eq('status', 'pending');
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  React.useEffect(() => {
+    if (!companyId) return;
+    const channel = supabase
+      .channel(`wf-pending-${companyId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_proposed_actions', filter: `company_id=eq.${companyId}` },
+        () => qc.invalidateQueries({ queryKey: ['workflow-pending-actions', companyId] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [companyId, qc]);
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-sm font-medium text-primary">
-        <Zap className="h-4 w-4 text-primary" />
-        End-to-End Workflows
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-sm font-medium text-primary">
+          <Zap className="h-4 w-4 text-primary" />
+          End-to-End Workflows
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
+          onClick={() => navigate('/dashboard/automation')}
+        >
+          <ShieldCheck className="h-3.5 w-3.5 mr-1" />
+          Review &amp; Approve Automation
+          {pendingCount > 0 && (
+            <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-[10px]">
+              {pendingCount}
+            </Badge>
+          )}
+        </Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {chains.map((chain) => (
