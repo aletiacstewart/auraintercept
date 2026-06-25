@@ -14,7 +14,9 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     mode === "production" && VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt' lets PWAUpdatePrompt show a banner instead of silently activating a new
+      // SW mid-session (which was causing random reloads / logouts on dashboards).
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'Aura Intercept Field Ops',
@@ -48,10 +50,33 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB limit
         cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true,
-        // Prevent service worker from controlling dashboard/chat/auth routes
-        navigateFallbackDenylist: [/^\/dashboard/, /^\/chat/, /^\/auth/, /^\/customer/, /^\/feedback/],
+        // skipWaiting + clientsClaim was activating new SWs mid-session and causing
+        // dashboards/consoles to reload and bounce users back to /auth. Wait for an
+        // explicit user action via PWAUpdatePrompt instead.
+        skipWaiting: false,
+        clientsClaim: false,
+        // Service worker is scoped to /technician (PWA install target). Exclude every
+        // authenticated, marketing, checkout, and customer route from navigation
+        // fallback so the SW never serves stale HTML to those pages.
+        navigateFallbackDenylist: [
+          /^\/$/,
+          /^\/dashboard/,
+          /^\/chat/,
+          /^\/auth/,
+          /^\/signin/,
+          /^\/signup/,
+          /^\/customer/,
+          /^\/feedback/,
+          /^\/for-business/,
+          /^\/audit/,
+          /^\/onboarding/,
+          /^\/intake/,
+          /^\/subscription/,
+          /^\/demo/,
+          /^\/site/,
+          /^\/book/,
+          /^\/super-switcher/,
+        ],
         runtimeCaching: [
           {
             urlPattern: /\.html$/,
