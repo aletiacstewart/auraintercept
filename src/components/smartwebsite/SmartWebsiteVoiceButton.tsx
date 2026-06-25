@@ -35,10 +35,12 @@ export function SmartWebsiteVoiceButton({
     });
     
     // Log voice started event
-    await supabase.from('site_chat_logs').insert({
-      website_id: websiteId,
-      visitor_fingerprint: visitorFingerprint,
-      interaction_type: 'voice_started',
+    await supabase.functions.invoke('log-site-event', {
+      body: {
+        website_id: websiteId,
+        visitor_fingerprint: visitorFingerprint,
+        interaction_type: 'voice_started',
+      },
     });
   }, [websiteId, visitorFingerprint]);
 
@@ -48,11 +50,13 @@ export function SmartWebsiteVoiceButton({
       : 0;
     
     // Log voice ended event with duration
-    await supabase.from('site_chat_logs').insert({
-      website_id: websiteId,
-      visitor_fingerprint: visitorFingerprint,
-      interaction_type: 'voice_ended',
-      duration_seconds: duration,
+    await supabase.functions.invoke('log-site-event', {
+      body: {
+        website_id: websiteId,
+        visitor_fingerprint: visitorFingerprint,
+        interaction_type: 'voice_ended',
+        duration_seconds: duration,
+      },
     });
     
     sessionStartRef.current = null;
