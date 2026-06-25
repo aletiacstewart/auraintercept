@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { Bot, CheckCircle2, Clock, ShieldAlert, X } from "lucide-react";
+import { Bot, CheckCircle2, Clock, Info, ShieldAlert, X } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { PageContainer } from "@/components/ui/page-container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -226,6 +226,23 @@ export default function Automation() {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-3">
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="py-4 flex gap-3">
+                <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div className="text-sm space-y-1.5">
+                  <p className="font-medium text-foreground">What these limits mean</p>
+                  <p className="text-muted-foreground">
+                    <span className="text-foreground font-medium">Min Confidence</span> — How sure the agent must be (0.00–1.00) before acting on its own. Anything below this is sent to your Action Queue for approval. Higher = stricter.
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="text-foreground font-medium">Max Value / Action ($)</span> — The largest dollar amount the agent can commit in a single action (refund, discount, ad spend, quote send, etc.). Actions above this dollar value require your approval.
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="text-foreground font-medium">Daily Auto Cap</span> — The maximum number of auto-executed actions this agent can take per day. Once hit, everything else queues for approval until tomorrow.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
             {settingsLoading ? (
               <Skeleton className="h-64 w-full" />
             ) : (
