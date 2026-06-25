@@ -159,7 +159,8 @@ export default function Automation() {
         <PageHeader
           icon={Bot}
           title="Automation"
-          subtitle="Decide how autonomously each AI operative acts on your behalf — and review what they did."
+          description="Decide how autonomously each AI operative acts on your behalf — and review what they did."
+          featureColor="platform"
         />
 
         <Tabs defaultValue="inbox" className="space-y-6">
