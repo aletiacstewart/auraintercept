@@ -1,37 +1,26 @@
-## Goal
-Guarantee every Live Demo signup gets a full 60-day Aura Elite trial with consoles/dashboards tailored to the industry they picked on `/for-business`.
+# Simplify Industry Selection to Main Categories Only
 
-## What's already correct (no change)
-- `/for-business` deep-links to `/signup?mode=company&tier=command&industry=<id>`.
-- `SignUp.tsx` persists `subscription_tier='command'`, `industry_vertical=<canonical>`, `trial_ends_at = now + 60d`.
-- `check-subscription` returns `tier='command'`, `subscribed=true`, `in_trial=true` for active trial; tier-gating + `useIndustryPack` already render the Elite agent suite and industry-tailored consoles.
+Both the SignUp form and the Live Demo picker currently expose 185 sub-types under blue category headers. You want users to pick from **only the main categories** — and that list must match the updated homepage Industries grid (which now has 25 categories after splitting "Beauty, Restaurants & Pro Services" into Beauty & Salons, Restaurants & Food Delivery, Personal Assistants, and B2B Pro Services).
+
+## Single source of truth
+- Extract the homepage's `MARKETING_INDUSTRY_CATEGORIES` array (currently inline in `src/pages/Index.tsx`) into a shared module — `src/lib/mainIndustryCategories.ts` — exporting the 25 entries with `{ name, icon, description, demoPack }`.
+- Update `src/pages/Index.tsx` to import from this module so the homepage grid keeps rendering the same cards.
 
 ## Changes
 
-### 1. Lock the Live-Demo signup to Elite (UI)
-**`src/pages/SignUp.tsx`**
-- Add a derived `isLiveDemoFlow = !!industryParam` flag (industry-deep-link = Live Demo).
-- When `isLiveDemoFlow` is true:
-  - Force `selectedTier='command'` and disable the 4-tier picker (the existing pricing card stays visible but is locked, with a sash: "Live Demo runs on Aura Elite — every agent, console, and integration unlocked. Downgrade or cancel anytime before day 60.").
-  - Replace the per-tier "Choose tier" CTA with a single primary "Start 60-Day Live Demo on Elite" button that runs the existing company-signup handler.
-  - Hide the per-tier "originalMonthly/monthlyPrice" striked pricing for non-Elite cards so it's visually clear Elite is the active plan (other tier cards collapse to a small "Available to switch to after day 60" row).
+### 1. Live Demo picker (`src/components/marketing/IndustryDropdownPicker.tsx`)
+- Remove the "Search 185+ business types" field and per-category sub-type rows.
+- Render the 25 main categories from `mainIndustryCategories.ts` (icon + name + short description).
+- Selecting a category routes to `/for-business?industry=<demoPack>` — same behavior as the homepage cards.
 
-### 2. Make the industry pre-selection visible and locked-in
-**`src/pages/SignUp.tsx`**
-- When `industryParam` resolves to a valid `BUSINESS_TYPES` entry, render the industry dropdown disabled with a "Pre-selected from your Live Demo pick" badge, plus a one-line preview from the resolved `INDUSTRY_CONTENT` pack ("Your consoles, KPIs, and Aura prompts will be tuned for <pack.label>.").
-- If `industryParam` does not resolve (e.g. arbitrary string), leave the dropdown enabled and show a warning toast — fall back to the existing required-industry guard.
+### 2. SignUp form (`src/pages/SignUp.tsx`)
+- Replace the 185-type business-type dropdown with a 25-option dropdown of the main categories from `mainIndustryCategories.ts`.
+- Persist the chosen category's `demoPack` (e.g. `hvac`, `plumbing`, `restaurants`, `beauty_wellness`, `personal_assistant`) as the company's `business_type` / `industry` so existing pack resolution, console context, and onboarding flow keep working.
+- `?industry=<pack>` pre-fill still works since we persist the same pack IDs the homepage cards link to.
 
-### 3. Harden the trial-branch tier default (edge function)
-**`supabase/functions/check-subscription/index.ts`**
-- In the trial-active branch, change `const trialTier = companyData?.subscription_tier || 'starter';` → `const trialTier = companyData?.subscription_tier || 'command';`. Rationale: Live Demos are persisted with `command`, but defending against a NULL/legacy row means the trial never silently drops to Starter mid-experience.
-- No schema change. No CORS / no public-grant change. Re-deploy the function.
-
-### 4. Smoke-verify with Playwright
-- Drive `/for-business?industry=plumber` → click `Start 60-Day Live Demo` → land on `/signup?...tier=command&industry=plumber`.
-- Confirm: tier card locked to Elite, industry dropdown shows "Plumber — pre-selected", primary CTA = "Start 60-Day Live Demo on Elite".
-- Repeat for `industry=hvac` and `industry=electrician` to confirm the resolved pack label changes.
+### 3. Homepage Industries grid
+- Refactored only to import the shared list — visual output unchanged (still the 25 cards we just finished).
 
 ## Out of scope
-- No backend table / RLS / Stripe / trigger changes (industry_vertical → consoles is already wired via `useIndustryPack`).
-- Existing post-signup onboarding (3rd-party account hookups, knowledge-base seed, etc.) remains as-is — full Elite access is already granted by the trial branch.
-- Direct `/signup` visits without `?industry=` keep today's tier picker behaviour.
+- The internal 185-type registry stays in `businessTypeRegistry.ts` for backend marketing-matrix lookups; we just stop exposing it in the two user-facing selectors.
+- No pricing, console, or PDF copy changes.
