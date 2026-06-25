@@ -1,11 +1,33 @@
-Add an explanation note to the Per-Agent Settings tab in `/dashboard/automation` so users understand what the three numeric thresholds control.
+# Cleanup: Remove Duplicate Demo Companies
 
-Plan:
-1. Open `src/pages/Automation.tsx`.
-2. Above the list of agent cards in the `settings` tab, insert a compact info block (e.g., a small Card or bordered note row) using theme tokens only.
-3. Use a `HelpCircle` or `Info` icon and one-line definitions for each field:
-   - **Min Confidence** — The lowest certainty score (0.0–1.0) the agent must reach before it can act without asking.
-   - **Max Value / Action ($)** — The maximum dollar value of a single action the agent may auto-execute. Anything above this is sent for approval.
-   - **Daily Auto Cap** — The maximum number of auto-executed actions this agent can run in one day. When reached, everything queues for approval.
-4. Keep it compact and unobtrusive; do not change the existing input layout or logic. No backend changes are needed.
-5. Verify the change renders correctly in the preview under the Per-Agent Settings tab.
+## Goal
+Customer Console Portals currently list 37 demo companies. Reduce to one demo per industry category, plus the explicitly-kept `demo-trial-restaurants-0fa7k0`.
+
+## Companies to DELETE (10)
+All are `[DEMO] Paz` / `[DEMO] Alicia Stewart Demo Co.` trial duplicates:
+
+| Slug | Industry |
+|---|---|
+| demo-trial-plumbing-ggiqyn | plumbing |
+| demo-trial-plumbing-qpdger | plumbing |
+| demo-trial-restaurants-06lve3 | restaurants |
+| demo-trial-restaurants-42ogqa | restaurants |
+| demo-trial-restaurants-6ysmco | restaurants |
+| demo-trial-restaurants-8d69rz | restaurants |
+| demo-trial-restaurants-jtybs7 | restaurants |
+| demo-trial-restaurants-rksngw | restaurants |
+| demo-trial-restaurants-rt93mx | restaurants |
+| demo-trial-restaurants-smt8bk | restaurants |
+
+## Companies to KEEP (27)
+- One canonical `demo-<industry>` row per category (25 industries).
+- `demo-restaurants` (canonical restaurant demo).
+- `demo-trial-restaurants-0fa7k0` (per your instruction).
+
+## Execution
+1. Run a migration that deletes the 10 companies above by ID. Related rows (customers, leads, jobs, appointments, etc.) cascade via existing FKs; any non-cascading child rows will be deleted in the same migration before the company row to keep the operation atomic.
+2. Verify by re-running the demo company list and confirming the Customer Portal directory now shows 27 entries.
+
+## Notes
+- This only removes records from the database. The demo-account registry / reseeder code is not changed, so future reseeds won't recreate these duplicates unless explicitly invoked.
+- If you'd rather *hide* them from the Customer Portal instead of deleting (e.g. preserve historical chat/call logs), say so and I'll switch to flipping a visibility flag instead.
