@@ -166,8 +166,10 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   // Auto-refresh queries when tab becomes visible after being hidden
   useVisibilityRefresh(60000); // Refresh if hidden for more than 60 seconds
   
-  // Auto-reload when new deployment is detected (polls every 20s)
-  useDeploymentAutoReload(20000);
+  // Auto-reload when a new deployment is detected. Poll once every 10 minutes
+  // (not 20s) so we don't disrupt long dashboard / console sessions. The hook
+  // is also gated on user activity, open modals, and route changes.
+  useDeploymentAutoReload(10 * 60 * 1000);
 
   return (
     <TooltipProvider>
@@ -339,28 +341,20 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
 };
 
 const App = () => {
-  // Self-healing: unregister service workers on non-technician routes to prevent stale cached versions
+  // Self-healing: only unregister stray service workers whose scope is NOT the
+  // technician PWA. Previously this nuked every SW + cache on every full app
+  // mount, which combined with VitePWA autoUpdate to cause flapping (install →
+  // unregister → reinstall → reload) and randomly logged users out.
   useEffect(() => {
-    const path = window.location.pathname;
-    const isTechnicianRoute = path.startsWith('/technician');
-    
-    if (!isTechnicianRoute && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((registration) => {
-          registration.unregister();
-        });
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        const scope = registration.scope || '';
+        // Keep the technician PWA SW (scope ends with "/technician" or "/technician/").
+        if (/\/technician\/?$/.test(scope)) return;
+        registration.unregister().catch(() => {});
       });
-      // Also clear workbox caches
-      if ('caches' in window) {
-        caches.keys().then((names) => {
-          names.forEach((name) => {
-            if (name.includes('workbox') || name.includes('assets') || name.includes('html')) {
-              caches.delete(name);
-            }
-          });
-        });
-      }
-    }
+    }).catch(() => {});
   }, []);
 
   // Embed mode must be true in an iframe (preview widgets) OR when explicitly requested via ?embed=true

@@ -64,8 +64,53 @@ const isSwitching = () => {
   }
 };
 
+// Routes where an involuntary reload would interrupt a real task (auth, billing,
+// dashboards, customer portals, technician PWA, onboarding flows). On these we
+// never auto-reload; the user can pick up the new bundle on next manual navigation
+// or via the PWAUpdatePrompt banner.
+const NEVER_RELOAD_PATH_PREFIXES = [
+  '/dashboard',
+  '/customer',
+  '/technician',
+  '/auth',
+  '/signin',
+  '/signup',
+  '/onboarding',
+  '/intake',
+  '/checkout',
+  '/subscription',
+  '/demo',
+  '/super-switcher',
+];
+
+const isProtectedRoute = () => {
+  if (typeof window === 'undefined') return false;
+  const path = window.location.pathname || '/';
+  return NEVER_RELOAD_PATH_PREFIXES.some((p) => path === p || path.startsWith(p + '/') || path === p);
+};
+
+const hasActiveSession = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const key = Object.keys(window.localStorage).find((k) => k.includes('-auth-token'));
+    if (!key) return false;
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    return !!parsed?.access_token || !!parsed?.currentSession?.access_token;
+  } catch {
+    return false;
+  }
+};
+
 const shouldDeferReload = () =>
-  isDemoSession() || isSwitching() || isUserActive() || isRouteChanging() || hasOpenModal();
+  isDemoSession() ||
+  isSwitching() ||
+  isUserActive() ||
+  isRouteChanging() ||
+  hasOpenModal() ||
+  isProtectedRoute() ||
+  hasActiveSession();
 
 /**
  * Hook that detects when a new frontend bundle has been deployed
@@ -183,7 +228,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 60000) => {
           // Use consecutive match to avoid reload on transient differences
           consecutiveMatchRef.current++;
           
-          if (consecutiveMatchRef.current >= 3) {
+          if (consecutiveMatchRef.current >= 5) {
             // Store signature to prevent reload loops
             const reloadedSignature = sessionStorage.getItem('lastReloadedSignature');
             if (reloadedSignature === newSignature) {
@@ -260,18 +305,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 60000) => {
   }, [pollIntervalMs]);
 };
 
-// Handle Vite HMR reconnection at module level (outside React)
-// This prevents hook count mismatches during hot reloads
-if (import.meta.hot && import.meta.env.PROD) {
-  import.meta.hot.on('vite:ws:connect', () => {
-    if (shouldDeferReload()) {
-      console.log('[DeploymentAutoReload] Vite reconnected — deferring reload (user active / demo / modal)');
-      return;
-    }
-    console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
-    setTimeout(() => {
-      if (shouldDeferReload()) return;
-      window.location.reload();
-    }, 500);
-  });
-}
+// NOTE: previously this module also auto-reloaded on Vite HMR `ws:connect`
+// events in production, which fired on transient WebSocket hiccups and
+// reloaded authenticated dashboards mid-session. Removed — the polling path
+// above (with shouldDeferReload guards) is enough.
