@@ -680,7 +680,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionText}>"I'm not tech-savvy. This seems complicated."</Text>
         <Text style={styles.responseLabel}>Response</Text>
         <Text style={styles.responseText}>
-          "That's actually one of our biggest advantages. Our implementation team does everything for you. We connect your phone number, set up your scheduling preferences, train the AI on your services and pricing—you don't touch a thing. Most businesses are fully operational in 24-48 hours. And our support team is available anytime you have questions. We've had 70-year-old business owners tell us it's the easiest tech they've ever used."
+          "That's actually one of our biggest advantages. Our implementation team does everything for you. We connect your phone number, set up your scheduling preferences, train the AI on your services and pricing—you don't touch a thing. Most businesses are fully live after our 30-day concierge onboarding window, with another 30 days of full live use before billing begins. And our support team is available anytime you have questions. We've had 70-year-old business owners tell us it's the easiest tech they've ever used."
         </Text>
       </View>
 
@@ -808,7 +808,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need comprehensive analytics + predictive AI</Text>
         <Text style={styles.tierBullet}>- All 7 Consoles + AI Hub</Text>
-        <Text style={styles.tierBullet}>- All 10 AI Operatives: Full enterprise suite</Text>
+        <Text style={styles.tierBullet}>- All 24 AI Operatives: Full enterprise suite</Text>
       </View>
 
       <View style={styles.closingCard}>
@@ -841,7 +841,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionLabel}>The Urgency Close</Text>
         <Text style={styles.responseText}>
           "Here's what's happening while we're talking: Your phone might be ringing right now. If no one answers, that's a potential $500 job going to your competitor.{'\n\n'}
-          Every day you wait is another day of leaked revenue. Our implementation takes 24-48 hours. If you start today, by [day after tomorrow], every call gets answered.{'\n\n'}
+          Every day you wait is another day of leaked revenue. Our concierge onboarding runs the first 30 days of your 60-Day Live Trial — every call is answered before your monthly subscription even starts. If you start today, by [day after tomorrow], every call gets answered.{'\n\n'}
           What's holding you back from getting this protection in place today?"
         </Text>
       </View>

@@ -468,7 +468,7 @@ const CONSOLES_DETAIL: Array<{
     kpis: ['Operative health', 'Action volume', 'Override rate'] },
 ];
 
-// --- Industry Packs (18) ---
+// --- Industry Packs (25) ---
 const INDUSTRY_PACKS: Array<{ id: string; cluster: string; tagline: string }> = [
   { id: 'hvac', cluster: 'Trades', tagline: 'Capture more cooling & heating peaks' },
   { id: 'plumbing', cluster: 'Trades', tagline: 'Win more emergency calls before competitors' },
@@ -710,7 +710,7 @@ const MarketingSalesMasterPDF: React.FC = () => (
       <View style={s.divider} />
       <View style={s.card}>
         <Text style={s.p}>
-          Aura ships with 22 industry packs across 4 clusters (Trades, Outdoor,
+          Aura ships with 25 main industry categories (Trades, Outdoor,
           Repair, Booking). Selecting an industry at signup activates that pack's
           terminology, quote/invoice templates, KPI presets, marketing playbooks, and
           specialist operatives — without changing tier or pricing. 14 specialists

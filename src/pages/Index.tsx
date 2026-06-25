@@ -551,7 +551,7 @@ export default function Index() {
               AI Automation for Field Service Industries
             </h2>
             <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 560, margin: "0 auto" }}>
-              22 industry categories. 185+ business types. White-label AI that intercepts every inquiry and books directly to your calendar.
+              25 industry categories. 185+ business types. White-label AI that intercepts every inquiry and books directly to your calendar.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">

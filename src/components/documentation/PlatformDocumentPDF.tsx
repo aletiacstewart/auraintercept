@@ -582,7 +582,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
           Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
-          With 10 AI Operatives, we handle everything from answering calls and booking appointments 
+          With 24 AI Operatives, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
         </Text>
@@ -624,7 +624,7 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Key Differentiator</Text>
       <Text style={styles.paragraph}>
-        Unlike generic CRMs or answering services, Aura Intercept uses 10 AI Operatives that 
+        Unlike generic CRMs or answering services, Aura Intercept uses 24 AI Operatives that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
         classifies the urgency, Booking Agent books the appointment, Dispatch/GPS Console assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
@@ -684,7 +684,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.solutionCard}>
         <Text style={styles.solutionTitle}>The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
-          Our 10 AI Operatives work 24/7 to answer every call, book every appointment, remind every customer, 
+          Our 24 AI Operatives work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment - automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
@@ -825,7 +825,7 @@ const PlatformDocumentPDF = () => (
     {/* AI Agent Ecosystem - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
-      <Text style={styles.sectionTitle}>10 AI Operatives Working Together</Text>
+      <Text style={styles.sectionTitle}>24 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
         Each agent is specialized for a specific task but seamlessly hands off to others when needed.
         This creates an intelligent, always-on workforce that handles your entire operation.
@@ -1179,7 +1179,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Elite (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$3,979/month</Text>
-        <Text style={styles.pricingFeature}>- All 10 AI Operatives + 7 Consoles + AI Hub</Text>
+        <Text style={styles.pricingFeature}>- All 24 AI Operatives + 7 Consoles + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Advanced Analytics & Revenue Forecasting</Text>
         <Text style={styles.pricingFeature}>- All Industry Specialists + AI Hub</Text>
         <Text style={styles.pricingFeature}>- Unlimited Employee Accounts</Text>
@@ -1199,7 +1199,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Why Aura Intercept Wins</Text>
       
       <Text style={styles.subsectionTitle}>vs. Generic CRMs (ServiceTitan, Housecall Pro)</Text>
-      <BulletPoint>10 AI Operatives vs. basic automation rules</BulletPoint>
+      <BulletPoint>24 AI Operatives vs. basic automation rules</BulletPoint>
       <BulletPoint>True 24/7 AI voice answering vs. voicemail or expensive call centers</BulletPoint>
       <BulletPoint>Intelligent agent handoffs vs. siloed features</BulletPoint>
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
@@ -1219,10 +1219,10 @@ const PlatformDocumentPDF = () => (
       <View style={styles.highlightBox}>
         <Text style={styles.highlightTitle}>Only Platform With:</Text>
         <Text style={styles.highlightText}>
-          - 10 AI Operatives organized as 10 Operatives that work together{"\n"}
+          - 24 AI Operatives organized into 10 operative roles that work together{"\n"}
           - True voice AI (not just IVR or voicemail){"\n"}
           - Full social media content creation (6 platforms){"\n"}
-          - 22 industry packs covering trades, outdoor, repair, and booking-first verticals that auto-tune the platform on signup.{"\n"}
+          - 25 main industry categories covering trades, outdoor, repair, and booking-first verticals that auto-tune the platform on signup.{"\n"}
           - Built specifically for service businesses{"\n"}
           - Customer holds own accounts at SignalWire, ElevenLabs, Resend, Tavily, and Stripe (billed directly by each provider, separate from the Aura plan fee)
         </Text>
@@ -1301,7 +1301,7 @@ const PlatformDocumentPDF = () => (
           Follow a business owner through a typical day.{"\n"}
           Show Aura handling: morning calls, scheduling, dispatch, reminders, reviews.{"\n"}
           Owner checks dashboard, sees everything running smoothly.{"\n"}
-          "10 AI Operatives (24 specialist agents). Zero stress. All day, every day."
+          "24 AI Operatives (organized into 10 operative roles). Zero stress. All day, every day."
         </Text>
       </View>
 
@@ -1360,13 +1360,13 @@ const PlatformDocumentPDF = () => (
           "Still missing customer calls?{"\n\n"}
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
-          automatic reminders. 10 AI Operatives (24 specialist agents) working for you around the clock.{"\n\n"}
+          automatic reminders. 24 AI Operatives (organized into 10 operative roles) working for you around the clock.{"\n\n"}
           60-Day Live Trial (first 30 days = onboarding). Start now"
         </Text>
       </View>
 
       <Text style={styles.subsectionTitle}>Carousel Post Ideas</Text>
-      <BulletPoint>Slide 1: "10 AI Operatives for Your Service Business"</BulletPoint>
+      <BulletPoint>Slide 1: "24 AI Operatives for Your Service Business"</BulletPoint>
       <BulletPoint>Slide 2-7: One operative per slide with icon and benefit</BulletPoint>
       <BulletPoint>Slide 8: "All working together 24/7"</BulletPoint>
       <BulletPoint>Slide 9: CTA with 60-Day Live Trial offer</BulletPoint>
@@ -1430,7 +1430,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Dark: Deep Indigo (#1e1b4b) - Professional, sophisticated</BulletPoint>
 
       <Text style={styles.subsectionTitle}>Visual Elements to Create</Text>
-      <BulletPoint>Icons for each of the 10 AI Operatives (24 underlying specialist agents)</BulletPoint>
+      <BulletPoint>Icons for each of the 24 AI Operatives (organized into 10 operative roles)</BulletPoint>
       <BulletPoint>Console screenshots (anonymized demo data)</BulletPoint>
       <BulletPoint>Comparison tables (Before/After)</BulletPoint>
       <BulletPoint>Customer journey maps</BulletPoint>

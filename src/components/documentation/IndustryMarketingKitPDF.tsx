@@ -311,7 +311,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>Industry{'\n'}Marketing Kits</Text>
       <Text style={styles.coverSubtitle}>
-        Targeted Content for 18 Key Industry Verticals
+        Targeted Content for 25 Key Industry Verticals
       </Text>
       <View style={styles.coverCategories}>
         <Text style={styles.coverCategory}>⚡ Essential Trades: HVAC • Plumbing • Electrical • Solar Energy</Text>

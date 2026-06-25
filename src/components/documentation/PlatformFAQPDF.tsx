@@ -335,7 +335,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Aura Intercept?"
-          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 10 AI Operatives and 7 Control Centers designed for service businesses."
+          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 AI Operatives and 7 Control Centers designed for service businesses."
         />
         
         <FAQItem 
@@ -468,7 +468,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What happens when my trial ends?"
-          answer="You'll receive email reminders at 14 days, 7 days, and 1 day before trial expiration. After the trial, your subscription begins automatically if payment is configured. Without payment, access is paused until you subscribe."
+          answer="Your 60-Day Live Trial = 30 days of concierge onboarding + 30 days of full live use. You'll receive email reminders at 30, 7, and 1 day before your monthly subscription auto-starts (i.e. as the 30-day live-use window winds down). After the trial, your subscription begins automatically on the tier you selected if payment is configured. Without payment, access is paused until you subscribe. The one-time onboarding fee is charged at trial start and is non-refundable once onboarding begins."
         />
 
         <View style={styles.footer}>

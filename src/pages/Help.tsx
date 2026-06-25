@@ -639,7 +639,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 10 AI Operatives, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 60-Day Live Trial includes <strong className="text-card-foreground">full access to all Aura Elite tier features</strong>. This means all 24 AI Operatives, all 7 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>
@@ -684,11 +684,11 @@ export default function Help() {
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Pro (<span className="line-through text-muted-foreground">$2,788</span> $1,988/mo · Beta Pricing):</strong>
-                              <p className="mt-1">10 AI Operatives: All Boost operatives + Business Finance, Analytics Intelligence, Admin. Full business management automation.</p>
+                              <p className="mt-1">24 AI Operatives: All Boost operatives + Business Finance, Analytics Intelligence, Admin. Full business management automation.</p>
                             </li>
                             <li>
                               <strong className="text-card-foreground">Aura Elite (<span className="line-through text-muted-foreground">$5,576</span> $3,979/mo · Beta Pricing):</strong>
-                              <p className="mt-1">All 10 AI Operatives (24 agents) — full suite including Invoice, Inventory, Insights, Revenue, Forecast + Predictive AI Hub.</p>
+                              <p className="mt-1">All 24 AI Operatives (organized into 10 operative roles) — full suite including Invoice, Inventory, Insights, Revenue, Forecast + Predictive AI Hub.</p>
                             </li>
                           </ul>
                         </div>

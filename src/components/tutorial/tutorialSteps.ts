@@ -166,8 +166,8 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'ai-operatives-hub',
     title: 'AI Operatives Hub',
-    description: 'The nerve center of your AI workforce. Enable or disable any of the 10 AI Operatives, monitor their performance metrics, view real-time event logs, and fine-tune operative behavior from one central management interface.',
-    tryIt: 'Open the Hub to see all 10 AI Operatives, their health status, and enable the ones you need.',
+    description: 'The nerve center of your AI workforce. Enable or disable any of the 24 AI Operatives, monitor their performance metrics, view real-time event logs, and fine-tune operative behavior from one central management interface.',
+    tryIt: 'Open the Hub to see all 24 AI Operatives, their health status, and enable the ones you need.',
     targetSelector: '[data-tour-id="nav-ai-operatives"]',
     route: '/dashboard',
     position: 'right',
@@ -281,7 +281,7 @@ const platformAdminSteps: TutorialStep[] = [
   {
     id: 'platform-guides',
     title: 'Platform Guides',
-    description: 'Comprehensive documentation for all subscription tiers and 10 AI Operatives. Manage and publish guide content that all users see in their Help section.',
+    description: 'Comprehensive documentation for all subscription tiers and 24 AI Operatives. Manage and publish guide content that all users see in their Help section.',
     targetSelector: '[data-tour-id="nav-platform-guides"]',
     route: '/dashboard',
     position: 'right',
@@ -394,7 +394,7 @@ const completionStep: TutorialStep[] = [
   {
     id: 'tutorial-complete',
     title: 'Tutorial Complete! 🎉',
-    description: 'You\'ve explored all sections of Aura Intercept. Your 10 AI Operatives are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
+    description: 'You\'ve explored all sections of Aura Intercept. Your 24 AI Operatives are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
     tip: 'Use the floating Aura button (bottom-right) anytime to get AI-powered help on the page you\'re viewing.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',
