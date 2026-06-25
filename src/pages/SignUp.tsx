@@ -1216,33 +1216,30 @@ export default function SignUp() {
                                       Pre-selected from your Live Demo pick
                                     </span>
                                   ) : (
-                                    <span className="text-muted-foreground font-normal">(choose from {BUSINESS_TYPE_COUNT}+ types)</span>
+                                    <span className="text-muted-foreground font-normal">({MAIN_INDUSTRY_CATEGORY_COUNT} industries)</span>
                                   )}
                                 </Label>
                                 <Select value={businessIndustry} onValueChange={setBusinessIndustry} disabled={industryPreselectValid}>
                                   <SelectTrigger className={`text-xs h-8 ${industryPreselectValid ? 'border-amber-500/40 bg-amber-500/5' : ''}`}>
-                                    <SelectValue placeholder="Select your business type…">
+                                    <SelectValue placeholder="Select your industry…">
                                       {(() => {
-                                        const entry = BUSINESS_TYPES.find((b) => b.key === businessIndustry);
-                                        return entry ? entry.label : (businessIndustry === 'other' ? '✨ Other / Custom' : 'Select your business type…');
+                                        const cat = findMainCategoryByPack(businessIndustry);
+                                        return cat ? cat.name : (businessIndustry === 'other' ? '✨ Other / Custom' : 'Select your industry…');
                                       })()}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent className="max-h-[60vh]">
-                                    {BUSINESS_TYPE_GROUPS.map((g) => (
-                                      <SelectGroup key={g.category}>
-                                        <SelectLabel className="flex items-center gap-1.5 text-primary font-bold uppercase tracking-wider text-[10px] py-1">
-                                          <span>{g.emoji}</span>
-                                          <span>{g.category}</span>
-                                          <span className="ml-auto text-muted-foreground/70 normal-case font-normal">{g.items.length}</span>
-                                        </SelectLabel>
-                                        {g.items.map((b) => (
-                                          <SelectItem key={b.key} value={b.key} className="text-xs">
-                                            {b.label}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectGroup>
-                                    ))}
+                                    {MAIN_INDUSTRY_CATEGORIES.map((cat) => {
+                                      const Icon = cat.icon;
+                                      return (
+                                        <SelectItem key={cat.demoPack + cat.name} value={cat.demoPack} className="text-xs">
+                                          <span className="flex items-center gap-2">
+                                            <Icon className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                            <span>{cat.name}</span>
+                                          </span>
+                                        </SelectItem>
+                                      );
+                                    })}
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
