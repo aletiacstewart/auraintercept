@@ -63,6 +63,79 @@ function shouldAutoExecute(opts: {
   return { auto: true, reason: "ok" };
 }
 
+/**
+ * Performs the real side-effect for an approved/auto-executed action.
+ * Returns a short human summary. Errors are surfaced to the caller so the
+ * action can be marked 'failed'.
+ */
+async function applyAction(
+  supabase: ReturnType<typeof createClient>,
+  companyId: string,
+  actionType: string,
+  payload: Record<string, unknown>,
+): Promise<string> {
+  switch (actionType) {
+    case "draft_sms": {
+      const to = String(payload.to ?? payload.lead_phone ?? "");
+      const from = String(payload.from ?? "AURA");
+      const message = String(payload.message ?? payload.body ?? "");
+      const { error } = await supabase.from("sms_logs").insert({
+        company_id: companyId,
+        from_number: from,
+        to_number: to || "+10000000000",
+        message,
+        direction: "outbound",
+        status: "draft",
+        source: "aura_workflow",
+        metadata: { workflow_id: payload.workflow_id, run_id: payload.run_id, label: payload.label },
+      });
+      if (error) throw error;
+      return `Drafted SMS to ${to || "lead"}`;
+    }
+    case "draft_email": {
+      // No persistent email-drafts table; the draft remains in
+      // agent_proposed_actions and is surfaced in the Email console panel.
+      return `Drafted email: ${String(payload.subject ?? payload.label ?? "(no subject)")}`;
+    }
+    case "create_appointment": {
+      const datetime = payload.datetime
+        ? new Date(String(payload.datetime)).toISOString()
+        : new Date(Date.now() + 24 * 3600_000).toISOString();
+      const { error } = await supabase.from("appointments").insert({
+        company_id: companyId,
+        customer_name: String(payload.customer_name ?? "Unnamed customer"),
+        customer_email: payload.customer_email ?? null,
+        customer_phone: payload.customer_phone ?? null,
+        service_type: String(payload.service_type ?? "Consultation"),
+        datetime,
+        duration_minutes: Number(payload.duration_minutes ?? 60),
+        status: "proposed",
+        notes: String(payload.notes ?? "Drafted by Aura workflow"),
+      });
+      if (error) throw error;
+      return `Drafted appointment for ${payload.customer_name ?? "customer"}`;
+    }
+    case "draft_invoice": {
+      const total = Number(payload.total ?? 0);
+      const { error } = await supabase.from("invoices").insert({
+        company_id: companyId,
+        customer_name: String(payload.customer_name ?? "Unnamed customer"),
+        customer_email: payload.customer_email ?? null,
+        customer_phone: payload.customer_phone ?? null,
+        status: "draft",
+        subtotal: total,
+        total,
+        notes: String(payload.notes ?? "Drafted by Aura workflow"),
+      });
+      if (error) throw error;
+      return `Drafted invoice for ${payload.customer_name ?? "customer"} ($${total.toFixed(2)})`;
+    }
+    case "task":
+    default:
+      return `Logged task: ${String(payload.label ?? actionType)}`;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -84,21 +157,67 @@ Deno.serve(async (req: Request) => {
       const { data: u, error: ue } = await supabase.auth.getUser(token);
       if (ue || !u.user) throw new Error("invalid token");
       const { id } = (await req.json()) as { id: string };
-      const status = op === "approve" ? "approved" : "rejected";
-      const { data, error } = await supabase
+
+      if (op === "reject") {
+        const { data, error } = await supabase
+          .from("agent_proposed_actions")
+          .update({
+            status: "rejected",
+            reviewed_by: u.user.id,
+            reviewed_at: new Date().toISOString(),
+          })
+          .eq("id", id)
+          .select()
+          .single();
+        if (error) throw error;
+        return new Response(JSON.stringify({ ok: true, action: data }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // approve: load action, perform side-effect, mark approved or failed
+      const { data: existing, error: loadErr } = await supabase
         .from("agent_proposed_actions")
-        .update({
-          status,
-          reviewed_by: u.user.id,
-          reviewed_at: new Date().toISOString(),
-        })
+        .select("*")
         .eq("id", id)
-        .select()
         .single();
-      if (error) throw error;
-      return new Response(JSON.stringify({ ok: true, action: data }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (loadErr) throw loadErr;
+      try {
+        const summary = await applyAction(
+          supabase,
+          existing.company_id,
+          existing.action_type,
+          (existing.payload ?? {}) as Record<string, unknown>,
+        );
+        const { data, error } = await supabase
+          .from("agent_proposed_actions")
+          .update({
+            status: "approved",
+            reviewed_by: u.user.id,
+            reviewed_at: new Date().toISOString(),
+            executed_at: new Date().toISOString(),
+            result_summary: summary,
+          })
+          .eq("id", id)
+          .select()
+          .single();
+        if (error) throw error;
+        return new Response(JSON.stringify({ ok: true, action: data }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      } catch (sideErr) {
+        const msg = sideErr instanceof Error ? sideErr.message : String(sideErr);
+        await supabase
+          .from("agent_proposed_actions")
+          .update({
+            status: "failed",
+            reviewed_by: u.user.id,
+            reviewed_at: new Date().toISOString(),
+            result_summary: `failed: ${msg}`,
+          })
+          .eq("id", id);
+        throw sideErr;
+      }
     }
 
     // --- propose: called by agents (service-role) ---
@@ -157,7 +276,23 @@ Deno.serve(async (req: Request) => {
       ? new Date(Date.now() + body.expires_in_hours * 3600_000).toISOString()
       : new Date(Date.now() + 72 * 3600_000).toISOString();
 
-    const status = decision.auto ? "auto_executed" : "pending";
+    // If auto-executing, run the side-effect first; if it throws, fall back to pending.
+    let status = decision.auto ? "auto_executed" : "pending";
+    let resultSummary = decision.auto ? "auto-executed" : decision.reason;
+    if (decision.auto) {
+      try {
+        resultSummary = await applyAction(
+          supabase,
+          body.company_id,
+          body.action_type,
+          body.payload ?? {},
+        );
+      } catch (sideErr) {
+        status = "pending";
+        const msg = sideErr instanceof Error ? sideErr.message : String(sideErr);
+        resultSummary = `auto failed, queued: ${msg}`;
+      }
+    }
     const { data: inserted, error: insErr } = await supabase
       .from("agent_proposed_actions")
       .insert({
@@ -171,8 +306,8 @@ Deno.serve(async (req: Request) => {
         estimated_value_usd: valueUsd,
         requested_by_event: body.requested_by_event ?? null,
         status,
-        executed_at: decision.auto ? new Date().toISOString() : null,
-        result_summary: decision.auto ? "auto-executed" : decision.reason,
+        executed_at: status === "auto_executed" ? new Date().toISOString() : null,
+        result_summary: resultSummary,
         expires_at: expires,
       })
       .select()
@@ -182,7 +317,7 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         ok: true,
-        decision: decision.auto ? "auto_executed" : "queued",
+        decision: status === "auto_executed" ? "auto_executed" : "queued",
         reason: decision.reason,
         action: inserted,
       }),
