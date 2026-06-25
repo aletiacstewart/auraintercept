@@ -202,14 +202,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  // Check subscription on session change and periodically
+  // Keep a ref to the latest checkSubscription so the interval below doesn't
+  // need to tear down/rebuild every time userRole changes (which previously
+  // could leak overlapping intervals and fire duplicate edge-function calls).
+  const checkSubscriptionRef = useRef(checkSubscription);
   useEffect(() => {
-    if (session?.access_token) {
-      checkSubscription();
-      const interval = setInterval(checkSubscription, 60000); // Every 60 seconds
-      return () => clearInterval(interval);
-    }
-  }, [session?.access_token, checkSubscription]);
+    checkSubscriptionRef.current = checkSubscription;
+  }, [checkSubscription]);
+
+  // Check subscription on session change and periodically (every 5 minutes —
+  // 60s was unnecessarily chatty and added load to the edge function).
+  useEffect(() => {
+    if (!session?.access_token) return;
+    checkSubscriptionRef.current();
+    const interval = setInterval(() => checkSubscriptionRef.current(), 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [session?.access_token]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
