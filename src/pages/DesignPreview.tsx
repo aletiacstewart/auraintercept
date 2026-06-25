@@ -175,7 +175,7 @@ export default function DesignPreview() {
                 boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)",
                 letterSpacing: 1,
               }}>
-                START FREE TRIAL →
+                START 60-DAY LIVE TRIAL →
               </button>
               <button style={{
                 padding: "16px 36px",
@@ -460,7 +460,7 @@ export default function DesignPreview() {
               EVERYTHING YOUR BUSINESS NEEDS
             </h2>
             <p style={{ fontSize: 15, color: "rgba(200,220,240,0.5)", maxWidth: 480, margin: "0 auto" }}>
-              10 AI Operatives working in concert to run your operations
+              24 AI Operatives working in concert to run your operations
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>

@@ -54,7 +54,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>4-Tier Pricing & Inclusions</li>
-                  <li>10 AI Operatives (capabilities + use cases)</li>
+                  <li>24 AI Operatives (capabilities + use cases)</li>
                   <li>Industry Specialists overview</li>
                   <li>Platform Feature Catalog</li>
                   <li>Dashboards & 7 Consoles + AI Hub</li>
@@ -159,7 +159,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
             <CardDescription>
-                Complete guide to all 10 AI Operatives across 7 Consoles + AI Operatives Hub, communication channels & integrations
+                Complete guide to all 24 AI Operatives across 7 Consoles + AI Operatives Hub, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -167,7 +167,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>7 Console Overviews + AI Operatives Hub (Elite)</li>
-                  <li>10 AI Operative Descriptions (24 underlying specialist agents)</li>
+                  <li>10 AI Operative Descriptions (organized into 10 operative roles)</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide (SignalWire, ElevenLabs, Resend, Tavily — your own accounts, billed separately by each provider)</li>
@@ -226,7 +226,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
                   <li>Project Complexity Score</li>
-                  <li>Complete Smart AI Agents Catalog (24 agents)</li>
+                  <li>Complete Smart AI Agents Catalog (organized into 10 operative roles)</li>
                   <li>7 Control Center Descriptions</li>
                   <li>Technical Architecture</li>
                 </ul>

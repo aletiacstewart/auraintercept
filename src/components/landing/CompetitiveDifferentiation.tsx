@@ -91,7 +91,7 @@ export const CompetitiveDifferentiation = () => {
             This Is <span className="gradient-text">Not a Chatbot</span>
           </h2>
           <p className="text-white max-w-2xl mx-auto">
-            See how Aura Intercept's 10 AI Operatives compare to what you're using now.
+            See how Aura Intercept's 24 AI Operatives compare to what you're using now.
           </p>
         </div>
 
