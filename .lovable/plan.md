@@ -1,33 +1,16 @@
-# Cleanup: Remove Duplicate Demo Companies
+# Fix `/appointments` 404
 
-## Goal
-Customer Console Portals currently list 37 demo companies. Reduce to one demo per industry category, plus the explicitly-kept `demo-trial-restaurants-0fa7k0`.
+## What's happening
+The screenshot shows the preview address bar pointed at `/appointments`, which returns the SPA 404 page. The router only defines `/dashboard/appointments` (in `src/App.tsx`); no top-level `/appointments` route exists, and no in-app link points at the bare path — it's reachable only by typing the URL directly.
 
-## Companies to DELETE (10)
-All are `[DEMO] Paz` / `[DEMO] Alicia Stewart Demo Co.` trial duplicates:
+## Fix
+Add a redirect alias in `src/App.tsx` so the bare path lands on the real page:
 
-| Slug | Industry |
-|---|---|
-| demo-trial-plumbing-ggiqyn | plumbing |
-| demo-trial-plumbing-qpdger | plumbing |
-| demo-trial-restaurants-06lve3 | restaurants |
-| demo-trial-restaurants-42ogqa | restaurants |
-| demo-trial-restaurants-6ysmco | restaurants |
-| demo-trial-restaurants-8d69rz | restaurants |
-| demo-trial-restaurants-jtybs7 | restaurants |
-| demo-trial-restaurants-rksngw | restaurants |
-| demo-trial-restaurants-rt93mx | restaurants |
-| demo-trial-restaurants-smt8bk | restaurants |
+```tsx
+<Route path="/appointments" element={<Navigate to="/dashboard/appointments" replace />} />
+```
 
-## Companies to KEEP (27)
-- One canonical `demo-<industry>` row per category (25 industries).
-- `demo-restaurants` (canonical restaurant demo).
-- `demo-trial-restaurants-0fa7k0` (per your instruction).
+`Navigate` is already imported in `App.tsx`. No other files change.
 
-## Execution
-1. Run a migration that deletes the 10 companies above by ID. Related rows (customers, leads, jobs, appointments, etc.) cascade via existing FKs; any non-cascading child rows will be deleted in the same migration before the company row to keep the operation atomic.
-2. Verify by re-running the demo company list and confirming the Customer Portal directory now shows 27 entries.
-
-## Notes
-- This only removes records from the database. The demo-account registry / reseeder code is not changed, so future reseeds won't recreate these duplicates unless explicitly invoked.
-- If you'd rather *hide* them from the Customer Portal instead of deleting (e.g. preserve historical chat/call logs), say so and I'll switch to flipping a visibility flag instead.
+## Out of scope
+Not touching any unrelated routes, sidebar entries, or appointment logic.
