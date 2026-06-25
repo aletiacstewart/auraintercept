@@ -23,6 +23,7 @@ import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { IntakeSummary } from '@/components/forms/IntakeSummary';
+import { PendingAuraDraftsPanel } from '@/components/automation/PendingAuraDraftsPanel';
 
 interface Invoice {
   id: string;
@@ -187,6 +188,7 @@ export default function Invoices() {
           }
         />
         <InlineFormHost />
+        <PendingAuraDraftsPanel channel="invoice" title="Pending Aura Invoice Drafts" />
         <FormShell
           id="invoice-create"
           title="Create Invoice"

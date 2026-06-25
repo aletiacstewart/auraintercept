@@ -20,18 +20,59 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       description: 'Full job lifecycle from new lead to paid invoice',
       icon: ArrowRightLeft, steps: ['Lead', 'Quote', 'Schedule', 'Invoice'],
       command: 'Run the full job flow: create a quote from my latest lead, schedule the appointment, and generate an invoice when done',
+      actions: [
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: 'Quote SMS to lead',
+          risk_tier: 'low', confidence: 0.9, est_value_usd: 0,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{lead_name}}, this is {{company_name}}. Thanks for reaching out — here is a quick quote for the work. Reply YES and we will get you on the schedule.' },
+        },
+        {
+          agent_id: 'scheduler', action_type: 'create_appointment', channel: 'appointment', label: 'On-site visit',
+          risk_tier: 'low', confidence: 0.82, est_value_usd: 0,
+          payload: { customer_name: '{{customer_name}}', service_type: 'On-site visit', notes: 'Auto-scheduled from Lead → Invoice workflow.' },
+        },
+        {
+          agent_id: 'billing', action_type: 'draft_invoice', channel: 'invoice', label: 'Draft invoice',
+          risk_tier: 'medium', confidence: 0.78, est_value_usd: 350,
+          payload: { customer_name: '{{customer_name}}', total: 350, notes: 'Draft from Lead → Invoice workflow — adjust before sending.' },
+        },
+      ],
     },
     {
       id: 'quote-to-job', label: 'Quote → Job',
       description: 'Convert an approved quote into a scheduled job',
       icon: ClipboardList, steps: ['Quote', 'Approve', 'Schedule', 'Assign'],
       command: 'Take my most recent pending quote, approve it, schedule the job, and assign the best available technician',
+      actions: [
+        {
+          agent_id: 'scheduler', action_type: 'create_appointment', channel: 'appointment', label: 'Job appointment',
+          risk_tier: 'low', confidence: 0.85,
+          payload: { customer_name: '{{customer_name}}', service_type: 'Scheduled job', notes: 'Auto-scheduled from approved quote.' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: 'Confirmation SMS',
+          risk_tier: 'low', confidence: 0.92,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, your job with {{company_name}} is scheduled for {{appointment_time}}. Reply C to confirm.' },
+        },
+      ],
     },
     {
       id: 'invoice-chase', label: 'Invoice Follow-Up',
       description: 'Chase overdue invoices with smart reminders',
       icon: Receipt, steps: ['Find Overdue', 'Draft Reminder', 'Send'],
       command: 'Find all overdue invoices, draft friendly payment reminders for each, and show them for my approval before sending',
+      actions: [
+        {
+          agent_id: 'billing', action_type: 'draft_sms', channel: 'sms', label: 'Payment reminder SMS',
+          risk_tier: 'low', confidence: 0.88,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, quick reminder from {{company_name}} — your invoice is past due. Pay here when convenient. Thank you!' },
+        },
+        {
+          agent_id: 'billing', action_type: 'draft_email', channel: 'email', label: 'Payment reminder email',
+          risk_tier: 'low', confidence: 0.85,
+          payload: { to: '{{lead_email}}', subject: 'Friendly payment reminder from {{company_name}}', body: 'Hi {{customer_name}},\n\nThis is a friendly reminder that your invoice is past due. Let us know if you have any questions.\n\nThanks,\n{{company_name}}' },
+        },
+      ],
     },
   ],
 
@@ -83,18 +124,49 @@ const CLUSTER_WORKFLOWS: Record<IndustryPack['cluster'], WorkflowChain[]> = {
       description: 'Convert a new lead into a booked {{appointment}} and close the deal',
       icon: Home, steps: ['Lead', 'Schedule', 'Follow-Up', 'Close'],
       command: 'Take my newest lead: book the next available appointment, send a confirmation, and queue follow-up messages until close',
+      actions: [
+        {
+          agent_id: 'scheduler', action_type: 'create_appointment', channel: 'appointment', label: 'Book appointment',
+          risk_tier: 'low', confidence: 0.87,
+          payload: { customer_name: '{{customer_name}}', service_type: 'Consultation', notes: 'Auto-booked from new lead.' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: 'Confirmation SMS',
+          risk_tier: 'low', confidence: 0.92,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, you are booked with {{company_name}} for {{appointment_time}}. Reply C to confirm.' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_email', channel: 'email', label: 'Welcome email',
+          risk_tier: 'low', confidence: 0.85,
+          payload: { to: '{{lead_email}}', subject: 'Welcome to {{company_name}}', body: 'Hi {{customer_name}},\n\nThanks for booking with us. We are looking forward to seeing you at {{appointment_time}}.\n\n— {{company_name}}' },
+        },
+      ],
     },
     {
       id: 'appointment-reminders', label: '{{appointment}} Reminders',
       description: 'Send confirmations and reminders for upcoming {{appointment}}s',
       icon: Phone, steps: ['Pull Upcoming', 'Draft Reminder', 'Send'],
       command: 'Find all upcoming appointments in the next 48 hours, draft reminder messages, and send them for my approval',
+      actions: [
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: '24h reminder SMS',
+          risk_tier: 'low', confidence: 0.95,
+          payload: { to: '{{lead_phone}}', message: 'Reminder from {{company_name}}: your appointment is {{appointment_time}}. Reply C to confirm or R to reschedule.' },
+        },
+      ],
     },
     {
       id: 'invoice-followup', label: 'Invoice Follow-Up',
       description: 'Chase outstanding invoices with smart reminders',
       icon: Receipt, steps: ['Find Outstanding', 'Draft', 'Send'],
       command: 'Find all outstanding invoices, draft friendly reminders, and show them for my approval',
+      actions: [
+        {
+          agent_id: 'billing', action_type: 'draft_sms', channel: 'sms', label: 'Payment reminder SMS',
+          risk_tier: 'low', confidence: 0.88,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, a quick reminder from {{company_name}} — your invoice is outstanding. Reply if you need help.' },
+        },
+      ],
     },
   ],
 
@@ -153,18 +225,59 @@ const INDUSTRY_WORKFLOWS: Partial<Record<string, WorkflowChain[]>> = {
       description: 'Move new trial signups toward activation and a paid upgrade',
       icon: ArrowRightLeft, steps: ['Trial', 'Onboard', 'Activate', 'Upgrade'],
       command: 'For my newest trial signups, send the onboarding sequence, track activation milestones, and queue upgrade offers when ready',
+      actions: [
+        {
+          agent_id: 'outreach', action_type: 'draft_email', channel: 'email', label: 'Onboarding email',
+          risk_tier: 'low', confidence: 0.9,
+          payload: { to: '{{lead_email}}', subject: 'Get started with {{company_name}}', body: 'Hi {{customer_name}},\n\nWelcome to your trial. Here are the 3 steps to activate your account…\n\n— {{company_name}}' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_sms', channel: 'sms', label: 'Day-2 nudge SMS',
+          risk_tier: 'low', confidence: 0.85,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, this is {{company_name}}. Need a hand activating your trial? Reply HELP and we will guide you.' },
+        },
+        {
+          agent_id: 'billing', action_type: 'draft_email', channel: 'email', label: 'Upgrade offer',
+          risk_tier: 'medium', confidence: 0.78, est_value_usd: 99,
+          payload: { to: '{{lead_email}}', subject: 'Ready to upgrade {{company_name}}?', body: 'Hi {{customer_name}},\n\nYou hit your activation milestones — here is a tailored upgrade plan for you.\n\n— {{company_name}}' },
+        },
+      ],
     },
     {
       id: 'inbound-demo', label: 'Inbound → Demo → Follow-Up',
       description: 'Capture an inbound lead, book a demo, and run the follow-up',
       icon: Phone, steps: ['Capture', 'Book Demo', 'Follow-Up'],
       command: 'Take my newest inbound lead, book a product demo on my calendar, and queue a personalized follow-up sequence',
+      actions: [
+        {
+          agent_id: 'scheduler', action_type: 'create_appointment', channel: 'appointment', label: 'Product demo',
+          risk_tier: 'low', confidence: 0.86,
+          payload: { customer_name: '{{customer_name}}', service_type: 'Product demo', notes: 'Auto-booked from inbound lead.' },
+        },
+        {
+          agent_id: 'outreach', action_type: 'draft_email', channel: 'email', label: 'Demo confirmation',
+          risk_tier: 'low', confidence: 0.92,
+          payload: { to: '{{lead_email}}', subject: 'Your demo with {{company_name}} is confirmed', body: 'Hi {{customer_name}},\n\nYour demo is set for {{appointment_time}}. Talk soon!\n\n— {{company_name}}' },
+        },
+      ],
     },
     {
       id: 'renewal-churn-save', label: 'Renewal / Churn Save',
       description: 'Spot at-risk accounts and run a save play before they churn',
       icon: Star, steps: ['Score Risk', 'Draft Outreach', 'Offer'],
       command: 'Identify at-risk customers approaching renewal, draft a save-play outreach for each, and show me for approval',
+      actions: [
+        {
+          agent_id: 'retention', action_type: 'draft_email', channel: 'email', label: 'Save-play email',
+          risk_tier: 'medium', confidence: 0.8, est_value_usd: 200,
+          payload: { to: '{{lead_email}}', subject: 'A note from {{company_name}}', body: 'Hi {{customer_name}},\n\nWe noticed you have not been as active recently. Here is a tailored offer to keep you on board.\n\n— {{company_name}}' },
+        },
+        {
+          agent_id: 'retention', action_type: 'draft_sms', channel: 'sms', label: 'Save-play SMS',
+          risk_tier: 'medium', confidence: 0.78,
+          payload: { to: '{{lead_phone}}', message: 'Hi {{customer_name}}, this is {{company_name}}. Just checking in — anything we can help with before your renewal?' },
+        },
+      ],
     },
   ],
 

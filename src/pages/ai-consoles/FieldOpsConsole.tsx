@@ -15,6 +15,7 @@ import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
@@ -28,6 +29,7 @@ export default function FieldOpsConsole() {
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const { submitQuery } = useAuraCommand();
+  const { run: runChain } = useRunWorkflowChain();
   const { pack } = useIndustryPack();
   const workflows = getFieldOpsWorkflows(pack);
   const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
@@ -90,9 +92,14 @@ export default function FieldOpsConsole() {
 
             <WorkflowChainButtons
               chains={workflows}
-              onTrigger={(cmd) => {
-                toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
-                submitQuery(cmd);
+              onTrigger={(chain) => {
+                if (chain.actions && chain.actions.length > 0) {
+                  toast.info('Aura is drafting actions…', { description: chain.label });
+                  void runChain(chain);
+                } else {
+                  toast.info('Running workflow…', { description: chain.command.slice(0, 80) + '…' });
+                  submitQuery(chain.command);
+                }
               }}
             />
 

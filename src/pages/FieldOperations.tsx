@@ -9,6 +9,7 @@ import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workfl
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
@@ -83,6 +84,7 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
 export default function FieldOperations() {
   const { companyId, loading } = useAuth();
   const { submitQuery } = useAuraCommand();
+  const { run: runChain } = useRunWorkflowChain();
   const { pack } = useIndustryPack();
   const serviceConfig = getIndustryServiceConsoleConfig(pack);
   const isDispatch = hasFieldTechnicians(pack) && serviceConfig.fieldRouting;
@@ -131,9 +133,14 @@ export default function FieldOperations() {
           {isDispatch && (
             <WorkflowChainButtons
               chains={DISPATCH_WORKFLOWS}
-              onTrigger={(cmd) => {
-                toast.info('Running workflow…', { description: cmd.slice(0, 80) + '…' });
-                submitQuery(cmd);
+              onTrigger={(chain) => {
+                if (chain.actions && chain.actions.length > 0) {
+                  toast.info('Aura is drafting actions…', { description: chain.label });
+                  void runChain(chain);
+                } else {
+                  toast.info('Running workflow…', { description: chain.command.slice(0, 80) + '…' });
+                  submitQuery(chain.command);
+                }
               }}
             />
           )}

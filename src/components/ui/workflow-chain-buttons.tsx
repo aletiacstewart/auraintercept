@@ -27,6 +27,23 @@ export interface WorkflowPreview {
   estimatedVolume?: string;
 }
 
+export type WorkflowActionChannel = 'sms' | 'email' | 'appointment' | 'invoice' | 'task' | 'voice';
+
+export interface WorkflowAction {
+  /** Agent that owns this step (matches AGENTS list in Automation page). */
+  agent_id: string;
+  /** Side-effect type the executor knows how to perform. */
+  action_type: 'draft_sms' | 'draft_email' | 'create_appointment' | 'draft_invoice' | 'task';
+  channel: WorkflowActionChannel;
+  /** Short human label shown in the run summary. */
+  label: string;
+  risk_tier?: 'low' | 'medium' | 'high';
+  confidence?: number;
+  est_value_usd?: number;
+  /** Payload template — strings may contain {{customer_name}} / {{lead_phone}} / {{company_name}} placeholders. */
+  payload: Record<string, unknown>;
+}
+
 export interface WorkflowChain {
   id: string;
   label: string;
@@ -38,11 +55,14 @@ export interface WorkflowChain {
   targetRoute?: string;
   /** Optional transparency metadata shown in the "Review before Aura runs" dialog. */
   preview?: WorkflowPreview;
+  /** Optional structured actions; when present, Run with Aura writes real rows
+   *  into agent_proposed_actions instead of only prompting Aura inline. */
+  actions?: WorkflowAction[];
 }
 
 interface WorkflowChainButtonsProps {
   chains: WorkflowChain[];
-  onTrigger: (command: string) => void;
+  onTrigger: (chain: WorkflowChain) => void;
 }
 
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
@@ -109,7 +129,7 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
         onCancel={() => setPending(null)}
         onConfirm={(chain) => {
           setPending(null);
-          onTrigger(chain.command);
+          onTrigger(chain);
         }}
       />
     </div>
