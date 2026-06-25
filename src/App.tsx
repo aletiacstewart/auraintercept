@@ -341,28 +341,20 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
 };
 
 const App = () => {
-  // Self-healing: unregister service workers on non-technician routes to prevent stale cached versions
+  // Self-healing: only unregister stray service workers whose scope is NOT the
+  // technician PWA. Previously this nuked every SW + cache on every full app
+  // mount, which combined with VitePWA autoUpdate to cause flapping (install →
+  // unregister → reinstall → reload) and randomly logged users out.
   useEffect(() => {
-    const path = window.location.pathname;
-    const isTechnicianRoute = path.startsWith('/technician');
-    
-    if (!isTechnicianRoute && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((registration) => {
-          registration.unregister();
-        });
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        const scope = registration.scope || '';
+        // Keep the technician PWA SW (scope ends with "/technician" or "/technician/").
+        if (/\/technician\/?$/.test(scope)) return;
+        registration.unregister().catch(() => {});
       });
-      // Also clear workbox caches
-      if ('caches' in window) {
-        caches.keys().then((names) => {
-          names.forEach((name) => {
-            if (name.includes('workbox') || name.includes('assets') || name.includes('html')) {
-              caches.delete(name);
-            }
-          });
-        });
-      }
-    }
+    }).catch(() => {});
   }, []);
 
   // Embed mode must be true in an iframe (preview widgets) OR when explicitly requested via ?embed=true
