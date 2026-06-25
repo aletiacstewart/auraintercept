@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { PendingAuraDraftsPanel } from '@/components/automation/PendingAuraDraftsPanel';
 
 type UnifiedSmsRow = {
   id: string;
@@ -291,6 +292,8 @@ export default function SMSLogs() {
             description="Inbound texts, outbound campaigns, and appointment reminders"
             showAuraBar
           />
+
+          <PendingAuraDraftsPanel channel="sms" title="Pending Aura SMS Drafts" />
 
           <div className="grid grid-cols-3 gap-4">
             <MetricCard icon={MessageSquare} value={total} label="Total Messages" iconColor="text-channel-sms" />

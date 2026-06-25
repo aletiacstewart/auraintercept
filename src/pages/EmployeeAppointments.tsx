@@ -16,6 +16,7 @@ import { PageContainer } from '@/components/ui/page-container';
 import { Calendar, ClipboardList, History, Briefcase, Plus, Link2 } from 'lucide-react';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPageHeader, getQueueLabels } from '@/lib/industryNavLabels';
+import { PendingAuraDraftsPanel } from '@/components/automation/PendingAuraDraftsPanel';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function EmployeeAppointments() {
@@ -73,6 +74,7 @@ export default function EmployeeAppointments() {
             }
           />
           <InlineFormHost />
+          <PendingAuraDraftsPanel channel="appointment" title="Pending Aura Appointment Drafts" />
           <FormShell
             id="appointment-add"
             title="Add Appointment"

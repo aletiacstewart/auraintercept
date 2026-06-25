@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { PendingAuraDraftsPanel } from '@/components/automation/PendingAuraDraftsPanel';
 
 export default function EmailLogs() {
   const { companyId } = useAuth();
@@ -96,6 +97,8 @@ export default function EmailLogs() {
           description="View email communication history with customers"
           showAuraBar
         />
+
+        <PendingAuraDraftsPanel channel="email" title="Pending Aura Email Drafts" />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4">
