@@ -123,12 +123,14 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   const trackMessage = useCallback(async (role: 'user' | 'assistant', content: string) => {
     if (!websiteId || !visitorFingerprint) return;
     
-    await supabase.from('site_chat_logs').insert({
-      website_id: websiteId,
-      visitor_fingerprint: visitorFingerprint,
-      interaction_type: 'message_sent',
-      message_role: role,
-      message_preview: content.slice(0, 100), // First 100 chars only for privacy
+    await supabase.functions.invoke('log-site-event', {
+      body: {
+        website_id: websiteId,
+        visitor_fingerprint: visitorFingerprint,
+        interaction_type: 'message_sent',
+        message_role: role,
+        message_preview: content.slice(0, 100), // First 100 chars only for privacy
+      },
     });
   }, [websiteId, visitorFingerprint]);
 
