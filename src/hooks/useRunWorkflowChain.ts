@@ -25,6 +25,7 @@ function hydrate(value: unknown, ctx: Record<string, string>): unknown {
 
 /** Pulls minimal company + latest lead / customer / appointment context. */
 async function loadContext(companyId: string): Promise<Record<string, string>> {
+  const APP_ORIGIN = 'https://auraintercept.ai';
   const ctx: Record<string, string> = {
     company_name: 'your business',
     customer_name: 'the customer',
@@ -33,16 +34,39 @@ async function loadContext(companyId: string): Promise<Record<string, string>> {
     lead_email: '',
     appointment_time: 'the scheduled time',
     invoice_total: '0.00',
+    // Canonical platform URLs available to every workflow draft
+    activation_url: `${APP_ORIGIN}/dashboard/billing?activate=1`,
+    billing_url: `${APP_ORIGIN}/dashboard/billing`,
+    login_url: `${APP_ORIGIN}/signin`,
+    dashboard_url: `${APP_ORIGIN}/dashboard`,
+    automation_url: `${APP_ORIGIN}/dashboard/automation`,
+    onboarding_url: `${APP_ORIGIN}/onboarding`,
+    company_portal_url: `${APP_ORIGIN}/portal`,
+    booking_url: `${APP_ORIGIN}/book`,
+    quote_url: `${APP_ORIGIN}/dashboard/quotes`,
+    invoice_url: `${APP_ORIGIN}/dashboard/invoices`,
+    from_name: 'your business',
+    from_email: 'no-reply@auraintercept.ai',
+    reply_to: '',
+    from_number: '',
   };
 
   const [company, lead, customer, appt] = await Promise.all([
-    supabase.from('companies').select('name').eq('id', companyId).maybeSingle(),
+    supabase.from('companies').select('name, slug, custom_domain, sms_phone_number, contact_email').eq('id', companyId).maybeSingle(),
     supabase.from('leads').select('name, phone, email').eq('company_id', companyId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('customers').select('first_name, last_name, phone, email').eq('company_id', companyId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('appointments').select('customer_name, datetime').eq('company_id', companyId).order('datetime', { ascending: false }).limit(1).maybeSingle(),
   ]);
 
-  if (company.data?.name) ctx.company_name = company.data.name;
+  if (company.data?.name) {
+    ctx.company_name = company.data.name;
+    ctx.from_name = company.data.name;
+  }
+  const c: any = company.data ?? {};
+  if (c.slug) ctx.company_portal_url = `${APP_ORIGIN}/c/${c.slug}`;
+  if (c.custom_domain) ctx.company_portal_url = `https://${c.custom_domain}`;
+  if (c.sms_phone_number) ctx.from_number = c.sms_phone_number;
+  if (c.contact_email) ctx.reply_to = c.contact_email;
   if (lead.data) {
     ctx.lead_name = lead.data.name ?? ctx.lead_name;
     ctx.lead_phone = (lead.data as any).phone ?? '';
