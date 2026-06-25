@@ -228,7 +228,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 60000) => {
           // Use consecutive match to avoid reload on transient differences
           consecutiveMatchRef.current++;
           
-          if (consecutiveMatchRef.current >= 3) {
+          if (consecutiveMatchRef.current >= 5) {
             // Store signature to prevent reload loops
             const reloadedSignature = sessionStorage.getItem('lastReloadedSignature');
             if (reloadedSignature === newSignature) {
