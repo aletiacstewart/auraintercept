@@ -166,8 +166,10 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   // Auto-refresh queries when tab becomes visible after being hidden
   useVisibilityRefresh(60000); // Refresh if hidden for more than 60 seconds
   
-  // Auto-reload when new deployment is detected (polls every 20s)
-  useDeploymentAutoReload(20000);
+  // Auto-reload when a new deployment is detected. Poll once every 10 minutes
+  // (not 20s) so we don't disrupt long dashboard / console sessions. The hook
+  // is also gated on user activity, open modals, and route changes.
+  useDeploymentAutoReload(10 * 60 * 1000);
 
   return (
     <TooltipProvider>
