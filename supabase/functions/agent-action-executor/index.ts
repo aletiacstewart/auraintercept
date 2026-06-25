@@ -1,0 +1,198 @@
+// agent-action-executor
+// Single mutating-action entrypoint for AI agents.
+// Reads company_agent_autonomy, decides auto vs queue, writes to agent_proposed_actions.
+// Internal/service callers can bypass auth with X-Internal-Token header.
+
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-internal-token",
+};
+
+type Mode = "off" | "suggest" | "auto_safe" | "auto_all";
+type Risk = "low" | "medium" | "high";
+
+interface ProposeBody {
+  company_id: string;
+  agent_id: string;
+  action_type: string;
+  payload: Record<string, unknown>;
+  reverse_payload?: Record<string, unknown> | null;
+  risk_tier?: Risk;
+  confidence?: number;
+  estimated_value_usd?: number;
+  requested_by_event?: string;
+  expires_in_hours?: number;
+}
+
+function nowHour(d = new Date()) {
+  return d.getUTCHours();
+}
+
+function inQuietHours(start: number | null, end: number | null) {
+  if (start == null || end == null) return false;
+  const h = nowHour();
+  if (start === end) return false;
+  return start < end ? h >= start && h < end : h >= start || h < end;
+}
+
+function shouldAutoExecute(opts: {
+  mode: Mode;
+  risk: Risk;
+  confidence: number;
+  threshold: number;
+  valueUsd: number;
+  maxValueUsd: number;
+  dailyCount: number;
+  dailyCap: number;
+  quietStart: number | null;
+  quietEnd: number | null;
+}): { auto: boolean; reason: string } {
+  if (opts.mode === "off") return { auto: false, reason: "agent off" };
+  if (opts.mode === "suggest") return { auto: false, reason: "approval required" };
+  if (opts.dailyCount >= opts.dailyCap) return { auto: false, reason: "daily cap" };
+  if (inQuietHours(opts.quietStart, opts.quietEnd))
+    return { auto: false, reason: "quiet hours" };
+  if (opts.confidence < opts.threshold)
+    return { auto: false, reason: "confidence below threshold" };
+  if (opts.valueUsd > opts.maxValueUsd) return { auto: false, reason: "value cap" };
+  if (opts.mode === "auto_safe" && opts.risk !== "low")
+    return { auto: false, reason: "auto_safe accepts low risk only" };
+  return { auto: true, reason: "ok" };
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } },
+    );
+
+    const url = new URL(req.url);
+    const op = url.searchParams.get("op") ?? "propose";
+
+    // --- approve / reject / revert ops are JWT-gated through RLS ---
+    if (op === "approve" || op === "reject") {
+      const auth = req.headers.get("Authorization") ?? "";
+      const token = auth.replace("Bearer ", "");
+      if (!token) throw new Error("auth required");
+      const { data: u, error: ue } = await supabase.auth.getUser(token);
+      if (ue || !u.user) throw new Error("invalid token");
+      const { id } = (await req.json()) as { id: string };
+      const status = op === "approve" ? "approved" : "rejected";
+      const { data, error } = await supabase
+        .from("agent_proposed_actions")
+        .update({
+          status,
+          reviewed_by: u.user.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true, action: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- propose: called by agents (service-role) ---
+    const body = (await req.json()) as ProposeBody;
+    if (!body.company_id || !body.agent_id || !body.action_type) {
+      return new Response(
+        JSON.stringify({ error: "company_id, agent_id, action_type required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const confidence = Math.max(0, Math.min(1, body.confidence ?? 0.5));
+    const risk: Risk = body.risk_tier ?? "medium";
+    const valueUsd = body.estimated_value_usd ?? 0;
+
+    // load autonomy settings (default if missing)
+    const { data: settings } = await supabase
+      .from("company_agent_autonomy")
+      .select("*")
+      .eq("company_id", body.company_id)
+      .eq("agent_id", body.agent_id)
+      .maybeSingle();
+
+    const mode: Mode = (settings?.mode as Mode) ?? "suggest";
+    const threshold = Number(settings?.confidence_threshold ?? 0.8);
+    const maxValueUsd = Number(settings?.max_value_usd ?? 100);
+    const dailyCap = Number(settings?.daily_action_cap ?? 50);
+    const quietStart = settings?.quiet_hours_start ?? null;
+    const quietEnd = settings?.quiet_hours_end ?? null;
+
+    // daily count
+    const since = new Date();
+    since.setUTCHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from("agent_proposed_actions")
+      .select("id", { count: "exact", head: true })
+      .eq("company_id", body.company_id)
+      .eq("agent_id", body.agent_id)
+      .eq("status", "auto_executed")
+      .gte("created_at", since.toISOString());
+
+    const decision = shouldAutoExecute({
+      mode,
+      risk,
+      confidence,
+      threshold,
+      valueUsd,
+      maxValueUsd,
+      dailyCount: count ?? 0,
+      dailyCap,
+      quietStart,
+      quietEnd,
+    });
+
+    const expires = body.expires_in_hours
+      ? new Date(Date.now() + body.expires_in_hours * 3600_000).toISOString()
+      : new Date(Date.now() + 72 * 3600_000).toISOString();
+
+    const status = decision.auto ? "auto_executed" : "pending";
+    const { data: inserted, error: insErr } = await supabase
+      .from("agent_proposed_actions")
+      .insert({
+        company_id: body.company_id,
+        agent_id: body.agent_id,
+        action_type: body.action_type,
+        payload: body.payload ?? {},
+        reverse_payload: body.reverse_payload ?? null,
+        risk_tier: risk,
+        confidence,
+        estimated_value_usd: valueUsd,
+        requested_by_event: body.requested_by_event ?? null,
+        status,
+        executed_at: decision.auto ? new Date().toISOString() : null,
+        result_summary: decision.auto ? "auto-executed" : decision.reason,
+        expires_at: expires,
+      })
+      .select()
+      .single();
+    if (insErr) throw insErr;
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        decision: decision.auto ? "auto_executed" : "queued",
+        reason: decision.reason,
+        action: inserted,
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
