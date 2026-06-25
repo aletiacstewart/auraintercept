@@ -65,6 +65,84 @@ export type Database = {
           },
         ]
       }
+      agent_proposed_actions: {
+        Row: {
+          action_type: string
+          agent_id: string
+          company_id: string
+          confidence: number
+          created_at: string
+          estimated_value_usd: number | null
+          executed_at: string | null
+          expires_at: string | null
+          id: string
+          payload: Json
+          requested_by_event: string | null
+          result_summary: string | null
+          reverse_payload: Json | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_tier: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action_type: string
+          agent_id: string
+          company_id: string
+          confidence?: number
+          created_at?: string
+          estimated_value_usd?: number | null
+          executed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          payload?: Json
+          requested_by_event?: string | null
+          result_summary?: string | null
+          reverse_payload?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_tier?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action_type?: string
+          agent_id?: string
+          company_id?: string
+          confidence?: number
+          created_at?: string
+          estimated_value_usd?: number | null
+          executed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          payload?: Json
+          requested_by_event?: string | null
+          result_summary?: string | null
+          reverse_payload?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_tier?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_proposed_actions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_proposed_actions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_agent_configs: {
         Row: {
           agent_type: string
@@ -1451,6 +1529,66 @@ export type Database = {
           weekly_digest_timezone?: string | null
         }
         Relationships: []
+      }
+      company_agent_autonomy: {
+        Row: {
+          agent_id: string
+          company_id: string
+          confidence_threshold: number
+          created_at: string
+          daily_action_cap: number
+          id: string
+          max_value_usd: number
+          mode: string
+          quiet_hours_end: number | null
+          quiet_hours_start: number | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          agent_id: string
+          company_id: string
+          confidence_threshold?: number
+          created_at?: string
+          daily_action_cap?: number
+          id?: string
+          max_value_usd?: number
+          mode?: string
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          agent_id?: string
+          company_id?: string
+          confidence_threshold?: number
+          created_at?: string
+          daily_action_cap?: number
+          id?: string
+          max_value_usd?: number
+          mode?: string
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_agent_autonomy_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_agent_autonomy_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       company_ai_content_profiles: {
         Row: {
