@@ -84,6 +84,7 @@ const DISPATCH_WORKFLOWS: WorkflowChain[] = [
 export default function FieldOperations() {
   const { companyId, loading } = useAuth();
   const { submitQuery } = useAuraCommand();
+  const { run: runChain } = useRunWorkflowChain();
   const { pack } = useIndustryPack();
   const serviceConfig = getIndustryServiceConsoleConfig(pack);
   const isDispatch = hasFieldTechnicians(pack) && serviceConfig.fieldRouting;
