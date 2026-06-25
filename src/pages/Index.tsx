@@ -612,13 +612,6 @@ export default function Index() {
       </section>
 
       {/* How It Works */}
-      <section style={{ padding: "32px 0" }}>
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-6">
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 12px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 8 }}>
-              <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>For Service Businesses</span>
-            </div>
-            <h2 style={{ fontSize: "clamp(18px, 3vw, 28px)", fontWeight: 800, margin: "0 0 6px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
       {/* How It Works — removed per request */}
 
       {/* Pricing Section */}
