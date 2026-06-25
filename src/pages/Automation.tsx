@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Bot, CheckCircle2, Clock, ShieldAlert, X } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { PageContainer } from "@/components/layout/PageContainer";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,8 +64,7 @@ type ProposedAction = {
 };
 
 export default function Automation() {
-  const { profile } = useAuth();
-  const companyId = profile?.company_id;
+  const { companyId } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [drafts, setDrafts] = useState<Record<string, AutonomyRow>>({});
