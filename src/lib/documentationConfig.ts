@@ -1,7 +1,7 @@
 /**
  * Master Documentation Configuration
  * Single source of truth for all platform data used across PDFs, Help pages, and guides.
- * Last updated: April 2026 — Consolidated to 4-Tier Growth Ladder (Core/Boost/Pro/Elite) + 10 AI Operatives (24 underlying agents)
+ * Last updated: April 2026 — Consolidated to 4-Tier Growth Ladder (Core/Boost/Pro/Elite) + 24 AI Operatives (organized into 10 operative roles)
  */
 
 // ============================================
@@ -127,7 +127,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     employees: 'Unlimited',
     operatives: 24,
     consoles: 7,
-    description: '10 AI Operatives — full suite with business operations, analytics & AI Hub.',
+    description: '24 AI Operatives — full suite with business operations, analytics & AI Hub.',
     bestFor: 'Large service teams, property management firms, enterprise operations.',
     highlights: [
       'Everything in Aura Pro',
@@ -394,7 +394,7 @@ export const MANAGEMENT_INTERFACES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management interface for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management interface for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     tier: 'aura_elite',
     agentCount: 24,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],

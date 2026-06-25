@@ -308,11 +308,11 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'ai_operatives_hub',
     title: 'AI Operatives Hub',
     icon: Bot,
-    description: 'Central management console for all 10 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     requiredTier: 'command',
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     agents: [
-      { name: 'All 10 AI Operatives', tier: 'command' },
+      { name: 'All 24 AI Operatives', tier: 'command' },
     ],
     features: [
       { text: 'Individual agent configuration and enable/disable' },
@@ -409,7 +409,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   performance: {
     title: 'Aura Pro',
-    description: '10 AI Operatives with social media, campaigns, and industry specialist agents.',
+    description: '24 AI Operatives with social media, campaigns, and industry specialist agents.',
     highlights: [
       'Everything in Aura Boost',
       'Campaign Agent + Outreach Agent',
@@ -420,7 +420,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   command: {
     title: 'Aura Elite',
-    description: 'All 10 AI Operatives (24 agents) — full suite with advanced analytics, AI Hub & unlimited employees.',
+    description: 'All 24 AI Operatives (organized into 10 operative roles) — full suite with advanced analytics, AI Hub & unlimited employees.',
     highlights: [
       'Everything in Aura Pro',
       'Invoice + Inventory + Insights + Performance Agents',

@@ -290,7 +290,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Hero Variation 2 - Solution-Focused</Text>
-        <Text style={styles.copyHeadline}>10 AI Operatives. One Mission: Grow Your Business.</Text>
+        <Text style={styles.copyHeadline}>24 AI Operatives. One Mission: Grow Your Business.</Text>
         <Text style={styles.copySubhead}>From answering calls to dispatching technicians, Aura Intercept handles every operational task while you focus on what matters.</Text>
       </View>
 
@@ -541,8 +541,8 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Aura Elite - $3,979/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 10 AI Operatives suite (24 underlying specialist agents) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
-          - All 10 AI Operatives{'\n'}
+          Full command of your business. The complete 24 AI Operatives suite (organized into 10 operative roles) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
+          - All 24 AI Operatives{'\n'}
           - All 7 Control Centers + AI Operatives Hub{'\n'}
           - Admin, Quoting, Invoice & Inventory{'\n'}
           - Revenue, Forecast & Advanced Analytics{'\n'}
@@ -568,7 +568,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How long does setup take?</Text>
-        <Text style={styles.faqAnswer}>Most businesses are fully operational within 24-48 hours. Our implementation team handles everything: connecting your phone number, setting up your scheduling preferences, and training the AI on your services and pricing. You don't need any technical expertise.</Text>
+        <Text style={styles.faqAnswer}>Your 60-Day Live Trial starts with a 30-day concierge onboarding window — we connect your phone number, configure scheduling, build the knowledge base, activate 3rd-party providers (you bring your own SignalWire, ElevenLabs, Resend, Stripe, etc.), and train the AI on your services and pricing. After day 30, you move into 30 days of full live use before your monthly subscription begins. You never need to touch the technical setup.</Text>
       </View>
 
       <View style={styles.faqCard}>
@@ -605,7 +605,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 10 AI Operatives handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start your 60-Day Live Trial.
+          Meta: 24 AI Operatives handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start your 60-Day Live Trial.
         </Text>
       </View>
 
@@ -621,7 +621,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $497/mo. 10 AI Operatives, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your 60-Day Live Trial today.
+          Meta: Plans from $497/mo. 24 AI Operatives, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your 60-Day Live Trial today.
         </Text>
       </View>
 
