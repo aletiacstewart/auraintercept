@@ -9,13 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
-import {
-  BUSINESS_TYPE_GROUPS,
-  BUSINESS_TYPES,
-  getPackIdForBusinessType,
-  BUSINESS_TYPE_COUNT,
-} from '@/lib/businessTypeRegistry';
+import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
+import {
+  MAIN_INDUSTRY_CATEGORIES,
+  MAIN_INDUSTRY_CATEGORY_COUNT,
+  findMainCategoryByPack,
+} from '@/lib/mainIndustryCategories';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
   CustomIndustryWizard,
@@ -60,14 +60,17 @@ export default function SignUp() {
   // Live-Demo deep-link from /for-business: presence of ?industry= locks the
   // signup onto the 60-Day Live Demo on Aura Elite. Tier picker becomes read-only.
   const isLiveDemoFlow = !!industryParam;
-  const resolvedDemoPackId = industryParam ? getPackIdForBusinessType(industryParam) : null;
+  // Industry params from /for-business and the homepage industries grid are
+  // canonical pack IDs (e.g. 'hvac', 'plumbing'). Resolve via the main category
+  // list, and fall back to the business-type registry for any legacy deep links.
+  const resolvedDemoPackId = industryParam
+    ? (findMainCategoryByPack(industryParam)?.demoPack ?? getPackIdForBusinessType(industryParam))
+    : null;
   const resolvedDemoPack = resolvedDemoPackId
     ? (INDUSTRY_CONTENT[resolvedDemoPackId] || INDUSTRY_CONTENT.default)
     : null;
-  const resolvedDemoBusinessType = industryParam
-    ? BUSINESS_TYPES.find((b) => b.key === industryParam)
-    : null;
-  const industryPreselectValid = !!resolvedDemoBusinessType;
+  const resolvedDemoCategory = resolvedDemoPackId ? findMainCategoryByPack(resolvedDemoPackId) : undefined;
+  const industryPreselectValid = !!resolvedDemoCategory;
   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -129,7 +132,8 @@ export default function SignUp() {
       setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
     }
     if (industryParam) {
-      setBusinessIndustry(industryParam);
+      // Always persist the canonical pack id, even if the URL used a sub-type alias.
+      setBusinessIndustry(resolvedDemoPackId || industryParam);
     }
   }, [tierParam, industryParam, isLiveDemoFlow]);
 
