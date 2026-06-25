@@ -17,6 +17,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Earlier launch pricing (Elite $3,097) and pre-launch full-price IDs are
 // retained so grandfathered customers continue to map to the correct tier.
 const PRICE_TO_TIER: Record<string, string> = {
+  // === AURA INTERCEPT ACCOUNT (active) ===
+  "price_1TmJ2pEGn9AqCo3ECdv8mh0A": "starter",     // Core $497
+  "price_1TmJ2qEGn9AqCo3EpspZoDZK": "connect",     // Boost $994
+  "price_1TmJ2rEGn9AqCo3EkxrT5Z09": "performance", // Pro $1,988
+  "price_1TmJ2tEGn9AqCo3ES4Mf3YHm": "command",     // Elite $3,979
+
   // === BETA PRICING PRICE IDS (active, June 2026) ===
   // Aura Core - $497/mo (Beta, was $697)
   "price_1ThWTeJ9fo9y8fGHfDU4ZNq8": "starter",
