@@ -584,7 +584,7 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
             {MARKETING_INDUSTRY_CATEGORIES.map(cat => (
-              <div key={cat.name} style={{ borderRadius: 10, padding: "12px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
+              <button key={cat.name} type="button" onClick={() => navigate(`/for-business?industry=${cat.demoPack}`)} aria-label={`See live demo for ${cat.name}`} style={{ cursor: "pointer", borderRadius: 10, padding: "12px 8px", textAlign: "center", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(0,229,255,0.2)", boxShadow: "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)", transition: "all 0.3s ease" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 18px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.3)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 0 1px rgba(0,229,255,0.12), 0 0 12px rgba(0,229,255,0.05)"; (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(0,229,255,0.2)"; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}
               >
@@ -597,7 +597,7 @@ export default function Index() {
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#00E5FF", lineHeight: 1.2 }}>{cat.name}</div>
                 <div style={{ fontSize: 9, fontWeight: 600, color: "#00E5FF", opacity: 0.7, marginTop: 2 }}>{cat.count} business types</div>
                 <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.3, marginTop: 4 }} className="hidden sm:block">{cat.description}</p>
-              </div>
+              </button>
             ))}
           </div>
           <div className="text-center mt-10">
