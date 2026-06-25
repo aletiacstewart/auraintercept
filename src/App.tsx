@@ -63,6 +63,7 @@ import AskAura from "./pages/AskAura";
 import OperationsRouter from "./pages/operations/OperationsRouter";
 import VideoConsole from "./pages/VideoConsole";
 import AIAgentsHub from "./pages/AIAgentsHub";
+import Automation from "./pages/Automation";
 import AIAgentGuide from "./pages/AIAgentGuide";
 import AuditReport from "./pages/AuditReport";
 import AgentDetailPage from "./pages/AgentDetailPage";
@@ -218,6 +219,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
                 <Route path="/dashboard/employees/:id" element={<ProtectedRoute><EmployeeDetail /></ProtectedRoute>} />
                 <Route path="/dashboard/quick-setup" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/dashboard/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
                 
                 <Route path="/dashboard/availability" element={<ProtectedRoute><EmployeeAvailability /></ProtectedRoute>} />
                 <Route path="/dashboard/appointments" element={<ProtectedRoute><EmployeeAppointments /></ProtectedRoute>} />
