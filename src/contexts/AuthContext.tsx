@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -62,7 +62,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Silently ignore auth errors (stale tokens during login/logout transitions)
         const errMsg = typeof error === 'object' && error !== null ? JSON.stringify(error) : String(error);
         if (errMsg.includes('Auth session missing') || errMsg.includes('401') || errMsg.includes('Unauthorized')) {
-          console.warn('Subscription check skipped: session not ready');
+          console.warn('Subscription check skipped: session not ready, attempting refresh');
+          // Try one refresh before giving up — prevents the user from being silently
+          // de-authenticated when the access token is just slightly stale.
+          try {
+            await supabase.auth.refreshSession();
+          } catch {
+            /* swallow — onAuthStateChange will react if it actually expired */
+          }
           return;
         }
         console.error('Error checking subscription:', error);
@@ -136,8 +143,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
 
+      // TOKEN_REFRESHED fires every hour and on tab focus; the user identity
+      // hasn't changed, so do NOT re-run user-data fetches or toggle loading.
+      // That was causing perceived "random refreshes" on dashboards.
+      if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        return;
+      }
+
       // Only set loading=true for identity-changing events to avoid UI flicker
-      const isIdentityChange = event === 'SIGNED_IN' || event === 'SIGNED_OUT';
+      const isIdentityChange = event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'INITIAL_SESSION';
 
       if (session?.user) {
         if (isIdentityChange) {
