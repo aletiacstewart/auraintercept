@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { ActionPreview } from "@/components/automation/ActionPreview";
 
 const AGENTS: { id: string; label: string; description: string }[] = [
   { id: "triage", label: "Front Desk (Triage)", description: "Greets callers, answers FAQs, routes requests." },
@@ -63,11 +64,23 @@ type ProposedAction = {
   executed_at: string | null;
 };
 
+const STATUS_FILTERS: { id: string; label: string; matches: (s: string) => boolean }[] = [
+  { id: "all", label: "All", matches: () => true },
+  { id: "pending", label: "Awaiting approval", matches: (s) => s === "pending" },
+  { id: "auto_executed", label: "Auto-executed", matches: (s) => s === "auto_executed" },
+  { id: "approved", label: "Approved", matches: (s) => s === "approved" },
+  { id: "rejected", label: "Rejected", matches: (s) => s === "rejected" },
+  { id: "failed", label: "Failed", matches: (s) => s === "failed" || s.startsWith("failed") },
+];
+
 export default function Automation() {
   const { companyId } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [drafts, setDrafts] = useState<Record<string, AutonomyRow>>({});
+  const [pageSize, setPageSize] = useState(50);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [agentFilter, setAgentFilter] = useState<string>("all");
 
   const { data: settings, isLoading: settingsLoading } = useQuery({
     queryKey: ["agent-autonomy", companyId],
@@ -111,17 +124,46 @@ export default function Automation() {
         .select("*")
         .eq("company_id", companyId!)
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(500);
       if (error) throw error;
       return (data ?? []) as ProposedAction[];
     },
   });
 
+  // Realtime: surface new agent actions instantly instead of waiting for poll
+  useEffect(() => {
+    if (!companyId) return;
+    const channel = supabase
+      .channel(`agent-actions-${companyId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "agent_proposed_actions", filter: `company_id=eq.${companyId}` },
+        () => qc.invalidateQueries({ queryKey: ["proposed-actions", companyId] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [companyId, qc]);
+
   const pending = useMemo(() => queue?.filter((a) => a.status === "pending") ?? [], [queue]);
-  const recent = useMemo(
-    () => queue?.filter((a) => a.status !== "pending").slice(0, 25) ?? [],
-    [queue],
-  );
+
+  const filtered = useMemo(() => {
+    const all = queue ?? [];
+    const statusDef = STATUS_FILTERS.find((s) => s.id === statusFilter) ?? STATUS_FILTERS[0];
+    return all.filter((a) =>
+      statusDef.matches(a.status) && (agentFilter === "all" || a.agent_id === agentFilter),
+    );
+  }, [queue, statusFilter, agentFilter]);
+
+  const visibleRecent = useMemo(() => filtered.slice(0, pageSize), [filtered, pageSize]);
+  const totalRecent = filtered.length;
+
+  const knownAgents = useMemo(() => {
+    const ids = new Set<string>(AGENTS.map((a) => a.id));
+    (queue ?? []).forEach((a) => ids.add(a.agent_id));
+    return Array.from(ids);
+  }, [queue]);
 
   async function saveAgent(agentId: string) {
     const row = drafts[agentId];
@@ -172,7 +214,12 @@ export default function Automation() {
               )}
             </TabsTrigger>
             <TabsTrigger value="settings">Per-Agent Settings</TabsTrigger>
-            <TabsTrigger value="history">Recent Activity</TabsTrigger>
+            <TabsTrigger value="history">
+              Recent Activity
+              {(queue?.length ?? 0) > 0 && (
+                <Badge variant="secondary" className="ml-2">{queue!.length}</Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="inbox" className="space-y-3">
@@ -205,10 +252,12 @@ export default function Automation() {
                         {formatDistanceToNow(new Date(a.created_at))} ago
                       </p>
                       <details className="mt-2">
-                        <summary className="text-xs text-muted-foreground cursor-pointer">View payload</summary>
-                        <pre className="text-xs bg-muted p-2 rounded mt-1 overflow-auto max-h-40">
-                          {JSON.stringify(a.payload, null, 2)}
-                        </pre>
+                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                          View preview
+                        </summary>
+                        <div className="mt-2">
+                          <ActionPreview actionType={a.action_type} payload={a.payload as Record<string, unknown>} />
+                        </div>
                       </details>
                     </div>
                     <div className="flex gap-2 shrink-0">
@@ -306,39 +355,88 @@ export default function Automation() {
           </TabsContent>
 
           <TabsContent value="history" className="space-y-2">
+            <Card className="border-border/60">
+              <CardContent className="py-3 flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted-foreground mr-1">Status:</span>
+                {STATUS_FILTERS.map((s) => (
+                  <Button
+                    key={s.id}
+                    size="sm"
+                    variant={statusFilter === s.id ? "default" : "outline"}
+                    className="h-7 text-xs"
+                    onClick={() => setStatusFilter(s.id)}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+                <span className="text-xs text-muted-foreground ml-3 mr-1">Agent:</span>
+                <Select value={agentFilter} onValueChange={setAgentFilter}>
+                  <SelectTrigger className="h-7 w-44 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All agents</SelectItem>
+                    {knownAgents.map((id) => (
+                      <SelectItem key={id} value={id}>{id}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  Showing {Math.min(pageSize, totalRecent)} of {totalRecent}
+                </span>
+              </CardContent>
+            </Card>
             {queueLoading ? (
               <Skeleton className="h-32 w-full" />
-            ) : recent.length === 0 ? (
+            ) : visibleRecent.length === 0 ? (
               <Card><CardContent className="py-8 text-center text-muted-foreground">
                 <Clock className="w-8 h-8 mx-auto mb-2" />
-                No agent activity yet.
+                No activity matches these filters.
               </CardContent></Card>
             ) : (
-              recent.map((a) => (
-                <Card key={a.id}>
-                  <CardContent className="py-3 flex items-center gap-3">
-                    {a.status === "auto_executed" ? (
-                      <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                    ) : a.status === "approved" ? (
-                      <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                    ) : a.status === "rejected" ? (
-                      <X className="w-4 h-4 text-muted-foreground shrink-0" />
-                    ) : (
-                      <ShieldAlert className="w-4 h-4 text-accent shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">
-                        <Badge variant="outline" className="mr-2 text-xs">{a.agent_id}</Badge>
-                        {a.action_type}
+              <>
+                {visibleRecent.map((a) => (
+                  <Card key={a.id}>
+                    <CardContent className="py-3 space-y-2">
+                      <div className="flex items-center gap-3">
+                        {a.status === "auto_executed" || a.status === "approved" ? (
+                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                        ) : a.status === "rejected" ? (
+                          <X className="w-4 h-4 text-muted-foreground shrink-0" />
+                        ) : a.status === "failed" || a.status.startsWith("failed") ? (
+                          <X className="w-4 h-4 text-destructive shrink-0" />
+                        ) : (
+                          <ShieldAlert className="w-4 h-4 text-accent shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium truncate flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">{a.agent_id}</Badge>
+                            <span>{a.action_type}</span>
+                            <Badge variant="secondary" className="text-[10px]">{a.status.replace("_", " ")}</Badge>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {formatDistanceToNow(new Date(a.created_at))} ago
+                            {a.result_summary ? ` · ${a.result_summary}` : ""}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {a.status.replace("_", " ")} · {formatDistanceToNow(new Date(a.created_at))} ago
-                        {a.result_summary ? ` · ${a.result_summary}` : ""}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                      <details>
+                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                          View preview
+                        </summary>
+                        <div className="mt-2">
+                          <ActionPreview actionType={a.action_type} payload={a.payload as Record<string, unknown>} />
+                        </div>
+                      </details>
+                    </CardContent>
+                  </Card>
+                ))}
+                {totalRecent > pageSize && (
+                  <div className="flex justify-center pt-2">
+                    <Button variant="outline" size="sm" onClick={() => setPageSize((n) => n + 50)}>
+                      Load 50 more
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
         </Tabs>
