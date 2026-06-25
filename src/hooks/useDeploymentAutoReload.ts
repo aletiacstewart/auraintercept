@@ -305,18 +305,7 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 60000) => {
   }, [pollIntervalMs]);
 };
 
-// Handle Vite HMR reconnection at module level (outside React)
-// This prevents hook count mismatches during hot reloads
-if (import.meta.hot && import.meta.env.PROD) {
-  import.meta.hot.on('vite:ws:connect', () => {
-    if (shouldDeferReload()) {
-      console.log('[DeploymentAutoReload] Vite reconnected — deferring reload (user active / demo / modal)');
-      return;
-    }
-    console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
-    setTimeout(() => {
-      if (shouldDeferReload()) return;
-      window.location.reload();
-    }, 500);
-  });
-}
+// NOTE: previously this module also auto-reloaded on Vite HMR `ws:connect`
+// events in production, which fired on transient WebSocket hiccups and
+// reloaded authenticated dashboards mid-session. Removed — the polling path
+// above (with shouldDeferReload guards) is enough.
