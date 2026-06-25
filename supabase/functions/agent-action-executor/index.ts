@@ -64,6 +64,40 @@ function shouldAutoExecute(opts: {
 }
 
 /**
+ * Server-side safety net: resolve canonical platform URL tokens (and a few
+ * defaults) that may have slipped through client-side hydration. This keeps
+ * the stored payload — and therefore the preview rendered in the Automation
+ * console — free of unresolved `{{...}}` placeholders.
+ */
+const APP_ORIGIN = "https://auraintercept.ai";
+const URL_DEFAULTS: Record<string, string> = {
+  activation_url: `${APP_ORIGIN}/dashboard/billing?activate=1`,
+  billing_url: `${APP_ORIGIN}/dashboard/billing`,
+  login_url: `${APP_ORIGIN}/signin`,
+  dashboard_url: `${APP_ORIGIN}/dashboard`,
+  automation_url: `${APP_ORIGIN}/dashboard/automation`,
+  onboarding_url: `${APP_ORIGIN}/onboarding`,
+  company_portal_url: `${APP_ORIGIN}/portal`,
+  booking_url: `${APP_ORIGIN}/book`,
+  quote_url: `${APP_ORIGIN}/dashboard/quotes`,
+  invoice_url: `${APP_ORIGIN}/dashboard/invoices`,
+  from_email: "no-reply@auraintercept.ai",
+};
+function hydrateTokens(value: unknown, companyName: string): unknown {
+  const ctx: Record<string, string> = { ...URL_DEFAULTS, company_name: companyName, from_name: companyName };
+  const sub = (s: string) =>
+    s.replace(/\{\{(\w+)\}\}/g, (_m, k) => (ctx[k] !== undefined ? ctx[k] : `{{${k}}}`));
+  if (typeof value === "string") return sub(value);
+  if (Array.isArray(value)) return value.map((v) => hydrateTokens(v, companyName));
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = hydrateTokens(v, companyName);
+    return out;
+  }
+  return value;
+}
+
+/**
  * Performs the real side-effect for an approved/auto-executed action.
  * Returns a short human summary. Errors are surfaced to the caller so the
  * action can be marked 'failed'.
@@ -228,6 +262,18 @@ Deno.serve(async (req: Request) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+
+    // Resolve any leftover canonical URL placeholders server-side.
+    let companyName = "your business";
+    try {
+      const { data: co } = await supabase
+        .from("companies")
+        .select("name")
+        .eq("id", body.company_id)
+        .maybeSingle();
+      if (co?.name) companyName = co.name;
+    } catch (_e) { /* ignore */ }
+    body.payload = hydrateTokens(body.payload ?? {}, companyName) as Record<string, unknown>;
 
     const confidence = Math.max(0, Math.min(1, body.confidence ?? 0.5));
     const risk: Risk = body.risk_tier ?? "medium";
