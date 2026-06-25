@@ -1,67 +1,31 @@
-## Goal
+# Fix: "Workflow failed to queue any actions"
 
-Make "Run with Aura" actually create real, reviewable drafts in `agent_proposed_actions` and surface them in the Automation queue and the relevant channel consoles — instead of only chatting with Aura.
+## Root cause
 
-## Scope
+Every `Run with Aura` click in `useRunWorkflowChain` hits `supabase.functions.invoke("agent-action-executor", ...)` and gets `FunctionsFetchError: Failed to send a request to the Edge Function` (visible in console logs). The function code exists at `supabase/functions/agent-action-executor/index.ts`, but:
 
-End-to-end Workflows triggered from `WorkflowChainButtons` (Business Mgt + Field Ops consoles) become real multi-step runs. Each step produces one row in `agent_proposed_actions` routed through `agent-action-executor`, which honors the per-agent autonomy settings the user already configured at `/dashboard/automation`.
+- It has no entry in `supabase/config.toml`.
+- It has never produced a log (the edge log tool returns "No logs found").
 
-## Changes
+That means the function was never deployed to the gateway, so every invocation 404s at the network layer and the runner reports "Workflow failed to queue any actions."
 
-### 1. `WorkflowChain` schema gains structured steps
-File: `src/components/ui/workflow-chain-buttons.tsx`
-- Add optional `actions: WorkflowAction[]` to `WorkflowChain` where each `WorkflowAction` declares `{ agent_id, action_type, channel: 'sms'|'email'|'voice'|'appointment'|'invoice'|'task', risk_tier, confidence, est_value_usd, draft: (ctx) => payload, label }`.
-- `onTrigger` signature becomes `(chain: WorkflowChain) => void`.
+## Fix
 
-### 2. New runner hook `useRunWorkflowChain`
-File: `src/hooks/useRunWorkflowChain.ts` (new)
-- Resolves `companyId`, pulls the latest lead/customer/invoice/appointment row needed per action (`reads`), composes drafts, and POSTs each step to `agent-action-executor` (`op=propose`).
-- Returns `{ run, lastRunId, isRunning }`.
-- Shows one toast summarizing "N drafts queued for approval • M auto-executed".
+1. Register the function in `supabase/config.toml`:
+   ```toml
+   [functions.agent-action-executor]
+   verify_jwt = false
+   ```
+   (We use `verify_jwt = false` to match other internal executors — the function already validates `company_id` and uses the service role for inserts.)
 
-### 3. `BusinessManagementConsole.tsx` + `FieldOpsConsole.tsx`
-- Replace `onTrigger={(cmd) => { toast; submitQuery(cmd); }}` with `onTrigger={runChain}`.
-- Keep `command` string as a fallback prompt the runner sends to Aura only after the action rows are written (so the inline chat still narrates what just happened).
+2. Deploy `agent-action-executor` so the gateway route exists.
 
-### 4. `industryWorkflows.ts` action templates
-- Add `actions` arrays to the existing chains. Starter coverage:
-  - `lead-to-invoice` (trades): Draft SMS to latest lead • Draft Quote • Draft Appointment • Draft Invoice
-  - `inbound-demo` (saas): Draft Email to lead • Create Calendar Hold • Draft Follow-Up SMS
-  - `renewal-churn-save`: Score risk (read-only) • Draft Email offer
-  - `appointment-reminders`: For each appt in next 48h → Draft SMS reminder
-- Workflows without a structured `actions` array keep current behavior (prompt-only).
+3. Smoke-test by:
+   - Calling the function directly with a minimal `{ op: "propose", company_id, agent_id, action_type: "draft_email", payload: {...} }` body and confirming a 200 response plus a row in `agent_proposed_actions`.
+   - Clicking "Run with Aura" on the Business Mgmt console and confirming the toast switches from "failed to queue" to the success/queued state and rows appear in `sms_logs` / `agent_proposed_actions`.
 
-### 5. `agent-action-executor` — execute approved actions
-- Extend `op=approve` to actually perform side-effects based on `action_type`:
-  - `draft_sms` → insert into `sms_logs` (status='queued') and invoke `send-sms` if a number exists
-  - `draft_email` → invoke `send-transactional-email` with `templateName='custom-draft'` and the payload body
-  - `create_appointment` → insert into `appointments` (status='pending_confirmation')
-  - `draft_invoice` → insert into `invoices` (status='draft') + line items
-- Auto-executed rows run the same side-effect inline at propose time.
-- All failures flip status to `failed` with `result_summary` set; nothing throws past the response.
+4. If the smoke test surfaces a secondary error (RLS, missing column, payload shape), patch that in the same pass — but the deploy + config registration is the blocking fix.
 
-### 6. Console-level "Pending Aura Drafts" strips
-- Phone & SMS console: filter `agent_proposed_actions` where `payload->>'channel'='sms' AND status='pending'`, show Approve/Reject inline.
-- Email console: same with `channel='email'`.
-- Appointments console: `action_type='create_appointment'`.
-- Billing console: `action_type='draft_invoice'`.
-- Reuse a new shared component `PendingAuraDraftsPanel` (props: `channel` or `actionTypes`).
+## Out of scope
 
-### 7. `Automation.tsx` Action Queue
-- Already reads `agent_proposed_actions`; only update is per-row "View payload" expander showing the actual drafted SMS body / email subject+body / appointment time, plus a "Open in [Console]" deep link.
-
-## Out of scope (explicit)
-
-- No new tables; reusing `agent_proposed_actions`, `sms_logs`, `appointments`, `invoices`, `email_send_log`.
-- No model orchestration / Aura tool-calling refactor — workflow drafts are template-driven and deterministic. Aura's inline chat still narrates afterward.
-- No changes to Stripe, demo seeding, or industry packs.
-
-## Verification
-
-1. From Business Mgt console run "Lead → Invoice" → see 4 rows appear at `/dashboard/automation` Action Queue + in Phone/SMS, Appointments, Billing console strips.
-2. Approve the SMS row → row in `sms_logs` and status flips to `executed`.
-3. Approve the Email row → `email_send_log` entry exists.
-4. Run the same workflow under a SaaS demo company → see the SaaS-specific actions (Email + Calendar Hold), not the trades ones.
-5. Set Outreach agent to `auto_safe` with confidence ≥ 0.9 → re-run, low-risk drafts auto-execute without queueing.
-
-OK to proceed?
+No changes to `useRunWorkflowChain`, the workflow definitions, or the consoles — those are wired correctly; they just need a reachable function.
