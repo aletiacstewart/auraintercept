@@ -9,6 +9,7 @@ import { WorkflowChainButtons, type WorkflowChain } from '@/components/ui/workfl
 import { InstallOnPhoneButton } from '@/components/ui/install-on-phone-button';
 import { toast } from 'sonner';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { hasFieldTechnicians } from '@/lib/industryCapabilities';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
