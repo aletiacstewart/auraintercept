@@ -19,26 +19,26 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 const CORE = {
   name: "Aura Core",
   price: 49700,
-  price_id: "price_1ThWTeJ9fo9y8fGHfDU4ZNq8",
-  onboarding_price_id: "price_1ThwUIJ9fo9y8fGHjmUhJtDw", // $249
+  price_id: "price_1TmJ2pEGn9AqCo3ECdv8mh0A",
+  onboarding_price_id: "price_1TmJ2tEGn9AqCo3EmpVYjiUm", // $249
 };
 const BOOST = {
   name: "Aura Boost",
   price: 99400,
-  price_id: "price_1ThWTfJ9fo9y8fGHsbLQp0Za",
-  onboarding_price_id: "price_1ThwUJJ9fo9y8fGHvVRIyQCb", // $497
+  price_id: "price_1TmJ2qEGn9AqCo3EpspZoDZK",
+  onboarding_price_id: "price_1TmJ2uEGn9AqCo3EO854d1Ml", // $497
 };
 const PRO = {
   name: "Aura Pro",
   price: 198800,
-  price_id: "price_1ThWTgJ9fo9y8fGHgoZLc8qu",
-  onboarding_price_id: "price_1ThwUKJ9fo9y8fGHc8oQuO7u", // $994
+  price_id: "price_1TmJ2rEGn9AqCo3EkxrT5Z09",
+  onboarding_price_id: "price_1TmJ2vEGn9AqCo3EHoqQuLSm", // $994
 };
 const ELITE = {
   name: "Aura Elite",
   price: 397900,
-  price_id: "price_1ThWThJ9fo9y8fGHGSowuwkR",
-  onboarding_price_id: "price_1ThwULJ9fo9y8fGHYwbM6gWn", // $1,990
+  price_id: "price_1TmJ2tEGn9AqCo3ES4Mf3YHm",
+  onboarding_price_id: "price_1TmJ2wEGn9AqCo3E6oQRe5E7", // $1,990
 };
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
