@@ -38,8 +38,8 @@ async function loadContext(companyId: string): Promise<Record<string, string>> {
   const [company, lead, customer, appt] = await Promise.all([
     supabase.from('companies').select('name').eq('id', companyId).maybeSingle(),
     supabase.from('leads').select('name, phone, email').eq('company_id', companyId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-    supabase.from('customers').select('name, phone, email').eq('company_id', companyId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-    supabase.from('appointments').select('customer_name, scheduled_at').eq('company_id', companyId).order('scheduled_at', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('customers').select('first_name, last_name, phone, email').eq('company_id', companyId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('appointments').select('customer_name, datetime').eq('company_id', companyId).order('datetime', { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   if (company.data?.name) ctx.company_name = company.data.name;
@@ -49,10 +49,13 @@ async function loadContext(companyId: string): Promise<Record<string, string>> {
     ctx.lead_email = (lead.data as any).email ?? '';
     ctx.customer_name = lead.data.name ?? ctx.customer_name;
   }
-  if (customer.data?.name) ctx.customer_name = customer.data.name;
-  if (appt.data?.scheduled_at) {
+  if (customer.data) {
+    const full = [customer.data.first_name, customer.data.last_name].filter(Boolean).join(' ').trim();
+    if (full) ctx.customer_name = full;
+  }
+  if (appt.data?.datetime) {
     try {
-      ctx.appointment_time = new Date(appt.data.scheduled_at as string).toLocaleString();
+      ctx.appointment_time = new Date(appt.data.datetime as string).toLocaleString();
     } catch { /* ignore */ }
     if ((appt.data as any).customer_name) ctx.customer_name = (appt.data as any).customer_name;
   }
