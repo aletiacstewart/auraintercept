@@ -58,10 +58,12 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
       
       // Log chat opened event
       if (visitorFingerprint) {
-        await supabase.from('site_chat_logs').insert({
-          website_id: websiteId,
-          visitor_fingerprint: visitorFingerprint,
-          interaction_type: 'chat_opened',
+        await supabase.functions.invoke('log-site-event', {
+          body: {
+            website_id: websiteId,
+            visitor_fingerprint: visitorFingerprint,
+            interaction_type: 'chat_opened',
+          },
         });
       }
       

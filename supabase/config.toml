@@ -18,6 +18,9 @@ verify_jwt = false
 [functions.chat-widget]
 verify_jwt = false
 
+[functions.log-site-event]
+verify_jwt = false
+
 [functions.voice-handler]
 verify_jwt = false
 
