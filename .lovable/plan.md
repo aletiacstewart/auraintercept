@@ -1,58 +1,57 @@
-## Goal
-Stop the random refreshes and forced logouts users hit on dashboards/consoles, and confirm Stripe checkout works end‑to‑end for every plan plus the one‑time onboarding fee.
 
-## Suspected causes (from code audit)
+## Problem
 
-After reading `AuthContext`, `useDeploymentAutoReload`, `PWAUpdatePrompt`, `App.tsx`, `ErrorBoundary`, `vite.config.ts`, and the existing edge functions, the most likely culprits behind the “page reloads / kicks me to login” reports are:
+The project's `STRIPE_SECRET_KEY` is currently for a sandbox account named **"Ai Bot Company sandbox"** (`acct_1SekovJ9fo9y8fGH`), not for the real **Aura Intercept** account (`acct_1StvIGEGn9AqCo3E`) shown in your screenshot. Every checkout, subscription check, customer-portal call, and onboarding fee charge is being routed to the wrong Stripe account.
 
-1. **VitePWA `registerType: 'autoUpdate'` + `skipWaiting` + `clientsClaim`** in `vite.config.ts`. In production this can silently activate a new SW mid‑session and trigger a reload — exactly the “random refresh” symptom. Scope is `/technician` but the SW intercepts the whole origin while active.
-2. **`App.tsx` SW self‑heal** unregisters every service worker on non‑`/technician` routes on every full app mount. Combined with VitePWA auto‑updating in another tab, this causes SW flapping: install → unregister → reinstall → reload.
-3. **`useDeploymentAutoReload`** polls `/` every 60s in production and reloads when the asset hashes change. On Lovable preview/published, brief CDN inconsistency or a deploy mid‑session is enough to force a hard reload of an authenticated dashboard.
-4. **`PWAUpdatePrompt`** triggers `window.location.reload()` 250 ms after `SKIP_WAITING`. Safe in theory, but combined with #1 it can fire without the “Update Now” banner ever being clicked because `autoUpdate` skips waiting itself.
-5. **`AuthContext` check‑subscription interval** re‑creates `setInterval` every time `userRole` (and therefore `checkSubscription` identity) changes, and the function silently swallows `401`/`Auth session missing` instead of forcing a re‑auth. That isn’t the reload cause, but it masks expired sessions until the next navigation, which is when the user “suddenly gets logged out.”
-6. **Multi‑tab / iframe session races.** The floating chat widget and embed pages share the same Supabase storage key. If two tabs both try to rotate the refresh token, one loses and Supabase emits `SIGNED_OUT` → `ProtectedRoute` bounces to `/auth`.
+The 8 price IDs hardcoded in the codebase (4 subscription tiers + 4 onboarding fees) only exist in the wrong sandbox account, so they will 404 the moment we point at the correct account.
 
-## Fix plan
+## Plan
 
-### A. Kill the involuntary reload paths
-1. `vite.config.ts` — switch VitePWA to `registerType: 'prompt'`, set `skipWaiting: false`, `clientsClaim: false`, and tighten `scope`/`navigateFallback` strictly to `/technician*` so the SW never touches `/dashboard`, `/customer*`, `/auth*`, `/checkout`, or the marketing site.
-2. `src/App.tsx` — remove the blanket SW unregister effect. Replace it with a one‑shot guard that only unregisters a SW whose `scope` is not `/technician/`. Don’t purge `caches` on every mount.
-3. `src/components/pwa/PWAUpdatePrompt.tsx` — make the “Update Now” reload the **only** path that calls `location.reload()`. Add a guard so it never runs when the user is on `/dashboard`, `/customer*`, `/auth*`, `/checkout`, `/onboarding`, or when an HTTP form/modal is dirty.
-4. `src/hooks/useDeploymentAutoReload.ts` — keep the production gate but (a) require 5 consecutive mismatches (not 3), (b) also defer if the current route starts with `/dashboard`, `/customer-portal`, `/technician`, `/onboarding`, `/checkout`, `/subscription`, or `/auth`, and (c) never auto‑reload when an authenticated session exists. For those routes show a small toast prompting a manual refresh instead.
-5. `src/components/error/ErrorBoundary.tsx` — drop the implicit `location.reload()` from the cache‑clear path and require an explicit user click.
+### Step 1 — You: get a Stripe secret key from the real Aura Intercept account
+From the screenshot you're already on `dashboard.stripe.com/acct_1StvIGEGn9AqCo3E/apikeys`. The "Active 0" panel shows you have **no secret key created yet** on this account.
 
-### B. Make the auth session sticky
-6. `src/contexts/AuthContext.tsx`:
-   - Treat `TOKEN_REFRESHED` as a no‑op (don’t re‑run `fetchUserData`).
-   - On `SIGNED_OUT` only clear local state if the previous session was real (skip on transient `getSession()` races).
-   - Move the periodic `checkSubscription` to a stable interval that doesn’t reset when `userRole` changes; debounce calls so two rapid auth events don’t fire parallel edge‑function requests.
-   - When `check-subscription` returns 401, force a `supabase.auth.refreshSession()` once before clearing state.
-7. Add a single‑flight lock around `supabase.auth.refreshSession()` and respect `BroadcastChannel('supabase.auth')` so multiple tabs share one rotation and don’t evict each other.
-8. Confirm `src/integrations/supabase/client.ts` is configured with `persistSession: true`, `autoRefreshToken: true`, `detectSessionInUrl: true` (it’s auto‑generated — verify only, don’t edit). If something looks off, document it for the user.
+Decide which mode to launch with:
+- **Test mode (recommended first)** — top of the dashboard, click **"Switch to sandbox"** (or the test-mode toggle), then create a **Secret key** starting with `sk_test_...`. Use this until live payments are ready.
+- **Live mode** — stay in live mode and click **"+ Create"** → **Secret key** to mint an `sk_live_...` key. Only do this once the Aura Intercept account is fully activated (business details, bank account, tax info).
 
-### C. Quiet down render loops
-9. Audit `useEffect` deps in heavy console pages (`MarketingSalesConsole`, `SocialMediaConsole`, `FieldOpsConsole`, `BusinessManagementConsole`, `AnalyticsConsole`, `CustomerPortalConsole`, `ProfileWidgetGrid`) for unstable object/array deps that cause infinite re‑mounts; wrap derived data in `useMemo` and selectors in `useCallback`. Add a runtime guard that logs (`console.warn` only in dev) when the same effect fires > 20×/sec.
-10. Verify the new `BusinessTypeContextStrip` and `MarketingMatrixCards` don’t resubscribe to Supabase on every render.
+Copy the secret key (you'll only see it once).
 
-### D. Stripe checkout verification (auraintercept@gmail.com)
-11. Confirm `STRIPE_SECRET_KEY` is present in edge‑function secrets; if not, request the user to add it.
-12. Use `stripe_api_read` to verify each price ID referenced in `supabase/functions/create-checkout/index.ts` is **active** in the connected Stripe account:
-    - Subscriptions: `price_1ThWTeJ9fo9y8fGHfDU4ZNq8` (Core), `price_1ThWTfJ9fo9y8fGHsbLQp0Za` (Boost), `price_1ThWTgJ9fo9y8fGHgoZLc8qu` (Pro), `price_1ThWThJ9fo9y8fGHGSowuwkR` (Elite).
-    - One‑time onboarding fees: `price_1ThwUIJ9fo9y8fGHjmUhJtDw` ($249), `price_1ThwUJJ9fo9y8fGHvVRIyQCb` ($497), `price_1ThwUKJ9fo9y8fGHc8oQuO7u` ($994), `price_1ThwULJ9fo9y8fGHYwbM6gWn` ($1,990).
-13. For each tier, dry‑invoke `create-checkout` against the test/live key the project is using to confirm both line items (subscription + onboarding) attach correctly and that the session URL returns 200.
-14. Verify `check-subscription` resolves the customer for `auraintercept@gmail.com` (logs already show it currently returns `{subscribed:false, tier:'command'}` because no Stripe customer exists yet — once a checkout completes this should flip to `subscribed:true`).
-15. If any price is missing or archived, recreate it via `create_stripe_product_and_price` and patch the IDs in `create-checkout` (and any other functions that reference them).
-16. Confirm Stripe Customer Portal is enabled (`customer-portal` function exists) so users can manage / downgrade after the 60‑day window.
+### Step 2 — I update the project secret
+I'll open the secure secret form via `update_secret` so you can paste the new `STRIPE_SECRET_KEY`. The old sandbox value gets overwritten; nothing is logged.
 
-### E. Verification pass
-17. Drive the app via Playwright as a signed‑in company admin: load `/dashboard`, sit idle 5 minutes with periodic interaction, navigate between 6 consoles, confirm no reload and no redirect to `/auth`.
-18. Run the same pass with a customer portal account.
-19. Hit `/subscription`, click upgrade on each of the 4 tiers, confirm Stripe Checkout opens with the right subscription + onboarding line items and the success URL returns the user authenticated.
-20. Open `platform_issues` table and capture any new frontend errors logged during the test run; fix anything that surfaces.
+### Step 3 — I recreate the 8 prices in the Aura Intercept account
+Using `create_stripe_product_and_price`, I'll create — in the new account — the exact catalog the codebase expects, matching the canonical 4-tier + beta pricing rules in project memory:
 
-## Out of scope
-- Re‑theming, sidebar/menu structure, content/PDF updates (already shipped in prior turns).
-- Backend schema changes; only edge‑function price IDs may be patched if Stripe verification finds drift.
+| Product | Price | Type | Maps to env / code constant |
+|---|---|---|---|
+| Aura Core — Subscription | $497 / month | recurring | `STRIPE_PRICE_CORE` |
+| Aura Boost — Subscription | $994 / month | recurring | `STRIPE_PRICE_BOOST` |
+| Aura Pro — Subscription | $1,988 / month | recurring | `STRIPE_PRICE_PRO` |
+| Aura Elite — Subscription | $3,979 / month | recurring | `STRIPE_PRICE_ELITE` (alias `command`) |
+| Aura Core — Onboarding | $249 | one-time | `STRIPE_PRICE_CORE_ONBOARDING` |
+| Aura Boost — Onboarding | $497 | one-time | `STRIPE_PRICE_BOOST_ONBOARDING` |
+| Aura Pro — Onboarding | $994 | one-time | `STRIPE_PRICE_PRO_ONBOARDING` |
+| Aura Elite — Onboarding | $1,990 | one-time | `STRIPE_PRICE_ELITE_ONBOARDING` |
 
-## Deliverable
-A short written report at the end of the build pass listing: every file changed, the Stripe verification result for each of the 8 price IDs, and the Playwright session evidence (no reload, no logout) for an admin + a customer.
+### Step 4 — I wire the new price IDs into the codebase
+Update the price-ID map in `supabase/functions/create-checkout/index.ts` and `supabase/functions/check-subscription/index.ts` (and `src/lib/launchPricing.ts` if it carries them) so they reference the new IDs. The legacy `Tdvk*` / `Tee*` IDs stay in the `LEGACY_TIER_MAP` fallback list so any grandfathered subs on the wrong account would still resolve to a tier if they ever appeared — but those will not exist on the new account, so nothing breaks.
+
+### Step 5 — I verify
+- `get_stripe_account_info` → confirms key now points to `acct_1StvIGEGn9AqCo3E` / Aura Intercept.
+- `fetch_stripe_resources` on each new `price_…` → confirms all 8 are active and amounts/intervals match.
+- Redeploy the three Stripe edge functions (`create-checkout`, `check-subscription`, `customer-portal`) so they pick up the new secret + price IDs.
+- Smoke test: hit `check-subscription` for `auraintercept@gmail.com` — expect `subscribed:false, tier:'command'` (no customer yet on this account, which is correct).
+
+### Step 6 — Customer Portal activation (one manual step on your side)
+The Customer Portal must be enabled once per Stripe account. On the new Aura Intercept account, visit https://dashboard.stripe.com/settings/billing/portal (test mode first, then live) and click **Activate**. Without this the "Manage subscription" button will throw.
+
+## Notes / things this plan deliberately does NOT do
+
+- It does **not** migrate any customers, subscriptions, or payment history from the sandbox account — there shouldn't be any real ones, but confirm. If there are real test subs you want to keep, tell me and I'll list them first.
+- It does **not** touch the `LEGACY_TIER_MAP` price-id fallbacks; those continue to grandfather older subs by name.
+- I won't ask for the secret value in chat — `update_secret` opens a secure form.
+
+## Open question before I proceed
+
+**Which mode do you want to launch the new key in — test (`sk_test_...`) or live (`sk_live_...`)?**
+Recommendation: start with **test**, recreate the 8 prices in test, run an end-to-end checkout smoke test against the Aura Intercept account, then repeat the exact same 4-step swap in live mode once you've activated the live account.
