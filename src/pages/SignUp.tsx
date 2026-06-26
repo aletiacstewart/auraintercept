@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toCanonicalIndustryId, isCanonicalIndustryId } from '@/lib/industryIdAliases';
 import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { INDUSTRY_CONTENT } from '@/lib/industryMarketingContent';
@@ -15,6 +15,7 @@ import {
   MAIN_INDUSTRY_CATEGORIES,
   MAIN_INDUSTRY_CATEGORY_COUNT,
   findMainCategoryByPack,
+  getSubTypesForMainCategory,
 } from '@/lib/mainIndustryCategories';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import {
@@ -1223,23 +1224,42 @@ export default function SignUp() {
                                   <SelectTrigger className={`text-xs h-8 ${industryPreselectValid ? 'border-amber-500/40 bg-amber-500/5' : ''}`}>
                                     <SelectValue placeholder="Select your industry…">
                                       {(() => {
+                                        if (!businessIndustry) return 'Select your industry…';
+                                        if (businessIndustry === 'other') return '✨ Other / Custom';
                                         const cat = findMainCategoryByPack(businessIndustry);
-                                        return cat ? cat.name : (businessIndustry === 'other' ? '✨ Other / Custom' : 'Select your industry…');
+                                        if (cat) return cat.name;
+                                        // sub-type key — show its label and parent
+                                        for (const c of MAIN_INDUSTRY_CATEGORIES) {
+                                          const sub = getSubTypesForMainCategory(c).find((s) => s.key === businessIndustry);
+                                          if (sub) return `${sub.label} — ${c.name}`;
+                                        }
+                                        return businessIndustry;
                                       })()}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent className="max-h-[60vh]">
-                                    {MAIN_INDUSTRY_CATEGORIES.map((cat) => {
+                                    {MAIN_INDUSTRY_CATEGORIES.map((cat, idx) => {
                                       const Icon = cat.icon;
+                                      const subs = getSubTypesForMainCategory(cat);
                                       return (
-                                        <SelectItem key={cat.demoPack + cat.name} value={cat.demoPack} className="text-xs">
-                                          <span className="flex items-center gap-2">
-                                            <Icon className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                                            <span>{cat.name}</span>
-                                          </span>
-                                        </SelectItem>
+                                        <SelectGroup key={cat.name}>
+                                          {idx > 0 && <SelectSeparator />}
+                                          <SelectLabel className="flex items-center gap-2 pt-1.5 text-[11px]">
+                                            <Icon className="w-3 h-3 text-primary flex-shrink-0" />
+                                            <span className="font-semibold text-primary">{cat.name}</span>
+                                          </SelectLabel>
+                                          <SelectItem value={cat.demoPack} className="text-xs">
+                                            <span className="font-medium">All {cat.name}</span>
+                                          </SelectItem>
+                                          {subs.map((b) => (
+                                            <SelectItem key={`${cat.name}:${b.key}`} value={b.key} className="text-xs pl-6">
+                                              {b.label}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectGroup>
                                       );
                                     })}
+                                    <SelectSeparator />
                                     <SelectItem value="other" className="text-xs">✨ Other / Custom</SelectItem>
                                   </SelectContent>
                                 </Select>
