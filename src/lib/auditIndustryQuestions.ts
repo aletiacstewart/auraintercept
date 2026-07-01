@@ -87,7 +87,7 @@ const FIELD_TRADES: AuditQuestion[] = [
   {
     id: 'quoting_process',
     question: 'How do you create quotes / estimates for customers?',
-    description: 'Billing (Elite) includes AI Quoting + Invoicing',
+    description: 'Billing (Pro) includes AI Quoting + Invoicing',
     section: 'Industry Specifics',
     options: [
       { label: 'Fixed pricing — no quotes needed', tierScores: { CORE: 80, BOOST: 70, PRO: 45, ELITE: 30 } },
@@ -99,25 +99,13 @@ const FIELD_TRADES: AuditQuestion[] = [
   {
     id: 'inventory_tracking',
     question: 'Do you track inventory or parts / materials?',
-    description: 'Billing (Elite) includes Inventory Management',
+    description: 'Billing (Pro) includes Inventory Management',
     section: 'Industry Specifics',
     options: [
       { label: 'No inventory to track', tierScores: { CORE: 80, BOOST: 70, PRO: 50, ELITE: 35 } },
       { label: 'Yes — already on inventory software', tierScores: { CORE: 45, BOOST: 55, PRO: 58, ELITE: 60 } },
       { label: 'Spreadsheets or manual tracking', tierScores: { CORE: 40, BOOST: 65, PRO: 80, ELITE: 90 } },
       { label: 'Need better inventory management', tierScores: { CORE: 35, BOOST: 60, PRO: 82, ELITE: 95 } },
-    ],
-  },
-  {
-    id: 'phone_setup',
-    question: "What's your business phone setup today?",
-    description: 'We will tailor your phone setup steps in your PDF',
-    section: 'Setup & Integrations',
-    options: [
-      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
-      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
-      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
-      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
     ],
   },
 ];
