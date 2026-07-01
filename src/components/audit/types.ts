@@ -147,7 +147,7 @@ export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
   {
     id: 'social_media_activity',
     question: 'How active is your business on social media?',
-    description: 'Marketing (Pro+) auto-creates and posts content',
+    description: 'Social Media (Boost+) auto-creates and posts content',
     section: 'Marketing & Web Presence',
     options: [
       { label: 'Very active (daily posts)', tierScores: { CORE: 70, BOOST: 60, PRO: 70, ELITE: 80 } },
@@ -172,7 +172,7 @@ export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
   {
     id: 'marketing_automation',
     question: 'How do you currently run marketing campaigns?',
-    description: 'Marketing (Pro+) includes Campaign + Outreach automation',
+    description: 'Outreach & Sales (Pro+) includes Campaign + Outreach automation',
     section: 'Business Operations',
     options: [
       { label: 'Sophisticated marketing automation', tierScores: { CORE: 45, BOOST: 55, PRO: 52, ELITE: 50 } },
@@ -193,6 +193,42 @@ export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
       { label: 'Google Calendar (or similar) only', tierScores: { CORE: 80, BOOST: 78, PRO: 72, ELITE: 68 } },
       { label: 'Google Calendar + social media accounts', tierScores: { CORE: 70, BOOST: 75, PRO: 82, ELITE: 78 } },
       { label: 'Calendar + social + Stripe / payments', tierScores: { CORE: 60, BOOST: 70, PRO: 80, ELITE: 90 } },
+    ],
+  },
+  {
+    id: 'phone_setup',
+    question: "What's your business phone setup today?",
+    description: 'We will tailor your phone setup steps in your PDF',
+    section: 'Setup & Integrations',
+    options: [
+      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
+      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
+      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
+      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
+    ],
+  },
+  {
+    id: 'business_entity_ein',
+    question: 'Do you have a registered business entity and EIN?',
+    description: "10DLC SMS registration requires an EIN and legal business name — we'll flag this early so it doesn't stall your launch",
+    section: 'Setup & Integrations',
+    options: [
+      { label: 'Yes, fully set up (LLC/Inc + EIN)', tierScores: { CORE: 80, BOOST: 82, PRO: 85, ELITE: 88 } },
+      { label: 'Sole proprietor with EIN', tierScores: { CORE: 82, BOOST: 80, PRO: 78, ELITE: 75 } },
+      { label: 'Not yet registered', tierScores: { CORE: 88, BOOST: 82, PRO: 75, ELITE: 68 } },
+      { label: 'Not sure', tierScores: { CORE: 85, BOOST: 80, PRO: 75, ELITE: 70 } },
+    ],
+  },
+  {
+    id: 'current_software',
+    question: 'Are you currently using any business/field-service software?',
+    description: 'Helps us scope migration effort vs. a fresh start',
+    section: 'Setup & Integrations',
+    options: [
+      { label: 'No — spreadsheets or paper', tierScores: { CORE: 90, BOOST: 82, PRO: 72, ELITE: 62 } },
+      { label: 'Yes — a CRM or field-service tool (ServiceTitan, Jobber, Housecall Pro, etc.)', tierScores: { CORE: 55, BOOST: 75, PRO: 85, ELITE: 88 } },
+      { label: 'Yes — industry-specific software not listed above', tierScores: { CORE: 60, BOOST: 72, PRO: 82, ELITE: 85 } },
+      { label: 'A mix of a few different tools', tierScores: { CORE: 55, BOOST: 72, PRO: 85, ELITE: 90 } },
     ],
   },
   {

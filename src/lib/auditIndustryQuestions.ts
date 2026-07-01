@@ -87,7 +87,7 @@ const FIELD_TRADES: AuditQuestion[] = [
   {
     id: 'quoting_process',
     question: 'How do you create quotes / estimates for customers?',
-    description: 'Billing (Elite) includes AI Quoting + Invoicing',
+    description: 'Billing (Pro) includes AI Quoting + Invoicing',
     section: 'Industry Specifics',
     options: [
       { label: 'Fixed pricing — no quotes needed', tierScores: { CORE: 80, BOOST: 70, PRO: 45, ELITE: 30 } },
@@ -99,25 +99,13 @@ const FIELD_TRADES: AuditQuestion[] = [
   {
     id: 'inventory_tracking',
     question: 'Do you track inventory or parts / materials?',
-    description: 'Billing (Elite) includes Inventory Management',
+    description: 'Billing (Pro) includes Inventory Management',
     section: 'Industry Specifics',
     options: [
       { label: 'No inventory to track', tierScores: { CORE: 80, BOOST: 70, PRO: 50, ELITE: 35 } },
       { label: 'Yes — already on inventory software', tierScores: { CORE: 45, BOOST: 55, PRO: 58, ELITE: 60 } },
       { label: 'Spreadsheets or manual tracking', tierScores: { CORE: 40, BOOST: 65, PRO: 80, ELITE: 90 } },
       { label: 'Need better inventory management', tierScores: { CORE: 35, BOOST: 60, PRO: 82, ELITE: 95 } },
-    ],
-  },
-  {
-    id: 'phone_setup',
-    question: "What's your business phone setup today?",
-    description: 'We will tailor your phone setup steps in your PDF',
-    section: 'Setup & Integrations',
-    options: [
-      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
-      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
-      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
-      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
     ],
   },
 ];
@@ -198,22 +186,13 @@ const RESTAURANTS: AuditQuestion[] = [
   },
   {
     id: 'rest_takeout_delivery_mix',
-    question: "What's your takeout / delivery mix?",
+    question: 'How do customers order takeout or delivery today?',
     description: 'Smart Link routes online orders to your existing apps',
     section: 'Industry Specifics',
     options: [
-      { label: 'Dine-in only', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
-      { label: 'Some takeout / a 3rd-party app or two', tierScores: { CORE: 90, BOOST: 70, PRO: 55, ELITE: 40 } },
-      { label: 'Heavy takeout + multiple delivery apps', tierScores: { CORE: 80, BOOST: 75, PRO: 70, ELITE: 60 } },
-    ],
-  },
-  {
-    id: 'rest_online_ordering',
-    question: 'How do customers order online today?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Our own online ordering system', tierScores: { CORE: 75, BOOST: 60, PRO: 55, ELITE: 50 } },
-      { label: 'Only 3rd-party (DoorDash / UberEats / etc.)', tierScores: { CORE: 90, BOOST: 70, PRO: 55, ELITE: 45 } },
+      { label: 'Dine-in only, no takeout/delivery', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: 'Our own online ordering system', tierScores: { CORE: 75, BOOST: 65, PRO: 60, ELITE: 55 } },
+      { label: 'Only 3rd-party apps (DoorDash / UberEats / etc.)', tierScores: { CORE: 90, BOOST: 72, PRO: 58, ELITE: 45 } },
       { label: 'Phone only — no online ordering', tierScores: { CORE: 95, BOOST: 75, PRO: 55, ELITE: 45 } },
     ],
   },
@@ -226,16 +205,6 @@ const RESTAURANTS: AuditQuestion[] = [
       { label: 'Reply quickly, ask actively', tierScores: { CORE: 60, BOOST: 55, PRO: 55, ELITE: 50 } },
       { label: 'We reply when we can', tierScores: { CORE: 80, BOOST: 75, PRO: 70, ELITE: 65 } },
       { label: 'Rarely reply, never ask', tierScores: { CORE: 90, BOOST: 80, PRO: 75, ELITE: 70 } },
-    ],
-  },
-  {
-    id: 'rest_waitlist_management',
-    question: 'How do you manage the waitlist on busy nights?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Dedicated waitlist app (Yelp Waitlist, etc.)', tierScores: { CORE: 70, BOOST: 65, PRO: 60, ELITE: 55 } },
-      { label: 'Pen & paper / verbal estimates', tierScores: { CORE: 90, BOOST: 75, PRO: 60, ELITE: 50 } },
-      { label: 'No waitlist — just first come first served', tierScores: { CORE: 85, BOOST: 65, PRO: 50, ELITE: 40 } },
     ],
   },
 ];
@@ -275,19 +244,9 @@ const BEAUTY_WELLNESS: AuditQuestion[] = [
     ],
   },
   {
-    id: 'bw_intake_forms',
-    question: 'How do you collect client intake forms / consent?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Digital forms sent before the visit', tierScores: { CORE: 60, BOOST: 60, PRO: 60, ELITE: 60 } },
-      { label: 'Paper forms at the front desk', tierScores: { CORE: 90, BOOST: 80, PRO: 75, ELITE: 70 } },
-      { label: 'No formal intake', tierScores: { CORE: 95, BOOST: 85, PRO: 80, ELITE: 75 } },
-    ],
-  },
-  {
     id: 'bw_retail_inventory',
     question: 'Do you sell retail products on top of services?',
-    description: 'Billing (Elite) adds inventory + retail',
+    description: 'Billing (Pro) adds inventory + retail',
     section: 'Industry Specifics',
     options: [
       { label: 'Yes, retail is a big part of revenue', tierScores: { CORE: 50, BOOST: 65, PRO: 80, ELITE: 95 } },
@@ -343,55 +302,24 @@ const PERSONAL_ASSISTANT: AuditQuestion[] = [
 
 const HEALTHCARE: AuditQuestion[] = [
   {
-    id: 'hc_visit_volume',
-    question: 'About how many visits / sessions do you run per week?',
+    id: 'hc_service_location',
+    question: 'Where do you mostly deliver your services?',
     section: 'Industry Specifics',
     options: [
-      { label: 'Under 20', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
-      { label: '20-50', tierScores: { CORE: 70, BOOST: 85, PRO: 75, ELITE: 60 } },
-      { label: '50-150', tierScores: { CORE: 40, BOOST: 70, PRO: 90, ELITE: 80 } },
-      { label: '150+ / multi-clinician', tierScores: { CORE: 20, BOOST: 55, PRO: 80, ELITE: 95 } },
+      { label: 'At my business location only', tierScores: { CORE: 95, BOOST: 75, PRO: 45, ELITE: 30 } },
+      { label: 'At customer locations', tierScores: { CORE: 35, BOOST: 90, PRO: 95, ELITE: 90 } },
+      { label: 'Mix of both', tierScores: { CORE: 60, BOOST: 85, PRO: 85, ELITE: 80 } },
+      { label: 'Virtual / remote', tierScores: { CORE: 95, BOOST: 65, PRO: 45, ELITE: 35 } },
     ],
   },
   {
-    id: 'hc_intake_documentation',
-    question: 'How do you collect intake + consent documentation?',
-    description: 'Front Desk + Smart Forms handle digital intake',
+    id: 'hc_pricing_model',
+    question: 'How do you quote / price work today?',
     section: 'Industry Specifics',
     options: [
-      { label: 'Digital forms via our EHR / portal', tierScores: { CORE: 60, BOOST: 65, PRO: 70, ELITE: 75 } },
-      { label: 'Paper forms at first visit', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 75 } },
-      { label: 'Mix of digital + paper', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 78 } },
-    ],
-  },
-  {
-    id: 'hc_scheduling_complexity',
-    question: 'How complex is your scheduling?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Simple — single clinician / single location', tierScores: { CORE: 90, BOOST: 70, PRO: 50, ELITE: 35 } },
-      { label: 'Multiple clinicians, varying durations', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 80 } },
-      { label: 'In-home visits + route planning', tierScores: { CORE: 30, BOOST: 90, PRO: 90, ELITE: 85 } },
-    ],
-  },
-  {
-    id: 'hc_referral_followup',
-    question: 'How do you handle referral / new-patient follow-up?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Auto-respond + schedule fast', tierScores: { CORE: 60, BOOST: 65, PRO: 70, ELITE: 75 } },
-      { label: 'Manual call-back from front desk', tierScores: { CORE: 85, BOOST: 85, PRO: 80, ELITE: 75 } },
-      { label: 'Often falls through the cracks', tierScores: { CORE: 85, BOOST: 90, PRO: 92, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'hc_compliance_followup',
-    question: 'Do you have automated post-visit follow-up / outcome surveys?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Yes, fully automated', tierScores: { CORE: 55, BOOST: 60, PRO: 65, ELITE: 70 } },
-      { label: 'Manual phone calls when we can', tierScores: { CORE: 80, BOOST: 80, PRO: 80, ELITE: 80 } },
-      { label: 'No structured follow-up', tierScores: { CORE: 85, BOOST: 85, PRO: 88, ELITE: 90 } },
+      { label: 'Fixed pricing', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: 'Custom quotes per job', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 90 } },
+      { label: 'Subscriptions / retainers', tierScores: { CORE: 75, BOOST: 75, PRO: 75, ELITE: 70 } },
     ],
   },
 ];
@@ -416,17 +344,6 @@ const OTHER_FALLBACK: AuditQuestion[] = [
       { label: 'Fixed pricing', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
       { label: 'Custom quotes per job', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 90 } },
       { label: 'Subscriptions / retainers', tierScores: { CORE: 75, BOOST: 75, PRO: 75, ELITE: 70 } },
-    ],
-  },
-  {
-    id: 'other_phone_setup',
-    question: "What's your business phone setup today?",
-    section: 'Setup & Integrations',
-    options: [
-      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
-      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
-      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
-      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
     ],
   },
 ];
