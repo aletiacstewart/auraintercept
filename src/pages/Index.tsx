@@ -846,9 +846,9 @@ export default function Index() {
                   <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                   <div className="w-full space-y-3">
                     <div>
-                      <h5 className="text-sm font-semibold text-warning">SMS / 10DLC Compliance — required for SMS</h5>
+                      <h5 className="text-sm font-semibold text-warning">📶 SMS System — Carrier Registration (10DLC)</h5>
                       <p className="text-[11px] text-white/85 leading-relaxed mt-1">
-                        10DLC is the US carrier standard for business SMS. We register your brand &amp; campaigns through SignalWire on your behalf. Unregistered messages are filtered or blocked.
+                        Carriers require every business to register before sending SMS — this is what keeps your appointment reminders and confirmations from getting flagged as spam or blocked outright. We handle the registration through SignalWire on your behalf.
                       </p>
                     </div>
 
@@ -856,13 +856,13 @@ export default function Index() {
                       <div className="rounded-md bg-black/20 p-3 space-y-1.5">
                         <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Pass-Through Fees</p>
                         <ul className="text-[11px] text-white/90 space-y-1 list-disc list-inside">
-                          <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span></li>
-                          <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span> (first 3 mo upfront)</li>
-                          <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission</li>
-                          <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises T-Mobile caps)</li>
-                          <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> (no SMS in 60 days)</li>
+                          <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span> (verifies your business to carriers)</li>
+                          <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span>, first 3 months upfront (covers your specific use case)</li>
+                          <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission (additional carrier verification step)</li>
+                          <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises your T-Mobile sending limits)</li>
+                          <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> if no SMS sent in 60 days (charged by T-Mobile, not us — easy to avoid)</li>
                         </ul>
-                        <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$42</span> to go live</p>
+                        <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$44</span> to go live</p>
                       </div>
 
                       <div className="rounded-md bg-black/20 p-3 space-y-2">
@@ -876,6 +876,10 @@ export default function Index() {
                           <p className="text-[11px] text-white/80">EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc docs, brand website, opt-in/opt-out language, sample messages, and a help message.</p>
                         </div>
                       </div>
+                    </div>
+                    <div className="rounded-md bg-black/20 p-3">
+                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
+                      <p className="text-[11px] text-white/85 leading-relaxed">If another business's texts ever get flagged for spam, your number and sending reputation stay completely unaffected — because it was never shared in the first place.</p>
                     </div>
                   </div>
                 </div>
