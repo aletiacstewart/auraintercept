@@ -302,55 +302,24 @@ const PERSONAL_ASSISTANT: AuditQuestion[] = [
 
 const HEALTHCARE: AuditQuestion[] = [
   {
-    id: 'hc_visit_volume',
-    question: 'About how many visits / sessions do you run per week?',
+    id: 'hc_service_location',
+    question: 'Where do you mostly deliver your services?',
     section: 'Industry Specifics',
     options: [
-      { label: 'Under 20', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
-      { label: '20-50', tierScores: { CORE: 70, BOOST: 85, PRO: 75, ELITE: 60 } },
-      { label: '50-150', tierScores: { CORE: 40, BOOST: 70, PRO: 90, ELITE: 80 } },
-      { label: '150+ / multi-clinician', tierScores: { CORE: 20, BOOST: 55, PRO: 80, ELITE: 95 } },
+      { label: 'At my business location only', tierScores: { CORE: 95, BOOST: 75, PRO: 45, ELITE: 30 } },
+      { label: 'At customer locations', tierScores: { CORE: 35, BOOST: 90, PRO: 95, ELITE: 90 } },
+      { label: 'Mix of both', tierScores: { CORE: 60, BOOST: 85, PRO: 85, ELITE: 80 } },
+      { label: 'Virtual / remote', tierScores: { CORE: 95, BOOST: 65, PRO: 45, ELITE: 35 } },
     ],
   },
   {
-    id: 'hc_intake_documentation',
-    question: 'How do you collect intake + consent documentation?',
-    description: 'Front Desk + Smart Forms handle digital intake',
+    id: 'hc_pricing_model',
+    question: 'How do you quote / price work today?',
     section: 'Industry Specifics',
     options: [
-      { label: 'Digital forms via our EHR / portal', tierScores: { CORE: 60, BOOST: 65, PRO: 70, ELITE: 75 } },
-      { label: 'Paper forms at first visit', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 75 } },
-      { label: 'Mix of digital + paper', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 78 } },
-    ],
-  },
-  {
-    id: 'hc_scheduling_complexity',
-    question: 'How complex is your scheduling?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Simple — single clinician / single location', tierScores: { CORE: 90, BOOST: 70, PRO: 50, ELITE: 35 } },
-      { label: 'Multiple clinicians, varying durations', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 80 } },
-      { label: 'In-home visits + route planning', tierScores: { CORE: 30, BOOST: 90, PRO: 90, ELITE: 85 } },
-    ],
-  },
-  {
-    id: 'hc_referral_followup',
-    question: 'How do you handle referral / new-patient follow-up?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Auto-respond + schedule fast', tierScores: { CORE: 60, BOOST: 65, PRO: 70, ELITE: 75 } },
-      { label: 'Manual call-back from front desk', tierScores: { CORE: 85, BOOST: 85, PRO: 80, ELITE: 75 } },
-      { label: 'Often falls through the cracks', tierScores: { CORE: 85, BOOST: 90, PRO: 92, ELITE: 90 } },
-    ],
-  },
-  {
-    id: 'hc_compliance_followup',
-    question: 'Do you have automated post-visit follow-up / outcome surveys?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Yes, fully automated', tierScores: { CORE: 55, BOOST: 60, PRO: 65, ELITE: 70 } },
-      { label: 'Manual phone calls when we can', tierScores: { CORE: 80, BOOST: 80, PRO: 80, ELITE: 80 } },
-      { label: 'No structured follow-up', tierScores: { CORE: 85, BOOST: 85, PRO: 88, ELITE: 90 } },
+      { label: 'Fixed pricing', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: 'Custom quotes per job', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 90 } },
+      { label: 'Subscriptions / retainers', tierScores: { CORE: 75, BOOST: 75, PRO: 75, ELITE: 70 } },
     ],
   },
 ];
@@ -375,17 +344,6 @@ const OTHER_FALLBACK: AuditQuestion[] = [
       { label: 'Fixed pricing', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
       { label: 'Custom quotes per job', tierScores: { CORE: 50, BOOST: 80, PRO: 90, ELITE: 90 } },
       { label: 'Subscriptions / retainers', tierScores: { CORE: 75, BOOST: 75, PRO: 75, ELITE: 70 } },
-    ],
-  },
-  {
-    id: 'other_phone_setup',
-    question: "What's your business phone setup today?",
-    section: 'Setup & Integrations',
-    options: [
-      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
-      { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
-      { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
-      { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
     ],
   },
 ];
