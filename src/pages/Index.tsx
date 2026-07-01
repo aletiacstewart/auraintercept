@@ -376,10 +376,10 @@ export default function Index() {
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "0 24px 56px", textAlign: "center" }}>
           <div style={{ marginBottom: 28 }}>
             <button
-              onClick={() => navigate('/auth?mode=company')}
+              onClick={() => navigate('/for-business')}
               style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
             >
-              Deploy Your AI Workforce
+              Start Here
             </button>
           </div>
 
