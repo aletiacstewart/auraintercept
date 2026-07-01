@@ -186,22 +186,13 @@ const RESTAURANTS: AuditQuestion[] = [
   },
   {
     id: 'rest_takeout_delivery_mix',
-    question: "What's your takeout / delivery mix?",
+    question: 'How do customers order takeout or delivery today?',
     description: 'Smart Link routes online orders to your existing apps',
     section: 'Industry Specifics',
     options: [
-      { label: 'Dine-in only', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
-      { label: 'Some takeout / a 3rd-party app or two', tierScores: { CORE: 90, BOOST: 70, PRO: 55, ELITE: 40 } },
-      { label: 'Heavy takeout + multiple delivery apps', tierScores: { CORE: 80, BOOST: 75, PRO: 70, ELITE: 60 } },
-    ],
-  },
-  {
-    id: 'rest_online_ordering',
-    question: 'How do customers order online today?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Our own online ordering system', tierScores: { CORE: 75, BOOST: 60, PRO: 55, ELITE: 50 } },
-      { label: 'Only 3rd-party (DoorDash / UberEats / etc.)', tierScores: { CORE: 90, BOOST: 70, PRO: 55, ELITE: 45 } },
+      { label: 'Dine-in only, no takeout/delivery', tierScores: { CORE: 90, BOOST: 70, PRO: 45, ELITE: 30 } },
+      { label: 'Our own online ordering system', tierScores: { CORE: 75, BOOST: 65, PRO: 60, ELITE: 55 } },
+      { label: 'Only 3rd-party apps (DoorDash / UberEats / etc.)', tierScores: { CORE: 90, BOOST: 72, PRO: 58, ELITE: 45 } },
       { label: 'Phone only — no online ordering', tierScores: { CORE: 95, BOOST: 75, PRO: 55, ELITE: 45 } },
     ],
   },
@@ -214,16 +205,6 @@ const RESTAURANTS: AuditQuestion[] = [
       { label: 'Reply quickly, ask actively', tierScores: { CORE: 60, BOOST: 55, PRO: 55, ELITE: 50 } },
       { label: 'We reply when we can', tierScores: { CORE: 80, BOOST: 75, PRO: 70, ELITE: 65 } },
       { label: 'Rarely reply, never ask', tierScores: { CORE: 90, BOOST: 80, PRO: 75, ELITE: 70 } },
-    ],
-  },
-  {
-    id: 'rest_waitlist_management',
-    question: 'How do you manage the waitlist on busy nights?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Dedicated waitlist app (Yelp Waitlist, etc.)', tierScores: { CORE: 70, BOOST: 65, PRO: 60, ELITE: 55 } },
-      { label: 'Pen & paper / verbal estimates', tierScores: { CORE: 90, BOOST: 75, PRO: 60, ELITE: 50 } },
-      { label: 'No waitlist — just first come first served', tierScores: { CORE: 85, BOOST: 65, PRO: 50, ELITE: 40 } },
     ],
   },
 ];
@@ -263,19 +244,9 @@ const BEAUTY_WELLNESS: AuditQuestion[] = [
     ],
   },
   {
-    id: 'bw_intake_forms',
-    question: 'How do you collect client intake forms / consent?',
-    section: 'Industry Specifics',
-    options: [
-      { label: 'Digital forms sent before the visit', tierScores: { CORE: 60, BOOST: 60, PRO: 60, ELITE: 60 } },
-      { label: 'Paper forms at the front desk', tierScores: { CORE: 90, BOOST: 80, PRO: 75, ELITE: 70 } },
-      { label: 'No formal intake', tierScores: { CORE: 95, BOOST: 85, PRO: 80, ELITE: 75 } },
-    ],
-  },
-  {
     id: 'bw_retail_inventory',
     question: 'Do you sell retail products on top of services?',
-    description: 'Billing (Elite) adds inventory + retail',
+    description: 'Billing (Pro) adds inventory + retail',
     section: 'Industry Specifics',
     options: [
       { label: 'Yes, retail is a big part of revenue', tierScores: { CORE: 50, BOOST: 65, PRO: 80, ELITE: 95 } },
