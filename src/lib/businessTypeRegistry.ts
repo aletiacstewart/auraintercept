@@ -13,6 +13,7 @@
  */
 
 import { BUSINESS_TYPE_TO_PROFILE } from './businessTypeProfileMap';
+import { INDUSTRY_CONTENT } from './industryMarketingContent';
 
 /** Map raw key (e.g. 'hvac contractor') to a human label. */
 function toLabel(key: string): string {
@@ -429,6 +430,10 @@ export const BUSINESS_TYPE_GROUPS: BusinessTypeGroup[] = CATEGORY_ORDER.map((cat
 export function getPackIdForBusinessType(input: string | null | undefined): string {
   if (!input) return 'default';
   const key = String(input).toLowerCase().trim();
+  // If input is already a known demo pack id (e.g. main-category demoPack
+  // from mainIndustryCategories), pass it through so newly-added packs like
+  // `cleaning_restoration` route to their own content.
+  if (INDUSTRY_CONTENT[key]) return key;
   return resolvePackId(key);
 }
 
