@@ -138,7 +138,7 @@ const agentCategories = [{
   neonRgb: '236,72,153',
   agents: [{
     name: 'Social Scheduler Agent',
-    description: 'Cross-platform scheduling, optimal timing, and auto-publishing',
+    description: 'Cross-platform scheduling, optimal timing, and auto-publishing via your own connected social account (Boost/Pro/Elite)',
     icon: Calendar
   }, {
     name: 'Social Analytics Agent',
@@ -208,13 +208,13 @@ const agentConsoles = [{
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media Console',
-  description: 'AI-generated multi-channel content with Manual Bridge posting across 6 platforms.',
+  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge, included on every tier. Want it fully automated? Social Scheduler (Boost/Pro/Elite) posts on your schedule using your own connected account.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
   tier: 'connect',
-  features: ['AI content generation', 'Manual Bridge posting', '6-platform support', 'Content scheduling']
+  features: ['AI content generation', 'Manual Bridge (all tiers)', 'Social Scheduler auto-post (Boost/Pro/Elite)', '6-platform support']
 }, {
   name: 'Creative & Web Presence Console',
   description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
@@ -594,7 +594,7 @@ export default function Index() {
               Choose Your Command Level
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
-              Pick your automation level. Bring your own voice, SMS, and payment accounts — billed directly by the provider.
+              Pick your automation level. Bring your own voice, SMS, email, research, payment, and social accounts — each billed directly by the provider, never marked up by us.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a complimentary audit to help determine which plans best fit your business needs →
@@ -790,9 +790,19 @@ export default function Index() {
               {/* 3rd-Party intro */}
               <div>
                 <h4 className="text-sm font-semibold text-white mb-1">3rd-Party Integrations &amp; Usage Fees</h4>
+                <p className="text-xs font-semibold text-primary mb-1.5">Your Accounts. Your Control. Your Protection.</p>
                 <p className="text-xs text-white/85 leading-relaxed">
-                  Bring your own provider accounts (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social). Each vendor bills you directly, pay-as-you-go — <span className="font-semibold text-white">including during your trial</span>. A valid credit card is required on every provider account. Vendor fees are set by the provider and may change at any time.
+                  You bring your own voice, SMS, email, research, payment, and social accounts — each billed directly by the provider. That's what keeps your number, your inbox, and your reputation completely isolated from every other business on Aura Intercept. We never resell, mark up, or absorb vendor charges.
                 </p>
+                <p className="text-[11px] text-white/70 leading-relaxed mt-1.5">
+                  A valid credit card is required on every provider account — <span className="font-semibold text-white">including during your trial</span>. Vendor fees are set by the provider and may change at any time.
+                </p>
+                <div className="mt-3 rounded-md border border-emerald-400/30 bg-emerald-500/5 p-3 flex items-start gap-2">
+                  <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-white/90 leading-relaxed">
+                    <span className="font-semibold text-emerald-300">🔒 Billed by your provider — never by Aura Intercept.</span> No markups, no hidden reseller fees. Most businesses spend <span className="font-semibold text-white">$30–$80/month total</span> across these accounts, on top of your subscription.
+                  </p>
+                </div>
               </div>
 
               {/* Why my own accounts? — collapsible explainer */}
@@ -836,9 +846,9 @@ export default function Index() {
                   <Shield className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                   <div className="w-full space-y-3">
                     <div>
-                      <h5 className="text-sm font-semibold text-warning">SMS / 10DLC Compliance — required for SMS</h5>
+                      <h5 className="text-sm font-semibold text-warning">📶 SMS System — Carrier Registration (10DLC)</h5>
                       <p className="text-[11px] text-white/85 leading-relaxed mt-1">
-                        10DLC is the US carrier standard for business SMS. We register your brand &amp; campaigns through SignalWire on your behalf. Unregistered messages are filtered or blocked.
+                        Carriers require every business to register before sending SMS — this is what keeps your appointment reminders and confirmations from getting flagged as spam or blocked outright. We handle the registration through SignalWire on your behalf.
                       </p>
                     </div>
 
@@ -846,13 +856,13 @@ export default function Index() {
                       <div className="rounded-md bg-black/20 p-3 space-y-1.5">
                         <p className="text-[11px] font-semibold text-warning uppercase tracking-wide">Pass-Through Fees</p>
                         <ul className="text-[11px] text-white/90 space-y-1 list-disc list-inside">
-                          <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span></li>
-                          <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span> (first 3 mo upfront)</li>
-                          <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission</li>
-                          <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises T-Mobile caps)</li>
-                          <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> (no SMS in 60 days)</li>
+                          <li>Brand registration — <span className="font-medium text-white">$4.50 one-time</span> (verifies your business to carriers)</li>
+                          <li>Campaign fee — <span className="font-medium text-white">$1.50–$30/mo</span>, first 3 months upfront (covers your specific use case)</li>
+                          <li>DCA vetting — <span className="font-medium text-white">$7.50</span> per submission (additional carrier verification step)</li>
+                          <li>Optional brand vetting — <span className="font-medium text-white">$40</span> (raises your T-Mobile sending limits)</li>
+                          <li>T-Mobile non-use fee — <span className="font-medium text-white">$250</span> if no SMS sent in 60 days (charged by T-Mobile, not us — easy to avoid)</li>
                         </ul>
-                        <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$42</span> to go live</p>
+                        <p className="text-[11px] text-white/70 pt-1">Typical all-in: <span className="font-medium text-white">$16–$44</span> to go live</p>
                       </div>
 
                       <div className="rounded-md bg-black/20 p-3 space-y-2">
@@ -866,6 +876,10 @@ export default function Index() {
                           <p className="text-[11px] text-white/80">EIN / Tax ID, legal business name, DBA (if applicable), LLC/Inc docs, brand website, opt-in/opt-out language, sample messages, and a help message.</p>
                         </div>
                       </div>
+                    </div>
+                    <div className="rounded-md bg-black/20 p-3">
+                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
+                      <p className="text-[11px] text-white/85 leading-relaxed">If another business's texts ever get flagged for spam, your number and sending reputation stay completely unaffected — because it was never shared in the first place.</p>
                     </div>
                   </div>
                 </div>
@@ -897,6 +911,7 @@ export default function Index() {
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
                 <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
                 <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
+                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if another business's emails ever get flagged for spam, your domain and email deliverability stay completely unaffected — because it was never shared in the first place.</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -943,12 +958,14 @@ export default function Index() {
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Send className="w-3.5 h-3.5 text-pink-400" />
-                  <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
+                  <span className="font-semibold text-xs text-pink-400">📣 Social Media Accounts</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-emerald-400 font-medium">OAuth — connect your existing pages</p>
-                <p className="text-[10px] text-white">Core: manual Bridge posting · Boost/Pro/Elite: automated via Social Scheduler (up to 6 platforms)</p>
-                <p className="text-[10px] text-white">Admin access to your business pages required</p>
+                <p className="text-[10px] text-white mb-1">Facebook, Instagram, TikTok, LinkedIn, Reddit</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own social scheduler account · billed directly by the provider</p>
+                <p className="text-[10px] text-white">Automated posting vendor is being finalized — pricing tiers announced at general availability.</p>
+                <p className="text-[10px] text-white"><span className="font-semibold">Core:</span> manual Bridge posting (copy &amp; post yourself) · <span className="font-semibold">Boost/Pro/Elite:</span> automated Social Scheduler — requires your own connected scheduler account (up to 6 platforms)</p>
+                <p className="text-[10px] text-white">OAuth-connect each platform through your scheduler account · API key configured during onboarding · Valid credit card required on your scheduler account · Admin access to your business pages required</p>
+                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if one connected page ever gets flagged by a platform, only that connection is affected — your other accounts and every other business on Aura Intercept stay completely unaffected.</p>
               </div>
 
 
