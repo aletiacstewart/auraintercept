@@ -594,7 +594,7 @@ export default function Index() {
               Choose Your Command Level
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
-              Pick your automation level. Bring your own voice, SMS, and payment accounts — billed directly by the provider.
+              Pick your automation level. Bring your own voice, SMS, email, research, payment, and social accounts — each billed directly by the provider, never marked up by us.
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
               We offer a complimentary audit to help determine which plans best fit your business needs →
