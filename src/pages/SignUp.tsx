@@ -45,6 +45,13 @@ type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 
 const VALID_MODES: AuthMode[] = ['platform_admin', 'company', 'employee', 'customer'];
 
+const TIER_OPTIONS = [
+  { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$398', annualTotal: '$4,771', savings: '$1,193',   color: 'teal',    popular: false },
+  { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,394', monthlyPrice: '$994',   annualPrice: '$795', annualTotal: '$9,542', savings: '$2,386', color: 'primary', popular: true  },
+  { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple',  popular: false },
+  { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber',   popular: false },
+] as const;
+
 export default function SignUp() {
   const [searchParams] = useSearchParams();
   
@@ -921,12 +928,7 @@ export default function SignUp() {
                   </div>
                 )}
                 <div className="space-y-1">
-                  {[
-                    { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$398', annualTotal: '$4,771', savings: '$1,193',   color: 'teal',   popular: false },
-                    { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,394', monthlyPrice: '$994',   annualPrice: '$795', annualTotal: '$9,542', savings: '$2,386', color: 'primary', popular: true  },
-                    { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple', popular: false },
-                    { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber', popular: false },
-                  ].map(t => {
+                  {TIER_OPTIONS.map(t => {
                     return (
                     <div
                       key={t.id}
@@ -1467,8 +1469,8 @@ export default function SignUp() {
                           className="w-full gradient-primary" 
                           disabled={isLoading || !termsAgreed || (mode === 'company' && (!setupAcknowledged.a2p || !setupAcknowledged.costs || !setupAcknowledged.knowledgeBase))}
                         >
-                          {isLoading ? 'Creating account...' : mode === 'company' 
-                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start 60-Day Live Trial')
+                          {isLoading ? 'Creating account...' : mode === 'company'
+                            ? (selectedTier ? `Subscribe to ${TIER_OPTIONS.find(t => t.id === selectedTier)?.name ?? 'Aura Elite'}` : 'Start 60-Day Live Trial')
                             : 'Create Account'}
                         </Button>
                         {mode === 'company' && (
