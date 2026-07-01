@@ -1,28 +1,54 @@
+# Fix Live Demo Industry Dropdown
 
-## Fix Industry Dropdown Selection Behavior
+Two bugs, both in the industry picker on `/for-business`.
 
-Refactor `src/components/marketing/IndustryDropdownPicker.tsx` so the main industry categories drive the Dynamic Demo page selection and sub-types are shown as an informational list only.
+## Bug 1 — Highlighted row text is invisible
 
-### Changes
+Cause: main-category rows in `IndustryDropdownPicker` use `text-primary` (cyan). When Radix highlights a row on hover/focus, the row background becomes cyan too, so the label disappears against it.
 
-1. **Main category = the selectable item (cyan header row)**
-   - Replace the current pattern (cyan `SelectLabel` header + separate "All X — see demo" `SelectItem`) with a single selectable `SelectItem` per main category, styled as the cyan header with icon + name.
-   - Selecting it sets the demo pack to that main category's `demoPack`, exactly like before we added the 185 sub-categories.
+Fix in `src/components/marketing/IndustryDropdownPicker.tsx`:
+- Replace the always-cyan label with a class that flips to a dark/readable color when the item is highlighted or selected:
+  `text-primary data-[highlighted]:text-primary-foreground data-[state=checked]:text-primary-foreground`
+- Apply the same `data-[highlighted]:text-primary-foreground` treatment to the leading `<Icon />` so it stays visible.
+- Also darken the chevron/checkmark contrast the same way.
 
-2. **Sub-types = non-selectable list**
-   - Render each sub-type as a plain `<div>` (not a `SelectItem`) under its main category, indented, muted text, `pointer-events-none` so it can't be clicked/highlighted.
-   - Purely informational — shows users what business types fall under the main category.
+## Bug 2 — Selecting a different main category doesn't change the demo page
 
-3. **Remove "— see demo" text** from every row.
+Cause: `MAIN_INDUSTRY_CATEGORIES` has 25 entries but only ~15 unique `demoPack` ids (e.g. Cleaning & Restoration, Moving & Junk Removal, Specialty Trades, Delivery all map to `handyman`; Plumbing + Utility & Infrastructure both map to `plumbing`; Real Estate + Insurance both to `real_estate`; Health & Wellness + Event both to `beauty_wellness`; Senior & Lifestyle to `home_health`; Personal Assistants + In-Home Personal Services both to `personal_assistant`; B2B Pro Services to `real_estate`).
 
-4. **Trigger label** always shows the currently selected main category name + emoji (no sub-type label needed since sub-types are no longer selectable).
+Because `ForBusiness.tsx` keys off `demoPack`, picking any of those siblings produces the same page — matching what the user is seeing.
 
-5. **Simplify value encoding**
-   - Value = main category name only (drop `sub::` encoding entirely).
-   - `onBusinessTypeChange` (if still passed by parent) fires with `(null, categoryName)` since only main categories are selectable.
+Fix by giving every main category a unique pack id:
 
-### Result
-- Cyan main category rows in the dropdown are clickable and swap the Dynamic Demo page per selection (restoring pre-185-subcategory behavior).
-- Sub-types render below each main category as a read-only reference list.
-- "— see demo" text is gone.
-- No changes needed to `ForBusiness.tsx` — it already reacts to `onChange(packId)`.
+1. **Add new packs to `src/lib/industryMarketingContent.ts`** (using the existing `make(...)` helper) for the categories that currently double up:
+   - `cleaning_restoration` (Cleaning & Restoration)
+   - `moving_junk` (Moving & Junk Removal)
+   - `specialty_trades` (Specialty Trades)
+   - `delivery_logistics` (Delivery & On-Site Logistics)
+   - `utility_infrastructure` (Utility & Infrastructure)
+   - `insurance_assessment` (Insurance & Assessment)
+   - `senior_lifestyle` (Senior & Lifestyle)
+   - `event_temporary` (Event & Temporary)
+   - `in_home_personal` (In-Home Personal Services — separate from `personal_assistant`)
+   - `b2b_pro_services` (B2B Pro Services)
+   - `home_inspection` (Home Inspection & Safety — currently reuses `security_systems`)
+   - `pet_services` (Pet & Animal Services — currently reuses `veterinary`)
+   - `health_wellness_inhome` (Health & Wellness — currently reuses `beauty_wellness`)
+
+   Each new entry gets a distinct label, emoji, hero copy, KPIs, sample leads, and colors so the Dynamic Demo page visibly changes. Content will be adapted from the closest existing pack.
+
+2. **Update `src/lib/mainIndustryCategories.ts`** so every main category points to its own unique `demoPack` (the new ids above; leave uniquely-mapped ones untouched).
+
+3. **Sanity-check consumers** that key off `demoPack`:
+   - `ForBusiness.tsx` (`getPackIdForBusinessType`) — pure lookup; already unique-safe.
+   - `SignUp.tsx` industry dropdown — writes `industry_vertical`; new ids will be persisted as-is (backend column is free-text, no schema change).
+   - `useIndustryPack` / `industryPacks` — falls back to `default` for unknown ids; no crash. Add lightweight alias mapping in `useIndustryPack` so the new marketing-only packs still resolve to a sensible operational template (e.g. `cleaning_restoration → handyman`, `utility_infrastructure → plumbing`, `insurance_assessment → real_estate`, etc.) until dedicated packs exist. This keeps dashboards/consoles working without expanding scope.
+
+4. **No changes** to sub-type behavior (still read-only) or to the trigger label logic — `findMainCategoryByPack` will now always resolve correctly since every pack id is unique.
+
+## Verification
+
+- Load `/for-business`, open the picker, hover each main row → label stays readable (light text on cyan bg).
+- Select Plumbing → Utility & Infrastructure → Cleaning & Restoration → Moving & Junk Removal in sequence. Confirm hero headline, emoji, KPI cards, and sample-lead list all change each time.
+- Confirm `?industry=` URL param updates with the new pack id and survives reload.
+- Confirm SignUp dropdown still submits (industry_vertical accepts the new strings).
