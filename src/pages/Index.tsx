@@ -790,9 +790,19 @@ export default function Index() {
               {/* 3rd-Party intro */}
               <div>
                 <h4 className="text-sm font-semibold text-white mb-1">3rd-Party Integrations &amp; Usage Fees</h4>
+                <p className="text-xs font-semibold text-primary mb-1.5">Your Accounts. Your Control. Your Protection.</p>
                 <p className="text-xs text-white/85 leading-relaxed">
-                  Bring your own provider accounts (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social). Each vendor bills you directly, pay-as-you-go — <span className="font-semibold text-white">including during your trial</span>. A valid credit card is required on every provider account. Vendor fees are set by the provider and may change at any time.
+                  You bring your own voice, SMS, email, research, payment, and social accounts — each billed directly by the provider. That's what keeps your number, your inbox, and your reputation completely isolated from every other business on Aura Intercept. We never resell, mark up, or absorb vendor charges.
                 </p>
+                <p className="text-[11px] text-white/70 leading-relaxed mt-1.5">
+                  A valid credit card is required on every provider account — <span className="font-semibold text-white">including during your trial</span>. Vendor fees are set by the provider and may change at any time.
+                </p>
+                <div className="mt-3 rounded-md border border-emerald-400/30 bg-emerald-500/5 p-3 flex items-start gap-2">
+                  <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-white/90 leading-relaxed">
+                    <span className="font-semibold text-emerald-300">🔒 Billed by your provider — never by Aura Intercept.</span> No markups, no hidden reseller fees. Most businesses spend <span className="font-semibold text-white">$30–$80/month total</span> across these accounts, on top of your subscription.
+                  </p>
+                </div>
               </div>
 
               {/* Why my own accounts? — collapsible explainer */}
