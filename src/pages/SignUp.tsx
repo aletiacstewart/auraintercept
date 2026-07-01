@@ -126,10 +126,7 @@ export default function SignUp() {
 
   // Pre-select tier and industry from query params (deep-link from /for-business)
   useEffect(() => {
-    if (isLiveDemoFlow) {
-      // Live Demo always runs on Elite for the 60-day trial.
-      setSelectedTier('command');
-    } else if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
+    if (tierParam && ['starter', 'connect', 'performance', 'command'].includes(tierParam)) {
       setSelectedTier(tierParam as 'starter' | 'connect' | 'performance' | 'command');
     }
     if (industryParam) {
@@ -862,7 +859,7 @@ export default function SignUp() {
                       <h3 className="text-sm font-bold text-foreground">60-Day Live Trial — Full Access</h3>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your 60-Day Live Demo runs on <span className="font-semibold text-foreground">Aura Elite</span> by default — every agent, console, and integration unlocked. <span className="font-semibold text-foreground">Downgrade to Core, Boost, or Pro anytime before day 60</span>, or your card is charged at the Elite rate.
+                      Your 60-Day Live Demo runs on <span className="font-semibold text-foreground">the plan you pick</span> — every agent, console, and integration is unlocked for the full 60 days on any tier. <span className="font-semibold text-foreground">Switch tiers or cancel anytime before day 60.</span>
                     </p>
                     <p className="text-[11px] text-foreground/80 leading-relaxed mt-2">
                       <span className="font-semibold text-foreground">First 30 days = concierge onboarding</span> (setup, KB, 3rd-party activation, training). <span className="font-semibold text-foreground">Remaining 30 days = fully live</span>.
@@ -915,11 +912,11 @@ export default function SignUp() {
                 {isLiveDemoFlow && (
                   <div className="p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 text-[11px] leading-snug">
                     <p className="font-semibold text-amber-300 mb-0.5">
-                      🚀 Your 60-Day Live Demo runs on Aura Elite
+                      🚀 Pick the plan that fits — your 60-Day Live Demo runs on it
                     </p>
                     <p className="text-amber-200/90">
-                      Every agent, console, and integration unlocked for 60 days — no credit card charged during the trial.
-                      Downgrade to Core, Boost, or Pro (or cancel) anytime before day 60.
+                      Every agent, console, and integration is unlocked for 60 days on any tier — no credit card charged during the trial.
+                      Switch tiers or cancel anytime before day 60.
                     </p>
                   </div>
                 )}
@@ -930,17 +927,13 @@ export default function SignUp() {
                     { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple', popular: false },
                     { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber', popular: false },
                   ].map(t => {
-                    const lockedOut = isLiveDemoFlow && t.id !== 'command';
                     return (
                     <div
                       key={t.id}
                       onClick={() => {
-                        if (isLiveDemoFlow) return;
                         setSelectedTier(selectedTier === t.id ? null : t.id as 'starter' | 'connect' | 'performance' | 'command');
                       }}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded border transition-all relative ${
-                        lockedOut ? 'opacity-50 cursor-not-allowed border-border/30 bg-card/40' :
-                        isLiveDemoFlow ? 'cursor-default border-amber-500 bg-amber-500/10' :
                         t.popular
                           ? selectedTier === t.id
                             ? 'border-primary bg-primary/10'
@@ -960,11 +953,8 @@ export default function SignUp() {
                         </div>
                         <span className={`text-xs font-semibold truncate ${t.popular ? 'text-foreground' : 'text-card-foreground'}`}>{t.name}</span>
                         {t.popular && <span className="text-[8px] px-1 py-0.5 rounded gradient-primary text-primary-foreground font-medium shrink-0">Popular</span>}
-                        {isLiveDemoFlow && t.id === 'command' && (
+                        {isLiveDemoFlow && selectedTier === t.id && (
                           <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500 text-amber-950 font-bold shrink-0">YOUR TRIAL</span>
-                        )}
-                        {lockedOut && (
-                          <span className="text-[8px] px-1 py-0.5 rounded bg-muted text-muted-foreground font-medium shrink-0">Switch after day 60</span>
                         )}
                         <span className="text-[10px] text-muted-foreground truncate hidden sm:inline">— {t.sub}</span>
                       </div>
