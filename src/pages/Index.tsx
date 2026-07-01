@@ -911,6 +911,7 @@ export default function Index() {
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
                 <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
                 <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
+                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if another business's emails ever get flagged for spam, your domain and email deliverability stay completely unaffected — because it was never shared in the first place.</p>
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -957,12 +958,14 @@ export default function Index() {
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Send className="w-3.5 h-3.5 text-pink-400" />
-                  <span className="font-semibold text-xs text-pink-400">Social Media Accounts</span>
+                  <span className="font-semibold text-xs text-pink-400">📣 Social Media Accounts</span>
                 </div>
-                <p className="text-[10px] text-white mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-[10px] text-emerald-400 font-medium">OAuth — connect your existing pages</p>
-                <p className="text-[10px] text-white">Core: manual Bridge posting · Boost/Pro/Elite: automated via Social Scheduler (up to 6 platforms)</p>
-                <p className="text-[10px] text-white">Admin access to your business pages required</p>
+                <p className="text-[10px] text-white mb-1">Facebook, Instagram, TikTok, LinkedIn, Reddit</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own social scheduler account · billed directly by the provider</p>
+                <p className="text-[10px] text-white">Automated posting vendor is being finalized — pricing tiers announced at general availability.</p>
+                <p className="text-[10px] text-white"><span className="font-semibold">Core:</span> manual Bridge posting (copy &amp; post yourself) · <span className="font-semibold">Boost/Pro/Elite:</span> automated Social Scheduler — requires your own connected scheduler account (up to 6 platforms)</p>
+                <p className="text-[10px] text-white">OAuth-connect each platform through your scheduler account · API key configured during onboarding · Valid credit card required on your scheduler account · Admin access to your business pages required</p>
+                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if one connected page ever gets flagged by a platform, only that connection is affected — your other accounts and every other business on Aura Intercept stay completely unaffected.</p>
               </div>
 
 
