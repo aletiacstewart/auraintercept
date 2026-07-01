@@ -138,7 +138,7 @@ const agentCategories = [{
   neonRgb: '236,72,153',
   agents: [{
     name: 'Social Scheduler Agent',
-    description: 'Cross-platform scheduling, optimal timing, and auto-publishing',
+    description: 'Cross-platform scheduling, optimal timing, and auto-publishing via your own connected social account (Boost/Pro/Elite)',
     icon: Calendar
   }, {
     name: 'Social Analytics Agent',
@@ -208,13 +208,13 @@ const agentConsoles = [{
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media Console',
-  description: 'AI-generated multi-channel content with Manual Bridge posting across 6 platforms.',
+  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge, included on every tier. Want it fully automated? Social Scheduler (Boost/Pro/Elite) posts on your schedule using your own connected account.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
   tier: 'connect',
-  features: ['AI content generation', 'Manual Bridge posting', '6-platform support', 'Content scheduling']
+  features: ['AI content generation', 'Manual Bridge (all tiers)', 'Social Scheduler auto-post (Boost/Pro/Elite)', '6-platform support']
 }, {
   name: 'Creative & Web Presence Console',
   description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
