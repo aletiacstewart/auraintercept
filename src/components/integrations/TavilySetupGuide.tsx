@@ -17,7 +17,7 @@ export function TavilySetupGuide() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full">
           {/* Step 1: What is Tavily */}
           <AccordionItem value="step-1">
             <AccordionTrigger className="text-sm">

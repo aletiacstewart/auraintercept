@@ -46,7 +46,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       </TabsList>
 
       <TabsContent value="revenue" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="revenue-analysis" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -81,7 +81,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       </TabsContent>
 
       <TabsContent value="performance" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="performance-report" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       </TabsContent>
 
       <TabsContent value="insights" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="insights-report" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       </TabsContent>
 
       <TabsContent value="analytics" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="all-revenue" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">

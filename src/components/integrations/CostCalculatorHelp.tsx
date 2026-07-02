@@ -28,7 +28,7 @@ export function CostCalculatorHelp({ totalReminders, appointments, avgTransactio
   };
 
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion type="multiple" className="w-full">
       <AccordionItem value="help" className="border rounded-lg bg-muted/30">
         <AccordionTrigger className="px-4 hover:no-underline">
           <div className="flex items-center gap-2 text-sm font-medium">

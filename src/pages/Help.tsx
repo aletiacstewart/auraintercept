@@ -396,7 +396,7 @@ export default function Help() {
                       <AlertCircle className="w-5 h-5 text-destructive" />
                       Troubleshooting
                     </h3>
-                    <Accordion type="single" collapsible className="ml-7">
+                    <Accordion type="multiple" className="ml-7">
                       <AccordionItem value="mic-permissions">
                         <AccordionTrigger>Microphone not working?</AccordionTrigger>
                         <AccordionContent>
@@ -628,7 +628,7 @@ export default function Help() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
+                  <Accordion type="multiple" className="w-full">
                     {/* Getting Started */}
                     <AccordionItem value="trial">
                       <AccordionTrigger>

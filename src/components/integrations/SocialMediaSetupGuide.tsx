@@ -563,7 +563,7 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
           </ul>
         </div>
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full">
           {config.steps.map((step, index) => (
             <AccordionItem key={index} value={`step-${index + 1}`}>
               <AccordionTrigger className="text-sm">

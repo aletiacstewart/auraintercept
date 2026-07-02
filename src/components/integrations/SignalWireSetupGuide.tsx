@@ -53,7 +53,7 @@ export function SignalWireSetupGuide() {
         </Alert>
 
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full">
           {/* Step 1: A2P 10DLC Overview */}
           <AccordionItem value="step-1">
             <AccordionTrigger className="text-sm">

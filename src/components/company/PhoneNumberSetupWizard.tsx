@@ -286,7 +286,7 @@ export function PhoneNumberSetupWizard({ signalWireNumber, onSelect, selectedOpt
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="multiple" className="w-full">
               {CARRIER_INSTRUCTIONS.conditional_forwarding.map((carrier, idx) => (
                 <AccordionItem key={idx} value={`cfna-${idx}`}>
                   <AccordionTrigger className="text-sm">{carrier.carrier}</AccordionTrigger>
@@ -403,7 +403,7 @@ export function PhoneNumberSetupWizard({ signalWireNumber, onSelect, selectedOpt
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="multiple" className="w-full">
               {CARRIER_INSTRUCTIONS.unconditional_forwarding.map((carrier, idx) => (
                 <AccordionItem key={idx} value={`ucf-${idx}`}>
                   <AccordionTrigger className="text-sm">{carrier.carrier}</AccordionTrigger>

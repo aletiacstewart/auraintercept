@@ -45,7 +45,7 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
 
       {/* Sales Tab */}
       <TabsContent value="sales" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="leads" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
 
       {/* Appointments Tab */}
       <TabsContent value="appointments" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="appointments-section" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
 
       {/* Inventory Tab */}
       <TabsContent value="inventory" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="inventory-items" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
 
       {/* People Tab */}
       <TabsContent value="people" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="companies" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
 
       {/* All Business Ops Tab */}
       <TabsContent value="all" className="mt-6">
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="multiple" className="space-y-4">
           <AccordionItem value="all-leads" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
