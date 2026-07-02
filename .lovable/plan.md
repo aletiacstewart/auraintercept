@@ -1,71 +1,69 @@
-## Scope
+## Goal
 
-Three surfaces render the onboarding workbook. All will be updated together so the online form, the emailed workbook PDF, and the downloadable Company Onboarding PDF stay in sync:
+Full re-audit of the platform against the four uploaded docs (homepage content pack, corrected audit questions, onboarding workbook revisions, social posting spec). Sweep every surface — pages, consoles, PDFs, help/guides, tooltips, video scripts, edge-function shared strings — for drift. Add a regression test so forbidden strings can't return. Defer the Upload-Post build.
 
-1. `src/components/documentation/CompanyOnboardingPDF.tsx` — the full printable workbook (industry list, worksheets, KB, employees, ToS, carrier guide, sign-off).
-2. `supabase/functions/_shared/onboarding-workbook-sections.ts` — the shorter workbook attached to the welcome email (Section 6 vendor list, section headings).
-3. `src/components/onboarding/CompanyOnboardingForm.tsx` — the online form; contains a `mailto:` and industry pickers.
-4. `src/components/audit/AgentOpportunityAudit.tsx` — audit tier-driver copy embedded in the workbook.
+## Forbidden-string list (single source of truth for the sweep)
 
-No schema, RLS, or backend logic changes.
+Any hit against these gets fixed:
 
----
+- `Healthcare` / `Home Health` / `Physical Therapy` / `Occupational Therapy` / `Hospice` / `Veterinary` / `Medical Practice` as a selectable industry (component pickers, PDFs, help copy, seed data, tests).
+- `Port my existing number` / `port my existing business number` (phone-setup answer options only — porting isn't offered).
+- `Google Workspace` referenced as a paid vendor (must be "Google Account — free, OAuth" wherever it's in a vendor/pricing context; leave alone in unrelated prose).
+- `onboarding@auraintercept` (must be `ai@auraintercept.ai`).
+- `[VENDOR NAME]` placeholder from the Social Media card / Scheduler copy (leave as-is per your call — will add a visible "vendor TBD" comment near each so future me knows why).
+- Old tier labels: `Marketing (Pro+)` in social/marketing driver text → `Social Media (Boost+)` or `Outreach & Sales (Pro+)` per doc #2; `Billing (Elite)` → `Billing (Pro)`.
+- `bundled` / `overage` / `absorbed` in third-party fee context.
+- `24 hour Demo` / `14 day trial` / `48hrs` timeline copy (should all be 60-day live trial).
+- `minutes, not months` steps copy (should be "days, not months" — steps section is currently removed; catch any reintroduction).
 
-## Fixes (mapped to the revision doc)
+## Surfaces to sweep
 
-### 1. Industry list — remove 6 medical verticals
-In `CompanyOnboardingPDF.tsx` (line ~392) replace the parenthetical industry list with the 17-industry list from the homepage (drops Home Health, Physical Therapy, Occupational Therapy, Hospice, Veterinary, Medical Practice; renames "Solar" → "Solar Energy"). Mirror the same list anywhere it appears in the online form's industry picker.
+**Marketing pages**
+- `src/pages/Index.tsx`, `ForBusiness.tsx`, `Auth.tsx`, `SignUp.tsx`, `SignIn.tsx`, `OpportunityAudit.tsx`, `AuditReport.tsx`, `KnowledgeBase.tsx`, `Blog.tsx`, `Calculators.tsx`
+- All `src/components/marketing/**` (industry picker, hero, integrations panel, etc.)
 
-### 2. Google Workspace → free Google Account
-In the PDF's "3rd-Party Account Worksheet" (line ~1048) remove the `Google Workspace` row and the `Google Workspace` chip in the account-owner-email grid (line ~1079). Add a Communication Routing clarifier above the Email Aliases block: *"These addresses send and receive through your Resend account on your own domain — no separate email hosting account needed."* Leave ToS §4, Key Reminders, Signature Acknowledgement, and Sign-Off unchanged.
+**Onboarding & audit surfaces**
+- `src/components/onboarding/CompanyOnboardingForm.tsx`
+- `src/components/audit/**` (`types.ts`, `AgentOpportunityAudit.tsx`, review question wording matches doc #2 verbatim)
+- `src/lib/auditIndustryQuestions.ts`
 
-Also drop the `Google Workspace account email` line from `_shared/onboarding-workbook-sections.ts` Section 6 (it currently doesn't list Workspace — verify and add only the "Google account for Calendar (free, OAuth)" as an unchecked one-liner).
+**PDF exporters** (visual QA each after edits by rendering with pdfmake/react-pdf)
+- `src/components/documentation/CompanyOnboardingPDF.tsx`
+- `src/components/documentation/IntegrationOnboardingPDF.tsx`
+- `src/components/documentation/PlatformFAQPDF.tsx`
+- Every other file in `src/components/documentation/` (checklists, ToS, video prompts, marketing pack, etc.)
 
-### 3. Delete the ElevenLabs API Key field
-Remove line ~687 in `CompanyOnboardingPDF.tsx` (`ElevenLabs API Key:` label + input). Keep the other non-secret account fields.
+**Help / guides / tooltips / scripts**
+- `src/lib/howToUseContent.ts`, `industryHelpContent.ts`, `helpSystemPrompt.ts`, `featureTooltips.ts`, `receptionistScripts.ts`, `campaignTemplates.ts`, `industryVoiceGreetings.ts`, `industryRolePreview.ts`
+- Locale JSON: `src/locales/{en,es}/*.json`
+- Video prompt page: `src/pages/VideoPromptsPage.tsx`
 
-### 4. Merge the two vendor worksheets
-Delete the standalone `3rd-Party Account Worksheet` block in the PDF and keep a single worksheet in Section 4 (Integration Requirements) with columns **Have It | Need Help Setting Up | Card on File | N/A** and rows: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Google Account (free), Social Media Accounts. Append the "Account Owner / Admin Email per Provider" table underneath the merged worksheet.
+**Edge-function shared strings**
+- `supabase/functions/_shared/onboarding-workbook-sections.ts`
+- Any function that emails workbooks, sends onboarding reminders, or references the vendor list.
 
-### 5. Consolidate employee sections
-Keep `Employee & Technician Roster` (richer). Delete `Section 6: Employee Accounts` (line ~793). Add a one-line clarifier to the Roster header: *"Everyone who needs a login — field or office."*
+**Registries / seed data**
+- `src/lib/mainIndustryCategories.ts`, `businessTypeRegistry.ts`, `businessTypeProfileMap.ts`, `industryIdAliases.ts` — confirm 17 industries only (healthcare cluster removed).
+- Any test fixture or demo seeder that still enumerates removed verticals.
 
-### 6. Consolidate document checklists
-Keep the Master Document & Asset Checklist. Replace the sign-off page's 11-item "Attachments included" list with a single line: *"Confirm every item on the Master Document & Asset Checklist is attached before signing below."*
+## Regression test
 
-### 7. Renumber sections & pages
-After the above deletions/merges, renumber sections sequentially (1..N, no gaps, no reused numbers, no "Section 3" skip). Fold the embedded audit's `Section A / C / D…` into the workbook's numbering scheme. Re-order so Knowledge Base Setup follows Integration Requirements. React-PDF handles page numbers automatically; verify no hard-coded "Page X" strings remain.
+Add `src/lib/__tests__/contentDriftGuard.test.ts`:
+- Load key doc-generator modules + a rendered sample of the two big PDFs (as text via a text-only render helper).
+- Assert none of the forbidden strings appear.
+- Runs under `bunx vitest run` in CI so future edits can't silently reintroduce drift.
 
-### 8. Audit tier-label + reframing
-In `AgentOpportunityAudit.tsx` (and any mirrored copy inside `CompanyOnboardingPDF.tsx`):
-- "Marketing (Pro+) auto-creates and posts content" → **"Social Media (Boost+) auto-creates and posts content"**
-- "Marketing (Pro+) includes Campaign + Outreach automation" → **"Outreach & Sales (Pro+) includes Campaign + Outreach automation"**
+## Explicitly out of scope
 
-Reframing: keep the questions but change the intro/driver copy from "which tier fits" to "how to configure your agents" (customer, not prospect). One-paragraph header rewrite only.
+- Building the Upload-Post / Ayrshare social posting module (deferred by your call). Social Media card copy stays with `[VENDOR NAME]` placeholder; will add an inline `TODO(social-vendor):` code comment next to each so it's easy to find when you're ready.
 
-### 9. Extract carrier guide to appendix + add scenario field
-Before the carrier instructions add a required checkbox group: **Immediate / After-hours only / Busy / Unreachable / Combination**. Move the 12 carrier-specific step-by-step pages to an "Appendix A — Carrier Forwarding Codes" at the end of the PDF, keeping the "My carrier" capture field inline and referencing the appendix by carrier name.
+## Deliverable per surface
 
-### 10. Standardize social platform list
-Use one canonical list everywhere in the workbook & audit: **Facebook, Instagram, LinkedIn, TikTok** (matches homepage "up to 6 platforms, expanding" copy). Remove X / YouTube / GBP / Reddit from the Social Accounts capture page in the PDF.
-
-### 11. Porting vs. forwarding
-Add a top-level phone-setup toggle to the PDF: **[ ] Forward existing number to my new Aura number  [ ] Port my existing number into Aura**. If Port is selected, present a short porting sub-section (current carrier, account #, PIN, billing-name/address, LOA signature line). Forwarding branch continues to the (now-appendix) carrier codes.
-
-### 12. Standardize outbound email to `ai@auraintercept.ai`
-- `CompanyOnboardingPDF.tsx` line ~898 and ~1558: `onboarding@auraintercept.ai` → `ai@auraintercept.ai`.
-- `CompanyOnboardingForm.tsx` line ~251: `onboarding@auraintercept.com` → `ai@auraintercept.ai` (also fixes wrong TLD).
-- Grep the repo for any remaining `onboarding@auraintercept` and replace.
-
----
+For every file changed: one focused patch + a note in the final summary listing what forbidden strings I found there. If a surface has zero hits, I'll say so explicitly rather than silently skipping it, so you can trust the audit was complete.
 
 ## Verification
 
-- `tsgo` typecheck.
-- Manually render the PDF via the existing Export Documentation route and skim for: 17-industry list, no ElevenLabs key field, single merged vendor worksheet, single employee roster, sequential section numbers, appendix at the end, updated audit tier labels, `ai@auraintercept.ai` everywhere.
-- Confirm the emailed workbook (shared sections file) reflects the merged vendor list and no ElevenLabs key line.
-
-## Out of scope
-
-- Standalone Free Audit PDF healthcare-cluster removal (called out in #1 as a companion fix in a separate doc) — handle in a follow-up unless you want it in this pass.
-- Picking the final social-posting vendor (#10 assumes FB/IG/LI/TikTok per current homepage).
+- `bunx tsgo` clean.
+- New `contentDriftGuard` vitest passes.
+- Render `CompanyOnboardingPDF` and `IntegrationOnboardingPDF` to images, spot-check the pages that changed (industry list, vendor worksheet, appendix, sign-off).
+- Grep sweep re-run at the end to confirm zero remaining hits on the forbidden-string list.

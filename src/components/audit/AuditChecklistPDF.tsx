@@ -450,14 +450,7 @@ const ThirdPartyPage = ({ tier }: { tier: TierType }) => {
 const phoneSteps = (answer?: string): string[] => {
   if (!answer) return [
     'Aura will help you choose the best path during your guided launch.',
-    'Most companies decide between porting an existing number or getting a new SignalWire number.',
-  ];
-  if (answer.includes('port')) return [
-    'During launch we send you a Letter of Authorization (LOA) to port your existing number.',
-    'You sign and return it (about 5 minutes). Carrier port typically completes in 5-10 business days.',
-    'During the port, we forward calls to a temporary number so you never miss a call.',
-    'Once ported, your existing number rings into Aura Front Desk 24/7.',
-    'For SMS, we register your number with 10DLC (US business texting compliance) - we handle the paperwork.',
+    'Most companies either get a new SignalWire number or forward calls from their current line.',
   ];
   if (answer.includes('new business number')) return [
     'You pick the area code (and optionally a vanity number) during onboarding.',
