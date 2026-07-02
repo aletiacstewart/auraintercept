@@ -95,7 +95,7 @@ function ClipCard({ clip, sectionColor, sectionBorderColor }: { clip: Clip; sect
   );
 }
 
-export default function VideoPromptsPage() {
+export default function VideoPromptsPage({ embedded }: { embedded?: boolean } = {}) {
   const [copiedAll, setCopiedAll] = useState(false);
 
   const handleCopyAll = () => {
@@ -110,10 +110,9 @@ export default function VideoPromptsPage() {
     setTimeout(() => setCopiedAll(false), 2000);
   };
 
-  return (
-    <DashboardLayout>
-      <PageContainer>
-        <PageHeader
+  const body = (
+    <>
+      <PageHeader
           icon={Clapperboard}
           title="Promo Video Prompts"
           description="34 AI video generation prompts for Runway, Sora, Kling, and similar tools. Each clip includes a video prompt, 8-second audio script, and graphic image prompt."
@@ -209,7 +208,12 @@ export default function VideoPromptsPage() {
             </div>
           ))}
         </div>
-      </PageContainer>
+    </>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>
+      <PageContainer>{body}</PageContainer>
     </DashboardLayout>
   );
 }
