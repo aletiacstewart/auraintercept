@@ -30,6 +30,7 @@ import { getPageHeader } from '@/lib/industryNavLabels';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { CampaignSeriesWizard } from '@/components/marketing/CampaignSeriesWizard';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
@@ -429,10 +430,14 @@ export default function Campaigns() {
           </div>
         ) : campaigns?.length === 0 ? (
           <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium">No campaigns yet</h3>
-              <p className="text-muted-foreground text-sm">Create your first marketing campaign</p>
+            <CardContent className="py-6">
+              <AuraEmptyState
+                icon={Megaphone}
+                title="No campaigns yet"
+                description="Create your first marketing campaign to reach customers by email or SMS."
+                actionLabel="New campaign"
+                onAction={() => setDialogOpen(true)}
+              />
             </CardContent>
           </Card>
         ) : (
