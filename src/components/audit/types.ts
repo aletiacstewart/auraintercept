@@ -201,7 +201,6 @@ export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
     description: 'We will tailor your phone setup steps in your PDF',
     section: 'Setup & Integrations',
     options: [
-      { label: 'Port my existing business number in', tierScores: { CORE: 85, BOOST: 85, PRO: 82, ELITE: 80 } },
       { label: 'Get me a new business number', tierScores: { CORE: 90, BOOST: 85, PRO: 80, ELITE: 78 } },
       { label: 'Forward calls from my current line', tierScores: { CORE: 80, BOOST: 80, PRO: 78, ELITE: 75 } },
       { label: 'No business line yet — just my cell', tierScores: { CORE: 92, BOOST: 88, PRO: 80, ELITE: 75 } },
