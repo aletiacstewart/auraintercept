@@ -80,12 +80,13 @@ const COST_ITEMS: CostItem[] = [
     learnMoreUrl: 'https://tavily.com/#pricing',
   },
   {
-    id: 'social',
+    id: 'upload-post',
     icon: <Share2 className="h-4 w-4 text-pink-500" />,
-    name: 'Social Media APIs',
-    purpose: 'Social Posting (required only if using social publishing)',
-    estimatedCost: 'Your own business pages + API credentials · any platform fees billed directly by each network',
+    name: 'Upload-Post.com',
+    purpose: 'Automated multi-platform social posting (Copy & Post is included on every tier with no setup — Upload-Post is only needed if you want Aura to schedule and publish automatically to up to 6 platforms per social set).',
+    estimatedCost: 'Your own Upload-Post account · from ~$9/mo (1 social set) up to ~$99/mo · billed directly by Upload-Post to your card, separate from your Aura plan',
     required: false,
+    learnMoreUrl: 'https://www.upload-post.com',
   },
 ];
 
@@ -218,7 +219,7 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
                 </Badge>
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
-                We create and configure each 3rd-party account (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) on your behalf using your login and credit card. You remain the account owner and billing contact at every provider. Includes onboarding call + AI knowledge base setup.
+                We create and configure each 3rd-party account (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and Upload-Post if you want automated social posting) on your behalf using your login and credit card. You remain the account owner and billing contact at every provider. Includes onboarding call + AI knowledge base setup.
               </p>
               <p className="text-[10px] text-muted-foreground/70 mt-1 italic">
                 ✦ You can also purchase Concierge Onboarding later from your dashboard if you decide you need it.
@@ -234,7 +235,7 @@ export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfi
             you place on file with them, in addition to your Aura plan fee.
           </p>
           <p className="italic text-[10px] opacity-80">
-            3rd-party vendor pricing is set by each provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe) and may change at any time.
+            3rd-party vendor pricing is set by each provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, Upload-Post) and may change at any time.
           </p>
         </div>
 
