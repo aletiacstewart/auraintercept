@@ -1495,6 +1495,19 @@ const PlatformGuides: React.FC = () => {
           }
         />
 
+        <Tabs value={topTab} onValueChange={setTopTab}>
+          <TabsList>
+            <TabsTrigger value="guides"><BookOpen className="h-3.5 w-3.5 mr-1.5" />Guides</TabsTrigger>
+            <TabsTrigger value="export"><FileDown className="h-3.5 w-3.5 mr-1.5" />Export Docs</TabsTrigger>
+            <TabsTrigger value="video"><VideoIcon className="h-3.5 w-3.5 mr-1.5" />Video Prompts</TabsTrigger>
+          </TabsList>
+          <TabsContent value="export" className="mt-4">
+            <ExportDocumentation embedded />
+          </TabsContent>
+          <TabsContent value="video" className="mt-4">
+            <VideoPromptsPage embedded />
+          </TabsContent>
+          <TabsContent value="guides" className="mt-4 space-y-6">
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="glass-card border-primary/30 bg-primary/5">
