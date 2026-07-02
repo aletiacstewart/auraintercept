@@ -59,9 +59,9 @@ const AGENT_ICONS: Record<string, React.ElementType> = {
 };
 
 const STATUS_CONFIG: Record<string, { color: string; icon: React.ElementType }> = {
-  pending: { color: 'bg-yellow-500', icon: Clock },
-  processing: { color: 'bg-blue-500', icon: Activity },
-  processed: { color: 'bg-green-500', icon: CheckCircle2 },
+  pending: { color: 'bg-amber-500', icon: Clock },
+  processing: { color: 'bg-sky-500', icon: Activity },
+  processed: { color: 'bg-emerald-500', icon: CheckCircle2 },
   failed: { color: 'bg-red-500', icon: XCircle },
 };
 
