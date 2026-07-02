@@ -310,9 +310,14 @@ export function PlatformAdminDashboard() {
         </CollapsibleTrigger>
 
         <CollapsibleContent className="mt-4 space-y-6">
-          {/* Stats Grid */}
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {statCards.map((stat) => (
+          {/* Stats Grid — grouped clusters */}
+          {(() => {
+            const GROUPS: Array<{ key: string; label: string; titles: string[]; cols: string }> = [
+              { key: 'growth', label: 'Growth', titles: ['Total Companies', 'Total Users', 'Customers', 'Leads'], cols: 'md:grid-cols-2 lg:grid-cols-4' },
+              { key: 'revenue', label: 'Revenue', titles: ['Platform Revenue', 'Monthly Revenue'], cols: 'md:grid-cols-2' },
+              { key: 'operations', label: 'Operations', titles: ['Appointments', 'Pending Quotes', 'Inventory', 'Active Campaigns', 'AI Agents Active'], cols: 'md:grid-cols-2 lg:grid-cols-5' },
+            ];
+            const renderCard = (stat: typeof statCards[number]) => (
               <Card key={stat.title} className="relative overflow-hidden border-border/50">
                 <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
                   <CardTitle className={`text-xs font-medium ${stat.colorClass}`}>
@@ -333,8 +338,28 @@ export function PlatformAdminDashboard() {
                   <p className="text-[10px] text-foreground mt-0.5">{stat.description}</p>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            );
+            return (
+              <div className="space-y-5">
+                {GROUPS.map((group) => {
+                  const cards = group.titles
+                    .map((t) => statCards.find((s) => s.title === t))
+                    .filter(Boolean) as typeof statCards;
+                  if (cards.length === 0) return null;
+                  return (
+                    <section key={group.key} className="space-y-2">
+                      <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+                        {group.label}
+                      </h3>
+                      <div className={`grid gap-3 ${group.cols}`}>
+                        {cards.map(renderCard)}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           {/* Platform Activity & Growth Metrics */}
           <div className="grid gap-4 md:grid-cols-2">
@@ -382,15 +407,29 @@ export function PlatformAdminDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { label: 'Monthly Active Companies', value: Math.min((stats?.companies ?? 0) * 10, 100), display: stats?.companies ?? 0, colorVar: 'hsl(var(--primary))' },
-                    { label: 'Lead Conversion', value: stats?.leadConversionRate ?? 0, display: `${stats?.leadConversionRate ?? 0}%`, colorVar: 'hsl(var(--secondary))' },
-                    { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, display: `${stats?.quoteConversionRate ?? 0}%`, colorVar: 'hsl(var(--primary))' },
-                    { label: 'Appointment Completion', value: stats?.appointmentCompletionRate ?? 0, display: `${stats?.appointmentCompletionRate ?? 0}%`, colorVar: 'hsl(var(--accent-foreground))' },
+                    { label: 'Monthly Active Companies', value: Math.min((stats?.companies ?? 0) * 10, 100), display: `${stats?.companies ?? 0}`, colorVar: 'hsl(var(--primary))', muted: false },
+                    {
+                      label: 'Lead Conversion',
+                      value: stats?.leadConversionRate ?? 0,
+                      // If we have leads but zero tracked conversions, show explicit "Not yet tracked" state
+                      display: (stats?.leadConversionRate ?? 0) === 0 && (stats?.leads ?? 0) > 0
+                        ? 'Not yet tracked'
+                        : `${stats?.leadConversionRate ?? 0}%`,
+                      colorVar: 'hsl(var(--secondary))',
+                      muted: (stats?.leadConversionRate ?? 0) === 0 && (stats?.leads ?? 0) > 0,
+                    },
+                    { label: 'Quote Conversion', value: stats?.quoteConversionRate ?? 0, display: `${stats?.quoteConversionRate ?? 0}%`, colorVar: 'hsl(var(--primary))', muted: false },
+                    { label: 'Appointment Completion', value: stats?.appointmentCompletionRate ?? 0, display: `${stats?.appointmentCompletionRate ?? 0}%`, colorVar: 'hsl(var(--accent-foreground))', muted: false },
                   ].map(metric => (
                     <div key={metric.label} className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span>{metric.label}</span>
-                        <span className="font-medium">{metric.display}</span>
+                        <span
+                          className={cn('font-medium', metric.muted && 'text-muted-foreground text-xs italic')}
+                          title={metric.muted ? "Lead-to-customer conversion events aren't wired up yet." : undefined}
+                        >
+                          {metric.display}
+                        </span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-muted">
                         <div className="h-full rounded-full transition-all" style={{ width: `${metric.value}%`, background: metric.colorVar }} />
@@ -410,7 +449,9 @@ export function PlatformAdminDashboard() {
                 Company Breakdown
               </CardTitle>
               <CardDescription className="text-foreground">
-                Per-company metrics and performance
+                Per-company metrics and performance. Rows tagged{' '}
+                <Badge variant="outline" className="mx-1 text-[10px] uppercase tracking-wide">Demo Data</Badge>
+                are seeded fixtures, not live tenant metrics.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -444,6 +485,11 @@ export function PlatformAdminDashboard() {
                             <TableCell className="font-medium text-foreground">
                               <div className="flex items-center gap-2 group">
                                 {company.name}
+                                {/^demo\b/i.test(company.name) && (
+                                  <Badge variant="outline" className="text-[10px] uppercase tracking-wide bg-muted text-muted-foreground border-border">
+                                    Demo Data
+                                  </Badge>
+                                )}
                                 <ExternalLink className="w-3.5 h-3.5 text-foreground group-hover:text-primary transition-colors" />
                               </div>
                             </TableCell>
