@@ -1141,6 +1141,7 @@ export type Database = {
           id: string
           industry_config: Json
           industry_vertical: string | null
+          is_demo: boolean
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
           last_monthly_digest_at: string | null
@@ -1289,6 +1290,7 @@ export type Database = {
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
+          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
@@ -1437,6 +1439,7 @@ export type Database = {
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
+          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
