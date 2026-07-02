@@ -440,13 +440,16 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                   <SelectValue placeholder="Select your industry" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[60vh]" side="bottom" avoidCollisions={false}>
-                  {INDUSTRY_GROUPS.map((g) => (
+                  {INDUSTRY_GROUPS.map((g) => {
+                    const visibleIds = g.ids.filter(isIndustryVisible);
+                    if (visibleIds.length === 0) return null;
+                    return (
                     <SelectGroup key={g.group}>
                       <SelectLabel className="flex items-center gap-1.5">
                         <span>{g.emoji}</span>
                         <span>{g.group}</span>
                       </SelectLabel>
-                      {g.ids.map((id) => {
+                      {visibleIds.map((id) => {
                         const ind = INDUSTRY_CONTENT[id];
                         if (!ind) return null;
                         return (
@@ -459,7 +462,8 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                         );
                       })}
                     </SelectGroup>
-                  ))}
+                    );
+                  })}
                   <SelectGroup>
                     <SelectLabel>Other</SelectLabel>
                     <SelectItem value="other">🏢 Not listed / Other</SelectItem>
