@@ -121,7 +121,7 @@ export const CyberConsoleLayout: React.FC<CyberConsoleLayoutProps> = ({
   const metrics = sessionMetrics ?? {
     status: 'Live',
     avgResponse: '<1s',
-    satisfaction: '98.4%',
+    satisfaction: 'No data yet',
   };
 
   const agentColors = [
