@@ -1,45 +1,38 @@
-## Fix: Automation, AI Operatives Hub & Knowledge Base
+## Fix: Sidebar duplication report & sticky-header overlap
 
-### 1. Confirmed: "Failed" count is independent (item 1)
-`AgentWorkflowMonitor` computes `failed = events.filter(e => e.status === 'failed').length` from `ai_agent_events` — unrelated to the header's `enabledCount/totalCount`. **The "24" match is coincidental.** No code change; note only.
+### 1. Sidebar duplication — cannot reproduce, no code change proposed
+Verified via headless capture at `/dashboard/knowledge?tab=inventory` (platform_admin session, current build):
+- `DashboardLayout` is imported in exactly one place per KB/Inventory route and mounts a single `<aside>` sidebar.
+- HTML string contains exactly **1** "Configuration", **1** "Sign Out", **1** "Platform Admin"; "Knowledge Base" appears 3× only because it is the page title + nav item + tab label.
+- Only one `position: sticky` element exists on the page (the top notification bar). No duplicated sidebar column, no duplicated footer block.
+- Route graph in `src/App.tsx`: `/dashboard/knowledge` → `KnowledgeBase` (one `DashboardLayout`), `/dashboard/inventory` → `Inventory` (one `DashboardLayout`). No nested layout wrappers.
 
-### 2. Confirmed: Failed workflow events are genuine (item 2)
-Direct DB query on `ai_agent_events` where `status='failed'`:
-- 24 total failed rows across 5 distinct days (Jan 21 → Feb 10, 2026)
-- 19 `triage_handoff`, 2 `booking_handoff`, 2 `human_escalation`, 1 `triage→quoting`
-- 22 of 24 rows have distinct payloads — not a logging duplication bug, just historical events sharing the same `formatDistanceToNow` bucket ("5 months ago")
+**Proposed action:** do not blind-edit. Ask the user to share a screenshot + exact URL + viewport width + which account role they were signed in as so we can reproduce. If they can reproduce, we'll re-open with concrete evidence.
 
-**Fix:** Show an absolute date next to (or in place of) the relative "5 months ago" so historical clusters read clearly. In `AgentWorkflowMonitor.tsx`, render both `format(created_at, 'MMM d, yyyy · h:mm a')` (title) and the relative form, or add a `title` attribute tooltip. No data change.
+### 2. Sticky top bar clips "Business Description" (and other section headers)
+Root cause found while investigating:
+- Outer shell (`DashboardLayout.tsx` line 465) uses `min-h-screen flex` with no fixed height, so `main` (line 749) with `overflow-y-auto flex-1` never becomes a real scroll container — the **window** scrolls instead.
+- The header bar at line 753 is `sticky top-0 z-10`, height ≈ 57px. Because the window scrolls, the sticky bar pins to the viewport and overlaps any content that scrolls under it.
+- On `KnowledgeBase.tsx` the tabs bar (`<TabsList>` line 69) is NOT sticky, so as the user scrolls to Business Description the tabs disappear and the top 57px of subsequent Card headers (`Business Description`, `Content Tone & Voice`, etc.) sit behind the notification bar → "usiness Description" appearance.
 
-### 3. Disambiguate the two "Operatives Active" counters (item 3)
-- `AIAgentsHub.tsx` header (line 419): change `Operatives Active` → `Total Operatives Active` and keep `{enabledCount}/{totalCount}` (24/24).
-- Quick Activation panel (same page, lower): change its label to `Core Operative Phases Active` (10/10). Locate and rename the label text only.
+Two-part fix, scoped narrowly:
 
-### 4. Filter Content Topics by industry (item 4 — highest value)
-In `src/components/knowledge/AIContentProfileManager.tsx`:
-- Refactor `DEFAULT_CONTENT_TOPICS` (currently a flat array of ~30 topics grouped by comment) into a keyed object:
-  ```ts
-  const TOPICS_BY_CLUSTER = {
-    general: [...5 general],
-    food_hospitality: [...5],
-    beauty_wellness: [...6],
-    personal_services: [...5],
-    home_services: [...6],
-  };
-  ```
-- Add an `INDUSTRY_TO_CLUSTER` map covering all entries in `INDUSTRY_OPTIONS` (Restaurant/Cafe/... → food_hospitality; Hair Salon/Spa/... → beauty_wellness; Coaching/Concierge/... → personal_services; HVAC/... → home_services). Already grouped in file by comments — reuse those groupings.
-- Compute `visibleTopics` = `general` ∪ clusters resolved from `primaryIndustry` + `secondaryIndustries`. If nothing selected or industry maps to no cluster → show `general` only (sensible generic default).
-- Render `visibleTopics.map(...)` in the checklist (line 777).
-- Keep `DEFAULT_CONTENT_TOPICS` as the union of all preset topics so the "Custom Topics" filter at line 795 still correctly distinguishes user-added topics from any preset (including presets from other clusters that a saved profile may reference).
-- No DB schema change; applies platform-wide because it's client-render.
+**a. Make the KB `TabsList` sticky beneath the notification bar** — in `src/pages/KnowledgeBase.tsx`:
+- Wrap `<TabsList>` in a container with `sticky top-[57px] z-20 -mx-1 px-1 py-1 bg-[rgba(4,10,20,0.9)] backdrop-blur border-b border-[rgba(0,229,255,0.1)]` so the tabs stay pinned flush under the notification bar, providing a solid backdrop that prevents underlying content from bleeding through.
+- No change to Tab semantics.
 
-### 5. Consistent "Free" pricing display (item 5)
-In `src/components/knowledge/ServicesManager.tsx`:
-- `getPriceDisplay(service)` (line 793): change final fallback from `prices.length > 0 ? prices.join(' + ') : '-'` to `prices.length > 0 ? prices.join(' + ') : 'Free'`.
-- Also apply same fallback in the import-preview table (line 1447): replace trailing `|| '-'` with `|| 'Free'`.
-- The `<DollarSign />` icon precedes the text, so the row renders `$ Free` consistently with existing rows whose `price_display` is literally `'Free'`. No data migration needed.
+**b. Add scroll-offset breathing room to section headers** — in `src/components/knowledge/AIContentProfileManager.tsx` (and mirror on `BusinessContextManager.tsx` if it uses the same pattern):
+- Add `scroll-mt-[128px]` on each top-level `<Card>` (or on their `CardHeader`s). This is the offset used when a header is scrolled into view via `scrollIntoView` / anchor jump, so it sits below the combined sticky bar (57px) + sticky tabs (~48px) with a small gap.
+- Applies to: Industry Categories, Keywords & Terms, Business Description, Content Tone & Voice, Content Topics.
+
+**c. Add the same `scroll-mt` to other KB tab panels' primary Cards** for consistency (Services, FAQs, Documents, Smart Links). Small utility-class-only change; no component refactor.
+
+### Verification
+Re-run the KB AI Profile page in headless capture and confirm:
+- Tabs bar stays visible while scrolling down through Business Description.
+- Business Description heading is fully visible when scrolled into view.
+- No other page's layout regresses (sticky change is scoped to KB's `TabsList` wrapper).
 
 ### Out of scope
-- Deleting/deduping historical `ai_agent_events` rows (confirmed genuine).
-- Reshaping the ai_agent_events table or write path.
-- Changing industry pack / cluster infrastructure beyond the topic mapping above.
+- Rewriting `DashboardLayout` to make `main` the true scroll container (larger change with broad side effects — worth doing later as its own pass if we want header behavior identical to native SPA shells).
+- Making other pages' Tabs sticky (mirror this pattern later if the user reports the same symptom elsewhere).
