@@ -1,79 +1,50 @@
-# Voice & Style Sheet v2 — Implementation Plan
+## What happened
 
-Apply the uploaded style guide across marketing, consoles, and agent copy. Frontend/content-only — no schema or business-logic changes.
+The Super Admin Switcher Hub you built on May 8 (`/super-switcher`, `SwitcherPill`, `useSuperSwitcher`, `seed-super-admin` edge function, Auth.tsx entry point) is no longer in the codebase. `rg` finds zero references anywhere in `src/` or `supabase/functions/`. It was removed at some point after May 8 — most likely collateral damage from one of these later sweeps:
 
-## 1. Canonical naming registry (single source of truth)
+- Sidebar simplification v1 (hid non-core routes)
+- Power-user pages restricted to `platform_admin` (design-preview, architecture, calculators, etc.)
+- Canonical naming refactor (touched many console entry points)
 
-Update `src/lib/canonicalNames.ts` (create if missing; otherwise extend the existing naming registry in `.lovable/memory/architecture/canonical-naming-registry.md` + code helpers) so every surface pulls names from one place.
+The 78 demo accounts themselves still exist in the demo registry (`aidemo*!`, reseedable at `/dashboard/demo-seeder`), so only the *hub UI* is missing — no data was lost.
 
-**Consoles — one canonical name each, used everywhere (nav, hero grid, agent grid, footer, tier cards, docs):**
+## Plan to restore
 
-| Canonical | Replace occurrences of |
-|---|---|
-| Customer Portal | (already consistent) |
-| Service Management | (already consistent) |
-| Business Operations | "Business Management" |
-| Outreach & Sales | "Outreach & Sales Ops", "Outreach & Sales Console" |
-| Analytics & Reports | (already consistent) |
-| Social Media | "Social Media Console" (drop suffix or add everywhere — pick drop) |
-| Creative & Web Presence | "Smart Website" (as a console header) |
+### 1. Route + page
+- Add `src/pages/SuperSwitcher.tsx` — the grid hub: 26 industries × 3 roles (admin / employee / customer), each a card that opens the demo session in a **new tab via magic link** (the behavior you originally approved).
+- Register `/super-switcher` in `src/App.tsx`, gated to `platform_admin` only (uses the existing `useUserRole` hook with a loading gate to avoid the flash-of-unauthorized issue).
 
-Decision: drop the trailing "Console" from display names everywhere; keep it only in route paths.
+### 2. Hook
+- `src/hooks/useSuperSwitcher.ts` — calls the `seed-super-admin` edge function to mint a magic link for `{industry}{role}@demo.com`, returns `{ openSession(industry, role) }`.
 
-**Agents — every unit uses `[Function] Agent`.** Sole exception: **AI Receptionist**. Purge "operative" as a per-unit label; keep it only for collective phrases ("24 AI operatives", "the operative network").
+### 3. Edge function
+- Restore `supabase/functions/seed-super-admin/index.ts` — verifies the caller is `platform_admin`, uses service-role to generate a magic link for the target demo account, returns the URL. `verify_jwt = true` (this one is admin-only, not a public bypass).
 
-## 2. Agent card copy rewrite (jargon → foreman voice)
+### 4. Entry points
+- `SwitcherPill` component in the Platform Admin dashboard header (visible only to `platform_admin`) linking to `/super-switcher`.
+- Add a sidebar entry under the Platform Admin group.
 
-Update the agent registry (`src/lib/agentStyles.ts` + wherever agent descriptions live, e.g. `subscriptionAgentConfig.ts`, `industryPack` agent labels) with plain-English one-liners. Examples from the doc:
+### 5. Guardrails
+- Hide demo companies from non-admin dropdowns is already in place (`is_demo` column + `list_companies_public` RPC filter from the earlier sweep) — nothing to change there.
+- Loading-state gate on the page (spinner while `useAuth` + `useUserRole` resolve) so it never flashes "Access Denied".
 
-- Admin Agent → "Manages your team's logins and settings, so you control who can see and change what."
-- AI Receptionist → "Answers every call, figures out what the customer needs, and either handles it or hands it straight to the right agent."
-- Insights Agent → "Ask it a plain-English question about your business and get a straight answer."
+## Files to add / edit
 
-Rewrite all 24 agent descriptions in the same voice: owner's language, concrete verbs, no "role-based / classifies intent / access control" spec-sheet phrasing.
+- **add** `src/pages/SuperSwitcher.tsx`
+- **add** `src/hooks/useSuperSwitcher.ts`
+- **add** `src/components/admin/SwitcherPill.tsx`
+- **add** `supabase/functions/seed-super-admin/index.ts` + `config.toml` entry
+- **edit** `src/App.tsx` (route registration, platform_admin gate)
+- **edit** the Platform Admin dashboard header + sidebar to surface the pill/link
 
-## 3. Voice pillars applied to marketing pages
+## Out of scope
 
-Sweep `src/pages/ForBusiness.tsx`, landing hero, pricing section, and console hero grids:
+- No changes to the demo account registry or seeder (already working).
+- No changes to pricing, canonical names, or any of the recent voice-and-style work.
+- No new secrets needed — `SUPER_ADMIN_PASSWORD` was already added on May 8 and remains in the secret store.
 
-- Short sentences (<20 words), second person, active voice.
-- Max one tactical word per sentence from {Agent, Console, Operative, Command, Deploy}.
-- Replace adjectives ("powerful/comprehensive/robust") with real counts/dollars.
-- Keep em-dash "here's the real reason" beat.
-- No exclamation points, no "revolutionary".
+## Verification
 
-## 4. Fee/trust sections — lean in harder
-
-On pricing + integration pages (`launchPricing.ts` copy, tier cards, SignalWire/ElevenLabs/Resend blurbs, `third-party-fee-disclaimer` surfaces):
-
-Every fee claim uses the 3-beat structure: **number → who bills it → why it protects the owner**, in ≤3 sentences. Keep phrases: "Billed by your provider — never by Aura Intercept.", "Never marked up by us.", "Your accounts. Your control. Your protection."
-
-## 5. Structural card shapes (enforce)
-
-- **Console card:** name → one plain sentence → 3–5 chip tags.
-- **Agent card:** `[Function] Agent` name → one owner-voice sentence.
-- **Tier card:** name + category line → "Best for…" → strike-through original + Beta Pricing badge → plain-count checklist → CTA. (Already close; audit for consistency.)
-
-## 6. Files expected to change
-
-- `src/lib/agentStyles.ts` — agent names + descriptions
-- `src/lib/subscriptionAgentConfig.ts` — tier agent lists use canonical names
-- `src/lib/canonicalNames.ts` (new or extended) — console + agent name constants
-- `src/pages/ForBusiness.tsx` — hero, console grid, tier cards, fee sections
-- `src/pages/ai-consoles/*.tsx` — page headers use canonical console names
-- Sidebar/nav components rendering console labels
-- `src/lib/launchPricing.ts` copy (tier taglines / "Best for" lines) if drift found
-- `.lovable/memory/architecture/canonical-naming-registry.md` — updated to match
-- Save a new memory: `mem://style/voice-and-copy-standard` capturing the pillars, phrase bank, and words-to-avoid so future edits stay in voice.
-
-## 7. Out of scope
-
-- No DB migrations, no edge functions, no schema changes.
-- No changes to route paths (only display labels).
-- Voice-agent prompts (`auraInterceptSalesPrompt.ts`) unchanged unless a canonical name drifts.
-
-## 8. Verification
-
-- Grep for stale strings: "Business Management" (as console), "Outreach & Sales Ops", "Outreach & Sales Console", "Smart Website" used as console header, "operative" as singular per-agent label.
-- Load `/for-business`, `/dashboard/ai-consoles/*`, pricing section — confirm every console name matches the registry.
-- Read 3 random agent cards out loud — should sound like a coworker, not a spec sheet.
+- Sign in as `ai@auraintercept.ai`, confirm the pill appears and `/super-switcher` renders the 78 cards.
+- Click one card → new tab opens signed in as that demo user.
+- Sign in as a non-admin, confirm `/super-switcher` is not reachable and no flash of the hub UI.
