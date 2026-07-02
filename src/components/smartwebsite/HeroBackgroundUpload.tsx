@@ -220,6 +220,20 @@ export function HeroBackgroundUpload({
               <span>Images wider than {MAX_WIDTH}px will be automatically resized</span>
             </div>
 
+            {/* Safe-area guidance — hero uses background-size: cover on the public
+                site, so any captions or logos baked into the raster near the top
+                or bottom edges can be cropped at some viewport heights. */}
+            <div className="flex items-start gap-2 p-3 bg-muted/20 border border-border/60 rounded-lg text-xs text-card-foreground/70">
+              <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0 opacity-70" />
+              <span>
+                Keep important content (text, logos, faces) at least ~10% away from
+                the top and bottom edges. The public hero crops with{' '}
+                <code className="text-[10px]">background-size: cover</code>, so
+                anything flush to an edge can be cut off on some screens. Recommended
+                size: <strong>1920 × 822</strong> (21:9).
+              </span>
+            </div>
+
             {/* Upload Button */}
             <div>
               <input
