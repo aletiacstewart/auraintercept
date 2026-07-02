@@ -11,6 +11,8 @@ import { format } from 'date-fns';
 import { ArrowLeft, Mail, MessageSquare, CheckCircle2, XCircle, Eye, MousePointer } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { Send } from 'lucide-react';
 
 export default function CampaignDetail() {
   const { id } = useParams<{ id: string }>();
@@ -119,7 +121,12 @@ export default function CampaignDetail() {
             <CardHeader><CardTitle>Recipients</CardTitle></CardHeader>
             <CardContent>
               {!sends || sends.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No sends yet. Click "Send Now" from the campaigns list to dispatch.</p>
+                <AuraEmptyState
+                  compact
+                  icon={Send}
+                  title="No sends yet"
+                  description='Click "Send Now" from the campaigns list to dispatch this campaign.'
+                />
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">

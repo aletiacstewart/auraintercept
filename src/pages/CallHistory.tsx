@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 import {
   Table,
   TableBody,
@@ -307,15 +308,15 @@ export default function CallHistory() {
                 </Table>
               </div>
             ) : (
-              <div className="text-center py-12">
-                <Phone className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">No calls found</p>
-                <p className="text-sm text-muted-foreground/80">
-                  {searchQuery || directionFilter !== 'all' || statusFilter !== 'all'
-                    ? 'Try adjusting your filters'
-                    : 'Call history will appear here once calls are made'}
-                </p>
-              </div>
+              <AuraEmptyState
+                icon={Phone}
+                title="No calls found"
+                description={
+                  searchQuery || directionFilter !== 'all' || statusFilter !== 'all'
+                    ? 'Try adjusting your filters.'
+                    : 'Call history will appear here once calls are made.'
+                }
+              />
             )}
           </CardContent>
         </Card>

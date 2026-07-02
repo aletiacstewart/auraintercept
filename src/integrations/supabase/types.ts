@@ -6563,7 +6563,11 @@ export type Database = {
           email_alerts_enabled: boolean | null
           id: string
           in_app_enabled: boolean | null
+          notify_a2p_status: boolean
+          notify_agent_escalation: boolean
+          notify_integration_disconnected: boolean
           notify_job_updates: boolean | null
+          notify_low_inventory: boolean
           notify_missed_calls: boolean | null
           notify_new_bookings: boolean | null
           notify_new_email: boolean | null
@@ -6580,7 +6584,11 @@ export type Database = {
           email_alerts_enabled?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
+          notify_a2p_status?: boolean
+          notify_agent_escalation?: boolean
+          notify_integration_disconnected?: boolean
           notify_job_updates?: boolean | null
+          notify_low_inventory?: boolean
           notify_missed_calls?: boolean | null
           notify_new_bookings?: boolean | null
           notify_new_email?: boolean | null
@@ -6597,7 +6605,11 @@ export type Database = {
           email_alerts_enabled?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
+          notify_a2p_status?: boolean
+          notify_agent_escalation?: boolean
+          notify_integration_disconnected?: boolean
           notify_job_updates?: boolean | null
+          notify_low_inventory?: boolean
           notify_missed_calls?: boolean | null
           notify_new_bookings?: boolean | null
           notify_new_email?: boolean | null
