@@ -272,7 +272,7 @@ const fieldOperatives = (jobNoun: string, teamMemberNoun: string): ServiceOperat
     icon: Truck,
     hsl: '189,100%,65%',
     status: 'active',
-    metric1Label: pluralize(jobNoun),
+    metric1Label: 'Active',
     metric2Label: 'Assigned',
   },
   {
@@ -283,7 +283,7 @@ const fieldOperatives = (jobNoun: string, teamMemberNoun: string): ServiceOperat
     hsl: '142,72%,55%',
     status: 'standby',
     metric1Label: 'Pending',
-    metric2Label: 'Done Today',
+    metric2Label: 'In Progress',
   },
 ];
 
@@ -295,7 +295,7 @@ const bookingOperatives = (jobNoun: string): ServiceOperativeCard[] => [
     icon: CalendarCheck,
     hsl: '189,100%,65%',
     status: 'active',
-    metric1Label: pluralize(jobNoun),
+    metric1Label: 'Active',
     metric2Label: 'Checked In',
   },
   {
@@ -306,7 +306,7 @@ const bookingOperatives = (jobNoun: string): ServiceOperativeCard[] => [
     hsl: '142,72%,55%',
     status: 'standby',
     metric1Label: 'Pending',
-    metric2Label: 'Done Today',
+    metric2Label: 'In Progress',
   },
 ];
 
