@@ -1117,13 +1117,13 @@ const A2P10DLCPage = () => (
 );
 
 const SocialAccountsPage = () => {
-  const platforms = ['Facebook', 'Instagram', 'LinkedIn', 'X (Twitter)', 'TikTok', 'YouTube', 'Google Business Profile'];
+  const platforms = ['Facebook', 'Instagram', 'LinkedIn', 'TikTok'];
   return (
     <Page size="A4" style={styles.page}>
       <PageHeader title="Social Accounts" pageNum={6} />
-      <Text style={styles.sectionTitle}>{sanitizePdfText('Social Media & Google Business Profile')}</Text>
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Social Media Accounts')}</Text>
       <Text style={styles.paragraph}>
-        {sanitizePdfText('List the handle/URL and admin email for every account you want Aura to publish to or monitor.')}
+        {sanitizePdfText('List the handle/URL and admin email for each supported platform you want Aura to publish to or monitor. Supported platforms today: Facebook, Instagram, LinkedIn, TikTok. Additional platforms will be added as our posting vendor expands.')}
       </Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
