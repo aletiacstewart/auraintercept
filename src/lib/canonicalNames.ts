@@ -3,8 +3,9 @@
  * (per Aura Intercept Voice & Style Sheet v2).
  *
  * RULES
- * - Consoles: one canonical name. Drop the trailing "Console" from display
- *   copy everywhere; route paths keep their existing slugs.
+ * - Consoles: use the names below verbatim. These match what the product
+ *   ships (Business Management, Field Operations Console, Outreach & Sales
+ *   Console, etc.) — do NOT drop or add "Console" arbitrarily.
  * - Agents: every unit is "[Function] Agent". Sole exception: "AI Receptionist".
  * - "Operative" is a collective/narrative word only ("24 AI operatives",
  *   "the operative network"). Never a per-unit label.
@@ -12,9 +13,9 @@
 
 export const CONSOLE_NAMES = {
   customer_portal: 'Customer Portal',
-  field_operations: 'Service Management',
-  business_management: 'Business Operations',
-  marketing_sales: 'Outreach & Sales',
+  field_operations: 'Field Operations Console',
+  business_management: 'Business Management',
+  marketing_sales: 'Outreach & Sales Console',
   social_media: 'Social Media',
   creative_web_presence: 'Creative & Web Presence',
   analytics_reports: 'Analytics & Reports',
