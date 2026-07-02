@@ -66,6 +66,7 @@ export default function KnowledgeBase() {
         />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
+          <div className="sticky top-[57px] z-20 -mx-1 px-1 py-1 bg-[rgba(4,10,20,0.9)] backdrop-blur border-b border-[rgba(0,229,255,0.1)]">
           <TabsList>
             <TabsTrigger value="ai-profile" className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 hidden sm:block" />
@@ -106,6 +107,7 @@ export default function KnowledgeBase() {
               </TabsTrigger>
             )}
           </TabsList>
+          </div>
 
           <TabsContent value="ai-profile" className="space-y-3">
             <div className="flex justify-end">
