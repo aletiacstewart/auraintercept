@@ -458,10 +458,10 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     optional: true,
   },
   {
-    name: 'Social Media (Platform OAuth)',
-    purpose: 'Manual Bridge posting (available now) + Own API credentials for automatic posting.',
-    cost: 'Free (Manual Bridge) or Free (Own API setup)',
-    requiredFor: 'Required for Pro, Elite • Optional for Core, Boost',
+    name: 'Upload-Post.com (Automated Social Posting)',
+    purpose: 'Copy & Post is included on every tier (no setup). Upload-Post is required only for automated, scheduled multi-platform publishing — company\'s own Upload-Post account, up to 6 connected platforms per social set.',
+    cost: 'From ~$9/mo (1 social set) up to ~$99/mo · billed directly by Upload-Post to your card',
+    requiredFor: 'Optional on every tier (only if using automated posting)',
     optional: true,
   },
   {
