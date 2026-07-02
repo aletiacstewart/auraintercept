@@ -113,7 +113,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>ElevenLabs (voice AI brain + client tools)</li>
                   <li>Resend (email + domain DNS)</li>
                   <li>Tavily (web search)</li>
-                  <li>Google Workspace + Calendar OAuth</li>
+                  <li>Google Calendar OAuth (any free Google account)</li>
                   <li>Social Media OAuth apps (Meta, LinkedIn, X, TikTok, YouTube)</li>
                   <li>Custom domain (CNAME + TXT)</li>
                   <li>Master verification checklist</li>

@@ -68,7 +68,7 @@ const INTEGRATION_PROVIDERS = [
   { key: 'resend', label: 'Resend (email)' },
   { key: 'tavily', label: 'Tavily (research)' },
   { key: 'stripe', label: 'Stripe (payments)' },
-  { key: 'google', label: 'Google Workspace' },
+  { key: 'google', label: 'Google Account (free OAuth)' },
   { key: 'a2p_10dlc', label: 'A2P 10DLC (SMS registration)' },
   { key: 'social', label: 'Social Media (Meta/X/LinkedIn OAuth)' },
 ];
