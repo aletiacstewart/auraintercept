@@ -1,70 +1,49 @@
-## Platform Design System Pass
 
-A broad consistency sweep across the app and public homepage. Ordering below matches the recommended sequence in the request.
+# Pre-Launch Automated Verification
 
-### 1. Remove "Cyber-Sentry Edition" branding
-- Global search for `Cyber-Sentry`, `Cyber Sentry`, `CYBER-SENTRY`, `cyber-sentry` (case-insensitive) across `src/`, `public/`, memory docs, and templates.
-- Strip the ` — CYBER-SENTRY EDITION` suffix from console headers (Service Management, Outreach & Sales Ops, Business Management, Customer Portal, and any others found). Leave the plain console name.
-- Rename any variables/CSS class names/comments that reference the phrase where it's user-visible; keep internal file names (e.g. `cyber-sentry-*.md` memory files) but drop the term from any rendered string.
-- Update `mem://` core rule that references "Cyber-Sentry UI" to just describe the token/theme rule without the branding label.
+Goal: automate what a machine can actually prove from your checklist. I'll produce a single markdown report at `/mnt/documents/pre-launch-report.md` with PASS / FAIL / MANUAL-ONLY per item, plus screenshots for the browser checks.
 
-### 2. Semantic section-header color system
-Introduce a single mapping used by `PageHeader` (`src/components/ui/page-header.tsx`) via a new `pageCategory` → `featureColor` resolver:
+I won't ship any product code changes in this pass — only diagnostics. If a check fails, I'll list the offending file/query so a follow-up build turn can fix it.
 
-- Cyan/Teal (`fieldops`) — Service Management, Dispatch, Appointments, Field Ops surfaces.
-- Magenta/Pink (`config`) — Settings, Knowledge Base, Automation, Integrations.
-- Green (`customers`) — Customer Portal, Web Presence (published).
-- Purple (`platform` / new `ai` token if needed) — AI Operatives Hub, Specialist Operatives, AI consoles.
+## Part A — Tenant Isolation (Item 1)
 
-Audit every `<PageHeader featureColor=…>` call site and reassign to match the mapping. Add a lightweight lint-style unit test in `src/lib/__tests__/` that asserts key pages use the expected category.
+Static + DB analysis (no fake test tenant needed, and safer than one):
 
-### 3. Unified status badge system
-- Create `src/components/ui/status-badge.tsx` (or extend existing `value-badge`) exporting a `<StatusBadge tone="success|warning|neutral|danger|info">` with tokens:
-  - success = green, warning = amber, neutral = gray, danger = red, info = blue.
-- Map current strings: Active/Approved/Auto-executed/Free/Live → success; Required/Pending/Needs action → warning; Optional/Inactive/Not configured → neutral; Failed/Error/Critical → danger; informational-only → info.
-- Refactor badge usages in: Settings, Integrations pages, Automation, AI Operatives Hub (incl. `AgentWorkflowMonitor`, `DecisionModeBadge` review/escalate variants stay but align to tokens), all consoles, Knowledge Base ServicesManager.
+1. **RLS coverage audit** — query `pg_policies` + `pg_class` for every table in the codebase's `<supabase-tables>` list. Flag any table that is (a) RLS-disabled, (b) has zero policies, or (c) has a `USING (true)` SELECT policy without a `company_id`/`user_id` scope.
+2. **GRANT audit** — for each public table, confirm no `anon` SELECT grant exists on tables that store tenant data (customers, appointments, leads, invoices, quotes, call_logs, sms_logs, etc.).
+3. **Security definer function audit** — list every `SECURITY DEFINER` function and flag any that return tenant rows without filtering by `auth.uid()` / caller's `company_id`.
+4. **Client-side leak scan** — ripgrep the frontend for `.from('<tenant-table>')` calls that don't chain `.eq('company_id', …)` and aren't already inside an RLS-protected read. Report suspicious call sites.
+5. **Cross-company access log check** — query `cross_company_access_logs` for anything unexpected in the last 30 days.
+6. **Platform Admin gate check** — grep routes/components for `platform_admin` guards; confirm `/dashboard/architecture`, `/design-preview`, `/cyber-sentry-mockup*`, `/calculators`, `/export-docs` are gated in router config, not just hidden in the sidebar.
 
-### 4. Empty-state chart rendering (Website Analytics)
-In `WebsiteAnalytics` (Daily Traffic Trend, AI Engagement Trend):
-- Detect zero-data (all series values 0 or empty).
-- Replace the chart with the existing empty-state pattern ("No visitor data yet") — hide axes/line entirely rather than drawing a flat baseline.
+Output: table of `{table, rls_enabled, policy_count, anon_grant, tenant_scoped, verdict}` + list of unscoped frontend queries + list of ungated admin routes.
 
-### 5. Pagination / virtualization for long lists
-- Blog management list (`src/pages/BlogManagement.tsx`): add a search input + 25/page pager.
-- `AgentWorkflowMonitor` events: add search/filter input (by agent or event type) plus a 25/page pager, replacing the flat 100-event scroll.
-- Audit other long lists (CRM leads table, Appointments history, Call History, Email Logs) and apply the same pattern where item counts routinely exceed ~30.
+## Part B — Code-Fix Regression Verification (Item 5)
 
-### 6. Workflow card layout across AI Consoles
-- Extract the 3-card End-to-End Workflows row used in Business Management and Service Management consoles into a shared component (or ensure they already share one) with fixed card height, spacing, and spacing-above-chat.
-- Apply it to Outreach & Sales Console and any other console rendering equivalent workflow cards.
+Purely static — fast:
 
-### 7. Non-color indicators on status dots
-- Operative Dependencies panel: alongside each colored dot, render a small icon (check / dash / warning triangle) and/or a short text label so state is legible without color.
-- Sweep for other dot-only status indicators (uptime pills, connection dots) and add matching icon/text.
+1. **Twilio → SignalWire** — `rg -i 'twilio'` across `src/`, `supabase/functions/`, `public/`, `.lovable/memory/`. Expected result: only historical mentions in memory/migration comments; zero references in live UI copy, edge functions, or config.
+2. **Sidebar duplication** — read `src/components/dashboard/DashboardSidebar.tsx` (and TechnicianDashboardLayout) and diff the nav item arrays for duplicate `path` entries per role. Snapshot render via Playwright on `/dashboard` at desktop width and count sidebar `<a>` elements per section.
+3. **Sticky sub-nav overlap** — Playwright: load Field Ops Console, Business Management Console, and Settings; scroll 400px; screenshot; check for computed `position: sticky` elements whose bounding box overlaps the first content card (`getBoundingClientRect` intersection test).
+4. **Job-count sync (HVAC Tech Ops vs Dispatch)** — read `useFieldOpsWorkflow.ts` and the Dispatch page; confirm both derive counts from the same query/hook. If they diverge, flag the two sources.
+5. **Calendar sync cards (CalDAV, ICS)** — Playwright load `/dashboard/integrations/calendar`; assert no card renders the string "not available" / "unavailable"; screenshot for visual confirmation.
 
-### 8. Contrast audit on muted text over dark panels
-- Sample the muted/gray colors used on near-black panels (timestamps, descriptions, helper text).
-- Adjust the `--muted-foreground` (and any hardcoded gray usages found) so body text hits WCAG AA 4.5:1 and large text 3:1 against the panel background token, preserving hierarchy vs primary text.
+## Part C — Marked MANUAL-ONLY in the report
 
-### 9. Homepage "All-in-One AI Center" 8-box grid — apply console/operative colors
-On the public homepage, map each of the 8 feature boxes to the closest existing console/operative category and reuse that section's color token — no new colors.
+These I can't meaningfully automate and will explicitly call out:
+- Item 2 (real-phone iOS Safari + Android Chrome PWA install) — Playwright mobile emulation is not the same as a real device install flow.
+- Item 3 (Privacy / Terms legal review) — I can confirm the pages exist and aren't lorem ipsum, but "reflects what the platform actually does" needs a human/lawyer.
+- Item 4 real signup flow — creating a live tenant + Stripe row via the automation would pollute prod data.
 
-### 10. Homepage "Connect Everywhere" 4-box channel grid — distinct palette
-Assign Voice / SMS / Email / Chat a set of 4 colors that don't collide with any console or operative color already used on the page. Keep the four internally coherent.
+For Item 3 I *will* fetch `/privacy` and `/terms`, word-count them, and flag if either contains "lorem", "TODO", or is under ~500 words.
+For Item 4 I *will* read the signup edge function + `Auth.tsx` and confirm no demo-company `company_id` is seeded into new profiles, and that new companies start with empty `services`/`faqs`/`inventory_items`.
 
-### 11. Industries grid — confirmation only
-Leave the uniform teal treatment as-is. No code change unless the user says otherwise.
+## Deliverable
 
-### Execution order
-1. Item 1 (find/replace).
-2. Items 2 + 3 together (shared header/badge refactor).
-3. Items 9 + 10 together (homepage color pass).
-4. Items 4, 5, 6, 7, 8 independently.
-5. Item 11 = no-op.
+`/mnt/documents/pre-launch-report.md` with:
+- PASS/FAIL per checklist item
+- Concrete file:line references for any failure
+- Screenshots under `/mnt/documents/prelaunch-screens/`
+- A prioritized fix list at the bottom I can hand to a follow-up build turn
 
-### Technical notes
-- All colors resolve to existing CSS variables in `index.css` / `tailwind.config.ts`. No hex/rgba literals in components.
-- New `StatusBadge` will live next to `value-badge.tsx` and reuse shadcn `Badge` primitives.
-- `PageHeader` gets a small `pageCategory` helper so future pages can't drift.
-- Pagination uses local state + shadcn `Pagination` primitive; no backend changes.
-- No schema, RLS, or edge-function changes.
+No product code is modified in this pass.
