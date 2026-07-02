@@ -640,68 +640,62 @@ const IntegrationRequirementsPage = () => {
     { name: 'Resend', purpose: 'Email Delivery — your own account · valid card · billed directly by Resend', tiers: 'All tiers — Core, Boost, Pro, Elite' },
     { name: 'Tavily', purpose: 'AI Content Research — your own account · valid card · billed directly by Tavily', tiers: 'All tiers — Core, Boost, Pro, Elite' },
     { name: 'Stripe', purpose: 'Payment Processing — your own account · billed directly by Stripe', tiers: 'All tiers — required if collecting payments' },
-    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Boost, Pro, Elite (Optional)' },
-    { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'Pro, Elite' },
+    { name: 'A2P 10DLC', purpose: 'SMS carrier registration — one-time brand fee + monthly campaign fee, billed via SignalWire', tiers: 'All tiers sending SMS' },
+    { name: 'Google Account', purpose: 'Calendar Sync — free personal Google account, connected via one-click OAuth. No signup fee, no card required.', tiers: 'All tiers (Optional)' },
+    { name: 'Social Media Accounts', purpose: 'Content Publishing — your own Facebook, Instagram, LinkedIn, TikTok pages/accounts', tiers: 'Boost, Pro, Elite' },
   ];
 
   return (
     <Page size="A4" style={styles.page}>
       <PageHeader title="Integration Requirements" pageNum={12} />
-      <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Integration Requirements')}</Text>
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Section 10: Integration Requirements')}</Text>
       <Text style={styles.paragraph}>
-        {sanitizePdfText('Check each integration you have set up or need assistance with. We will help configure these during implementation.')}
+        {sanitizePdfText('The single canonical worksheet for every third-party account. Every paid provider below is owned by you and billed to you directly and separately from your Aura plan fee. Concierge Onboarding will configure these on your behalf using your logins and card.')}
       </Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderCell, { width: 100 }]}>{sanitizePdfText('Integration')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 140 }]}>{sanitizePdfText('Purpose')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 60 }]}>{sanitizePdfText('Have It')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 60 }]}>{sanitizePdfText('Need Help')}</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('N/A')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 90 }]}>{sanitizePdfText('Provider')}</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Purpose')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 46, textAlign: 'center' }]}>{sanitizePdfText('Have It')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('Need Help Setting Up')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 56, textAlign: 'center' }]}>{sanitizePdfText('Card on File')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 32, textAlign: 'center' }]}>{sanitizePdfText('N/A')}</Text>
         </View>
         {integrations.map(int => (
           <View key={int.name} style={styles.tableRow}>
-            <Text style={[styles.tableCell, { width: 100, fontWeight: 600 }]}>{sanitizePdfText(int.name)}</Text>
-            <Text style={[styles.tableCell, { width: 140 }]}>{sanitizePdfText(int.purpose)}</Text>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 600 }]}>{sanitizePdfText(int.name)}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(int.purpose)}</Text>
+            <Text style={[styles.tableCell, { width: 46, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
             <Text style={[styles.tableCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
-            <Text style={[styles.tableCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
-            <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
+            <Text style={[styles.tableCell, { width: 56, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
+            <Text style={[styles.tableCell, { width: 32, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
           </View>
         ))}
       </View>
 
-      <Text style={styles.subsectionTitle}>{sanitizePdfText('Existing Account Details (if applicable)')}</Text>
-      
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Account Owner / Admin Email per Provider')}</Text>
+      {['SignalWire', 'ElevenLabs', 'Resend', 'Tavily', 'Stripe', 'A2P 10DLC (via SignalWire)', 'Google Account (for Calendar)', 'Social Media Accounts'].map(p => (
+        <View key={p} style={styles.formRow}>
+          <Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(`${p}:`)}</Text>
+          <View style={styles.formLine} />
+        </View>
+      ))}
+
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Non-secret Account Details (safe to include)')}</Text>
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Project ID:')}</Text>
         <View style={styles.formLine} />
       </View>
-      
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Phone Number:')}</Text>
         <View style={styles.formLine} />
       </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('ElevenLabs API Key:')}</Text>
-        <View style={styles.formLine} />
-      </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Stripe Account Email:')}</Text>
-        <View style={styles.formLine} />
-      </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Google Account Email:')}</Text>
-        <View style={styles.formLine} />
-      </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Security Note')}</Text>
+        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Do NOT email API keys or passwords')}</Text>
         <Text style={styles.infoBoxText}>
-          {sanitizePdfText('API keys and secrets will be securely configured during your onboarding call. Never share secrets via email or insecure channels.')}
+          {sanitizePdfText('API keys, secret tokens, and passwords are collected in a secure session on your kickoff call — never write them in this PDF, never send them by email.')}
         </Text>
       </View>
     </Page>
