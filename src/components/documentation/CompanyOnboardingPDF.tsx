@@ -706,7 +706,7 @@ const IntegrationRequirementsPage = () => {
 const KnowledgeBasePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Knowledge Base Setup" pageNum={13} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 5: Knowledge Base Setup')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Knowledge Base Setup')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('This information helps your AI assistant answer customer questions accurately.')}
     </Text>
@@ -784,9 +784,9 @@ const KnowledgeBasePage2 = () => (
 const EmployeeInfoPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Employee Information" pageNum={15} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 6: Employee Accounts')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Legacy — see Employee & Technician Roster (Section 7)')}</Text>
     <Text style={styles.paragraph}>
-      {sanitizePdfText('List employees who need dashboard access. Job types: Owner, Manager, Technician, Admin, Sales.')}
+      {sanitizePdfText('Employee & login data is captured once in the Employee & Technician Roster (Section 7). This page is intentionally left blank.')}
     </Text>
 
     <View style={styles.table}>
@@ -819,7 +819,7 @@ const EmployeeInfoPage = () => (
 const GoalsNotesPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Goals & Notes" pageNum={16} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 7: Goals & Additional Notes')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 11: Goals & Additional Notes')}</Text>
 
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Top 3 Pain Points')}</Text>
     <Text style={styles.paragraph}>{sanitizePdfText('What are your biggest operational challenges right now?')}</Text>
