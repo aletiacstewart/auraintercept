@@ -105,7 +105,7 @@ export function PageHeader({
       
       {/* Inline Ask Aura Bar */}
       {showAuraBar && (
-        <InlineAuraBar placeholder={`Ask about ${title.toLowerCase()}...`} />
+        <InlineAuraBar placeholder={auraBarPlaceholder || `Ask about ${title.toLowerCase()}...`} />
       )}
     </div>
   );
