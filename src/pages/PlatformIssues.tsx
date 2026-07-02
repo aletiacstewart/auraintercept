@@ -513,9 +513,9 @@ export default function PlatformIssues() {
               </div>
             )}
         </FormShell>
-        </div>
             </TabsContent>
           </Tabs>
+        </div>
         </InlineFormProvider>
       </PageContainer>
     </DashboardLayout>
