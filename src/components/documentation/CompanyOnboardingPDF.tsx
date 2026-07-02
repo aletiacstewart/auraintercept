@@ -1148,7 +1148,7 @@ const SocialAccountsPage = () => {
 const BrandVoicePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Brand Voice" pageNum={7} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Brand & Voice Worksheet')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 3: Brand & Voice')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('These answers feed directly into how every AI operative speaks on your behalf — voice calls, SMS, email, web chat, social posts.')}
     </Text>
@@ -1171,7 +1171,7 @@ const BrandVoicePage = () => (
 const KnowledgeBaseExpandedPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Knowledge Base — Policies" pageNum={8} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Business Policies (Knowledge Base)')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Business Policies (Knowledge Base)')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Aura quotes these verbatim to customers. Be specific — vague answers create bad customer experiences.')}
     </Text>
@@ -1196,7 +1196,7 @@ const KnowledgeBaseExpandedPage = () => (
 const IndustryIntakePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Industry-Specific Intake" pageNum={9} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Industry-Specific Intake')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 5: Industry-Specific Intake')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Fill out ONLY the cluster that matches your business. We use this to activate the right industry pack, specialists, and prompt templates.')}
     </Text>
@@ -1226,7 +1226,7 @@ const IndustryIntakePage = () => (
 const CommunicationRoutingPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Communication Routing" pageNum={10} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Communication Routing Worksheet')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 6: Communication Routing')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Tells Aura who handles what and where to send escalations.')}
     </Text>
@@ -1248,6 +1248,7 @@ const CommunicationRoutingPage = () => (
       ))}
     </View>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Email Aliases')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('These addresses send and receive through your Resend account on your own domain — no separate email hosting account (like Google Workspace) is needed.')}</Text>
     {['sales@:', 'support@:', 'billing@:', 'info@:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
     ))}
