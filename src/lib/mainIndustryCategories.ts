@@ -53,10 +53,10 @@ export const MAIN_INDUSTRY_CATEGORIES: MainIndustryCategory[] = [
   { name: 'Insurance & Assessment',      icon: FileText,       count: 4,  description: 'Home/auto, adjusters, appraisers',       demoPack: 'insurance_assessment', subTypeCategory: 'Insurance & Assessment' },
   { name: 'Senior & Lifestyle',          icon: HeartHandshake, count: 5,  description: 'Senior move, organize, energy audit',    demoPack: 'senior_lifestyle',   subTypeCategory: 'Senior & Lifestyle Services' },
   { name: 'Event & Temporary',           icon: Megaphone,      count: 6,  description: 'Tents, party, DJ, catering, photo',      demoPack: 'event_temporary',    subTypeCategory: 'Event & Temporary Services' },
-  { name: 'Beauty & Salons',             icon: Scissors,       count: 0,  description: 'Salons, barbers, spa & nail studios',    demoPack: 'beauty_wellness' },
-  { name: 'Restaurants & Food Delivery', icon: UtensilsCrossed,count: 0,  description: 'Restaurants, cafes, food delivery',      demoPack: 'restaurants' },
-  { name: 'Personal Assistants',         icon: HeartHandshake, count: 0,  description: 'Personal & executive assistants',        demoPack: 'personal_assistant' },
-  { name: 'B2B Pro Services',            icon: Briefcase,      count: 0,  description: 'Consultants & professional services',    demoPack: 'b2b_pro_services' },
+  { name: 'Beauty & Salons',             icon: Scissors,       count: 14, description: 'Salons, barbers, spa & nail studios',    demoPack: 'beauty_wellness',      subTypeCategory: 'Beauty & Salons' },
+  { name: 'Restaurants & Food Delivery', icon: UtensilsCrossed,count: 13, description: 'Restaurants, cafes, food delivery',      demoPack: 'restaurants',          subTypeCategory: 'Restaurants & Food Delivery' },
+  { name: 'Personal Assistants',         icon: HeartHandshake, count: 11, description: 'Personal & executive assistants',      demoPack: 'personal_assistant',   subTypeCategory: 'Personal Assistants' },
+  { name: 'B2B Pro Services',            icon: Briefcase,      count: 19, description: 'Consultants & professional services',    demoPack: 'b2b_pro_services',     subTypeCategory: 'B2B Pro Services' },
 ];
 
 export const MAIN_INDUSTRY_CATEGORY_COUNT = MAIN_INDUSTRY_CATEGORIES.length;
