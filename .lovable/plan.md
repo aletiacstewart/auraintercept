@@ -1,44 +1,45 @@
-## Merge Platform Resources sidebar pages
+## Fix: Automation, AI Operatives Hub & Knowledge Base
 
-Consolidate 9 sidebar entries → 3, using tabs inside each host page. Keep old routes alive as redirects so links don't break.
+### 1. Confirmed: "Failed" count is independent (item 1)
+`AgentWorkflowMonitor` computes `failed = events.filter(e => e.status === 'failed').length` from `ai_agent_events` — unrelated to the header's `enabledCount/totalCount`. **The "24" match is coincidental.** No code change; note only.
 
-### Merges
+### 2. Confirmed: Failed workflow events are genuine (item 2)
+Direct DB query on `ai_agent_events` where `status='failed'`:
+- 24 total failed rows across 5 distinct days (Jan 21 → Feb 10, 2026)
+- 19 `triage_handoff`, 2 `booking_handoff`, 2 `human_escalation`, 1 `triage→quoting`
+- 22 of 24 rows have distinct payloads — not a logging duplication bug, just historical events sharing the same `formatDistanceToNow` bucket ("5 months ago")
 
-1. **Platform Guides** (host) absorbs **Export Docs** + **Video Prompts**
-   - Add `Tabs` to `src/pages/PlatformGuides.tsx`: `Guides` (current content), `Export Docs` (render `<ExportDocumentation />`), `Video Prompts` (render `<VideoPromptsPage />`).
-   - Sync active tab with `?tab=guides|export|video` query param.
-   - Remove `Export Docs` and `Video Prompts` items from sidebar in `src/components/dashboard/DashboardLayout.tsx`.
-   - In `src/App.tsx`, redirect `/dashboard/export-docs` → `/dashboard/platform-guides?tab=export` and `/dashboard/video-prompts` → `?tab=video`.
+**Fix:** Show an absolute date next to (or in place of) the relative "5 months ago" so historical clusters read clearly. In `AgentWorkflowMonitor.tsx`, render both `format(created_at, 'MMM d, yyyy · h:mm a')` (title) and the relative form, or add a `title` attribute tooltip. No data change.
 
-2. **Architecture** (host) absorbs **AI Agent Demo**
-   - Add tabs to `src/pages/Architecture.tsx`: `Architecture`, `AI Agent Demo` (renders `<AIAgentFlowDemo />`).
-   - `?tab=architecture|demo`.
-   - Remove `AI Agent Demo` sidebar entry; redirect `/dashboard/ai-agent-demo` → `/dashboard/architecture?tab=demo`.
+### 3. Disambiguate the two "Operatives Active" counters (item 3)
+- `AIAgentsHub.tsx` header (line 419): change `Operatives Active` → `Total Operatives Active` and keep `{enabledCount}/{totalCount}` (24/24).
+- Quick Activation panel (same page, lower): change its label to `Core Operative Phases Active` (10/10). Locate and rename the label text only.
 
-3. **Subscription Analytics** (host) absorbs **Onboarding Invites**
-   - Add tabs to `src/pages/SubscriptionAnalytics.tsx`: `Analytics`, `Onboarding Invites` (renders `<OnboardingInvites />`).
-   - `?tab=analytics|invites`.
-   - Remove `Onboarding Invites` sidebar entry; redirect `/dashboard/onboarding-invites` → `/dashboard/subscription-analytics?tab=invites`.
+### 4. Filter Content Topics by industry (item 4 — highest value)
+In `src/components/knowledge/AIContentProfileManager.tsx`:
+- Refactor `DEFAULT_CONTENT_TOPICS` (currently a flat array of ~30 topics grouped by comment) into a keyed object:
+  ```ts
+  const TOPICS_BY_CLUSTER = {
+    general: [...5 general],
+    food_hospitality: [...5],
+    beauty_wellness: [...6],
+    personal_services: [...5],
+    home_services: [...6],
+  };
+  ```
+- Add an `INDUSTRY_TO_CLUSTER` map covering all entries in `INDUSTRY_OPTIONS` (Restaurant/Cafe/... → food_hospitality; Hair Salon/Spa/... → beauty_wellness; Coaching/Concierge/... → personal_services; HVAC/... → home_services). Already grouped in file by comments — reuse those groupings.
+- Compute `visibleTopics` = `general` ∪ clusters resolved from `primaryIndustry` + `secondaryIndustries`. If nothing selected or industry maps to no cluster → show `general` only (sensible generic default).
+- Render `visibleTopics.map(...)` in the checklist (line 777).
+- Keep `DEFAULT_CONTENT_TOPICS` as the union of all preset topics so the "Custom Topics" filter at line 795 still correctly distinguishes user-added topics from any preset (including presets from other clusters that a saved profile may reference).
+- No DB schema change; applies platform-wide because it's client-render.
 
-4. **Platform Issues** (host) absorbs **Help**
-   - Add tabs to `src/pages/PlatformIssues.tsx`: `Issues`, `Help` (renders `<Help />`).
-   - `?tab=issues|help`.
-   - Remove `Help` sidebar entry; redirect `/dashboard/help` → `/dashboard/platform-issues?tab=help`.
-   - Note: `Help` is currently visible to `company_admin` and `employee`. Since Platform Issues is platform_admin-only, keep the standalone `/dashboard/help` route rendering `<Help />` for non-admin roles (only sidebar link is removed for platform_admin). For platform_admin, redirect to the merged tab.
-
-### Resulting Platform Resources sidebar
-- Subscription Analytics
-- Platform Issues
-- Platform Guides
-- Architecture
-
-### Technical details
-- Use existing `Tabs`/`TabsList`/`TabsTrigger`/`TabsContent` from `@/components/ui/tabs`.
-- Tab state driven by `useSearchParams` so redirects with `?tab=` land on the right pane.
-- Do not modify the child page components themselves — just import and render them inside the host tab.
-- Keep all existing route protection (`platform_admin`) on the surviving routes.
-- No changes to page business logic, data, or styling beyond adding the tab shell.
+### 5. Consistent "Free" pricing display (item 5)
+In `src/components/knowledge/ServicesManager.tsx`:
+- `getPriceDisplay(service)` (line 793): change final fallback from `prices.length > 0 ? prices.join(' + ') : '-'` to `prices.length > 0 ? prices.join(' + ') : 'Free'`.
+- Also apply same fallback in the import-preview table (line 1447): replace trailing `|| '-'` with `|| 'Free'`.
+- The `<DollarSign />` icon precedes the text, so the row renders `$ Free` consistently with existing rows whose `price_display` is literally `'Free'`. No data migration needed.
 
 ### Out of scope
-- Renaming pages, merging their internal content, or changing the child components.
-- Any non-sidebar navigation surfaces (command palette, deep links elsewhere) beyond the redirects listed.
+- Deleting/deduping historical `ai_agent_events` rows (confirmed genuine).
+- Reshaping the ai_agent_events table or write path.
+- Changing industry pack / cluster infrastructure beyond the topic mapping above.

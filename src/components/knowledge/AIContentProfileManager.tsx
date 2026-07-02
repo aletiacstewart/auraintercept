@@ -125,41 +125,149 @@ interface AIContentProfile {
   updated_at: string;
 }
 
-// Default content topic suggestions by industry type
-const DEFAULT_CONTENT_TOPICS = [
-  // General topics
-  'Customer success stories',
-  'Behind the scenes',
-  'Team spotlights',
-  'Industry news and trends',
-  'Seasonal promotions',
-  // Restaurant & Food topics
-  'Daily specials & menu highlights',
-  'Chef features & recipes',
-  'Local sourcing & ingredients',
-  'Happy hour promotions',
-  'Private events & catering',
-  // Beauty & Wellness topics
-  'Beauty tips & tutorials',
-  'Skincare routines',
-  'Treatment spotlights',
-  'Before & after transformations',
-  'Self-care & wellness tips',
-  'Seasonal beauty trends',
-  // Personal Services topics
-  'Productivity tips',
-  'Work-life balance',
-  'Time management strategies',
-  'Goal setting & achievement',
-  'Professional development',
-  // Home Services topics
-  'Home maintenance tips',
-  'DIY tips for homeowners',
-  'Safety tips',
-  'Energy saving tips',
-  'Seasonal reminders',
-  'Product/equipment highlights',
-];
+// Content topic suggestions grouped by industry cluster
+const TOPICS_BY_CLUSTER: Record<string, string[]> = {
+  general: [
+    'Customer success stories',
+    'Behind the scenes',
+    'Team spotlights',
+    'Industry news and trends',
+    'Seasonal promotions',
+  ],
+  food_hospitality: [
+    'Daily specials & menu highlights',
+    'Chef features & recipes',
+    'Local sourcing & ingredients',
+    'Happy hour promotions',
+    'Private events & catering',
+  ],
+  beauty_wellness: [
+    'Beauty tips & tutorials',
+    'Skincare routines',
+    'Treatment spotlights',
+    'Before & after transformations',
+    'Self-care & wellness tips',
+    'Seasonal beauty trends',
+  ],
+  personal_services: [
+    'Productivity tips',
+    'Work-life balance',
+    'Time management strategies',
+    'Goal setting & achievement',
+    'Professional development',
+  ],
+  home_services: [
+    'Home maintenance tips',
+    'DIY tips for homeowners',
+    'Safety tips',
+    'Energy saving tips',
+    'Seasonal reminders',
+    'Product/equipment highlights',
+  ],
+  professional_services: [
+    'Client case studies',
+    'Regulatory & compliance updates',
+    'Expert tips & insights',
+    'FAQ & common questions',
+    'Process walkthroughs',
+  ],
+  automotive: [
+    'Vehicle care tips',
+    'Seasonal maintenance reminders',
+    'Before & after detailing',
+    'New arrivals & inventory',
+    'Safety & recall alerts',
+  ],
+  retail: [
+    'New arrivals & product drops',
+    'Style & how-to guides',
+    'Sales & promotions',
+    'Customer favorites',
+    'Gift guides',
+  ],
+};
+
+const INDUSTRY_TO_CLUSTER: Record<string, keyof typeof TOPICS_BY_CLUSTER> = {
+  // Food & Hospitality
+  'Restaurant': 'food_hospitality',
+  'Cafe & Coffee Shop': 'food_hospitality',
+  'Fine Dining': 'food_hospitality',
+  'Fast Casual Restaurant': 'food_hospitality',
+  'Food Truck': 'food_hospitality',
+  'Bakery & Pastry Shop': 'food_hospitality',
+  'Bar & Lounge': 'food_hospitality',
+  'Catering Services': 'food_hospitality',
+  'Brewery & Taproom': 'food_hospitality',
+  'Ice Cream & Dessert Shop': 'food_hospitality',
+  // Beauty & Wellness
+  'Hair Salon': 'beauty_wellness',
+  'Barbershop': 'beauty_wellness',
+  'Nail Salon': 'beauty_wellness',
+  'Day Spa': 'beauty_wellness',
+  'Med Spa & Aesthetics': 'beauty_wellness',
+  'Massage Therapy': 'beauty_wellness',
+  'Skincare & Facials': 'beauty_wellness',
+  'Lash & Brow Studio': 'beauty_wellness',
+  'Makeup Artist': 'beauty_wellness',
+  'Tanning Salon': 'beauty_wellness',
+  'Wellness Center': 'beauty_wellness',
+  'Yoga & Pilates Studio': 'beauty_wellness',
+  'Fitness & Personal Training': 'beauty_wellness',
+  // Personal Services
+  'Life Coaching': 'personal_services',
+  'Business Coaching': 'personal_services',
+  'Personal Assistant Services': 'personal_services',
+  'Concierge Services': 'personal_services',
+  'Travel Planning': 'personal_services',
+  'Executive Assistant': 'personal_services',
+  'Virtual Assistant': 'personal_services',
+  'Personal Styling': 'personal_services',
+  'Personal Shopper': 'personal_services',
+  'Career Counseling': 'personal_services',
+  // Home Services
+  'HVAC & Air Conditioning': 'home_services',
+  'Plumbing': 'home_services',
+  'Electrical Services': 'home_services',
+  'Roofing': 'home_services',
+  'Landscaping & Lawn Care': 'home_services',
+  'Cleaning Services': 'home_services',
+  'Pest Control': 'home_services',
+  'Home Renovation': 'home_services',
+  'Painting': 'home_services',
+  'Flooring': 'home_services',
+  'Appliance Repair': 'home_services',
+  'Pool & Spa Services': 'home_services',
+  'Garage Door Services': 'home_services',
+  'Handyman Services': 'home_services',
+  'Moving & Storage': 'home_services',
+  'Construction': 'home_services',
+  // Professional Services
+  'Legal Services': 'professional_services',
+  'Accounting & Tax': 'professional_services',
+  'Real Estate': 'professional_services',
+  'Insurance': 'professional_services',
+  'Financial Services': 'professional_services',
+  'Consulting': 'professional_services',
+  'Marketing & Advertising': 'professional_services',
+  'IT Services': 'professional_services',
+  'Web Design & Development': 'professional_services',
+  'SaaS (Software as a Service)': 'professional_services',
+  'DaaS (Data as a Service)': 'professional_services',
+  // Automotive
+  'Auto Repair': 'automotive',
+  'Auto Detailing': 'automotive',
+  'Towing Services': 'automotive',
+  'Car Dealership': 'automotive',
+  // Retail
+  'Retail Store': 'retail',
+  'E-commerce': 'retail',
+  'Boutique': 'retail',
+};
+
+// Union of all preset topics — used to detect "custom" topics added by the user
+const DEFAULT_CONTENT_TOPICS = Array.from(
+  new Set(Object.values(TOPICS_BY_CLUSTER).flat())
+);
 
 export function AIContentProfileManager() {
   const { companyId } = useAuth();
@@ -772,9 +880,20 @@ export function AIContentProfileManager() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Preset topic checkboxes */}
+          {/* Preset topic checkboxes — filtered by selected industries */}
+          {(() => {
+            const selected = [primaryIndustry, ...secondaryIndustries].filter(Boolean);
+            const clusters = new Set<string>(['general']);
+            selected.forEach(ind => {
+              const c = INDUSTRY_TO_CLUSTER[ind];
+              if (c) clusters.add(c);
+            });
+            const visibleTopics = Array.from(
+              new Set(Array.from(clusters).flatMap(c => TOPICS_BY_CLUSTER[c] || []))
+            );
+            return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {DEFAULT_CONTENT_TOPICS.map(topic => (
+            {visibleTopics.map(topic => (
               <div key={topic} className="flex items-center space-x-2">
                 <Checkbox
                   id={`topic-${topic}`}
@@ -790,6 +909,8 @@ export function AIContentProfileManager() {
               </div>
             ))}
           </div>
+            );
+          })()}
 
           {/* Custom topics */}
           {contentTopics.filter(t => !DEFAULT_CONTENT_TOPICS.includes(t)).length > 0 && (

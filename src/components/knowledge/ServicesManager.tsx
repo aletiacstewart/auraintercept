@@ -800,7 +800,7 @@ export function ServicesManager() {
     if (service.hourly_rate) prices.push(`$${service.hourly_rate.toFixed(2)}/hr`);
     if (service.parts_cost) prices.push(`$${service.parts_cost.toFixed(2)} parts`);
     if (service.price) prices.push(`$${service.price.toFixed(2)}`);
-    return prices.length > 0 ? prices.join(' + ') : '-';
+    return prices.length > 0 ? prices.join(' + ') : 'Free';
   };
 
   const calculateTotalEstimate = (service: Service) => {
@@ -1444,12 +1444,12 @@ export function ServicesManager() {
                           {service.duration_minutes ? `${service.duration_minutes} min` : '-'}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {service.price_display || [
+                          {service.price_display || ([
                             service.flat_fee && `$${service.flat_fee} flat`,
                             service.hourly_rate && `$${service.hourly_rate}/hr`,
                             service.parts_cost && `$${service.parts_cost} parts`,
                             service.price && `$${service.price}`,
-                          ].filter(Boolean).join(' + ') || '-'}
+                          ].filter(Boolean).join(' + ') || 'Free')}
                         </TableCell>
                       </TableRow>
                     ))}

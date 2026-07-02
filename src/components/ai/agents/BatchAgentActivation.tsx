@@ -236,7 +236,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">{totalEnabled}/{totalAgents}</div>
-            <div className="text-sm text-muted-foreground">Operatives Active</div>
+            <div className="text-sm text-muted-foreground">Core Operative Phases Active</div>
           </div>
         </div>
       </CardHeader>
