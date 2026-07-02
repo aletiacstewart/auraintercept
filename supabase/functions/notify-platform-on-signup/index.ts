@@ -26,19 +26,13 @@ Deno.serve(async (req) => {
 
     const { data: company, error: cErr } = await supabase
       .from("companies")
-      .select("id, name, subscription_tier, industry_vertical, trial_ends_at, phone, address, is_demo")
+      .select("id, name, subscription_tier, industry_vertical, trial_ends_at, phone, address")
       .eq("id", companyId)
       .maybeSingle();
 
     if (cErr || !company) {
       return new Response(JSON.stringify({ error: "company not found" }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    if (company.is_demo) {
-      return new Response(JSON.stringify({ skipped: "demo" }), {
-        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

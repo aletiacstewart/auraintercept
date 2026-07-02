@@ -59,9 +59,6 @@ Deno.serve(async (req) => {
       case 'transfer_call':
         return await handleTransferCall(supabase, companyId);
 
-      case 'send_walkthrough_demo':
-        return await handleSendWalkthroughDemo(args, callLogId);
-
       default:
         console.log(`Unknown SWAIG function: ${functionName}`);
         return swaigResponse("I'm not sure how to help with that. Could you tell me what service you're looking for?");

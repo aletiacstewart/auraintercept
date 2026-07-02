@@ -1,5 +1,5 @@
 // Deno mirror of src/lib/industryIdAliases.ts. Keep in sync.
-// Used by edge functions (create-demo-trial, etc.) to normalize incoming
+// Used by edge functions to normalize incoming
 // industry IDs before persisting to companies.industry_vertical.
 
 export const INDUSTRY_ID_ALIASES: Record<string, string> = {

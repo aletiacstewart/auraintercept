@@ -404,8 +404,8 @@ export default function Contact() {
                       <Mic className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                       <p className="text-xs leading-relaxed">
                         <span className="font-semibold text-primary">Tip:</span>{' '}
-                        Tell Aura your industry (HVAC, plumbing, real estate, etc.) and she'll text
-                        you a one-tap link to a live walkthrough demo pre-loaded for your business.
+                        Tell Aura your industry (HVAC, plumbing, real estate, etc.) and share your
+                        contact info — the team will follow up to schedule a personalized walkthrough of Aura.
                       </p>
                     </div>
 

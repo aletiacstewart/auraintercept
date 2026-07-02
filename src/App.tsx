@@ -11,8 +11,6 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AutoTranslatePageObserver } from "@/components/common/AutoTranslatePageObserver";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
-import { SwitcherPill } from "@/components/super-switcher/SwitcherPill";
-import { SwitchingOverlay } from "@/components/super-switcher/SwitchingOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import { useEffect } from "react";
 import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
@@ -113,8 +111,6 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
 import PlatformHealth from "./pages/PlatformHealth";
-import DemoAccountSeeder from "./pages/DemoAccountSeeder";
-import SuperSwitcher from "./pages/SuperSwitcher";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
@@ -122,7 +118,6 @@ import CompanyBlog from "./pages/CompanyBlog";
 import CompanyBlogPost from "./pages/CompanyBlogPost";
 import Contact from "./pages/Contact";
 import ForBusiness from "./pages/ForBusiness";
-import DemoAccess from "./pages/DemoAccess";
 
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -185,8 +180,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
             <ScrollToTop />
             <VoiceProvider>
               {!isEmbedMode && <AuraVoiceOverlay />}
-              {!isEmbedMode && <SwitcherPill />}
-              {!isEmbedMode && <SwitchingOverlay />}
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
@@ -194,8 +187,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
-                <Route path="/demo/:trialId" element={<DemoAccess />} />
-                <Route path="/super-switcher" element={<ProtectedRoute><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/intake/:token" element={<PublicOnboardingIntake />} />
                 <Route path="/dashboard/onboarding-invites" element={<ProtectedRoute requiredRole="platform_admin"><OnboardingInvites /></ProtectedRoute>} />
@@ -299,7 +290,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
-                <Route path="/dashboard/demo-seeder" element={<ProtectedRoute><DemoAccountSeeder /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent-demo" element={<ProtectedRoute><AIAgentFlowDemo /></ProtectedRoute>} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />

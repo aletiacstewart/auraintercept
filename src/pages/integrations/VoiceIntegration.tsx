@@ -227,11 +227,6 @@ export default function VoiceIntegration() {
             />
           )}
 
-          {/* ElevenLabs Client Tool Checklist (send_walkthrough_demo) */}
-          {integrations?.elevenlabs_api_key && (
-            <ElevenLabsToolChecklist />
-          )}
-
           {/* Setup Form */}
           <FormShell
             id="voice-integration-setup"

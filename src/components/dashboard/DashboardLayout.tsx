@@ -195,7 +195,6 @@ const navGroups: NavGroup[] = [
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Demo Account Seeder', icon: Sparkles, href: '/dashboard/demo-seeder', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Onboarding Invites', icon: Send, href: '/dashboard/onboarding-invites', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
