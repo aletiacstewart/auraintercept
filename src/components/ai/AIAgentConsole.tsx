@@ -763,7 +763,16 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[10px] text-foreground">Satisfaction</span>
-                <span className="text-[10px] font-bold text-emerald-400">98.4%</span>
+                <span
+                  className={cn(
+                    'text-[10px] font-bold',
+                    satisfactionData && satisfactionData.count > 0
+                      ? 'text-emerald-400'
+                      : 'text-muted-foreground',
+                  )}
+                >
+                  {satisfactionLabel}
+                </span>
               </div>
             </div>
           </div>
