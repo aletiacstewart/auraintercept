@@ -1597,7 +1597,6 @@ export const CompanyOnboardingPDF = () => (
     <HowToUsePage />
     <DocumentChecklistPage />
     <WhyYourOwnAccountsPage />
-    <ThirdPartyAccountsPage />
     <A2P10DLCPage />
     <SocialAccountsPage />
     <CompanyProfilePage />
@@ -1608,17 +1607,17 @@ export const CompanyOnboardingPDF = () => (
     <KnowledgeBaseExpandedPage />
     <IndustryIntakePage />
     <CommunicationRoutingPage />
-    <CarrierForwardingPage />
     <TechnicianRosterPage />
     <BookingPortalPage />
     <SmartWebsitePage />
     <IntegrationRequirementsPage />
-    <EmployeeInfoPage />
     <AuditQuestionsPages />
     <GoalsNotesPage />
     <TermsOfServiceSummaryPage />
     <TermsAcknowledgementPage />
     <SignOffPage />
+    {/* Appendix A — carrier-specific forwarding codes; only your carrier's page is relevant */}
+    <CarrierForwardingPage />
   </Document>
 );
 
