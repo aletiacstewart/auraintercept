@@ -880,9 +880,20 @@ export function AIContentProfileManager() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Preset topic checkboxes */}
+          {/* Preset topic checkboxes — filtered by selected industries */}
+          {(() => {
+            const selected = [primaryIndustry, ...secondaryIndustries].filter(Boolean);
+            const clusters = new Set<string>(['general']);
+            selected.forEach(ind => {
+              const c = INDUSTRY_TO_CLUSTER[ind];
+              if (c) clusters.add(c);
+            });
+            const visibleTopics = Array.from(
+              new Set(Array.from(clusters).flatMap(c => TOPICS_BY_CLUSTER[c] || []))
+            );
+            return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {DEFAULT_CONTENT_TOPICS.map(topic => (
+            {visibleTopics.map(topic => (
               <div key={topic} className="flex items-center space-x-2">
                 <Checkbox
                   id={`topic-${topic}`}
@@ -898,6 +909,8 @@ export function AIContentProfileManager() {
               </div>
             ))}
           </div>
+            );
+          })()}
 
           {/* Custom topics */}
           {contentTopics.filter(t => !DEFAULT_CONTENT_TOPICS.includes(t)).length > 0 && (
