@@ -12,7 +12,7 @@ export const FEATURE_TOOLTIPS = {
   },
   talkToAura: {
     label: 'Talk to Aura (Voice)',
-    tooltip: 'Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs (voice synthesis) and Twilio (telephony).',
+    tooltip: 'Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs (voice synthesis) and SignalWire (telephony).',
     shortDescription: 'Voice conversations with AI assistant',
   },
   
@@ -26,7 +26,7 @@ export const FEATURE_TOOLTIPS = {
   // Communication channels
   smsReminders: {
     label: 'SMS Reminders',
-    tooltip: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires Twilio integration.',
+    tooltip: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires SignalWire integration.',
     shortDescription: 'Automated text message notifications',
   },
   emailReminders: {
@@ -36,7 +36,7 @@ export const FEATURE_TOOLTIPS = {
   },
   voiceReminders: {
     label: 'Voice Reminders',
-    tooltip: 'Automated outbound phone calls for appointment reminders and follow-ups. Requires ElevenLabs + Twilio integration.',
+    tooltip: 'Automated outbound phone calls for appointment reminders and follow-ups. Requires ElevenLabs + SignalWire integration.',
     shortDescription: 'Automated phone call reminders',
   },
   
@@ -106,8 +106,8 @@ export const FEATURE_TOOLTIPS = {
       label: 'ElevenLabs',
       tooltip: 'Powers Talk to Aura (Voice) and Voice Reminders. Provides natural-sounding AI voice synthesis.',
     },
-    twilio: {
-      label: 'Twilio',
+    signalwire: {
+      label: 'SignalWire',
       tooltip: 'Enables SMS Reminders and Voice Reminders. Provides phone number provisioning and call handling.',
     },
     stripe: {

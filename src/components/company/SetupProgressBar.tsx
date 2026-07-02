@@ -29,7 +29,11 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
   }, []);
 
   useEffect(() => {
-    if (!companyId) return;
+    if (!companyId) {
+      setSteps([]);
+      setLoading(false);
+      return;
+    }
 
     const checkSetupStatus = async () => {
       setLoading(true);
@@ -145,6 +149,17 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
     return (
       <div className="flex items-center justify-center py-4">
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (steps.length === 0) {
+    return (
+      <div ref={ref} className="guide-card rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-card-foreground">Setup Progress</h3>
+        <p className="text-xs text-muted-foreground mt-1">
+          Setup checklist not yet configured for this workspace.
+        </p>
       </div>
     );
   }

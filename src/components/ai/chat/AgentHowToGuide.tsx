@@ -106,7 +106,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
     label: 'Talk to Aura (Voice)',
     icon: Mic,
     color: 'violet',
-    description: 'Speech-based conversations with AI - requires ElevenLabs + Twilio',
+    description: 'Speech-based conversations with AI - requires ElevenLabs + SignalWire',
     steps: [
       { step: 1, title: 'Click Voice Button', description: 'Tap the microphone icon to start a voice conversation' },
       { step: 2, title: 'Allow Microphone', description: 'Grant permission for the browser to use your microphone' },
@@ -152,7 +152,7 @@ const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
       { step: 4, title: 'Confirmation Links', description: 'Customers can confirm or reschedule via links in the message' },
     ],
     tips: [
-      'Requires Twilio integration',
+      'Requires SignalWire integration',
       'Customers can opt-out via reply',
       'Configure timing in Notification Settings',
       'Reduces no-shows by up to 50%'

@@ -61,7 +61,7 @@ export function CustomerPreferencesManager() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from("companies")
-        .select("customer_prefs_enabled")
+        .select("customer_prefs_enabled, name")
         .eq("id", companyId)
         .single();
       if (error) throw error;
@@ -333,7 +333,11 @@ export function CustomerPreferencesManager() {
 
         {/* Table */}
         {filteredAppointments.length === 0 ? (
-          <AuraEmptyState icon={Users} title="No appointments found" description="Appointments with customer preferences will appear here" />
+          <AuraEmptyState
+            icon={Users}
+            title={companySetting?.name ? `No appointments for ${companySetting.name} yet` : 'No appointments yet'}
+            description="Appointments with customer preferences will appear here once bookings come in."
+          />
         ) : (
           <ScrollArea className="h-[500px]">
             <Table>
