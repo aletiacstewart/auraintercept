@@ -350,7 +350,7 @@ export default function SpecialistOperativesConsole() {
             icon={Sparkles}
             title="Specialist Operatives"
             description="Specialists for diagnostics, permits, surveys, and claims."
-            featureColor="config"
+            featureColor="platform"
             badge={
               <Badge variant="outline" className="text-[10px]">
                 Aura Pro & Elite
