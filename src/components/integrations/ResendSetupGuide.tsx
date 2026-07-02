@@ -37,7 +37,7 @@ export function ResendSetupGuide() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full">
           {/* Step 1: Create Account */}
           <AccordionItem value="step-1">
             <AccordionTrigger className="text-sm">

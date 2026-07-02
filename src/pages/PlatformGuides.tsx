@@ -1601,7 +1601,7 @@ const PlatformGuides: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Accordion type="single" collapsible className="space-y-3">
+              <Accordion type="multiple" className="space-y-3">
                 {currentCategory?.guides.map((guide, index) => (
                   <AccordionItem 
                     key={index} 

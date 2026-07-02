@@ -1020,7 +1020,7 @@ export default function SignUp() {
                 </div>
 
                 {/* 3rd Party Costs + Setup — Compact Accordion */}
-                <Accordion type="single" collapsible className="border border-border/40 rounded-lg overflow-hidden">
+                <Accordion type="multiple" className="border border-border/40 rounded-lg overflow-hidden">
                   <AccordionItem value="costs" className="border-0">
                     <AccordionTrigger className="px-3 py-2 hover:no-underline hover:bg-muted/30 text-xs font-semibold">
                       <div className="flex items-center gap-1.5">
@@ -1069,7 +1069,7 @@ export default function SignUp() {
 
                       {/* Setup docs — nested accordion */}
                       <div className="border border-primary/20 rounded-md overflow-hidden">
-                        <Accordion type="single" collapsible>
+                        <Accordion type="multiple">
                           <AccordionItem value="setup-docs" className="border-0">
                             <AccordionTrigger className="px-2.5 py-1.5 hover:no-underline hover:bg-primary/5 text-[10px] font-semibold text-primary">
                               <div className="flex items-center gap-1.5">

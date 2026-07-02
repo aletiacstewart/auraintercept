@@ -282,7 +282,7 @@ export function GoogleCalendarSettings() {
               </p>
             </div>
 
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="multiple" className="w-full">
               <AccordionItem value="step-1" className="border-b-0">
                 <AccordionTrigger className="text-xs py-2 hover:no-underline">
                   <span className="flex items-center gap-2">
