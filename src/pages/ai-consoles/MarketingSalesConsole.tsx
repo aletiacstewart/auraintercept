@@ -18,6 +18,12 @@ import { getMarketingPlaybook } from '@/lib/industryMarketingPlaybooks';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import type { IndustrySpecialistOperative } from '@/lib/subscriptionAgentConfig';
 import { MarketingMatrixCards } from '@/components/marketing/MarketingMatrixCards';
+import { WorkflowChainButtons } from '@/components/ui/workflow-chain-buttons';
+import { getMarketingWorkflows } from '@/lib/industryMarketingWorkflows';
+import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
+import { useAuraCommand } from '@/hooks/useAuraCommand';
+import { toast } from 'sonner';
+import { useMemo } from 'react';
 
 // Cluster-aware marketing specialists. Surfaces the AI roles most useful for
 // outreach campaigns in each industry cluster (Phase 4 contextual surfacing).
@@ -39,6 +45,9 @@ export default function MarketingSalesConsole() {
   const navigate = useNavigate();
   const { pack } = useIndustryPack();
   const playbook = getMarketingPlaybook(pack);
+  const marketingWorkflows = useMemo(() => getMarketingWorkflows(pack), [pack]);
+  const { run: runChain } = useRunWorkflowChain();
+  const { submitQuery } = useAuraCommand();
   const marketingSpecialists =
     (pack && MARKETING_SPECIALISTS_BY_INDUSTRY[pack.industry_id]) ||
     (pack && MARKETING_SPECIALISTS_BY_CLUSTER[pack.cluster]) ||
@@ -92,6 +101,19 @@ export default function MarketingSalesConsole() {
               }
             />
             
+            <WorkflowChainButtons
+              chains={marketingWorkflows}
+              onTrigger={(chain) => {
+                if (chain.actions && chain.actions.length > 0) {
+                  toast.info('Aura is drafting actions…', { description: chain.label });
+                  void runChain(chain);
+                } else {
+                  toast.info('Running workflow…', { description: chain.command.slice(0, 80) + '…' });
+                  submitQuery(chain.command);
+                }
+              }}
+            />
+
             <MarketingSalesAgentConsole />
 
             <MarketingMatrixCards />
