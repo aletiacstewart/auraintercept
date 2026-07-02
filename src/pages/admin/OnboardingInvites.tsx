@@ -344,6 +344,9 @@ export default function OnboardingInvites({ embedded }: { embedded?: boolean } =
         </DialogContent>
       </Dialog>
       </div>
-    </DashboardLayout>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>{body}</DashboardLayout>
   );
 }
