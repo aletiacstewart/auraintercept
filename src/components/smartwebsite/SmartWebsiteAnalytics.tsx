@@ -23,6 +23,7 @@ import {
 } from 'recharts';
 import { format, subDays, eachDayOfInterval, parseISO } from 'date-fns';
 import { Eye, Users, MessageSquare, MousePointer, TrendingUp, Mic, Phone, BarChart3, ChevronDown } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface SmartWebsiteAnalyticsProps {
   websiteId: string;
@@ -356,9 +357,12 @@ export function SmartWebsiteAnalytics({
             </ResponsiveContainer>
           </div>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              No visitor data yet
-            </div>
+            <EmptyState
+              icon={TrendingUp}
+              title="No visitor data yet"
+              description="Traffic will appear here once real visitors reach your published site."
+              className="h-[300px]"
+            />
           )}
         </CardContent>
       </Card>
@@ -514,9 +518,12 @@ export function SmartWebsiteAnalytics({
             </ResponsiveContainer>
           </div>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              No engagement data yet
-            </div>
+            <EmptyState
+              icon={MessageSquare}
+              title="No engagement data yet"
+              description="Chat opens, voice sessions, and messages will show up here."
+              className="h-[300px]"
+            />
           )}
         </CardContent>
       </Card>
