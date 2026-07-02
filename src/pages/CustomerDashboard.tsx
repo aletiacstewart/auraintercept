@@ -31,8 +31,6 @@ import { format } from 'date-fns';
 import { parseUTCDateTime } from '@/lib/dateUtils';
 import { CommunicationPreferencesCheckboxes, CommunicationPreferences } from '@/components/customer/CommunicationPreferencesCheckboxes';
 import { toast } from 'sonner';
-import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
-
 interface CustomerProfile {
   id: string;
   company_id: string;
@@ -312,7 +310,6 @@ export default function CustomerDashboard() {
               <h1 className="text-2xl font-bold">{company.name}</h1>
               <p className="text-muted-foreground">Customer Portal</p>
             </div>
-            <SuperHubInlineButton />
           </div>
         </header>
 

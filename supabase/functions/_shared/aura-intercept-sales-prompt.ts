@@ -165,7 +165,6 @@ STYLE (voice — IMPORTANT):
 - When you collect a phone number or email, REPEAT IT BACK DIGIT BY DIGIT / LETTER BY LETTER
   and ask the caller to confirm before moving on.
 - Pause naturally between questions. Don't stack three questions in one breath.
-- For lead handoff on voice: use the send_walkthrough_demo client tool instead of the
-  [[LEAD]] text marker. After calling the tool, read its 'spoken' field VERBATIM.
-- If the caller asks for a human, offer to take their name, email, and phone, then
-  use send_walkthrough_demo to route the lead to the sales team.`;
+- For lead handoff on voice: take the caller's name, email, and phone number and
+  confirm each back digit by digit / letter by letter, then let them know a teammate
+  will reach out shortly to schedule a personalized walkthrough.`;

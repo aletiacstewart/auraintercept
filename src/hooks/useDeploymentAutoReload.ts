@@ -79,8 +79,6 @@ const NEVER_RELOAD_PATH_PREFIXES = [
   '/intake',
   '/checkout',
   '/subscription',
-  '/demo',
-  '/super-switcher',
 ];
 
 const isProtectedRoute = () => {

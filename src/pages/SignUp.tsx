@@ -313,7 +313,6 @@ export default function SignUp() {
           phone: companyPhone || null,
           subscription_tier: tierToPersist,
           industry_vertical: canonicalIndustry,
-          is_demo: false,
           trial_ends_at: trialEndsAt,
           aura_sms_opt_in: auraSmsOptIn,
           aura_sms_consent_at: auraSmsOptIn ? new Date().toISOString() : null,

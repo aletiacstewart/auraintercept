@@ -8,8 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LogOut } from 'lucide-react';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
-import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
-import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
 import logo from '@/assets/aura-intercept-logo.png';
 
 interface Company {
@@ -89,7 +87,6 @@ export default function CustomerCompanyPortal() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <DemoExpiryBanner />
       {/* Minimal header */}
       <header className="border-b bg-card sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -100,7 +97,6 @@ export default function CustomerCompanyPortal() {
             <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
           </div>
           <div className="flex items-center gap-2">
-            <SuperHubInlineButton />
             <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>

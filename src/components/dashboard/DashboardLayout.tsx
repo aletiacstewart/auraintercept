@@ -68,27 +68,14 @@ import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner';
-import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
-import { useSuperSwitcher } from '@/hooks/useSuperSwitcher';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video, Sparkles, Send } from 'lucide-react';
+import { Clapperboard, Video, Send, Sparkles } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
 import { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
-
-function SuperAdminHubButton() {
-  const { user } = useAuth();
-  const { exit } = useSuperSwitcher();
-  if (!user?.email?.endsWith('@demo.com')) return null;
-  return (
-    <Button size="sm" variant="default" className="h-8 px-3 text-[11px] font-semibold" onClick={exit}>
-      <Crown className="w-3.5 h-3.5 mr-1" />Super Admin Hub
-    </Button>
-  );
-}
 
 interface NavItem {
   label: string;
@@ -195,7 +182,6 @@ const navGroups: NavGroup[] = [
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Demo Account Seeder', icon: Sparkles, href: '/dashboard/demo-seeder', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Onboarding Invites', icon: Send, href: '/dashboard/onboarding-invites', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
@@ -764,7 +750,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <main ref={mainRef} className="dashboard-main flex-1 min-w-0 overflow-x-hidden overflow-y-auto w-full" data-tour-id="main-content">
-        <DemoExpiryBanner />
         {/* Mobile install banner (only on small screens, dismissable) */}
         <MobileInstallBanner />
         {/* Header with notification bell */}
@@ -782,7 +767,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </Button>
             <div className="flex items-center justify-end gap-2 ml-auto">
             <CurrentPlanChip />
-            <SuperAdminHubButton />
             <NotificationBell />
             </div>
           </div>

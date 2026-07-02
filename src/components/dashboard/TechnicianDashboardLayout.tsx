@@ -30,8 +30,6 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getNavLabels } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
-import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
-
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -131,7 +129,6 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <SuperHubInlineButton />
             <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-sidebar-foreground hover:bg-sidebar-accent">
@@ -318,11 +315,6 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
 
       {/* Main Content */}
       <main className="dashboard-main flex-1 overflow-auto">
-        {user?.email?.endsWith('@demo.com') && (
-          <div className="sticky top-0 z-40 flex items-center justify-end gap-2 px-6 py-2 border-b border-border bg-background/80 backdrop-blur">
-            <SuperHubInlineButton />
-          </div>
-        )}
         <div className="container max-w-7xl py-8 px-6">
           {children}
         </div>

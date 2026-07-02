@@ -15,7 +15,6 @@ interface SignupRow {
   industry_vertical: string | null;
   trial_ends_at: string | null;
   created_at: string;
-  is_demo: boolean | null;
 }
 
 function trialDay(trialEndsAt: string | null): string {
@@ -36,8 +35,7 @@ export function NewSignupsWidget() {
       const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, subscription_tier, industry_vertical, trial_ends_at, created_at, is_demo')
-        .eq('is_demo', false)
+        .select('id, name, subscription_tier, industry_vertical, trial_ends_at, created_at')
         .gte('created_at', since)
         .order('created_at', { ascending: false })
         .limit(10);

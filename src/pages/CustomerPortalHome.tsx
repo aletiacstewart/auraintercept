@@ -13,7 +13,6 @@ import { PortalQuickActions } from '@/components/customer-portal/PortalQuickActi
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPortalCopy } from '@/lib/industryPortalCopy';
 import { toast } from 'sonner';
-import { SuperHubInlineButton } from '@/components/super-switcher/SuperHubInlineButton';
 
 export default function CustomerPortalHome() {
   const { user, loading: authLoading } = useAuth();
@@ -78,7 +77,6 @@ export default function CustomerPortalHome() {
                 <span className="hidden sm:inline">Install App</span>
               </Button>
             )}
-            <SuperHubInlineButton />
             <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>

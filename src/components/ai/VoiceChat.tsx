@@ -174,47 +174,6 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
           });
         } finally { setIsProcessingTool(false); }
       },
-      // Industry-matched live walkthrough demo. Aura captures industry +
-      // contact info, calls this tool, and reads back the `spoken` field so
-      // the prospect immediately knows their text + email are on the way.
-      send_walkthrough_demo: async (params: Record<string, unknown>) => {
-        setIsProcessingTool(true);
-        try {
-          const { data, error } = await supabase.functions.invoke(
-            "send-walkthrough-demo",
-            {
-              body: {
-                industry: params.industry,
-                name: params.name,
-                email: params.email,
-                phone: params.phone || params.mobile || params.phone_number,
-                company_name: params.company_name || params.business_name,
-                source: "voice_web",
-              },
-            },
-          );
-          if (error) throw error;
-          const spoken = (data && typeof (data as any).spoken === "string")
-            ? (data as any).spoken
-            : "I just sent your live walkthrough link by text and email — tap it whenever you're ready.";
-          if ((data as any)?.demo_url) {
-            toast({
-              title: "Live demo on the way",
-              description: `Tap the link in your text or email — opens your ${(data as any).industry_label || "industry"} demo.`,
-            });
-          }
-          return JSON.stringify({ ok: true, spoken });
-        } catch (e) {
-          console.error("[VoiceChat] send_walkthrough_demo failed:", e);
-          return JSON.stringify({
-            ok: false,
-            spoken:
-              "I had trouble sending that — can a teammate text the demo link in a couple minutes?",
-          });
-        } finally {
-          setIsProcessingTool(false);
-        }
-      },
     },
     onConnect: () => {
       console.log("[VoiceChat] ✅ Connected");
@@ -323,19 +282,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       if (!agentId) throw new Error("No ElevenLabs agent configured for this company");
 
       console.log("[VoiceChat] Starting with agentId:", agentId);
-      const isAuraSalesTenant = companyId === '04c57cbe-358e-4036-a3ad-b777a55f5be0';
-      const walkthroughPromptAddendum = isAuraSalesTenant
-        ? `\n\nLIVE WALKTHROUGH DEMO:\nIf the caller asks for a demo, walkthrough, sample, or "try it for my <industry>", do this:\n1. Confirm their industry. Supported: HVAC, plumbing, electrical, roofing, solar, landscaping, pool & spa, pest control, appliance repair, handyman, construction, auto care, security systems, real estate, beauty & wellness, restaurants, personal assistant, fencing. (Home health / hospice / PT / OT are on a HIPAA waitlist — capture them as a lead instead.)\n2. Collect first name and mobile phone number (email optional, company name optional).\n3. Call the send_walkthrough_demo client tool with { industry, name, phone, email?, company_name? }.\n4. Read back the tool's "spoken" field verbatim so the caller hears the confirmation. Never claim the demo was sent unless the tool returned ok:true.`
-        : '';
       await conversation.startSession({
         agentId,
         connectionType: "webrtc",
         overrides: {
           agent: {
             language: voiceLanguage,
-            ...(walkthroughPromptAddendum
-              ? { prompt: { prompt: walkthroughPromptAddendum } }
-              : {}),
           },
         },
       });

@@ -1,71 +1,82 @@
-# Settings Hub & Platform Dashboard Fixes
+# Remove all demo-seeded content
 
-Scope: copy + presentation fixes on Settings tabs and the Platform Admin Dashboard. No schema, no auth, no billing changes.
+Goal: the only "60-Day Live Demo" a company ever gets is the real signup flow in `SignUp.tsx` — a real, empty tenant they populate with their own data. Every code path that pre-populates a tenant with fake customers, jobs, invoices, or "Demo Construction/HVAC/Electrical/Landscape/Home Health Care" companies is deleted.
 
-## 1. Twilio → SignalWire copy sweep (CRITICAL)
+## Scope split
 
-Replace user-facing "Twilio" copy with "SignalWire" everywhere it describes our telephony vendor. Keep code that talks to the actual Twilio REST API (staff SMS fallback), keep DB column names, keep the SignalWire signature file's Twilio-compat header comment.
+Two distinct fake-data systems currently exist. Both are removed:
 
-User-facing text to update:
-- `src/components/company/ReminderSettings.tsx` — "Twilio and ElevenLabs integrations" → "SignalWire and ElevenLabs integrations" (both the toast at ~L160 and body copy at ~L345). This is the exact bug the user cited.
-- `src/lib/featureTooltips.ts` — voice/SMS/voice-call tooltips (L15, L29, L39) reword Twilio → SignalWire; rename the `twilio` entry in the integrations map (L109-110) to `signalwire` and update its `label`. Grep callers of `INTEGRATIONS.twilio` and update the key.
-- `src/pages/SmartWebsiteManager.tsx` L1026 tooltip.
-- `src/components/ai/chat/AgentHowToGuide.tsx` L109, L155.
-- `src/components/ai/SMSChat.tsx` L126 "Send SMS via Twilio" → "Send SMS via SignalWire".
-- `src/components/ai/TestCallDialog.tsx` L125-146 — the "Twilio trial account" error path is dead copy for SignalWire; reword to "SignalWire trial number not verified" or generic "This number isn't verified on your telephony account yet."
-- `src/components/onboarding/GoLiveTimeline.tsx` L89-90 — `label: 'Connect Phone (SignalWire)'`; keep the `key: 'twilio'` only if changing it breaks stored progress — otherwise rename key too and add a one-line migration comment.
-- `src/components/onboarding/CompanyOnboardingForm.tsx` — rename the `twilio` field label at L956 to "SignalWire" (keep the object key if it maps to persisted onboarding state; only rename the display name).
-- `src/components/integrations/CostCalculatorHelp.tsx` L123 + `src/components/integrations/CostCalculator.tsx` L301 — rename the local `twilioCost` variable to `signalwireCost` for consistency (already computed from SignalWire pricing).
+1. **Sandbox 60-day demo tenants** — spun up by the marketing voice agent / avatar chat via `send_walkthrough_demo` client tool → `send-walkthrough-demo` → `create-demo-trial`, then delivered via `/demo/:trialId` (`DemoAccess.tsx`) with a shared password. Expired daily by `expire-demo-trials`.
+2. **Platform-admin fake tenant registry** — `Demo Construction`, `Demo HVAC`, `Demo Electrical`, `Demo Landscape & Trees`, `Demo Home Health Care`, etc. Created by `seed-demo-accounts-v2` from the `DemoAccountSeeder` page at `/dashboard/demo-seeder`, wiped by `wipe-demo-companies`. These are the "$378.88 identical rows" from the last audit.
 
-Also re-check onboarding workbook PDF, AI Opportunity Audit PDF, and any Help/PlatformGuides copy for stray "Twilio" strings via `rg -i twilio src/` after edits; only actual Twilio API-integration code (staff SMS in `send-staff-notification`) should remain.
+Real customer signup (`/signup` → `SignUp.tsx`, `is_demo: false`, Stripe subscription, 60-day trial) is untouched.
 
-Verification: `rg -i twilio src/` returns only DB type strings, the staff-SMS Twilio API call, and the SignalWire-signature Twilio-compat comment. Add a `contentDriftGuard` rule that fails if any `.tsx` under `src/pages` or `src/components` matches `/Twilio/` outside an allowlist.
+## Step 1 — Wipe existing seeded data (one-time)
 
-## 2. Platform Dashboard — demo company data
+Before schema/code removal, invoke the existing `wipe-demo-companies` edge function once to hard-delete every `companies.is_demo = true` row and all cascaded child rows + associated auth users. This is safer than doing it inside the migration because it removes `auth.users` rows too.
 
-In `PlatformAdminDashboard.tsx` Company Breakdown table: detect demo companies (`name ILIKE 'Demo %'` or the `demo_trials`/registry flag) and render a small "Demo Data" pill next to the company name. Also add a subtle section-level caption under the Company Breakdown heading: "Rows tagged Demo Data are seeded fixtures, not live tenant metrics." No numeric randomization — labeling is safer than fake variance.
+Fallback if the function fails: run a data-only script that deletes from `companies WHERE is_demo = true` (cascades handle most children).
 
-## 3. Overall Setup Progress — 0/0 empty state
+## Step 2 — DB migration
 
-Where the Platform Dashboard renders "Overall Setup Progress", branch on `steps.length === 0` (or denominator === 0): render an inline empty state "Setup checklist not yet configured for this workspace" instead of the 0% progress bar. Keep the widget mounted so layout doesn't shift.
+Single migration that:
+- `DROP TABLE public.demo_trials CASCADE;`
+- `DROP FUNCTION IF EXISTS public.get_demo_trial_access(uuid);` (and any sibling demo RPCs surfaced by `\df public.*demo*`)
+- Removes any RLS policies / grants referencing `demo_trials`
+- `ALTER TABLE public.companies DROP COLUMN IF EXISTS is_demo;`
+- Drops `NewSignupsWidget`-style indexes on `is_demo` if any
 
-## 4. Lead Conversion — "Not yet tracked" state
+Verification query included in the migration description: `SELECT COUNT(*) FROM companies WHERE name ILIKE 'Demo %'` should return 0 after Step 1.
 
-Locate the Lead Conversion tile in `PlatformAdminDashboard.tsx`. If either (a) there is no `converted_at`/conversion event column being queried, or (b) the numerator is 0 while leads > 0 and customers > 0, render the tile value as "Not yet tracked" with muted styling and a small tooltip: "Lead-to-customer conversion events aren't wired up yet." Leave Quote Conversion and Appointment Completion unchanged.
+## Step 3 — Delete edge functions
 
-## 5. Persistent spinner on Settings tabs
+Delete via `supabase--delete_edge_functions`:
+- `create-demo-trial`
+- `expire-demo-trials`
+- `send-walkthrough-demo`
+- `seed-demo-accounts-v2`
+- `wipe-demo-companies`
 
-On Settings tabs (Company, Communications, Templates, Campaigns & Reviews) the top-level loader keeps spinning after content loads. Audit the Settings page wrapper (`src/pages/Settings.tsx`) and the tab shells: look for a parent `isLoading` that ORs multiple queries and never flips false because one query has no data / stays `isFetching`. Fix by:
-- Scope the spinner to the specific card/section that owns the query (skeletons inside each card), OR
-- Change parent gate from `isLoading || isFetching` to `isLoading` only (initial load), so background refetches don't retrigger the top spinner.
+## Step 4 — Frontend removals
 
-Verify by loading each tab and confirming spinner clears within 1s of first paint.
+Delete files:
+- `src/pages/DemoAccountSeeder.tsx`
+- `src/pages/DemoAccess.tsx`
+- `src/components/marketing/DemoCredentialsCard.tsx`
+- `src/components/admin/ElevenLabsToolChecklist.tsx` (only registers `send_walkthrough_demo`)
 
-## 6. Appointments count mismatch — Customer Preferences empty state
+Update:
+- `src/App.tsx` — remove `DemoAccountSeeder` + `DemoAccess` imports and the `/dashboard/demo-seeder` and `/demo/:trialId` routes.
+- `src/components/dashboard/DashboardLayout.tsx` — remove the "Demo Account Seeder" nav entry.
+- `src/pages/SuperSwitcher.tsx` — drop the seed-demo button, the demo-seeder link, and the `.eq('is_demo', true)` query. If the page's only purpose was toggling demo tenants, remove the page entirely and its route + all nav references. (Confirm with a quick read; likely just prune the demo bits and keep the industry switcher.)
+- `src/components/dashboard/NewSignupsWidget.tsx` — drop `.eq('is_demo', false)` and the `is_demo` column selection.
+- `src/components/ai/CompanySelector.tsx` — drop the `is_demo` badge + interface field.
+- `src/components/aura/AuraAvatarChat.tsx` and `src/components/ai/VoiceChat.tsx` — remove the `send_walkthrough_demo` client-tool implementation. Voice/avatar can still capture the lead (name/email/phone) via existing `create_lead` / contact-form paths; they just no longer spin up a sandbox tenant. Replace the tool's spoken response with a plain "I've forwarded your details to the sales team — they'll follow up shortly."
+- `src/lib/auraInterceptSalesPrompt.ts` — remove the `send_walkthrough_demo` tool reference; keep lead-capture guidance. Change CTA line from "send a walkthrough" to "book a 15-minute call or start the trial."
+- `src/pages/Contact.tsx` L408 — reword "one-tap link to a live walkthrough demo pre-loaded for your business" → "we'll follow up to schedule a personalized walkthrough of Aura."
+- `src/pages/integrations/VoiceIntegration.tsx` L230 — drop the ElevenLabs `send_walkthrough_demo` checklist section.
+- `supabase/functions/voice-swaig/index.ts` L369-377 — remove the `send-walkthrough-demo` forward; keep the lead-capture branch.
+- `supabase/functions/notify-platform-on-signup/index.ts` — drop `is_demo` select and the `if (company.is_demo)` short-circuit.
+- `supabase/functions/check-subscription/index.ts` L206-220 — drop `is_demo` select and the demo-tenant free-pass branch (any tenant left must go through real subscription logic now).
+- `supabase/functions/ai-agent-chat/index.ts` L7637 — remove the `send-walkthrough-demo` invoke (or gate behind a feature flag disabled by default; simpler to remove).
 
-`CustomerPreferences` empty state currently reads "No appointments found — Showing 0 of 0 appointments." Update the copy to include the active company name: "No appointments for {companyName} yet." Pull `companyName` from `useCompanyProfile()`. This clarifies scope vs. the platform-wide Snapshot count. No data-fetch change.
+## Step 5 — Regenerate types + smoke test
 
-## 7. Platform Snapshot — group into 3 clusters
+- Types file regenerates automatically after migration approval; verify `demo_trials` and `is_demo` no longer appear.
+- `tsgo` clean.
+- Manual verification: `/dashboard/demo-seeder` returns 404; `/demo/anything` returns 404; SuperSwitcher no longer lists demo companies; Platform Dashboard Company Breakdown shows only real tenants; `SignUp.tsx` still creates an empty tenant successfully.
+- Update `mem://platform-operations/demo-account-registry` to note the demo-seeding system was removed on this date and any future "demo" is the real 60-day trial only.
 
-In `PlatformAdminDashboard.tsx`, wrap the 11 `MetricCard` tiles into three labeled `<section>` blocks, each with a small `text-xs uppercase tracking-wide text-muted-foreground` header:
-- **Growth** — Total Companies, Total Users, Customers, Leads
-- **Revenue** — Platform Revenue, Monthly Revenue
-- **Operations** — Appointments, Pending Quotes, Inventory, Active Campaigns, AI Agents Active
+## Out of scope (kept intact)
 
-Keep existing `MetricCard` styling and grid classes; only add the group headers and split the grid. Responsive: each group is its own `grid grid-cols-2 md:grid-cols-4` (Revenue group uses `md:grid-cols-2`).
-
-## 8. Missed Call Follow-up default
-
-Confirmation-only. Grep `missed_call_action` default in `companies` schema + `ReminderSettings` initial state. If default is not `enabled` at the DB or UI layer, flip the UI default toggle to on for new accounts (client-side default only — no migration to backfill existing rows). If already enabled by design and just displays "Disabled" until user saves, add clarifying helper text "Enabled by default on all plans — configure the follow-up action below." No further action.
+- `SignUp.tsx` and everything downstream — real 60-Day Live Trial for paying tenants.
+- `seed-super-admin`, `seed-aura-intercept`, `seed-sales-rep-accounts` — internal bootstrap for the Aura Intercept tenant + super-admin identity, not customer-facing fake data.
+- `beta_invite_codes` — real program, not seeded demo data.
+- `industry_template_packs` — data-driven per-industry config; contains no fake customer/appointment/invoice rows.
+- Marketing copy that says "60-Day Live Trial" or "60-Day Live Demo" — kept, meaning changes from "sandbox with sample data" to "your real workspace, day one."
 
 ## Technical notes
 
-- Files touched (est.): 12 component/lib files, 0 migrations, 0 edge functions.
-- Regression coverage: extend `src/lib/__tests__/contentDriftGuard.test.ts` with a "no user-facing Twilio" rule and a "Platform Snapshot grouping" snapshot check.
-- Post-change verification: `rg -i twilio src/pages src/components`, `tsgo`, manual load of `/dashboard` as platform_admin and `/settings?tab=communications` as company_admin.
-
-## Out of scope
-
-- Real lead-conversion tracking pipeline (item 4 is a label fix, not a data fix).
-- Randomizing demo-company metrics (item 2 is a label fix).
-- Any schema, RLS, edge function, or billing changes.
+- Files touched (est.): 4 file deletions, ~12 file edits, 1 migration, 5 edge-function deletions.
+- Risk: `check-subscription` currently gives `is_demo=true` tenants a free pass. After Step 1 there are no such rows, so removing the branch is safe.
+- No user data is at risk — every deletion is scoped to `is_demo = true` or child rows of same.

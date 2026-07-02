@@ -1141,7 +1141,6 @@ export type Database = {
           id: string
           industry_config: Json
           industry_vertical: string | null
-          is_demo: boolean
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
           last_monthly_digest_at: string | null
@@ -1290,7 +1289,6 @@ export type Database = {
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
-          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
@@ -1439,7 +1437,6 @@ export type Database = {
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
-          is_demo?: boolean
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
@@ -2725,84 +2722,6 @@ export type Database = {
           },
           {
             foreignKeyName: "customers_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      demo_trials: {
-        Row: {
-          admin_email: string | null
-          admin_user_id: string | null
-          company_id: string | null
-          created_at: string
-          created_ip: string | null
-          customer_email: string | null
-          customer_user_id: string | null
-          email_opt_in: boolean
-          employee_email: string | null
-          employee_user_id: string | null
-          expires_at: string
-          id: string
-          industry: string
-          prospect_email: string
-          prospect_name: string
-          prospect_phone: string | null
-          sms_opt_in: boolean
-          status: string
-        }
-        Insert: {
-          admin_email?: string | null
-          admin_user_id?: string | null
-          company_id?: string | null
-          created_at?: string
-          created_ip?: string | null
-          customer_email?: string | null
-          customer_user_id?: string | null
-          email_opt_in?: boolean
-          employee_email?: string | null
-          employee_user_id?: string | null
-          expires_at?: string
-          id?: string
-          industry: string
-          prospect_email: string
-          prospect_name: string
-          prospect_phone?: string | null
-          sms_opt_in?: boolean
-          status?: string
-        }
-        Update: {
-          admin_email?: string | null
-          admin_user_id?: string | null
-          company_id?: string | null
-          created_at?: string
-          created_ip?: string | null
-          customer_email?: string | null
-          customer_user_id?: string | null
-          email_opt_in?: boolean
-          employee_email?: string | null
-          employee_user_id?: string | null
-          expires_at?: string
-          id?: string
-          industry?: string
-          prospect_email?: string
-          prospect_name?: string
-          prospect_phone?: string | null
-          sms_opt_in?: boolean
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "demo_trials_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "demo_trials_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
@@ -7871,19 +7790,6 @@ export type Database = {
           summary: string
         }[]
       }
-      get_demo_trial_access: {
-        Args: { p_trial_id: string }
-        Returns: {
-          admin_email: string
-          company_id: string
-          customer_email: string
-          employee_email: string
-          expires_at: string
-          industry: string
-          status: string
-          trial_id: string
-        }[]
-      }
       get_employee_calendar_appointments: {
         Args: { p_feed_token: string }
         Returns: {
@@ -8128,7 +8034,6 @@ export type Database = {
         Args: never
         Returns: {
           id: string
-          is_demo: boolean
           logo_url: string
           name: string
           primary_color: string

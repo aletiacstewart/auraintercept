@@ -14,7 +14,6 @@ interface Company {
   name: string;
   logo_url: string | null;
   primary_color: string | null;
-  is_demo?: boolean;
 }
 
 interface CompanySelectorProps {
@@ -132,11 +131,6 @@ export const CompanySelector: React.FC<CompanySelectorProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium truncate">{company.name}</h3>
-                    {company.is_demo && (
-                      <Badge variant="outline" className="text-[10px] uppercase tracking-wide border-amber-500/50 text-amber-500">
-                        Demo
-                      </Badge>
-                    )}
                   </div>
                   <p className="text-sm text-muted-foreground">Click to start chatting</p>
                 </div>

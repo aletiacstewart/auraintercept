@@ -14,8 +14,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTutorialContext } from '@/components/tutorial/DashboardTutorial';
 import { Button } from '@/components/ui/button';
 import { GraduationCap } from 'lucide-react';
-import { SUPER_ADMIN_EMAIL } from '@/hooks/useSuperSwitcher';
-
 export default function Dashboard() {
   const { user, loading, userRole, companyId } = useAuth();
   const { hasJobType, jobTypes, loading: jobRoleLoading } = useEmployeeJobRole();
@@ -65,13 +63,6 @@ export default function Dashboard() {
     }
   }, [user, loading, navigate]);
 
-  // Super-admin always lands on the Switcher hub, never the dashboard
-  useEffect(() => {
-    if (!loading && user?.email?.toLowerCase() === SUPER_ADMIN_EMAIL) {
-      navigate('/super-switcher', { replace: true });
-    }
-  }, [loading, user, navigate]);
-
   // Redirect technicians to their dedicated dashboard
   useEffect(() => {
     if (!loading && !jobRoleLoading && userRole === 'employee' && hasJobType('technician')) {
@@ -92,7 +83,6 @@ export default function Dashboard() {
   }
 
   if (!user) return null;
-  if (user.email?.toLowerCase() === SUPER_ADMIN_EMAIL) return null;
 
   const renderDashboard = () => {
     switch (userRole) {

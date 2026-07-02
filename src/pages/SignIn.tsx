@@ -73,15 +73,7 @@ export default function SignIn() {
 
       toast({ title: 'Welcome back!', description: 'Redirecting...' });
 
-      if (email.toLowerCase() === 'superadmin@auraintercept.ai' && roleData?.role === 'platform_admin') {
-        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
-        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
-        navigate('/super-switcher');
-      } else if (roleData?.role === 'demo_rep') {
-        try { localStorage.removeItem('aura_super_switcher_active'); } catch {}
-        try { localStorage.removeItem('aura_super_switcher_session'); } catch {}
-        navigate('/super-switcher');
-      } else if (roleData?.role === 'customer') {
+      if (roleData?.role === 'customer') {
         navigate('/customer');
       } else {
         navigate('/dashboard');
