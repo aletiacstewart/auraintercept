@@ -833,7 +833,7 @@ export default function Index() {
                     <li><span className="font-semibold text-white">Why not bundle it?</span> We keep our platform fee separate so neither number is inflated. Your Aura bill never fluctuates with call volume.</li>
                     <li><span className="font-semibold text-white">Extra setup?</span> A little. Concierge Onboarding can create and configure these for you using your login and card.</li>
                     <li><span className="font-semibold text-white">Low call volume?</span> Costs scale down — ElevenLabs starts at $5/mo, Resend is free under 3,000 emails.</li>
-                    <li><span className="font-semibold text-white">High call volume?</span> Costs scale up, but a bundled flat fee would too — with a markup baked in. We'll model your numbers before you commit.</li>
+                    <li><span className="font-semibold text-white">High call volume?</span> Costs scale up, but a competitor's flat-fee add-on would too — with a markup baked in. We'll model your numbers before you commit.</li>
                     <li><span className="font-semibold text-white">Switch providers later?</span> We're actively adding alternative provider options. Ask onboarding.</li>
                     <li><span className="font-semibold text-white">Do you mark up?</span> No. You're billed directly by each vendor on your own card. We never see or touch that money.</li>
                   </ul>
