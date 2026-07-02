@@ -69,7 +69,7 @@ export const WORKBOOK_SECTIONS: WorkbookSection[] = [
   },
   {
     title: '6. Integrations & Accounts',
-    intro: 'These providers require YOUR OWN ACCOUNT and a valid credit card on file — each provider invoices you directly and separately from your Aura plan fee. Concierge Onboarding configures them on your behalf using your logins.',
+    intro: 'These providers require YOUR OWN ACCOUNT and a valid credit card on file — each provider invoices you directly and separately from your Aura plan fee. Concierge Onboarding configures them on your behalf using your logins. Do NOT paste API keys or passwords into this workbook; we collect secrets in a secure kickoff session.',
     fields: [
       { label: 'SignalWire account email (voice/SMS)' },
       { label: 'ElevenLabs account email (voice cloning)' },
@@ -77,7 +77,8 @@ export const WORKBOOK_SECTIONS: WorkbookSection[] = [
       { label: 'Tavily account email (web search)' },
       { label: 'Stripe account email (payments)' },
       { label: 'A2P 10DLC brand/EIN ready? (yes / no)' },
-      { label: 'Social media handles + admin access', lines: 3 },
+      { label: 'Google account for Calendar (free, OAuth — no signup fee, no card)' },
+      { label: 'Social media handles + admin access (Facebook, Instagram, LinkedIn, TikTok)', lines: 3 },
     ],
   },
   {

@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SelectGroup, SelectLabel } from '@/components/ui/select';
 import { INDUSTRY_CONTENT, INDUSTRY_GROUPS } from '@/lib/industryMarketingContent';
+import { isIndustryVisible } from '@/lib/industryVisibility';
 import { UNIVERSAL_TITLES, getIndustryTitles, OTHER_TITLE_VALUE } from '@/lib/industryJobTitles';
 import { Progress } from '@/components/ui/progress';
 import { Building2, User, Clock, Settings, MessageSquare, Calendar, Star, Globe, BarChart3, Users, Send, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -248,7 +249,7 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
         // Admin / preview mode: no invite token, fall back to mailto so the form is still usable.
         const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
         const body = encodeURIComponent(generateEmailBody());
-        window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:ai@auraintercept.ai?subject=${subject}&body=${body}`;
         toast.success('Preview mode — opening email client (submission not saved).');
         return;
       }
@@ -439,13 +440,16 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                   <SelectValue placeholder="Select your industry" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[60vh]" side="bottom" avoidCollisions={false}>
-                  {INDUSTRY_GROUPS.map((g) => (
+                  {INDUSTRY_GROUPS.map((g) => {
+                    const visibleIds = g.ids.filter(isIndustryVisible);
+                    if (visibleIds.length === 0) return null;
+                    return (
                     <SelectGroup key={g.group}>
                       <SelectLabel className="flex items-center gap-1.5">
                         <span>{g.emoji}</span>
                         <span>{g.group}</span>
                       </SelectLabel>
-                      {g.ids.map((id) => {
+                      {visibleIds.map((id) => {
                         const ind = INDUSTRY_CONTENT[id];
                         if (!ind) return null;
                         return (
@@ -458,7 +462,8 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
                         );
                       })}
                     </SelectGroup>
-                  ))}
+                    );
+                  })}
                   <SelectGroup>
                     <SelectLabel>Other</SelectLabel>
                     <SelectItem value="other">🏢 Not listed / Other</SelectItem>

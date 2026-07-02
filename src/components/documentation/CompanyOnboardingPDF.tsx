@@ -389,7 +389,7 @@ const CompanyProfilePage = () => (
       <Text style={styles.formLabel}>{sanitizePdfText('Industry/Business Type:')}</Text>
       <View style={styles.formLine} />
     </View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Circle one: HVAC, Plumbing, Electrical, Solar, Roofing, Fencing & Decking, Landscape & Trees, Pool & Spa, Pest Control, Appliance Repair, Handyman & Cleaning, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Home Health, Physical Therapy, Occupational Therapy, Hospice, Veterinary, Medical Practice, Other)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Circle one: HVAC, Plumbing, Electrical, Solar Energy, Roofing, Fencing & Decking, Landscape & Trees, Pool & Spa, Pest Control, Appliance Repair, Handyman & Cleaning, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Other)')}</Text>
     
     <View style={styles.formRow}>
       <Text style={styles.formLabel}>{sanitizePdfText('Years in Business:')}</Text>
@@ -640,68 +640,62 @@ const IntegrationRequirementsPage = () => {
     { name: 'Resend', purpose: 'Email Delivery — your own account · valid card · billed directly by Resend', tiers: 'All tiers — Core, Boost, Pro, Elite' },
     { name: 'Tavily', purpose: 'AI Content Research — your own account · valid card · billed directly by Tavily', tiers: 'All tiers — Core, Boost, Pro, Elite' },
     { name: 'Stripe', purpose: 'Payment Processing — your own account · billed directly by Stripe', tiers: 'All tiers — required if collecting payments' },
-    { name: 'Google Calendar', purpose: 'Calendar Sync', tiers: 'Boost, Pro, Elite (Optional)' },
-    { name: 'Social Media Accounts', purpose: 'Content Publishing', tiers: 'Pro, Elite' },
+    { name: 'A2P 10DLC', purpose: 'SMS carrier registration — one-time brand fee + monthly campaign fee, billed via SignalWire', tiers: 'All tiers sending SMS' },
+    { name: 'Google Account', purpose: 'Calendar Sync — free personal Google account, connected via one-click OAuth. No signup fee, no card required.', tiers: 'All tiers (Optional)' },
+    { name: 'Social Media Accounts', purpose: 'Content Publishing — your own Facebook, Instagram, LinkedIn, TikTok pages/accounts', tiers: 'Boost, Pro, Elite' },
   ];
 
   return (
     <Page size="A4" style={styles.page}>
       <PageHeader title="Integration Requirements" pageNum={12} />
-      <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Integration Requirements')}</Text>
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Section 10: Integration Requirements')}</Text>
       <Text style={styles.paragraph}>
-        {sanitizePdfText('Check each integration you have set up or need assistance with. We will help configure these during implementation.')}
+        {sanitizePdfText('The single canonical worksheet for every third-party account. Every paid provider below is owned by you and billed to you directly and separately from your Aura plan fee. Concierge Onboarding will configure these on your behalf using your logins and card.')}
       </Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderCell, { width: 100 }]}>{sanitizePdfText('Integration')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 140 }]}>{sanitizePdfText('Purpose')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 60 }]}>{sanitizePdfText('Have It')}</Text>
-          <Text style={[styles.tableHeaderCell, { width: 60 }]}>{sanitizePdfText('Need Help')}</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('N/A')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 90 }]}>{sanitizePdfText('Provider')}</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{sanitizePdfText('Purpose')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 46, textAlign: 'center' }]}>{sanitizePdfText('Have It')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('Need Help Setting Up')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 56, textAlign: 'center' }]}>{sanitizePdfText('Card on File')}</Text>
+          <Text style={[styles.tableHeaderCell, { width: 32, textAlign: 'center' }]}>{sanitizePdfText('N/A')}</Text>
         </View>
         {integrations.map(int => (
           <View key={int.name} style={styles.tableRow}>
-            <Text style={[styles.tableCell, { width: 100, fontWeight: 600 }]}>{sanitizePdfText(int.name)}</Text>
-            <Text style={[styles.tableCell, { width: 140 }]}>{sanitizePdfText(int.purpose)}</Text>
+            <Text style={[styles.tableCell, { width: 90, fontWeight: 600 }]}>{sanitizePdfText(int.name)}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{sanitizePdfText(int.purpose)}</Text>
+            <Text style={[styles.tableCell, { width: 46, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
             <Text style={[styles.tableCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
-            <Text style={[styles.tableCell, { width: 60, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
-            <Text style={[styles.tableCell, { flex: 1, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
+            <Text style={[styles.tableCell, { width: 56, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
+            <Text style={[styles.tableCell, { width: 32, textAlign: 'center' }]}>{sanitizePdfText('[ ]')}</Text>
           </View>
         ))}
       </View>
 
-      <Text style={styles.subsectionTitle}>{sanitizePdfText('Existing Account Details (if applicable)')}</Text>
-      
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Account Owner / Admin Email per Provider')}</Text>
+      {['SignalWire', 'ElevenLabs', 'Resend', 'Tavily', 'Stripe', 'A2P 10DLC (via SignalWire)', 'Google Account (for Calendar)', 'Social Media Accounts'].map(p => (
+        <View key={p} style={styles.formRow}>
+          <Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(`${p}:`)}</Text>
+          <View style={styles.formLine} />
+        </View>
+      ))}
+
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Non-secret Account Details (safe to include)')}</Text>
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Project ID:')}</Text>
         <View style={styles.formLine} />
       </View>
-      
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>{sanitizePdfText('SignalWire Phone Number:')}</Text>
         <View style={styles.formLine} />
       </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('ElevenLabs API Key:')}</Text>
-        <View style={styles.formLine} />
-      </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Stripe Account Email:')}</Text>
-        <View style={styles.formLine} />
-      </View>
-      
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>{sanitizePdfText('Google Account Email:')}</Text>
-        <View style={styles.formLine} />
-      </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Security Note')}</Text>
+        <Text style={styles.infoBoxTitle}>{sanitizePdfText('Do NOT email API keys or passwords')}</Text>
         <Text style={styles.infoBoxText}>
-          {sanitizePdfText('API keys and secrets will be securely configured during your onboarding call. Never share secrets via email or insecure channels.')}
+          {sanitizePdfText('API keys, secret tokens, and passwords are collected in a secure session on your kickoff call — never write them in this PDF, never send them by email.')}
         </Text>
       </View>
     </Page>
@@ -712,7 +706,7 @@ const IntegrationRequirementsPage = () => {
 const KnowledgeBasePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Knowledge Base Setup" pageNum={13} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 5: Knowledge Base Setup')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Knowledge Base Setup')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('This information helps your AI assistant answer customer questions accurately.')}
     </Text>
@@ -790,9 +784,9 @@ const KnowledgeBasePage2 = () => (
 const EmployeeInfoPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Employee Information" pageNum={15} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 6: Employee Accounts')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Legacy — see Employee & Technician Roster (Section 7)')}</Text>
     <Text style={styles.paragraph}>
-      {sanitizePdfText('List employees who need dashboard access. Job types: Owner, Manager, Technician, Admin, Sales.')}
+      {sanitizePdfText('Employee & login data is captured once in the Employee & Technician Roster (Section 7). This page is intentionally left blank.')}
     </Text>
 
     <View style={styles.table}>
@@ -825,7 +819,7 @@ const EmployeeInfoPage = () => (
 const GoalsNotesPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Goals & Notes" pageNum={16} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 7: Goals & Additional Notes')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 11: Goals & Additional Notes')}</Text>
 
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Top 3 Pain Points')}</Text>
     <Text style={styles.paragraph}>{sanitizePdfText('What are your biggest operational challenges right now?')}</Text>
@@ -894,8 +888,8 @@ const HowToUsePage = () => (
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Steps')}</Text>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('1. Fill out every section below that applies to your business.')}</Text></View>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('2. Gather the documents & assets listed on the Master Document Checklist (next page).')}</Text></View>
-    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('3. Confirm you have or will create the 3rd-party accounts listed in the 3rd-Party Worksheet (with billing card on file).')}</Text></View>
-    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('4. Email the completed PDF + attachments to onboarding@auraintercept.ai.')}</Text></View>
+    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('3. Confirm you have or will create every provider listed in the Integration Requirements worksheet (Section 10), with a billing card on file.')}</Text></View>
+    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('4. Email the completed PDF + attachments to ai@auraintercept.ai.')}</Text></View>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('5. We will schedule your kickoff call within 1 business day of receipt.')}</Text></View>
 
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Kickoff Details')}</Text>
@@ -1123,13 +1117,13 @@ const A2P10DLCPage = () => (
 );
 
 const SocialAccountsPage = () => {
-  const platforms = ['Facebook', 'Instagram', 'LinkedIn', 'X (Twitter)', 'TikTok', 'YouTube', 'Google Business Profile'];
+  const platforms = ['Facebook', 'Instagram', 'LinkedIn', 'TikTok'];
   return (
     <Page size="A4" style={styles.page}>
       <PageHeader title="Social Accounts" pageNum={6} />
-      <Text style={styles.sectionTitle}>{sanitizePdfText('Social Media & Google Business Profile')}</Text>
+      <Text style={styles.sectionTitle}>{sanitizePdfText('Social Media Accounts')}</Text>
       <Text style={styles.paragraph}>
-        {sanitizePdfText('List the handle/URL and admin email for every account you want Aura to publish to or monitor.')}
+        {sanitizePdfText('List the handle/URL and admin email for each supported platform you want Aura to publish to or monitor. Supported platforms today: Facebook, Instagram, LinkedIn, TikTok. Additional platforms will be added as our posting vendor expands.')}
       </Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
@@ -1154,7 +1148,7 @@ const SocialAccountsPage = () => {
 const BrandVoicePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Brand Voice" pageNum={7} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Brand & Voice Worksheet')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 3: Brand & Voice')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('These answers feed directly into how every AI operative speaks on your behalf — voice calls, SMS, email, web chat, social posts.')}
     </Text>
@@ -1177,7 +1171,7 @@ const BrandVoicePage = () => (
 const KnowledgeBaseExpandedPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Knowledge Base — Policies" pageNum={8} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Business Policies (Knowledge Base)')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 4: Business Policies (Knowledge Base)')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Aura quotes these verbatim to customers. Be specific — vague answers create bad customer experiences.')}
     </Text>
@@ -1202,7 +1196,7 @@ const KnowledgeBaseExpandedPage = () => (
 const IndustryIntakePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Industry-Specific Intake" pageNum={9} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Industry-Specific Intake')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 5: Industry-Specific Intake')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Fill out ONLY the cluster that matches your business. We use this to activate the right industry pack, specialists, and prompt templates.')}
     </Text>
@@ -1232,7 +1226,7 @@ const IndustryIntakePage = () => (
 const CommunicationRoutingPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Communication Routing" pageNum={10} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Communication Routing Worksheet')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 6: Communication Routing')}</Text>
     <Text style={styles.paragraph}>
       {sanitizePdfText('Tells Aura who handles what and where to send escalations.')}
     </Text>
@@ -1254,6 +1248,7 @@ const CommunicationRoutingPage = () => (
       ))}
     </View>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Email Aliases')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('These addresses send and receive through your Resend account on your own domain — no separate email hosting account (like Google Workspace) is needed.')}</Text>
     {['sales@:', 'support@:', 'billing@:', 'info@:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
     ))}
@@ -1267,9 +1262,9 @@ const CommunicationRoutingPage = () => (
 const TechnicianRosterPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Employee / Technician Roster" pageNum={11} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Employee & Technician Roster')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 7: Employee & Technician Roster')}</Text>
     <Text style={styles.paragraph}>
-      {sanitizePdfText('Everyone who needs a login. Role options: admin, employee, technician, dispatcher.')}
+      {sanitizePdfText('Everyone who needs a login — field or office. Role options: admin, employee, technician, dispatcher. This is the single source of truth for dashboard logins (the old separate "Employee Accounts" section has been folded into this roster).')}
     </Text>
     <View style={styles.table}>
       <View style={styles.tableHeader}>
@@ -1319,7 +1314,22 @@ const CarrierForwardingPage = () => (
           </Text>
         ))}
       </View>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Phone setup: Forward or Port?')}</Text>
+      <Text style={styles.paragraph}>{sanitizePdfText('Pick one — forwarding keeps your existing carrier and reroutes calls to Aura; porting moves the number itself onto Aura.')}</Text>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Forward my existing business number to my new Aura number (use carrier codes on the following pages).')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Port my existing business number into Aura (we will collect a Letter of Authorization, current bill copy, account #, and PIN on the kickoff call).')}</Text></View>
+
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Which forwarding scenario do you want?')}</Text>
+      <Text style={styles.paragraph}>{sanitizePdfText('Check every scenario Aura should catch. Most businesses pick "Immediate" or "After-hours only + Unreachable".')}</Text>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Immediate — all calls go straight to Aura')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('After-hours only — outside business hours')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Busy — when the line is engaged')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Unreachable — no signal / phone off')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Combination (list which):')}</Text></View>
+      <View style={styles.formLine} />
+
       <Text style={styles.subsectionTitle}>{sanitizePdfText('My carrier')}</Text>
+      <Text style={styles.formNote}>{sanitizePdfText('Full step-by-step star codes for every supported US carrier are listed in "Appendix A — Carrier Forwarding Codes" at the end of this workbook. Only the pages for your carrier are relevant to you.')}</Text>
       <View style={styles.formRow}>
         <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Carrier name:')}</Text>
         <View style={styles.formLine} />
@@ -1335,8 +1345,8 @@ const CarrierForwardingPage = () => (
     </Page>
     {CARRIERS.map((c, idx) => (
       <Page key={c.name} size="A4" style={styles.page}>
-        <PageHeader title={`Carrier Guide — ${c.name}`} pageNum={10 + idx + 1} />
-        <Text style={styles.sectionTitle}>{sanitizePdfText(c.name)}</Text>
+        <PageHeader title={`Appendix A — ${c.name}`} pageNum={10 + idx + 1} />
+        <Text style={styles.sectionTitle}>{sanitizePdfText(`Appendix A — ${c.name}`)}</Text>
         <Text style={[styles.paragraph, { marginTop: -6, color: colors.gray }]}>
           {sanitizePdfText(c.type)}
         </Text>
@@ -1374,7 +1384,7 @@ const CarrierForwardingPage = () => (
 const BookingPortalPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Booking & Customer Portal" pageNum={12} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Booking & Customer Portal Setup')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 8: Booking & Customer Portal Setup')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Booking Rules')}</Text>
     {['Booking window (how far out customers can book):', 'Lead time required (min hours before slot):', 'Buffer between appointments (minutes):', 'Default appointment length:', 'Deposit required? (amount or %):', 'Cancellation deadline:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
@@ -1392,7 +1402,7 @@ const BookingPortalPage = () => (
 const SmartWebsitePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Smart Website Inputs" pageNum={13} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Smart Website & Content Inputs')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 9: Smart Website & Content Inputs')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Domain')}</Text>
     {['Preferred domain (yourbrand.com):', 'Currently registered with (GoDaddy, Cloudflare...):', 'DNS admin login available? (Y/N):'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
@@ -1544,18 +1554,13 @@ const SignOffPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Sign-Off & Submission" pageNum={99} />
     <Text style={styles.sectionTitle}>{sanitizePdfText('Sign-Off & Submission')}</Text>
-    <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments included with this workbook')}</Text>
-    {['Signed Terms of Service Agreement (previous page) — REQUIRED',
-      'Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
-      'Customer list CSV', 'Employee/technician list CSV', 'Service / price list', 'Quote + invoice samples',
-      'Photos (numbered to website slots)', 'Testimonials / review screenshots'].map(item => (
-      <View key={item} style={styles.optionRow}>
-        <View style={styles.checkbox} />
-        <Text style={styles.optionText}>{sanitizePdfText(item)}</Text>
-      </View>
-    ))}
+    <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments')}</Text>
+    <View style={styles.optionRow}>
+      <View style={styles.checkbox} />
+      <Text style={styles.optionText}>{sanitizePdfText('I confirm every item on the Master Document & Asset Checklist (page 3) is attached, plus the signed Terms of Service Agreement (previous page).')}</Text>
+    </View>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Return To')}</Text>
-    <Text style={styles.paragraph}>{sanitizePdfText('Email completed workbook + attachments to: onboarding@auraintercept.ai')}</Text>
+    <Text style={styles.paragraph}>{sanitizePdfText('Email completed workbook + attachments to: ai@auraintercept.ai')}</Text>
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Acknowledgement')}</Text>
       <Text style={styles.infoBoxText}>
@@ -1592,7 +1597,6 @@ export const CompanyOnboardingPDF = () => (
     <HowToUsePage />
     <DocumentChecklistPage />
     <WhyYourOwnAccountsPage />
-    <ThirdPartyAccountsPage />
     <A2P10DLCPage />
     <SocialAccountsPage />
     <CompanyProfilePage />
@@ -1603,17 +1607,17 @@ export const CompanyOnboardingPDF = () => (
     <KnowledgeBaseExpandedPage />
     <IndustryIntakePage />
     <CommunicationRoutingPage />
-    <CarrierForwardingPage />
     <TechnicianRosterPage />
     <BookingPortalPage />
     <SmartWebsitePage />
     <IntegrationRequirementsPage />
-    <EmployeeInfoPage />
     <AuditQuestionsPages />
     <GoalsNotesPage />
     <TermsOfServiceSummaryPage />
     <TermsAcknowledgementPage />
     <SignOffPage />
+    {/* Appendix A — carrier-specific forwarding codes; only your carrier's page is relevant */}
+    <CarrierForwardingPage />
   </Document>
 );
 
