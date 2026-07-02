@@ -1369,7 +1369,7 @@ const CarrierForwardingPage = () => (
 const BookingPortalPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Booking & Customer Portal" pageNum={12} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Booking & Customer Portal Setup')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 8: Booking & Customer Portal Setup')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Booking Rules')}</Text>
     {['Booking window (how far out customers can book):', 'Lead time required (min hours before slot):', 'Buffer between appointments (minutes):', 'Default appointment length:', 'Deposit required? (amount or %):', 'Cancellation deadline:'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
@@ -1387,7 +1387,7 @@ const BookingPortalPage = () => (
 const SmartWebsitePage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Smart Website Inputs" pageNum={13} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Smart Website & Content Inputs')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 9: Smart Website & Content Inputs')}</Text>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Domain')}</Text>
     {['Preferred domain (yourbrand.com):', 'Currently registered with (GoDaddy, Cloudflare...):', 'DNS admin login available? (Y/N):'].map(l => (
       <View key={l} style={styles.formRow}><Text style={[styles.formLabel, { width: 220 }]}>{sanitizePdfText(l)}</Text><View style={styles.formLine} /></View>
