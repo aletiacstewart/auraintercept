@@ -1,23 +1,27 @@
-## Sidebar scroll unification (`src/components/dashboard/DashboardLayout.tsx`)
+Reduce vertical spacing and row height in the main dashboard sidebar so all nav groups and footer actions fit without scrolling.
 
-Today the sidebar has two regions:
-- Middle nav wrapped in a `ScrollArea` (lines 514–661) — scrolls.
-- Bottom footer holding the Aura Elite tier badge, role badge, AI Help Center, Report Issue, and Sign Out (lines 663–737) — pinned, never scrolls.
+### What we will change
+1. **Tighten nav group spacing** in `src/components/dashboard/DashboardLayout.tsx`:
+   - Reduce the outer `nav` gap (`space-y-4`) and nav padding (`py-4`) so groups sit closer together.
+   - Reduce group label/header padding (`px-3 py-1`) to `px-3 py-0.5`.
+   - Keep visual hierarchy with the existing uppercase label and icon styling.
 
-That's why the tier chip + bottom actions stay stuck while the nav scrolls behind them.
+2. **Compact individual nav buttons**:
+   - Add `h-8` / `py-1.5` sizing to the nav `Button` so each row is shorter while the icon and label remain the same size.
+   - Preserve the collapsed icon-only layout and active/hover glow effects.
 
-### Fix
+3. **Compact the footer section** (tier badge, role badge, AI Help Center, Report Issue, Sign Out):
+   - Reduce `p-3 space-y-2` to `p-2 space-y-1`.
+   - Shorten the Report Issue and Sign Out buttons to match nav row height.
+   - Keep the tier badge and Sign Out button as they are functionally.
 
-Merge both regions into a single scroll surface so the tier badge and bottom actions scroll together with the nav:
-
-1. Extend the existing `ScrollArea` (still inside the `flex-1 min-h-0` container) to wrap both the `<nav>` block and the current footer `div`.
-2. Keep the `Separator` between nav and footer, but move it inside the scroll area.
-3. Preserve current visuals: same spacing (`px-2 py-4` around nav, `p-3 space-y-2` around footer), same collapsed vs. expanded rendering, same tour IDs, same scroll-restore logic (still targets the single `[data-radix-scroll-area-viewport]`).
-4. Leave the collapse chevron button (lines 740–748) outside the scroll area so it stays fixed on the sidebar edge.
-
-Result: on short viewports, the user can scroll down within the sidebar to reach Aura Elite → Platform Admin → AI Help Center → Report Issue → Sign Out. On tall viewports, everything fits with no scrollbar (same as today).
+4. **Verification**:
+   - Type-check with `tsgo`.
+   - Confirm the full sidebar (nav + footer) fits within a 900 px viewport without scrolling and that all items remain clickable and readable.
 
 ### Out of scope
-
-- No changes to nav items, tier logic, badge styling, or the main content area.
-- No changes to the technician sidebar (`TechnicianDashboardLayout.tsx`).
+- Mobile drawer layout
+- Collapse behavior / collapse button
+- Technicians dashboard layout
+- Nav labels, group ordering, or tier badge logic
+- Color/theming changes beyond spacing/sizing classes

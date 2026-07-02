@@ -514,11 +514,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             bottom actions scroll with the nav on short viewports. */}
         <div ref={sidebarScrollRootRef} className="flex-1 min-h-0">
           <ScrollArea className="h-full w-full">
-            <nav className="space-y-4 px-2 py-4">
+            <nav className="space-y-1 px-2 py-1">
               {filteredNavGroups.map((group) => (
-                <div key={group.label} className="space-y-1">
+                <div key={group.label} className="space-y-0.5">
                   {!collapsed && (
-                    <p className="px-3 py-1 text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(0,229,255,0.35)" }}>
+                    <p className="px-3 py-0 text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(0,229,255,0.35)" }}>
                       {group.label === 'Field Ops'
                         ? (serviceConfig.fieldOpsSectionLabel || 'Field Ops')
                         : group.label}
@@ -598,7 +598,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         variant="ghost"
                         data-tour-id={tourId}
                         className={cn(
-                          'w-full justify-start gap-3 transition-all duration-200 hover:bg-transparent hover:text-[inherit]',
+                          '!h-7 py-0.5 w-full justify-start gap-3 transition-all duration-200 hover:bg-transparent hover:text-[inherit]',
                           collapsed && 'justify-center px-2'
                         )}
                         style={isActive ? {
@@ -662,13 +662,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
 
             {/* User section */}
-            <div className="p-3 space-y-2">
+            <div className="p-1.5 space-y-0.5">
           {/* Subscription badge */}
           {!collapsed && (
             <button
               onClick={() => navigate('/dashboard/subscription')}
               className={cn(
-                'w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors hover:opacity-80',
+                'w-full flex items-center justify-between px-3 py-0.5 rounded-lg transition-colors hover:opacity-80',
                 tierDisplay.color
               )}
             >
@@ -695,7 +695,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           )}
           
           {!collapsed && roleBadge && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.15)" }}>
+            <div className="flex items-center gap-2 px-3 py-0.5 rounded-lg" style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.15)" }}>
               <roleBadge.icon className={cn('w-4 h-4', roleBadge.color)} />
               <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.9)" }}>{roleBadge.label}</span>
             </div>
@@ -710,7 +710,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full justify-start gap-3',
+                  '!h-7 py-0.5 w-full justify-start gap-3',
                   collapsed && 'justify-center px-2'
                 )}
                 style={{ color: "rgba(255,255,255,0.92)" }}
@@ -724,7 +724,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Button
             variant="ghost"
             className={cn(
-              'w-full justify-start gap-3',
+              '!h-7 py-0.5 w-full justify-start gap-3',
               collapsed && 'justify-center px-2'
             )}
             style={{ color: "rgba(255,255,255,0.92)" }}
