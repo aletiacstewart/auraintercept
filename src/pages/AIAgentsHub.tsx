@@ -416,7 +416,7 @@ export default function AIAgentsHub() {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-2xl font-bold text-foreground">{enabledCount}/{totalCount}</p>
-                <p className="text-sm text-muted-foreground">Operatives Active</p>
+                <p className="text-sm text-muted-foreground">Total Operatives Active</p>
               </div>
               <HowToUseModal {...HOW_TO_USE.aiOperativesHub} />
               <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
