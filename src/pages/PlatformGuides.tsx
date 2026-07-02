@@ -1433,6 +1433,13 @@ const PlatformGuides: React.FC = () => {
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topTab = ['export', 'video'].includes(searchParams.get('tab') || '') ? (searchParams.get('tab') as string) : 'guides';
+  const setTopTab = (v: string) => {
+    const p = new URLSearchParams(searchParams);
+    if (v === 'guides') p.delete('tab'); else p.set('tab', v);
+    setSearchParams(p, { replace: true });
+  };
 
   // Filter out restricted guides and categories for non-platform-admin users
   const filteredCategories = useMemo(() => {
