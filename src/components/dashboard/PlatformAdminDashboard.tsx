@@ -225,10 +225,10 @@ export function PlatformAdminDashboard() {
       colorClass: 'text-feature-appointments'
     },
     { 
-      title: 'AI Agents Active', 
+      title: 'Companies with AI Deployed', 
       value: stats?.companies ?? 0, 
       icon: Bot, 
-      description: 'Deployed AI agents',
+      description: 'Tenants running the agent stack',
       colorClass: 'text-primary'
     },
     { 
