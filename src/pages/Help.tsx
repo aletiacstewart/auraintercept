@@ -850,7 +850,11 @@ export default function Help({ embedded }: { embedded?: boolean } = {}) {
             </TabsContent>
           </Tabs>
         </div>
-      </PageContainer>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>
+      <PageContainer>{body}</PageContainer>
     </DashboardLayout>
   );
 }
