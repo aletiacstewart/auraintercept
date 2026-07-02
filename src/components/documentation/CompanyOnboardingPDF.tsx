@@ -1262,9 +1262,9 @@ const CommunicationRoutingPage = () => (
 const TechnicianRosterPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Employee / Technician Roster" pageNum={11} />
-    <Text style={styles.sectionTitle}>{sanitizePdfText('Employee & Technician Roster')}</Text>
+    <Text style={styles.sectionTitle}>{sanitizePdfText('Section 7: Employee & Technician Roster')}</Text>
     <Text style={styles.paragraph}>
-      {sanitizePdfText('Everyone who needs a login. Role options: admin, employee, technician, dispatcher.')}
+      {sanitizePdfText('Everyone who needs a login — field or office. Role options: admin, employee, technician, dispatcher. This is the single source of truth for dashboard logins (the old separate "Employee Accounts" section has been folded into this roster).')}
     </Text>
     <View style={styles.table}>
       <View style={styles.tableHeader}>
