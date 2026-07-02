@@ -217,7 +217,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkSubscriptionRef.current();
     const interval = setInterval(() => checkSubscriptionRef.current(), 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [session?.access_token]);
+    // Re-run when userRole resolves so the platform_admin bypass fires
+    // after fetchUserData completes (roles load async via setTimeout).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.access_token, userRole]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
