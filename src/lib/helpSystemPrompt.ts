@@ -67,7 +67,7 @@ ${renderTierSection()}
 - **Agent not responding**: Check if agent is enabled in AI Operatives Hub or AI Agents page
 - **Calendar not syncing**: Verify Google Calendar connection in Settings > Integrations
 - **SMS not sending**: Check SignalWire configuration and phone number verification
-- **Phone number setup**: Settings > Missed Calls > "How is your number connected?" — 4 options: Conditional Forwarding (CFNA), Number Porting, Unconditional Forwarding, New AI Number. Carrier dial codes are shown inline.
+- **Phone number setup**: Settings > Missed Calls > "How is your number connected?" — 3 options: Conditional Forwarding (CFNA), Unconditional Forwarding, New AI Number. Number porting is not offered. Carrier dial codes are shown inline.
 - **Social media "Not Configured"**: Two posting paths — Manual Bridge (default; copy-paste via deep link, no setup) or Own API Credentials (advanced; OAuth per platform). Platform-level auto-posting is Coming Soon.
 - **Tavily not connected**: Integrations > AI Research; enter your Tavily API key.
 - **Cross-console agent handoffs**: Agents can hand off context — booking → followup, inventory → quoting, campaign → marketing, creative_content → social_feed_queue.

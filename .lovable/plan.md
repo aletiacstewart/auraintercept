@@ -1,69 +1,81 @@
 ## Goal
 
-Full re-audit of the platform against the four uploaded docs (homepage content pack, corrected audit questions, onboarding workbook revisions, social posting spec). Sweep every surface — pages, consoles, PDFs, help/guides, tooltips, video scripts, edge-function shared strings — for drift. Add a regression test so forbidden strings can't return. Defer the Upload-Post build.
+Make every customer-facing surface (pages, consoles, PDFs, export docs, guides, help content, tooltips, edge-function strings, locale JSON) consistent with the three canonical sources:
 
-## Forbidden-string list (single source of truth for the sweep)
+1. **Homepage content pack** — hero, pricing, 60-day trial, 3rd-party pass-through policy
+2. **Onboarding workbook (2026.1 revision)** — 17 industries (healthcare hidden), Google Account (free OAuth), no phone porting, ai@auraintercept.ai
+3. **Audit document (corrected)** — question wording, tier labels, industry list
 
-Any hit against these gets fixed:
+## Canonical values (single source of truth)
 
-- `Healthcare` / `Home Health` / `Physical Therapy` / `Occupational Therapy` / `Hospice` / `Veterinary` / `Medical Practice` as a selectable industry (component pickers, PDFs, help copy, seed data, tests).
-- `Port my existing number` / `port my existing business number` (phone-setup answer options only — porting isn't offered).
-- `Google Workspace` referenced as a paid vendor (must be "Google Account — free, OAuth" wherever it's in a vendor/pricing context; leave alone in unrelated prose).
-- `onboarding@auraintercept` (must be `ai@auraintercept.ai`).
-- `[VENDOR NAME]` placeholder from the Social Media card / Scheduler copy (leave as-is per your call — will add a visible "vendor TBD" comment near each so future me knows why).
-- Old tier labels: `Marketing (Pro+)` in social/marketing driver text → `Social Media (Boost+)` or `Outreach & Sales (Pro+)` per doc #2; `Billing (Elite)` → `Billing (Pro)`.
-- `bundled` / `overage` / `absorbed` in third-party fee context.
-- `24 hour Demo` / `14 day trial` / `48hrs` timeline copy (should all be 60-day live trial).
-- `minutes, not months` steps copy (should be "days, not months" — steps section is currently removed; catch any reintroduction).
+| Field | Correct value |
+|---|---|
+| Pricing tiers | Core $497 / Boost $994 / Pro $1,988 / Elite $3,979 (Beta, monthly) |
+| Standard (strikethrough) | Core $697 / Boost $1,394 / Pro $2,788 / Elite $5,576 |
+| Onboarding fee (Beta) | Core $249 / Boost $497 / Pro $994 / Elite $1,990 (50% off, 1x, due at trial start) |
+| Trial | 60-Day Live Trial (30d concierge onboarding + 30d full live use) |
+| Industries | 17 (healthcare cluster HIDDEN via HIPAA gate) |
+| Phone setup | Forward only. NO porting. |
+| Google | "Google Account — free, OAuth" (never "Google Workspace" as paid vendor) |
+| Aura outbound email | `ai@auraintercept.ai` |
+| 3rd-party billing | Customer's own account + own card, invoiced separately. Never "bundled/overage/absorbed" |
+| Tier labels | "Social Media (Boost+)", "Outreach & Sales (Pro+)", "Billing (Pro)" — NOT "Marketing (Pro+)" / "Billing (Elite)" |
+| Timelines | "days, not months" — NOT "minutes, not months" / "24 hour" / "14 day" / "48hrs" |
+| Social vendor | Placeholder `[VENDOR NAME]` with `TODO(social-vendor):` code comment (deferred build) |
 
 ## Surfaces to sweep
 
-**Marketing pages**
-- `src/pages/Index.tsx`, `ForBusiness.tsx`, `Auth.tsx`, `SignUp.tsx`, `SignIn.tsx`, `OpportunityAudit.tsx`, `AuditReport.tsx`, `KnowledgeBase.tsx`, `Blog.tsx`, `Calculators.tsx`
-- All `src/components/marketing/**` (industry picker, hero, integrations panel, etc.)
+**PDF exporters** (`src/components/documentation/**`, `src/components/audit/**`)
+- CompanyOnboardingPDF, IntegrationOnboardingPDF, PlatformFAQPDF, AuditChecklistPDF, ToS, checklists, video prompts, marketing pack, outreach toolkit PDFs
+- Every remaining file in `documentation/` — verify pricing table, trial length, 3rd-party clause, industry list, Google copy, tier labels
+
+**Export/print pages**
+- `src/pages/ExportDocumentation.tsx`, `PublicOnboardingIntake.tsx`, `IntegrationDocs.tsx`, `KnowledgeBase.tsx`, `VideoPromptsPage.tsx`
+
+**Marketing pages & components**
+- `Index.tsx`, `ForBusiness.tsx`, `Auth.tsx`, `SignUp.tsx`, `SignIn.tsx`, `OpportunityAudit.tsx`, `AuditReport.tsx`, `Blog.tsx`, `Calculators.tsx`, `Referrals.tsx`
+- `src/components/marketing/**` — pricing, hero, integrations panel, industry pickers, ROI/DIY calculators
 
 **Onboarding & audit surfaces**
-- `src/components/onboarding/CompanyOnboardingForm.tsx`
-- `src/components/audit/**` (`types.ts`, `AgentOpportunityAudit.tsx`, review question wording matches doc #2 verbatim)
-- `src/lib/auditIndustryQuestions.ts`
-
-**PDF exporters** (visual QA each after edits by rendering with pdfmake/react-pdf)
-- `src/components/documentation/CompanyOnboardingPDF.tsx`
-- `src/components/documentation/IntegrationOnboardingPDF.tsx`
-- `src/components/documentation/PlatformFAQPDF.tsx`
-- Every other file in `src/components/documentation/` (checklists, ToS, video prompts, marketing pack, etc.)
+- `CompanyOnboardingForm.tsx`, `src/components/audit/**`, `auditIndustryQuestions.ts`, `industryFastStartQuestions.ts`
 
 **Help / guides / tooltips / scripts**
-- `src/lib/howToUseContent.ts`, `industryHelpContent.ts`, `helpSystemPrompt.ts`, `featureTooltips.ts`, `receptionistScripts.ts`, `campaignTemplates.ts`, `industryVoiceGreetings.ts`, `industryRolePreview.ts`
+- `howToUseContent.ts`, `industryHelpContent.ts`, `helpSystemPrompt.ts`, `featureTooltips.ts`, `receptionistScripts.ts`, `campaignTemplates.ts`, `industryVoiceGreetings.ts`, `industryRolePreview.ts`, `documentationConfig.ts`, `diyCostBreakdown.ts`
 - Locale JSON: `src/locales/{en,es}/*.json`
-- Video prompt page: `src/pages/VideoPromptsPage.tsx`
 
 **Edge-function shared strings**
-- `supabase/functions/_shared/onboarding-workbook-sections.ts`
-- Any function that emails workbooks, sends onboarding reminders, or references the vendor list.
+- `supabase/functions/_shared/onboarding-workbook-sections.ts` (and any function that emails workbooks, sends onboarding reminders, references vendor list, or renders pricing)
 
 **Registries / seed data**
-- `src/lib/mainIndustryCategories.ts`, `businessTypeRegistry.ts`, `businessTypeProfileMap.ts`, `industryIdAliases.ts` — confirm 17 industries only (healthcare cluster removed).
-- Any test fixture or demo seeder that still enumerates removed verticals.
+- `mainIndustryCategories.ts`, `businessTypeRegistry.ts`, `businessTypeProfileMap.ts`, `industryIdAliases.ts`, `launchPricing.ts`, `subscriptionAgentConfig.ts` — confirm 17 industries, canonical pricing
+- Demo seeder tier map
+
+## Method
+
+For each surface, grep for the forbidden strings + verify canonical values are present and correctly worded. One focused patch per file. If a file is clean, note it explicitly in the final summary.
 
 ## Regression test
 
 Add `src/lib/__tests__/contentDriftGuard.test.ts`:
-- Load key doc-generator modules + a rendered sample of the two big PDFs (as text via a text-only render helper).
-- Assert none of the forbidden strings appear.
-- Runs under `bunx vitest run` in CI so future edits can't silently reintroduce drift.
+- Renders `CompanyOnboardingPDF`, `IntegrationOnboardingPDF`, `PlatformFAQPDF`, `AuditChecklistPDF` to text
+- Imports help/guide/tooltip/receptionist/campaign modules
+- Loads locale JSON
+- Asserts none of the forbidden strings appear AND canonical pricing values are present in pricing surfaces
+- Runs under `bunx vitest run`
 
 ## Explicitly out of scope
 
-- Building the Upload-Post / Ayrshare social posting module (deferred by your call). Social Media card copy stays with `[VENDOR NAME]` placeholder; will add an inline `TODO(social-vendor):` code comment next to each so it's easy to find when you're ready.
-
-## Deliverable per surface
-
-For every file changed: one focused patch + a note in the final summary listing what forbidden strings I found there. If a surface has zero hits, I'll say so explicitly rather than silently skipping it, so you can trust the audit was complete.
+- Building the social posting module (deferred). `[VENDOR NAME]` stays with a `TODO(social-vendor):` code comment.
+- Any backend schema, business logic, or feature work — copy/consistency only.
 
 ## Verification
 
-- `bunx tsgo` clean.
-- New `contentDriftGuard` vitest passes.
-- Render `CompanyOnboardingPDF` and `IntegrationOnboardingPDF` to images, spot-check the pages that changed (industry list, vendor worksheet, appendix, sign-off).
-- Grep sweep re-run at the end to confirm zero remaining hits on the forbidden-string list.
+- `bunx tsgo` clean
+- `contentDriftGuard` vitest passes
+- Render both big PDFs to images, spot-check pricing table, industry list, Google/vendor pages, trial length, sign-off
+- Final grep sweep for every forbidden string — expect zero hits
+- Final summary lists every file touched + files audited-and-clean
+
+## Deliverable
+
+A single sweep pass. Final summary organized by surface with per-file notes so the audit is auditable.

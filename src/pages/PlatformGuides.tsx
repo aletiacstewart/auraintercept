@@ -169,12 +169,12 @@ const guideCategories = [
         steps: [
           '1. Customer Portal: AI-powered customer engagement (Core+)',
           '2. Field Operations: GPS dispatch, routing, job management (Boost+)',
-          '3. Business Operations: Quoting, invoicing, inventory (Elite)',
+          '3. Business Operations: Quoting, invoicing, inventory (Pro+)',
           '4. Outreach & Sales Ops: Campaigns, leads, marketing (Pro+)',
-          '5. Social Media Ops: 6-platform content creation and scheduling (Pro+)',
+          '5. Social Media Ops: 6-platform content creation and scheduling (Boost+)',
           '6. Creative & Web Presence: Content Engine, website, blog, SEO (Core+)',
-          '7. Analytics & Reports: KPIs, forecasting, exports (Elite)',
-          'AI Operatives Hub: Central agent management interface (Elite only, not a console)',
+          '7. Analytics & Reports: KPIs, forecasting, exports (Pro+)',
+          'AI Operatives Hub: Central agent management interface (Pro+, not a console)',
           'Each console manages specific AI operatives',
           'Access consoles via sidebar navigation'
         ],
