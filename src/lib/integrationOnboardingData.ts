@@ -264,15 +264,15 @@ export const INTEGRATION_PROVIDERS: IntegrationProvider[] = [
   },
   {
     id: 'google-oauth',
-    name: 'Google Workspace + Calendar OAuth',
-    purpose: 'Two-way calendar sync, Gmail sending, Google Drive uploads.',
+    name: 'Google Account + Calendar OAuth',
+    purpose: 'Two-way calendar sync — works with any free Google account.',
     whyNeeded:
-      'Booking confirmation events need to land on the technician\'s real Google Calendar; quotes get filed in Drive.',
-    estTime: '45-90 minutes (first time)',
-    estCost: 'Free for the OAuth credentials. Google Workspace plan billed separately by Google.',
+      'Booking confirmation events land on the technician\'s real Google Calendar. No paid Google Workspace subscription is required — a free Google account works.',
+    estTime: '15-30 minutes (first time)',
+    estCost: 'Free. Uses Google Calendar OAuth on any free Google account. No Google Workspace plan required.',
     signupUrl: 'https://console.cloud.google.com',
     prereqs: [
-      'Google Workspace admin (or personal Google account for testing)',
+      'Any free Google account (Workspace not required)',
       'Verified ownership of the sending domain',
     ],
     steps: [
