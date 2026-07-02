@@ -250,6 +250,7 @@ export default function Integrations() {
             description="Connect services to power your AI agents"
             featureColor="integrations"
             showAuraBar
+            auraBarPlaceholder="Ask about integrations..."
           />
         </div>
 

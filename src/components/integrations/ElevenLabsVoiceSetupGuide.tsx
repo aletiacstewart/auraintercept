@@ -123,6 +123,7 @@ export function ElevenLabsVoiceSetupGuide() {
                       variant="ghost"
                       size="sm"
                       className="h-5 px-1 gap-1 text-xs"
+                      title="Click to copy full Voice ID: 21m00Tcm4TlvDq8ikWAM"
                       onClick={() => copyToClipboard('21m00Tcm4TlvDq8ikWAM', 'rachel')}
                     >
                       {copiedItems['rachel'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -135,6 +136,7 @@ export function ElevenLabsVoiceSetupGuide() {
                       variant="ghost"
                       size="sm"
                       className="h-5 px-1 gap-1 text-xs"
+                      title="Click to copy full Voice ID: cgSgspJ2msm6clMCkdW9"
                       onClick={() => copyToClipboard('cgSgspJ2msm6clMCkdW9', 'jessica')}
                     >
                       {copiedItems['jessica'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
