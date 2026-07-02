@@ -230,29 +230,29 @@ const communicationChannels = [{
   title: 'Talk to Aura (Voice)',
   description: 'Natural voice conversations with AI agents for phone-based customer service. Requires ElevenLabs + SignalWire.',
   color: 'bg-channel-voice',
-  gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]',
-  neonRgb: '236,72,153'
+  gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(30,100%,45%)]',
+  neonRgb: '245,158,11'
 }, {
   icon: MessageSquare,
   title: 'SMS Reminders',
   description: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires SignalWire.',
   color: 'bg-channel-sms',
-  gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]',
-  neonRgb: '34,197,94'
+  gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(12,85%,45%)]',
+  neonRgb: '239,90,60'
 }, {
   icon: Mail,
   title: 'Email Reminders',
   description: 'Automated email notifications for appointments, confirmations, and marketing campaigns.',
   color: 'bg-channel-email',
-  gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]',
-  neonRgb: '14,165,233'
+  gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(235,85%,45%)]',
+  neonRgb: '99,102,241'
 }, {
   icon: Headphones,
   title: 'Message Aura (Text)',
   description: 'Text-based chat where customers type questions and receive AI responses. Works on ALL tiers.',
   color: 'bg-channel-chat',
-  gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]',
-  neonRgb: '168,85,247'
+  gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(220,15%,40%)]',
+  neonRgb: '148,163,184'
 }];
 const howItWorks = [{
   step: 1,
