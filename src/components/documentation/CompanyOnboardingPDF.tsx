@@ -888,8 +888,8 @@ const HowToUsePage = () => (
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Steps')}</Text>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('1. Fill out every section below that applies to your business.')}</Text></View>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('2. Gather the documents & assets listed on the Master Document Checklist (next page).')}</Text></View>
-    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('3. Confirm you have or will create the 3rd-party accounts listed in the 3rd-Party Worksheet (with billing card on file).')}</Text></View>
-    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('4. Email the completed PDF + attachments to onboarding@auraintercept.ai.')}</Text></View>
+    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('3. Confirm you have or will create every provider listed in the Integration Requirements worksheet (Section 10), with a billing card on file.')}</Text></View>
+    <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('4. Email the completed PDF + attachments to ai@auraintercept.ai.')}</Text></View>
     <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('5. We will schedule your kickoff call within 1 business day of receipt.')}</Text></View>
 
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Kickoff Details')}</Text>
