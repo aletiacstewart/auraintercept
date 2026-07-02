@@ -177,12 +177,8 @@ const navGroups: NavGroup[] = [
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
-      { label: 'AI Agent Demo', icon: Clapperboard, href: '/dashboard/ai-agent-demo', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['company_admin', 'employee'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Video Prompts', icon: Video, href: '/dashboard/video-prompts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Onboarding Invites', icon: Send, href: '/dashboard/onboarding-invites', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];
