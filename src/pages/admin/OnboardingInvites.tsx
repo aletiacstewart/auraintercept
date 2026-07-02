@@ -31,7 +31,7 @@ type SubmissionPayload = {
   signature: { signer_name?: string; signer_title?: string; signed_at?: string; ip?: string } | null;
 };
 
-export default function OnboardingInvites() {
+export default function OnboardingInvites({ embedded }: { embedded?: boolean } = {}) {
   const { toast } = useToast();
   const [rows, setRows] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -198,8 +198,7 @@ export default function OnboardingInvites() {
     return doc;
   }
 
-  return (
-    <DashboardLayout>
+  const body = (
       <div className="max-w-5xl mx-auto p-6 space-y-6">
       <header>
         <div className="flex items-start justify-between gap-4">
@@ -345,6 +344,9 @@ export default function OnboardingInvites() {
         </DialogContent>
       </Dialog>
       </div>
-    </DashboardLayout>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>{body}</DashboardLayout>
   );
 }

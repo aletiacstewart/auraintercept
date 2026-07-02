@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,9 +25,14 @@ import {
   Lightbulb,
   Clock,
   Globe,
-  ExternalLink
+  ExternalLink,
+  FileDown,
+  Video as VideoIcon
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ExportDocumentation from './ExportDocumentation';
+import VideoPromptsPage from './VideoPromptsPage';
 
 // Route mapping for interactive navigation
 const NAVIGATION_ROUTES: Record<string, string> = {
@@ -1428,6 +1433,13 @@ const PlatformGuides: React.FC = () => {
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topTab = ['export', 'video'].includes(searchParams.get('tab') || '') ? (searchParams.get('tab') as string) : 'guides';
+  const setTopTab = (v: string) => {
+    const p = new URLSearchParams(searchParams);
+    if (v === 'guides') p.delete('tab'); else p.set('tab', v);
+    setSearchParams(p, { replace: true });
+  };
 
   // Filter out restricted guides and categories for non-platform-admin users
   const filteredCategories = useMemo(() => {
@@ -1483,6 +1495,19 @@ const PlatformGuides: React.FC = () => {
           }
         />
 
+        <Tabs value={topTab} onValueChange={setTopTab}>
+          <TabsList>
+            <TabsTrigger value="guides"><BookOpen className="h-3.5 w-3.5 mr-1.5" />Guides</TabsTrigger>
+            <TabsTrigger value="export"><FileDown className="h-3.5 w-3.5 mr-1.5" />Export Docs</TabsTrigger>
+            <TabsTrigger value="video"><VideoIcon className="h-3.5 w-3.5 mr-1.5" />Video Prompts</TabsTrigger>
+          </TabsList>
+          <TabsContent value="export" className="mt-4">
+            <ExportDocumentation embedded />
+          </TabsContent>
+          <TabsContent value="video" className="mt-4">
+            <VideoPromptsPage embedded />
+          </TabsContent>
+          <TabsContent value="guides" className="mt-4 space-y-6">
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="glass-card border-primary/30 bg-primary/5">
@@ -1668,6 +1693,8 @@ const PlatformGuides: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+        </Tabs>
         </div>
       </PageContainer>
     </DashboardLayout>

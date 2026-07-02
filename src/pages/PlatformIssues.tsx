@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import {
@@ -14,7 +15,10 @@ import {
   Filter,
   RefreshCw,
   AlertCircle,
+  HelpCircle,
 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Help from './Help';
 import { PageHeader } from '@/components/ui/page-header';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
@@ -94,6 +98,13 @@ const statusConfig: Record<IssueStatus, { icon: typeof Clock; label: string; col
 };
 
 export default function PlatformIssues() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topTab = searchParams.get('tab') === 'help' ? 'help' : 'issues';
+  const setTopTab = (v: string) => {
+    const p = new URLSearchParams(searchParams);
+    if (v === 'issues') p.delete('tab'); else p.set('tab', v);
+    setSearchParams(p, { replace: true });
+  };
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -197,6 +208,15 @@ export default function PlatformIssues() {
             }
           />
 
+          <Tabs value={topTab} onValueChange={setTopTab}>
+            <TabsList>
+              <TabsTrigger value="issues"><AlertCircle className="h-3.5 w-3.5 mr-1.5" />Issues</TabsTrigger>
+              <TabsTrigger value="help"><HelpCircle className="h-3.5 w-3.5 mr-1.5" />Help</TabsTrigger>
+            </TabsList>
+            <TabsContent value="help" className="mt-4">
+              <Help embedded />
+            </TabsContent>
+            <TabsContent value="issues" className="mt-4 space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-4">
           <Card>
@@ -493,6 +513,8 @@ export default function PlatformIssues() {
               </div>
             )}
         </FormShell>
+            </TabsContent>
+          </Tabs>
         </div>
         </InlineFormProvider>
       </PageContainer>

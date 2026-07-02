@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { MermaidDiagram } from '@/components/architecture/MermaidDiagram';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Network } from 'lucide-react';
+import { Network, Clapperboard } from 'lucide-react';
+import AIAgentFlowDemo from './AIAgentFlowDemo';
 
 // Shared classDef block for flowcharts
 const tierStyles = `
@@ -516,6 +518,13 @@ ${tierStyles}`
 };
 
 export default function Architecture() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topTab = searchParams.get('tab') === 'demo' ? 'demo' : 'architecture';
+  const setTopTab = (v: string) => {
+    const p = new URLSearchParams(searchParams);
+    if (v === 'architecture') p.delete('tab'); else p.set('tab', v);
+    setSearchParams(p, { replace: true });
+  };
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -528,6 +537,16 @@ export default function Architecture() {
             description="Interactive platform flowcharts — 7 consoles, 10 operatives, 24 agents, 4 tiers"
             featureColor="overview"
           />
+
+          <Tabs value={topTab} onValueChange={setTopTab}>
+            <TabsList>
+              <TabsTrigger value="architecture"><Network className="h-3.5 w-3.5 mr-1.5" />Architecture</TabsTrigger>
+              <TabsTrigger value="demo"><Clapperboard className="h-3.5 w-3.5 mr-1.5" />AI Agent Demo</TabsTrigger>
+            </TabsList>
+            <TabsContent value="demo" className="mt-4">
+              <AIAgentFlowDemo />
+            </TabsContent>
+            <TabsContent value="architecture" className="mt-4 space-y-6">
 
           {/* Cyber-Sentry telemetry strip */}
           <div className="relative flex items-center gap-3 overflow-hidden rounded-lg border border-primary/30 bg-card/60 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary/80 backdrop-blur-sm">
@@ -581,6 +600,8 @@ export default function Architecture() {
                 />
               </TabsContent>
             ))}
+          </Tabs>
+            </TabsContent>
           </Tabs>
         </div>
       </PageContainer>

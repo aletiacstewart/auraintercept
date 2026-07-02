@@ -189,7 +189,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/for-business" element={<ForBusiness />} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/intake/:token" element={<PublicOnboardingIntake />} />
-                <Route path="/dashboard/onboarding-invites" element={<ProtectedRoute requiredRole="platform_admin"><OnboardingInvites /></ProtectedRoute>} />
+                <Route path="/dashboard/onboarding-invites" element={<Navigate to="/dashboard/subscription-analytics?tab=invites" replace />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
                 <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
@@ -270,8 +270,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/tavily-limits" element={<ProtectedRoute><TavilyLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/architecture" element={<ProtectedRoute requiredRole="platform_admin"><Architecture /></ProtectedRoute>} />
                 <Route path="/dashboard/calculators" element={<ProtectedRoute requiredRole="platform_admin"><Calculators /></ProtectedRoute>} />
-                <Route path="/dashboard/export-docs" element={<ProtectedRoute requiredRole="platform_admin"><ExportDocumentation /></ProtectedRoute>} />
-                <Route path="/dashboard/video-prompts" element={<ProtectedRoute><VideoPromptsPage /></ProtectedRoute>} />
+                <Route path="/dashboard/export-docs" element={<Navigate to="/dashboard/platform-guides?tab=export" replace />} />
+                <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
                 <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
@@ -290,7 +290,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-agent-demo" element={<ProtectedRoute><AIAgentFlowDemo /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agent-demo" element={<Navigate to="/dashboard/architecture?tab=demo" replace />} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
                 

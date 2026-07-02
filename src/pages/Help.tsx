@@ -50,7 +50,7 @@ import { getNavLabels } from '@/lib/industryNavLabels';
 
 type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
-export default function Help() {
+export default function Help({ embedded }: { embedded?: boolean } = {}) {
   const { userRole } = useAuth();
   const { subscriptionTier, inTrial } = useSubscription();
   const { pack: industryPack } = useIndustryPack();
@@ -124,9 +124,7 @@ export default function Help() {
   // Tier display info
   const tierInfo = TIER_HELP_DESCRIPTIONS[effectiveTier];
 
-  return (
-    <DashboardLayout>
-      <PageContainer>
+  const body = (
         <div className="space-y-8">
           {/* Header */}
           <PageHeader
@@ -852,7 +850,11 @@ export default function Help() {
             </TabsContent>
           </Tabs>
         </div>
-      </PageContainer>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>
+      <PageContainer>{body}</PageContainer>
     </DashboardLayout>
   );
 }

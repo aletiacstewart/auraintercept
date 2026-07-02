@@ -1,27 +1,44 @@
-Reduce vertical spacing and row height in the main dashboard sidebar so all nav groups and footer actions fit without scrolling.
+## Merge Platform Resources sidebar pages
 
-### What we will change
-1. **Tighten nav group spacing** in `src/components/dashboard/DashboardLayout.tsx`:
-   - Reduce the outer `nav` gap (`space-y-4`) and nav padding (`py-4`) so groups sit closer together.
-   - Reduce group label/header padding (`px-3 py-1`) to `px-3 py-0.5`.
-   - Keep visual hierarchy with the existing uppercase label and icon styling.
+Consolidate 9 sidebar entries → 3, using tabs inside each host page. Keep old routes alive as redirects so links don't break.
 
-2. **Compact individual nav buttons**:
-   - Add `h-8` / `py-1.5` sizing to the nav `Button` so each row is shorter while the icon and label remain the same size.
-   - Preserve the collapsed icon-only layout and active/hover glow effects.
+### Merges
 
-3. **Compact the footer section** (tier badge, role badge, AI Help Center, Report Issue, Sign Out):
-   - Reduce `p-3 space-y-2` to `p-2 space-y-1`.
-   - Shorten the Report Issue and Sign Out buttons to match nav row height.
-   - Keep the tier badge and Sign Out button as they are functionally.
+1. **Platform Guides** (host) absorbs **Export Docs** + **Video Prompts**
+   - Add `Tabs` to `src/pages/PlatformGuides.tsx`: `Guides` (current content), `Export Docs` (render `<ExportDocumentation />`), `Video Prompts` (render `<VideoPromptsPage />`).
+   - Sync active tab with `?tab=guides|export|video` query param.
+   - Remove `Export Docs` and `Video Prompts` items from sidebar in `src/components/dashboard/DashboardLayout.tsx`.
+   - In `src/App.tsx`, redirect `/dashboard/export-docs` → `/dashboard/platform-guides?tab=export` and `/dashboard/video-prompts` → `?tab=video`.
 
-4. **Verification**:
-   - Type-check with `tsgo`.
-   - Confirm the full sidebar (nav + footer) fits within a 900 px viewport without scrolling and that all items remain clickable and readable.
+2. **Architecture** (host) absorbs **AI Agent Demo**
+   - Add tabs to `src/pages/Architecture.tsx`: `Architecture`, `AI Agent Demo` (renders `<AIAgentFlowDemo />`).
+   - `?tab=architecture|demo`.
+   - Remove `AI Agent Demo` sidebar entry; redirect `/dashboard/ai-agent-demo` → `/dashboard/architecture?tab=demo`.
+
+3. **Subscription Analytics** (host) absorbs **Onboarding Invites**
+   - Add tabs to `src/pages/SubscriptionAnalytics.tsx`: `Analytics`, `Onboarding Invites` (renders `<OnboardingInvites />`).
+   - `?tab=analytics|invites`.
+   - Remove `Onboarding Invites` sidebar entry; redirect `/dashboard/onboarding-invites` → `/dashboard/subscription-analytics?tab=invites`.
+
+4. **Platform Issues** (host) absorbs **Help**
+   - Add tabs to `src/pages/PlatformIssues.tsx`: `Issues`, `Help` (renders `<Help />`).
+   - `?tab=issues|help`.
+   - Remove `Help` sidebar entry; redirect `/dashboard/help` → `/dashboard/platform-issues?tab=help`.
+   - Note: `Help` is currently visible to `company_admin` and `employee`. Since Platform Issues is platform_admin-only, keep the standalone `/dashboard/help` route rendering `<Help />` for non-admin roles (only sidebar link is removed for platform_admin). For platform_admin, redirect to the merged tab.
+
+### Resulting Platform Resources sidebar
+- Subscription Analytics
+- Platform Issues
+- Platform Guides
+- Architecture
+
+### Technical details
+- Use existing `Tabs`/`TabsList`/`TabsTrigger`/`TabsContent` from `@/components/ui/tabs`.
+- Tab state driven by `useSearchParams` so redirects with `?tab=` land on the right pane.
+- Do not modify the child page components themselves — just import and render them inside the host tab.
+- Keep all existing route protection (`platform_admin`) on the surviving routes.
+- No changes to page business logic, data, or styling beyond adding the tab shell.
 
 ### Out of scope
-- Mobile drawer layout
-- Collapse behavior / collapse button
-- Technicians dashboard layout
-- Nav labels, group ordering, or tier badge logic
-- Color/theming changes beyond spacing/sizing classes
+- Renaming pages, merging their internal content, or changing the child components.
+- Any non-sidebar navigation surfaces (command palette, deep links elsewhere) beyond the redirects listed.
