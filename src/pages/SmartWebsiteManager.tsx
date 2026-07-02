@@ -1023,7 +1023,7 @@ export default function SmartWebsiteManager() {
                       <p className="font-medium text-card-foreground">Talk to Aura (Voice)</p>
                       <HelpTooltip 
                         term="" 
-                        tooltip="Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs + Twilio."
+                        tooltip="Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs + SignalWire."
                         showIcon={true}
                       />
                     </div>

@@ -123,7 +123,7 @@ export const SMSChat: React.FC<SMSChatProps> = ({ companyId, companyName }) => {
           <MessageSquare className="h-6 w-6 text-primary" />
         </div>
         <h3 className="font-semibold">SMS Messaging</h3>
-        <p className="text-sm text-muted-foreground">Send SMS via Twilio</p>
+        <p className="text-sm text-muted-foreground">Send SMS via SignalWire</p>
       </div>
 
       {/* Send Form */}

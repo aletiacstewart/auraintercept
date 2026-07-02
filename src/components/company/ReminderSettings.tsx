@@ -157,7 +157,7 @@ export function ReminderSettings() {
       return;
     }
     if (!setting.call_enabled && !hasVoiceSupport) {
-      toast.error('Please configure ElevenLabs and Twilio integrations first');
+      toast.error('Please configure ElevenLabs and SignalWire integrations first');
       return;
     }
     upsertMutation.mutate({
@@ -342,7 +342,7 @@ export function ReminderSettings() {
             <AlertDescription className="text-sm">
               Voice call reminders require{' '}
               <Link to="/integrations" className="text-secondary underline hover:no-underline">
-                Twilio and ElevenLabs integrations
+                SignalWire and ElevenLabs integrations
               </Link>{' '}
               to be configured.
             </AlertDescription>
