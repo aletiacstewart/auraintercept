@@ -208,6 +208,15 @@ export default function PlatformIssues() {
             }
           />
 
+          <Tabs value={topTab} onValueChange={setTopTab}>
+            <TabsList>
+              <TabsTrigger value="issues"><AlertCircle className="h-3.5 w-3.5 mr-1.5" />Issues</TabsTrigger>
+              <TabsTrigger value="help"><HelpCircle className="h-3.5 w-3.5 mr-1.5" />Help</TabsTrigger>
+            </TabsList>
+            <TabsContent value="help" className="mt-4">
+              <Help embedded />
+            </TabsContent>
+            <TabsContent value="issues" className="mt-4 space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-4">
           <Card>
