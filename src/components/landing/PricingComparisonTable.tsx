@@ -129,12 +129,12 @@ const sections: FeatureSection[] = [
   {
     title: 'Control Centers (6 / 7 / 7 / 8)',
     features: [
-      { name: 'Customer Portal Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Customer Portal', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Outreach & Sales', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Creative & Web Presence', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Social Media', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Service Management Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
-      { name: 'Analytics & Reports Console', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Service Management', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
+      { name: 'Analytics & Reports', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
       { name: 'Business Operations', starter: 'x', connect: 'x', performance: 'check', command: 'check' },
       { name: 'AI Operatives Hub', starter: 'check', connect: 'check', performance: 'check', command: 'check' },
     ],
