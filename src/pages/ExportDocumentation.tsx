@@ -24,11 +24,10 @@ import PlatformFAQPDF from '@/components/documentation/PlatformFAQPDF';
 import MarketingSalesMasterPDF from '@/components/documentation/MarketingSalesMasterPDF';
 import IntegrationOnboardingPDF from '@/components/documentation/IntegrationOnboardingPDF';
 
-const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
+interface ExportDocumentationProps { embedded?: boolean }
+const ExportDocumentation = forwardRef<HTMLDivElement, ExportDocumentationProps>(({ embedded }, ref) => {
 
-  return (
-    <DashboardLayout>
-      <PageContainer>
+  const body = (
         <div className="space-y-6">
           <PageHeader
             icon={FileDown}
@@ -929,7 +928,11 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           </CardContent>
          </Card>
         </div>
-      </PageContainer>
+  );
+  if (embedded) return body;
+  return (
+    <DashboardLayout>
+      <PageContainer>{body}</PageContainer>
     </DashboardLayout>
   );
 });
