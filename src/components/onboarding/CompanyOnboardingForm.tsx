@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SelectGroup, SelectLabel } from '@/components/ui/select';
 import { INDUSTRY_CONTENT, INDUSTRY_GROUPS } from '@/lib/industryMarketingContent';
+import { isIndustryVisible } from '@/lib/industryVisibility';
 import { UNIVERSAL_TITLES, getIndustryTitles, OTHER_TITLE_VALUE } from '@/lib/industryJobTitles';
 import { Progress } from '@/components/ui/progress';
 import { Building2, User, Clock, Settings, MessageSquare, Calendar, Star, Globe, BarChart3, Users, Send, ChevronLeft, ChevronRight } from 'lucide-react';
