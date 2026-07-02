@@ -83,7 +83,7 @@ export function IndustryDropdownPicker({ value, onChange, onBusinessTypeChange }
               {idx > 0 && <SelectSeparator />}
               <SelectItem
                 value={encodeMain(cat.name)}
-                className="text-sm py-2 text-primary data-[highlighted]:text-primary-foreground data-[state=checked]:text-primary-foreground focus:text-primary-foreground"
+                className="text-sm py-2 text-foreground data-[highlighted]:bg-primary data-[highlighted]:text-primary-foreground data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground focus:bg-primary focus:text-primary-foreground"
               >
                 <span className="flex items-center gap-2">
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" />
