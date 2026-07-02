@@ -426,6 +426,10 @@ const CATEGORY_DEFAULT_PACK: Record<string, string> = {
   'Insurance & Assessment': 'default',
   'Senior & Lifestyle Services': 'default',
   'Event & Temporary Services': 'default',
+  'Beauty & Salons': 'beauty_wellness',
+  'Restaurants & Food Delivery': 'restaurants',
+  'Personal Assistants': 'personal_assistant',
+  'B2B Pro Services': 'b2b_pro_services',
 };
 
 export interface BusinessTypeEntry {
