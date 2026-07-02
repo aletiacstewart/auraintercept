@@ -27,6 +27,16 @@ interface FieldOpsMetrics {
   jobsCompletedToday: number;
   jobsPending: number;
   checkInsToday: number;
+  // Reconciled slices — all derived from the same job_assignments query
+  // Dispatch/GPS Console uses `jobsActive` as its "Active" badge, so
+  // jobsActive === jobsAssigned + jobsUnassigned and
+  // jobsActive >= jobsPending + jobsInProgress at all times.
+  jobsActive: number;
+  jobsAssigned: number;
+  jobsUnassigned: number;
+  jobsInProgress: number;
+  feedbackCount: number;
+  avgRating: number;
 }
 
 interface MarketingMetrics {
@@ -135,24 +145,75 @@ export function useFieldOpsMetrics(companyId: string | null | undefined) {
   return useQuery<FieldOpsMetrics>({
     queryKey: ['fieldops-metrics', companyId],
     queryFn: async () => {
-      if (!companyId) return { jobsTotal: 0, jobsEnRoute: 0, jobsCompletedToday: 0, jobsPending: 0, checkInsToday: 0 };
+      if (!companyId) return {
+        jobsTotal: 0, jobsEnRoute: 0, jobsCompletedToday: 0, jobsPending: 0, checkInsToday: 0,
+        jobsActive: 0, jobsAssigned: 0, jobsUnassigned: 0, jobsInProgress: 0,
+        feedbackCount: 0, avgRating: 0,
+      };
 
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
-      const [totalRes, enRouteRes, completedTodayRes, pendingRes] = await Promise.all([
-        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
-        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).in('status', ['en_route', 'in_progress']),
-        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('status', 'completed').gte('completed_at', todayStart.toISOString()),
+      // Mirrors Dispatch/GPS Console definitions (see FieldOpsManager: activeJobs =
+      // status NOT IN ('completed','cancelled')). Single source of truth is
+      // job_assignments filtered by company_id — same for both consoles.
+      const [
+        activeRes,
+        assignedRes,
+        unassignedRes,
+        pendingRes,
+        inProgressRes,
+        completedTodayRes,
+        feedbackRes,
+      ] = await Promise.all([
         supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).not('status', 'in', '("completed","cancelled")'),
+        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).not('status', 'in', '("completed","cancelled")').not('employee_id', 'is', null),
+        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).not('status', 'in', '("completed","cancelled")').is('employee_id', null),
+        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).in('status', ['pending_acceptance', 'accepted']),
+        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).in('status', ['en_route', 'arrived', 'in_progress']),
+        supabase.from('job_assignments').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('status', 'completed').gte('completed_at', todayStart.toISOString()),
+        supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
       ]);
 
+      const jobsActive = activeRes.count ?? 0;
+      const jobsAssigned = assignedRes.count ?? 0;
+      const jobsUnassigned = unassignedRes.count ?? 0;
+      const jobsPending = pendingRes.count ?? 0;
+      const jobsInProgress = inProgressRes.count ?? 0;
+      const jobsCompletedToday = completedTodayRes.count ?? 0;
+
+      const ratings = (feedbackRes.data ?? []).map((r: any) => Number(r.rating)).filter((n) => Number.isFinite(n));
+      const feedbackCount = ratings.length;
+      const avgRating = feedbackCount > 0 ? ratings.reduce((s, r) => s + r, 0) / feedbackCount : 0;
+
+      if (import.meta.env.DEV) {
+        // Guardrail — if this ever trips, the two consoles will disagree again.
+        console.assert(
+          jobsAssigned + jobsUnassigned === jobsActive,
+          '[useFieldOpsMetrics] assigned + unassigned !== active',
+          { jobsAssigned, jobsUnassigned, jobsActive },
+        );
+        console.assert(
+          jobsPending + jobsInProgress <= jobsActive,
+          '[useFieldOpsMetrics] pending + inProgress > active',
+          { jobsPending, jobsInProgress, jobsActive },
+        );
+      }
+
       return {
-        jobsTotal: totalRes.count ?? 0,
-        jobsEnRoute: enRouteRes.count ?? 0,
-        jobsCompletedToday: completedTodayRes.count ?? 0,
-        jobsPending: pendingRes.count ?? 0,
-        checkInsToday: completedTodayRes.count ?? 0,
+        // Aliases kept for backward compatibility with any external callers.
+        jobsTotal: jobsActive,
+        jobsEnRoute: jobsInProgress,
+        jobsCompletedToday,
+        jobsPending,
+        checkInsToday: jobsCompletedToday,
+        // Canonical fields — prefer these going forward.
+        jobsActive,
+        jobsAssigned,
+        jobsUnassigned,
+        jobsInProgress,
+        feedbackCount,
+        avgRating,
       };
     },
     enabled: !!companyId,
