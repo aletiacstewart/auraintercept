@@ -1,71 +1,37 @@
-# Settings & Dashboard Polish Pass
+## 3rd Party Integrations — Fixes
 
-Six focused, low-risk fixes. No layout changes.
+### 1. Remove Carrier Cheat Sheet from Voice Agent page
 
-## 1. "AI Agents Active" tile (Platform Dashboard)
+**File:** `src/pages/integrations/VoiceIntegration.tsx`
+- Remove the `CarrierForwardingGuide` import (line 10) and its usage (~line 163). Voice/ElevenLabs handles TTS, not call routing.
+- **Keep** the guide on `SMSIntegration.tsx` (Phone & SMS / SignalWire — correct home).
+- **Keep** on `Integrations.tsx` (3rd Party Overview) since it functions as a consolidated summary hub.
 
-**Finding:** `PlatformAdminDashboard.tsx` line 229 sets `value: stats?.companies`. The "28" is the total company count, not an agent count. This contradicts the documented 24-agent architecture.
+### 2. Fix broken company-wide Calendar cards (CalDAV + ICS)
 
-**Fix:** Relabel the tile to `"Companies with AI Deployed"` and update the description to `"Tenants running the agent stack"`. Keep the underlying query (`stats.companies`) — that's what the number actually represents. No new query needed.
+Both `type="company"` variants currently render the fully-styled card (title, "Free" badge, feature tags) and then show a "not available. Please contact support." message when the backend feature isn't wired up.
 
-## 2. Review Platform Links — empty-state guard
+**Files:**
+- `src/components/integrations/CalendarSubscription.tsx` (~line 196–199)
+- `src/components/integrations/CalDAVSubscription.tsx` (~line 192)
 
-**Where:** Settings → Campaigns & Reviews tab (`ReviewSettings` / campaigns section).
+**Fix:** When `type === "company"` and no usable URL/config is available, render a "Coming Soon" state instead of the current fallback:
+- Replace the "Free" badge with a muted "Coming Soon" badge.
+- Apply `opacity-60` to the card body and drop the action buttons.
+- Remove the "not available, please contact support" line entirely.
+- Individual-user variants (`type !== "company"`) render unchanged.
 
-**Fix:**
-- When the "Enable Review Requests" toggle is on but all three URL fields (Google, Yelp, Facebook) are empty, render an inline warning banner: *"Add at least one review link before enabling review requests — messages will send without a destination."*
-- Disable the toggle's save action while all three are empty (soft block: allow the toggle to flip visually, but the Save/persist call is blocked and the warning stays).
-- Validate each URL with a light `https?://` + host check when non-empty; show per-field error if invalid.
+### 3. Standardize sidebar across all Integration pages
 
-## 3. Call Routing — conflicting configured / not-configured state
+All integration pages already import `DashboardLayout` (verified in `VoiceIntegration`, `EmailIntegration`, `SMSIntegration`, `TavilyIntegration`, `CalendarIntegration`, `CRMIntegration`, `SocialMediaIntegration`, and `Integrations.tsx` at `/dashboard/3rd-party-overview`), so the sidebar component is shared.
 
-**Where:** Settings → Communications → Call Routing section.
+**Fix:** Audit `DashboardLayout` / `AppSidebar` for any conditional that hides the `MARKETING`, `CONFIGURATION`, or `INTEGRATIONS` section headers based on route, role, or feature flag. Ensure the section headers always render for `platform_admin` / `company_admin` regardless of current path. If the sections are only hidden because their child groups collapse to empty, force the header labels to remain visible with their canonical child links so a user landing on any integration subpage sees the same navigation structure.
 
-**Fix:** When "How is your number connected?" = *"Not configured yet"*:
-- Wrap the "When a customer calls your number" card in a disabled visual state (`opacity-60`, `pointer-events-none` on selection controls).
-- Change the section heading to *"Default behavior once connected"* and add a small muted note: *"This preview activates after you connect a number above."*
-- Once the dropdown moves off "Not configured yet", restore the normal active styling and heading.
+### 4. Follow-up check on Platform Dashboard "Active Integrations: 1 configured"
 
-## 4. Review-request template tone per business profile
+After the above lands, verify the count on `PlatformAdminDashboard.tsx` maps to an actual configured integration (not a stale placeholder). If every integration on the Overview shows "Not configured" / 0%, the count should read `0`. Adjust the query so it counts only integrations with a truthy config record.
 
-**Where:** `src/lib/campaignTemplates.ts` (default SMS/email template source) + wherever it's read for defaults on new companies.
-
-**Fix:**
-- Add a `reviewRequestTemplates` map keyed by profile A–J in `campaignTemplates.ts`. Two tones:
-  - **Warm / emoji** (profiles serving trades, outdoor, repair, home_health, restaurants, salon, beauty, fitness): keeps the ⭐⭐⭐⭐⭐ default.
-  - **Formal / no emoji** (profiles serving real_estate, professional, personal_assistant, saas_platform, medical_practice, veterinary): plain-text ask, no emoji.
-- Update the default-template resolver to look up the company's profile (`businessTypeProfileMap`) and return the matching template.
-- Companies can still override manually — existing edits are preserved. Only affects the *default* used when no custom template exists.
-
-## 5. Notification bell badge
-
-**Where:** `NotificationBell.tsx` in top nav.
-
-**Fix:**
-- Add a `useStaffNotifications` (or the existing unread-count query) subscription. Render a small pill/dot on the bell when `unreadCount > 0`:
-  - `1–9` → numeric badge
-  - `10+` → "9+"
-  - `0` → no badge
-- Confirm click opens the existing notification dropdown/list. If it doesn't currently open a list, wire it to the existing notification panel.
-- Uses semantic tokens (`bg-destructive text-destructive-foreground`) — no hardcoded colors.
-
-## 6. "All Companies" button destination
-
-**Where:** Platform Dashboard, next to `NewSignupsWidget`.
-
-**Fix:**
-- Verify the button's target route exists. If a full companies list page exists, keep as-is and confirm it renders.
-- If it doesn't exist, add a minimal `/dashboard/platform/companies` page: table of companies (name, industry, tier, signup date, status) sourced from `list_companies_admin` RPC, with row click → company detail. Platform-admin only.
-
-## Technical notes
-
-- All copy uses semantic tokens; no hex colors.
-- Profile lookup for #4 uses existing `businessTypeProfileMap.ts` — no new schema.
-- No DB migrations required.
-- Files touched (expected): `PlatformAdminDashboard.tsx`, review settings component, call-routing settings component, `campaignTemplates.ts`, `NotificationBell.tsx`, possibly one new page under `src/pages/admin/`.
-
-## Out of scope
-
-- Layout restructuring.
-- Twilio/SignalWire routing logic (handled in prior prompt).
-- Any duplicate-data reconciliation beyond the label fix in #1.
+### Out of scope
+- No changes to Settings hub or Platform Dashboard fixes from the prior pass beyond the count correction in (4).
+- No layout restructuring, no changes to individual-user calendar sync flows.
+- No DB migrations.

@@ -126,6 +126,26 @@ export function CalendarSubscription({
     );
   }
 
+  // Company-wide ICS feed isn't wired up yet — Coming Soon state
+  if (type === 'company' && !tokenData) {
+    return (
+      <Card className="opacity-60">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-muted-foreground" />
+            {title}
+          </CardTitle>
+          <CardDescription className="text-card-foreground">{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/40">
+            Coming Soon
+          </Badge>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <>
       <Card>
@@ -193,11 +213,7 @@ export function CalendarSubscription({
                 </Button>
               </div>
             </div>
-          ) : (
-            <p className="text-sm text-card-foreground">
-              Calendar feed not available. Please contact support.
-            </p>
-          )}
+          ) : null}
         </CardContent>
       </Card>
 
