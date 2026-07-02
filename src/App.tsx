@@ -92,6 +92,7 @@ import VideoPromptsPage from "./pages/VideoPromptsPage";
 import CyberSentryMockup from "./pages/CyberSentryMockup";
 import IndustryPacksAdmin from "./pages/admin/IndustryPacksAdmin";
 import PackCoverage from "./pages/admin/PackCoverage";
+import SuperSwitcher from "./pages/SuperSwitcher";
 import CyberSentryPortalMockup from "./pages/CyberSentryPortalMockup";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
