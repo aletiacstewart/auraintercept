@@ -1554,18 +1554,13 @@ const SignOffPage = () => (
   <Page size="A4" style={styles.page}>
     <PageHeader title="Sign-Off & Submission" pageNum={99} />
     <Text style={styles.sectionTitle}>{sanitizePdfText('Sign-Off & Submission')}</Text>
-    <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments included with this workbook')}</Text>
-    {['Signed Terms of Service Agreement (previous page) — REQUIRED',
-      'Logo files', 'Business license / EIN letter', 'W-9 (for Stripe)', 'Insurance cert (if applicable)',
-      'Customer list CSV', 'Employee/technician list CSV', 'Service / price list', 'Quote + invoice samples',
-      'Photos (numbered to website slots)', 'Testimonials / review screenshots'].map(item => (
-      <View key={item} style={styles.optionRow}>
-        <View style={styles.checkbox} />
-        <Text style={styles.optionText}>{sanitizePdfText(item)}</Text>
-      </View>
-    ))}
+    <Text style={styles.subsectionTitle}>{sanitizePdfText('Attachments')}</Text>
+    <View style={styles.optionRow}>
+      <View style={styles.checkbox} />
+      <Text style={styles.optionText}>{sanitizePdfText('I confirm every item on the Master Document & Asset Checklist (page 3) is attached, plus the signed Terms of Service Agreement (previous page).')}</Text>
+    </View>
     <Text style={styles.subsectionTitle}>{sanitizePdfText('Return To')}</Text>
-    <Text style={styles.paragraph}>{sanitizePdfText('Email completed workbook + attachments to: onboarding@auraintercept.ai')}</Text>
+    <Text style={styles.paragraph}>{sanitizePdfText('Email completed workbook + attachments to: ai@auraintercept.ai')}</Text>
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Acknowledgement')}</Text>
       <Text style={styles.infoBoxText}>
