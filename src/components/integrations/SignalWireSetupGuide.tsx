@@ -244,9 +244,17 @@ export function SignalWireSetupGuide() {
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
                   <strong>⏱️ Timeline:</strong> A2P 10DLC approval typically takes <strong>3–5 business days end-to-end</strong> when the submission is clean, but can extend to <strong>1–2+ weeks</strong> if SignalWire's review team or the DCA requires changes and re-vetting. There is no guaranteed turnaround.
                 </p>
-                <p className="text-amber-600 dark:text-amber-400 text-xs">
-                  <strong>💵 Customer pass-through fees (billed by SignalWire / The Campaign Registry):</strong> Brand registration <strong>$4.50</strong> (one-time) · Campaign <strong>$1.50–$30/month</strong> depending on use case (first <strong>3 months charged upfront</strong>) · DCA vetting <strong>$7.50/submission</strong> (re-charged on rejection) · Optional brand vetting <strong>$40</strong> for T-Mobile throughput boost. Typical all-in: <strong>$16–$42</strong> to go live. T-Mobile also charges <strong>$250/mo</strong> for any campaign with no SMS to a T-Mobile handset in <strong>60 consecutive days</strong>. Aura Intercept does not mark these up — they are charged by SignalWire / the carriers directly.
-                </p>
+                <div className="text-amber-600 dark:text-amber-400 text-xs space-y-1">
+                  <p><strong>💵 Customer pass-through fees</strong> (billed by SignalWire / The Campaign Registry):</p>
+                  <ul className="list-disc list-inside space-y-1 pl-1">
+                    <li>Brand registration: <strong>$4.50</strong> (one-time)</li>
+                    <li>Campaign registration: <strong>$1.50–$30/month</strong> depending on use case (first <strong>3 months charged upfront</strong>)</li>
+                    <li>DCA vetting: <strong>$7.50/submission</strong> (re-charged on rejection)</li>
+                    <li>Optional brand vetting: <strong>$40</strong> for T-Mobile throughput boost</li>
+                    <li>T-Mobile fee: <strong>$250/month</strong> for any campaign with no SMS to a T-Mobile handset in <strong>60 consecutive days</strong></li>
+                  </ul>
+                  <p>Typical all-in: <strong>$16–$42</strong> to go live. Aura Intercept does not mark these up — they are charged by SignalWire / the carriers directly.</p>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
