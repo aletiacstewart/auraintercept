@@ -309,8 +309,8 @@ export const BUSINESS_TYPE_TO_PROFILE: Record<string, ProfileKey> = {
   'commercial insurance agency': 'PROFILE_E',
   'financial advisory firm': 'PROFILE_D',
   'wealth management firm': 'PROFILE_D',
-  'commercial cleaning service': 'PROFILE_D',
-  'janitorial service': 'PROFILE_D',
+  'b2b commercial cleaning service': 'PROFILE_D',
+  'b2b janitorial service': 'PROFILE_D',
   'payroll administration firm': 'PROFILE_D',
   'benefits administration firm': 'PROFILE_D',
 };
