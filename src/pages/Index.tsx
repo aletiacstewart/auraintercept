@@ -963,7 +963,6 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Facebook, Instagram, TikTok, LinkedIn, Reddit</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Upload-Post.com account · billed directly by Upload-Post</p>
                 <p className="text-[10px] text-white">Upload-Post pricing: from ~$9/mo (1 social set) up to ~$99/mo · covers up to 6 connected platforms per set</p>
-                
               </div>
 
 
