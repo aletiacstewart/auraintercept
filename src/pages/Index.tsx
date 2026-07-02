@@ -23,19 +23,19 @@ const agentCategories = [{
   neonRgb: '0,229,255',
   agents: [{
     name: 'AI Receptionist',
-    description: '24/7 first contact — classifies intent, answers FAQs, and routes to the right agent',
+    description: 'Answers every call, figures out what the customer needs, and either handles it or hands it straight to the right agent.',
     icon: Target
   }, {
     name: 'Booking Agent',
-    description: 'Calendar sync, availability checks, and automated appointment scheduling',
+    description: 'Checks your calendar and books the job at a time that actually works.',
     icon: Calendar
   }, {
     name: 'Follow-Up Agent',
-    description: 'SMS/email reminders, post-service check-ins, and no-show recovery',
+    description: 'Nudges customers before and after the visit so no one gets forgotten.',
     icon: Bell
   }, {
     name: 'Review Agent',
-    description: 'Automated Google & Yelp review requests with sentiment tracking',
+    description: 'Asks happy customers for a Google or Yelp review at the right moment.',
     icon: MessageSquare
   }]
 }, {
@@ -46,19 +46,19 @@ const agentCategories = [{
   neonRgb: '0,230,118',
   agents: [{
     name: 'Assignment Agent',
-    description: 'Smart job, visit, or appointment assignment by skills, availability, and workload',
+    description: 'Picks the right person for each job based on skills, load, and who is free.',
     icon: Users
   }, {
     name: 'Routing Agent',
-    description: 'Traffic-aware multi-stop routing for technicians, providers, and field teams',
+    description: 'Builds the shortest drive between stops so your team spends less time in traffic.',
     icon: Navigation
   }, {
     name: 'ETA Agent',
-    description: 'Real-time arrival estimates and customer notification updates',
+    description: 'Tells the customer when you will actually arrive — and updates them if it slips.',
     icon: Truck
   }, {
     name: 'Check-In Agent',
-    description: 'Staff check-in, progress logging, and on-site or on-visit status updates',
+    description: 'Logs when a tech starts, what they did, and when they wrap.',
     icon: CheckCircle2
   }]
 }, {
@@ -69,19 +69,19 @@ const agentCategories = [{
   neonRgb: '168,85,247',
   agents: [{
     name: 'Admin Agent',
-    description: 'User management, company settings, role-based permissions, and access control',
+    description: "Manages your team's logins and settings, so you control who can see and change what.",
     icon: Lock
   }, {
     name: 'Quoting Agent',
-    description: 'Instant estimates, service pricing, and quote-to-job conversion',
+    description: 'Turns a phone call or a photo into a clean estimate the customer can approve.',
     icon: FileText
   }, {
     name: 'Invoice Agent',
-    description: 'Automated invoicing, payment tracking, and Stripe integration',
+    description: 'Sends the invoice, chases the payment, and keeps the numbers straight.',
     icon: DollarSign
   }, {
     name: 'Inventory Agent',
-    description: 'Stock level monitoring, reorder alerts, and parts tracking',
+    description: "Watches your parts and materials and tells you when it's time to reorder.",
     icon: Briefcase
   }]
 }, {
@@ -92,77 +92,77 @@ const agentCategories = [{
   neonRgb: '99,102,241',
   agents: [{
     name: 'Insights Agent',
-    description: 'Natural language queries and AI-powered business intelligence',
+    description: 'Ask it a plain-English question about your business and get a straight answer.',
     icon: Brain
   }, {
     name: 'Performance Agent',
-    description: 'KPI dashboards, team metrics, and productivity tracking',
+    description: 'Shows how your team is doing this week — who is crushing it, who needs help.',
     icon: TrendingUp
   }, {
     name: 'Revenue Agent',
-    description: 'Revenue analytics, profitability reports, and financial trends',
+    description: 'Tracks the money in, the money out, and where your margin actually lives.',
     icon: DollarSign
   }, {
     name: 'Forecast Agent',
-    description: 'Demand prediction, seasonal trends, and capacity planning',
+    description: 'Predicts your busy weeks so you can staff up before the phone rings.',
     icon: BarChart3
   }]
 }, {
   id: 'marketing',
-  name: 'Outreach & Sales Console',
+  name: 'Outreach & Sales',
   icon: Megaphone,
   color: 'from-orange-500 to-amber-500',
   neonRgb: '249,115,22',
   agents: [{
     name: 'Campaign Agent',
-    description: 'Multi-channel email/SMS campaign creation and scheduling',
+    description: 'Runs email and SMS campaigns end to end — draft, schedule, send, measure.',
     icon: Send
   }, {
     name: 'Lead Agent',
-    description: 'Lead scoring, pipeline management, and conversion tracking',
+    description: 'Scores new leads by how likely they are to book, so you call the hot ones first.',
     icon: Target
   }, {
     name: 'Marketing Agent',
-    description: 'Promo codes, referral tracking, and win-back targeting',
+    description: 'Runs promos, referrals, and win-backs so lapsed customers come home.',
     icon: Megaphone
   }, {
     name: 'Outreach Agent',
-    description: 'Automated outbound sequences and prospect engagement',
+    description: "Reaches out to prospects who haven't replied yet and keeps the pipeline moving.",
     icon: Mail
   }]
 }, {
   id: 'social_media',
-  name: 'Social Media Console',
+  name: 'Social Media',
   icon: Share2,
   color: 'from-pink-500 to-rose-500',
   neonRgb: '236,72,153',
   agents: [{
     name: 'Social Scheduler Agent',
-    description: 'Cross-platform scheduling, optimal timing, and auto-publishing via your own connected social account (Boost/Pro/Elite)',
+    description: 'Posts your content on the schedule you approved, using your own connected social account.',
     icon: Calendar
   }, {
     name: 'Social Analytics Agent',
-    description: 'Engagement metrics, audience insights, and growth tracking',
+    description: 'Tells you what posts landed, what fell flat, and where your audience is growing.',
     icon: BarChart3
   }]
 }, {
   id: 'smart_website',
-  name: 'Smart Website',
+  name: 'Creative & Web Presence',
   icon: Globe,
   color: 'from-teal-500 to-cyan-500',
   neonRgb: '20,184,166',
   agents: [{
     name: 'Creative Content Agent',
-    description: 'AI-powered content generation for social media, email, SMS, blog, and website copy',
+    description: 'Writes the posts, emails, and website copy in your voice — you approve, it publishes.',
     icon: Palette
   }, {
     name: 'Web Presence Agent',
-    description: 'AI website builder, blog management, SEO scans, and performance monitoring',
+    description: 'Builds and updates your website, blog, and SEO in the background so you stay found.',
     icon: Globe
   }]
 }];
 const agentConsoles = [{
-  name: 'Customer Portal Console',
+  name: 'Customer Portal',
   description: 'AI-powered customer interactions with booking, appointments, quotes, and 24/7 support.',
   icon: HeadphonesIcon,
   gradient: 'from-cyan-500 to-cyan-500',
@@ -171,7 +171,7 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Online booking', 'Appointment tracking', 'Quote requests', 'AI chat & voice support']
 }, {
-  name: 'Service Management Console',
+  name: 'Service Management',
   description: 'Schedule, assign, and track every job, visit, or appointment in real time — across technicians, providers, stylists, and agents.',
   icon: Truck,
   gradient: 'from-green-500 to-emerald-500',
@@ -180,7 +180,7 @@ const agentConsoles = [{
   tier: 'performance',
   features: ['Smart scheduling & assignment', 'Route & visit optimization', 'Live status & ETA tracking', 'Staff check-in & updates']
 }, {
-  name: 'Business Management Console',
+  name: 'Business Operations',
   description: 'Unified hub for quotes, invoices, inventory, employees, and customer management.',
   icon: Briefcase,
   gradient: 'from-orange-500 to-amber-500',
@@ -189,7 +189,7 @@ const agentConsoles = [{
   tier: 'command',
   features: ['Invoice generation', 'Inventory tracking', 'Quote builder', 'Employee management']
 }, {
-  name: 'Outreach & Sales Ops Console',
+  name: 'Outreach & Sales',
   description: 'Lead capture, pipeline scoring, email/SMS campaigns, and customer segmentation.',
   icon: Megaphone,
   gradient: 'from-purple-500 to-pink-500',
@@ -198,7 +198,7 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['Lead capture & scoring', 'Campaign automation', 'Customer segments', 'Follow-up sequences']
 }, {
-  name: 'Analytics & Reports Console',
+  name: 'Analytics & Reports',
   description: 'Deep KPI dashboards, revenue trends, AI-driven insights, and performance reports.',
   icon: BarChart3,
   gradient: 'from-cyan-500 to-violet-500',
@@ -207,7 +207,7 @@ const agentConsoles = [{
   tier: 'command',
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
-  name: 'Social Media Console',
+  name: 'Social Media',
   description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge, included on every tier. Want it fully automated? Social Scheduler (Boost/Pro/Elite) posts on your schedule using your own connected account.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
@@ -216,7 +216,7 @@ const agentConsoles = [{
   tier: 'connect',
   features: ['AI content generation', 'Manual Bridge (all tiers)', 'Social Scheduler auto-post (Boost/Pro/Elite)', '6-platform support']
 }, {
-  name: 'Creative & Web Presence Console',
+  name: 'Creative & Web Presence',
   description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
   icon: Palette,
   gradient: 'from-teal-500 to-cyan-500',

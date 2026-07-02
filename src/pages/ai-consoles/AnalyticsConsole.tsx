@@ -31,7 +31,7 @@ export default function AnalyticsConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={BarChart3}
-              title="Analytics & Reports Console"
+              title="Analytics & Reports"
               description={description}
               featureColor="platform"
               showAuraBar

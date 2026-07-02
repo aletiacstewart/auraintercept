@@ -33,16 +33,8 @@ const AGENT_NAMES: Record<string, string> = {
   forecast: 'Forecast Agent',
 };
 
-const CONSOLE_NAMES: Record<string, string> = {
-  customer_portal: 'Customer Portal',
-  field_operations: 'Field Operations',
-  business_management: 'Business Management',
-  marketing_sales: 'Outreach & Sales Console',
-  social_media: 'Social Media',
-  creative_web_presence: 'Creative & Web Presence',
-  analytics_reports: 'Analytics & Reports',
-  ai_operatives_hub: 'AI Operatives Hub',
-};
+// Canonical console display names — see src/lib/canonicalNames.ts
+import { CONSOLE_NAMES } from '@/lib/canonicalNames';
 
 interface TierCardProps {
   tier: SubscriptionTier;

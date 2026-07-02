@@ -51,8 +51,8 @@ export default function BusinessManagementConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Briefcase}
-              title="Business Management Console"
-              description="Run day-to-day operations from one place."
+              title="Business Operations"
+              description="One place for quotes, invoices, inventory, employees, and customer records."
               featureColor="platform"
               showAuraBar
               badge={<ValueBadge label="Automates 60-70% of admin tasks" />}

@@ -1,83 +1,79 @@
-## Pre-Launch Readiness Fixes
+# Voice & Style Sheet v2 — Implementation Plan
 
-Five fixes before onboarding real clients. Item 5 is a quick verification (unread badge already exists in code — likely a data/route issue, not missing UI).
+Apply the uploaded style guide across marketing, consoles, and agent copy. Frontend/content-only — no schema or business-logic changes.
 
----
+## 1. Canonical naming registry (single source of truth)
 
-### 1. Onboarding checklist / Setup Progress
+Update `src/lib/canonicalNames.ts` (create if missing; otherwise extend the existing naming registry in `.lovable/memory/architecture/canonical-naming-registry.md` + code helpers) so every surface pulls names from one place.
 
-**Symptom:** New company sees "0 of 0 sections completed · 0%" on the Platform Dashboard.
+**Consoles — one canonical name each, used everywhere (nav, hero grid, agent grid, footer, tier cards, docs):**
 
-**Root cause:** `DashboardSetupNav.tsx` and `SetupProgressBar.tsx` bail to a `sections.length === 0` empty state when the `companies` row fetch fails or `companyId` isn't hydrated yet. Both also mix "always-true" checks with "needs data" checks, so real progress numbers look wrong.
+| Canonical | Replace occurrences of |
+|---|---|
+| Customer Portal | (already consistent) |
+| Service Management | (already consistent) |
+| Business Operations | "Business Management" |
+| Outreach & Sales | "Outreach & Sales Ops", "Outreach & Sales Console" |
+| Analytics & Reports | (already consistent) |
+| Social Media | "Social Media Console" (drop suffix or add everywhere — pick drop) |
+| Creative & Web Presence | "Smart Website" (as a console header) |
 
-**Fix:**
-- Redefine the checklist as **6 first-run steps** every new company must complete, in order:
-  1. Business info (name, phone, address, hours)
-  2. Services / offerings (≥1 service row)
-  3. Communications (SignalWire phone connected OR email sender configured)
-  4. AI Operatives (≥1 `ai_agent_configs.is_enabled`)
-  5. Web Presence (smart website created)
-  6. Publish / Go Live (smart website `is_published` OR `public_app_url` set)
-- Rewrite `DashboardSetupNav.tsx` so it always renders those 6 steps even before data loads (skeleton), never "0 of 0".
-- Each chip links to the correct settings route and shows check when complete.
-- Fire `SETUP_PROGRESS_REFRESH_EVENT` from the relevant settings screens (verify existing dispatch points, add where missing).
-- Retire the redundant duplicate section calc in `SetupProgressBar.tsx` — collapse both widgets into a single source of truth (`useSetupProgress` hook) so the dashboard and settings header agree.
+Decision: drop the trailing "Console" from display names everywhere; keep it only in route paths.
 
----
+**Agents — every unit uses `[Function] Agent`.** Sole exception: **AI Receptionist**. Purge "operative" as a per-unit label; keep it only for collective phrases ("24 AI operatives", "the operative network").
 
-### 2. Clean signup state (no AuraIntercept / demo data bleed)
+## 2. Agent card copy rewrite (jargon → foreman voice)
 
-Audit + patch:
-- **Signup path** (`SignUp.tsx` + `handle_new_user` + `seed-company` edge functions if any): confirm no INSERT into `services`, `faqs`, `smart_links`, `inventory_items`, `knowledge_documents` beyond the generic industry-pack seed. The `seed_default_smart_links` trigger inserts 5 empty smart-link *templates* (URLs blank) — that's fine; verify no live URLs.
-- Confirm `seed_industry_pack_kb_for_company` uses `industry_template_packs` (generic per-vertical content) — never Aura Intercept's own row.
-- Audit that no dropdown, "recent customers", or dashboard widget on a fresh account can select data outside `.eq('company_id', currentCompanyId)`. Reuse the tenant-scope grep from the prior pre-launch report to spot-check.
-- Customer Portal: verify the portal page loads company info via `get_company_public_info_by_id(currentCompanyId)` (not a hardcoded Aura Intercept fallback). If a default falls back to Aura Intercept anywhere, replace with the active company's own `contact_phone`/`contact_email`/`address`.
-- Confirm demo companies (`is_demo = true`) are excluded from every non-platform-admin query (dropdowns, reports, "all companies" lists in non-admin surfaces).
-- If any seed content is retained, prefix with `Example — ` and mark `is_example = true` (add column) so the UI can render it grayed with an "Edit or delete" hint.
+Update the agent registry (`src/lib/agentStyles.ts` + wherever agent descriptions live, e.g. `subscriptionAgentConfig.ts`, `industryPack` agent labels) with plain-English one-liners. Examples from the doc:
 
-Deliverable: audit notes in `/mnt/documents/tenant-isolation-audit.md` + code fixes for anything found.
+- Admin Agent → "Manages your team's logins and settings, so you control who can see and change what."
+- AI Receptionist → "Answers every call, figures out what the customer needs, and either handles it or hands it straight to the right agent."
+- Insights Agent → "Ask it a plain-English question about your business and get a straight answer."
 
----
+Rewrite all 24 agent descriptions in the same voice: owner's language, concrete verbs, no "role-based / classifies intent / access control" spec-sheet phrasing.
 
-### 3. Standardize empty states
+## 3. Voice pillars applied to marketing pages
 
-Create `src/components/ui/EmptyState.tsx` with a single pattern: icon + title + subtitle + optional CTA. Then sweep:
-- `SmartWebsiteAnalytics.tsx` — Daily Traffic Trend + AI Engagement Trend: when the log arrays are empty, render `<EmptyState />` instead of a zero-line chart. Same for any hardcoded satisfaction % — swap for "No sessions yet".
-- `CalDAVSubscription.tsx` company variant already shows "Coming Soon" — confirm ICS card has parity (check `src/pages/integrations/CalendarIntegration.tsx`).
-- Ripgrep for `not available.*contact support`, `NaN%`, hardcoded percentages in analytics cards, and flat-zero recharts renders — replace each with `<EmptyState />`.
+Sweep `src/pages/ForBusiness.tsx`, landing hero, pricing section, and console hero grids:
 
----
+- Short sentences (<20 words), second person, active voice.
+- Max one tactical word per sentence from {Agent, Console, Operative, Command, Deploy}.
+- Replace adjectives ("powerful/comprehensive/robust") with real counts/dollars.
+- Keep em-dash "here's the real reason" beat.
+- No exclamation points, no "revolutionary".
 
-### 4. Remove hardcoded tenant-specific references
+## 4. Fee/trust sections — lean in harder
 
-Audit the surfaces that generate AI templates or content:
-- ElevenLabs voice agent prompt generator (find it — likely `src/pages/AskAuraConfig.tsx` or an edge function).
-- AI Content Profile defaults (`company_ai_content_profiles`).
-- Any system prompt in `supabase/functions/*` (there are ~30 matches for "Aura Intercept").
-- Filter matches into two buckets:
-  - **Legitimate** (platform-level branding — welcome emails from `ai@auraintercept.ai`, TCPA opt-in copy, signup page, footer) — leave alone.
-  - **Illegitimate** (any string used as a default for the *tenant's* company name, manager name, or contact info in generated content) — replace with `${company.name}`, `${company.contact_phone}`, etc. Placeholder previews shown before a company fills in data get grayed "e.g., Jane Smith" styling.
-- Also scan for literal "Charles Perez" and any other personal names appearing as defaults.
+On pricing + integration pages (`launchPricing.ts` copy, tier cards, SignalWire/ElevenLabs/Resend blurbs, `third-party-fee-disclaimer` surfaces):
 
-Deliverable: audit notes + code fixes.
+Every fee claim uses the 3-beat structure: **number → who bills it → why it protects the owner**, in ≤3 sentences. Keep phrases: "Billed by your provider — never by Aura Intercept.", "Never marked up by us.", "Your accounts. Your control. Your protection."
 
----
+## 5. Structural card shapes (enforce)
 
-### 5. Notification bell unread indicator
+- **Console card:** name → one plain sentence → 3–5 chip tags.
+- **Agent card:** `[Function] Agent` name → one owner-voice sentence.
+- **Tier card:** name + category line → "Best for…" → strike-through original + Beta Pricing badge → plain-count checklist → CTA. (Already close; audit for consistency.)
 
-The bell component (`NotificationBell.tsx`) **already** renders a destructive badge with `unreadCount` when > 0. So the "no indicator ever" symptom is one of:
-- `useStaffNotifications` hook returns `unreadCount = 0` because no rows match the current user's `recipient_id`;
-- notifications aren't being written for the events listed (integration status, low inventory, escalations);
-- bell isn't mounted on the header the user is looking at.
+## 6. Files expected to change
 
-**Fix:**
-- Verify `NotificationBell` is mounted in `DashboardLayout` header for every role (spot-check).
-- Audit `staff_notifications` inserts — add missing ones for: A2P 10DLC status change, failed automation (edge function error), escalated customer issue, low inventory threshold, new signup (already present), integration disconnect. Add whichever are missing.
-- Confirm the `staff_notifications` RLS `SELECT` policy lets a company_admin see rows where `recipient_id = auth.uid()` OR `recipient_role` matches their role.
-- Add a small test insert path (dev-only button) so the badge can be smoke-tested during QA.
+- `src/lib/agentStyles.ts` — agent names + descriptions
+- `src/lib/subscriptionAgentConfig.ts` — tier agent lists use canonical names
+- `src/lib/canonicalNames.ts` (new or extended) — console + agent name constants
+- `src/pages/ForBusiness.tsx` — hero, console grid, tier cards, fee sections
+- `src/pages/ai-consoles/*.tsx` — page headers use canonical console names
+- Sidebar/nav components rendering console labels
+- `src/lib/launchPricing.ts` copy (tier taglines / "Best for" lines) if drift found
+- `.lovable/memory/architecture/canonical-naming-registry.md` — updated to match
+- Save a new memory: `mem://style/voice-and-copy-standard` capturing the pillars, phrase bank, and words-to-avoid so future edits stay in voice.
 
----
+## 7. Out of scope
 
-### Order of work
+- No DB migrations, no edge functions, no schema changes.
+- No changes to route paths (only display labels).
+- Voice-agent prompts (`auraInterceptSalesPrompt.ts`) unchanged unless a canonical name drifts.
 
-1 → 2 → 4 → 3 → 5. Items 1 and 2 ship together so a fresh test company can be walked end-to-end (matches the manual verification checklist). No product behavior changes to billing, tier, or integrations — this pass is polish, isolation, and UX consistency only.
+## 8. Verification
+
+- Grep for stale strings: "Business Management" (as console), "Outreach & Sales Ops", "Outreach & Sales Console", "Smart Website" used as console header, "operative" as singular per-agent label.
+- Load `/for-business`, `/dashboard/ai-consoles/*`, pricing section — confirm every console name matches the registry.
+- Read 3 random agent cards out loud — should sound like a coworker, not a spec sheet.
