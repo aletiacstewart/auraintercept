@@ -126,7 +126,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
               {companyName}
             </h2>
             <p className="text-[9px] text-cyan-400/70 uppercase tracking-widest truncate">
-              {subtitle || `${agentLabel} — Cyber-Sentry Edition`}
+              {subtitle || agentLabel}
             </p>
           </div>
         </div>
