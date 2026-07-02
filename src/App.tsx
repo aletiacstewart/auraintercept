@@ -278,6 +278,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/pack-coverage" element={<ProtectedRoute requiredRole="platform_admin"><PackCoverage /></ProtectedRoute>} />
+                <Route path="/dashboard/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
+                <Route path="/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/dashboard/audit-report" element={<ProtectedRoute requiredRole="platform_admin"><AuditReport /></ProtectedRoute>} />
                 <Route path="/dashboard/operations" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><OperationsRouter /></ProtectedRoute>} />
