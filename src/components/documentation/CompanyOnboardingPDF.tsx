@@ -1039,7 +1039,7 @@ const ThirdPartyAccountsPage = () => {
     { name: 'Tavily', purpose: 'AI web research', signup: 'tavily.com', required: 'Pro, Elite' },
     { name: 'Stripe', purpose: 'Payment processing', signup: 'stripe.com', required: 'If collecting payments' },
     { name: 'A2P 10DLC', purpose: 'SMS carrier registration', signup: 'via SignalWire console', required: 'All tiers sending SMS' },
-    { name: 'Google Workspace', purpose: 'Calendar + email aliases', signup: 'workspace.google.com', required: 'Optional, recommended' },
+    { name: 'Google Account', purpose: 'Calendar sync (free, OAuth)', signup: 'accounts.google.com', required: 'No signup, card, or setup fee — connect during onboarding' },
   ];
   return (
     <Page size="A4" style={styles.page}>
@@ -1070,7 +1070,7 @@ const ThirdPartyAccountsPage = () => {
       </View>
 
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Account Owner / Admin Email per Provider')}</Text>
-      {['SignalWire', 'ElevenLabs', 'Resend', 'Tavily', 'Stripe', 'Google Workspace'].map(p => (
+      {['SignalWire', 'ElevenLabs', 'Resend', 'Tavily', 'Stripe'].map(p => (
         <View key={p} style={styles.formRow}>
           <Text style={styles.formLabel}>{sanitizePdfText(`${p}:`)}</Text>
           <View style={styles.formLine} />
@@ -1314,10 +1314,9 @@ const CarrierForwardingPage = () => (
           </Text>
         ))}
       </View>
-      <Text style={styles.subsectionTitle}>{sanitizePdfText('Phone setup: Forward or Port?')}</Text>
-      <Text style={styles.paragraph}>{sanitizePdfText('Pick one — forwarding keeps your existing carrier and reroutes calls to Aura; porting moves the number itself onto Aura.')}</Text>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Phone setup')}</Text>
+      <Text style={styles.paragraph}>{sanitizePdfText('Forwarding keeps your existing carrier and reroutes calls to Aura. Number porting is not offered today — if you need to move the number itself, keep your current line and forward using the carrier codes on the following pages.')}</Text>
       <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Forward my existing business number to my new Aura number (use carrier codes on the following pages).')}</Text></View>
-      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Port my existing business number into Aura (we will collect a Letter of Authorization, current bill copy, account #, and PIN on the kickoff call).')}</Text></View>
 
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Which forwarding scenario do you want?')}</Text>
       <Text style={styles.paragraph}>{sanitizePdfText('Check every scenario Aura should catch. Most businesses pick "Immediate" or "After-hours only + Unreachable".')}</Text>
@@ -1429,7 +1428,7 @@ const TOS_CLAUSES: Array<{ title: string; body: string }> = [
   { title: '1. Services', body: 'Aura Intercept provides an AI-powered customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
   { title: '2. Subscription & 60-Day Live Trial', body: 'Subscription begins on the date the onboarding fee is paid. A 60-Day Live Trial period applies; the platform is fully active during the trial. Cancellation must occur in writing before the next monthly billing date.' },
   { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to one month of your plan applies, with 50% OFF during Beta: Core $249 (was $497), Boost $497 (was $994), Pro $994 (was $1,988), Elite $1,990 (was $3,979). It is due at the start of the 60-Day Live Trial and is non-refundable once onboarding begins. The fee covers Concierge Onboarding services and platform configuration.' },
-  { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms, Google Workspace, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells or marks up third-party usage charges.' },
+  { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All paid third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social scheduler, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells or marks up third-party usage charges. A free Google Account may be connected via OAuth for Calendar sync at no additional cost.' },
   { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
   { title: '6. Customer Data & Privacy', body: 'Customer retains ownership of all customer data uploaded to the Platform. Aura Intercept processes data per the Privacy Policy and applicable law (CCPA, GDPR where relevant). Customer is the data controller; Aura Intercept is the data processor.' },
   { title: '7. Acceptable Use', body: 'Customer agrees not to use the Platform for unlawful, harassing, or fraudulent activity, to violate TCPA / CAN-SPAM / A2P 10DLC rules, or to interfere with platform operation. Aura may suspend service for material violations.' },
