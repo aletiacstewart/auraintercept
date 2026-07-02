@@ -21,7 +21,7 @@ import { MarketingMatrixCards } from '@/components/marketing/MarketingMatrixCard
 import { WorkflowChainButtons } from '@/components/ui/workflow-chain-buttons';
 import { getMarketingWorkflows } from '@/lib/industryMarketingWorkflows';
 import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
-import { useUnifiedAura } from '@/hooks/useUnifiedAura';
+import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { toast } from 'sonner';
 import { useMemo } from 'react';
 
@@ -46,8 +46,8 @@ export default function MarketingSalesConsole() {
   const { pack } = useIndustryPack();
   const playbook = getMarketingPlaybook(pack);
   const marketingWorkflows = useMemo(() => getMarketingWorkflows(pack), [pack]);
-  const { runChain } = useRunWorkflowChain();
-  const { submitQuery } = useUnifiedAura();
+  const { run: runChain } = useRunWorkflowChain();
+  const { submitQuery } = useAuraCommand();
   const marketingSpecialists =
     (pack && MARKETING_SPECIALISTS_BY_INDUSTRY[pack.industry_id]) ||
     (pack && MARKETING_SPECIALISTS_BY_CLUSTER[pack.cluster]) ||
