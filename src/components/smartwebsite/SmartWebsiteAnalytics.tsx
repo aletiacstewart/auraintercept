@@ -312,6 +312,7 @@ export function SmartWebsiteAnalytics({
           <CardDescription>Page views and unique visitors over time</CardDescription>
         </CardHeader>
         <CardContent>
+          {dailyTrendData && dailyTrendData.some((d: any) => (d.pageViews ?? 0) > 0 || (d.uniqueVisitors ?? 0) > 0) ? (
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dailyTrendData}>
@@ -354,6 +355,11 @@ export function SmartWebsiteAnalytics({
               </LineChart>
             </ResponsiveContainer>
           </div>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+              No visitor data yet
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -456,6 +462,7 @@ export function SmartWebsiteAnalytics({
           <CardDescription>Chat and voice interactions over time</CardDescription>
         </CardHeader>
         <CardContent>
+          {engagementTrendData && engagementTrendData.some((d: any) => (d.chatOpens ?? 0) > 0 || (d.voiceSessions ?? 0) > 0 || (d.messages ?? 0) > 0) ? (
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={engagementTrendData}>
@@ -506,6 +513,11 @@ export function SmartWebsiteAnalytics({
               </LineChart>
             </ResponsiveContainer>
           </div>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+              No engagement data yet
+            </div>
+          )}
         </CardContent>
       </Card>
 

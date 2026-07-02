@@ -208,7 +208,7 @@ export default function CyberSentryPortalMockup() {
             <div className="text-sm font-bold tracking-widest" style={{ color: '#00e5ff', fontFamily: 'monospace', textShadow: '0 0 12px rgba(0,229,255,0.6)' }}>
               ACME HOME SERVICES
             </div>
-            <div className="text-[10px] tracking-widest text-white/40" style={{ fontFamily: 'monospace' }}>CUSTOMER PORTAL — CYBER-SENTRY EDITION</div>
+            <div className="text-[10px] tracking-widest text-white/40" style={{ fontFamily: 'monospace' }}>CUSTOMER PORTAL</div>
           </div>
         </div>
 

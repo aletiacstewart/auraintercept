@@ -213,7 +213,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       agentLabel={activeLabel}
       agentColor={agentStyle.color}
       agentBgColor={agentStyle.bgColor}
-      subtitle="Outreach & Sales Ops — Cyber-Sentry Edition"
+      subtitle="Outreach & Sales Ops"
       companyCreatedAt={companyCreatedAt}
       tabs={TABS}
       activeTab={activeTab}

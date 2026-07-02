@@ -322,7 +322,7 @@ const baseConfig = (pack: IndustryPack, fieldRouting: boolean): IndustryServiceC
       ? `Live ${jobNoun.toLowerCase()} assignment, routing, and completion workflows`
       : `Today's ${jobNoun.toLowerCase()}s, check-ins, provider flow, and follow-up`,
     consoleBadge: fieldRouting ? 'Built for mobile service teams' : 'Built for booking-based teams',
-    consoleSubtitle: fieldRouting ? 'Service Management — Cyber-Sentry Edition' : 'Appointment Operations — Cyber-Sentry Edition',
+    consoleSubtitle: fieldRouting ? 'Service Management' : 'Appointment Operations',
     workerConsoleTitle: fieldRouting ? 'Service Management Console' : 'Team Console',
     workerConsoleDescription: fieldRouting
       ? `Manage ${jobNoun.toLowerCase()}s, routes, ETAs, and completion`

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
 import { 
   Activity, 
   ArrowRight, 
@@ -72,6 +73,9 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
   const [events, setEvents] = useState<AgentEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'processed' | 'failed'>('all');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
 
   useEffect(() => {
     fetchEvents();
@@ -120,9 +124,18 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
   };
 
   const filteredEvents = events.filter(e => {
-    if (filter === 'all') return true;
-    return e.status === filter;
+    if (filter !== 'all' && e.status !== filter) return false;
+    if (!search.trim()) return true;
+    const q = search.trim().toLowerCase();
+    return (
+      e.source_agent?.toLowerCase().includes(q) ||
+      (e.target_agent || '').toLowerCase().includes(q) ||
+      e.event_type?.toLowerCase().includes(q)
+    );
   });
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pagedEvents = filteredEvents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const stats = {
     total: events.length,
@@ -181,6 +194,16 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
           </button>
         </div>
 
+        {/* Search */}
+        <div className="mb-3">
+          <Input
+            placeholder="Search by agent or event type..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="h-9"
+          />
+        </div>
+
         {/* Events List */}
         <ScrollArea className="h-[400px]">
           <div className="space-y-2">
@@ -196,12 +219,26 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
                 <p className="text-sm">Agent events will appear here in real-time</p>
               </div>
             ) : (
-              filteredEvents.map((event) => (
+              pagedEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))
             )}
           </div>
         </ScrollArea>
+
+        {/* Pagination */}
+        {filteredEvents.length > pageSize && (
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredEvents.length)} of {filteredEvents.length}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</Button>
+              <span className="text-muted-foreground">Page {currentPage} of {totalPages}</span>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Next</Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -633,7 +633,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             handleBackToCompanySelector();
           }
         }}
-        subtitle="Customer Portal — Cyber-Sentry Edition"
+        subtitle="Customer Portal"
       />
 
       {/* Tab Navigation */}
