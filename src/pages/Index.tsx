@@ -208,13 +208,13 @@ const agentConsoles = [{
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media',
-  description: 'AI generates on-brand content for 6 platforms. Copy with one click and post via the Manual Bridge, included on every tier. Want it fully automated? Social Scheduler (Boost/Pro/Elite) posts on your schedule using your own connected account.',
+  description: 'AI generates on-brand content for 6 platforms. Copy & post is included on every tier. Optional Upload-Post Automated API account for fully scheduled auto-posting.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
   tier: 'connect',
-  features: ['AI content generation', 'Manual Bridge (all tiers)', 'Social Scheduler auto-post (Boost/Pro/Elite)', '6-platform support']
+  features: ['AI content generation', 'Copy & Post (all tiers)', 'Optional Upload-Post auto-post API', '6-platform support']
 }, {
   name: 'Creative & Web Presence',
   description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
@@ -963,7 +963,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Facebook, Instagram, TikTok, LinkedIn, Reddit</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Upload-Post.com account · billed directly by Upload-Post</p>
                 <p className="text-[10px] text-white">Upload-Post pricing: from ~$9/mo (1 social set) up to ~$99/mo · covers up to 6 connected platforms per set</p>
-                <p className="text-[10px] text-white"><span className="font-semibold">Core:</span> manual Bridge posting (copy &amp; post yourself) · <span className="font-semibold">Boost/Pro/Elite:</span> automated posting via your Upload-Post account</p>
+                
               </div>
 
 
