@@ -510,10 +510,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
 
-        {/* Navigation */}
-        <div ref={sidebarScrollRootRef} className="flex-1 min-h-0 px-2 py-4">
+        {/* Navigation + footer share one scroll surface so the tier badge and
+            bottom actions scroll with the nav on short viewports. */}
+        <div ref={sidebarScrollRootRef} className="flex-1 min-h-0">
           <ScrollArea className="h-full w-full">
-            <nav className="space-y-4">
+            <nav className="space-y-4 px-2 py-4">
               {filteredNavGroups.map((group) => (
                 <div key={group.label} className="space-y-1">
                   {!collapsed && (
@@ -657,13 +658,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </div>
               ))}
             </nav>
-          </ScrollArea>
-        </div>
 
-        <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
+            <Separator style={{ background: "rgba(0,229,255,0.1)" }} />
 
-        {/* User section */}
-        <div className="p-3 space-y-2">
+            {/* User section */}
+            <div className="p-3 space-y-2">
           {/* Subscription badge */}
           {!collapsed && (
             <button
@@ -734,6 +733,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: "#ff6b6b" }} />
             {!collapsed && <span>Sign Out</span>}
           </Button>
+            </div>
+          </ScrollArea>
         </div>
 
         {/* Collapse button */}
