@@ -1,65 +1,71 @@
+# Settings & Dashboard Polish Pass
 
-## Problem
+Six focused, low-risk fixes. No layout changes.
 
-- Tech Ops Console (`FieldOpsAgentConsole`) shows Assignment Agent `0 Jobs / 0 Assigned` and Routing Agent `0 Pending / 0 Done Today` while Dispatch/GPS Console (`FieldOpsManager`) shows `5 Active`.
-- Both surfaces query `public.job_assignments` scoped to the same `company_id`, so the numbers should never disagree by definition.
-- Root cause of the visible gap is definition, not source: `useFieldOpsMetrics.jobsTotal` counts **every** row on the company (including completed / cancelled). Dispatch's "Active" = `status NOT IN ('completed','cancelled')`. On an empty/new tenant `jobsTotal` and `jobsPending` are both 0, but on any tenant with historical completed rows the Assignment tile will read *higher* than Dispatch — the opposite mismatch. Either way the tiles and the header badge don't line up because they use different filters and identical labels ("Jobs" / "Pending").
-- `CyberConsoleLayout` renders a hardcoded `Satisfaction: 98.4%` when no `sessionMetrics` prop is passed (Tech Ops never passes one), regardless of whether any completed jobs or feedback exist.
+## 1. "AI Agents Active" tile (Platform Dashboard)
 
-## Fix
+**Finding:** `PlatformAdminDashboard.tsx` line 229 sets `value: stats?.companies`. The "28" is the total company count, not an agent count. This contradicts the documented 24-agent architecture.
 
-Single source of truth = `job_assignments` filtered by `company_id`. Redefine the metrics hook and rewire the two agent tiles so their numbers add up to Dispatch's Active total, and label them explicitly so scope is visible.
+**Fix:** Relabel the tile to `"Companies with AI Deployed"` and update the description to `"Tenants running the agent stack"`. Keep the underlying query (`stats.companies`) — that's what the number actually represents. No new query needed.
 
-### 1. `src/hooks/useConsoleAgentMetrics.ts` — `useFieldOpsMetrics`
+## 2. Review Platform Links — empty-state guard
 
-Replace the current shape with counts that share Dispatch's definitions and add supporting slices:
+**Where:** Settings → Campaigns & Reviews tab (`ReviewSettings` / campaigns section).
 
-- `jobsActive` — `status NOT IN ('completed','cancelled')` — matches Dispatch's `stats.total`.
-- `jobsAssigned` — active AND `employee_id IS NOT NULL`.
-- `jobsUnassigned` — active AND `employee_id IS NULL` (or status = `pending_acceptance`).
-- `jobsPending` — active AND status IN (`pending_acceptance`,`accepted`).
-- `jobsInProgress` — status IN (`en_route`,`arrived`,`in_progress`).
-- `jobsCompletedToday` — `status = 'completed'` AND `completed_at >= todayStart`.
-- `feedbackCount` and `avgRating` — one read from `customer_feedback` for today's satisfaction stat.
+**Fix:**
+- When the "Enable Review Requests" toggle is on but all three URL fields (Google, Yelp, Facebook) are empty, render an inline warning banner: *"Add at least one review link before enabling review requests — messages will send without a destination."*
+- Disable the toggle's save action while all three are empty (soft block: allow the toggle to flip visually, but the Save/persist call is blocked and the warning stays).
+- Validate each URL with a light `https?://` + host check when non-empty; show per-field error if invalid.
 
-Keep the old field names as aliases (`jobsTotal = jobsActive`, `jobsEnRoute = jobsInProgress`) so nothing else breaks; update callers in the next step.
+## 3. Call Routing — conflicting configured / not-configured state
 
-### 2. `src/components/employee/FieldOpsAgentConsole.tsx`
+**Where:** Settings → Communications → Call Routing section.
 
-Rewire `FIELDOPS_AGENTS`:
+**Fix:** When "How is your number connected?" = *"Not configured yet"*:
+- Wrap the "When a customer calls your number" card in a disabled visual state (`opacity-60`, `pointer-events-none` on selection controls).
+- Change the section heading to *"Default behavior once connected"* and add a small muted note: *"This preview activates after you connect a number above."*
+- Once the dropdown moves off "Not configured yet", restore the normal active styling and heading.
 
-- **Assignment Agent (index 0)** → `metric1 = jobsActive` label **"Active"**, `metric2 = jobsAssigned` label **"Assigned"**. Sanity: `jobsAssigned + jobsUnassigned === jobsActive`.
-- **Routing Agent (index 1)** → `metric1 = jobsPending` label **"Pending"**, `metric2 = jobsInProgress` label **"In Progress"** (was "Done Today", which duplicated completed-today info and hid the real routing workload). Add a small caption "Done today: N" underneath if trivial to slot in, otherwise leave out.
+## 4. Review-request template tone per business profile
 
-Because these tile labels come from `industryAgentMap.ts` (`metric1Label` / `metric2Label` on `ServiceOperativeCard`), update the field/booking operative factories there too so every vertical using `fieldOperatives()` / `bookingOperatives()` gets the new labels. Booking variant becomes `Active / Checked In` and `Pending / In Progress`.
+**Where:** `src/lib/campaignTemplates.ts` (default SMS/email template source) + wherever it's read for defaults on new companies.
 
-Pass real session metrics to `CyberConsoleLayout`:
+**Fix:**
+- Add a `reviewRequestTemplates` map keyed by profile A–J in `campaignTemplates.ts`. Two tones:
+  - **Warm / emoji** (profiles serving trades, outdoor, repair, home_health, restaurants, salon, beauty, fitness): keeps the ⭐⭐⭐⭐⭐ default.
+  - **Formal / no emoji** (profiles serving real_estate, professional, personal_assistant, saas_platform, medical_practice, veterinary): plain-text ask, no emoji.
+- Update the default-template resolver to look up the company's profile (`businessTypeProfileMap`) and return the matching template.
+- Companies can still override manually — existing edits are preserved. Only affects the *default* used when no custom template exists.
 
-```ts
-sessionMetrics={{
-  status: 'Live',
-  avgResponse: '<1s',
-  satisfaction: fm && fm.feedbackCount > 0
-    ? `${((fm.avgRating / 5) * 100).toFixed(1)}%`
-    : 'No data yet',
-}}
-```
+## 5. Notification bell badge
 
-### 3. `src/components/ai/chat/CyberConsoleLayout.tsx`
+**Where:** `NotificationBell.tsx` in top nav.
 
-Change the fallback default so unpassed satisfaction renders `"No data yet"` instead of `"98.4%"`. Session status / avg response defaults stay as they are.
+**Fix:**
+- Add a `useStaffNotifications` (or the existing unread-count query) subscription. Render a small pill/dot on the bell when `unreadCount > 0`:
+  - `1–9` → numeric badge
+  - `10+` → "9+"
+  - `0` → no badge
+- Confirm click opens the existing notification dropdown/list. If it doesn't currently open a list, wire it to the existing notification panel.
+- Uses semantic tokens (`bg-destructive text-destructive-foreground`) — no hardcoded colors.
 
-### 4. Consistency guardrail
+## 6. "All Companies" button destination
 
-Add a lightweight `console.assert` in `useFieldOpsMetrics` (dev only) confirming `jobsAssigned + jobsUnassigned === jobsActive` and `jobsPending + jobsInProgress <= jobsActive`. Keeps future regressions loud without shipping runtime UI.
+**Where:** Platform Dashboard, next to `NewSignupsWidget`.
+
+**Fix:**
+- Verify the button's target route exists. If a full companies list page exists, keep as-is and confirm it renders.
+- If it doesn't exist, add a minimal `/dashboard/platform/companies` page: table of companies (name, industry, tier, signup date, status) sourced from `list_companies_admin` RPC, with row click → company detail. Platform-admin only.
+
+## Technical notes
+
+- All copy uses semantic tokens; no hex colors.
+- Profile lookup for #4 uses existing `businessTypeProfileMap.ts` — no new schema.
+- No DB migrations required.
+- Files touched (expected): `PlatformAdminDashboard.tsx`, review settings component, call-routing settings component, `campaignTemplates.ts`, `NotificationBell.tsx`, possibly one new page under `src/pages/admin/`.
 
 ## Out of scope
 
-- Dispatch/GPS Console UI, Settings hub, Platform Dashboard, and other consoles' agent tiles.
-- Any other place that already reads `useFieldOpsMetrics` keeps working because we retain the old field names as aliases.
-
-## Verification
-
-- On a tenant with 5 active jobs: Dispatch header shows `Active 5`, Tech Ops Assignment tile shows `Active 5 / Assigned N`, Routing tile shows `Pending X / In Progress Y` where `X + Y ≤ 5`.
-- On an empty tenant or one with zero completed-today jobs and zero feedback rows: Satisfaction reads `No data yet` (not `98.4%`).
-- Typecheck passes; existing tests for `useConsoleAgentMetrics` (if any) updated for renamed fields.
+- Layout restructuring.
+- Twilio/SignalWire routing logic (handled in prior prompt).
+- Any duplicate-data reconciliation beyond the label fix in #1.
