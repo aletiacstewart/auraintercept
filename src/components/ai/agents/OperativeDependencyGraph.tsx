@@ -12,7 +12,10 @@ import {
   BarChart3,
   Share2,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Check,
+  Minus,
+  AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AgentInfo } from '@/hooks/useAIAgentOrchestrator';
@@ -242,15 +245,15 @@ export function OperativeDependencyGraph({ agents }: OperativeDependencyGraphPro
           {/* Legend */}
           <div className="flex flex-wrap gap-4 text-xs">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-emerald-500" />
+              <Check className="w-3 h-3 text-emerald-500" aria-hidden="true" />
               <span className="text-muted-foreground">Active</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-muted-foreground/30" />
+              <Minus className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
               <span className="text-muted-foreground">Inactive</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded border-2 border-amber-500 border-dashed" />
+              <AlertTriangle className="w-3 h-3 text-amber-500" aria-hidden="true" />
               <span className="text-muted-foreground">Missing Dependencies</span>
             </div>
           </div>
@@ -291,10 +294,13 @@ export function OperativeDependencyGraph({ agents }: OperativeDependencyGraphPro
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-medium">{node.name}</span>
-                            <div className={cn(
-                              "w-2 h-2 rounded-full",
-                              node.enabled ? "bg-emerald-500" : "bg-muted-foreground/30"
-                            )} />
+                            {hasMissingDeps ? (
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" aria-label="Missing dependencies" />
+                            ) : node.enabled ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-500" aria-label="Active" />
+                            ) : (
+                              <Minus className="w-3.5 h-3.5 text-muted-foreground" aria-label="Inactive" />
+                            )}
                           </div>
                           {renderDependencyArrows(node.id)}
                           {hasMissingDeps && (
