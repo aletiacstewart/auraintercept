@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
 import { 
   Activity, 
   ArrowRight, 
@@ -72,6 +73,9 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
   const [events, setEvents] = useState<AgentEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'processed' | 'failed'>('all');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
 
   useEffect(() => {
     fetchEvents();
@@ -120,9 +124,18 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
   };
 
   const filteredEvents = events.filter(e => {
-    if (filter === 'all') return true;
-    return e.status === filter;
+    if (filter !== 'all' && e.status !== filter) return false;
+    if (!search.trim()) return true;
+    const q = search.trim().toLowerCase();
+    return (
+      e.source_agent?.toLowerCase().includes(q) ||
+      (e.target_agent || '').toLowerCase().includes(q) ||
+      e.event_type?.toLowerCase().includes(q)
+    );
   });
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pagedEvents = filteredEvents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const stats = {
     total: events.length,
