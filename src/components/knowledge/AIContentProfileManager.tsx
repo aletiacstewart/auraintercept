@@ -575,7 +575,7 @@ export function AIContentProfileManager() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardContent className="py-8 text-center text-muted-foreground">
           Loading AI Content Profile...
         </CardContent>
@@ -619,7 +619,7 @@ export function AIContentProfileManager() {
       </div>
 
       {/* Industry Selection */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -681,7 +681,7 @@ export function AIContentProfileManager() {
       </Card>
 
       {/* Keywords */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -765,7 +765,7 @@ export function AIContentProfileManager() {
       </Card>
 
       {/* Business Description */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
@@ -823,7 +823,7 @@ export function AIContentProfileManager() {
       </Card>
 
       {/* Content Tone */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Target className="h-4 w-4 text-muted-foreground" />
@@ -869,7 +869,7 @@ export function AIContentProfileManager() {
       </Card>
 
       {/* Content Topics */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-muted-foreground" />
@@ -953,7 +953,7 @@ export function AIContentProfileManager() {
       </Card>
 
       {/* Avoid Keywords */}
-      <Card>
+      <Card className="scroll-mt-[128px]">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Ban className="h-4 w-4 text-muted-foreground" />
