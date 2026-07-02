@@ -83,7 +83,6 @@ export default function Dashboard() {
   }
 
   if (!user) return null;
-  if (user.email?.toLowerCase() === SUPER_ADMIN_EMAIL) return null;
 
   const renderDashboard = () => {
     switch (userRole) {

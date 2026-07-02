@@ -68,27 +68,14 @@ import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner';
-import { DemoExpiryBanner } from '@/components/common/DemoExpiryBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
-import { useSuperSwitcher } from '@/hooks/useSuperSwitcher';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video, Sparkles, Send } from 'lucide-react';
+import { Clapperboard, Video, Send } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
 import { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
-
-function SuperAdminHubButton() {
-  const { user } = useAuth();
-  const { exit } = useSuperSwitcher();
-  if (!user?.email?.endsWith('@demo.com')) return null;
-  return (
-    <Button size="sm" variant="default" className="h-8 px-3 text-[11px] font-semibold" onClick={exit}>
-      <Crown className="w-3.5 h-3.5 mr-1" />Super Admin Hub
-    </Button>
-  );
-}
 
 interface NavItem {
   label: string;

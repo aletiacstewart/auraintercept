@@ -7,7 +7,6 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
-import { ElevenLabsToolChecklist } from '@/components/admin/ElevenLabsToolChecklist';
 import { CarrierForwardingGuide } from '@/components/integrations/CarrierForwardingGuide';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
