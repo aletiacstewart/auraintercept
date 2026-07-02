@@ -98,6 +98,13 @@ const statusConfig: Record<IssueStatus, { icon: typeof Clock; label: string; col
 };
 
 export default function PlatformIssues() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topTab = searchParams.get('tab') === 'help' ? 'help' : 'issues';
+  const setTopTab = (v: string) => {
+    const p = new URLSearchParams(searchParams);
+    if (v === 'issues') p.delete('tab'); else p.set('tab', v);
+    setSearchParams(p, { replace: true });
+  };
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
