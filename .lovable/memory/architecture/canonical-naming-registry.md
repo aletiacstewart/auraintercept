@@ -48,15 +48,37 @@ tier check or "Active" computation.
 - **Aura Elite** (`command`) $3,997/mo (launch sale $2,997) · $1,549 onboarding — All 10 operatives + industry
   specialists + AI Operatives Hub console. Unlimited employees.
 
-## 7 Consoles (canonical display titles)
+## 7 Consoles (canonical DISPLAY names — no trailing "Console")
 
-Customer Portal Console · Field Operations Console · Business Management
-Console · Outreach & Sales Console · Social Media Console · Creative & Web
-Presence Console · Analytics & Reports Console (+ AI Operatives Hub on Elite).
+Per Voice & Style Sheet v2 — one canonical display name per console. Route
+paths keep their slugs; only the human-facing label is standardized.
 
-Forbidden variants: "Mgt Ops", "Business Ops Hub", "Technician-Field Ops",
-"Analytics & Reports Ops", "Social Media Ops", "Outreach & Sales Ops",
-"Field Ops + Dispatch Operative".
+Source of truth: `src/lib/canonicalNames.ts` (`CONSOLE_NAMES`).
+
+| Key                      | Canonical display |
+|--------------------------|-------------------|
+| `customer_portal`        | Customer Portal   |
+| `field_operations`       | Service Management |
+| `business_management`    | Business Operations |
+| `marketing_sales`        | Outreach & Sales  |
+| `social_media`           | Social Media      |
+| `creative_web_presence`  | Creative & Web Presence |
+| `analytics_reports`      | Analytics & Reports |
+| `ai_operatives_hub`      | AI Operatives Hub |
+
+Forbidden variants: any of the above with a trailing "Console" or "Ops" in
+display copy · "Business Management" (use "Business Operations") ·
+"Outreach & Sales Ops" / "Outreach & Sales Console" · "Smart Website" as a
+console header (use "Creative & Web Presence") · "Field Operations Console"
+in display (use "Service Management") · "Marketing & Sales Console" (use
+"Outreach & Sales").
+
+## Agent naming
+
+Every named unit is `[Function] Agent`. Sole exception: **AI Receptionist**
+(flagship first-contact product, no `Agent` suffix). "Operative" is a
+collective/narrative word only ("24 AI operatives", "the operative
+network") — never a per-unit label.
 
 ## Plain-English Customer Labels (`agentStyles.ts`)
 
