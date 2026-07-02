@@ -50,7 +50,7 @@ import { getNavLabels } from '@/lib/industryNavLabels';
 
 type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
-export default function Help() {
+export default function Help({ embedded }: { embedded?: boolean } = {}) {
   const { userRole } = useAuth();
   const { subscriptionTier, inTrial } = useSubscription();
   const { pack: industryPack } = useIndustryPack();
