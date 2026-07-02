@@ -12,12 +12,13 @@ import { FormShell } from '@/components/ui/form-shell';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles, CalendarClock } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles, CalendarClock, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BlogBatchWizard } from '@/components/blog/BlogBatchWizard';
 import { BlogScheduleQueue } from '@/components/blog/BlogScheduleQueue';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface BlogPost {
   id: string;
@@ -42,6 +43,8 @@ export function BlogManagementTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isBatchWizardOpen, setIsBatchWizardOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'draft'>('all');
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
