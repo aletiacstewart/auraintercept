@@ -46,7 +46,7 @@ interface Rule {
 
 const RULES: Rule[] = [
   { name: 'phone porting offer', pattern: /\bport\s+(?:my|your)\s+(?:existing\s+)?(?:business\s+)?number\b/i },
-  { name: 'Google Workspace as paid vendor', pattern: /paid\s+Google\s+Workspace|Google\s+Workspace\s+(?:plan|subscription)\s+required(?!\s*[—-]\s*a\s+free)/i },
+  { name: 'Google Workspace as paid vendor', pattern: /(?<!no\s)(?<!not\s)(?:requires?|need|paid)\s+(?:a\s+)?Google\s+Workspace\s+(?:plan|subscription|account)/i },
   { name: 'onboarding@ outbound alias', pattern: /onboarding@auraintercept/i },
   { name: 'legacy Marketing (Pro+) label', pattern: /\bMarketing\s+\(Pro\+\)/ },
   { name: 'legacy Billing (Elite) label', pattern: /\bBilling\s+\(Elite\)/ },
