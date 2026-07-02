@@ -71,7 +71,7 @@ import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner'
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
-import { Clapperboard, Video, Send } from 'lucide-react';
+import { Clapperboard, Video, Send, Sparkles } from 'lucide-react';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -750,7 +750,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <main ref={mainRef} className="dashboard-main flex-1 min-w-0 overflow-x-hidden overflow-y-auto w-full" data-tour-id="main-content">
-        <DemoExpiryBanner />
         {/* Mobile install banner (only on small screens, dismissable) */}
         <MobileInstallBanner />
         {/* Header with notification bell */}
@@ -768,7 +767,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </Button>
             <div className="flex items-center justify-end gap-2 ml-auto">
             <CurrentPlanChip />
-            <SuperAdminHubButton />
             <NotificationBell />
             </div>
           </div>
