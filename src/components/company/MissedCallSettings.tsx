@@ -336,7 +336,13 @@ export function MissedCallSettings() {
             )}
           </div>
 
-          <div className="space-y-4">
+          <div
+            className={
+              !localSettings.phone_number_setup_type
+                ? 'space-y-4 opacity-60'
+                : 'space-y-4'
+            }
+          >
             <div className="space-y-2">
               <Label>
                 {!localSettings.phone_number_setup_type
