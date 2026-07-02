@@ -72,7 +72,7 @@
     /* Feature Colors - Platform Feature Areas */
     --feature-companies: 238 66% 65%;
     --feature-employees: 173 58% 50%;
-    --feature-customers: 38 92% 55%;
+    --feature-customers: 145 65% 40%;
     --feature-leads: 280 67% 60%;
     --feature-appointments: 188 94% 45%;
     --feature-quotes: 167 72% 47%;
@@ -80,9 +80,9 @@
     --feature-inventory: 215 50% 55%;
     --feature-analytics: 223 73% 50%;
     --feature-marketing: 292 84% 60%;
-    --feature-fieldops: 84 81% 45%;
-    --feature-platform: 205 70% 55%;
-    --feature-config: 221 91% 52%;
+    --feature-fieldops: 185 85% 45%;
+    --feature-platform: 270 70% 55%;
+    --feature-config: 322 85% 55%;
     --feature-overview: 193 89% 64%;
     --feature-integrations: 282 44% 53%;
 
@@ -161,7 +161,7 @@
     /* Feature Colors - Neon-boosted for cinematic dark */
     --feature-companies: 238 80% 75%;
     --feature-employees: 173 100% 55%;
-    --feature-customers: 38 100% 65%;
+    --feature-customers: 145 100% 55%;
     --feature-leads: 280 100% 75%;
     --feature-appointments: 189 100% 55%;
     --feature-quotes: 167 100% 55%;
@@ -169,9 +169,9 @@
     --feature-inventory: 215 80% 65%;
     --feature-analytics: 223 100% 65%;
     --feature-marketing: 292 100% 70%;
-    --feature-fieldops: 84 100% 55%;
-    --feature-platform: 189 100% 55%;
-    --feature-config: 221 100% 65%;
+    --feature-fieldops: 185 100% 60%;
+    --feature-platform: 270 100% 70%;
+    --feature-config: 322 100% 65%;
     --feature-overview: 189 100% 65%;
     --feature-integrations: 282 80% 70%;
   }

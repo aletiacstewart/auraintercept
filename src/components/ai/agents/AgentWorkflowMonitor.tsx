@@ -59,9 +59,9 @@ const AGENT_ICONS: Record<string, React.ElementType> = {
 };
 
 const STATUS_CONFIG: Record<string, { color: string; icon: React.ElementType }> = {
-  pending: { color: 'bg-yellow-500', icon: Clock },
-  processing: { color: 'bg-blue-500', icon: Activity },
-  processed: { color: 'bg-green-500', icon: CheckCircle2 },
+  pending: { color: 'bg-amber-500', icon: Clock },
+  processing: { color: 'bg-sky-500', icon: Activity },
+  processed: { color: 'bg-emerald-500', icon: CheckCircle2 },
   failed: { color: 'bg-red-500', icon: XCircle },
 };
 
@@ -173,23 +173,23 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
           </button>
           <button
             onClick={() => setFilter('pending')}
-            className={`p-3 rounded-lg border transition-colors ${filter === 'pending' ? 'bg-yellow-500/10 border-yellow-500' : 'hover:bg-muted'}`}
+            className={`p-3 rounded-lg border transition-colors ${filter === 'pending' ? 'bg-amber-500/10 border-amber-500' : 'hover:bg-muted'}`}
           >
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-amber-500">{stats.pending}</div>
             <div className="text-xs text-muted-foreground">Pending</div>
           </button>
           <button
             onClick={() => setFilter('processed')}
-            className={`p-3 rounded-lg border transition-colors ${filter === 'processed' ? 'bg-green-500/10 border-green-500' : 'hover:bg-muted'}`}
+            className={`p-3 rounded-lg border transition-colors ${filter === 'processed' ? 'bg-emerald-500/10 border-emerald-500' : 'hover:bg-muted'}`}
           >
-            <div className="text-2xl font-bold text-green-600">{stats.processed}</div>
+            <div className="text-2xl font-bold text-emerald-500">{stats.processed}</div>
             <div className="text-xs text-muted-foreground">Processed</div>
           </button>
           <button
             onClick={() => setFilter('failed')}
             className={`p-3 rounded-lg border transition-colors ${filter === 'failed' ? 'bg-red-500/10 border-red-500' : 'hover:bg-muted'}`}
           >
-            <div className="text-2xl font-bold text-red-600">{stats.failed}</div>
+            <div className="text-2xl font-bold text-red-500">{stats.failed}</div>
             <div className="text-xs text-muted-foreground">Failed</div>
           </button>
         </div>
