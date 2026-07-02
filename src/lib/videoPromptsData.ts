@@ -56,7 +56,7 @@ export const sections: Section[] = [
         num: 4,
         name: 'Booking Agent',
         prompt: 'A holographic calendar floating in 3D space. Time slots light up and fill automatically as appointment requests fly in as glowing orbs. The AI agent icon stamps each booking with a confirmation checkmark. Calendar syncs ripple outward like digital waves. Blue-green glow, premium tech aesthetic. 4K cinematic.',
-        audioScript: 'The Booking Agent fills your calendar automatically — no back-and-forth, no missed appointments, just seamless scheduling.',
+        audioScript: 'The Booking Agent fills your calendar automatically — no back-and-forth, no missed appointments, just scheduling that happens on its own.',
         imagePrompt: '3D holographic calendar with glowing blue appointment slots. AI agent icon confirming bookings with checkmarks. Floating confirmation cards. "BOOKING AGENT — Aura Intercept" badge overlay. Clean dark tech aesthetic.',
       },
       {

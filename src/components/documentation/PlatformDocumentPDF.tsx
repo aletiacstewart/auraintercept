@@ -827,7 +827,7 @@ const PlatformDocumentPDF = () => (
       <Header title="AI Agent Ecosystem" />
       <Text style={styles.sectionTitle}>24 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
-        Each agent is specialized for a specific task but seamlessly hands off to others when needed.
+        Each agent is specialized for a specific task and hands off to others when the job calls for it.
         This creates an intelligent, always-on workforce that handles your entire operation.
       </Text>
       

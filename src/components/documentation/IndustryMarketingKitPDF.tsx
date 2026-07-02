@@ -1228,7 +1228,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.landingCard}>
         <Text style={styles.landingHeadline}>Landing Page: Construction</Text>
         <Text style={styles.landingSubhead}>
-          From Quote to Completion, Seamlessly{'\n\n'}
+          From Quote to Completion, in One Thread{'\n\n'}
           AI project coordination for painting, flooring, tile, and trim work.
         </Text>
         <View style={styles.bulletList}>
