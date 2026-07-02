@@ -483,6 +483,10 @@ const CATEGORY_ORDER = [
   'Insurance & Assessment',
   'Senior & Lifestyle Services',
   'Event & Temporary Services',
+  'Beauty & Salons',
+  'Restaurants & Food Delivery',
+  'Personal Assistants',
+  'B2B Pro Services',
 ];
 
 export interface BusinessTypeGroup {
