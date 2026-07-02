@@ -389,7 +389,7 @@ const CompanyProfilePage = () => (
       <Text style={styles.formLabel}>{sanitizePdfText('Industry/Business Type:')}</Text>
       <View style={styles.formLine} />
     </View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Circle one: HVAC, Plumbing, Electrical, Solar, Roofing, Fencing & Decking, Landscape & Trees, Pool & Spa, Pest Control, Appliance Repair, Handyman & Cleaning, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Home Health, Physical Therapy, Occupational Therapy, Hospice, Veterinary, Medical Practice, Other)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Circle one: HVAC, Plumbing, Electrical, Solar Energy, Roofing, Fencing & Decking, Landscape & Trees, Pool & Spa, Pest Control, Appliance Repair, Handyman & Cleaning, Construction, Auto Care, Security Systems, Real Estate, Beauty & Wellness, Restaurants, Personal Assistant, Other)')}</Text>
     
     <View style={styles.formRow}>
       <Text style={styles.formLabel}>{sanitizePdfText('Years in Business:')}</Text>
