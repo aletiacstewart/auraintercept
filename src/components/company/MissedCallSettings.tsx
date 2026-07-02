@@ -37,7 +37,9 @@ export function MissedCallSettings() {
   const queryClient = useQueryClient();
 
   const [localSettings, setLocalSettings] = useState({
-    missed_call_action: 'disabled' as MissedCallAction,
+    // New-account default: enabled with SMS+callback follow-up on all plans.
+    // Existing records with a stored value override this on load.
+    missed_call_action: 'callback_then_sms' as MissedCallAction,
     callback_delay_seconds: 30,
     callback_retry_count: 3,
     call_routing_mode: 'ai_direct' as CallRoutingMode,

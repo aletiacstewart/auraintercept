@@ -193,6 +193,17 @@ export function DashboardSetupNav() {
     );
   }
 
+  if (sections.length === 0) {
+    return (
+      <div className="guide-card rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-card-foreground">Overall Setup Progress</h3>
+        <p className="text-xs text-muted-foreground mt-1">
+          Setup checklist not yet configured for this workspace.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Overall Progress */}
