@@ -1,37 +1,45 @@
-## 3rd Party Integrations — Fixes
+# Fix: auraintercept@gmail.com shows Free plan / Upgrade walls
 
-### 1. Remove Carrier Cheat Sheet from Voice Agent page
+## Root cause (two bugs stacked)
 
-**File:** `src/pages/integrations/VoiceIntegration.tsx`
-- Remove the `CarrierForwardingGuide` import (line 10) and its usage (~line 163). Voice/ElevenLabs handles TTS, not call routing.
-- **Keep** the guide on `SMSIntegration.tsx` (Phone & SMS / SignalWire — correct home).
-- **Keep** on `Integrations.tsx` (3rd Party Overview) since it functions as a consolidated summary hub.
+`auraintercept@gmail.com` holds **two** `user_roles` rows: `platform_admin` and `company_admin` (confirmed via DB). Company tier is `command`, trial ended 2026-02-13. Both platform_admin bypasses that should grant full access are broken:
 
-### 2. Fix broken company-wide Calendar cards (CalDAV + ICS)
+**1. `supabase/functions/check-subscription/index.ts` (lines 155–159)**
+```ts
+.from('user_roles').select('role').eq('user_id', user.id).maybeSingle()
+```
+`.maybeSingle()` returns `null` when more than one row matches. Result: `userRole` is `undefined`, the `if (userRole === 'platform_admin')` bypass at line 164 is skipped, execution falls through to the Stripe branch and (with no active sub / Stripe hiccup) returns `subscribed: false` and often `tier: "free"` via the catch on line 369.
 
-Both `type="company"` variants currently render the fully-styled card (title, "Free" badge, feature tags) and then show a "not available. Please contact support." message when the backend feature isn't wired up.
+**2. `src/contexts/AuthContext.tsx` (lines 40–52, 215–220)**
+`checkSubscription`'s useEffect depends only on `session?.access_token`, so it fires **once at login** while `userRole` is still `null` (roles load asynchronously via `setTimeout`→`fetchUserData`). The `userRole === 'platform_admin'` short-circuit at line 44 is therefore false on the first (and only, for 5 min) call, and the frontend hits the broken edge function. When `userRole` finally resolves, nothing re-invokes `checkSubscription`.
 
-**Files:**
-- `src/components/integrations/CalendarSubscription.tsx` (~line 196–199)
-- `src/components/integrations/CalDAVSubscription.tsx` (~line 192)
+## Fix
 
-**Fix:** When `type === "company"` and no usable URL/config is available, render a "Coming Soon" state instead of the current fallback:
-- Replace the "Free" badge with a muted "Coming Soon" badge.
-- Apply `opacity-60` to the card body and drop the action buttons.
-- Remove the "not available, please contact support" line entirely.
-- Individual-user variants (`type !== "company"`) render unchanged.
+**A. `supabase/functions/check-subscription/index.ts`** — replace the single-row role lookup with a multi-row query and prefer `platform_admin`:
+```ts
+const { data: rolesData } = await supabaseClient
+  .from('user_roles')
+  .select('role')
+  .eq('user_id', user.id);
+const roles = (rolesData ?? []).map(r => r.role);
+const userRole = roles.includes('platform_admin') ? 'platform_admin'
+  : roles.includes('company_admin') ? 'company_admin'
+  : roles.includes('employee') ? 'employee'
+  : roles.includes('customer') ? 'customer'
+  : undefined;
+```
+Everything downstream (the `platform_admin` bypass, the employee/customer branch) already works once `userRole` is populated correctly. No other edge-function logic changes.
 
-### 3. Standardize sidebar across all Integration pages
+**B. `src/contexts/AuthContext.tsx`** — make the client platform_admin bypass fire as soon as the role resolves:
+1. Add `userRole` to the subscription-check useEffect dependency array (line 220) so `checkSubscription` re-runs after `fetchUserData` finishes.
+2. Keep the existing `userRole === 'platform_admin'` short-circuit — this becomes the durable frontend guarantee that admins never depend on the edge function at all.
 
-All integration pages already import `DashboardLayout` (verified in `VoiceIntegration`, `EmailIntegration`, `SMSIntegration`, `TavilyIntegration`, `CalendarIntegration`, `CRMIntegration`, `SocialMediaIntegration`, and `Integrations.tsx` at `/dashboard/3rd-party-overview`), so the sidebar component is shared.
+## Out of scope
+- Header "Current Plan" chip UI, subscription page, Stripe billing flows.
+- Role-priority logic in `fetchUserData` (already correctly picks `platform_admin` first).
+- No DB migrations; no changes to `user_roles` rows.
 
-**Fix:** Audit `DashboardLayout` / `AppSidebar` for any conditional that hides the `MARKETING`, `CONFIGURATION`, or `INTEGRATIONS` section headers based on route, role, or feature flag. Ensure the section headers always render for `platform_admin` / `company_admin` regardless of current path. If the sections are only hidden because their child groups collapse to empty, force the header labels to remain visible with their canonical child links so a user landing on any integration subpage sees the same navigation structure.
-
-### 4. Follow-up check on Platform Dashboard "Active Integrations: 1 configured"
-
-After the above lands, verify the count on `PlatformAdminDashboard.tsx` maps to an actual configured integration (not a stale placeholder). If every integration on the Overview shows "Not configured" / 0%, the count should read `0`. Adjust the query so it counts only integrations with a truthy config record.
-
-### Out of scope
-- No changes to Settings hub or Platform Dashboard fixes from the prior pass beyond the count correction in (4).
-- No layout restructuring, no changes to individual-user calendar sync flows.
-- No DB migrations.
+## Verification
+- Log in as `auraintercept@gmail.com` → header shows Command/Elite, Business Management + all consoles render without "Upgrade Required".
+- Log in as `ai@auraintercept.ai` → unchanged (single platform_admin row, bypass already fired; still bypasses).
+- Log in as a real Free-tier company_admin → still sees upgrade gates (regression check).

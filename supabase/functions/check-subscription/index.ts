@@ -152,14 +152,22 @@ serve(async (req) => {
     }
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const { data: roleData } = await supabaseClient
+    const { data: rolesData } = await supabaseClient
       .from('user_roles')
       .select('role')
-      .eq('user_id', user.id)
-      .maybeSingle();
+      .eq('user_id', user.id);
 
-    const userRole = roleData?.role;
-    logStep("User role fetched", { role: userRole });
+    const roles = (rolesData ?? []).map((r: { role: string }) => r.role);
+    const userRole = roles.includes('platform_admin')
+      ? 'platform_admin'
+      : roles.includes('company_admin')
+        ? 'company_admin'
+        : roles.includes('employee')
+          ? 'employee'
+          : roles.includes('customer')
+            ? 'customer'
+            : undefined;
+    logStep("User role fetched", { role: userRole, allRoles: roles });
 
     if (userRole === 'platform_admin') {
       logStep("Platform admin detected, granting command access");
