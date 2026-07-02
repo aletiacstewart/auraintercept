@@ -961,11 +961,9 @@ export default function Index() {
                   <span className="font-semibold text-xs text-pink-400">📣 Social Media Accounts</span>
                 </div>
                 <p className="text-[10px] text-white mb-1">Facebook, Instagram, TikTok, LinkedIn, Reddit</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Your own social scheduler account · billed directly by the provider</p>
-                <p className="text-[10px] text-white">Automated posting vendor is being finalized — pricing tiers announced at general availability.</p>
-                <p className="text-[10px] text-white"><span className="font-semibold">Core:</span> manual Bridge posting (copy &amp; post yourself) · <span className="font-semibold">Boost/Pro/Elite:</span> automated Social Scheduler — requires your own connected scheduler account (up to 6 platforms)</p>
-                <p className="text-[10px] text-white">OAuth-connect each platform through your scheduler account · API key configured during onboarding · Valid credit card required on your scheduler account · Admin access to your business pages required</p>
-                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if one connected page ever gets flagged by a platform, only that connection is affected — your other accounts and every other business on Aura Intercept stay completely unaffected.</p>
+                <p className="text-[10px] text-emerald-400 font-medium">Your own Upload-Post.com account · billed directly by Upload-Post</p>
+                <p className="text-[10px] text-white">Upload-Post pricing: from ~$9/mo (1 social set) up to ~$99/mo · covers up to 6 connected platforms per set</p>
+                <p className="text-[10px] text-white"><span className="font-semibold">Core:</span> manual Bridge posting (copy &amp; post yourself) · <span className="font-semibold">Boost/Pro/Elite:</span> automated posting via your Upload-Post account</p>
               </div>
 
 
