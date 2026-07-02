@@ -78,7 +78,7 @@ export default function TavilyIntegration() {
             <PageHeader
               icon={Search}
               title="AI Research"
-              description="AI-powered web search for enhanced content generation"
+              description="AI web search for enhanced content generation"
               featureColor="integrations"
               showAuraBar
             />
@@ -113,7 +113,7 @@ export default function TavilyIntegration() {
                 </div>
                 <div>
                   <CardTitle className="text-lg">Tavily AI Connection</CardTitle>
-                  <CardDescription>Connect your Tavily account for AI-powered web research</CardDescription>
+                  <CardDescription>Connect your Tavily account for AI web research</CardDescription>
                 </div>
               </div>
             </CardHeader>

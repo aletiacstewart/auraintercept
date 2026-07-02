@@ -60,7 +60,7 @@ export const FEATURE_TOOLTIPS = {
     },
     socialMedia: {
       label: 'Social Media Console',
-      tooltip: 'AI-powered content creation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
+      tooltip: 'AI content creation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
     },
     analyticsReports: {
       label: 'Analytics & Reports Console',

@@ -331,7 +331,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
         <div className="flex items-start gap-2 p-3 bg-muted rounded-lg text-sm">
           <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5" />
           <div className="text-muted-foreground">
-            Activating operatives will enable AI-powered automation. Make sure to configure each operative's
+            Activating operatives will enable AI automation. Make sure to configure each operative's
             settings after activation for optimal performance.
           </div>
         </div>

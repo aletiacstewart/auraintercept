@@ -545,7 +545,7 @@ const guideCategories = [
           'Navigate to Business Management Console from sidebar',
           'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
-          'Access Quote Forge for AI-powered quote generation',
+          'Access Quote Forge for AI quote generation',
           'Inventory tab requires Aura Elite tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard']
@@ -687,7 +687,7 @@ const guideCategories = [
           'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
           'Supports 6 platforms: IG, FB, LI, TT, GMB, SMS',
-          'AI-powered content generation and scheduling',
+          'AI content generation and scheduling',
           'Cross-platform analytics tracking',
           'Connect accounts via OAuth in Social Media Settings'
         ],

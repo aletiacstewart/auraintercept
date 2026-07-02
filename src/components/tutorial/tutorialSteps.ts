@@ -41,7 +41,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'customer-portal',
     title: 'Customer Portal Console',
-    description: 'The live AI-powered console your team uses to monitor customer interactions. See AI chat conversations, appointment bookings, and customer messages in real-time. The Customer Engagement Operative manages all customer-facing interactions.',
+    description: 'The live AI console your team uses to monitor customer interactions. See AI chat conversations, appointment bookings, and customer messages in real-time. The Customer Engagement Operative manages all customer-facing interactions.',
     tip: 'Customers get a free mobile-friendly portal with AI chat, appointment tracking, and direct contact links.',
     targetSelector: '[data-tour-id="nav-customer-portal"]',
     route: '/dashboard',
@@ -86,7 +86,7 @@ const adminSteps: TutorialStep[] = [
   {
     id: 'analytics-reports',
     title: 'Analytics & Reports Console',
-    description: 'AI-powered deep-dive analytics powered by the Analytics Intelligence Operative. Revenue trends, customer lifetime value, operative performance, conversion rates, and business forecasting — all generated automatically.',
+    description: 'AI deep-dive analytics powered by the Analytics Intelligence Operative. Revenue trends, customer lifetime value, operative performance, conversion rates, and business forecasting — all generated automatically.',
     tip: 'Available on Performance and Command tiers. Upgrade to unlock predictive revenue and customer insights.',
     targetSelector: '[data-tour-id="nav-analytics-reports"]',
     route: '/dashboard',
@@ -329,7 +329,7 @@ const employeeSteps: TutorialStep[] = [
   {
     id: 'tech-ai-console',
     title: 'Field Operations Console',
-    description: 'Your AI-powered field operations assistant. Accept jobs, get turn-by-turn directions, mark en-route, update your ETA, arrive and start jobs, then complete them and generate invoices — all in one streamlined workflow.',
+    description: 'Your AI field operations assistant. Accept jobs, get turn-by-turn directions, mark en-route, update your ETA, arrive and start jobs, then complete them and generate invoices — all in one streamlined workflow.',
     tip: 'The Field Navigation Operative is pre-trained with your company\'s service protocols so responses are accurate and on-brand.',
     targetSelector: '[data-tour-id="nav-tech-ai-console"]',
     route: '/dashboard',
@@ -395,7 +395,7 @@ const completionStep: TutorialStep[] = [
     id: 'tutorial-complete',
     title: 'Tutorial Complete! 🎉',
     description: 'You\'ve explored all sections of Aura Intercept. Your 24 AI Operatives are ready to start automating your business. Start with Quick Setup, then connect your integrations to go live.',
-    tip: 'Use the floating Aura button (bottom-right) anytime to get AI-powered help on the page you\'re viewing.',
+    tip: 'Use the floating Aura button (bottom-right) anytime to get AI help on the page you\'re viewing.',
     targetSelector: '[data-tour-id="sidebar-logo"]',
     route: '/dashboard',
     position: 'right',

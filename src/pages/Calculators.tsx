@@ -15,7 +15,7 @@ export default function Calculators() {
           <PageHeader
             icon={Calculator}
             title="Cost & ROI Calculator"
-            description="Estimate costs and calculate potential savings from AI-powered reminders"
+            description="Estimate costs and calculate potential savings from AI reminders"
             featureColor="analytics"
             showAuraBar
           />

@@ -495,14 +495,14 @@ const agents = {
   ],
   marketingSales: [
     { name: 'Campaign Agent', desc: 'Creates and manages promotional, referral, win-back, seasonal, and loyalty campaigns.' },
-    { name: 'Lead Agent', desc: 'AI-powered lead scoring and customer segmentation for targeted marketing with higher conversion rates.' },
+    { name: 'Lead Agent', desc: 'AI lead scoring and customer segmentation for targeted marketing with higher conversion rates.' },
     { name: 'Marketing Agent', desc: 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.' },
   ],
   analytics: [
     { name: 'Insights Agent', desc: 'Business data analysis and trend identification for strategic decisions.' },
     { name: 'Performance Agent', desc: 'Team and technician performance metrics. Identifies top performers and training needs.' },
     { name: 'Revenue Agent', desc: 'Financial trend tracking and analysis. Spots revenue opportunities.' },
-    { name: 'Forecast Agent', desc: 'AI-powered demand and revenue predictions. Plan with confidence.' },
+    { name: 'Forecast Agent', desc: 'AI demand and revenue predictions. Plan with confidence.' },
   ],
   // Social Media agents are premium add-ons (not included in the core 24-agent / 10-operative model)
   socialMediaAddons: [
@@ -517,7 +517,7 @@ const PlatformDocumentPDF = () => (
     {/* Cover Page */}
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>AURA INTERCEPT</Text>
-      <Text style={styles.coverSubtitle}>AI-Powered Service Business Automation</Text>
+      <Text style={styles.coverSubtitle}>AI Service Business Automation</Text>
       <Text style={styles.coverTagline}>"Your Business. Always On. Always Growing."</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
@@ -581,7 +581,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.highlightBox}>
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
-          Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
+          Aura Intercept is an AI automation platform that runs your service business 24/7. 
           With 24 AI Operatives, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
@@ -827,7 +827,7 @@ const PlatformDocumentPDF = () => (
       <Header title="AI Agent Ecosystem" />
       <Text style={styles.sectionTitle}>24 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
-        Each agent is specialized for a specific task but seamlessly hands off to others when needed.
+        Each agent is specialized for a specific task and hands off to others when the job calls for it.
         This creates an intelligent, always-on workforce that handles your entire operation.
       </Text>
       

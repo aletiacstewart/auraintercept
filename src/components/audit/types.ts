@@ -178,7 +178,7 @@ export const UNIVERSAL_QUESTIONS: AuditQuestion[] = [
       { label: 'Sophisticated marketing automation', tierScores: { CORE: 45, BOOST: 55, PRO: 52, ELITE: 50 } },
       { label: 'Basic email campaigns occasionally', tierScores: { CORE: 60, BOOST: 70, PRO: 75, ELITE: 80 } },
       { label: 'Mostly word of mouth', tierScores: { CORE: 70, BOOST: 70, PRO: 72, ELITE: 75 } },
-      { label: 'Want AI-powered marketing automation', tierScores: { CORE: 45, BOOST: 65, PRO: 85, ELITE: 95 } },
+      { label: 'Want AI marketing automation', tierScores: { CORE: 45, BOOST: 65, PRO: 85, ELITE: 95 } },
     ],
   },
 

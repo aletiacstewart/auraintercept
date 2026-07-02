@@ -124,7 +124,7 @@ export function OutboundCallDialog({
             Outbound Call
           </DialogTitle>
           <DialogDescription>
-            Initiate an AI-powered call to a customer
+            Initiate an AI call to a customer
           </DialogDescription>
         </DialogHeader>
 

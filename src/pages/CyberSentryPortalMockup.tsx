@@ -121,11 +121,11 @@ function AgentCard({ agent }: { agent: typeof AGENTS[0] }) {
       <div className="grid grid-cols-2 gap-1.5">
         <div className="text-center rounded p-1" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="text-[10px] font-bold" style={{ color: agent.color, fontFamily: 'monospace' }}>{agent.messages}</div>
-          <div className="text-[9px] text-white/30">SESSIONS</div>
+          <div className="text-[9px] text-white/70">SESSIONS</div>
         </div>
         <div className="text-center rounded p-1" style={{ background: 'rgba(255,255,255,0.03)' }}>
           <div className="text-[10px] font-bold" style={{ color: '#10b981', fontFamily: 'monospace' }}>{agent.responseTime}</div>
-          <div className="text-[9px] text-white/30">AVG RESP</div>
+          <div className="text-[9px] text-white/70">AVG RESP</div>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@ export default function CyberSentryPortalMockup() {
           </div>
           {/* Session Stats */}
           <div className="p-3 border-t" style={{ borderColor: 'rgba(0,229,255,0.1)' }}>
-            <div className="text-[10px] text-white/30 tracking-widest mb-2" style={{ fontFamily: 'monospace' }}>SESSION METRICS</div>
+            <div className="text-[10px] text-white/70 tracking-widest mb-2" style={{ fontFamily: 'monospace' }}>SESSION METRICS</div>
             <div className="space-y-1.5">
               {[
                 { label: 'SESSION STATUS', val: 'LIVE', color: '#10b981' },
@@ -249,7 +249,7 @@ export default function CyberSentryPortalMockup() {
                 { label: 'SATISFACTION', val: '98.4%', color: '#a855f7' },
               ].map(m => (
                 <div key={m.label} className="flex justify-between items-center">
-                  <span className="text-[10px] text-white/30" style={{ fontFamily: 'monospace' }}>{m.label}</span>
+                  <span className="text-[10px] text-white/70" style={{ fontFamily: 'monospace' }}>{m.label}</span>
                   <span className="text-[10px] font-bold" style={{ color: m.color, fontFamily: 'monospace' }}>{m.val}</span>
                 </div>
               ))}
@@ -360,7 +360,7 @@ export default function CyberSentryPortalMockup() {
                   </div>
                   <div className="text-center">
                     <div className="text-sm font-bold text-white/60 tracking-widest mb-1" style={{ fontFamily: 'monospace' }}>{activeTab.toUpperCase()} MODULE</div>
-                    <div className="text-xs text-white/30" style={{ fontFamily: 'monospace' }}>Select this tab in the live portal to view content</div>
+                    <div className="text-xs text-white/70" style={{ fontFamily: 'monospace' }}>Select this tab in the live portal to view content</div>
                   </div>
                 </div>
               )}
@@ -399,7 +399,7 @@ export default function CyberSentryPortalMockup() {
                 </div>
                 <div className="flex items-center gap-1.5 mt-2 px-1">
                   <CheckCircle size={10} style={{ color: '#10b981' }} />
-                  <span className="text-[10px] text-white/30" style={{ fontFamily: 'monospace' }}>End-to-end encrypted  ·  AI-powered  ·  Response in &lt;1s</span>
+                  <span className="text-[10px] text-white/70" style={{ fontFamily: 'monospace' }}>End-to-end encrypted  ·  AI  ·  Response in &lt;1s</span>
                 </div>
               </div>
             )}
@@ -478,7 +478,7 @@ export default function CyberSentryPortalMockup() {
             </div>
           ))}
         </div>
-        <div className="text-[10px] text-white/20" style={{ fontFamily: 'monospace' }}>
+        <div className="text-[10px] text-white/70" style={{ fontFamily: 'monospace' }}>
           AURA INTERCEPT — CYBER-SENTRY v2.4.1 — CUSTOMER PORTAL MOCKUP
         </div>
       </div>

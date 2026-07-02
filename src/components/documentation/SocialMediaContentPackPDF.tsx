@@ -610,7 +610,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateLabel}>Update 1: Service Announcement</Text>
         <Text style={styles.templateText}>
           [NEW] NEW: 24/7 Phone Support{'\n\n'}
-          We now answer calls around the clock! Our AI-powered system ensures you always reach us—day or night, weekends and holidays.{'\n\n'}
+          We now answer calls around the clock! Our AI system ensures you always reach us—day or night, weekends and holidays.{'\n\n'}
           Call anytime: [Phone Number]{'\n'}
           Book online: [Link]
         </Text>
@@ -863,7 +863,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.promptBox}>
         <Text style={styles.promptLabel}>[AI] SOCIAL POST GENERATOR</Text>
         <Text style={styles.promptText}>
-          "Create a [platform] post for a [HVAC/plumbing/electrical] business promoting AI-powered call answering. Use a [problem-solution/story/data-driven] format. Include a hook in the first line, 3-4 key benefits, and a clear CTA. Keep it under [character limit] characters. Tone should be [professional/friendly/urgent]."
+          "Create a [platform] post for a [HVAC/plumbing/electrical] business promoting AI call answering. Use a [problem-solution/story/data-driven] format. Include a hook in the first line, 3-4 key benefits, and a clear CTA. Keep it under [character limit] characters. Tone should be [professional/friendly/urgent]."
         </Text>
       </View>
 

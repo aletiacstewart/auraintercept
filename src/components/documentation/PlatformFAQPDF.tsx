@@ -287,7 +287,7 @@ const PlatformFAQPDF = () => {
           </View>
         </View>
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text>2026 Edition</Text>
         </View>
       </Page>
@@ -323,7 +323,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -335,12 +335,12 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Aura Intercept?"
-          answer="Aura Intercept is an AI-powered business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 AI Operatives and 7 Control Centers designed for service businesses."
+          answer="Aura Intercept is an AI business platform that synchronizes your voice, chat, email, and SMS communications into a 24/7 proactive workforce. It captures every lead and booking while your team is in the field, featuring 24 AI Operatives and 7 Control Centers designed for service businesses."
         />
         
         <FAQItem 
           question="How do I get started with Aura Intercept?"
-          answer="Getting started is simple: 1) Sign up for a subscription tier that fits your business needs, 2) Complete the onboarding questionnaire to configure your AI, 3) Set up required integrations (SignalWire, Resend, etc.), 4) Train your Knowledge Base with business information, and 5) Launch your AI-powered communication channels."
+          answer="Getting started is simple: 1) Sign up for a subscription tier that fits your business needs, 2) Complete the onboarding questionnaire to configure your AI, 3) Set up required integrations (SignalWire, Resend, etc.), 4) Train your Knowledge Base with business information, and 5) Launch your AI communication channels."
         />
         
         <FAQItem 
@@ -359,7 +359,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -395,7 +395,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -436,7 +436,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -472,7 +472,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -507,7 +507,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -594,7 +594,7 @@ const PlatformFAQPDF = () => {
         </Text>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -630,7 +630,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -647,7 +647,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What is Message Aura vs Talk to Aura?"
-          answer="Message Aura (Text) is AI-powered chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and SignalWire. Voice is available on ALL paid tiers (Core through Elite)."
+          answer="Message Aura (Text) is AI chat communication via web widget, SMS, and email. Talk to Aura (Voice) is real-time voice conversation using AI speech synthesis powered by ElevenLabs and SignalWire. Voice is available on ALL paid tiers (Core through Elite)."
         />
         
         <FAQItem 
@@ -661,7 +661,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -703,7 +703,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -736,7 +736,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -767,7 +767,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -794,11 +794,11 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What is the Creative & Web Presence console?"
-          answer="This console combines two powerful tools: The Content Engine for unified multi-channel content generation, and Web Presence for AI-powered website building, blog management, and SEO optimization. Includes the Creative Agent and Web Presence Agent."
+          answer="This console combines two powerful tools: The Content Engine for unified multi-channel content generation, and Web Presence for AI website building, blog management, and SEO optimization. Includes the Creative Agent and Web Presence Agent."
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -835,7 +835,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -875,7 +875,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -906,7 +906,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -941,7 +941,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -972,7 +972,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -1003,7 +1003,7 @@ const PlatformFAQPDF = () => {
         />
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -1043,7 +1043,7 @@ const PlatformFAQPDF = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>
@@ -1098,12 +1098,12 @@ const PlatformFAQPDF = () => {
             Thank You for Choosing Aura Intercept
           </Text>
           <Text style={{ fontSize: 10, color: colors.gray }}>
-            AI-Powered Service Business Platform - 2026 Edition
+            AI Service Business Platform - 2026 Edition
           </Text>
         </View>
 
         <View style={styles.footer}>
-          <Text>Aura Intercept - AI-Powered Service Platform</Text>
+          <Text>Aura Intercept - AI Service Platform</Text>
           <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
         </View>
       </Page>

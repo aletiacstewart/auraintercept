@@ -47,7 +47,7 @@ const featureDescriptions: Record<string, string> = {
   'ETA Agent': 'Real-time arrival estimates and automatic customer notification updates.',
   'Check-In Agent': 'Job progress logging, time tracking, and on-site status updates for field teams.',
   'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting.',
-  'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, monitors site performance, and auto-publishes blog posts.',
+  'Web Presence Agent': 'AI website and blog management. Auto-optimizes SEO, monitors site performance, and auto-publishes blog posts.',
   'Social Scheduler Agent': 'Cross-platform scheduling, optimal timing, and auto-publishing across 6 social platforms.',
   'Social Analytics Agent': 'Engagement metrics, audience insights, and growth tracking across all social channels.',
   'Admin Agent': 'Platform administration, user management, and system configuration.',

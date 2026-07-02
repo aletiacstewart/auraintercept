@@ -103,7 +103,7 @@ export function WelcomeModal({
     if (userRole === 'company_admin' || userRole === 'platform_admin') {
       return {
         title: `Welcome${userName ? `, ${userName}` : ''}!`,
-        subtitle: "Your AI-Powered Command Center",
+        subtitle: "Your AI Command Center",
         description: "This is your hub for managing operations, AI agents, and team performance. Let's get you set up for success.",
         actions: [
           {

@@ -246,7 +246,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   {
     id: 'web_presence',
     name: 'Web Presence Agent',
-    description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
+    description: 'AI website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
     console: 'creative_web_presence',
     tier: 'aura_core',
     dependencies: ['creative_content'],
@@ -327,7 +327,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'customer_portal',
     name: 'Customer Portal',
-    description: 'AI-powered customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
+    description: 'AI customer engagement hub with Message Aura (Text), Talk to Aura (Voice), automated follow-ups, and review collection.',
     tier: 'aura_core',
     agentCount: 2,
     tabs: ['AI Assistant', 'Services', 'Appointments', 'Voice AI', 'Contact', 'Hours'],
@@ -336,7 +336,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'marketing_sales',
     name: 'Outreach & Sales Console',
-    description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing — all in one Outreach Agent.',
+    description: 'AI marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing — all in one Outreach Agent.',
     tier: 'aura_core',
     agentCount: 1,
     tabs: ['Campaign', 'Leads', 'Marketing'],
@@ -345,7 +345,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'social_media',
     name: 'Social Media Console',
-    description: 'AI-powered creative studio for social media content creation across 6 platforms, AI image/video generation, and brand-consistent multi-channel content.',
+    description: 'AI creative studio for social media content creation across 6 platforms, AI image/video generation, and brand-consistent multi-channel content.',
     tier: 'aura_boost',
     agentCount: 1,
     tabs: ['Home', 'Create Content', 'My Posts'],
@@ -354,7 +354,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'creative_web_presence',
     name: 'Creative & Web Presence',
-    description: 'Content Engine for unified multi-channel generation plus AI-powered website builder, blog management, and SEO optimization.',
+    description: 'Content Engine for unified multi-channel generation plus AI website builder, blog management, and SEO optimization.',
     tier: 'aura_core',
     agentCount: 1,
     tabs: ['Content Engine', 'Brand Voice', 'Generate', 'Dashboard', 'Calendar', 'Web Presence', 'Blog', 'SEO'],
@@ -363,7 +363,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'field_operations',
     name: 'Field Operations',
-    description: 'Mobile-optimized console for field technicians with AI-powered dispatch, real-time GPS routing, and one-tap job management.',
+    description: 'Mobile-optimized console for field technicians with AI dispatch, real-time GPS routing, and one-tap job management.',
     tier: 'aura_boost',
     agentCount: 2,
     tabs: ['Map View', 'Schedule', 'Dispatch', 'Check-in'],
@@ -372,7 +372,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'business_management',
     name: 'Business Operations',
-    description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
+    description: 'Comprehensive business management console with AI quoting, invoicing, lead management, and inventory tracking.',
     tier: 'aura_elite',
     agentCount: 2,
     tabs: ['Aura Live', 'Quote', 'Invoice', 'Lead', 'Appts', 'Inventory', 'Companies', 'Employees', 'Customers'],

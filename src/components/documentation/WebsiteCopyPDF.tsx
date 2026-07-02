@@ -281,7 +281,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Hero Variation 1 - Problem-Focused</Text>
         <Text style={styles.copyHeadline}>Stop Losing $10,000+ Monthly to Missed Calls</Text>
-        <Text style={styles.copySubhead}>Your AI-powered team answers every call, books every lead, and runs your business operations 24/7.</Text>
+        <Text style={styles.copySubhead}>Your AI team answers every call, books every lead, and runs your business operations 24/7.</Text>
         <View style={styles.ctaCard}>
           <Text style={styles.ctaLabel}>CTA</Text>
           <Text style={styles.ctaText}>Start Your 60-Day Live Trial</Text>
@@ -462,7 +462,7 @@ export const WebsiteCopyPDF: React.FC = () => (
           </View>
           <View style={styles.agentCard}>
             <Text style={styles.agentName}>Forecast Agent</Text>
-            <Text style={styles.agentDesc}>Predict demand and revenue. AI-powered forecasting for staffing, inventory, and growth planning.</Text>
+            <Text style={styles.agentDesc}>Predict demand and revenue. AI forecasting for staffing, inventory, and growth planning.</Text>
           </View>
           <View style={styles.agentCard}>
             <Text style={styles.agentName}>Creative Agent</Text>
@@ -493,7 +493,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Aura Core - $497/mo</Text>
         <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
-          Your AI-powered business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
+          Your AI business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
           - 4 AI Operatives{'\n'}
           - 3 Control Centers{'\n'}
           - AI Receptionist (24/7){'\n'}
@@ -612,7 +612,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <View style={styles.seoCard}>
         <Text style={styles.seoLabel}>Features Page</Text>
         <Text style={styles.seoText}>
-          Title: AI-Powered Features | Aura Intercept Business Automation{'\n'}
+          Title: AI Features | Aura Intercept Business Automation{'\n'}
           Meta: AI receptionist, smart scheduling, route optimization, automated invoicing & 15 more agents. See how Aura Intercept transforms operations.
         </Text>
       </View>

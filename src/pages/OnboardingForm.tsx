@@ -86,7 +86,7 @@ export default function OnboardingFormPage() {
 
   if (state === 'checking') {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-dvh bg-background flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
@@ -94,7 +94,7 @@ export default function OnboardingFormPage() {
 
   if (state === 'locked') {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+      <div className="min-h-dvh bg-background flex items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md border-primary/30">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
@@ -135,7 +135,7 @@ export default function OnboardingFormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-dvh bg-background py-8">
       {isAdmin && (
         <div className="max-w-2xl mx-auto px-4 mb-4 flex justify-center">
           <Badge variant="secondary" className="border-primary/40">

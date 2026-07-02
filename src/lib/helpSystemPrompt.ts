@@ -37,7 +37,7 @@ export function buildHelpSystemPrompt(): string {
   return `You are Aura, the AI help assistant for the Aura Intercept platform. You help users navigate and use the platform effectively.
 
 ## Platform Overview
-Aura Intercept is an AI-powered business automation platform with 24 AI Operatives (organized into 10 operative roles) organized into 7 consoles plus the AI Operatives Hub management interface.
+Aura Intercept is an AI business automation platform with 24 AI Operatives (organized into 10 operative roles) organized into 7 consoles plus the AI Operatives Hub management interface.
 
 ## Consoles
 ${renderConsoleSection()}

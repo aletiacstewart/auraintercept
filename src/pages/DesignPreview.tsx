@@ -10,7 +10,7 @@ import heroLogo from "@/assets/hero-logo.jpeg";
 // ============================================================
 
 const consoles = [
-  { title: "Customer Portal", desc: "AI-powered customer communication hub", icon: Users, neonColor: "#00E5FF", neonShadow: "0 0 24px rgba(0,229,255,0.45), 0 0 60px rgba(0,229,255,0.15)", borderHover: "rgba(0,229,255,0.55)" },
+  { title: "Customer Portal", desc: "AI customer communication hub", icon: Users, neonColor: "#00E5FF", neonShadow: "0 0 24px rgba(0,229,255,0.45), 0 0 60px rgba(0,229,255,0.15)", borderHover: "rgba(0,229,255,0.55)" },
   { title: "Field Ops", desc: "Dispatch and technician management", icon: Wrench, neonColor: "#00E676", neonShadow: "0 0 24px rgba(0,230,118,0.45), 0 0 60px rgba(0,230,118,0.15)", borderHover: "rgba(0,230,118,0.55)" },
   { title: "Business Ops", desc: "Operations intelligence and automation", icon: Briefcase, neonColor: "#B388FF", neonShadow: "0 0 24px rgba(179,136,255,0.45), 0 0 60px rgba(179,136,255,0.15)", borderHover: "rgba(179,136,255,0.55)" },
   { title: "Analytics", desc: "Revenue insights and performance metrics", icon: BarChart3, neonColor: "#18FFFF", neonShadow: "0 0 24px rgba(24,255,255,0.45), 0 0 60px rgba(24,255,255,0.15)", borderHover: "rgba(24,255,255,0.55)" },
@@ -129,7 +129,7 @@ export default function DesignPreview() {
               marginBottom: 20,
             }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00E5FF", boxShadow: "0 0 10px #00E5FF" }} />
-              <span style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#00E5FF", fontWeight: 600 }}>AI-Powered Command Center</span>
+              <span style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#00E5FF", fontWeight: 600 }}>AI Command Center</span>
             </div>
 
             {/* Title */}

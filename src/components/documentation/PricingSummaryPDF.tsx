@@ -140,7 +140,7 @@ const PricingSummaryPDF = () => (
         </View>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text>Generated: {new Date().toLocaleDateString()}</Text>
       </View>
     </Page>
@@ -168,7 +168,7 @@ const PricingSummaryPDF = () => (
         ))}
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -242,7 +242,7 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -292,7 +292,7 @@ const PricingSummaryPDF = () => (
         ))}
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -335,7 +335,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>$249 one-time onboarding fee (was $497, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -373,7 +373,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>$497 one-time onboarding fee (was $994, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -410,7 +410,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>$994 one-time onboarding fee (was $1,988, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -455,7 +455,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -502,7 +502,7 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -561,7 +561,7 @@ const PricingSummaryPDF = () => (
         </View>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>
@@ -598,7 +598,7 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
       </View>
     </Page>

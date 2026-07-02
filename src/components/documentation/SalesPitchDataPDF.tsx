@@ -605,7 +605,7 @@ export const SalesPitchDataPDF: React.FC = () => (
             <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={styles.tableCell}>AI-Powered Dispatch</Text>
+            <Text style={styles.tableCell}>AI Dispatch</Text>
             <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
             <Text style={[styles.tableCell, styles.xMark]}>No</Text>
             <Text style={[styles.tableCell, styles.xMark]}>No</Text>
@@ -751,7 +751,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
         </View>
         <Text style={{ fontSize: 10, color: colors.dark, lineHeight: 1.5 }}>
-          "ProPlumb was struggling to coordinate dispatching across 3 locations and 12 technicians. The Aura Elite tier unified their operations with AI-powered dispatch, eliminating scheduling conflicts and reducing drive time by 45%. Their dispatchers now focus on customer relationships instead of logistics."
+          "ProPlumb was struggling to coordinate dispatching across 3 locations and 12 technicians. The Aura Elite tier unified their operations with AI dispatch, eliminating scheduling conflicts and reducing drive time by 45%. Their dispatchers now focus on customer relationships instead of logistics."
         </Text>
       </View>
 

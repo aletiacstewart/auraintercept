@@ -129,7 +129,7 @@ const INTEGRATIONS: Integration[] = [
   {
     id: 'tavily',
     name: 'Tavily AI',
-    description: 'AI-powered web research for content.',
+    description: 'AI web research for content.',
     icon: Search,
     color: 'bg-cyan-500',
     docsUrl: 'https://tavily.com',

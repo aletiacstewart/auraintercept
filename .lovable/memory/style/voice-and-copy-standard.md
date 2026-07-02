@@ -30,7 +30,7 @@ type: design
 - "Operative" as a per-unit label (that's what "Agent" is for).
 - "Smart Website" as a console header (use "Creative & Web Presence").
 - Spec-sheet phrasing: "role-based permissions", "classifies intent", "access control", "AI-powered", "leverage", "seamless".
-- Trailing "Console" on display labels (route slugs are fine).
+- Renaming shipped consoles (Business Management, Field Operations Console, Outreach & Sales Console) to invented alternates ("Business Operations", "Service Management", etc.). Use the names in `src/lib/canonicalNames.ts` verbatim.
 - Piling up "Command / Control Center / Operative" in one sentence.
 
 ## Card shapes

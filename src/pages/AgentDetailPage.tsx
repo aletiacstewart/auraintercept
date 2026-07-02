@@ -600,7 +600,7 @@ const AGENT_DEFINITIONS: Record<string, {
   },
   web_presence: {
     name: 'Web Presence Agent',
-    description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
+    description: 'AI website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
     category: 'content_engine',
     phase: 2,
     icon: Globe,

@@ -36,17 +36,25 @@ tier check or "Active" computation.
 | `analytics_intelligence`    | `insights`, `revenue`, `forecast`              |
 | `admin`                     | —                                              |
 
-## Tiers (4 + free)
+## Tiers (4 + free) — Beta Pricing (ACTIVE)
 
-- **Aura Core** (`starter`) $697/mo · $349 onboarding — 5 operatives: AI Receptionist, Customer
-  Journey, Outreach, Creative Content, Web Presence. Consoles: Customer
-  Portal, Outreach & Sales, Creative & Web Presence. 10 employees.
-- **Aura Boost** (`connect`) $1,097/mo · $549 onboarding — Core + Dispatch + Field Navigation.
-  Adds Field Operations + Social Media consoles. 25 employees.
-- **Aura Pro** (`performance`) $1,997/mo · $999 onboarding — Boost + Business Finance + Analytics
-  Intelligence + Admin. 50 employees.
-- **Aura Elite** (`command`) $3,997/mo (launch sale $2,997) · $1,549 onboarding — All 10 operatives + industry
-  specialists + AI Operatives Hub console. Unlimited employees.
+Originals are struck through; beta price is what the customer pays.
+Onboarding = 50% of beta monthly, due at start of the 60-Day Live Trial.
+
+- **Aura Core** (`starter`) **$497/mo** (was $697) · **$249** onboarding (was $497)
+  — 5 operatives: AI Receptionist, Customer Journey, Outreach, Creative
+  Content, Web Presence. Consoles: Customer Portal, Outreach & Sales
+  Console, Creative & Web Presence, Social Media, Analytics & Reports,
+  AI Operatives Hub. 10 employees.
+- **Aura Boost** (`connect`) **$994/mo** (was $1,394) · **$497** onboarding (was $994)
+  — Core + Dispatch + Field Navigation. Adds Field Operations Console.
+  25 employees.
+- **Aura Pro** (`performance`) **$1,988/mo** (was $2,788) · **$994** onboarding (was $1,988)
+  — Boost + Business Finance + Analytics Intelligence + Admin. Adds
+  Business Management. 50 employees.
+- **Aura Elite** (`command`) **$3,979/mo** (was $5,576) · **$1,990** onboarding (was $3,979)
+  — All 10 operatives + industry specialists + all 8 consoles including
+  AI Operatives Hub. Unlimited employees.
 
 ## 7 Consoles (canonical DISPLAY names — no trailing "Console")
 
@@ -58,20 +66,20 @@ Source of truth: `src/lib/canonicalNames.ts` (`CONSOLE_NAMES`).
 | Key                      | Canonical display |
 |--------------------------|-------------------|
 | `customer_portal`        | Customer Portal   |
-| `field_operations`       | Service Management |
-| `business_management`    | Business Operations |
-| `marketing_sales`        | Outreach & Sales  |
+| `field_operations`       | Field Operations Console |
+| `business_management`    | Business Management |
+| `marketing_sales`        | Outreach & Sales Console |
 | `social_media`           | Social Media      |
 | `creative_web_presence`  | Creative & Web Presence |
 | `analytics_reports`      | Analytics & Reports |
 | `ai_operatives_hub`      | AI Operatives Hub |
 
-Forbidden variants: any of the above with a trailing "Console" or "Ops" in
-display copy · "Business Management" (use "Business Operations") ·
-"Outreach & Sales Ops" / "Outreach & Sales Console" · "Smart Website" as a
-console header (use "Creative & Web Presence") · "Field Operations Console"
-in display (use "Service Management") · "Marketing & Sales Console" (use
-"Outreach & Sales").
+Forbidden variants: "Business Operations" · "Service Management" ·
+"Outreach & Sales Ops" · "Marketing & Sales Console" (use
+"Outreach & Sales Console") · "Smart Website" as a console header (use
+"Creative & Web Presence") · adding trailing "Console" to consoles that
+don't carry it above (Customer Portal, Social Media, Creative & Web
+Presence, Analytics & Reports, AI Operatives Hub, Business Management).
 
 ## Agent naming
 
@@ -87,7 +95,12 @@ Reports · Website. Customer-facing rollups for chat & dashboards.
 
 ## Trial & Pricing Copy
 
-- 90-Day Live Trial, no credit card. **First 30 days = onboarding window, remaining 60 days = full live use.** **Trial honors the selected tier** (no
-  Elite preview). Reminders at 30/7/1 days remaining.
-- 3rd-party usage (SignalWire/ElevenLabs/Resend/Tavily) = "Included in your tier".
-- A2P 10DLC and Stripe transaction fees = paid directly to provider.
+- **60-Day Live Trial**, no credit card. **First 30 days = concierge
+  onboarding window, remaining 30 days = full live use.** Trial honors the
+  selected tier (no Elite preview). Reminders at 30/7/1 days remaining.
+- **All** 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily,
+  Stripe, A2P 10DLC, social) require the CUSTOMER'S OWN ACCOUNT + card on
+  file. Each provider invoices the customer DIRECTLY and SEPARATELY from
+  the Aura plan fee. Aura never resells, marks up, or invoices 3rd-party
+  usage. Never use "bundled" / "overage" / "absorbed" /
+  "included in your tier" copy for 3rd-party usage.

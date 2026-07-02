@@ -783,7 +783,7 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
       { step: 1, title: 'View Summary', description: 'See key metrics at a glance' },
       { step: 2, title: 'Quick Actions', description: 'Access tabs for detailed analytics' },
       { step: 3, title: 'Ask Aura', description: 'Type questions about your data' },
-      { step: 4, title: 'Get Insights', description: 'Receive AI-powered recommendations' },
+      { step: 4, title: 'Get Insights', description: 'Receive AI recommendations' },
     ],
     tips: ['Use the chat to ask about trends', 'Click any tab for detailed views']
   },

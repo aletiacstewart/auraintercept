@@ -298,7 +298,7 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
 
         {jobs.length === 0 && (
           <div className="text-center py-12">
-            <Wrench className="h-12 w-12 mx-auto text-white/20 mb-4" />
+            <Wrench className="h-12 w-12 mx-auto text-white/70 mb-4" />
             <p className="text-white/40">No active jobs</p>
           </div>
         )}

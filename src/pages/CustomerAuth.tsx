@@ -172,7 +172,7 @@ export default function CustomerAuth() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-muted/30">
+    <div className="min-h-dvh flex flex-col bg-muted/30">
       <PublicHeader />
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-6 animate-fade-in">

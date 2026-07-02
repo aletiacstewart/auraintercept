@@ -53,14 +53,14 @@ export default function CustomerPortalHome() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-dvh bg-background flex items-center justify-center">
         <Skeleton className="h-32 w-32" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       {/* Minimal header with sign out */}
       <header className="border-b bg-card sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">

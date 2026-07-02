@@ -581,7 +581,7 @@ const CONSOLES = [
       },
       {
         name: 'Web Presence Agent',
-        description: 'AI-powered website and blog management. Auto-optimizes SEO, monitors performance, auto-publishes blogs.',
+        description: 'AI website and blog management. Auto-optimizes SEO, monitors performance, auto-publishes blogs.',
         isCore: true,
         worksAlone: false,
         requires: ['Creative Agent'],
@@ -824,7 +824,7 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>AI Agent & Console</Text>
       <Text style={styles.coverTitle}>Reference Guide</Text>
-      <Text style={styles.coverSubtitle}>Understanding Your AI-Powered Business Assistants</Text>
+      <Text style={styles.coverSubtitle}>Understanding Your AI Business Assistants</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>7</Text>
@@ -844,7 +844,7 @@ const AIAgentGuidesPDF = () => (
         </View>
       </View>
       <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text>Aura Intercept - AI Service Platform</Text>
         <Text>Generated: {new Date().toLocaleDateString()}</Text>
       </View>
     </Page>

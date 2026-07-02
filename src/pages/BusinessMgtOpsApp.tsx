@@ -103,7 +103,7 @@ export default function BusinessMgtOpsApp() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-dvh bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Briefcase className="h-10 w-10 text-primary animate-pulse" />
           <p className="text-sm text-muted-foreground">Loading Business Ops...</p>
@@ -115,7 +115,7 @@ export default function BusinessMgtOpsApp() {
   // Not authenticated - show embedded login form
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col items-center justify-center p-4">
+      <div className="min-h-dvh bg-gradient-to-b from-background to-muted/30 flex flex-col items-center justify-center p-4">
         {/* Branding */}
         <div className="flex flex-col items-center gap-3 mb-6">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -212,7 +212,7 @@ export default function BusinessMgtOpsApp() {
 
   // Authenticated - show Business Ops Consoles with tab switching
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       {/* Minimal Header */}
       <header className="flex-shrink-0 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex items-center justify-between px-4 py-3">
