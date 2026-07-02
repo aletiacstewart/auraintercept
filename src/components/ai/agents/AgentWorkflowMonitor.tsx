@@ -255,8 +255,14 @@ function EventCard({ event }: { event: AgentEvent }) {
         </Badge>
 
         {/* Timestamp */}
-        <span className="text-xs text-muted-foreground min-w-[80px] text-right">
-          {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
+        <span
+          className="text-xs text-muted-foreground min-w-[80px] text-right"
+          title={format(new Date(event.created_at), "MMM d, yyyy · h:mm a")}
+        >
+          {format(new Date(event.created_at), 'MMM d, yyyy')}
+          <span className="block text-[10px] opacity-70">
+            {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
+          </span>
         </span>
       </div>
 
