@@ -225,7 +225,7 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
 
   // Desktop Sidebar Navigation
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-dvh flex bg-background">
       {/* Desktop Sidebar */}
       <aside
         className={cn(

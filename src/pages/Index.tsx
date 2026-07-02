@@ -163,7 +163,7 @@ const agentCategories = [{
 }];
 const agentConsoles = [{
   name: 'Customer Portal',
-  description: 'AI-powered customer interactions with booking, appointments, quotes, and 24/7 support.',
+  description: 'AI customer interactions with booking, appointments, quotes, and 24/7 support.',
   icon: HeadphonesIcon,
   gradient: 'from-cyan-500 to-cyan-500',
   iconBg: 'bg-cyan-500/10',
@@ -305,7 +305,7 @@ const heroStats = [{
   value: '7+',
   label: 'Control Centers (Consoles)'
 }];
-const subtitles = ['Booking & Scheduling', 'Service Management', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
+const subtitles = ['Booking & Scheduling', 'Service Management', 'Business Analytics', 'Customer Portal', 'AI Insights'];
 export default function Index() {
   const navigate = useNavigate();
   const [currentSubtitle, setCurrentSubtitle] = useState(0);

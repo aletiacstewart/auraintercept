@@ -172,7 +172,7 @@ const guideCategories = [
         title: '7 Control Centers + AI Operatives Hub',
         duration: '12 min',
         steps: [
-          '1. Customer Portal: AI-powered customer engagement (Core+)',
+          '1. Customer Portal: AI customer engagement (Core+)',
           '2. Field Operations: GPS dispatch, routing, job management (Boost+)',
           '3. Business Operations: Quoting, invoicing, inventory (Pro+)',
           '4. Outreach & Sales Ops: Campaigns, leads, marketing (Pro+)',
@@ -339,7 +339,7 @@ const guideCategories = [
         title: 'Web Presence Agent',
         duration: '8 min',
         steps: [
-          'Manages AI-powered website and blog',
+          'Manages AI website and blog',
           'Auto-optimizes SEO for all pages',
           'Monitors site performance metrics',
           'Auto-publishes blog posts from Content Engine',
@@ -479,7 +479,7 @@ const guideCategories = [
           'Navigate to Business Management Console from sidebar',
           'Tabs: Aura Live, Quote, Invoice, Lead, Appts, Inventory, Companies, Employees, Customers',
           'Aura Live: Real-time activity monitoring',
-          'Quote/Invoice: AI-powered document generation',
+          'Quote/Invoice: AI document generation',
           'Lead: Pipeline and qualification management',
           'Inventory: Stock levels and reorder alerts (Command)',
           'Agents: Admin, Quoting, Invoice, Inventory'
@@ -723,7 +723,7 @@ const guideCategories = [
           'Tabs: Content Engine, Brand Voice, Generate, Dashboard, Calendar, Web Presence, Blog, SEO',
           'Content Engine: Multi-channel content generation hub',
           'Brand Voice: Configure your brand personality for AI',
-          'Web Presence: AI-powered website builder',
+          'Web Presence: AI website builder',
           'Blog: Manage and publish articles',
           'SEO: Site optimization and performance monitoring',
           'Agents: Creative Agent, Web Presence Agent'
@@ -780,7 +780,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Web Presence tab in Creative Console',
-          'AI-powered website builder with drag-and-drop sections',
+          'AI website builder with drag-and-drop sections',
           'Edit hero section: headline, subheadline, CTA button',
           'Manage about section, services, and testimonials',
           'Push website content from Content Engine',
@@ -937,7 +937,7 @@ const guideCategories = [
           'Navigate to Business Management Console from sidebar',
           'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
-          'Access Quote Forge for AI-powered quote generation',
+          'Access Quote Forge for AI quote generation',
           'Monitor payment status and outstanding invoices',
           'Inventory tab requires Elite tier'
         ],
@@ -1133,7 +1133,7 @@ const guideCategories = [
           'Navigate to Social Media Ops from sidebar (Pro+ tier)',
           'Tabs: Home, Create Content, My Posts',
           'Supports 6 platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
-          'AI-powered content generation via MultiChannelGenerator',
+          'AI content generation via MultiChannelGenerator',
           'Manual Bridge posting: copy content + open platform composer',
           'AI Suggest for topic ideas, Industry Templates for quick starts'
         ],
@@ -1144,7 +1144,7 @@ const guideCategories = [
         duration: '12 min',
         steps: [
           'Go to Create Content tab in Social Media Ops console',
-          'Click AI Suggest for AI-powered topic recommendations based on your industry',
+          'Click AI Suggest for AI topic recommendations based on your industry',
           'Or select an Industry Template for pre-built content structures',
           'Enter your topic and select target platforms',
           'AI generates platform-optimized content with hashtags',
@@ -1177,7 +1177,7 @@ const guideCategories = [
           'Analyze best posting times',
           'Compare platform performance',
           'Export social reports to PDF/CSV',
-          'Analytics Agent provides AI-powered insights'
+          'Analytics Agent provides AI insights'
         ],
         tips: ['Track trends over time', 'Adjust strategy based on performance data']
       }

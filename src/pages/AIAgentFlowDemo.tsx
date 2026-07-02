@@ -303,7 +303,7 @@ const scenes: Scene[] = [
       { id: 'b4', label: 'Real-Time\nTracking & ETA', emoji: '📊', color: 'hsl(220, 50%, 42%)', x: 85, y: 50 },
       { id: 'employee', label: 'Employee', emoji: '👷', color: C.field, x: 50, y: 85 },
       { id: 'b5', label: 'Pre-Qualified\nJobs & Routes', emoji: '✅', color: C.fieldDim, x: 15, y: 85 },
-      { id: 'b6', label: 'AI-Powered\nSchedule & Tools', emoji: '🗺️', color: C.fieldDim, x: 85, y: 85 },
+      { id: 'b6', label: 'AI\nSchedule & Tools', emoji: '🗺️', color: C.fieldDim, x: 85, y: 85 },
     ],
     connections: [
       { from: 'b1', to: 'company', label: '' },
@@ -517,7 +517,7 @@ export default function AIAgentFlowDemo() {
           size="sm"
           onClick={handleNext}
           disabled={currentScene >= scenes.length - 1}
-          className="border-white/20 bg-white/10 text-white hover:bg-white/20 disabled:text-white/30"
+          className="border-white/20 bg-white/10 text-white hover:bg-white/20 disabled:text-white/70"
         >
           Next <SkipForward className="w-4 h-4 ml-1" />
         </Button>

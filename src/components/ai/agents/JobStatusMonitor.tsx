@@ -299,7 +299,7 @@ function JobCard({ job, isFieldDispatch = true }: { job: JobAssignment; isFieldD
                         isActive ? config.bgColor : isPast ? 'bg-green-100' : 'bg-gray-100'
                       }`}
                     >
-                      <Icon className={`h-3 w-3 ${isActive ? config.color : isPast ? 'text-green-600' : 'text-gray-400'}`} />
+                      <Icon className={`h-3 w-3 ${isActive ? config.color : isPast ? 'text-green-600' : 'text-muted-foreground'}`} />
                     </div>
                     {timestamp && (
                       <span className="text-[10px] text-muted-foreground mt-1">

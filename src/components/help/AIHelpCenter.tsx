@@ -444,7 +444,7 @@ export function AIHelpCenter() {
             </Button>
           </form>
           <p className="text-[10px] text-muted-foreground text-center mt-2">
-            AI-powered help • Responses may not be 100% accurate
+            AI help • Responses may not be 100% accurate
           </p>
         </div>
       </SheetContent>

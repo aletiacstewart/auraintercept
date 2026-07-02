@@ -19,7 +19,7 @@ const BY_INDUSTRY: Record<string, ConsoleOverrideMap> = {
   real_estate: {
     customer_portal: {
       description:
-        'AI-powered buyer & seller engagement hub — showings, listing inquiries, and follow-ups.',
+        'AI buyer & seller engagement hub — showings, listing inquiries, and follow-ups.',
       tabs: ['Chat', 'Voice', 'Listings', 'Hours', 'Showings', 'Track'],
       features: [
         'Buyers and sellers ask questions and request showings',
@@ -33,7 +33,7 @@ const BY_INDUSTRY: Record<string, ConsoleOverrideMap> = {
   restaurants: {
     customer_portal: {
       description:
-        'AI-powered guest engagement hub — reservations, menu questions, private events.',
+        'AI guest engagement hub — reservations, menu questions, private events.',
       tabs: ['Chat', 'Voice', 'Menu', 'Hours', 'Reservations', 'Events'],
       features: [
         'Guests book reservations via chat or voice',
@@ -46,7 +46,7 @@ const BY_INDUSTRY: Record<string, ConsoleOverrideMap> = {
   beauty_wellness: {
     customer_portal: {
       description:
-        'AI-powered client engagement hub — bookings, service questions, and follow-ups.',
+        'AI client engagement hub — bookings, service questions, and follow-ups.',
       tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Stylists', 'Track'],
       features: [
         'Clients book appointments via chat or voice',

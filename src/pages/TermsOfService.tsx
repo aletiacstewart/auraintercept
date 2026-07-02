@@ -42,7 +42,7 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
             <p>
-              Aura Intercept is a multi-tenant, AI-powered customer service and appointment management platform designed 
+              Aura Intercept is a multi-tenant, AI customer service and appointment management platform designed 
               for service-based businesses in the trades industry. The platform provides <strong className="text-foreground">24 specialized AI agents organized into 10 operatives</strong> across the platform's Consoles: Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media, Web Presence, Analytics & Reports, and the AI Operatives Hub. These automate appointment scheduling, 
               customer communications, field technician dispatch, invoicing, marketing campaigns, social media content, 
               web presence management, and business analytics. Services are delivered through multiple communication channels 
@@ -179,7 +179,7 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">SignalWire:</strong> Voice calling and SMS messaging</li>
               <li><strong className="text-foreground">ElevenLabs:</strong> AI voice synthesis</li>
-              <li><strong className="text-foreground">Tavily:</strong> AI-powered web search for content and research operatives</li>
+              <li><strong className="text-foreground">Tavily:</strong> AI web search for content and research operatives</li>
               <li><strong className="text-foreground">Stripe:</strong> Payment processing</li>
               <li><strong className="text-foreground">Resend:</strong> Email delivery</li>
               <li><strong className="text-foreground">Google Calendar:</strong> Calendar synchronization</li>
@@ -490,7 +490,7 @@ export default function TermsOfService() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Notice of AI Interaction</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">AI-Powered Agents:</strong> You are interacting with AI-powered agents, not human representatives. Our AI assistants are designed to provide helpful information and support, but they are artificial intelligence systems.</li>
+              <li><strong className="text-foreground">AI Agents:</strong> You are interacting with AI agents, not human representatives. Our AI assistants are designed to provide helpful information and support, but they are artificial intelligence systems.</li>
               <li><strong className="text-foreground">Recording and Storage:</strong> Your conversations with our AI agents may be recorded, stored, and shared with ElevenLabs and its third-party large language model (LLM) providers.</li>
             </ul>
 

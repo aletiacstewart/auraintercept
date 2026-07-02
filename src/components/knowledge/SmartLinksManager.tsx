@@ -121,7 +121,7 @@ const CATEGORY_CONFIG: Record<SmartLinkCategory, { label: string; icon: React.Re
   custom: {
     label: 'Custom',
     icon: <Link2 className="w-4 h-4" />,
-    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+    color: 'bg-gray-500/20 text-muted-foreground border-gray-500/30',
     defaultTriggers: [],
   },
 };

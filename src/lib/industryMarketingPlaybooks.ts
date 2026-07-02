@@ -12,7 +12,7 @@ export interface MarketingPlaybook {
 const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
   trades: {
     tagline: '2-3x lead conversion improvement',
-    description: 'AI-powered marketing automation and sales intelligence for service trades',
+    description: 'AI marketing automation and sales intelligence for service trades',
     campaigns: [
       { title: 'Seasonal Tune-Up Drive', description: 'Hit recurring customers before peak season',
         command: 'Build a seasonal tune-up campaign: segment recurring customers, draft an SMS + email offer, and queue for approval' },
@@ -24,7 +24,7 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
   },
   outdoor: {
     tagline: 'More repeat visits per route mile',
-    description: 'AI-powered marketing for recurring outdoor and property services',
+    description: 'AI marketing for recurring outdoor and property services',
     campaigns: [
       { title: 'Seasonal Service Push', description: 'Promote the next season’s recurring service',
         command: 'Build a seasonal service campaign: segment recurring customers due for the next visit, draft the offer, and queue for approval' },
@@ -36,7 +36,7 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
   },
   repair: {
     tagline: 'Faster ticket-to-quote conversion',
-    description: 'AI-powered marketing for repair shops and ticket-based services',
+    description: 'AI marketing for repair shops and ticket-based services',
     campaigns: [
       { title: 'Repair-Tip Content Series', description: 'Drive trust with how-to content',
         command: 'Build a repair-tip content series: 4 weekly posts and a paired email, and queue for approval' },
@@ -48,7 +48,7 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
   },
   booking: {
     tagline: 'More bookings, fewer no-shows',
-    description: 'AI-powered marketing automation for booking-driven businesses',
+    description: 'AI marketing automation for booking-driven businesses',
     campaigns: [
       { title: 'New-Client Welcome', description: 'Convert first inquiries into booked clients',
         command: 'Build a new-client welcome campaign: drip 3 messages from inquiry to first booking, and queue for approval' },
@@ -60,7 +60,7 @@ const CLUSTER: Record<IndustryPack['cluster'], MarketingPlaybook> = {
   },
   home_health: {
     tagline: 'Trusted, compassionate patient growth',
-    description: 'AI-powered referral and patient-education campaigns for home health and hospice',
+    description: 'AI referral and patient-education campaigns for home health and hospice',
     campaigns: [
       { title: 'Referral Partner Outreach', description: 'Stay top-of-mind with referring physicians and discharge planners',
         command: 'Build a referral-partner outreach campaign to physicians, SNFs, and case managers, and queue for approval' },
@@ -273,7 +273,7 @@ const OVERRIDES: Record<string, Partial<MarketingPlaybook>> = {
     ] },
   veterinary: {
     tagline: 'Wellness recall and pet-owner loyalty',
-    description: 'AI-powered recall, vaccine reminders, and new-client campaigns for veterinary practices',
+    description: 'AI recall, vaccine reminders, and new-client campaigns for veterinary practices',
     campaigns: [
       { title: 'Vaccine & Wellness Recall', description: 'Bring pets in for due wellness and vaccinations',
         command: 'Build a vaccine and wellness recall campaign for pets due in the next 60 days and queue for approval' },
@@ -285,7 +285,7 @@ const OVERRIDES: Record<string, Partial<MarketingPlaybook>> = {
   },
   medical_practice: {
     tagline: 'Compassionate patient growth and retention',
-    description: 'AI-powered annual physical, new patient, and recall campaigns for private medical practices',
+    description: 'AI annual physical, new patient, and recall campaigns for private medical practices',
     campaigns: [
       { title: 'Annual Physical Reminder', description: 'Bring patients in for their yearly visit',
         command: 'Build an annual physical reminder campaign for patients overdue for a wellness visit, and queue for approval' },

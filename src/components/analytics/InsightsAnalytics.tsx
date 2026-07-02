@@ -262,7 +262,7 @@ export function InsightsAnalytics({ companyId }: InsightsAnalyticsProps) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Business Insights</h3>
-          <p className="text-sm text-muted-foreground">AI-powered analytics and natural language queries</p>
+          <p className="text-sm text-muted-foreground">AI analytics and natural language queries</p>
         </div>
         <Button onClick={() => refetch()} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />

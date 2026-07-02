@@ -100,7 +100,7 @@ const AIAgent = () => {
             <PageHeader
               icon={Bot}
               title="AI Agent"
-              description="Test and monitor your AI-powered virtual assistant"
+              description="Test and monitor your AI virtual assistant"
               action={
                 hasVoice ? (
                   <div className="flex items-center gap-2">

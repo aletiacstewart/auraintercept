@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
               <li><strong className="text-foreground">SMS & Communication Data:</strong> We collect SMS message content, phone numbers, timestamps, and delivery status when you interact with our platform via text messaging. This data is used to provide customer service and maintain communication records.</li>
               <li><strong className="text-foreground">Location Data:</strong> For field operations and technician dispatch services, we may collect approximate location data to optimize scheduling and provide accurate arrival estimates. This includes service addresses and GPS coordinates during active job assignments.</li>
               <li><strong className="text-foreground">Payment Information:</strong> When you subscribe to our services, payment processing is handled by Stripe. We do not store complete credit card numbers. We may retain billing addresses, transaction history, and subscription status.</li>
-              <li><strong className="text-foreground">AI Web Search Queries:</strong> When operatives use AI-powered web search (powered by Tavily), we log the query text and timestamps to monitor monthly usage allowances and improve relevance.</li>
+              <li><strong className="text-foreground">AI Web Search Queries:</strong> When operatives use AI web search (powered by Tavily), we log the query text and timestamps to monitor monthly usage allowances and improve relevance.</li>
             </ul>
           </section>
 
@@ -264,7 +264,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-2xl font-semibold mb-4">15. ElevenLabs AI Agent Disclosure</h2>
             <p className="mb-4">
               Aura Intercept uses ElevenLabs Agents to power our AI customer service assistants. This section describes 
-              how data is collected, processed, and shared when you interact with these AI-powered features.
+              how data is collected, processed, and shared when you interact with these AI features.
             </p>
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Data Collected</h3>
@@ -285,7 +285,7 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Purpose of Data Processing</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Providing AI-powered customer service and support</li>
+              <li>Providing AI customer service and support</li>
               <li>Improving the quality and accuracy of AI responses</li>
               <li>Training and improving machine learning models</li>
               <li>Ensuring compliance with applicable laws and platform terms</li>

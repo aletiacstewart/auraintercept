@@ -248,7 +248,7 @@ export default function CustomerPortalInstall() {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex items-center justify-center">
+      <div className="min-h-dvh bg-gradient-to-b from-background to-muted/30 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -257,7 +257,7 @@ export default function CustomerPortalInstall() {
   // If user is logged in and has selected a company, show the AI Console
   if (user && !showInstallInfo && selectedCompanyId) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-dvh bg-background flex flex-col">
         {/* Header */}
         <header className="border-b bg-card sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -287,7 +287,7 @@ export default function CustomerPortalInstall() {
     const favoriteCompanies = associations?.filter(a => a.is_favorite) || [];
 
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-dvh bg-background flex flex-col">
         {/* Header */}
         <header className="border-b bg-card sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -452,7 +452,7 @@ export default function CustomerPortalInstall() {
 
   // Default: Show install info and sign-in (first screen)
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
+    <div className="min-h-dvh bg-gradient-to-b from-background to-muted/30">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
@@ -511,7 +511,7 @@ export default function CustomerPortalInstall() {
             {/* Floating badge */}
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium shadow-lg flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
-              AI-Powered
+              AI
             </div>
           </div>
         </div>

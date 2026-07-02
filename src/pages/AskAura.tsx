@@ -134,7 +134,7 @@ export default function AskAura() {
           <PageHeader
             icon={Cpu}
             title="Analytics & Reports"
-            description="Your AI-powered analytics assistant. Ask anything about your business data."
+            description="Your AI analytics assistant. Ask anything about your business data."
             showAuraBar
           />
 

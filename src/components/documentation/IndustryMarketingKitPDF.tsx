@@ -438,7 +438,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page Headline: HVAC</Text>
         <Text style={styles.landingSubhead}>
           Never Miss Another Emergency Call—Even During Peak Season{'\n\n'}
-          AI-powered reception that scales with demand. Book every AC emergency, furnace breakdown, and maintenance request 24/7.
+          AI reception that scales with demand. Book every AC emergency, furnace breakdown, and maintenance request 24/7.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Unlimited simultaneous calls during heat waves</Text>
@@ -648,7 +648,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.landingCard}>
         <Text style={styles.landingHeadline}>Landing Page: Solar Energy</Text>
         <Text style={styles.landingSubhead}>
-          Turn Sunlight Into Savings—With AI-Powered Sales{'\n\n'}
+          Turn Sunlight Into Savings—With AI Sales{'\n\n'}
           Nurture leads for months, answer complex questions instantly, and close more deals.
         </Text>
         <View style={styles.bulletList}>
@@ -723,7 +723,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Roofing</Text>
         <Text style={styles.landingSubhead}>
           Never Miss a Storm Call Again{'\n\n'}
-          AI-powered response that captures every lead during weather events and guides homeowners through insurance.
+          AI response that captures every lead during weather events and guides homeowners through insurance.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Unlimited simultaneous storm calls</Text>
@@ -794,7 +794,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Fencing & Decking</Text>
         <Text style={styles.landingSubhead}>
           Book Your Backyard Upgrade Today{'\n\n'}
-          AI-powered scheduling that handles the spring rush and keeps every project on track.
+          AI scheduling that handles the spring rush and keeps every project on track.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Instant estimate appointment booking</Text>
@@ -867,7 +867,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Landscape & Trees</Text>
         <Text style={styles.landingSubhead}>
           Storm Response + Year-Round Service Management{'\n\n'}
-          AI-powered scheduling for emergencies and recurring maintenance.
+          AI scheduling for emergencies and recurring maintenance.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• 24/7 emergency tree removal dispatch</Text>
@@ -938,7 +938,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Pool & Spa</Text>
         <Text style={styles.landingSubhead}>
           Crystal Clear Service, Year-Round{'\n\n'}
-          AI-powered scheduling for openings, closings, maintenance, and equipment emergencies.
+          AI scheduling for openings, closings, maintenance, and equipment emergencies.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Spring opening and fall closing booking</Text>
@@ -1009,7 +1009,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Pest Control</Text>
         <Text style={styles.landingSubhead}>
           Fast Response, Lasting Protection{'\n\n'}
-          AI-powered scheduling that handles emergency calls and maintains recurring treatment programs.
+          AI scheduling that handles emergency calls and maintains recurring treatment programs.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Calm, immediate emergency response</Text>
@@ -1083,7 +1083,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Appliance Repair</Text>
         <Text style={styles.landingSubhead}>
           Same-Day Fixes, Smart Diagnostics{'\n\n'}
-          AI-powered intake that gets the right info so we show up prepared.
+          AI intake that gets the right info so we show up prepared.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Smart diagnostic questions before arrival</Text>
@@ -1157,7 +1157,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Handyman & Cleaning</Text>
         <Text style={styles.landingSubhead}>
           Reliable Service, Clear Communication{'\n\n'}
-          AI-powered booking with automatic reminders and real-time updates.
+          AI booking with automatic reminders and real-time updates.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Detailed task intake for accurate quotes</Text>
@@ -1229,7 +1229,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Construction</Text>
         <Text style={styles.landingSubhead}>
           From Quote to Completion, Seamlessly{'\n\n'}
-          AI-powered project coordination for painting, flooring, tile, and trim work.
+          AI project coordination for painting, flooring, tile, and trim work.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Multi-trade scheduling coordination</Text>
@@ -1303,7 +1303,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Auto Care</Text>
         <Text style={styles.landingSubhead}>
           Mobile Service, Maximum Convenience{'\n\n'}
-          AI-powered scheduling that optimizes routes and eliminates no-shows.
+          AI scheduling that optimizes routes and eliminates no-shows.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Location-based route optimization</Text>
@@ -1376,7 +1376,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Security Systems</Text>
         <Text style={styles.landingSubhead}>
           Peace of Mind, Installed by Pros{'\n\n'}
-          AI-powered consultations that answer questions and book installations fast.
+          AI consultations that answer questions and book installations fast.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• 24/7 response to security concerns</Text>
@@ -1449,7 +1449,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Real Estate</Text>
         <Text style={styles.landingSubhead}>
           Never Miss Another Lead, Never Lose Another Sale{'\n\n'}
-          AI-powered response that captures leads instantly and nurtures until they're ready.
+          AI response that captures leads instantly and nurtures until they're ready.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Instant lead response 24/7</Text>
@@ -1556,7 +1556,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Beauty & Wellness</Text>
         <Text style={styles.landingSubhead}>
           Fill Every Chair. Miss No Appointment.{'\n\n'}
-          AI-powered booking and reminders designed for salons, spas, and wellness businesses.
+          AI booking and reminders designed for salons, spas, and wellness businesses.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• 24/7 appointment booking via text or call</Text>
@@ -1627,7 +1627,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.landingHeadline}>Landing Page: Food Service</Text>
         <Text style={styles.landingSubhead}>
           Never Miss a Reservation Again{'\n\n'}
-          AI-powered phone answering designed specifically for restaurants, cafes, and food service.
+          AI phone answering designed specifically for restaurants, cafes, and food service.
         </Text>
         <View style={styles.bulletList}>
           <Text style={styles.bulletItem}>• Instant reservation booking</Text>

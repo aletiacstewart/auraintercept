@@ -729,7 +729,7 @@ export default function SignUp() {
                   <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-secondary/10 text-secondary mb-3">For Employees</span>
                   <h2 className="text-lg font-bold mb-2">Employee Portal Access</h2>
                   <p className="text-sm text-muted-foreground">
-                    Access your job queue, manage appointments, and coordinate with dispatch through your company's AI-powered platform.
+                    Access your job queue, manage appointments, and coordinate with dispatch through your company's AI platform.
                   </p>
                 </div>
 
@@ -776,7 +776,7 @@ export default function SignUp() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm text-card-foreground">AI Field Ops Assistant</h4>
-                      <p className="text-xs text-card-foreground/70">Get AI-powered support for job details, inventory lookups, and more.</p>
+                      <p className="text-xs text-card-foreground/70">Get AI support for job details, inventory lookups, and more.</p>
                     </div>
                   </div>
                 </div>
@@ -820,7 +820,7 @@ export default function SignUp() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm text-card-foreground">Instant Quote Requests</h4>
-                      <p className="text-xs text-card-foreground/70">Get AI-powered quotes based on your service needs.</p>
+                      <p className="text-xs text-card-foreground/70">Get AI quotes based on your service needs.</p>
                     </div>
                   </div>
 

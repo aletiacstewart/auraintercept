@@ -13,7 +13,7 @@ export function TavilySetupGuide() {
           <Badge variant="secondary">AI Research</Badge>
         </div>
         <CardDescription>
-          Configure Tavily for AI-powered web research to enhance your social media content with current trends.
+          Configure Tavily for AI web research to enhance your social media content with current trends.
         </CardDescription>
       </CardHeader>
       <CardContent>
