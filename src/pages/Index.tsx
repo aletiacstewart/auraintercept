@@ -911,7 +911,7 @@ export default function Index() {
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
                 <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
                 <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
-                <p className="text-[10px] text-white/80 mt-1"><span className="font-semibold text-emerald-300">Why your own account:</span> if another business's emails ever get flagged for spam, your domain and email deliverability stay completely unaffected — because it was never shared in the first place.</p>
+                
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
