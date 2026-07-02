@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,9 +25,14 @@ import {
   Lightbulb,
   Clock,
   Globe,
-  ExternalLink
+  ExternalLink,
+  FileDown,
+  Video as VideoIcon
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ExportDocumentation from './ExportDocumentation';
+import VideoPromptsPage from './VideoPromptsPage';
 
 // Route mapping for interactive navigation
 const NAVIGATION_ROUTES: Record<string, string> = {
