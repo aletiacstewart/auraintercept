@@ -11,8 +11,11 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Star, MessageSquare, Mail, Clock, ExternalLink, RotateCcw, Save, Loader2 } from 'lucide-react';
+import { Star, MessageSquare, Mail, Clock, ExternalLink, RotateCcw, Save, Loader2, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
+import { useCompanyProfile } from '@/hooks/useCompanyProfile';
+import { getReviewTemplatesForProfile } from '@/lib/reviewRequestTemplates';
 
 interface ReviewSettings {
   review_request_enabled: boolean;
@@ -25,23 +28,6 @@ interface ReviewSettings {
   review_email_template: string | null;
 }
 
-const DEFAULT_SMS = 'Hi {customer_name}! Thank you for choosing {company_name}. We hope {technician_name} provided excellent {service_type} service. Would you take a moment to leave us a 5-star review? It helps our small business grow! ⭐⭐⭐⭐⭐';
-const DEFAULT_EMAIL_SUBJECT = 'How was your experience? - {company_name}';
-const DEFAULT_EMAIL = `Hi {customer_name},
-
-We hope {technician_name} provided you with excellent {service_type} service today!
-
-Your feedback means the world to us. If you were happy with our service, we'd really appreciate it if you could take a moment to leave us a review.
-
-⭐⭐⭐⭐⭐
-
-Your 5-star review helps our small business grow and allows us to continue providing great service to customers like you.
-
-Thank you again for your business!
-
-Best regards,
-The {company_name} Team`;
-
 const PLACEHOLDERS = [
   { key: '{customer_name}', description: "Customer's name" },
   { key: '{company_name}', description: 'Your company name' },
@@ -49,9 +35,26 @@ const PLACEHOLDERS = [
   { key: '{service_type}', description: 'Type of service provided' },
 ];
 
+function isValidReviewUrl(v: string | null | undefined): boolean {
+  if (!v) return true; // empty is allowed at field level; enable-guard checks below
+  const trimmed = v.trim();
+  if (!trimmed) return true;
+  try {
+    const u = new URL(trimmed);
+    return (u.protocol === 'https:' || u.protocol === 'http:') && !!u.host;
+  } catch {
+    return false;
+  }
+}
+
 export function ReviewRequestSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const { profileKey } = useCompanyProfile();
+  const DEFAULTS = getReviewTemplatesForProfile(profileKey);
+  const DEFAULT_SMS = DEFAULTS.sms;
+  const DEFAULT_EMAIL_SUBJECT = DEFAULTS.emailSubject;
+  const DEFAULT_EMAIL = DEFAULTS.email;
   const [activeTab, setActiveTab] = useState<'sms' | 'email'>('sms');
   const [settings, setSettings] = useState<ReviewSettings>({
     review_request_enabled: true,
@@ -114,6 +117,15 @@ export function ReviewRequestSettings() {
   });
 
   const handleSave = () => {
+    // Guard: block save when the toggle is on but no valid URL is present.
+    if (settings.review_request_enabled && !hasAnyValidUrl) {
+      toast.error('Add at least one review link before enabling review requests.');
+      return;
+    }
+    if (googleInvalid || yelpInvalid || facebookInvalid) {
+      toast.error('Fix invalid review URLs before saving.');
+      return;
+    }
     saveMutation.mutate(settings);
   };
 
@@ -145,6 +157,15 @@ export function ReviewRequestSettings() {
 
   const charCount = getSmsCharCount();
   const isOverLimit = charCount > 160;
+
+  const googleInvalid = !isValidReviewUrl(settings.review_google_url);
+  const yelpInvalid = !isValidReviewUrl(settings.review_yelp_url);
+  const facebookInvalid = !isValidReviewUrl(settings.review_facebook_url);
+  const hasAnyValidUrl =
+    (!!settings.review_google_url?.trim() && !googleInvalid) ||
+    (!!settings.review_yelp_url?.trim() && !yelpInvalid) ||
+    (!!settings.review_facebook_url?.trim() && !facebookInvalid);
+  const showEnableWarning = settings.review_request_enabled && !hasAnyValidUrl;
 
   return (
     <div className="space-y-6">
@@ -202,6 +223,14 @@ export function ReviewRequestSettings() {
             <p className="text-sm text-card-foreground/70">
               Add direct links to your review pages. These will be included in review request emails.
             </p>
+            {showEnableWarning && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription className="text-sm">
+                  Add at least one review link before enabling review requests — messages will send without a destination.
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="grid gap-4">
               <div className="space-y-2">
                 <Label htmlFor="google-url" className="text-sm text-card-foreground/80">Google Reviews URL</Label>
@@ -212,7 +241,12 @@ export function ReviewRequestSettings() {
                   onChange={(e) => 
                     setSettings(prev => ({ ...prev, review_google_url: e.target.value || null }))
                   }
+                  aria-invalid={googleInvalid}
+                  className={googleInvalid ? 'border-destructive' : undefined}
                 />
+                {googleInvalid && (
+                  <p className="text-xs text-destructive">Enter a valid URL starting with https://</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="yelp-url" className="text-sm text-card-foreground/80">Yelp Reviews URL</Label>
@@ -223,7 +257,12 @@ export function ReviewRequestSettings() {
                   onChange={(e) => 
                     setSettings(prev => ({ ...prev, review_yelp_url: e.target.value || null }))
                   }
+                  aria-invalid={yelpInvalid}
+                  className={yelpInvalid ? 'border-destructive' : undefined}
                 />
+                {yelpInvalid && (
+                  <p className="text-xs text-destructive">Enter a valid URL starting with https://</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="facebook-url" className="text-sm text-card-foreground/80">Facebook Reviews URL</Label>
@@ -234,7 +273,12 @@ export function ReviewRequestSettings() {
                   onChange={(e) => 
                     setSettings(prev => ({ ...prev, review_facebook_url: e.target.value || null }))
                   }
+                  aria-invalid={facebookInvalid}
+                  className={facebookInvalid ? 'border-destructive' : undefined}
                 />
+                {facebookInvalid && (
+                  <p className="text-xs text-destructive">Enter a valid URL starting with https://</p>
+                )}
               </div>
             </div>
           </div>
