@@ -225,10 +225,10 @@ export function PlatformAdminDashboard() {
       colorClass: 'text-feature-appointments'
     },
     { 
-      title: 'AI Agents Active', 
+      title: 'Companies with AI Deployed', 
       value: stats?.companies ?? 0, 
       icon: Bot, 
-      description: 'Deployed AI agents',
+      description: 'Tenants running the agent stack',
       colorClass: 'text-primary'
     },
     { 
@@ -311,7 +311,7 @@ export function PlatformAdminDashboard() {
             const GROUPS: Array<{ key: string; label: string; titles: string[]; cols: string }> = [
               { key: 'growth', label: 'Growth', titles: ['Total Companies', 'Total Users', 'Customers', 'Leads'], cols: 'md:grid-cols-2 lg:grid-cols-4' },
               { key: 'revenue', label: 'Revenue', titles: ['Platform Revenue', 'Monthly Revenue'], cols: 'md:grid-cols-2' },
-              { key: 'operations', label: 'Operations', titles: ['Appointments', 'Pending Quotes', 'Inventory', 'Active Campaigns', 'AI Agents Active'], cols: 'md:grid-cols-2 lg:grid-cols-5' },
+              { key: 'operations', label: 'Operations', titles: ['Appointments', 'Pending Quotes', 'Inventory', 'Active Campaigns', 'Companies with AI Deployed'], cols: 'md:grid-cols-2 lg:grid-cols-5' },
             ];
             const renderCard = (stat: typeof statCards[number]) => (
               <Card key={stat.title} className="relative overflow-hidden border-border/50">

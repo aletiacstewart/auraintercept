@@ -336,16 +336,31 @@ export function MissedCallSettings() {
             )}
           </div>
 
-          <div className="space-y-4">
+          <div
+            className={
+              !localSettings.phone_number_setup_type
+                ? 'space-y-4 opacity-60'
+                : 'space-y-4'
+            }
+          >
             <div className="space-y-2">
-              <Label>When a customer calls your number</Label>
+              <Label>
+                {!localSettings.phone_number_setup_type
+                  ? 'Default behavior once connected'
+                  : 'When a customer calls your number'}
+              </Label>
+              {!localSettings.phone_number_setup_type && (
+                <p className="text-xs text-muted-foreground">
+                  This preview activates after you connect a number above.
+                </p>
+              )}
               <Select
                 value={localSettings.call_routing_mode}
                 onValueChange={(value: CallRoutingMode) => {
                   setLocalSettings(prev => ({ ...prev, call_routing_mode: value }));
                   setHasChanges(true);
                 }}
-                disabled={!hasSignalWire}
+                disabled={!hasSignalWire || !localSettings.phone_number_setup_type}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select routing mode" />
@@ -379,7 +394,7 @@ export function MissedCallSettings() {
                       setLocalSettings(prev => ({ ...prev, business_phone: e.target.value }));
                       setHasChanges(true);
                     }}
-                    disabled={!hasSignalWire}
+                    disabled={!hasSignalWire || !localSettings.phone_number_setup_type}
                   />
                   <p className="text-xs text-muted-foreground">
                     This is the number that will ring first when a customer calls
@@ -397,7 +412,7 @@ export function MissedCallSettings() {
                     min={10}
                     max={30}
                     step={5}
-                    disabled={!hasSignalWire}
+                    disabled={!hasSignalWire || !localSettings.phone_number_setup_type}
                   />
                   <p className="text-xs text-muted-foreground">
                     How long to ring your phone before the AI agent takes over (10–30 seconds)
