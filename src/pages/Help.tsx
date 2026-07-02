@@ -124,9 +124,7 @@ export default function Help({ embedded }: { embedded?: boolean } = {}) {
   // Tier display info
   const tierInfo = TIER_HELP_DESCRIPTIONS[effectiveTier];
 
-  return (
-    <DashboardLayout>
-      <PageContainer>
+  const body = (
         <div className="space-y-8">
           {/* Header */}
           <PageHeader
