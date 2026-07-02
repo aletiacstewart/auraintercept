@@ -248,7 +248,7 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
         // Admin / preview mode: no invite token, fall back to mailto so the form is still usable.
         const subject = encodeURIComponent(`Company Onboarding - ${formData.companyName}`);
         const body = encodeURIComponent(generateEmailBody());
-        window.location.href = `mailto:onboarding@auraintercept.com?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:ai@auraintercept.ai?subject=${subject}&body=${body}`;
         toast.success('Preview mode — opening email client (submission not saved).');
         return;
       }
