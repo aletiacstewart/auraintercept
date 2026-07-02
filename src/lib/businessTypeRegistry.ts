@@ -321,6 +321,10 @@ const CATEGORY_EMOJI: Record<string, string> = {
   'Insurance & Assessment': '📋',
   'Senior & Lifestyle Services': '🤝',
   'Event & Temporary Services': '🎉',
+  'Beauty & Salons': '✂️',
+  'Restaurants & Food Delivery': '🍽️',
+  'Personal Assistants': '🤝',
+  'B2B Pro Services': '💼',
 };
 
 /**
