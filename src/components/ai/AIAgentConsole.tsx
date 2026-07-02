@@ -243,6 +243,35 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     enabled: !!companyId,
   });
 
+  // Real-data satisfaction for the Session Metrics footer. Mirrors the
+  // pattern used by FieldOpsAgentConsole via useFieldOpsMetrics so the
+  // Customer Portal console shows an honest empty state ("No data yet")
+  // instead of a hardcoded percentage when there is no feedback yet.
+  const { data: satisfactionData } = useQuery({
+    queryKey: ['customer-portal-satisfaction', companyId],
+    queryFn: async () => {
+      if (!companyId) return { count: 0, avg: 0 };
+      const { data } = await supabase
+        .from('customer_feedback')
+        .select('rating')
+        .eq('company_id', companyId)
+        .not('rating', 'is', null);
+      const ratings = (data ?? [])
+        .map((r: any) => Number(r.rating))
+        .filter((n) => Number.isFinite(n));
+      const count = ratings.length;
+      const avg = count > 0 ? ratings.reduce((s, r) => s + r, 0) / count : 0;
+      return { count, avg };
+    },
+    enabled: !!companyId,
+    staleTime: 60_000,
+  });
+
+  const satisfactionLabel =
+    satisfactionData && satisfactionData.count > 0
+      ? `${((satisfactionData.avg / 5) * 100).toFixed(1)}%`
+      : 'No data yet';
+
   // Fetch feature flags securely (works for all roles including customers)
   const { data: featureFlags } = useQuery({
     queryKey: ['company-feature-flags', companyId],
@@ -734,7 +763,16 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[10px] text-foreground">Satisfaction</span>
-                <span className="text-[10px] font-bold text-emerald-400">98.4%</span>
+                <span
+                  className={cn(
+                    'text-[10px] font-bold',
+                    satisfactionData && satisfactionData.count > 0
+                      ? 'text-emerald-400'
+                      : 'text-muted-foreground',
+                  )}
+                >
+                  {satisfactionLabel}
+                </span>
               </div>
             </div>
           </div>

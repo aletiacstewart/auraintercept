@@ -25,6 +25,15 @@ export function BusinessTypeContextStrip({ subtitle, showOperatives, showNotes }
   const ctx = getConsoleContext(businessType, industryVertical, 3);
   const { profileSpec, matrixRow, groupSummary, topChannels: top, displayLabel } = ctx;
 
+  // Avoid rendering the same label twice when the business type name and the
+  // profile category resolve to the same string (e.g. "Solo / Appointment-Only
+  // Services"). Normalize whitespace/case for the comparison so trivial
+  // formatting differences don't trigger a duplicate badge.
+  const normalize = (v: string) => v.trim().toLowerCase().replace(/\s+/g, ' ');
+  const showProfileBadge =
+    !!profileSpec.label &&
+    normalize(profileSpec.label) !== normalize(displayLabel);
+
   // Always render — even without a matrix row we can show profile + label so
   // the user sees we know their business type.
   return (
@@ -39,9 +48,11 @@ export function BusinessTypeContextStrip({ subtitle, showOperatives, showNotes }
             <Badge variant="outline" className="border-primary/30 text-xs capitalize">
               {displayLabel}
             </Badge>
-            <Badge variant="secondary" className="text-[10px] font-normal">
-              {profileSpec.label}
-            </Badge>
+            {showProfileBadge && (
+              <Badge variant="secondary" className="text-[10px] font-normal">
+                {profileSpec.label}
+              </Badge>
+            )}
           </div>
         </div>
       </CardHeader>

@@ -12,12 +12,13 @@ import { FormShell } from '@/components/ui/form-shell';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles, CalendarClock } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles, CalendarClock, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BlogBatchWizard } from '@/components/blog/BlogBatchWizard';
 import { BlogScheduleQueue } from '@/components/blog/BlogScheduleQueue';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface BlogPost {
   id: string;
@@ -42,6 +43,8 @@ export function BlogManagementTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isBatchWizardOpen, setIsBatchWizardOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'draft'>('all');
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -343,9 +346,55 @@ export function BlogManagementTab() {
                 </Button>
               </CardContent>
             </Card>
-          ) : (
-            <div className="grid gap-4">
-              {posts?.map((post) => (
+          ) : (() => {
+            const q = search.trim().toLowerCase();
+            const filteredPosts = (posts ?? []).filter((post) => {
+              if (statusFilter === 'live' && !post.published) return false;
+              if (statusFilter === 'draft' && post.published) return false;
+              if (!q) return true;
+              return (
+                post.title.toLowerCase().includes(q) ||
+                post.slug.toLowerCase().includes(q) ||
+                (post.excerpt ?? '').toLowerCase().includes(q)
+              );
+            });
+            return (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search posts by title, slug, or excerpt…"
+                    className="pl-9"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="live">Live</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {filteredPosts.length} of {posts?.length ?? 0}
+                  </span>
+                </div>
+              </div>
+              {filteredPosts.length === 0 ? (
+                <Card>
+                  <CardContent className="py-10 text-center text-sm text-muted-foreground">
+                    No posts match your search or filter.
+                  </CardContent>
+                </Card>
+              ) : (
+              <div className="grid gap-4">
+              {filteredPosts.map((post) => (
                 <Card key={post.id}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
@@ -395,8 +444,11 @@ export function BlogManagementTab() {
                   </CardContent>
                 </Card>
               ))}
+              </div>
+              )}
             </div>
-          )}
+            );
+          })()}
         </TabsContent>
 
         <TabsContent value="schedule" className="mt-6">
