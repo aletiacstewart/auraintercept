@@ -1314,7 +1314,22 @@ const CarrierForwardingPage = () => (
           </Text>
         ))}
       </View>
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Phone setup: Forward or Port?')}</Text>
+      <Text style={styles.paragraph}>{sanitizePdfText('Pick one — forwarding keeps your existing carrier and reroutes calls to Aura; porting moves the number itself onto Aura.')}</Text>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Forward my existing business number to my new Aura number (use carrier codes on the following pages).')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Port my existing business number into Aura (we will collect a Letter of Authorization, current bill copy, account #, and PIN on the kickoff call).')}</Text></View>
+
+      <Text style={styles.subsectionTitle}>{sanitizePdfText('Which forwarding scenario do you want?')}</Text>
+      <Text style={styles.paragraph}>{sanitizePdfText('Check every scenario Aura should catch. Most businesses pick "Immediate" or "After-hours only + Unreachable".')}</Text>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Immediate — all calls go straight to Aura')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('After-hours only — outside business hours')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Busy — when the line is engaged')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Unreachable — no signal / phone off')}</Text></View>
+      <View style={styles.optionRow}><View style={styles.checkbox} /><Text style={styles.optionText}>{sanitizePdfText('Combination (list which):')}</Text></View>
+      <View style={styles.formLine} />
+
       <Text style={styles.subsectionTitle}>{sanitizePdfText('My carrier')}</Text>
+      <Text style={styles.formNote}>{sanitizePdfText('Full step-by-step star codes for every supported US carrier are listed in "Appendix A — Carrier Forwarding Codes" at the end of this workbook. Only the pages for your carrier are relevant to you.')}</Text>
       <View style={styles.formRow}>
         <Text style={[styles.formLabel, { width: 160 }]}>{sanitizePdfText('Carrier name:')}</Text>
         <View style={styles.formLine} />
