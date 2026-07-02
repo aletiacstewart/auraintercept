@@ -22,6 +22,9 @@ function toLabel(key: string): string {
     .map((w) => {
       if (w === '&' || w === '/' || w === '-') return w;
       if (w === 'b2b') return 'B2B';
+      if (w === 'msp') return 'MSP';
+      if (w === 'it') return 'IT';
+      if (w === 'hr') return 'HR';
       if (/^[a-z]/.test(w)) return w[0].toUpperCase() + w.slice(1);
       return w;
     })
