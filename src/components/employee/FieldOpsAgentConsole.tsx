@@ -914,9 +914,19 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const FIELDOPS_AGENTS: CyberAgent[] = serviceConfig.operatives.map((agent, index) => ({
     ...agent,
     status: agent.status === 'idle' ? 'off' : agent.status,
-    metric1Value: index === 0 ? (fm?.jobsTotal ?? 0) : (fm?.jobsPending ?? 0),
-    metric2Value: index === 0 ? (serviceConfig.fieldRouting ? (fm?.jobsEnRoute ?? 0) : (fm?.jobsPending ?? 0)) : (fm?.jobsCompletedToday ?? 0),
+    // Assignment/Front-Desk tile (index 0): Active vs Assigned/Checked-in.
+    // Routing/Billing tile (index 1): Pending vs In Progress.
+    // These slices are drawn from the same job_assignments query the
+    // Dispatch/GPS Console uses, so counts stay mutually consistent.
+    metric1Value: index === 0 ? (fm?.jobsActive ?? 0) : (fm?.jobsPending ?? 0),
+    metric2Value: index === 0
+      ? (serviceConfig.fieldRouting ? (fm?.jobsAssigned ?? 0) : (fm?.jobsInProgress ?? 0))
+      : (fm?.jobsInProgress ?? 0),
   }));
+
+  const satisfactionLabel = fm && fm.feedbackCount > 0
+    ? `${((fm.avgRating / 5) * 100).toFixed(1)}%`
+    : 'No data yet';
 
   return (
     <CyberConsoleLayout
@@ -929,6 +939,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       companyCreatedAt={companyCreatedAt}
       tabs={serviceConfig.tabs}
       activeTab={activeTab}
+      sessionMetrics={{ status: 'Live', avgResponse: '<1s', satisfaction: satisfactionLabel }}
       onTabChange={(tabId) => {
         setActiveTab(tabId);
         if (tabId === 'dispatch') {
