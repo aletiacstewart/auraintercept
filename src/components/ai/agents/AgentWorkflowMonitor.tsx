@@ -194,6 +194,16 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
           </button>
         </div>
 
+        {/* Search */}
+        <div className="mb-3">
+          <Input
+            placeholder="Search by agent or event type..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="h-9"
+          />
+        </div>
+
         {/* Events List */}
         <ScrollArea className="h-[400px]">
           <div className="space-y-2">
@@ -209,12 +219,26 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
                 <p className="text-sm">Agent events will appear here in real-time</p>
               </div>
             ) : (
-              filteredEvents.map((event) => (
+              pagedEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))
             )}
           </div>
         </ScrollArea>
+
+        {/* Pagination */}
+        {filteredEvents.length > pageSize && (
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredEvents.length)} of {filteredEvents.length}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</Button>
+              <span className="text-muted-foreground">Page {currentPage} of {totalPages}</span>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Next</Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
