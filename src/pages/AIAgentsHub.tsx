@@ -84,13 +84,13 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-analytics'
   },
   marketing_sales: { 
-    label: 'Outreach & Sales Ops', 
+    label: 'Outreach & Sales', 
     icon: Megaphone, 
     colorClass: 'text-feature-marketing',
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Media Ops',
+    label: 'Social Media',
     icon: Activity, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'

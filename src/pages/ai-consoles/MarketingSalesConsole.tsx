@@ -63,7 +63,7 @@ export default function MarketingSalesConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Megaphone}
-              title="Outreach & Sales Console"
+              title="Outreach & Sales"
               description={playbook.description}
               featureColor="platform"
               showAuraBar

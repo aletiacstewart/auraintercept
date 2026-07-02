@@ -31,7 +31,7 @@ export default function SocialMediaConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Share2}
-              title="Social Media Console"
+              title="Social Media"
               description={description}
               featureColor="platform"
               showAuraBar
