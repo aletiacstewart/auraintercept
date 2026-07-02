@@ -123,6 +123,14 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
           className="border-0 bg-transparent flex-1 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm text-foreground placeholder:text-muted-foreground"
           onKeyDown={handleKeyDown}
           disabled={isLoading}
+          name="aura-ask"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          data-lpignore="true"
+          data-form-type="other"
+          data-1p-ignore="true"
         />
         
         {/* Clear button when there's input */}
