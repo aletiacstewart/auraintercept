@@ -21,6 +21,10 @@ function toLabel(key: string): string {
     .split(' ')
     .map((w) => {
       if (w === '&' || w === '/' || w === '-') return w;
+      if (w === 'b2b') return 'B2B';
+      if (w === 'msp') return 'MSP';
+      if (w === 'it') return 'IT';
+      if (w === 'hr') return 'HR';
       if (/^[a-z]/.test(w)) return w[0].toUpperCase() + w.slice(1);
       return w;
     })
@@ -232,6 +236,71 @@ export const BUSINESS_TYPE_CATEGORY: Record<string, string> = {
   'dj / mobile entertainment service': 'Event & Temporary Services',
   'catering service on-site': 'Event & Temporary Services',
   'photo booth rental': 'Event & Temporary Services',
+
+  // Beauty & Salons
+  'hair salon': 'Beauty & Salons',
+  'barbershop': 'Beauty & Salons',
+  'nail salon': 'Beauty & Salons',
+  'day spa': 'Beauty & Salons',
+  'medical spa': 'Beauty & Salons',
+  'lash and brow studio': 'Beauty & Salons',
+  'waxing studio': 'Beauty & Salons',
+  'tanning salon': 'Beauty & Salons',
+  'massage therapy studio': 'Beauty & Salons',
+  'skincare clinic': 'Beauty & Salons',
+  'esthetician clinic': 'Beauty & Salons',
+  'tattoo studio': 'Beauty & Salons',
+  'piercing studio': 'Beauty & Salons',
+  'makeup artistry studio': 'Beauty & Salons',
+
+  // Restaurants & Food Delivery
+  'quick service restaurant': 'Restaurants & Food Delivery',
+  'full service restaurant': 'Restaurants & Food Delivery',
+  'cafe': 'Restaurants & Food Delivery',
+  'coffee shop': 'Restaurants & Food Delivery',
+  'food truck': 'Restaurants & Food Delivery',
+  'ghost kitchen': 'Restaurants & Food Delivery',
+  'virtual restaurant': 'Restaurants & Food Delivery',
+  'catering company': 'Restaurants & Food Delivery',
+  'meal prep delivery service': 'Restaurants & Food Delivery',
+  'bakery': 'Restaurants & Food Delivery',
+  'pizza delivery': 'Restaurants & Food Delivery',
+  'bar': 'Restaurants & Food Delivery',
+  'brewery with food service': 'Restaurants & Food Delivery',
+
+  // Personal Assistants
+  'virtual assistant service': 'Personal Assistants',
+  'concierge service': 'Personal Assistants',
+  'personal shopping service': 'Personal Assistants',
+  'household management service': 'Personal Assistants',
+  'family management service': 'Personal Assistants',
+  'errand running service': 'Personal Assistants',
+  'executive assistant service': 'Personal Assistants',
+  'senior care coordination service': 'Personal Assistants',
+  'companion service': 'Personal Assistants',
+  'travel planning assistant': 'Personal Assistants',
+  'personal organizing service': 'Personal Assistants',
+
+  // B2B Pro Services
+  'accounting firm': 'B2B Pro Services',
+  'bookkeeping firm': 'B2B Pro Services',
+  'law firm': 'B2B Pro Services',
+  'legal service': 'B2B Pro Services',
+  'marketing agency': 'B2B Pro Services',
+  'advertising agency': 'B2B Pro Services',
+  'it managed service provider': 'B2B Pro Services',
+  'msp': 'B2B Pro Services',
+  'business consulting firm': 'B2B Pro Services',
+  'management consulting firm': 'B2B Pro Services',
+  'hr agency': 'B2B Pro Services',
+  'staffing agency': 'B2B Pro Services',
+  'commercial insurance agency': 'B2B Pro Services',
+  'financial advisory firm': 'B2B Pro Services',
+  'wealth management firm': 'B2B Pro Services',
+  'b2b commercial cleaning service': 'B2B Pro Services',
+  'b2b janitorial service': 'B2B Pro Services',
+  'payroll administration firm': 'B2B Pro Services',
+  'benefits administration firm': 'B2B Pro Services',
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -256,6 +325,10 @@ const CATEGORY_EMOJI: Record<string, string> = {
   'Insurance & Assessment': '📋',
   'Senior & Lifestyle Services': '🤝',
   'Event & Temporary Services': '🎉',
+  'Beauty & Salons': '✂️',
+  'Restaurants & Food Delivery': '🍽️',
+  'Personal Assistants': '🤝',
+  'B2B Pro Services': '💼',
 };
 
 /**
@@ -357,6 +430,10 @@ const CATEGORY_DEFAULT_PACK: Record<string, string> = {
   'Insurance & Assessment': 'default',
   'Senior & Lifestyle Services': 'default',
   'Event & Temporary Services': 'default',
+  'Beauty & Salons': 'beauty_wellness',
+  'Restaurants & Food Delivery': 'restaurants',
+  'Personal Assistants': 'personal_assistant',
+  'B2B Pro Services': 'b2b_pro_services',
 };
 
 export interface BusinessTypeEntry {
@@ -410,6 +487,10 @@ const CATEGORY_ORDER = [
   'Insurance & Assessment',
   'Senior & Lifestyle Services',
   'Event & Temporary Services',
+  'Beauty & Salons',
+  'Restaurants & Food Delivery',
+  'Personal Assistants',
+  'B2B Pro Services',
 ];
 
 export interface BusinessTypeGroup {
