@@ -1345,8 +1345,8 @@ const CarrierForwardingPage = () => (
     </Page>
     {CARRIERS.map((c, idx) => (
       <Page key={c.name} size="A4" style={styles.page}>
-        <PageHeader title={`Carrier Guide — ${c.name}`} pageNum={10 + idx + 1} />
-        <Text style={styles.sectionTitle}>{sanitizePdfText(c.name)}</Text>
+        <PageHeader title={`Appendix A — ${c.name}`} pageNum={10 + idx + 1} />
+        <Text style={styles.sectionTitle}>{sanitizePdfText(`Appendix A — ${c.name}`)}</Text>
         <Text style={[styles.paragraph, { marginTop: -6, color: colors.gray }]}>
           {sanitizePdfText(c.type)}
         </Text>
