@@ -208,13 +208,13 @@ const agentConsoles = [{
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
   name: 'Social Media',
-  description: 'AI generates on-brand content for 6 platforms. Copy & post is included on every tier. Optional Upload-Post Automated API account for fully scheduled auto-posting.',
+  description: 'AI generates on-brand content for 6 platforms. Manual Social Media Copy/Post Feature is included with all plans. Optional Upload-Post Automated API account for fully scheduled auto-posting.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
   tier: 'connect',
-  features: ['AI content generation', 'Copy & Post (all tiers)', 'Optional Upload-Post auto-post API', '6-platform support']
+  features: ['AI content generation', 'Manual Copy/Post included with all plans', 'Optional Upload-Post auto-post API', '6-platform support']
 }, {
   name: 'Creative & Web Presence',
   description: 'AI website builder, blog management, SEO optimization, and brand content creation.',
